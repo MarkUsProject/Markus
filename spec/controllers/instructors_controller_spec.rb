@@ -1,16 +1,16 @@
-describe AdminsController do
-  let(:course) { admin.course }
-  let(:admin) { create :admin }
-  let(:role) { admin }
+describe InstructorsController do
+  let(:course) { instructor.course }
+  let(:instructor) { create :instructor }
+  let(:role) { instructor }
   let(:end_user) { create :end_user }
 
-  context 'An Admin should' do
+  context 'An Instructor should' do
     context '#new' do
       it_behaves_like 'role is from a different course' do
         subject { get_as new_role, :new, params: { course_id: course.id } }
       end
       it 'be able to get :new' do
-        get_as admin, :new, params: { course_id: course.id }
+        get_as instructor, :new, params: { course_id: course.id }
         expect(response.status).to eq(200)
       end
     end
@@ -20,7 +20,7 @@ describe AdminsController do
         subject { get_as new_role, :index, params: { course_id: course.id } }
       end
       it 'respond with success on index' do
-        get_as admin, :index, params: { course_id: course.id }
+        get_as instructor, :index, params: { course_id: course.id }
         expect(response.status).to eq(200)
       end
     end
@@ -32,22 +32,22 @@ describe AdminsController do
                   params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
       end
-      it 'be able to create Admin' do
-        post_as admin,
+      it 'be able to create Instructor' do
+        post_as instructor,
                 :create,
                 params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
-        expect(course.admins.joins(:end_user).where('users.user_name': end_user.user_name)).to exist
+        expect(course.instructors.joins(:end_user).where('users.user_name': end_user.user_name)).to exist
         expect(response).to redirect_to action: 'index'
       end
       context 'when a end_user does not exist' do
         let(:end_user) { build :end_user }
         subject do
-          post_as admin, :create,
+          post_as instructor, :create,
                   params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
         it 'should not create a Ta' do
-          admin
-          expect { subject }.not_to(change { Admin.count })
+          instructor
+          expect { subject }.not_to(change { Instructor.count })
         end
       end
     end
@@ -59,7 +59,7 @@ describe AdminsController do
         end
       end
       subject do
-        post_as admin, :update,
+        post_as instructor, :update,
                 params: { course_id: course.id, id: role, role: { end_user: { user_name: new_end_user.user_name } } }
       end
       context 'when the new user exists' do

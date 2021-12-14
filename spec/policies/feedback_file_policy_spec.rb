@@ -6,8 +6,8 @@ describe FeedbackFilePolicy do
   let(:record) { create :feedback_file_with_test_run, test_group_result: test_group_result }
 
   describe_rule :show? do
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
 
     context 'role is a ta' do

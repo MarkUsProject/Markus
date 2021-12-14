@@ -77,9 +77,9 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       FileUtils.remove_dir(TEST_REPO, true)
       FileUtils.mkdir_p(TEST_EXPORT_REPO_2)
       # configure and create repositories
-      conf_admin = Hash.new
-      conf_admin['is_repository_admin'] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_instructor = Hash.new
+      conf_instructor['is_repository_admin'] = true
+      conf_instructor["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       # create repository first
       SubversionRepository.create(TEST_REPO)
       # open the repository
@@ -391,20 +391,20 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       # create repository first
       repo1 = SVN_TEST_REPOS_DIR + "/Testrepo1"
       repo2 = SVN_TEST_REPOS_DIR + "/Repository2"
-      conf_admin = Hash.new
-      conf_admin['is_repository_admin'] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_instructor = Hash.new
+      conf_instructor['is_repository_admin'] = true
+      conf_instructor["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       SubversionRepository.create(repo1)
       SubversionRepository.create(repo2)
       SubversionRepository.create(TEST_REPO)
       # open the repository
-      conf_non_admin = Hash.new
-      conf_non_admin['is_repository_admin'] = false
-      conf_non_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_non_instructor = Hash.new
+      conf_non_instructor['is_repository_admin'] = false
+      conf_non_instructor["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
 
-      @repo1 = SubversionRepository.open(repo1) # non-admin repository
-      @repo2 = SubversionRepository.open(repo2) # again, a non-admin repo
-      @repo = SubversionRepository.open(TEST_REPO)     # repo with admin-privs
+      @repo1 = SubversionRepository.open(repo1) # non-instructor repository
+      @repo2 = SubversionRepository.open(repo2) # again, a non-instructor repo
+      @repo = SubversionRepository.open(TEST_REPO)     # repo with instructor-privs
 
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
@@ -619,9 +619,9 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       end
 
       repositories = []
-      conf_admin = Hash.new
-      conf_admin['is_repository_admin'] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_instructor = Hash.new
+      conf_instructor['is_repository_admin'] = true
+      conf_instructor["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       repository_names.each do |repo_name|
         SubversionRepository.create(repo_name)
         repo = SubversionRepository.open(repo_name)

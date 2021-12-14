@@ -2,8 +2,8 @@ describe ResultPolicy do
   let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :view? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -18,8 +18,8 @@ describe ResultPolicy do
     let(:submission) { create :submission, grouping: grouping }
     let(:grouping) { create :grouping, assignment: assignment }
     let(:assignment) { create :assignment }
-    context 'role is an admin' do
-      let(:role) { create :admin }
+    context 'role is an instructor' do
+      let(:role) { create :instructor }
       failed 'when result is released' do
         let(:record) { create :released_result }
       end
@@ -109,8 +109,8 @@ describe ResultPolicy do
   end
 
   describe_rule :grade? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -121,8 +121,8 @@ describe ResultPolicy do
   end
 
   describe_rule :review? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -150,8 +150,8 @@ describe ResultPolicy do
   end
 
   describe_rule :set_released_to_students? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
       succeed 'that can manage submissions' do
@@ -167,8 +167,8 @@ describe ResultPolicy do
   end
 
   describe_rule :manage? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     failed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -179,8 +179,8 @@ describe ResultPolicy do
   end
 
   describe_rule :download? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }

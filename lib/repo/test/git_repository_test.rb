@@ -81,9 +81,9 @@ class GitRepositoryTest < ActiveSupport::TestCase
       FileUtils.remove_dir(TEST_REPO, true)
       FileUtils.mkdir_p(TEST_EXPORT_REPO_2)
       # configure and create repositories
-      conf_admin = Hash.new
-      conf_admin['is_repository_admin'] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/git_auth/"
+      conf_instructor = Hash.new
+      conf_instructor['is_repository_admin'] = true
+      conf_instructor["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/git_auth/"
 
       # create repository first
       GitRepository.create(TEST_REPO)
@@ -428,21 +428,21 @@ class GitRepositoryTest < ActiveSupport::TestCase
       # create repository first
       repo1 = GIT_TEST_REPOS_DIR + "/Testrepo1"
       repo2 = GIT_TEST_REPOS_DIR + "/Repository2"
-      conf_admin = Hash.new
-      conf_admin['is_repository_admin'] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
+      conf_instructor = Hash.new
+      conf_instructor['is_repository_admin'] = true
+      conf_instructor["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
       GitRepository.create(repo1)
       GitRepository.create(repo2)
       GitRepository.create(TEST_REPO)
       # open the repository
-      conf_non_admin = Hash.new
-      conf_non_admin['is_repository_admin'] = false
-      conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
+      conf_non_instructor = Hash.new
+      conf_non_instructor['is_repository_admin'] = false
+      conf_non_instructor["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
-      @repo1 = GitRepository.open(repo1) # non-admin repository
-      @repo2 = GitRepository.open(repo2) # again, a non-admin repo
-      @repo = GitRepository.open(TEST_REPO)     # repo with admin-privs
+      @repo1 = GitRepository.open(repo1) # non-instructor repository
+      @repo2 = GitRepository.open(repo2) # again, a non-instructor repo
+      @repo = GitRepository.open(TEST_REPO)     # repo with instructor-privs
 
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
@@ -662,9 +662,9 @@ class GitRepositoryTest < ActiveSupport::TestCase
       end
 
       repositories = []
-      conf_admin = Hash.new
-      conf_admin['is_repository_admin'] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
+      conf_instructor = Hash.new
+      conf_instructor['is_repository_admin'] = true
+      conf_instructor["REPOSITORY_PERMISSION_FILE"] = new_git_auth
 
       repository_names.each do |repo_name|
         GitRepository.create(repo_name)
@@ -715,9 +715,9 @@ class GitRepositoryTest < ActiveSupport::TestCase
         FileUtils.mkdir_p(new_git_auth)
       end
 
-      @conf_admin = Hash.new
-      @conf_admin['is_repository_admin'] = true
-      @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
+      @conf_instructor = Hash.new
+      @conf_instructor['is_repository_admin'] = true
+      @conf_instructor["REPOSITORY_PERMISSION_FILE"] = new_git_auth
       # create some repositories, add some users
       repo_base_name = "Group_"
       @repository_names = []

@@ -2,7 +2,7 @@
 en:
   action_policy:
     policy:
-      admin:
+      instructor:
         manage_assessments?: You do not have permission to manage assessments.
         manage_submissions?: You do not have permission to manage submissions.
         run_tests?: You do not have permission to run tests.
@@ -12,11 +12,11 @@ en:
       annotation_category:
         manage?: You do not have permissions to manage annotation categories.
       application:
-        admin?: Only admins may perform this action
+        instructor?: Only instructors may perform this action
         manage?: You are not authorized to perform this action.
         student?: Only students may perform this action
         ta?: Only graders may perform this action
-        view_admin_subtabs?: You are not authorized to perform this action.
+        view_instructor_subtabs?: You are not authorized to perform this action.
         view_student_subtabs?: You are not authorized to perform this action.
         view_sub_sub_tabs?: You are not authorized to perform this action.
         view_ta_subtabs?: You are not authorized to perform this action.

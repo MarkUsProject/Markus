@@ -34,7 +34,7 @@ describe AnnotationsController do
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
   let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil) }
 
-  shared_examples 'an authenticated admin or TA' do
+  shared_examples 'an authenticated instructor or TA' do
     describe '#add_existing_annotation' do
       it 'successfully creates a text annotation' do
         post_as user,
@@ -349,9 +349,9 @@ describe AnnotationsController do
     end
   end
 
-  describe 'an authenticated admin' do
-    let!(:user) { create(:admin) }
-    include_examples 'an authenticated admin or TA'
+  describe 'an authenticated instructor' do
+    let!(:user) { create(:instructor) }
+    include_examples 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -412,7 +412,7 @@ describe AnnotationsController do
 
   describe 'an authenticated TA' do
     let!(:user) { create(:ta) }
-    include_examples 'an authenticated admin or TA'
+    include_examples 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }

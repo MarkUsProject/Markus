@@ -7,26 +7,26 @@ en:
         max_mark: Maximum mark
         name: Name
         peer_visible: Make visible to peer reviewers
-        ta_visible: Make visible to graders and admins
+        ta_visible: Make visible to graders and instructors
       criterion:
         bonus: Bonus
         description: Description
         max_mark: Maximum mark
         name: Name
         peer_visible: Make visible to peer reviewers
-        ta_visible: Make visible to graders and admins
+        ta_visible: Make visible to graders and instructors
       flexible_criterion:
         description: Description
         max_mark: Maximum mark
         name: Name
         peer_visible: Make visible to peer reviewers
-        ta_visible: Make visible to graders and admins
+        ta_visible: Make visible to graders and instructors
       rubric_criterion:
         description: Description
         max_mark: Maximum mark
         name: Name
         peer_visible: Make visible to peer reviewers
-        ta_visible: Make visible to graders and admins
+        ta_visible: Make visible to graders and instructors
     errors:
       models:
         criterion:

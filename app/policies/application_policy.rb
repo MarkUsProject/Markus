@@ -35,13 +35,13 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def view_sub_sub_tabs?
-    role&.admin? || role&.ta?
+    role&.instructor? || role&.ta?
   end
 
   # checks usable for all policies
 
-  def admin?
-    role.admin?
+  def instructor?
+    role.instructor?
   end
 
   def ta?

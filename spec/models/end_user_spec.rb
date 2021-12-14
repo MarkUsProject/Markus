@@ -41,7 +41,7 @@ describe EndUser do
       let(:end_user4) { create :end_user }
       let!(:end_user4_student) { create :student, course: course, end_user: end_user4 }
       let!(:end_user4_ta) { create :ta, course: course2, end_user: end_user4 }
-      let!(:end_user4_admin) { create :admin, end_user: end_user4, course: course3 }
+      let!(:end_user4_instructor) { create :instructor, end_user: end_user4, course: course3 }
       it 'returns only courses end_user1 can see' do
         expect(end_user.visible_courses).to contain_exactly(course)
       end
@@ -51,7 +51,7 @@ describe EndUser do
       it 'returns only visible courses for end_user3' do
         expect(end_user3.visible_courses).to contain_exactly(course3)
       end
-      it 'returns courses that are visible as a student, ta, or admin' do
+      it 'returns courses that are visible as a student, ta, or instructor' do
         expect(end_user4.visible_courses).to contain_exactly(course, course2, course3)
       end
     end

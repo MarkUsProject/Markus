@@ -1,7 +1,7 @@
 describe AnnotationPolicy do
   describe_rule :manage? do
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
       let(:context) { { role: role, real_user: role.end_user } }
     end
     succeed 'role is a ta' do
@@ -28,8 +28,8 @@ describe AnnotationPolicy do
     end
   end
   describe_rule :add_existing_annotation? do
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
       let(:context) { { role: role, real_user: role.end_user } }
     end
     succeed 'role is a ta' do

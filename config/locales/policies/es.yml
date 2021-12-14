@@ -2,7 +2,7 @@
 es:
   action_policy:
     policy:
-      admin:
+      instructor:
         manage_assessments?: UPDATE ME.
         manage_submissions?: UPDATE ME.
         run_tests?: UPDATE ME.
@@ -12,11 +12,11 @@ es:
       annotation_category:
         manage?: UPDATE ME.
       application:
-        admin?: UPDATE ME.
+        instructor?: UPDATE ME.
         manage?: UPDATE ME.
         student?: UPDATE ME.
         ta?: UPDATE ME.
-        view_admin_subtabs?: UPDATE ME.
+        view_instructor_subtabs?: UPDATE ME.
         view_student_subtabs?: UPDATE ME.
         view_sub_sub_tabs?: UPDATE ME.
         view_ta_subtabs?: UPDATE ME.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_07_164034) do
+ActiveRecord::Schema.define(version: 2021_12_13_200348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -291,7 +291,7 @@ ActiveRecord::Schema.define(version: 2021_12_07_164034) do
     t.integer "group_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "admin_approved", default: false, null: false
+    t.boolean "instructor_approved", default: false, null: false
     t.boolean "is_collected", default: false, null: false
     t.integer "criteria_coverage_count", default: 0
     t.integer "test_tokens", default: 0, null: false

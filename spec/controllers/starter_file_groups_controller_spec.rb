@@ -16,7 +16,7 @@ describe StarterFileGroupsController do
     end
   end
 
-  let(:role) { create :admin }
+  let(:role) { create :instructor }
   let(:assignment) { create :assignment }
   let(:course) { assignment.course }
   describe '#create' do

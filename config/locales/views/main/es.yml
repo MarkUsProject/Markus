@@ -14,8 +14,8 @@ es:
     password_not_blank: La contraseña no puede dejarse en blanco.
     please_log_in: Por favor inicie la sesión.
     role_switch:
-      admin_password: Clave del administrador
-      cannot_login_as_another_admin: Usted no puede iniciar la sesión como otro administrador.
+      instructor_password: Clave del administrador
+      cannot_login_as_another_instructor: Usted no puede iniciar la sesión como otro administrador.
       clear_role_switch_session: Cancelar cambio de rol
       log_in_as: Iniciar sesión como
       switch_role: Cambio de rol

@@ -44,7 +44,7 @@ class ResultsController < ApplicationController
           grouping_id: is_reviewer ? nil : submission.grouping_id,
           marking_state: result.marking_state,
           released_to_students: result.released_to_students,
-          detailed_annotations: current_role.admin? || current_role.ta? || is_reviewer,
+          detailed_annotations: current_role.instructor? || current_role.ta? || is_reviewer,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
           allow_remarks: assignment.allow_remarks,
@@ -101,11 +101,11 @@ class ResultsController < ApplicationController
         end
 
         data[:annotations] = all_annotations.map do |annotation|
-          annotation.get_data(current_role.admin? || current_role.ta?)
+          annotation.get_data(current_role.instructor? || current_role.ta?)
         end
 
         # Annotation categories
-        if current_role.admin? || current_role.ta?
+        if current_role.instructor? || current_role.ta?
           annotation_categories = AnnotationCategory.visible_categories(assignment, current_role)
                                                     .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
@@ -124,8 +124,8 @@ class ResultsController < ApplicationController
             }
           end
           data[:notes_count] = submission.grouping.notes.count
-          data[:num_marked] = assignment.get_num_marked(current_role.admin? ? nil : current_role.id)
-          data[:num_collected] = assignment.get_num_collected(current_role.admin? ? nil : current_role.id)
+          data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
+          data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
           if current_role.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
             data[:members] = []
@@ -452,7 +452,7 @@ class ResultsController < ApplicationController
     end
 
     annotation_data = all_annots.map do |annotation|
-      annotation.get_data(current_role.admin? || current_role.ta?)
+      annotation.get_data(current_role.instructor? || current_role.ta?)
     end
 
     render json: annotation_data

@@ -4,7 +4,7 @@ describe AutotestRunJob do
   let(:n_groups) { 3 }
   let(:groupings) { create_list(:grouping_with_inviter_and_submission, n_groups, assignment: assignment) }
   let(:groups) { groupings.map(&:group) }
-  let(:user) { create(:admin) }
+  let(:user) { create(:instructor) }
   before { allow(File).to receive(:read).and_return("123456789\n") }
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, user.id, assignment.id, groups.map(&:id)] }
@@ -138,10 +138,10 @@ describe AutotestRunJob do
           end
         end
       end
-      context 'when the user is an admin' do
+      context 'when the user is an instructor' do
         it 'should set the correct categories' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
-            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('admin')
+            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('instructor')
             dummy_return
           end
           subject
@@ -161,7 +161,7 @@ describe AutotestRunJob do
         let(:user) { create(:ta) }
         it 'should set the correct categories' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
-            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('admin')
+            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('instructor')
             dummy_return
           end
           subject

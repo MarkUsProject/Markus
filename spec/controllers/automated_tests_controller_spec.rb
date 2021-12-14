@@ -2,7 +2,7 @@ describe AutomatedTestsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:assignment) { create :assignment }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
-  shared_examples 'An authorized admin and grader managing automated testing' do
+  shared_examples 'An authorized instructor and grader managing automated testing' do
     include_examples 'An unauthorized role accessing student interface'
     context 'PUT update' do
       before { put_as role, :update, params: params }
@@ -346,14 +346,14 @@ describe AutomatedTestsController do
       include_examples 'An unauthorized role managing automated testing'
     end
   end
-  describe 'an authenticated admin' do
-    let(:role) { create(:admin) }
-    include_examples 'An authorized admin and grader managing automated testing'
+  describe 'an authenticated instructor' do
+    let(:role) { create(:instructor) }
+    include_examples 'An authorized instructor and grader managing automated testing'
   end
 
   describe 'When the grader is allowed to manage automated testing' do
     let(:role) { create(:ta, manage_assessments: true) }
-    include_examples 'An authorized admin and grader managing automated testing'
+    include_examples 'An authorized instructor and grader managing automated testing'
   end
 
   describe 'When the grader is not allowed to manage automated testing' do

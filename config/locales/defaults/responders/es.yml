@@ -13,7 +13,7 @@ es:
         success: Se actualizó la información del %{resource_name}.
       update_files:
         success: Sus cambios han sido realizados.
-    admins:
+    instructors:
       create:
         error: "%{resource_name} UPDATE ME: %{errors}."
       update:

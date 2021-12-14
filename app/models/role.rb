@@ -15,18 +15,13 @@ class Role < ApplicationRecord
   has_many :assessments, through: :course
   has_many :tags
 
-  validates_format_of :type, with: /\AStudent|Admin|Ta\z/
+  validates_format_of :type, with: /\AStudent|Instructor|Ta\z/
   validates_uniqueness_of :user_id, scope: :course_id
-
-  # role constants
-  STUDENT = 'Student'.freeze
-  ADMIN = 'Admin'.freeze
-  TA = 'Ta'.freeze
 
   # Helper methods -----------------------------------------------------
 
-  def admin?
-    instance_of?(Admin)
+  def instructor?
+    instance_of?(Instructor)
   end
 
   def ta?

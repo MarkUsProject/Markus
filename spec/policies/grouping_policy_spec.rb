@@ -2,12 +2,12 @@ describe GroupingPolicy do
   let(:context) { { role: role, real_user: role.end_user } }
   let(:record) { grouping }
   let(:grouping) { create :grouping }
-  let(:role) { create :admin }
+  let(:role) { create :instructor }
 
   describe_rule :member? do
     let(:grouping) { create :grouping_with_inviter }
-    failed 'role is an admin' do
-      let(:role) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'role is an ta' do
       let(:role) { create :ta }
@@ -156,8 +156,8 @@ describe GroupingPolicy do
   end
 
   describe_rule :view_file_manager? do
-    failed 'role is an admin' do
-      let(:role) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'role is a ta' do
       let(:role) { create :ta }
@@ -185,8 +185,8 @@ describe GroupingPolicy do
   end
 
   describe_rule :start_timed_assignment? do
-    failed 'role is an admin' do
-      let(:role) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'role is a ta' do
       let(:role) { create :ta }
@@ -213,8 +213,8 @@ describe GroupingPolicy do
   end
 
   describe_rule :download_starter_file? do
-    failed 'role is an admin' do
-      let(:role) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'user is a ta' do
       let(:role) { create :ta }

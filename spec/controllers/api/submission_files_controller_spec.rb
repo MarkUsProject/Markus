@@ -5,11 +5,11 @@ describe Api::SubmissionFilesController do
   let(:group) { grouping.group }
   let(:file_content) { Array.new(2) { Faker::TvShows::HeyArnold.quote } }
   let(:file_names) { Array.new(2) { Faker::File.file_name(dir: '') } }
-  let(:admin) { create :admin, course: course }
+  let(:instructor) { create :instructor, course: course }
 
   shared_examples 'for a different course' do
-    context 'admin in a different course' do
-      let(:admin) { create :admin, course: create(:course) }
+    context 'instructor in a different course' do
+      let(:instructor) { create :instructor, course: create(:course) }
       it 'should return a 403 error' do
         expect(response).to have_http_status(403)
       end
@@ -40,8 +40,8 @@ describe Api::SubmissionFilesController do
   end
   context 'An authenticated request' do
     before :each do
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
       group.access_repo do |repo|
         txn = repo.get_transaction(grouping.inviter.user_name)
         file_content.each_with_index do |content, i|

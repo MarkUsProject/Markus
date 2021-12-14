@@ -1,6 +1,6 @@
 # Student policy class
 class StudentPolicy < RolePolicy
-  default_rule :admin?
+  default_rule :instructor?
   alias_rule :update_mailer_settings?, to: :student?
   alias_rule :update_settings?, to: :settings?
   authorize :assignment, :grouping, :submission, optional: true

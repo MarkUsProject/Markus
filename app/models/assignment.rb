@@ -313,7 +313,7 @@ class Assignment < Assessment
                     .left_outer_joins(non_rejected_student_memberships: [role: :end_user])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
-                                   'groupings.admin_approved',
+                                   'groupings.instructor_approved',
                                    'groups.group_name',
                                    'users.user_name',
                                    'memberships.membership_status',
@@ -350,7 +350,7 @@ class Assignment < Assessment
       extension_data[:grouping_id] = data['groupings.id']
       {
         _id: data['groupings.id'],
-        admin_approved: data['groupings.admin_approved'],
+        instructor_approved: data['groupings.instructor_approved'],
         group_name: data['groups.group_name'],
         extension: extension_data,
         members: members[data['groupings.id']],
@@ -409,7 +409,7 @@ class Assignment < Assessment
         grouping = Grouping.new
         grouping.group_id = g.group_id
         grouping.assessment_id = self.id
-        grouping.admin_approved = g.admin_approved
+        grouping.instructor_approved = g.instructor_approved
         unless grouping.save
           warnings << I18n.t('groups.clone_warning.other',
                              group: g.group.group_name, error: grouping.errors.messages)
@@ -485,11 +485,11 @@ class Assignment < Assessment
   end
 
   # Generate JSON summary of grades for this assignment
-  # for the current user. The user should be an admin or TA.
+  # for the current user. The user should be an instructor or TA.
   def summary_json(user)
-    return {} unless user.admin? || user.ta?
+    return {} unless user.instructor? || user.ta?
 
-    if user.admin?
+    if user.instructor?
       groupings = self.groupings
       graders = groupings.joins(tas: :end_user)
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
@@ -533,7 +533,7 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    selected_criteria = user.admin? ? self.criteria : self.ta_criteria
+    selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
     criteria_columns = selected_criteria.map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
@@ -589,16 +589,16 @@ class Assignment < Assessment
 
     { data: final_data,
       criteriaColumns: criteria_columns,
-      numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
-      numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
+      numAssigned: self.get_num_assigned(user.instructor? ? nil : user.id),
+      numMarked: self.get_num_marked(user.instructor? ? nil : user.id) }
   end
 
   # Generate CSV summary of grades for this assignment
-  # for the current user. The user should be an admin or TA.
+  # for the current user. The user should be an instructor or TA.
   def summary_csv(role)
-    return '' unless role.admin?
+    return '' unless role.instructor?
 
-    if role.admin?
+    if role.instructor?
       groupings = self.groupings
                       .includes(:group,
                                 :accepted_students,
@@ -984,7 +984,7 @@ class Assignment < Assessment
   # Retrieve data for submissions table.
   # Uses joins and pluck rather than includes to improve query speed.
   def current_submission_data(current_role)
-    if current_role.admin?
+    if current_role.instructor?
       groupings = self.groupings
     elsif current_role.ta?
       groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
@@ -1047,7 +1047,7 @@ class Assignment < Assessment
       assigned_criteria = nil
     end
 
-    visible_criteria = current_role.admin? ? self.criteria : self.ta_criteria
+    visible_criteria = current_role.instructor? ? self.criteria : self.ta_criteria
     criteria = visible_criteria.reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
     end

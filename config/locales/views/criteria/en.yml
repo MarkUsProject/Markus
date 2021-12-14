@@ -16,7 +16,7 @@ en:
     help_editing_rubric_criteria_message: " Criteria names, level headings, descriptions and visibility can be modified. The weight that matches the maximum mark shown for each criterion can also be changed. To change the weight to a fractional number simply type in a decimal number into the text box. Note that the number of levels cannot be changed. However if no description is set for a level, that level will not be used."
     help_ordering_criteria_message: " Graders will see the criteria in the order that they are displayed to left. To change the order, drag a criterion to the desired location in the list."
     help_peer_visibility_message: Peer reviewers will be able to see the criterion.
-    help_ta_visibility_message: Graders and admins will be able to see the criterion.
+    help_ta_visibility_message: Graders and instructors will be able to see the criterion.
     max_mark_short: Max Mark
     modifying_visibility: Modifying visibility
     modifying_visibility_help: 'The icons on the rightmost column under visibility represent the following:'

@@ -1,5 +1,5 @@
 describe SplitPdfJob do
-  let(:admin) { create(:admin) }
+  let(:instructor) { create(:instructor) }
   let(:exam_template) { create(:exam_template_midterm) }
 
   before(:each) do
@@ -16,11 +16,11 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: admin
+      user: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 20
     expect(split_pdf_log.num_groups_in_complete + split_pdf_log.num_groups_in_incomplete).to eq 20
@@ -36,8 +36,8 @@ describe SplitPdfJob do
                                                           num_groups_in_complete: 0,
                                                           num_groups_in_incomplete: 0,
                                                           num_pages_qr_scan_error: 0,
-                                                          user: admin)
-      [exam_template, '', split_pdf_log, 'midterm_scan_100.pdf', admin]
+                                                          user: instructor)
+      [exam_template, '', split_pdf_log, 'midterm_scan_100.pdf', instructor]
     end
     include_examples 'background job'
   end
@@ -50,11 +50,11 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: admin
+      user: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_complete).to eq 1
@@ -70,11 +70,11 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: admin
+      user: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1
@@ -95,11 +95,11 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: admin
+      user: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1
@@ -120,11 +120,11 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: admin
+      user: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1

@@ -10,7 +10,7 @@ describe 'Subversion Repository' do
         @students = [:student1, :student2]
         RSpec::Mocks.with_temporary_scope do
           allow(Settings.repository).to receive(:type).and_return('svn')
-          Repository.get_class.send :update_permissions_file, { @repo_name => @students }, ['admin1']
+          Repository.get_class.send :update_permissions_file, { @repo_name => @students }, ['instructor1']
         end
       end
 
@@ -20,8 +20,8 @@ describe 'Subversion Repository' do
 
       let(:file_contents) { File.read(Repository::PERMISSION_FILE) }
 
-      it 'give admins access to all repos' do
-        expect(file_contents).to match(/\[\/\]\s*\n\s*admin1\s*=\s*rw/)
+      it 'give instructors access to all repos' do
+        expect(file_contents).to match(/\[\/\]\s*\n\s*instructor1\s*=\s*rw/)
       end
 
       it 'gives other users access to specific repos' do

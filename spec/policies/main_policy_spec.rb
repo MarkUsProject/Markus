@@ -2,8 +2,8 @@ describe MainPolicy do
   let(:context) { { real_user: user.end_user } }
 
   describe_rule :manage? do
-    succeed 'user is admin' do
-      let(:user) { create :admin }
+    succeed 'user is instructor' do
+      let(:user) { create :instructor }
     end
     succeed 'user is ta' do
       let(:user) { create :ta }

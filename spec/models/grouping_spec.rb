@@ -728,14 +728,14 @@ describe Grouping do
       end
     end
 
-    context 'without students (ie created by an admin)' do
+    context 'without students (ie created by an instructor)' do
       before :each do
         @student01 = create(:student)
         @student02 = create(:student)
       end
 
       describe '#invite' do
-        it 'adds students in any scenario possible when invoked by admin' do
+        it 'adds students in any scenario possible when invoked by instructor' do
           members = [@student01.user_name, @student02.user_name]
           @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
@@ -743,7 +743,7 @@ describe Grouping do
       end
     end
 
-    context 'without students (ie created by an admin) for a assignment with section restriction' do
+    context 'without students (ie created by an instructor) for a assignment with section restriction' do
       before :each do
         @assignment = create(:assignment, assignment_properties_attributes: { section_groups_only: true })
         @grouping = create(:grouping, assignment: @assignment)
@@ -1238,7 +1238,7 @@ describe Grouping do
     let!(:test_result) { create :test_result, test_group_result: test_group_result }
 
     context 'tests run by instructors' do
-      let(:test_runner) { create :admin }
+      let(:test_runner) { create :instructor }
       let(:submission) { create :version_used_submission }
       describe '#test_runs_instructors' do
         let(:data) { grouping.test_runs_instructors(submission) }

@@ -1,13 +1,13 @@
 ---
 es:
-  admins:
+  instructors:
     edit: Editar la información del Administrador
     help:
-      manage_admins: Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs, incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas.
+      manage_instructors: Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs, incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas.
     new: Crear un nuevo Administrador
   students:
     active: Activo
-    admin_actions:
+    instructor_actions:
       add_section: Añadir sección
       give_grace_credits: 'Dar créditos de gracia:'
       mark_active: Markar como activo

@@ -15,11 +15,11 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def manage_files?
-    role.admin? || role.ta?
+    role.instructor? || role.ta?
   end
 
   def manage_subdirectories?
-    role.admin? || role.ta?
+    role.instructor? || role.ta?
   end
 
   def view_files?

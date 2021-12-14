@@ -1,13 +1,14 @@
 namespace :db do
 
   desc 'Create a single Instructor'
-  task :admin => :environment do
-    puts 'Populate database with Admins'
-    [['a',    'admin', 'admin'], # Standard admin
+  task :instructor => :environment do
+    puts 'Populate database with Instructors'
+    [['a',    'instructor', 'instructor'], # Standard instructor
      ['reid', 'Karen', 'Reid']]  # Reid
-    .each do |admin|
-      Admin.create!(course: Course.first, end_user_attributes: { user_name: admin[0],
-                                                                 first_name: admin[1], last_name: admin[2] })
+    .each do |instructor|
+      Instructor.create!(course: Course.first, end_user_attributes: { user_name: instructor[0],
+                                                                      first_name: instructor[1],
+                                                                      last_name: instructor[2] })
     end
   end
 

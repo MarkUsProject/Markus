@@ -278,7 +278,7 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        role_ids = current_role.admin? ? Admin.pluck(:id) : current_role.id
+        role_ids = current_role.instructor? ? Instructor.pluck(:id) : current_role.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: { role_id: role_ids },
                                   'groupings.assessment_id': @assignment.id)
@@ -431,14 +431,14 @@ class AssignmentsController < ApplicationController
   # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
   # as the referer url for the new assignment if possible. Otherwise redirect to a
   # default action depending on the type of user:
-  #   - edit for admins
+  #   - edit for instructors
   #   - summary for TAs
   #   - show for students
   def switch
     options = referer_options
     if switch_to_same(options)
       redirect_to options
-    elsif current_role.admin?
+    elsif current_role.instructor?
       redirect_to edit_course_assignment_path(current_course, params[:id])
     elsif current_role.ta?
       redirect_to summary_course_assignment_path(current_course, params[:id])

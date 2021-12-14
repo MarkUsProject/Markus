@@ -7,12 +7,12 @@ describe MarkingScheme do
   describe 'students_weighted_grade_distribution_array' do
     let!(:assignment) { create(:assignment_with_criteria_and_results) }
     let!(:marking_scheme) { create(:marking_scheme, assessments: [assignment]) }
-    let(:admin) { create(:admin) }
+    let(:instructor) { create(:instructor) }
 
-    context 'when the current user is an admin' do
+    context 'when the current user is an instructor' do
       it 'generates the correct weighted grade distribution array' do
         intervals = 20
-        grade_distribution_array = marking_scheme.students_weighted_grade_distribution_array(admin, intervals)
+        grade_distribution_array = marking_scheme.students_weighted_grade_distribution_array(instructor, intervals)
 
         expect(grade_distribution_array).to have_key :data
         expect(grade_distribution_array).to have_key :max

@@ -351,7 +351,7 @@ class RawGroupsTable extends React.Component {
       Header: I18n.t("groups.valid"),
       Cell: row => {
         let isValid =
-          row.original.admin_approved || row.original.members.length >= this.props.groupMin;
+          row.original.instructor_approved || row.original.members.length >= this.props.groupMin;
         if (isValid) {
           return (
             <a
@@ -380,7 +380,8 @@ class RawGroupsTable extends React.Component {
           // Either 'true' or 'false'
           const val = filter.value === "true";
           let isValid =
-            row._original.admin_approved || row._original.members.length >= this.props.groupMin;
+            row._original.instructor_approved ||
+            row._original.members.length >= this.props.groupMin;
           return isValid === val;
         }
       },

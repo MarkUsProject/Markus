@@ -20,7 +20,7 @@ class FeedbackFilePolicy < ApplicationPolicy
       end
     elsif role.ta?
       grouping.tas.pluck(:id).include? role.id
-    else # role.admin?
+    else # role.instructor?
       true
     end
   end

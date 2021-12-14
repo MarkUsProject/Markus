@@ -133,7 +133,7 @@ class GradeEntryFormsController < ApplicationController
       student_pluck_attrs << Arel.sql('grade_entry_students.total_grade as total_marks')
     end
 
-    if current_role.admin?
+    if current_role.instructor?
       students = grade_entry_form.grade_entry_students
                                  .joins(role: :end_user)
                                  .pluck_to_hash(*student_pluck_attrs)
@@ -277,7 +277,7 @@ class GradeEntryFormsController < ApplicationController
     elsif redirect_options[:grade_entry_form_id]
       redirect_options[:grade_entry_form_id] = params[:id]
       redirect_to redirect_options
-    elsif current_role.admin?
+    elsif current_role.instructor?
       redirect_to edit_course_grade_entry_form_path(current_course, params[:id])
     elsif current_role.ta?
       redirect_to grades_course_grade_entry_form_path(current_course, params[:id])

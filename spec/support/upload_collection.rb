@@ -2,17 +2,17 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
   before :each do
     @initial_count = model_count
   end
-  let(:admin) { create :admin }
+  let(:instructor) { create :instructor }
 
   it 'does not accept request without an uploaded file' do
-    post_as admin, route_name, params: params
+    post_as instructor, route_name, params: params
 
     expect(flash[:error]).not_to be_empty
     expect(model_count).to eq @initial_count
   end
 
   it 'does not accept an xls file' do
-    post_as admin, route_name, params: {
+    post_as instructor, route_name, params: {
       **params,
       upload_file: fixture_file_upload('wrong_csv_format.xls')
     }
@@ -23,7 +23,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
   formats.each do |format|
     context "in #{format}" do
       it 'does not accept an empty file' do
-        post_as admin, route_name, params: {
+        post_as instructor, route_name, params: {
           **params,
           upload_file: fixture_file_upload("upload_shared_files/empty.#{format}")
         }
@@ -35,7 +35,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
       unless background
         # This is not checked right away if the file content is sent to a background job for later processing
         it "does not accept an invalid file even with a .#{format} extension" do
-          post_as admin, route_name, params: {
+          post_as instructor, route_name, params: {
             **params,
             upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.#{format}")
           }

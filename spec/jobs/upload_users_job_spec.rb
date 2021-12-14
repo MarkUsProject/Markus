@@ -24,7 +24,7 @@ describe UploadRolesJob do
         end
         context 'and a user already has a role in the course' do
           before do
-            create :admin, end_user: EndUser.find_by_user_name(:c6conley), course: course
+            create :instructor, end_user: EndUser.find_by_user_name(:c6conley), course: course
           end
           it 'does not create roles' do
             expect { subject }.to raise_exception(RuntimeError)

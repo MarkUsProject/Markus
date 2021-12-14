@@ -2,8 +2,8 @@ describe SubmissionPolicy do
   let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :manage? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
       succeed 'that can manage submissions' do
@@ -19,8 +19,8 @@ describe SubmissionPolicy do
   end
 
   describe_rule :file_manager? do
-    failed 'role is an admin' do
-      let(:role) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     failed 'role is a ta' do
       let(:role) { create(:ta) }

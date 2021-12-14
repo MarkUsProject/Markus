@@ -56,7 +56,7 @@ class TestRun < ApplicationRecord
   end
 
   def self.all_test_categories
-    [Admin.name.downcase, Student.name.downcase]
+    [Instructor.name.downcase, Student.name.downcase]
   end
 
   private

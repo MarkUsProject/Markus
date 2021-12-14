@@ -31,14 +31,14 @@ class CoursesController < ApplicationController
 
   # Sets current_user to nil, which clears a role switch session (see role_switch)
   def clear_role_switch_session
-    MarkusLogger.instance.log("Admin '#{session[:real_user_name]}' logged out from '#{session[:user_name]}'.")
+    MarkusLogger.instance.log("Instructor '#{session[:real_user_name]}' logged out from '#{session[:user_name]}'.")
     session[:user_name] = nil
     session[:role_switch_course_id] = nil
     redirect_to action: 'show'
   end
 
-  # Set the current_user. This allows an admin to view their course from
-  # the perspective of another (non-admin) user.
+  # Set the current_user. This allows an instructor to view their course from
+  # the perspective of another (non-instructor) user.
   def switch_role
     if params[:effective_user_login].blank?
       render partial: 'role_switch_handler',
@@ -50,14 +50,14 @@ class CoursesController < ApplicationController
     found_user = User.find_by_user_name(params[:effective_user_login])
     found_role = Role.find_by(end_user: found_user, course: current_course)
 
-    if found_role.nil? || found_role.admin?
+    if found_role.nil? || found_role.instructor?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
              locals: { error: Settings.validate_user_not_allowed_message || I18n.t('main.login_failed') }
       return
     end
 
-    # Check if an admin trying to login as the current user or themselves
+    # Check if an instructor trying to login as the current user or themselves
     if found_user.user_name == session[:user_name] || found_user.user_name == session[:real_user_name]
       # error
       render partial: 'role_switch_handler',
@@ -135,13 +135,13 @@ class CoursesController < ApplicationController
     # Log the date that the role switch occurred
     m_logger = MarkusLogger.instance
     if current_user != real_user
-      # Log that the admin dropped role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged out from '#{current_user.user_name}'.")
+      # Log that the instructor dropped role of another user
+      m_logger.log("Instructor '#{real_user.user_name}' logged out from '#{current_user.user_name}'.")
     end
 
     if found_user != real_user
-      # Log that the admin assumed role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged in as '#{found_user.user_name}'.")
+      # Log that the instructor assumed role of another user
+      m_logger.log("Instructor '#{real_user.user_name}' logged in as '#{found_user.user_name}'.")
     end
   end
 

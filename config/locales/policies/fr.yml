@@ -2,7 +2,7 @@
 fr:
   action_policy:
     policy:
-      admin:
+      instructor:
         manage_assessments?: UPDATE ME.
         manage_submissions?: UPDATE ME.
         run_tests?: UPDATE ME.
@@ -12,11 +12,11 @@ fr:
       annotation_category:
         manage?: UPDATE ME.
       application:
-        admin?: UPDATE ME.
+        instructor?: UPDATE ME.
         manage?: Vous n'êtes pas autorisé à effectuer cette action.
         student?: UPDATE ME.
         ta?: UPDATE ME.
-        view_admin_subtabs?: Vous n'êtes pas autorisé à effectuer cette action.
+        view_instructor_subtabs?: Vous n'êtes pas autorisé à effectuer cette action.
         view_student_subtabs?: Vous n'êtes pas autorisé à effectuer cette action.
         view_sub_sub_tabs?: Vous n'êtes pas autorisé à effectuer cette action.
         view_ta_subtabs?: Vous n'êtes pas autorisé à effectuer cette action.

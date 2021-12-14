@@ -4,8 +4,8 @@ describe GraderPermission do
     it { is_expected.to have_one(:course) }
   end
   describe 'Validating the user' do
-    context 'When the user is admin' do
-      let(:user) { create(:admin) }
+    context 'When the user is instructor' do
+      let(:user) { create(:instructor) }
       it 'should raise an invalid record error' do
         expect { create :grader_permission, role_id: user.id }.to raise_error(ActiveRecord::RecordInvalid)
       end

@@ -3,8 +3,8 @@ describe Api::AssignmentPolicy do
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :test_files? do
-    succeed 'role is an admin' do
-      let(:role) { build :admin }
+    succeed 'role is an instructor' do
+      let(:role) { build :instructor }
     end
     succeed 'user is a test server' do
       let(:role) { nil }

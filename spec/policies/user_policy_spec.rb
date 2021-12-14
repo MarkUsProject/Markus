@@ -10,8 +10,8 @@ describe UserPolicy do
 
   describe_rule :reset_api_key? do
     failed
-    succeed 'user is an admin in at least one course' do
-      let(:user) { create(:admin).end_user }
+    succeed 'user is an instructor in at least one course' do
+      let(:user) { create(:instructor).end_user }
     end
   end
   describe_rule :settings? do

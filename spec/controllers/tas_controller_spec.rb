@@ -1,6 +1,6 @@
 describe TasController do
-  let(:admin) { create :admin, end_user: create(:end_user, user_name: :admin) }
-  let(:course) { admin.course }
+  let(:instructor) { create :instructor, end_user: create(:end_user, user_name: :instructor) }
+  let(:course) { instructor.course }
 
   context '#upload' do
     include_examples 'a controller supporting upload', formats: [:csv], background: true do
@@ -9,12 +9,12 @@ describe TasController do
 
     it 'calls perform_later on a background job' do
       expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
-      post_as admin,
+      post_as instructor,
               :upload,
               params: { course_id: course.id, upload_file: fixture_file_upload('tas/form_good.csv', 'text/csv') }
     end
     it_behaves_like 'role is from a different course' do
-      let(:role) { admin }
+      let(:role) { instructor }
       subject do
         post_as new_role,
                 :upload,
@@ -24,7 +24,7 @@ describe TasController do
   end
 
   context '#download' do
-    subject { get_as(admin, :download, format: format_str, params: { course_id: course.id }) }
+    subject { get_as(instructor, :download, format: format_str, params: { course_id: course.id }) }
     let!(:tas) { create_list :ta, 4, course: course }
     context 'csv' do
       let(:format_str) { 'csv' }
@@ -60,7 +60,7 @@ describe TasController do
         expect(response.media_type).to eq 'text/csv'
       end
       it_behaves_like 'role is from a different course' do
-        let(:role) { admin }
+        let(:role) { instructor }
         subject do
           get_as(new_role, :download, format: format_str, params: { course_id: course.id })
         end
@@ -91,7 +91,7 @@ describe TasController do
         expect(response.media_type).to eq 'text/yaml'
       end
       it_behaves_like 'role is from a different course' do
-        let(:role) { admin }
+        let(:role) { instructor }
         subject do
           get_as(new_role, :download, format: format_str, params: { course_id: course.id })
         end
@@ -114,7 +114,7 @@ describe TasController do
     context 'when a end_user exists' do
       let(:end_user) { create :end_user }
       context 'when the role is in the same course' do
-        before { post_as admin, :create, params: params }
+        before { post_as instructor, :create, params: params }
         context 'When permissions are selected' do
           it 'should respond with a redirect' do
             expect(response).to redirect_to action: 'index'
@@ -142,12 +142,12 @@ describe TasController do
         end
       end
       it_behaves_like 'role is from a different course' do
-        let(:role) { admin }
+        let(:role) { instructor }
         subject { post_as new_role, :create, params: params }
       end
     end
     context 'when a end_user does not exist' do
-      before { post_as admin, :create, params: params }
+      before { post_as instructor, :create, params: params }
       let(:end_user) { build :end_user }
       it 'should not create a Ta' do
         expect(Ta.count).to eq(0)

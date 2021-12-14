@@ -37,12 +37,12 @@ namespace :markus do
       grouping.invite(
         [students[0].user_name],
         StudentMembership::STATUSES[:inviter],
-        invoked_by_admin=true)
+        invoked_by_instructor=true)
       students[1..-1].each do |student|
         grouping.invite(
           [student.user_name],
           StudentMembership::STATUSES[:accepted],
-          invoked_by_admin=true)
+          invoked_by_instructor=true)
       end
       group
     end
@@ -147,11 +147,11 @@ namespace :markus do
 
     puts 'CREATE USERS'
 
-    # Only use admin if in dev mode
-    puts 'Admins'
-    admins = [%w[instructor William Wonka]]
-    admins.each do |admin|
-      Admin.create(user_name: admin[0], first_name: admin[1], last_name: admin[2])
+    # Only use instructor if in dev mode
+    puts 'Instructors'
+    instructors = [%w[instructor William Wonka]]
+    instructors.each do |instructor|
+      Instructor.create(user_name: instructor[0], first_name: instructor[1], last_name: instructor[2])
     end
 
     puts 'Students'

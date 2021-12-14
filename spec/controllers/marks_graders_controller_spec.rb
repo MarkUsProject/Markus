@@ -1,5 +1,5 @@
 describe MarksGradersController do
-  let(:admin) { create :admin }
+  let(:instructor) { create :instructor }
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:course) { grade_entry_form.course }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
@@ -28,7 +28,7 @@ describe MarksGradersController do
                                       .joins(role: :end_user)
                                       .find_by('users.user_name': 'c5granad')
       create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
-      post_as admin,
+      post_as instructor,
               :upload,
               params: {
                 course_id: course.id,
@@ -59,7 +59,7 @@ describe MarksGradersController do
                                       .joins(role: :end_user)
                                       .find_by('users.user_name': 'c5granad')
       create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
-      post_as admin,
+      post_as instructor,
               :upload,
               params: {
                 course_id: course.id,
@@ -88,14 +88,14 @@ describe MarksGradersController do
 
   describe '#grader_mapping' do
     it 'responds with appropriate status' do
-      get_as admin, :grader_mapping,
+      get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get_as admin, :grader_mapping,
+      get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
@@ -115,13 +115,13 @@ describe MarksGradersController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get_as admin, :grader_mapping,
+      get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get_as admin, :grader_mapping,
+      get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
       expect(response.media_type).to eq 'text/csv'
     end

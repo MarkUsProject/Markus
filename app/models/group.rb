@@ -50,7 +50,7 @@ class Group < ApplicationRecord
   end
 
   def build_repository
-    # create repositories if and only if we are admin
+    # create repositories if and only if we are instructor
     return true unless Settings.repository.is_repository_admin
 
     # This might cause repository collision errors, because when the group

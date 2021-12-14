@@ -8,7 +8,7 @@
             "Test.hs"
           ],
           "category": [
-            "admin"
+            "instructor"
           ],
           "timeout": 30,
           "test_timeout": 10,

@@ -16,15 +16,15 @@ describe Api::CoursesController do
       expect(response).to have_http_status(403)
     end
   end
-  context 'An admin user in the course' do
+  context 'An instructor user in the course' do
     let(:end_user) { build :end_user }
     before :each do
       end_user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{end_user.api_key.strip}"
     end
-    context 'with multiple courses as admin' do
+    context 'with multiple courses as instructor' do
       before :each do
-        build_list(:admin, 4, end_user: end_user) { |admin| admin.update(course_id: create(:course).id) }
+        build_list(:instructor, 4, end_user: end_user) { |instructor| instructor.update(course_id: create(:course).id) }
         get :index
       end
       it 'should be successful' do

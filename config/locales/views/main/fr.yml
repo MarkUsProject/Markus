@@ -14,8 +14,8 @@ fr:
     password_not_blank: Veuillez entrer votre mot de passe.
     please_log_in: Merci de vous connecter.
     role_switch:
-      admin_password: Mot de passe Administrateur
-      cannot_login_as_another_admin: Vous ne pouvez vous connecter à la place d'un autre administrateur.
+      instructor_password: Mot de passe Administrateur
+      cannot_login_as_another_instructor: Vous ne pouvez vous connecter à la place d'un autre administrateur.
       clear_role_switch_session: Annuler le changement d'utilisateur
       log_in_as: Connexion en tant que
       switch_role: Changer d'utilisateur

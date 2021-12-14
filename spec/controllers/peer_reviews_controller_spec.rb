@@ -9,7 +9,7 @@ describe PeerReviewsController do
     @selected_reviewee_group_ids = @assignment_with_pr.groupings.pluck(:id)
   end
   context '#peer_review_mapping & #upload' do
-    let(:admin) { create :admin }
+    let(:instructor) { create :instructor }
 
     describe '#peer_review_mapping' do
       before :each do
@@ -28,7 +28,7 @@ describe PeerReviewsController do
         end
 
         # Perform peer_review_mapping via GET
-        get_as admin, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
+        get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
         @downloaded_text = response.body
         @found_filename =
           response.header['Content-Disposition']
@@ -67,7 +67,7 @@ describe PeerReviewsController do
 
       context 'with a valid upload file' do
         before :each do
-          post_as admin,
+          post_as instructor,
                   :assign_groups,
                   params: { actionString: 'random_assign',
                             selectedReviewerGroupIds: @selected_reviewer_group_ids,
@@ -75,7 +75,7 @@ describe PeerReviewsController do
                             assignment_id: @pr_id,
                             course_id: course.id,
                             numGroupsToAssign: 1 }
-          get_as admin, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
+          get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
           @downloaded_text = response.body
           PeerReview.all.destroy_all
           @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
@@ -86,7 +86,7 @@ describe PeerReviewsController do
           end
           csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
 
-          post_as admin, :upload,
+          post_as instructor, :upload,
                   params: { course_id: course.id, assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
         end
 
@@ -100,7 +100,7 @@ describe PeerReviewsController do
       end
     end
   end
-  shared_examples 'An authorized admin or grader' do
+  shared_examples 'An authorized instructor or grader' do
     describe '#index' do
       before { get_as role, :index, params: { course_id: course.id, assignment_id: @pr_id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
@@ -256,13 +256,13 @@ describe PeerReviewsController do
       end
     end
   end
-  describe 'When role is an authenticated admin' do
-    let(:role) { create(:admin) }
-    include_examples 'An authorized admin or grader'
+  describe 'When role is an authenticated instructor' do
+    let(:role) { create(:instructor) }
+    include_examples 'An authorized instructor or grader'
   end
   describe 'When role is grader and allowed to manage reviewers' do
     let(:role) { create(:ta, manage_assessments: true) }
-    include_examples 'An authorized admin or grader'
+    include_examples 'An authorized instructor or grader'
   end
   describe 'When the role is grader and not allowed to manage reviewers' do
     # By default all the grader permissions are set to false

@@ -25,14 +25,14 @@ describe Api::GroupsController do
   end
   context 'An authenticated request requesting' do
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:admin) { create :admin }
+    let(:instructor) { create :instructor }
     before :each do
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
     shared_examples 'for a different course' do
-      context 'an admin for a different course' do
-        let(:admin) { create :admin, course: create(:course) }
+      context 'an instructor for a different course' do
+        let(:instructor) { create :instructor, course: create(:course) }
         it 'should return a 403 error' do
           expect(response).to have_http_status(403)
         end

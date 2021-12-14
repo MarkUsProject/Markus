@@ -18,7 +18,7 @@ es:
         theme: UPDATE ME!
         user_name: Nombre de Usuario
     models:
-      admin:
+      instructor:
         one: Administrador
       student:
         one: Estudiante

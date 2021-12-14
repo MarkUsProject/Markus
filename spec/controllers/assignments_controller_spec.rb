@@ -70,8 +70,8 @@ describe AssignmentsController do
         end
       end
     end
-    context 'as an admin' do
-      let(:role) { create :admin }
+    context 'as an instructor' do
+      let(:role) { create :instructor }
       it 'should respond with 403' do
         put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id }
         expect(response).to have_http_status 403
@@ -88,8 +88,8 @@ describe AssignmentsController do
 
   describe '#index' do
     let(:course) { role.course }
-    context 'an admin' do
-      let(:role) { create(:admin) }
+    context 'an instructor' do
+      let(:role) { create(:instructor) }
 
       context 'when there are no assessments' do
         it 'responds with a success' do
@@ -180,8 +180,8 @@ describe AssignmentsController do
 
   context '#set_boolean_graders_options' do
     let!(:assignment) { create(:assignment) }
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       let(:value) { !assignment.assignment_properties[attribute] }
 
       before :each do
@@ -335,8 +335,8 @@ describe AssignmentsController do
       end
     end
 
-    describe 'When the role is admin' do
-      let(:role) { create(:admin) }
+    describe 'When the role is instructor' do
+      let(:role) { create(:instructor) }
       let(:assignment) { create(:assignment) }
       include_examples 'An authorized role viewing assignment summary'
     end
@@ -599,8 +599,8 @@ describe AssignmentsController do
     end
   end
 
-  describe 'When the role is admin' do
-    let(:role) { create(:admin) }
+  describe 'When the role is instructor' do
+    let(:role) { create(:instructor) }
     let(:course) { role.course }
     include_examples 'An authorized role updating the assignment'
     include_examples 'An authorized role managing assignments'
@@ -663,8 +663,8 @@ describe AssignmentsController do
     before(:each) { get_as role, :starter_file, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       context 'the assignment exists' do
         it 'should render the starter_file view' do
           expect(response).to render_template(:starter_file)
@@ -700,8 +700,8 @@ describe AssignmentsController do
     before { get_as role, :populate_starter_file_manager, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       it 'should contain the right values' do
         expected = { available_after_due: true,
                      starterfileType: assignment.starter_file_type,
@@ -779,8 +779,8 @@ describe AssignmentsController do
                                 use_rename: true }] }
     end
     let(:params) { base_params }
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       it 'should update starter_file_type' do
         expect { subject }.to change { assignment.reload.starter_file_type }.from('simple').to('shuffle')
       end
@@ -847,8 +847,8 @@ describe AssignmentsController do
     subject { get_as role, :download_starter_file_mappings, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:grouping) { create :grouping_with_inviter, assignment: assignment }
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
@@ -879,7 +879,7 @@ describe AssignmentsController do
 
   describe '#grade_distribution' do
     let(:assignment) { create :assignment_with_criteria_and_results_and_tas }
-    let(:role) { create :admin }
+    let(:role) { create :instructor }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
 
     before { get_as role, :grade_distribution, params: params }
@@ -1026,8 +1026,8 @@ describe AssignmentsController do
       end
     end
 
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       let(:non_assignment_url) { ->(params) { course_assignment_graders_url(params) } }
       let(:fallback_url) { ->(params) { edit_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
@@ -1097,8 +1097,8 @@ describe AssignmentsController do
         include_examples 'download sample starter files'
       end
     end
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       include_examples 'download sample starter files'
     end
   end

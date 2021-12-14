@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :split_pdf_log do
-    association :role, factory: :admin
+    association :role, factory: :instructor
     association :exam_template, factory: :exam_template_midterm
     filename { 'midterm1-v2-test.pdf' }
     num_groups_in_complete { 0 }

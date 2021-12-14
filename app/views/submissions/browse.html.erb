@@ -28,7 +28,7 @@
       <% if @current_role.ta? %>
         <%= t('submissions.help.browse.tas') %>
       <% else %>
-        <%= t('submissions.help.browse.admins') %>
+        <%= t('submissions.help.browse.instructors') %>
       <% end %>
     </p>
   </div>
@@ -38,7 +38,7 @@
 <% @heading_buttons = [] %>
 
 <% unless @assignment.is_peer_review? %>
-  <% if @current_role.admin? %>
+  <% if @current_role.instructor? %>
     <% @heading_buttons += [
       { link_text: t('submissions.repo_list'),
         link_path: download_repo_list_course_assignment_submissions_path(@current_course, @assignment)},

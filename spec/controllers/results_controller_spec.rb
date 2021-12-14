@@ -3,7 +3,7 @@ describe ResultsController do
   let(:course) { assignment.course }
   let(:assignment) { create :assignment }
   let(:student) { create :student, grace_credits: 2 }
-  let(:admin) { create :admin }
+  let(:instructor) { create :instructor }
   let(:ta) { create :ta }
   let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
   let(:submission) { create :version_used_submission, grouping: grouping }
@@ -126,7 +126,7 @@ describe ResultsController do
     end
   end
 
-  shared_examples 'shared ta and admin tests' do
+  shared_examples 'shared ta and instructor tests' do
     include_examples 'download files'
     context 'accessing next_grouping' do
       it 'should receive 200 when current grouping has a submission' do
@@ -174,9 +174,9 @@ describe ResultsController do
                                              submission_file_id: file.id,
                                              is_remark: false,
                                              annotation_number: @submission.annotations.count + 1,
-                                             annotation_text: create(:annotation_text, creator: admin),
+                                             annotation_text: create(:annotation_text, creator: instructor),
                                              result: complete_result,
-                                             creator: admin
+                                             creator: instructor
         file_name_snippet = grouping.group.access_repo do |repo|
           "#{assignment.short_identifier}_#{grouping.group.group_name}_r#{repo.get_latest_revision.revision_identifier}"
         end
@@ -584,8 +584,8 @@ describe ResultsController do
       end
     end
   end
-  context 'An admin' do
-    before(:each) { sign_in admin }
+  context 'An instructor' do
+    before(:each) { sign_in instructor }
 
     context 'accessing set_released_to_students' do
       before :each do
@@ -595,7 +595,7 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
       test_assigns_not_nil :result
     end
-    include_examples 'shared ta and admin tests'
+    include_examples 'shared ta and instructor tests'
 
     describe '#delete_grace_period_deduction' do
       it 'deletes an existing grace period deduction' do
@@ -711,7 +711,7 @@ describe ResultsController do
       it { expect(response).to render_template('edit') }
       it { expect(response).to have_http_status(:success) }
     end
-    include_examples 'shared ta and admin tests'
+    include_examples 'shared ta and instructor tests'
 
     context 'when groups information is anonymized' do
       let(:data) { JSON.parse(response.body) }

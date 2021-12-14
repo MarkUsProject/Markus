@@ -33,15 +33,15 @@ describe GradersController do
     end
   end # student context
 
-  context 'An authenticated and authorized admin' do
+  context 'An authenticated and authorized instructor' do
     let(:course) { @assignment.course }
     before :each do
-      @admin = create(:admin)
+      @instructor = create(:instructor)
       @assignment = create(:assignment)
     end
 
     it 'doing a GET on :index(graders_controller)' do
-      get_as @admin, :index, params: { course_id: course.id, assignment_id: @assignment.id }
+      get_as @instructor, :index, params: { course_id: course.id, assignment_id: @assignment.id }
       expect(response.status).to eq(200)
       expect(assigns :assignment).not_to be_nil
     end #manage
@@ -75,7 +75,7 @@ describe GradersController do
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'Group 4'))
         @grouping4.tas << @ta1
-        post_as @admin,
+        post_as @instructor,
                 :upload,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           upload_file: @group_grader_map_file, groupings: true }
@@ -93,7 +93,7 @@ describe GradersController do
 
       it 'and a successful call updates repository permissions exactly once' do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later)
-        post_as @admin,
+        post_as @instructor,
                 :upload,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           upload_file: @group_grader_map_file, groupings: true }
@@ -112,7 +112,7 @@ describe GradersController do
         @grouping3 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'Group 3'))
-        post_as @admin,
+        post_as @instructor,
                 :upload,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           upload_file: @group_grader_map_file, groupings: true }
@@ -139,7 +139,7 @@ describe GradersController do
         @grouping3 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'Group 3'))
-        post_as @admin,
+        post_as @instructor,
                 :upload,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           upload_file: @group_grader_map_file, groupings: true }
@@ -169,7 +169,7 @@ describe GradersController do
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'Group 4'))
         @grouping4.tas << @ta1
-        post_as @admin,
+        post_as @instructor,
                 :upload,
                 params: { course_id: course.id, assignment_id: @assignment.id, upload_file: @group_grader_map_file,
                           groupings: true, remove_existing_mappings: false }
@@ -203,7 +203,7 @@ describe GradersController do
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
-          post_as @admin,
+          post_as @instructor,
                   :upload,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             upload_file: @criteria_grader_map_file, criteria: true }
@@ -225,7 +225,7 @@ describe GradersController do
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
-          post_as @admin,
+          post_as @instructor,
                   :upload,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             upload_file: @criteria_grader_map_file, criteria: true }
@@ -245,7 +245,7 @@ describe GradersController do
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
-          post_as @admin,
+          post_as @instructor,
                   :upload,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             upload_file: @criteria_grader_map_file, criteria: true }
@@ -271,7 +271,7 @@ describe GradersController do
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
-          post_as @admin,
+          post_as @instructor,
                   :upload,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             upload_file: @criteria_grader_map_file, criteria: true }
@@ -296,7 +296,7 @@ describe GradersController do
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
-          post_as @admin,
+          post_as @instructor,
                   :upload,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             upload_file: @criteria_grader_map_file, criteria: true }
@@ -319,7 +319,7 @@ describe GradersController do
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
-          post_as @admin,
+          post_as @instructor,
                   :upload,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             upload_file: @criteria_grader_map_file, criteria: true }
@@ -349,7 +349,7 @@ describe GradersController do
         end
 
         it 'and no graders selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             current_table: 'groups_table' }
@@ -360,7 +360,7 @@ describe GradersController do
         end
 
         it 'and no groups selected, at least one grader' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'random_assign', graders: [@ta1], current_table: 'groups_table' }
@@ -371,7 +371,7 @@ describe GradersController do
         end
 
         it 'and no graders are selected, at least one grouping' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'random_assign', groupings: [@grouping1], current_table: 'groups_table' }
@@ -382,7 +382,7 @@ describe GradersController do
         end
 
         it 'and one grader and one grouping is selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'random_assign', groupings: [@grouping1],
@@ -394,7 +394,7 @@ describe GradersController do
         end
 
         it 'and one grader and multiple groupings are selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1], current_table: 'groups_table' }
@@ -405,7 +405,7 @@ describe GradersController do
         end
 
         it 'and two graders and one grouping is selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1], graders: [@ta1, @ta2], current_table: 'groups_table' }
@@ -416,7 +416,7 @@ describe GradersController do
         end
 
         it 'and two graders and two groupings are selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2], current_table: 'groups_table' }
@@ -429,7 +429,7 @@ describe GradersController do
 
         it 'and multiple graders and multiple groupings are selected' do
           @ta3 = create(:ta)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
@@ -452,7 +452,7 @@ describe GradersController do
         end
 
         it 'and no graders selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'assign', current_table: 'groups_table' }
@@ -463,7 +463,7 @@ describe GradersController do
         end
 
         it 'and no groupings selected, at least one grader' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             graders: [@ta1], current_table: 'groups_table' }
@@ -474,7 +474,7 @@ describe GradersController do
         end
 
         it 'and no graders are selected, at least one grouping' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1], current_table: 'groups_table' }
@@ -485,7 +485,7 @@ describe GradersController do
         end
 
         it 'and one grader and one grouping is selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1], graders: [@ta1], current_table: 'groups_table' }
@@ -496,7 +496,7 @@ describe GradersController do
         end
 
         it 'and one grader and two groupings are selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1], current_table: 'groups_table' }
@@ -507,7 +507,7 @@ describe GradersController do
         end
 
         it 'and two graders and one grouping is selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1], graders: [@ta1, @ta2], current_table: 'groups_table' }
@@ -520,7 +520,7 @@ describe GradersController do
         end
 
         it 'and two graders and two groupings are selected' do
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2], current_table: 'groups_table' }
@@ -536,7 +536,7 @@ describe GradersController do
 
         it 'and multiple graders and multiple groupings are selected' do
           @ta3 = create(:ta)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
@@ -555,7 +555,7 @@ describe GradersController do
         it 'and some graders are already assigned to some groups' do
           create(:ta_membership, role: @ta1, grouping: @grouping2)
           create(:ta_membership, role: @ta2, grouping: @grouping1)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1.id.to_s, @ta2.id.to_s],
@@ -572,10 +572,10 @@ describe GradersController do
         context 'and skip_empty_submissions is true' do
           before do
             submission
-            post_as @admin, :global_actions, params: { course_id: course.id, assignment_id: @assignment.id,
-                                                       global_actions: 'assign', groupings: [@grouping1],
-                                                       graders: [@ta1.id.to_s], current_table: 'groups_table',
-                                                       skip_empty_submissions: 'true' }
+            post_as @instructor, :global_actions, params: { course_id: course.id, assignment_id: @assignment.id,
+                                                            global_actions: 'assign', groupings: [@grouping1],
+                                                            graders: [@ta1.id.to_s], current_table: 'groups_table',
+                                                            skip_empty_submissions: 'true' }
           end
           context 'and the group has no submission' do
             let(:submission) { nil }
@@ -612,7 +612,7 @@ describe GradersController do
         it 'and no graders or groupings are selected' do
           create(:ta_membership, role: @ta1, grouping: @grouping1)
           create(:ta_membership, role: @ta2, grouping: @grouping2)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'unassign', current_table: 'groups_table' }
@@ -627,7 +627,7 @@ describe GradersController do
           create(:ta_membership, role: @ta2, grouping: @grouping1)
           create(:ta_membership, role: @ta3, grouping: @grouping1)
           create(:ta_membership, role: @ta3, grouping: @grouping3)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                             groupings: [@grouping1.id],
@@ -647,7 +647,7 @@ describe GradersController do
             create(:ta_membership, role: @ta3, grouping: @grouping2),
             create(:ta_membership, role: @ta3, grouping: @grouping3)
           ]
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                             groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
@@ -671,7 +671,7 @@ describe GradersController do
           create(:ta_membership, role: @ta1, grouping: @grouping3)
           create(:ta_membership, role: @ta2, grouping: @grouping3)
           create(:ta_membership, role: @ta3, grouping: @grouping3)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                             groupings: [@grouping2.id],
@@ -699,7 +699,7 @@ describe GradersController do
           create(:ta_membership, role: @ta1, grouping: @grouping3)
           create(:ta_membership, role: @ta2, grouping: @grouping3)
           create(:ta_membership, role: @ta3, grouping: @grouping3)
-          post_as @admin,
+          post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                             groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
@@ -727,7 +727,7 @@ describe GradersController do
           end
 
           it 'and no graders selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               current_table: 'criteria_table' }
@@ -738,7 +738,7 @@ describe GradersController do
           end
 
           it 'and no criteria selected, at least one grader' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
@@ -749,7 +749,7 @@ describe GradersController do
           end
 
           it 'and no graders are selected, at least one criterion' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
@@ -761,7 +761,7 @@ describe GradersController do
           end
 
           it 'and one grader and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
@@ -774,7 +774,7 @@ describe GradersController do
           end
 
           it 'and one grader and multiple criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -786,7 +786,7 @@ describe GradersController do
           end
 
           it 'and two graders and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
@@ -798,7 +798,7 @@ describe GradersController do
           end
 
           it 'and two graders and two criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -812,7 +812,7 @@ describe GradersController do
 
           it 'and multiple graders and multiple criteria are selected' do
             @ta3 = create(:ta)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -835,7 +835,7 @@ describe GradersController do
           end
 
           it 'and no graders selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'assign', current_table: 'criteria_table' }
@@ -846,7 +846,7 @@ describe GradersController do
           end
 
           it 'and no criteria selected, at least one grader' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'assign', graders: [@ta1], current_table: 'criteria_table' }
@@ -857,7 +857,7 @@ describe GradersController do
           end
 
           it 'and no graders are selected, at least one criterion' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position],
@@ -869,7 +869,7 @@ describe GradersController do
           end
 
           it 'and one grader and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position],
@@ -882,7 +882,7 @@ describe GradersController do
           end
 
           it 'and one grader and two criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -895,7 +895,7 @@ describe GradersController do
           end
 
           it 'and two graders and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position],
@@ -910,7 +910,7 @@ describe GradersController do
           end
 
           it 'and two graders and two criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -928,7 +928,7 @@ describe GradersController do
 
           it 'and multiple graders and multiple criteria are selected' do
             @ta3 = create(:ta)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -947,7 +947,7 @@ describe GradersController do
           it 'and some graders are already assigned to some criteria' do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -981,7 +981,7 @@ describe GradersController do
           it 'and no graders or criteria are selected' do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               current_table: 'criteria_table' }
@@ -999,7 +999,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion1.position],
@@ -1020,7 +1020,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -1048,7 +1048,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               graders: [@ta1.id],
@@ -1079,7 +1079,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -1113,7 +1113,7 @@ describe GradersController do
           end
 
           it 'and no graders selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               current_table: 'criteria_table' }
@@ -1124,7 +1124,7 @@ describe GradersController do
           end
 
           it 'and no criteria selected, at least one grader' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
@@ -1135,7 +1135,7 @@ describe GradersController do
           end
 
           it 'and no graders are selected, at least one criterion' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
@@ -1147,7 +1147,7 @@ describe GradersController do
           end
 
           it 'and one grader and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position], graders: [@ta1.id],
@@ -1162,7 +1162,7 @@ describe GradersController do
           end
 
           it 'and one grader and multiple criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -1178,7 +1178,7 @@ describe GradersController do
           end
 
           it 'and two graders and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
@@ -1194,7 +1194,7 @@ describe GradersController do
           end
 
           it 'and two graders and two criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -1212,7 +1212,7 @@ describe GradersController do
 
           it 'and multiple graders and multiple criteria are selected' do
             @ta3 = create(:ta)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -1239,7 +1239,7 @@ describe GradersController do
           end
 
           it 'and no graders selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'assign', current_table: 'criteria_table' }
@@ -1251,7 +1251,7 @@ describe GradersController do
           end
 
           it 'and no criteria selected, at least one grader' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               graders: [@ta1], current_table: 'criteria_table' }
@@ -1263,7 +1263,7 @@ describe GradersController do
           end
 
           it 'and no graders are selected, at least one criterion' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1], current_table: 'criteria_table' }
@@ -1274,7 +1274,7 @@ describe GradersController do
           end
 
           it 'and one grader and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position],
@@ -1290,7 +1290,7 @@ describe GradersController do
           end
 
           it 'and one grader and two criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -1306,7 +1306,7 @@ describe GradersController do
           end
 
           it 'and two graders and one criterion is selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position],
@@ -1324,7 +1324,7 @@ describe GradersController do
           end
 
           it 'and two graders and two criteria are selected' do
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -1345,7 +1345,7 @@ describe GradersController do
 
           it 'and multiple graders and multiple criteria are selected' do
             @ta3 = create(:ta)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -1367,7 +1367,7 @@ describe GradersController do
           it 'and some graders are already assigned to some criteria' do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
@@ -1399,7 +1399,7 @@ describe GradersController do
           it 'and no graders or criteria are selected' do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               current_table: 'criteria_table' }
@@ -1417,7 +1417,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion1.position],
@@ -1438,7 +1438,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -1466,7 +1466,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion2.position],
@@ -1497,7 +1497,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            post_as @admin,
+            post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
@@ -1513,5 +1513,5 @@ describe GradersController do
       end #flexible scheme
     end #criteria table
 
-  end #admin context
+  end #instructor context
 end

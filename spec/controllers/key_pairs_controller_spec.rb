@@ -1,12 +1,12 @@
 describe KeyPairsController do
-  let(:admin) { create :admin }
+  let(:instructor) { create :instructor }
 
   before :each do
     allow(Settings.repository).to receive(:type).and_return('git')
   end
 
   describe 'GET new', :keep_memory_repos do
-    before { get_as admin, :new }
+    before { get_as instructor, :new }
     it 'should respond with success' do
       is_expected.to respond_with(:success)
     end
@@ -43,22 +43,22 @@ describe KeyPairsController do
     end
 
     context 'uploading a string' do
-      before { post_as admin, :create, params: { key_pair: { key_string: key } } }
+      before { post_as instructor, :create, params: { key_pair: { key_string: key } } }
       it_behaves_like 'key_pair_create'
     end
     context 'uploading a file' do
       before do
-        post_as admin, :create, params: { key_pair: { file: fixture_file_upload(key_file) } }
+        post_as instructor, :create, params: { key_pair: { file: fixture_file_upload(key_file) } }
       end
       it_behaves_like 'key_pair_create'
     end
   end
 
   describe 'DELETE destroy', :keep_memory_repos do
-    before { delete_as admin, :destroy, params: { id: key_pair_id } }
+    before { delete_as instructor, :destroy, params: { id: key_pair_id } }
     context 'a key_pair exists' do
       context 'owned by the current user' do
-        let(:key_pair_id) { create(:key_pair, user: admin.end_user).id }
+        let(:key_pair_id) { create(:key_pair, user: instructor.end_user).id }
         it 'should delete the key_pair' do
           expect(KeyPair.where(id: key_pair_id)).to be_empty
         end

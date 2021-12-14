@@ -2,8 +2,8 @@ describe NotePolicy do
   let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :manage? do
-    succeed 'role is admin' do
-      let(:role) { create :admin }
+    succeed 'role is instructor' do
+      let(:role) { create :instructor }
     end
     succeed 'role is ta' do
       let(:role) { create :ta }
@@ -14,8 +14,8 @@ describe NotePolicy do
   end
 
   describe_rule :modify? do
-    succeed 'role is admin' do
-      let(:role) { create :admin }
+    succeed 'role is instructor' do
+      let(:role) { create :instructor }
     end
     context 'role is ta' do
       let(:role) { create :ta }

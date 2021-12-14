@@ -3,7 +3,7 @@
 <ul>
   <% if @current_course %>
 
-    <% if @current_role.admin? %>
+    <% if @current_role.instructor? %>
       <li class='<%= "active" if controller.controller_name == 'courses' %>'>
         <%= link_to t('menu.dashboard'), course_path(@current_course) %>
       </li>
@@ -26,7 +26,7 @@
         <%= link_to Assignment.model_name.human.pluralize, course_assignments_path(@current_course) %>
       </li>
 
-      <li <% if controller.controller_name == 'admins' ||
+      <li <% if controller.controller_name == 'instructors' ||
                 controller.controller_name == 'students' ||
                 controller.controller_name == 'tas' ||
                 controller.controller_name == 'sections' %>
@@ -48,7 +48,7 @@
           <% end %>>
         <%= link_to t('menu.home'), course_assignments_path(@current_course) %>
       </li>
-      <% unless @current_role.admin? || @current_role.ta? %>
+      <% unless @current_role.instructor? || @current_role.ta? %>
         <li <% if controller.controller_name == 'course_summaries'%>
             class='active'
             <% end %>>
@@ -64,13 +64,13 @@
       <% end %>
     <% end %>
 
-    <% if @current_role.admin? || @current_role.ta? %>
+    <% if @current_role.instructor? || @current_role.ta? %>
       <li class='<%= "active" if controller.controller_name == 'notes' %>'>
         <%= link_to Note.model_name.human.pluralize, course_notes_path(@current_course) %>
       </li>
     <% end %>
 
-    <% if @current_role.admin? %>
+    <% if @current_role.instructor? %>
      <li <% if controller.controller_name == 'course_summaries' ||
                controller.controller_name == 'marking_schemes' %>
             class='active'

@@ -4,11 +4,11 @@ describe MemoryRepository do
     before :all do
       @repo_loc = 'mock_repo'
       @students = [:student1, :student2]
-      MemoryRepository.send :update_permissions_file, { @repo_loc => @students }, ['admin1']
+      MemoryRepository.send :update_permissions_file, { @repo_loc => @students }, ['instructor1']
     end
 
-    it 'give admins access to all repos' do
-      expect(MemoryRepository.class_variable_get(:@@permissions)['*']).to eq(['admin1'])
+    it 'give instructors access to all repos' do
+      expect(MemoryRepository.class_variable_get(:@@permissions)['*']).to eq(['instructor1'])
     end
 
     it 'gives other users access to specific repos' do

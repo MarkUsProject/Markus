@@ -4,8 +4,8 @@ describe GroupsController do
   let(:assignment) { grouping.assignment }
   let(:course) { assignment.course }
 
-  describe 'administrator access' do
-    let(:admin) { create :admin }
+  describe 'instructor access' do
+    let(:instructor) { create :instructor }
     describe 'GET #new' do
       before :each do
         allow(Assignment).to receive(:find).and_return(assignment)
@@ -16,7 +16,7 @@ describe GroupsController do
           expect(assignment).to receive(:add_group)
                                   .with(nil)
                                   .and_return(grouping)
-          get_as admin, :new, params: { course_id: course.id, assignment_id: assignment }
+          get_as instructor, :new, params: { course_id: course.id, assignment_id: assignment }
         end
       end
 
@@ -28,7 +28,8 @@ describe GroupsController do
             expect(assignment).to receive(:add_group)
                                     .with(group_name)
                                     .and_return(grouping)
-            get_as admin, :new, params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
+            get_as instructor, :new,
+                   params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
           end
         end
 
@@ -38,7 +39,8 @@ describe GroupsController do
                                    .with(group_name)
                                    .and_raise('Group #{group_name} already exists')
 
-            get_as admin, :new, params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
+            get_as instructor, :new,
+                   params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
           end
 
           it 'assigns the error message to flash[:error]' do
@@ -60,37 +62,37 @@ describe GroupsController do
         end
 
         it 'should not flash an error message' do
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(flash[:error]).to be_nil
         end
 
         it 'populates @removed_groupings with deleted groupings' do
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(assigns(:removed_groupings)).to match_array([grouping])
         end
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(false)
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'calls grouping.delete_groupings' do
           expect(grouping).to receive(:delete_grouping)
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should return the :ok status code' do
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
         end
@@ -100,7 +102,7 @@ describe GroupsController do
         before :each do
           allow(grouping).to receive(:has_submission?).and_return(true)
 
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
@@ -114,19 +116,19 @@ describe GroupsController do
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(true)
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should return the :ok status code' do
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete_as admin, :remove_group,
+          delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
       end
@@ -141,7 +143,7 @@ describe GroupsController do
     describe 'GET #index' do
       before :each do
         allow(Assignment).to receive(:find).and_return(assignment)
-        get_as admin, :index, params: { course_id: course.id, assignment_id: assignment }
+        get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment }
       end
 
       it 'assigns the requested assignment to @assignment' do
@@ -184,7 +186,7 @@ describe GroupsController do
       it 'accepts a valid file' do
         ActiveJob::Base.queue_adapter = :test
         expect do
-          post_as admin, :upload, params: { course_id: course.id,
+          post_as instructor, :upload, params: { course_id: course.id,
             assignment_id: @assignment.id,
             upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
           }
@@ -195,7 +197,7 @@ describe GroupsController do
       end
 
       it 'does not accept files with invalid columns' do
-        post_as admin, :upload, params: { course_id: course.id,
+        post_as instructor, :upload, params: { course_id: course.id,
           assignment_id: @assignment.id,
           upload_file: fixture_file_upload('groups/form_invalid_column.csv', 'text/csv')
         }
@@ -231,14 +233,14 @@ describe GroupsController do
       end
 
       it 'responds with appropriate status' do
-        get_as admin, :download_grouplist,
+        get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get_as admin, :download_grouplist,
+        get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
@@ -250,20 +252,20 @@ describe GroupsController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get_as admin, :download_grouplist,
+        get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
       end
 
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get_as admin, :download_grouplist,
+        get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         expect(response.media_type).to eq 'text/csv'
       end
 
       # parse header object to check for the right file naming convention
       it 'filename passes naming conventions' do
-        get_as admin, :download_grouplist,
+        get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         filename = response.header['Content-Disposition']
                            .split[1].split('"').second
@@ -284,7 +286,7 @@ describe GroupsController do
         end
 
         it 'should remove an accepted membership' do
-          post_as admin, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
+          post_as instructor, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
                                           groupings: [grouping.id],
                                           students_to_remove: [accepted_student.id],
                                           global_actions: 'unassign' }
@@ -292,7 +294,7 @@ describe GroupsController do
         end
 
         it 'should remove a pending membership' do
-          post_as admin, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
+          post_as instructor, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
                                           groupings: [grouping.id],
                                           students_to_remove: [pending_student.id],
                                           global_actions: 'unassign' }
@@ -305,26 +307,26 @@ describe GroupsController do
       let(:grouping) { create :grouping_with_inviter }
 
       it 'should validate groupings' do
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping.id],
           global_actions: 'valid'
         }
-        expect(grouping.reload.admin_approved).to be true
+        expect(grouping.reload.instructor_approved).to be true
       end
     end
 
     describe '#invalidate_groupings' do
-      let(:grouping) { create :grouping_with_inviter, admin_approved: true }
+      let(:grouping) { create :grouping_with_inviter, instructor_approved: true }
 
       it 'should invalidate groupings' do
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping.id],
           global_actions: 'invalid'
         }
 
-        expect(grouping.reload.admin_approved).to be false
+        expect(grouping.reload.instructor_approved).to be false
       end
     end
 
@@ -333,7 +335,7 @@ describe GroupsController do
       let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
 
       it 'should delete groupings without submissions' do
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping.id],
           global_actions: 'delete'
@@ -343,7 +345,7 @@ describe GroupsController do
       end
 
       it 'should not delete groupings with submissions' do
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping_with_submission.assignment.id,
           groupings: [grouping_with_submission.id],
           global_actions: 'delete'
@@ -359,7 +361,7 @@ describe GroupsController do
       let(:student2) { create :student }
 
       it 'adds multiple students to group' do
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping],
           students: [student1.id, student2.id],
@@ -376,14 +378,14 @@ describe GroupsController do
       let(:student2) { create :student }
 
       it 'should remove multiple students from group' do
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping],
           students: [student1.id, student2.id],
           global_actions: 'assign'
         }
 
-        post_as admin, :global_actions, params: { course_id: course.id,
+        post_as instructor, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping],
           students_to_remove: [student1.user_name, student2.user_name],
@@ -413,7 +415,7 @@ describe GroupsController do
       end
 
       it 'returns matches for user_name' do
-        post_as admin, :get_names, params: { course_id: course.id,
+        post_as instructor, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: 'c9',
@@ -424,7 +426,7 @@ describe GroupsController do
       end
 
       it 'returns matches for first_name' do
-        post_as admin, :get_names, params: { course_id: course.id,
+        post_as instructor, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: 'fir',
@@ -435,7 +437,7 @@ describe GroupsController do
       end
 
       it 'returns matches for last_name' do
-        post_as admin, :get_names, params: { course_id: course.id,
+        post_as instructor, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: 'la',
@@ -446,7 +448,7 @@ describe GroupsController do
       end
 
       it 'returns matches for id_number' do
-        post_as admin, :get_names, params: { course_id: course.id,
+        post_as instructor, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: '123',
@@ -698,8 +700,8 @@ describe GroupsController do
   end
   describe '#download_starter_file' do
     subject { get_as role, :download_starter_file, params: { course_id: course.id, assignment_id: assignment.id } }
-    context 'an admin' do
-      let(:role) { create :admin }
+    context 'an instructor' do
+      let(:role) { create :instructor }
       it 'should respond with 403' do
         subject
         expect(response).to have_http_status(403)

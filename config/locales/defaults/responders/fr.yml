@@ -13,7 +13,7 @@ fr:
         success: Mise à jour de %{resource_name}.
       update_files:
         success: Les changements ont été enregistrés.
-    admins:
+    instructors:
       create:
         error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
       update:

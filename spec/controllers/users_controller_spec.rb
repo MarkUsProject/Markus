@@ -1,5 +1,5 @@
 describe UsersController do
-  let(:role) { create(:admin) }
+  let(:role) { create(:instructor) }
   let(:user) { role.end_user }
 
   shared_examples 'settings' do
@@ -49,7 +49,7 @@ describe UsersController do
     end
   end
 
-  describe 'User is an admin in at least one course' do
+  describe 'User is an instructor in at least one course' do
     describe '#reset_api_key' do
       it 'responds with a success' do
         post_as user, :reset_api_key
@@ -66,7 +66,7 @@ describe UsersController do
     include_examples 'settings'
   end
 
-  describe 'User is not an admin in at least one course' do
+  describe 'User is not an instructor in at least one course' do
     let(:role) { create :ta }
     describe '#reset_api_key' do
       it 'cannot reset their api key' do

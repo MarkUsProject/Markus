@@ -19,8 +19,8 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
-  # Only users that are admins in at least one course
+  # Only users that are instructors in at least one course
   def reset_api_key?
-    user.roles.pluck(:type).include?('Admin')
+    user.roles.pluck(:type).include?('Instructor')
   end
 end

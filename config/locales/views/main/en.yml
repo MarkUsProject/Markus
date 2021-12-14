@@ -14,8 +14,8 @@ en:
     password_not_blank: Your password must not be blank.
     please_log_in: Please log in.
     role_switch:
-      admin_password: Admin Password
-      cannot_login_as_another_admin: You cannot log in as another admin.
+      instructor_password: Instructor Password
+      cannot_login_as_another_instructor: You cannot log in as another instructor.
       clear_role_switch_session: Cancel role switch
       log_in_as: Log in as
       switch_role: Switch Role

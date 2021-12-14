@@ -15,11 +15,11 @@ describe 'Routing to main page', type: :routing do
   end
 end
 
-# start Admin route tests
-context 'Admin resource' do
-  let(:admin) { create(:admin) }
-  let(:path) { '/admins' }
-  let(:ctrl) { 'admins' }
+# start Instructor route tests
+context 'Instructor resource' do
+  let(:instructor) { create(:instructor) }
+  let(:path) { '/instructors' }
+  let(:ctrl) { 'instructors' }
 
   it 'routes GET index correctly' do
     expect(get: path).to route_to(
@@ -43,38 +43,38 @@ context 'Admin resource' do
   end
 
   it 'routes GET show correctly' do
-    expect(get: path + '/' + admin.id.to_s).to route_to(
+    expect(get: path + '/' + instructor.id.to_s).to route_to(
       controller: ctrl,
       action: 'show',
-      id: admin.id.to_s
+      id: instructor.id.to_s
     )
   end
 
   it 'routes GET edit correctly' do
-    expect(get: path + '/' + admin.id.to_s + '/edit').to route_to(
+    expect(get: path + '/' + instructor.id.to_s + '/edit').to route_to(
       controller: ctrl,
       action: 'edit',
-      id: admin.id.to_s
+      id: instructor.id.to_s
     )
   end
 
   it 'routes PUT update correctly' do
-    expect(put: path + '/' + admin.id.to_s).to route_to(
+    expect(put: path + '/' + instructor.id.to_s).to route_to(
       controller: ctrl,
       action: 'update',
-      id: admin.id.to_s
+      id: instructor.id.to_s
     )
   end
 
   it 'routes DELETE destroy correctly' do
-    expect(delete: path + '/' + admin.id.to_s).to route_to(
+    expect(delete: path + '/' + instructor.id.to_s).to route_to(
       controller: ctrl,
       action: 'destroy',
-      id: admin.id.to_s
+      id: instructor.id.to_s
     )
   end
 end
-# end Admin route tests
+# end Instructor route tests
 
 # start Assignment route tests
 describe 'An Assignment' do

@@ -7,8 +7,8 @@ describe Api::CoursePolicy do
       let(:user) { create :autotest_user }
       let(:role) { nil }
     end
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'role is a ta' do
       let(:role) { create :ta }
@@ -22,14 +22,14 @@ describe Api::CoursePolicy do
       let(:course1) { create :course }
       let(:course2) { create :course }
       let(:course3) { create :course }
-      succeed 'and at least one is an admin role' do
+      succeed 'and at least one is an instructor role' do
         before do
-          create :admin, end_user: user, course: course1
+          create :instructor, end_user: user, course: course1
           create :ta, end_user: user, course: course2
           create :student, end_user: user, course: course3
         end
       end
-      failed 'and none are admin roles' do
+      failed 'and none are instructor roles' do
         before do
           create :ta, end_user: user, course: course1
           create :ta, end_user: user, course: course2

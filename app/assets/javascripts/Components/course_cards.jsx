@@ -2,7 +2,7 @@ import React from "react";
 
 class CourseCard extends React.Component {
   onClick = () => {
-    if (this.props.role_type === "Admin") {
+    if (this.props.role_type === "Instructor") {
       window.location = Routes.course_path(this.props.course_id);
     } else {
       window.location = Routes.course_assignments_path(this.props.course_id);

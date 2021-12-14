@@ -15,11 +15,11 @@ class Tag < ApplicationRecord
   end
 
   def self.from_csv(data, course, assignment = nil)
-    admins = Hash[course.admins.joins(:end_user).pluck(:user_name, 'roles.id')]
+    instructors = Hash[course.instructors.joins(:end_user).pluck(:user_name, 'roles.id')]
     tag_data = []
     result = MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
-      name, description, role_id = row[0], row[1], admins[row[2]]
+      name, description, role_id = row[0], row[1], instructors[row[2]]
       if name.nil? || name.strip.blank? || role_id.nil?
         raise CsvInvalidLineError
       end
@@ -36,10 +36,10 @@ class Tag < ApplicationRecord
   end
 
   def self.from_yml(data, course, assignment = nil)
-    admins = Hash[course.admins.joins(:end_user).pluck(:user_name, 'roles.id')]
+    instructors = Hash[course.instructors.joins(:end_user).pluck(:user_name, 'roles.id')]
     begin
       tag_data = data.map do |row|
-        name, description, role_id = row['name'], row['description'], admins[row['user']]
+        name, description, role_id = row['name'], row['description'], instructors[row['user']]
         if name.nil? || name.strip.blank? || role_id.nil?
           raise ArgumentError("Invalid tag data #{row}.")
         end

@@ -16,7 +16,7 @@ describe TestResult do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
-      @role = create(:admin)
+      @role = create(:instructor)
       @test_group = TestGroup.create(
         assessment_id: @asst.id,
         name: 'test_group'

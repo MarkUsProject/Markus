@@ -3,7 +3,7 @@ describe Role do
   let(:student) { create(:student, course: course) }
 
   it { is_expected.to allow_value('Student').for(:type) }
-  it { is_expected.to allow_value('Admin').for(:type) }
+  it { is_expected.to allow_value('Instructor').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
   it { is_expected.to have_many :memberships }
@@ -15,8 +15,8 @@ describe Role do
     it 'should be able to create a student' do
       create(:student, course_id: course.id)
     end
-    it 'should be able to create an admin' do
-      create(:admin, course_id: course.id)
+    it 'should be able to create an instructor' do
+      create(:instructor, course_id: course.id)
     end
     it 'should be able to create a grader' do
       create(:ta, course_id: course.id)
@@ -25,14 +25,14 @@ describe Role do
 
   context 'The repository permissions file' do
     context 'should be upated' do
-      it 'when creating an admin' do
+      it 'when creating an instructor' do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        create(:admin)
+        create(:instructor)
       end
-      it 'when destroying an admin' do
-        admin = create(:admin)
+      it 'when destroying an instructor' do
+        instructor = create(:instructor)
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        admin.destroy
+        instructor.destroy
       end
     end
     context 'should not be updated' do

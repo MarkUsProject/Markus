@@ -63,8 +63,8 @@ describe StudentPolicy do
     failed
   end
   describe_rule :settings? do
-    failed 'role is an admin' do
-      let(:role) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'role is a ta' do
       let(:role) { create :ta }

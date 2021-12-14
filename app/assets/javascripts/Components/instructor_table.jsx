@@ -3,7 +3,7 @@ import {render} from "react-dom";
 
 import ReactTable from "react-table";
 
-class AdminTable extends React.Component {
+class InstructorTable extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -19,7 +19,7 @@ class AdminTable extends React.Component {
 
   fetchData() {
     $.ajax({
-      url: Routes.course_admins_path(this.props.course_id),
+      url: Routes.course_instructors_path(this.props.course_id),
       dataType: "json",
     }).then(res => {
       this.setState({data: res, loading: false});
@@ -53,7 +53,7 @@ class AdminTable extends React.Component {
             accessor: "id",
             Cell: data => (
               <span>
-                <a href={Routes.edit_course_admin_path(this.props.course_id, data.value)}>
+                <a href={Routes.edit_course_instructor_path(this.props.course_id, data.value)}>
                   {I18n.t("edit")}
                 </a>
               </span>
@@ -68,6 +68,6 @@ class AdminTable extends React.Component {
   }
 }
 
-export function makeAdminTable(elem, props) {
-  render(<AdminTable {...props} />, elem);
+export function makeInstructorTable(elem, props) {
+  render(<InstructorTable {...props} />, elem);
 }

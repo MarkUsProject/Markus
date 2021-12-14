@@ -4,7 +4,7 @@ module Api
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
 
     def index
-      courses = get_collection(Course.joins(:roles).where('roles.type': 'Admin', 'roles.user_id': current_user.id))
+      courses = get_collection(Course.joins(:roles).where('roles.type': 'Instructor', 'roles.user_id': current_user.id))
       respond_to do |format|
         format.xml { render xml: courses.to_xml(only: DEFAULT_FIELDS, root: 'courses', skip_types: 'true') }
         format.json { render json: courses.to_json(only: DEFAULT_FIELDS) }

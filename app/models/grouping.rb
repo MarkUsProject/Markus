@@ -69,7 +69,7 @@ class Grouping < ApplicationRecord
   has_many :peer_reviews, through: :results
   has_many :peer_reviews_to_others, class_name: 'PeerReview', foreign_key: 'reviewer_id'
 
-  scope :approved_groupings, -> { where admin_approved: true }
+  scope :approved_groupings, -> { where instructor_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
@@ -241,11 +241,11 @@ class Grouping < ApplicationRecord
   end
 
   # invites each user in 'members' by its user name, to this group
-  # If the method is invoked by an admin, checks on whether the students can
+  # If the method is invoked by an instructor, checks on whether the students can
   # be part of the group are skipped.
   def invite(members,
              set_membership_status=StudentMembership::STATUSES[:pending],
-             invoked_by_admin=false)
+             invoked_by_instructor=false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
@@ -257,7 +257,7 @@ class Grouping < ApplicationRecord
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
         end
-        if invoked_by_admin || self.can_invite?(user)
+        if invoked_by_instructor || self.can_invite?(user)
           self.add_member(user, set_membership_status)
         end
       rescue StandardError => e
@@ -322,24 +322,24 @@ class Grouping < ApplicationRecord
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    admin_approved || (non_rejected_student_memberships.size >= assignment.group_min)
+    instructor_approved || (non_rejected_student_memberships.size >= assignment.group_min)
   end
 
   # Validates a group
   def validate_grouping
-    self.admin_approved = true
+    self.instructor_approved = true
     self.save
   end
 
-  # Strips admin_approved privledge
+  # Strips instructor_approved privledge
   def invalidate_grouping
-    self.admin_approved = false
+    self.instructor_approved = false
     self.save
   end
 
   def update_repo_permissions_after_save
     return unless assignment.read_attribute(:vcs_submit)
-    return unless saved_change_to_attribute? :admin_approved
+    return unless saved_change_to_attribute? :instructor_approved
     Repository.get_class.update_permissions
   end
 
@@ -545,7 +545,7 @@ class Grouping < ApplicationRecord
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)
     subquery = StudentMembership.all.to_sql
     assignment.groupings.includes(:non_rejected_student_memberships)
-              .where(admin_approved: false)
+              .where(instructor_approved: false)
               .where('groupings.id > ?', grouping_id || 0)
               .joins(:current_submission_used)
               .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
@@ -690,13 +690,13 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = filter_test_runs(filters: { 'roles.type': %w[Admin Ta], 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'roles.type': %w[Instructor Ta], 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     Grouping.group_hash_list(plucked)
   end
 
   def test_runs_instructors_released(submission)
-    filtered = filter_test_runs(filters: { 'roles.type': %w[Admin Ta], 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'roles.type': %w[Instructor Ta], 'test_runs.submission': submission })
     latest_test_group_results = filtered.pluck_to_hash('test_groups.id as tgid',
                                                        'test_group_results.id as tgrid',
                                                        'test_group_results.created_at as date')

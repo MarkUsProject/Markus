@@ -17,13 +17,13 @@ describe FeedbackFilesController do
   end
 
   describe '#show' do
-    let(:admin) { create(:admin) }
-    let(:course) { admin.course }
+    let(:instructor) { create(:instructor) }
+    let(:course) { instructor.course }
 
-    context 'when an admin' do
+    context 'when an instructor' do
       context 'requests a feedback file associated with a submission' do
         it 'downloads the file contents' do
-          get_as admin, :show, params: { course_id: course.id, id: feedback_file.id }
+          get_as instructor, :show, params: { course_id: course.id, id: feedback_file.id }
 
           expect(response).to have_http_status :success
           expect(response.body).to eq(feedback_file.file_content)
@@ -32,7 +32,7 @@ describe FeedbackFilesController do
 
       context 'requests a feedback file associated with an instructor test run' do
         it 'downloads the file contents' do
-          get_as admin, :show, params: { course_id: course.id, id: instructor_test_run_feedback_file.id }
+          get_as instructor, :show, params: { course_id: course.id, id: instructor_test_run_feedback_file.id }
 
           expect(response).to have_http_status :success
           expect(response.body).to eq(instructor_test_run_feedback_file.file_content)
@@ -41,7 +41,7 @@ describe FeedbackFilesController do
 
       context 'requests a feedback file associated with a student test run' do
         it 'downloads the file contents' do
-          get_as admin, :show, params: { course_id: course.id, id: student_test_run_feedback_file.id }
+          get_as instructor, :show, params: { course_id: course.id, id: student_test_run_feedback_file.id }
 
           expect(response).to have_http_status :success
           expect(response.body).to eq(student_test_run_feedback_file.file_content)

@@ -3,8 +3,8 @@ describe Api::SubmissionFilePolicy do
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :index? do
-    succeed 'role is an admin' do
-      let(:role) { build :admin }
+    succeed 'role is an instructor' do
+      let(:role) { build :instructor }
     end
     succeed 'user is a test server' do
       let(:user) { build :autotest_user }

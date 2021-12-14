@@ -1,12 +1,12 @@
 describe Api::StarterFileGroupsController do
   let(:course) { create :course }
-  let(:admin) { create :admin, course: course }
+  let(:instructor) { create :instructor, course: course }
   let(:assignment) { create :assignment, course: course }
   let(:http_accept) { 'application/xml' }
 
   before :each do
-    admin.reset_api_key
-    request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+    instructor.reset_api_key
+    request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     request.env['HTTP_ACCEPT'] = http_accept
   end
 

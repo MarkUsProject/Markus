@@ -1,8 +1,8 @@
 describe AnnotationCategoryPolicy do
   let(:context) { { role: role, real_user: role.end_user } }
   describe_rule :manage? do
-    succeed 'when the role is an admin' do
-      let(:role) { build(:admin) }
+    succeed 'when the role is an instructor' do
+      let(:role) { build(:instructor) }
     end
     failed 'when the role is a ta' do
       let(:role) { create(:ta) }
@@ -15,8 +15,8 @@ describe AnnotationCategoryPolicy do
     end
   end
   describe_rule :read? do
-    succeed 'when the role is an admin' do
-      let(:role) { build(:admin) }
+    succeed 'when the role is an instructor' do
+      let(:role) { build(:instructor) }
     end
     succeed 'when the role is a ta' do
       let(:role) { build(:ta) }

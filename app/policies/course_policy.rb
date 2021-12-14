@@ -6,7 +6,7 @@ class CoursePolicy < ApplicationPolicy
   alias_rule :clear_role_switch_session?, to: :role_is_switched?
 
   def show?
-    role.admin?
+    role.instructor?
   end
 
   def index?
@@ -14,11 +14,11 @@ class CoursePolicy < ApplicationPolicy
   end
 
   def role_switch?
-    real_role.admin? && !check?(:role_is_switched?)
+    real_role.instructor? && !check?(:role_is_switched?)
   end
 
   def switch_role?
-    real_role.admin? && !check?(:role_is_switched?)
+    real_role.instructor? && !check?(:role_is_switched?)
   end
 
   def download_assignments?

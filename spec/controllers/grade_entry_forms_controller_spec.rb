@@ -4,7 +4,7 @@ describe GradeEntryFormsController do
     # initialize student DB entries
     @student = create(:student, end_user: create(:end_user, user_name: 'c8shosta'))
   end
-  let(:role) { create :admin }
+  let(:role) { create :instructor }
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:course) { grade_entry_form.course }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
@@ -389,8 +389,8 @@ describe GradeEntryFormsController do
       end
     end
   end
-  describe 'When the user is admin' do
-    let(:user) { create(:admin) }
+  describe 'When the user is instructor' do
+    let(:user) { create(:instructor) }
     include_examples '#update_grade_entry_students'
     include_examples '#manage grade entry forms'
     context 'GET student interface' do
@@ -461,7 +461,7 @@ describe GradeEntryFormsController do
   end
 
   describe '#grade_distribution' do
-    let(:user) { create(:admin) }
+    let(:user) { create(:instructor) }
     before { get_as user, :grade_distribution, params: { course_id: course.id, id: grade_entry_form_with_data.id } }
 
     it('should return grade distribution data') {
@@ -552,8 +552,8 @@ describe GradeEntryFormsController do
       end
     end
 
-    context 'an admin' do
-      let(:user) { create :admin }
+    context 'an instructor' do
+      let(:user) { create :instructor }
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { edit_course_grade_entry_form_path(params) } }
       include_examples 'switch assignment tests'

@@ -13,7 +13,7 @@ pt:
         success: "%{resource_name} atualizado com sucesso."
       update_files:
         success: As alterações foram feitas.
-    admins:
+    instructors:
       create:
         error: "%{resource_name} UPDATE ME: %{errors}."
       update:

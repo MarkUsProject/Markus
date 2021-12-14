@@ -1,9 +1,9 @@
 describe ExtensionsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  describe 'as an admin' do
-    let(:admin) { create :admin }
+  describe 'as an instructor' do
+    let(:instructor) { create :instructor }
     let(:grouping) { create :grouping }
-    let(:course) { admin.course }
+    let(:course) { instructor.course }
     describe '#update' do
       let(:extension) { create :extension, grouping: grouping }
       let(:params) do
@@ -20,22 +20,22 @@ describe ExtensionsController do
       end
       it 'should not create a new extension' do
         extension # make sure the object is created before the call
-        expect { put_as admin, :update, params: params }.to_not change { Extension.count }
+        expect { put_as instructor, :update, params: params }.to_not change { Extension.count }
       end
       it 'should flash a message on success' do
         expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:success, anything)
-        put_as admin, :update, params: params
+        put_as instructor, :update, params: params
       end
       it 'should flash a message on error' do
         expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
         params[:weeks] = 0
         params[:days] = 0
         params[:hours] = 0
-        put_as admin, :update, params: params
+        put_as instructor, :update, params: params
       end
       describe 'it should update the attibute:' do
         before :each do
-          put_as admin, :update, params: params
+          put_as instructor, :update, params: params
           extension.reload
         end
         it 'time_delta' do
@@ -64,20 +64,20 @@ describe ExtensionsController do
         }
       end
       it 'should create a new extension' do
-        expect { post_as admin, :create, params: params }.to change { Extension.count }.by(1)
+        expect { post_as instructor, :create, params: params }.to change { Extension.count }.by(1)
       end
       it 'should flash a message on success' do
         expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:success, anything)
-        post_as admin, :create, params: params
+        post_as instructor, :create, params: params
       end
       it 'should flash a message on error' do
         expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
         params[:grouping_id] = nil
-        post_as admin, :create, params: params
+        post_as instructor, :create, params: params
       end
       describe 'it should update the attibute:' do
         before :each do
-          post_as admin, :create, params: params
+          post_as instructor, :create, params: params
           extension.reload
         end
         it 'time_delta' do
@@ -98,18 +98,18 @@ describe ExtensionsController do
         it 'should delete the extension' do
           extension # make sure the object is created before the call
           expect do
-            delete_as admin, :destroy, params: { course_id: course.id, id: extension.id }
+            delete_as instructor, :destroy, params: { course_id: course.id, id: extension.id }
           end.to change { Extension.count }.by(-1)
         end
         it 'should flash an success on success' do
           extension # make sure the object is created before the call
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:success, anything)
-          delete_as admin, :destroy, params: { course_id: course.id, id: extension.id }
+          delete_as instructor, :destroy, params: { course_id: course.id, id: extension.id }
         end
         it 'should flash an error on error' do
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
           allow_any_instance_of(Extension).to receive(:destroy).and_return(extension)
-          delete_as admin, :destroy, params: { course_id: course.id, id: extension.id }
+          delete_as instructor, :destroy, params: { course_id: course.id, id: extension.id }
         end
       end
     end

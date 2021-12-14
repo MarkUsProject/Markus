@@ -13,7 +13,7 @@ en:
         success: "%{resource_name} was successfully updated."
       update_files:
         success: Your changes have been made.
-    admins:
+    instructors:
       create:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."
       update:

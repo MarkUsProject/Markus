@@ -75,7 +75,7 @@ Rails.application.routes.draw do
       post 'upload_assignments'
     end
 
-    resources :admins, only: [:index, :new, :create, :edit, :update]
+    resources :instructors, only: [:index, :new, :create, :edit, :update]
 
     resources :starter_file_groups, only: [:destroy, :update] do
       member do

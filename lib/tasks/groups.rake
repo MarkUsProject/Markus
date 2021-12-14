@@ -20,7 +20,7 @@ namespace :db do
           grouping.invite(
             [students[time + num_groups].end_user.user_name],
             StudentMembership::STATUSES[:accepted],
-            invoked_by_admin: true)
+            invoked_by_instructor: true)
         end
         if !assignment.is_timed && assignment.section_due_dates_type && grouping.id % 5 == 0
             note = Faker::Movies::PrincessBride.quote

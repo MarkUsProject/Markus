@@ -95,8 +95,8 @@ module AutomatedTestsHelper
            .pluck_to_hash('groupings.group_id as group_id',
                           'test_runs.id as run_id',
                           'roles.type as role_type')
-           .each { |h| h[:role_type] = 'Admin' if h[:role_type] == 'Ta' }
-           .each { |h| h[:test_categories] = [h['role_type'].downcase] }
+           .each { |h| h[:user_type] = 'Instructor' if h[:user_type] == 'Ta' }
+           .each { |h| h[:test_categories] = [h['user_type'].downcase] }
   end
 
   def get_markus_address(host_with_port)
@@ -210,7 +210,7 @@ module AutomatedTestsHelper
       end
       req.body = {
         file_urls: file_urls,
-        categories: role.student? ? ['student'] : ['admin'],
+        categories: role.student? ? ['student'] : ['instructor'],
         request_high_priority: batch.nil? && role.student?
       }.to_json
       res = send_request!(req, uri)

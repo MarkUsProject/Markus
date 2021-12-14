@@ -1,6 +1,6 @@
 describe Api::RolesController do
   let(:course) { create :course }
-  let(:admin) { create :admin, course: course }
+  let(:instructor) { create :instructor, course: course }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -13,7 +13,7 @@ describe Api::RolesController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: admin.id, course_id: course.id }
+      get :show, params: { id: instructor.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
@@ -24,15 +24,15 @@ describe Api::RolesController do
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :update, params: { id: admin.id, course_id: course.id }
+      put :update, params: { id: instructor.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request' do
     let(:students) { create_list :student, 3, course: course }
     before :each do
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
     context 'GET index' do
       context 'for a different course' do
