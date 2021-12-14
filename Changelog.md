@@ -15,6 +15,7 @@
 - Fixes assignment graders checkbox settings text to avoid double negatives (#5600)
 - Add test results download modal for assignment summary (#5561)
 - Improve accessibility of exam templates page (#5607)
+- Added the ability to copy over entire assignments (#5616)
 
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)
