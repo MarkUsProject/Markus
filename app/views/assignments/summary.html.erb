@@ -4,6 +4,7 @@
       makeAssignmentSummaryTable(
         document.getElementById('assignment_summary_table'),
         {
+          course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>,
           is_admin: <%= @current_role.admin? %>
         }
