@@ -4,17 +4,15 @@ export class URLViewer extends React.Component {
   constructor() {
     super();
     this.state = {
-      url: "https://youtu.be/sthMUE9fnfc"
+      url: "https://youtu.be/sthMUE9fnfc",
     };
   }
 
-  getYoutubeId = (youtubeUrl) => {
+  getYoutubeId = youtubeUrl => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = youtubeUrl.match(regExp);
-    return (match && match[2].length === 11)
-      ? match[2]
-      : null;
-  }
+    return match && match[2].length === 11 ? match[2] : null;
+  };
 
   render() {
     return (
@@ -25,8 +23,8 @@ export class URLViewer extends React.Component {
           className="annotation-holder-active"
           style={{display: "none"}}
         />
-        <iframe src={"https://www.youtube.com/embed/" + this.getYoutubeId(this.state.url)}/>
+        <iframe src={"https://www.youtube.com/embed/" + this.getYoutubeId(this.state.url)} />
       </div>
-    )
+    );
   }
 }

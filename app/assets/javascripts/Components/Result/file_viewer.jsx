@@ -174,10 +174,7 @@ export class FileViewer extends React.Component {
       return I18n.t("working");
     } else if (this.state.type === "image") {
       //return <ImageViewer url={this.state.url} {...commonProps} />;
-      return <URLViewer
-        url={this.state.url}
-        {...commonProps}
-      />
+      return <URLViewer url={this.state.url} {...commonProps} />;
     } else if (this.state.type === "pdf") {
       return (
         <PDFViewer
