@@ -20,6 +20,7 @@
 - Fix bug in User#visible_assessments for students in a section (#5634)
 - Fixed bug where tag edit modal closed whenever it is clicked (#5652)
 - Fix bug where the datetime selector wasn't being shown for peer review assessments (#5659)
+- Fix bug in displaying associated feedback files when switching between results (#5676)
 
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)
