@@ -13,8 +13,7 @@ class ResultsController < ApplicationController
     # required because MathJax dynamically changes
     # style. # TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
-    #TODO: make this more specific to allow content from certain websites only
-    p.frame_src "*"
+    p.frame_src "https://www.youtube.com"
   end
 
   def show
