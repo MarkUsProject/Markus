@@ -2,6 +2,7 @@
 fr:
   assignments:
     average_annotations: "%{average_annotations} annotations par soumission marquée"
+    configuration_zip_file: UPDATE ME
     deadline_with_extension: Vous avez une extension jusqu'au %{extension_deadline}.
     due_date:
       final_due_date_passed: La période de grâce pour ce projet est terminée
@@ -79,4 +80,3 @@ fr:
       time_until_due_warning: UPDATE ME %{due_date}
     upload_config_help_html: UPDATE ME %{section_id}
     upload_file_requirement: La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire
-    wrong_assignment_type: UPDATE ME %{form_type} %{upload_type}

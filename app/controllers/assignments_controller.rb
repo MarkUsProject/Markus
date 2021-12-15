@@ -609,10 +609,8 @@ class AssignmentsController < ApplicationController
                                                 CONFIG_FILES[:automated_tests])
       end
       assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:starter_files])
-      if allowed_to?(:manage?, Tag)
-        zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
-          f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
-        end
+      zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
+        f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
       end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
@@ -626,15 +624,14 @@ class AssignmentsController < ApplicationController
           f.write annotation_categories_to_yml(child_assignment.annotation_categories)
         end
         child_assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:peer_review_starter_files])
-        if allowed_to?(:manage?, Tag)
-          zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
-            f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
-          end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
+          f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
         end
       end
     end
     send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
   end
+
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.
   def upload_config_files
@@ -647,7 +644,6 @@ class AssignmentsController < ApplicationController
         # Build assignment from properties
         prop_file = zipfile.get_entry(CONFIG_FILES[:properties])
         assignment = build_uploaded_assignment(prop_file)
-        zipfile.remove(prop_file)
         tag_prop = build_hash_from_zip(zipfile, :tags)
         criteria_prop = build_hash_from_zip(zipfile, :criteria)
         annotations_prop = build_hash_from_zip(zipfile, :annotations)
@@ -656,19 +652,18 @@ class AssignmentsController < ApplicationController
         unless child_prop_file.nil?
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
           child_assignment.save!
-          zipfile.remove(child_prop_file)
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
-          Tag.from_yml(child_tag_prop, child_assignment.id) if allowed_to?(:manage?, Tag)
+          Tag.from_yml(child_tag_prop, child_assignment.id, true)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
-          config_criteria(child_assignment, child_criteria_prop)
+          upload_criteria_from_yaml(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
           upload_annotations_from_yaml(child_annotations_prop, child_assignment)
           config_starter_files(child_assignment, zipfile)
           child_assignment.save!
         end
         assignment.save!
-        Tag.from_yml(tag_prop, assignment.id) if allowed_to?(:manage?, Tag)
-        config_criteria(assignment, criteria_prop)
+        Tag.from_yml(tag_prop, assignment.id, true)
+        upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
         config_starter_files(assignment, zipfile)
@@ -678,13 +673,7 @@ class AssignmentsController < ApplicationController
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-    if params[:is_scanned] == 'true'
-      redirect_to new_assignment_path(scanned: true)
-    elsif params[:is_timed] == 'true'
-      redirect_to new_assignment_path(timed: true)
-    else
-      redirect_to new_assignment_path
-    end
+    redirect_to assignments_path
   end
 
   private
@@ -722,7 +711,7 @@ class AssignmentsController < ApplicationController
     starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
     starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
     starter_group_mappings = {}
-    starter_file_settings[:group_information].each do |group|
+    starter_file_settings[:starter_file_groups].each do |group|
       group = group.symbolize_keys
       file_group = StarterFileGroup.create!(name: group[:name],
                                             use_rename: group[:use_rename],
@@ -730,7 +719,7 @@ class AssignmentsController < ApplicationController
                                             assignment: assignment)
       starter_group_mappings[group[:directory_name]] = file_group
     end
-    default_name = starter_file_settings[:default_starter_group]
+    default_name = starter_file_settings[:default_starter_file_group]
     if !default_name.nil? && starter_group_mappings.key?(default_name)
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
@@ -770,39 +759,14 @@ class AssignmentsController < ApplicationController
     properties
   end
 
-  # Ensure that the +assignment+ type (scanned, timed, neither) matches the params
-  # If it does not match, raise an error
-  def check_assignment_type_match!(assignment)
-    timed = params[:is_timed] == 'true'
-    scanned = params[:is_scanned] == 'true'
-    unless assignment.is_timed == timed && assignment.scanned_exam == scanned
-      if assignment.is_timed
-        upload_type = I18n.t('activerecord.models.timed_assignment.one')
-      elsif assignment.scanned_exam
-        upload_type = I18n.t('activerecord.models.scanned_assignment.one')
-      else
-        upload_type = Assignment.model_name.human
-      end
-      if timed
-        form_type = I18n.t('activerecord.models.timed_assignment.one')
-      elsif scanned
-        form_type = I18n.t('activerecord.models.scanned_assignment.one')
-      else
-        form_type = Assignment.model_name.human
-      end
-      raise I18n.t('assignments.wrong_assignment_type', form_type: form_type, upload_type: upload_type)
-    end
-  end
-
-  # Builds an uploaded assignment/peer review assignment from it's properties file
-  # Precondition: If +parent_assignment+ is not null, this is a peer review assignment.
-  #               If building a peer review assignment, prop_file must not be null.
+  # Builds an uploaded assignment/peer review assignment from its properties file
+  # Precondition: prop_file must be a Zip::Entry object
+  #               If +parent_assignment+ is not nil, this is a peer review assignment.
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
-      check_assignment_type_match!(assignment)
       assignment.repository_folder = assignment.short_identifier
     else
       # Filter properties not supported by peer review assignments, then build assignment

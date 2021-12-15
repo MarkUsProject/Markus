@@ -1453,11 +1453,8 @@ describe AssignmentsController do
 
       # Check file content
       describe 'downloaded zip file' do
-        before :each do
-          subject
-        end
-
         it 'should have a valid properties file' do
+          subject
           properties = read_file_from_zip(response.body, 'properties.yml')
           properties = properties.deep_symbolize_keys
           expect(properties).to include(short_identifier: assignment.short_identifier,
@@ -1472,6 +1469,7 @@ describe AssignmentsController do
         end
 
         it 'should have a valid criteria file' do
+          subject
           criteria_download = read_file_from_zip(response.body, 'criteria.yml')
           criteria_download = criteria_download.deep_symbolize_keys
           criteria_download.each_key do |key|
@@ -1480,11 +1478,13 @@ describe AssignmentsController do
         end
 
         it 'should have a valid annotations file' do
+          subject
           annotation_download = read_file_from_zip(response.body, 'annotations.yml')
           expect(annotation_download).to be_a(Hash)
         end
 
         it 'should have a valid automated test settings file' do
+          subject
           spec_data = read_file_from_zip(response.body, 'automated-test-config-files/automated-test-specs.json')
           received_settings = {
             is_a_hash: spec_data.is_a?(Hash),
@@ -1504,13 +1504,14 @@ describe AssignmentsController do
           starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_file_group, :starter_file_groups)
         end
 
         it 'should have a starter file group with the right number of files' do
           subject
           starter_file_count = 0
-          starter_file_group_dir = "starter-file-config-files/1: #{starter_files.name}"
+          starter_file_group_dir_name = ActiveStorage::Filename.new(starter_files.name).sanitized
+          starter_file_group_dir = File.join('starter-file-config-files', starter_file_group_dir_name)
           Zip::InputStream.open(StringIO.new(response.body)) do |io|
             while (entry = io.get_next_entry)
               starter_file_count += 1 if entry.name.match?(/^#{starter_file_group_dir}/)
@@ -1519,7 +1520,24 @@ describe AssignmentsController do
           expect(starter_file_count).to eq(starter_files.files_and_dirs.length)
         end
 
+        it 'should have a valid tags file' do
+          tag1 = create :tag, assessment_id: assignment.id
+          tag2 = create :tag, assessment_id: assignment.id
+          subject
+          tags = read_file_from_zip(response.body, 'tags.yml')
+          tags = tags.map(&:symbolize_keys)
+          expect(tags).to eq([{ name: tag1.name, description: tag1.description },
+                              { name: tag2.name, description: tag2.description }])
+        end
+
+        it 'should contain a peer review tags file' do
+          subject
+          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'tags.yml'))
+          expect(tags).to be_a(Array)
+        end
+
         it 'should have a valid peer review properties file' do
+          subject
           properties = read_file_from_zip(response.body, File.join('peer-review-config-files', 'properties.yml'))
           properties = properties.deep_symbolize_keys
           peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
@@ -1533,13 +1551,16 @@ describe AssignmentsController do
         end
 
         it 'should contain a peer review criteria file' do
-          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'criteria.yml'))
-          expect(tags).to be_a(Hash)
+          subject
+          criteria = read_file_from_zip(response.body, File.join('peer-review-config-files', 'criteria.yml'))
+          expect(criteria).to be_a(Hash)
         end
 
         it 'should contain a peer review annotations file' do
-          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'annotations.yml'))
-          expect(tags).to be_a(Hash)
+          subject
+          annotations = read_file_from_zip(response.body, File.join('peer-review-config-files',
+                                                                    'annotations.yml'))
+          expect(annotations).to be_a(Hash)
         end
 
         it 'should contain a peer review starter file settings file' do
@@ -1548,7 +1569,7 @@ describe AssignmentsController do
                                                                               'starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_file_group, :starter_file_groups)
         end
       end
     end
@@ -1572,39 +1593,11 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create :ta, manage_assessments: true }
         include_examples 'download sample config files'
-
-        it 'should not have a tags file' do
-          subject
-          tags = read_file_from_zip(response.body, 'tags.yml')
-          expect(tags).to be_nil
-        end
-
-        it 'should not have a peer review tags file' do
-          subject
-          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'tags.yml'))
-          expect(tags).to be_nil
-        end
       end
     end
     context 'an admin' do
       let(:user) { create :admin }
       include_examples 'download sample config files'
-
-      it 'should have a valid tags file' do
-        tag1 = create :tag, assessment_id: assignment.id
-        tag2 = create :tag, assessment_id: assignment.id
-        subject
-        tags = read_file_from_zip(response.body, 'tags.yml')
-        tags = tags.map(&:symbolize_keys)
-        expect(tags).to eq([{ name: tag1.name, description: tag1.description },
-                            { name: tag2.name, description: tag2.description }])
-      end
-
-      it 'should contain a peer review tags file' do
-        subject
-        tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'tags.yml'))
-        expect(tags).to be_a(Array)
-      end
     end
   end
 
@@ -1642,7 +1635,7 @@ describe AssignmentsController do
       starter_settings_good = fixture_file_upload(File.join(base_dir,
                                                             'starter-file-config-files',
                                                             'starter-file-rules.yml'), 'text/yaml')
-      starter_file_dir = File.join(base_dir, 'starter-file-config-files', '1: sample_starter_group')
+      starter_file_dir = File.join(base_dir, 'starter-file-config-files', 'sample_starter_group')
       starter_file1 = fixture_file_upload(File.join(starter_file_dir, 'c_file.c'), 'text/c')
       starter_file2 = fixture_file_upload(File.join(starter_file_dir, 'Helpers', 'template.tex'), 'text/tex')
 
@@ -1664,9 +1657,9 @@ describe AssignmentsController do
         zip_file.add('criteria.yml', criteria_good.path)
         zip_file.add('annotations.yml', annotations_good.path)
         zip_file.add('starter-file-config-files/starter-file-rules.yml', starter_settings_good.path)
-        zip_file.add('starter-file-config-files/1: sample_starter_group/c_file.c', starter_file1.path)
+        zip_file.add('starter-file-config-files/sample_starter_group/c_file.c', starter_file1.path)
         zip_file.mkdir(File.join(starter_file_dir, 'Helpers'))
-        zip_file.add('starter-file-config-files/1: sample_starter_group/Helpers/template.tex', starter_file2.path)
+        zip_file.add('starter-file-config-files/sample_starter_group/Helpers/template.tex', starter_file2.path)
         zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
@@ -1681,16 +1674,6 @@ describe AssignmentsController do
     end
 
     shared_examples 'check valid assignment config files' do
-      it 'will not post if on the wrong page' do
-        post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
-                                                      is_timed: false,
-                                                      is_scanned: false }
-        expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('assignments.wrong_assignment_type',
-                         form_type: Assignment.model_name.human,
-                         upload_type: I18n.t('activerecord.models.timed_assignment.one'))].map { |f| extract_text f })
-      end
-
       it 'gives the appropriate response status' do
         subject
         expect(response.status).to eq(302)
@@ -1788,6 +1771,12 @@ describe AssignmentsController do
         expect(uploaded_starter_file_checks).to eq(expected_starter_file_checks)
       end
 
+      it 'uploads all the tags for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(uploaded_assignment.tags.count).to eq(2)
+      end
+
       it 'properly uploads a peer review assignment' do
         subject
         uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
@@ -1841,29 +1830,11 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create :ta, manage_assessments: true }
         include_examples 'check valid assignment config files'
-
-        it 'should have no tags' do
-          subject
-          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-          expect(uploaded_assignment.tags.count).to eq(0)
-        end
-
-        it 'should not have peer review tags' do
-          subject
-          uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
-          expect(uploaded_child_assignment.tags.count).to eq(0)
-        end
       end
     end
     context 'an admin' do
       let(:user) { create :admin }
       include_examples 'check valid assignment config files'
-
-      it 'uploads all the tags for an assignment' do
-        subject
-        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-        expect(uploaded_assignment.tags.count).to eq(2)
-      end
     end
   end
 

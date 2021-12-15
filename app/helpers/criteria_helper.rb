@@ -1,8 +1,8 @@
 # Helpers for handling criteria in various controllers
 module CriteriaHelper
-  # Configures +assignment+ with the provided criteria +data+
+  # Configures +assignment+ with the uploaded criteria +data+
   # Returns the number of successful criteria uploaded
-  def config_criteria(assignment, data)
+  def upload_criteria_from_yaml(assignment, data)
     assignment.criteria.destroy_all
 
     # Create criteria based on the parsed data.

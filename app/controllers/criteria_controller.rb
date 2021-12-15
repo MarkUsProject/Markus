@@ -149,7 +149,7 @@ class CriteriaController < ApplicationController
     else
       if data[:type] == '.yml'
         ApplicationRecord.transaction do
-          successes = config_criteria(assignment, data[:contents])
+          successes = upload_criteria_from_yaml(assignment, data[:contents])
           flash_message(:success, I18n.t('upload_success', count: successes)) if successes > 0
         rescue StandardError => e
           flash_message(:error, e.message)
