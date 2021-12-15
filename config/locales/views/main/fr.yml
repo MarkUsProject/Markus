@@ -2,6 +2,8 @@
 fr:
   main:
     create_marking_scheme: UPDATE ME
+    external_authentication: UPDATE ME %{name}
+    external_authentication_default_name: UPDATE ME
     external_authentication_not_supported: L'authentification externe n'est pas supportée sur votre plateforme.
     frequency: UPDATE ME
     grade: UPDATE ME
@@ -16,6 +18,7 @@ fr:
       log_in_as: Connexion en tant que
       switch_role: Changer d'utilisateur
     session_expired: Votre session a expiré. Merci de vous reconnecter.
+    sign_in_not_supported: UPDATE ME.
     timeout_imminent: Votre session est sur le point d'expirer.
     username_and_password_not_blank: Veuillez entrer vos nom d'utilisateur et mot de passe.
     username_not_blank: Veuillez entrer votre nom d'utilisateur.

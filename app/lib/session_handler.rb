@@ -79,14 +79,7 @@ module SessionHandler
   end
 
   def remote_user_name
-    @remote_user_name ||= if request.env['HTTP_X_FORWARDED_USER'].present?
-                            request.env['HTTP_X_FORWARDED_USER']
-                          elsif Settings.remote_user_auth && !Rails.env.production?
-                            # This is only used in non-production modes to test Markus behaviours specific to
-                            # external authentication. This should not be used in the place of any real
-                            # authentication (basic or otherwise)!
-                            authenticate_or_request_with_http_basic { |username, _| username }
-                          end
+    @remote_user_name ||= request.env['HTTP_X_FORWARDED_USER']
   end
 
   def redirect_to_last_page
@@ -100,16 +93,12 @@ module SessionHandler
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
   def authenticate
-    if Settings.remote_user_auth
-      if remote_user_name.nil?
-        msg = Settings.validate_user_not_allowed_message || I18n.t('main.login_failed')
-        render :remote_user_auth_login_fail, status: 403, locals: { login_error: msg }
-      else
-        refresh_timeout
-        session[:real_user_name] = remote_user_name
-      end
-    elsif real_user.nil? || session_expired?
-      # cleanup expired session stuff
+    if real_user && !session_expired?
+      refresh_timeout
+    elsif session[:auth_type] == :remote
+      refresh_timeout
+      session[:real_user_name] = remote_user_name
+    else
       clear_session
       if request.xhr? # is this an XMLHttpRequest?
         # Redirect users back to referer, or else
@@ -120,8 +109,6 @@ module SessionHandler
         session[:redirect_uri] = request.fullpath
         redirect_to controller: 'main', action: 'login'
       end
-    else
-      refresh_timeout
     end
   end
 
@@ -152,6 +139,7 @@ module SessionHandler
     session[:user_name] = nil
     session[:real_user_name] = nil
     session[:job_id] = nil
+    session[:auth_type] = nil
     cookies.delete :auth_token
     reset_session
   end

@@ -12,6 +12,31 @@ describe MainController do
       post :login, params: { user_login: 'a', user_password: '' }
       expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.password_not_blank'))
     end
+    describe 'login_remote_auth' do
+      before do
+        env_hash = { 'HTTP_X_FORWARDED_USER': http_x_forwarded_user }
+        request.headers.merge! env_hash
+        get :login_remote_auth
+      end
+      context 'remote user is set' do
+        let(:http_x_forwarded_user) { 'a' }
+        it 'should set the auth_type to remote' do
+          expect(session[:auth_type]).to eq :remote
+        end
+        it 'should redirect to the main page' do
+          expect(response).to redirect_to(main_path)
+        end
+      end
+      context 'remote user is not set' do
+        let(:http_x_forwarded_user) { nil }
+        it 'should set the auth_type to remote' do
+          expect(session[:auth_type]).to eq :remote
+        end
+        it 'should redirect to the remote login page' do
+          expect(response).to redirect_to(Settings.remote_auth_login_url)
+        end
+      end
+    end
   end
   context 'An Instructor' do
     let :all_assignments do
@@ -41,14 +66,12 @@ describe MainController do
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow(Settings).to receive(:remote_user_auth).and_return(false)
         sign_in instructor
       end
       include_examples 'instructor tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow(Settings).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': instructor.user_name }
         request.headers.merge! env_hash
         sign_in instructor
@@ -86,14 +109,12 @@ describe MainController do
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow(Settings).to receive(:remote_user_auth).and_return(false)
         sign_in student
       end
       include_examples 'student tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow(Settings).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': student.user_name }
         request.headers.merge! env_hash
         sign_in student
@@ -109,14 +130,12 @@ describe MainController do
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow(Settings).to receive(:remote_user_auth).and_return(false)
         sign_in ta
       end
       include_examples 'ta tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow(Settings).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': ta.user_name }
         request.headers.merge! env_hash
         sign_in ta

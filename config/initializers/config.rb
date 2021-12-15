@@ -113,12 +113,13 @@ Config.setup do |config|
         required(:url).filled(:string)
       end
       required(:course_name).filled(:string)
-      required(:validate_file).filled(:string)
-      required(:validate_ip).filled(:bool)
+      optional(:validate_file).filled(:string)
+      optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
       required(:validate_user_not_allowed_message).maybe(:string)
       required(:incorrect_login_message).maybe(:string)
-      required(:remote_user_auth).filled(:bool)
+      optional(:remote_auth_login_url).filled(:string)
+      optional(:remote_auth_login_name).filled(:string)
       required(:logout_redirect).filled(:string)
       optional(:student_csv_order).array(
         included_in?: %w[user_name last_name first_name section_name id_number email]

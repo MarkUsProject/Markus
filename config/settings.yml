@@ -34,8 +34,6 @@ course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
 validate_ip: false
 validate_custom_status_message: {}
 
-remote_user_auth: false
-
 logout_redirect: DEFAULT
 
 repository:

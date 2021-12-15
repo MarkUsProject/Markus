@@ -14,27 +14,37 @@
   </div>
 
   <div class='login-form'>
-    <%= form_tag({ action: 'login' }) do %>
-      <% unless defined? user_login
-           user_login = ''
-         end %>
-      <%= text_field_tag 'user_login',
-                         nil,
-                         placeholder: User.human_attribute_name(:user_name),
-                         'aria-label': User.human_attribute_name(:user_name),
-                         autocorrect: 'off',
-                         autocapitalize: 'off',
-                         autofocus: user_login == '',
-                         value: user_login %>
-      <%= password_field_tag 'user_password',
-                             nil,
-                             placeholder: t('main.password'),
-                             'aria-label': t('main.password'),
-                             autofocus: user_login != '',
-                             autocomplete: 'off' %>
-      <div class='submit'>
-        <%= submit_tag t('main.log_in'),
-                       data: { disable_with: t('main.logging_in') } %>
+    <% if Settings.validate_file %>
+      <%= form_tag({ action: 'login' }) do %>
+        <% unless defined? user_login
+             user_login = ''
+           end %>
+        <%= text_field_tag 'user_login',
+                           nil,
+                           placeholder: User.human_attribute_name(:user_name),
+                           'aria-label': User.human_attribute_name(:user_name),
+                           autocorrect: 'off',
+                           autocapitalize: 'off',
+                           autofocus: user_login == '',
+                           value: user_login %>
+        <%= password_field_tag 'user_password',
+                               nil,
+                               placeholder: t('main.password'),
+                               'aria-label': t('main.password'),
+                               autofocus: user_login != '',
+                               autocomplete: 'off' %>
+        <div class='submit'>
+          <%= submit_tag t('main.log_in'),
+                         data: { disable_with: t('main.logging_in') } %>
+        </div>
+      <% end %>
+    <% end %>
+    <% if Settings.remote_auth_login_url %>
+      <div class="remote-login">
+        <a class="button" href="<%= login_remote_auth_main_index_path %>">
+          <%= t('main.external_authentication',
+                name: Settings.remote_auth_login_name || t('main.external_authentication_default_name') ) %>
+        </a>
       </div>
     <% end %>
   </div>
