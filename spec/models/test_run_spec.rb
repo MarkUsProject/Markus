@@ -40,8 +40,8 @@ describe TestRun do
     end
   end
   describe '.all_test_categories' do
-    it 'should return [admin, student]' do
-      expect(TestRun.all_test_categories).to contain_exactly('admin', 'student')
+    it 'should return [instructor, student]' do
+      expect(TestRun.all_test_categories).to contain_exactly('instructor', 'student')
     end
   end
   describe '#update_results!' do

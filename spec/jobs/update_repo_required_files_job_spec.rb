@@ -1,6 +1,6 @@
 describe UpdateRepoRequiredFilesJob do
   let(:assignment) { create :assignment }
-  let(:user) { create :admin }
+  let(:user) { create :instructor }
   context 'when running as a background job' do
     let(:job_args) { [assignment.id, user.user_name] }
     include_examples 'background job'

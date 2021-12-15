@@ -14,7 +14,7 @@
           "tester": "pytest",
           "timeout": 30,
           "category": [
-            "admin"
+            "instructor"
           ],
           "extra_info": {
             "criterion": "FlexibleCriterion:criterion",
@@ -40,7 +40,7 @@
           ],
           "timeout": 30,
           "category": [
-            "admin"
+            "instructor"
           ],
           "extra_info": {
             "criterion": "FlexibleCriterion:criterion",

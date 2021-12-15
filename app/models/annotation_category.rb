@@ -152,11 +152,11 @@ class AnnotationCategory < ApplicationRecord
 
   # Return all visible annotation categories associated with +assignment+ for +role+.
   #
-  # This will return all annotation categories for admins and no admin categories for students.
+  # This will return all annotation categories for instructors and no instructor categories for students.
   # If graders are assigned annotation categories, then only return assigned categories, otherwise
-  # treat graders the same as admins.
+  # treat graders the same as instructors.
   def self.visible_categories(assignment, role)
-    return AnnotationCategory.none unless role.ta? || role.admin?
+    return AnnotationCategory.none unless role.ta? || role.instructor?
 
     if role.ta? && assignment.assign_graders_to_criteria
       visible = role.criterion_ta_associations.joins(:criterion).pluck(:criterion_id) + [nil]

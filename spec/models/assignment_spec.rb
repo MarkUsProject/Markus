@@ -349,9 +349,9 @@ describe Assignment do
     end
 
     context 'when one group is valid' do
-      context 'due to admin_approval' do
+      context 'due to instructor_approval' do
         before :each do
-          @groupings.first.update_attribute(:admin_approved, true)
+          @groupings.first.update_attribute(:instructor_approved, true)
         end
 
         it '#valid_groupings returns the valid group' do
@@ -1733,11 +1733,11 @@ describe Assignment do
       end
     end
 
-    context 'an Admin user' do
-      let(:admin) { create :admin }
-      let(:tags) { create_list :tag, 3, role: admin }
+    context 'an Instructor user' do
+      let(:instructor) { create :instructor }
+      let(:tags) { create_list :tag, 3, role: instructor }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
-      let(:data) { assignment.reload.current_submission_data(admin) }
+      let(:data) { assignment.reload.current_submission_data(instructor) }
       let(:submission) { create :version_used_submission, grouping: groupings[0] }
       let(:released_result) { create :released_result, submission: submission }
 
@@ -1849,7 +1849,7 @@ describe Assignment do
         end
 
         it 'should include member information for groups with members' do
-          members = groupings.map { |g| g.accepted_students.joins(:human).pluck('users.user_name') }
+          members = groupings.map { |g| g.accepted_students.joins(:end_user).pluck('users.user_name') }
           expect(data.map { |h| h[:members] }.compact).to contain_exactly(*members)
         end
       end
@@ -1890,7 +1890,7 @@ describe Assignment do
         end
       end
       context '#zip_automated_test_files' do
-        let(:content) { File.read assignment.zip_automated_test_files(admin) }
+        let(:content) { File.read assignment.zip_automated_test_files(instructor) }
         subject { content }
         it_behaves_like 'zip file download'
       end
@@ -1938,10 +1938,10 @@ describe Assignment do
       end
     end
 
-    context 'an Admin user' do
-      let(:admin) { create :admin }
+    context 'an Instructor user' do
+      let(:instructor) { create :instructor }
       let(:assignment_tag) { create :assignment }
-      let(:tags) { create_list :tag, 3, role: admin }
+      let(:tags) { create_list :tag, 3, role: instructor }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
       let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
@@ -1951,23 +1951,23 @@ describe Assignment do
 
       context 'with assigned students' do
         it 'has criteria columns' do
-          expect(@assignment.summary_json(admin)[:criteriaColumns]).not_to be_empty
+          expect(@assignment.summary_json(instructor)[:criteriaColumns]).not_to be_empty
         end
 
         it 'has correct criteria information' do
-          criteria_info = @assignment.summary_json(admin)[:criteriaColumns][0]
+          criteria_info = @assignment.summary_json(instructor)[:criteriaColumns][0]
           expect(criteria_info).is_a? Hash
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
 
         it 'has tags correct info' do
           tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
-          data = assignment_tag.reload.summary_json(admin)[:data]
+          data = assignment_tag.reload.summary_json(instructor)[:data]
           expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
         end
 
         it 'has group data' do
-          data = @assignment.summary_json(admin)[:data]
+          data = @assignment.summary_json(instructor)[:data]
           expected_keys = [
             :group_name,
             :section,
@@ -1989,13 +1989,13 @@ describe Assignment do
         end
 
         it 'has group with members' do
-          data = @assignment.summary_json(admin)[:data]
+          data = @assignment.summary_json(instructor)[:data]
           expect(data[0][:members]).not_to be_empty
           expect(data[0][:members][0]).not_to include(nil)
         end
 
         it 'has graders' do
-          data = @assignment.summary_json(admin)[:data]
+          data = @assignment.summary_json(instructor)[:data]
           expect(data[0][:graders][0]).not_to include(nil)
         end
 
@@ -2003,12 +2003,12 @@ describe Assignment do
           let(:grouping) { @assignment.groupings.first }
           let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result }
           it 'should included the extra mark value' do
-            data = @assignment.summary_json(admin)[:data]
+            data = @assignment.summary_json(instructor)[:data]
             grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
             expect(grouping_data[:total_extra_marks]).to eq extra_mark.extra_mark
           end
           it 'should add the extra mark to the total mark' do
-            data = @assignment.summary_json(admin)[:data]
+            data = @assignment.summary_json(instructor)[:data]
             grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
             extra = grouping.current_result.extra_marks.pluck(:extra_mark).sum
             expect(grouping_data[:final_grade]).to eq(grouping.current_result.total_mark + extra)
@@ -2016,7 +2016,7 @@ describe Assignment do
           context 'when the extra mark has a negative value' do
             let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result, extra_mark: -100 }
             it 'should not reduce the total mark below zero' do
-              data = @assignment.summary_json(admin)[:data]
+              data = @assignment.summary_json(instructor)[:data]
               grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
               expect(grouping_data[:final_grade]).to eq(0)
             end
@@ -2025,12 +2025,12 @@ describe Assignment do
             let!(:extra_mark_percentage) { create :extra_mark, result: grouping.current_result }
             let(:percentage_extra) { (extra_mark_percentage.extra_mark * @assignment.max_mark / 100).round(2) }
             it 'should included both extra mark values' do
-              data = @assignment.summary_json(admin)[:data]
+              data = @assignment.summary_json(instructor)[:data]
               grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
               expect(grouping_data[:total_extra_marks]).to eq(extra_mark.extra_mark + percentage_extra)
             end
             it 'should add both extra marks to the total mark' do
-              data = @assignment.summary_json(admin)[:data]
+              data = @assignment.summary_json(instructor)[:data]
               grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
               total = grouping.current_result.total_mark + extra_mark.extra_mark + percentage_extra
               expect(grouping_data[:final_grade]).to eq total
@@ -2060,8 +2060,8 @@ describe Assignment do
       end
     end
 
-    context 'an Admin user' do
-      let(:admin) { create :admin }
+    context 'an Instructor user' do
+      let(:instructor) { create :instructor }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -2069,7 +2069,7 @@ describe Assignment do
 
       context 'with assigned students' do
         it 'has student data' do
-          summary_string = @assignment.summary_csv(admin)
+          summary_string = @assignment.summary_csv(instructor)
           summary = CSV.parse(summary_string)
 
           expect(summary).to_not be_empty
@@ -2152,7 +2152,7 @@ describe Assignment do
   end
 
   describe '#get_num_collected' do
-    let(:admin) { create(:admin) }
+    let(:instructor) { create(:instructor) }
     let(:ta) { create(:ta) }
     let(:assignment) { create(:assignment) }
     let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
@@ -2163,7 +2163,7 @@ describe Assignment do
       create(:ta_membership, role: ta, grouping: grouping1)
       create(:ta_membership, role: ta, grouping: grouping2)
     end
-    context 'When user is admin' do
+    context 'When user is instructor' do
       it 'should return no of collected submissions of all groupings' do
         expect(assignment.get_num_collected).to eq(3)
       end
@@ -2176,7 +2176,7 @@ describe Assignment do
   end
 
   describe '#get_num_marked' do
-    let(:admin) { create(:admin) }
+    let(:instructor) { create(:instructor) }
     let(:ta) { create(:ta) }
     let(:assignment) { create(:assignment) }
     let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
@@ -2191,7 +2191,7 @@ describe Assignment do
       create(:ta_membership, role: ta, grouping: grouping1)
       create(:ta_membership, role: ta, grouping: grouping2)
     end
-    context 'When user is admin' do
+    context 'When user is instructor' do
       it 'should return no of marked submissions of all groupings' do
         expect(assignment.get_num_marked).to eq(2)
       end

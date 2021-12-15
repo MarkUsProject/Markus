@@ -1,13 +1,17 @@
 describe Api::MainApiPolicy do
-  let(:user) { role.human }
+  let(:user) { role.end_user }
+  let(:role) { nil }
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :manage? do
-    succeed 'role is an admin' do
-      let(:role) { build :admin }
+    succeed 'user is an admin user' do
+      let(:user) { build :admin_user }
+    end
+    succeed 'role is an instructor' do
+      let(:role) { build :instructor }
     end
     failed 'user is a test server' do
-      let(:user) { build :test_server }
+      let(:user) { build :autotest_user }
       let(:role) { nil }
     end
     failed 'role is a ta' do

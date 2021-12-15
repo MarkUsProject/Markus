@@ -31,11 +31,11 @@ namespace :db do
     template.template_divisions.create(label: 'Q2', start: 4, end: 4)
     template.template_divisions.create(label: 'Q3', start: 5, end: 6)
 
-    admin = Admin.first
+    instructor = Instructor.first
 
     %w(1-20 100 101 102 103 104).each do |n|
       template_path = File.join(file_dir, "midterm_scan_#{n}.pdf")
-      template.split_pdf(template_path, "midterm_scan_#{n}.pdf", admin)
+      template.split_pdf(template_path, "midterm_scan_#{n}.pdf", instructor)
     end
   end
 end

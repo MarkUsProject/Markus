@@ -95,8 +95,8 @@ module AutomatedTestsHelper
            .pluck_to_hash('groupings.group_id as group_id',
                           'test_runs.id as run_id',
                           'roles.type as role_type')
-           .each { |h| h[:role_type] = 'Admin' if h[:role_type] == 'Ta' }
-           .each { |h| h[:test_categories] = [h['role_type'].downcase] }
+           .each { |h| h[:user_type] = 'Instructor' if h[:user_type] == 'Ta' }
+           .each { |h| h[:test_categories] = [h['user_type'].downcase] }
   end
 
   def get_markus_address(host_with_port)
@@ -142,23 +142,23 @@ module AutomatedTestsHelper
     # Register this MarkUs instance with the autotester by sending a unique user name and credentials that
     # the autotester can use to make get requests to MarkUs' API
     def register
-      test_server = TestServer.find_or_create
+      autotest_user = AutotestUser.find_or_create
       uri = URI("#{Settings.autotest.url}/register")
       req = Net::HTTP::Post.new(uri)
       req['Content-Type'] = 'application/json'
       req.body = { user_name: AUTOTEST_USERNAME,
                    auth_type: Api::MainApiController::AUTHTYPE,
-                   credentials: test_server.api_key }.to_json
+                   credentials: autotest_user.api_key }.to_json
       res = send_request!(req, uri)
       File.write(AUTOTEST_KEY_FILE, JSON.parse(res.body)['api_key'])
     end
 
     # Send updated credentials to the autotester for this MarkUs instance
     def update_credentials
-      test_server = TestServer.find_or_create
+      autotest_user = AutotestUser.find_or_create
       uri = URI("#{Settings.autotest.url}/reset_credentials")
       req = Net::HTTP::Put.new(uri)
-      req.body = { auth_type: Api::MainApiController::AUTHTYPE, credentials: test_server.api_key }.to_json
+      req.body = { auth_type: Api::MainApiController::AUTHTYPE, credentials: autotest_user.api_key }.to_json
       set_headers(req)
       send_request!(req, uri)
     end
@@ -210,7 +210,7 @@ module AutomatedTestsHelper
       end
       req.body = {
         file_urls: file_urls,
-        categories: role.student? ? ['student'] : ['admin'],
+        categories: role.student? ? ['student'] : ['instructor'],
         request_high_priority: batch.nil? && role.student?
       }.to_json
       res = send_request!(req, uri)
@@ -335,14 +335,7 @@ module AutomatedTestsHelper
   private
 
   def server_api_key
-    server_user = TestServer.find_or_create_by(user_name: '.autotest') do |user|
-      user.first_name = 'Autotest'
-      user.last_name = 'Server'
-      user.hidden = true
-    end
-    server_user.reset_api_key if server_user.api_key.nil?
-
-    server_user.api_key
+    AutotestUser.find_or_create.api_key
   rescue ActiveRecord::RecordNotUnique
     # find_or_create_by is not atomic, there could be race conditions on creation: we just retry until it succeeds
     retry

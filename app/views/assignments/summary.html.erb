@@ -6,7 +6,7 @@
         {
           course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>,
-          is_admin: <%= @current_role.admin? %>
+          is_instructor: <%= @current_role.instructor? %>
         }
       );
     });

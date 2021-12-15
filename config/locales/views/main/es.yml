@@ -1,7 +1,6 @@
 ---
 es:
   main:
-    account_disabled: Esta cuenta ha sido desabilitada.
     create_marking_scheme: UPDATE ME
     external_authentication_not_supported: La autenticación externa no es soportada en su plataforma!
     frequency: UPDATE ME
@@ -12,10 +11,7 @@ es:
     login_failed: El inicio de sesión falló.
     password: Contaseña
     password_not_blank: La contraseña no puede dejarse en blanco.
-    please_log_in: Por favor inicie la sesión.
     role_switch:
-      admin_password: Clave del administrador
-      cannot_login_as_another_admin: Usted no puede iniciar la sesión como otro administrador.
       clear_role_switch_session: Cancelar cambio de rol
       log_in_as: Iniciar sesión como
       switch_role: Cambio de rol

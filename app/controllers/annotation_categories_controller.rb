@@ -116,6 +116,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def destroy_annotation_text
     @annotation_text = record
+    @assignment = Assignment.find_by(id: params[:assignment_id])
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
     else
@@ -126,9 +127,10 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation_text
     @annotation_text = record
+    @assignment = Assignment.find_by(id: params[:assignment_id])
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_role.id)
       flash_now(:success, t('annotation_categories.update.success'))
-      @text = annotation_text_data(@annotation_text.annotation_category).find do |text|
+      @text = annotation_text_data(@annotation_text.annotation_category, course: record.course).find do |text|
         text[:id] == @annotation_text.id
       end
     else
@@ -246,12 +248,12 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_data(category, course: nil)
     shared_values = ['annotation_texts.id AS id',
-                     'humen_roles.user_name AS last_editor', # Note: Rails pluralizes human as humen here
+                     'end_users_roles.user_name AS last_editor',
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     course ||= category&.course
-    base_query = AnnotationText.joins(creator: :human)
-                               .left_outer_joins(last_editor: :human)
+    base_query = AnnotationText.joins(creator: :end_user)
+                               .left_outer_joins(last_editor: :end_user)
                                .where('annotation_texts.annotation_category_id': category)
                                .where('roles.course_id': course)
                                .order('users.user_name')

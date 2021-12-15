@@ -79,8 +79,8 @@ class StudentsController < ApplicationController
   end
 
   def create
-    human = Human.find_by_user_name(params[:role][:human][:user_name])
-    @role = current_course.students.create(human: human, **role_params)
+    end_user = EndUser.find_by_user_name(params[:role][:end_user][:user_name])
+    @role = current_course.students.create(end_user: end_user, **role_params)
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(current_course)
   end
@@ -93,7 +93,7 @@ class StudentsController < ApplicationController
   end
 
   def download
-    students = current_course.students.joins(:human).order('users.user_name').includes(:section)
+    students = current_course.students.joins(:end_user).order('users.user_name').includes(:section)
     case params[:format]
       when 'csv'
         output = MarkusCsv.generate(students) do |student|
@@ -171,7 +171,7 @@ class StudentsController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @role.human&.user_name.blank? ? @role.model_name.human : @role.user_name,
+    { resource_name: @role.end_user&.user_name.blank? ? @role.model_name.human : @role.user_name,
       errors: @role.errors.full_messages.join('; ') }
   end
 end

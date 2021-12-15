@@ -1,7 +1,6 @@
-# Subclass of User for "Human" users (Admin, Student, TA)
-class Human < User
-  has_many :roles, foreign_key: :user_id, inverse_of: :human
-  validates_presence_of :roles, unless: -> { self.new_record? }
+# Subclass of User that can be associated with Roles
+class EndUser < User
+  has_many :roles, foreign_key: :user_id, inverse_of: :end_user
   has_many :courses, through: :roles
 
   def visible_courses

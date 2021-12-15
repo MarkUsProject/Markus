@@ -1,10 +1,10 @@
 describe Api::FeedbackFilesController do
   let(:course) { create :course }
-  let(:admin) { create :admin, course: course }
+  let(:instructor) { create :instructor, course: course }
   let(:assignment) { create :assignment, course: course }
   let(:grouping) { create :grouping_with_inviter_and_submission, assignment: assignment }
   let(:feedback_files) { create_list :feedback_file, 3, submission: grouping.submissions.first }
-  let(:test_run) { create :test_run, grouping: grouping, user: admin }
+  let(:test_run) { create :test_run, grouping: grouping, user: instructor }
   let(:feedback_files_with_test_run) { create_list :feedback_file_with_test_run, 3, test_run: test_run }
 
   context 'An unauthenticated request' do
@@ -41,8 +41,8 @@ describe Api::FeedbackFilesController do
 
   context 'An authenticated request' do
     before :each do
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
 
     context 'GET index' do

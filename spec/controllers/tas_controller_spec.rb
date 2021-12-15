@@ -1,6 +1,6 @@
 describe TasController do
-  let(:admin) { create :admin, human: create(:human, user_name: :admin) }
-  let(:course) { admin.course }
+  let(:instructor) { create :instructor, end_user: create(:end_user, user_name: :instructor) }
+  let(:course) { instructor.course }
 
   context '#upload' do
     include_examples 'a controller supporting upload', formats: [:csv], background: true do
@@ -9,12 +9,12 @@ describe TasController do
 
     it 'calls perform_later on a background job' do
       expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
-      post_as admin,
+      post_as instructor,
               :upload,
               params: { course_id: course.id, upload_file: fixture_file_upload('tas/form_good.csv', 'text/csv') }
     end
     it_behaves_like 'role is from a different course' do
-      let(:role) { admin }
+      let(:role) { instructor }
       subject do
         post_as new_role,
                 :upload,
@@ -24,7 +24,7 @@ describe TasController do
   end
 
   context '#download' do
-    subject { get_as(admin, :download, format: format_str, params: { course_id: course.id }) }
+    subject { get_as(instructor, :download, format: format_str, params: { course_id: course.id }) }
     let!(:tas) { create_list :ta, 4, course: course }
     context 'csv' do
       let(:format_str) { 'csv' }
@@ -43,7 +43,7 @@ describe TasController do
       end
 
       it 'expects a call to send_data' do
-        csv_data = course.tas.joins(:human).pluck(:user_name, :last_name, :first_name, :email).map do |data|
+        csv_data = course.tas.joins(:end_user).pluck(:user_name, :last_name, :first_name, :email).map do |data|
           data.join(',')
         end.join("\n") + "\n"
         expect(@controller).to receive(:send_data)
@@ -60,7 +60,7 @@ describe TasController do
         expect(response.media_type).to eq 'text/csv'
       end
       it_behaves_like 'role is from a different course' do
-        let(:role) { admin }
+        let(:role) { instructor }
         subject do
           get_as(new_role, :download, format: format_str, params: { course_id: course.id })
         end
@@ -81,7 +81,7 @@ describe TasController do
       end
 
       it 'expects a call to send_data' do
-        output = course.tas.joins(:human).pluck_to_hash(:user_name, :last_name, :first_name, :email).to_yaml
+        output = course.tas.joins(:end_user).pluck_to_hash(:user_name, :last_name, :first_name, :email).to_yaml
         expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
         subject
       end
@@ -91,7 +91,7 @@ describe TasController do
         expect(response.media_type).to eq 'text/yaml'
       end
       it_behaves_like 'role is from a different course' do
-        let(:role) { admin }
+        let(:role) { instructor }
         subject do
           get_as(new_role, :download, format: format_str, params: { course_id: course.id })
         end
@@ -102,29 +102,31 @@ describe TasController do
   context '#create' do
     let(:params) do
       {
-        grader_permission_attributes: {
-          manage_assessments: false,
-          manage_submissions: true,
-          run_tests: true
+        role: {
+          grader_permission_attributes: {
+            manage_assessments: false,
+            manage_submissions: true,
+            run_tests: true
+          }
         },
-        user_name: human.user_name,
+        user_name: end_user.user_name,
         course_id: course.id
       }
     end
-    context 'when a human exists' do
-      let(:human) { create :human }
+    context 'when a end_user exists' do
+      let(:end_user) { create :end_user }
       context 'when the role is in the same course' do
-        before { post_as admin, :create, params: params }
+        before { post_as instructor, :create, params: params }
         context 'When permissions are selected' do
           it 'should respond with a redirect' do
             expect(response).to redirect_to action: 'index'
           end
           it 'should create associated grader permissions' do
-            ta = course.tas.where(human: human).first
+            ta = course.tas.where(end_user: end_user).first
             expect(GraderPermission.exists?(ta.grader_permission.id)).to be true
           end
           it 'should create the permissions with corresponding values' do
-            ta = course.tas.where(human: human).first
+            ta = course.tas.where(end_user: end_user).first
             expect(ta.grader_permission.manage_assessments).to be false
             expect(ta.grader_permission.manage_submissions).to be true
             expect(ta.grader_permission.run_tests).to be true
@@ -132,9 +134,12 @@ describe TasController do
         end
 
         context 'when no permissions are selected' do
-          let(:params) { { user_name: human.user_name, course_id: course.id } }
+          let(:params) do
+            # Rails strips empty params so a dummy value has to be given
+            { user_name: end_user.user_name, course_id: course.id, role: { grader_permission_attributes: { a: 1 } } }
+          end
           it 'default value for all permissions should be false' do
-            ta = course.tas.where(human: human).first
+            ta = course.tas.where(end_user: end_user).first
             expect(ta.grader_permission.manage_assessments).to be false
             expect(ta.grader_permission.manage_submissions).to be false
             expect(ta.grader_permission.run_tests).to be false
@@ -142,13 +147,13 @@ describe TasController do
         end
       end
       it_behaves_like 'role is from a different course' do
-        let(:role) { admin }
+        let(:role) { instructor }
         subject { post_as new_role, :create, params: params }
       end
     end
-    context 'when a human does not exist' do
-      before { post_as admin, :create, params: params }
-      let(:human) { build :human }
+    context 'when a end_user does not exist' do
+      before { post_as instructor, :create, params: params }
+      let(:end_user) { build :end_user }
       it 'should not create a Ta' do
         expect(Ta.count).to eq(0)
       end

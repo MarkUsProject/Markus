@@ -8,8 +8,8 @@ describe Course do
     it { is_expected.to allow_value('Ads_-hb').for(:name) }
     it { is_expected.to allow_value('-22125-k1lj42_').for(:name) }
     it { is_expected.to allow_value('CSC108 2021 Fall').for(:display_name) }
-    it { is_expected.not_to allow_value('CSC108, 2021 Fall').for(:display_name) }
-    it { is_expected.not_to allow_value('CSC108!.2021 Fall').for(:display_name) }
+    it { is_expected.to allow_value('CSC108, 2021 Fall').for(:display_name) }
+    it { is_expected.to allow_value('CSC108!.2021 Fall').for(:display_name) }
     it { is_expected.to allow_value('CSC108-2021-Fall').for(:display_name) }
     it { is_expected.to have_many(:assignments) }
     it { is_expected.to have_many(:grade_entry_forms) }

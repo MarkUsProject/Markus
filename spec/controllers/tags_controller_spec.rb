@@ -2,8 +2,8 @@ describe TagsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
 
   let(:assignment) { create(:assignment) }
-  let(:admin) { create :admin }
-  let(:course) { admin.course }
+  let(:instructor) { create :instructor }
+  let(:course) { instructor.course }
 
   describe '#index' do
     let!(:tag) { create(:tag) }
@@ -11,7 +11,7 @@ describe TagsController do
     let(:tags) { [tag, assignment_tag] }
     context 'only getting the tags for the specified assignment' do
       it 'returns correct JSON data' do
-        get_as admin, :index, params: { course_id: course.id, assignment_id: assignment.id, format: :json }
+        get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id, format: :json }
         expected = [{ id: assignment_tag.id, name: assignment_tag.name, description: assignment_tag.description,
                       creator: "#{assignment_tag.role.first_name} #{assignment_tag.role.last_name}",
                       use: assignment_tag.groupings.size }.stringify_keys]
@@ -20,7 +20,7 @@ describe TagsController do
     end
     context 'getting tags for all assignments' do
       it 'returns correct JSON data' do
-        get_as admin, :index, params: { course_id: course.id, format: :json }
+        get_as instructor, :index, params: { course_id: course.id, format: :json }
         expected = tags.map do |t|
           { id: t.id, name: t.name, description: t.description,
             creator: "#{t.role.first_name} #{t.role.last_name}", use: t.groupings.size }.stringify_keys
@@ -35,14 +35,14 @@ describe TagsController do
     let(:grouping) { create(:grouping, assignment: assignment) }
 
     it 'creates a new tag' do
-      post_as admin, :create, params: { tag: { name: 'tag', description: 'tag description' },
+      post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
                                         assignment_id: assignment.id, course_id: course.id }
       expect(Tag.find_by(name: 'tag', description: 'tag description')).to_not be_nil
     end
 
     it 'associates the new tag with a grouping when passed grouping_id' do
-      post_as admin, :create, params: { tag: { name: 'tag', description: 'tag description' },
-                                        grouping_id: grouping.id, course_id: course.id }
+      post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
+                                             grouping_id: grouping.id, course_id: course.id }
       tags = grouping.tags
       expect(tags.size).to eq 1
       expect(tags.first.name).to eq 'tag'
@@ -50,8 +50,8 @@ describe TagsController do
     end
 
     it 'associates the new tag with an assessment' do
-      post_as admin, :create, params: { tag: { name: 'tag', description: 'tag description' },
-                                        assignment_id: assignment.id, course_id: course.id }
+      post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
+                                             assignment_id: assignment.id, course_id: course.id }
       expect(Tag.find_by(name: 'tag', description: 'tag description').assessment.id).to eq assignment.id
     end
   end
@@ -60,8 +60,8 @@ describe TagsController do
     let(:tag) { create(:tag, name: 'tag', description: 'description') }
 
     it 'updates tag name and description' do
-      post_as admin, :update, params: { id: tag.id, tag: { name: 'new name', description: 'new description' },
-                                        course_id: course.id }
+      post_as instructor, :update, params: { id: tag.id, tag: { name: 'new name', description: 'new description' },
+                                             course_id: course.id }
       tag.reload
       expect(tag.name).to eq 'new name'
       expect(tag.description).to eq 'new description'
@@ -71,7 +71,7 @@ describe TagsController do
   describe '#destroy' do
     it 'destroys an existing tag' do
       tag = create(:tag)
-      delete_as admin, :destroy, params: { id: tag.id, course_id: course.id }
+      delete_as instructor, :destroy, params: { id: tag.id, course_id: course.id }
       expect(Tag.count).to eq 0
     end
   end
@@ -82,7 +82,7 @@ describe TagsController do
     end
 
     before :each do
-      create(:admin, human: create(:human, user_name: 'a'))
+      create(:instructor, end_user: create(:end_user, user_name: 'a'))
 
       @file_good_csv = fixture_file_upload('tags/form_good.csv', 'text/csv')
       @file_good_yml = fixture_file_upload('tags/form_good.yml', 'text/yaml')
@@ -90,7 +90,7 @@ describe TagsController do
     end
 
     it 'accepts a valid CSV file' do
-      post_as admin, :upload,
+      post_as instructor, :upload,
               params: { upload_file: @file_good_csv, assignment_id: assignment.id, course_id: course.id }
 
       expect(response.status).to eq(302)
@@ -104,7 +104,7 @@ describe TagsController do
     end
 
     it 'accepts a valid YML file' do
-      post_as admin, :upload,
+      post_as instructor, :upload,
               params: { upload_file: @file_good_yml, assignment_id: assignment.id, course_id: course.id }
 
       expect(response.status).to eq(302)
@@ -116,7 +116,7 @@ describe TagsController do
     end
 
     it 'does not accept files with invalid columns' do
-      post_as admin, :upload,
+      post_as instructor, :upload,
               params: { upload_file: @file_invalid_column, assignment_id: assignment.id, course_id: course.id }
 
       expect(response.status).to eq(302)
@@ -152,13 +152,13 @@ describe TagsController do
 
       shared_examples 'upload csv' do
         it 'responds with appropriate status' do
-          get_as admin, :download, params: params, format: 'csv'
+          get_as instructor, :download, params: params, format: 'csv'
           expect(response.status).to eq(200)
         end
 
         # parse header object to check for the right disposition
         it 'sets disposition as attachment' do
-          get_as admin, :download, params: params, format: 'csv'
+          get_as instructor, :download, params: params, format: 'csv'
           d = response.header['Content-Disposition'].split.first
           expect(d).to eq 'attachment;'
         end
@@ -174,12 +174,12 @@ describe TagsController do
             # to prevent a 'missing template' error
             @controller.head :ok
           }
-          get_as admin, :download, params: params, format: 'csv'
+          get_as instructor, :download, params: params, format: 'csv'
         end
 
         # parse header object to check for the right content type
         it 'returns text/csv type' do
-          get_as admin, :download, params: params, format: 'csv'
+          get_as instructor, :download, params: params, format: 'csv'
           expect(response.media_type).to eq 'text/csv'
         end
       end
@@ -219,13 +219,13 @@ describe TagsController do
 
       shared_examples 'upload yml' do
         it 'responds with appropriate status' do
-          get_as admin, :download, params: params, format: 'yml'
+          get_as instructor, :download, params: params, format: 'yml'
           expect(response.status).to eq(200)
         end
 
         # parse header object to check for the right disposition
         it 'sets disposition as attachment' do
-          get_as admin, :download, params: params, format: 'yml'
+          get_as instructor, :download, params: params, format: 'yml'
           d = response.header['Content-Disposition'].split.first
           expect(d).to eq 'attachment;'
         end
@@ -251,12 +251,12 @@ describe TagsController do
             # to prevent a 'missing template' error
             @controller.head :ok
           }
-          get_as admin, :download, params: params, format: 'yml'
+          get_as instructor, :download, params: params, format: 'yml'
         end
 
         # parse header object to check for the right content type
         it 'returns text/yml type' do
-          get_as admin, :download, params: params, format: 'yml'
+          get_as instructor, :download, params: params, format: 'yml'
           expect(response.media_type).to eq 'text/yml'
         end
       end

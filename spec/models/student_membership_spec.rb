@@ -81,8 +81,8 @@ describe StudentMembership do
     it 'should belong to a student' do
       expect(create(:student_membership, role: create(:student))).to be_valid
     end
-    it 'should not belong to an admin' do
-      expect { create :student_membership, role: create(:admin) }.to raise_error(ActiveRecord::RecordInvalid)
+    it 'should not belong to an instructor' do
+      expect { create :student_membership, role: create(:instructor) }.to raise_error(ActiveRecord::RecordInvalid)
     end
     it 'should not belong to an ta' do
       expect { create :student_membership, role: create(:ta) }.to raise_error(ActiveRecord::RecordInvalid)

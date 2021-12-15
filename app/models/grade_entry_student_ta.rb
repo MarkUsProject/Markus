@@ -45,9 +45,9 @@ class GradeEntryStudentTa < ApplicationRecord
     end
 
     new_mappings = []
-    tas = Hash[Ta.joins(:human).pluck('users.user_name', :id)]
+    tas = Hash[Ta.joins(:end_user).pluck('users.user_name', :id)]
     grade_entry_students = Hash[
-      grade_entry_form.grade_entry_students.joins(role: :human).pluck('users.user_name', :id)
+      grade_entry_form.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id)
     ]
 
     result = MarkusCsv.parse(csv_data.read) do |row|

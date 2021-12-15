@@ -4,7 +4,7 @@ describe AutotestRunJob do
   let(:n_groups) { 3 }
   let(:groupings) { create_list(:grouping_with_inviter_and_submission, n_groups, assignment: assignment) }
   let(:groups) { groupings.map(&:group) }
-  let(:user) { create(:admin) }
+  let(:user) { create(:instructor) }
   before { allow(File).to receive(:read).and_return("123456789\n") }
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, user.id, assignment.id, groups.map(&:id)] }
@@ -77,8 +77,8 @@ describe AutotestRunJob do
       context 'when collected is true' do
         it 'should send the correct url' do
           file_urls = groups.map do |group|
-            "http://localhost:3000#{Rails.configuration.action_controller.relative_url_root}" \
-            "/api/assignments/#{assignment.id}/groups/#{group.id}/submission_files?collected=true"
+            "http://localhost:3000#{Rails.configuration.action_controller.relative_url_root}/api/courses"\
+            "/#{assignment.course.id}/assignments/#{assignment.id}/groups/#{group.id}/submission_files?collected=true"
           end
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
             expect(JSON.parse(net_obj.body)['file_urls']).to contain_exactly(*file_urls)
@@ -100,7 +100,8 @@ describe AutotestRunJob do
         it 'should send the correct url' do
           url_root = Rails.configuration.action_controller.relative_url_root
           file_urls = groups.map do |group|
-            "http://localhost:3000#{url_root}/api/assignments/#{assignment.id}/groups/#{group.id}/submission_files?"
+            "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/"\
+            "groups/#{group.id}/submission_files?"
           end
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
             expect(JSON.parse(net_obj.body)['file_urls']).to contain_exactly(*file_urls)
@@ -138,10 +139,10 @@ describe AutotestRunJob do
           end
         end
       end
-      context 'when the user is an admin' do
+      context 'when the user is an instructor' do
         it 'should set the correct categories' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
-            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('admin')
+            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('instructor')
             dummy_return
           end
           subject
@@ -161,7 +162,7 @@ describe AutotestRunJob do
         let(:user) { create(:ta) }
         it 'should set the correct categories' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
-            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('admin')
+            expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('instructor')
             dummy_return
           end
           subject

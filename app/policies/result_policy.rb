@@ -25,11 +25,11 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def grade?
-    role.admin? || role.ta?
+    role.instructor? || role.ta?
   end
 
   def review?
-    role.admin? || role.ta? || (
+    role.instructor? || role.ta? || (
       record&.submission&.assignment&.has_peer_review &&
           role.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
     )
@@ -40,11 +40,11 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def manage?
-    role.admin?
+    role.instructor?
   end
 
   def download?
-    role.admin? || role.ta? || (
+    role.instructor? || role.ta? || (
       from_codeviewer && role.is_reviewer_for?(record.submission.grouping.assignment.pr_assignment, record)
     ) || (
       record.submission.grouping.accepted_students.pluck(:id).include?(role.id) && (

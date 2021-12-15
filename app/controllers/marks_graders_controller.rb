@@ -17,7 +17,7 @@ class MarksGradersController < ApplicationController
                    .count
 
         graders = current_course.tas
-                                .joins(:human)
+                                .joins(:end_user)
                                 .pluck('roles.id', :user_name, :first_name, :last_name)
                                 .map do |ta_data|
           {
@@ -31,12 +31,12 @@ class MarksGradersController < ApplicationController
 
         # Student information
         student_data = gef.grade_entry_students
-                          .left_outer_joins(role: :human, tas: :human)
+                          .left_outer_joins(role: :end_user, tas: :end_user)
                           .pluck('roles.id',
                                  'users.user_name',
                                  'users.first_name',
                                  'users.last_name',
-                                 'humen_roles.user_name') # Note: Rails pluralizes human as humen here
+                                 'end_users_roles.user_name')
 
         students = Hash.new { |h, k| h[k] = [] }
         student_data.each do |s0, s1, s2, s3, ta|
@@ -90,10 +90,10 @@ class MarksGradersController < ApplicationController
   def grader_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
 
-    students = Student.left_outer_joins(:human, grade_entry_students: [tas: :human])
+    students = Student.left_outer_joins(:end_user, grade_entry_students: [tas: :end_user])
                       .where('grade_entry_students.assessment_id': grade_entry_form.id)
-                      .order('users.user_name', 'humen_roles.user_name') # Note: Rails pluralizes human as humen here
-                      .pluck('users.user_name', 'humen_roles.user_name')
+                      .order('users.user_name', 'end_users_roles.user_name')
+                      .pluck('users.user_name', 'end_users_roles.user_name')
                       .group_by { |x| x[0] }
                       .to_a
 

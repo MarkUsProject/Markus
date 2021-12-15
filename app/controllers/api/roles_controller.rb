@@ -2,9 +2,9 @@ module Api
   # API controller for Roles
   class RolesController < MainApiController
     # Define default fields to display for index and show methods
-    HUMAN_FIELDS = [:user_name, :email, :id_number, :first_name, :last_name].freeze
+    END_USER_FIELDS = [:user_name, :email, :id_number, :first_name, :last_name].freeze
     ROLE_FIELDS = [:type, :grace_credits, :hidden].freeze
-    DEFAULT_FIELDS = [:id, *HUMAN_FIELDS, *ROLE_FIELDS].freeze
+    DEFAULT_FIELDS = [:id, *END_USER_FIELDS, *ROLE_FIELDS].freeze
 
     # Returns users and their attributes
     # Optional: filter, fields
@@ -86,10 +86,8 @@ module Api
 
     def create_role
       ApplicationRecord.transaction do
-        human = Human.find_or_create_by!(human_params.permit(:user_name)) do |h|
-          h.assign_attributes(human_params)
-        end
-        role = Role.new(**role_params, human: human, course: @current_course)
+        end_user = EndUser.find_by(user_name: params[:user_name])
+        role = Role.new(**role_params, end_user: end_user, course: @current_course)
         role.section = Section.find_by(name: params[:section_name]) if params[:section_name]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
@@ -104,7 +102,6 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        role.human.update!(params.permit(:first_name, :last_name, :user_name))
         role.section = Section.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.save!
@@ -127,8 +124,8 @@ module Api
       end
 
       # Check if that user_name is taken
-      human = Human.find_by_user_name(params[:user_name])
-      role = Role.find_by(human: human, course: @current_course)
+      end_user = EndUser.find_by_user_name(params[:user_name])
+      role = Role.find_by(end_user: end_user, course: @current_course)
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: 404
         return
@@ -137,11 +134,11 @@ module Api
     end
 
     def filtered_roles
-      collection = Role.includes(:human).where(params.permit(:course_id)).order(:id)
+      collection = Role.includes(:end_user).where(params.permit(:course_id)).order(:id)
       if params[:filter]&.present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
-        human_filter = params[:filter].permit(*HUMAN_FIELDS).to_h.map { |k, v| ["users.#{k}", v] }.to_h
-        filter_params = { **role_filter, **human_filter }
+        end_user_filter = params[:filter].permit(*END_USER_FIELDS).to_h.map { |k, v| ["users.#{k}", v] }.to_h
+        filter_params = { **role_filter, **end_user_filter }
         if filter_params.empty?
           render 'shared/http_status',
                  locals: { code: '422', message: 'Invalid or malformed parameter values' }, status: 422
@@ -151,10 +148,6 @@ module Api
         end
       end
       collection
-    end
-
-    def human_params
-      params.permit(:user_name, :first_name, :last_name)
     end
 
     def role_params

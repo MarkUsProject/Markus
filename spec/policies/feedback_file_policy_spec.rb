@@ -1,13 +1,13 @@
 describe FeedbackFilePolicy do
-  let(:context) { { role: role, real_user: role.human } }
+  let(:context) { { role: role, real_user: role.end_user } }
   let(:grouping) { create :grouping_with_inviter }
   let(:test_run) { create :test_run, grouping: grouping, role: grouping.inviter }
   let(:test_group_result) { create :test_group_result, test_run: test_run }
   let(:record) { create :feedback_file_with_test_run, test_group_result: test_group_result }
 
   describe_rule :show? do
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
 
     context 'role is a ta' do

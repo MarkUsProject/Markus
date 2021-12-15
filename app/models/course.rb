@@ -6,7 +6,7 @@ class Course < ApplicationRecord
   has_many :sections, inverse_of: :course
   has_many :groups, inverse_of: :course
   has_many :roles
-  has_many :admins
+  has_many :instructors
   has_many :tas
   has_many :students
   has_many :marking_schemes

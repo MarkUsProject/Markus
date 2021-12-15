@@ -1,23 +1,23 @@
 ---
 fr:
-  admins:
+  instructors:
     edit: Modification d'un administrateur
     help:
-      manage_admins: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
+      manage_instructors: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
     new: Créer un nouvel administrateur
   students:
     active: Actif
-    admin_actions:
-      add_section: Ajouter à une section
-      give_grace_credits: Donner du temps supplémentaire
-      mark_active: Activer les étudiants
-      mark_inactive: Désactiver les étudiants
     display_inactive: UPDATE ME
     edit: Modification d'un(e) étudiant(e)
     help:
       manage_students: Mark students as active or inactive, give them grace credits.
     inactive: Inactif
-    new: Créer un(e) nouvel(le) étudiant(e)
+    instructor_actions:
+      add_section: Ajouter à une section
+      give_grace_credits: Donner du temps supplémentaire
+      mark_active: Activer les étudiants
+      mark_inactive: Désactiver les étudiants
+    new: Créer un(e) nouvel(le) étudiant(e)O
     no_students_selected: Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué.
     not_successfully_added_message_1: 'Les étudiants suivants n''ont pas été ajoutés correctement : '
     not_successfully_added_message_2: 'Assurez-vous que : '
@@ -34,8 +34,5 @@ fr:
     api_key:
       reset: Générer une nouvelle clé
       unavailable: Non disponible
-    upload:
-      errors:
-        duplicate_users: 'Nom d''utilisateur déjà inscrit (conflit) : %{user_names}.'
-    verify_settings_update: UPDATE ME
     not_found: 'UPDATE ME: %{user_names}'
+    verify_settings_update: UPDATE ME

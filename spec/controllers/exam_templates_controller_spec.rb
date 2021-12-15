@@ -2,7 +2,7 @@ describe ExamTemplatesController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:exam_template) { create(:exam_template_midterm) }
   let(:course) { exam_template.course }
-  shared_examples 'An authorized admin or grader managing exam templates' do
+  shared_examples 'An authorized instructor or grader managing exam templates' do
     describe '#index' do
       before { get_as user, :index, params: { course_id: course.id, assignment_id: exam_template.assignment.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
@@ -34,15 +34,15 @@ describe ExamTemplatesController do
     end
   end
 
-  describe 'When the user is admin' do
-    let(:user) { create(:admin) }
-    include_examples 'An authorized admin or grader managing exam templates'
+  describe 'When the user is instructor' do
+    let(:user) { create(:instructor) }
+    include_examples 'An authorized instructor or grader managing exam templates'
   end
 
   describe 'When the user is grader' do
     context 'When grader is allowed to manage exam template' do
       let(:user) { create(:ta, manage_assessments: true) }
-      include_examples 'An authorized admin or grader managing exam templates'
+      include_examples 'An authorized instructor or grader managing exam templates'
     end
     context 'When grader is not allowed to manage exam template' do
       # By default all the grader permissions are set to false

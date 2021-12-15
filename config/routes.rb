@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   # optional path scope (denoted by the parentheses)
   # API routes
   namespace :api do
+    resources :users, only: [:index, :create, :show, :update] do
+      collection do
+        put 'update_by_username'
+      end
+    end
     resources :courses, only: [:index, :show] do
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
@@ -75,7 +80,7 @@ Rails.application.routes.draw do
       post 'upload_assignments'
     end
 
-    resources :admins, only: [:index, :new, :create, :edit, :update]
+    resources :instructors, only: [:index, :new, :create, :edit, :update]
 
     resources :starter_file_groups, only: [:destroy, :update] do
       member do

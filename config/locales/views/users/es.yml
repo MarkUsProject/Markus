@@ -1,22 +1,22 @@
 ---
 es:
-  admins:
+  instructors:
     edit: Editar la información del Administrador
     help:
-      manage_admins: Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs, incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas.
+      manage_instructors: Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs, incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas.
     new: Crear un nuevo Administrador
   students:
     active: Activo
-    admin_actions:
-      add_section: Añadir sección
-      give_grace_credits: 'Dar créditos de gracia:'
-      mark_active: Markar como activo
-      mark_inactive: Markar como inactivo
     display_inactive: UPDATE ME
     edit: Editar un Estudiante
     help:
       manage_students: Markar estudiantes como activos o inactivos, darles créditos de gracia.
     inactive: Inactivo
+    instructor_actions:
+      add_section: Añadir sección
+      give_grace_credits: 'Dar créditos de gracia:'
+      mark_active: Markar como activo
+      mark_inactive: Markar como inactivo
     new: Crear un nuevo Estudiante
     no_students_selected: No se ha seleccionado ningún estudiante, por lo tanto, no se han realizado cambios.
     not_successfully_added_message_1: 'Los siguientes estudiantes no han podido ser añadidos:'
@@ -35,8 +35,5 @@ es:
       help_html: La clave API es usada como autenticación para la interface REST. Mira la <a href="https://github.com/MarkUsProject/Markus/wiki/RESTful-API"> Wiki de MarkUs</a> para más información acerca del uso de la REST API.
       reset: Reiniciar mi clave API
       unavailable: No disponible
-    upload:
-      errors:
-        duplicate_users: 'Se ha detectado un nombre de usuario duplicado: %{user_names}.'
-    verify_settings_update: UPDATE ME
     not_found: 'UPDATE ME: %{user_names}'
+    verify_settings_update: UPDATE ME

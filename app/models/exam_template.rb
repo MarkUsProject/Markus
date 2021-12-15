@@ -168,7 +168,7 @@ class ExamTemplate < ApplicationRecord
         grouping.access_repo do |repo|
           revision = repo.get_latest_revision
           assignment_folder = self.assignment.repository_folder
-          txn = repo.get_transaction(Admin.first.user_name)
+          txn = repo.get_transaction(Instructor.first.user_name)
           self.template_divisions.each do |template_division|
             next unless template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
 

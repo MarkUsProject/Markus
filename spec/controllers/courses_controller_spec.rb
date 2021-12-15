@@ -1,13 +1,13 @@
 describe CoursesController do
-  let(:admin) { create :admin }
-  let(:course) { admin.course }
+  let(:instructor) { create :instructor }
+  let(:course) { instructor.course }
   context 'accessing course pages' do
     it 'responds with success on index' do
-      get_as admin, :index
+      get_as instructor, :index
       expect(response.status).to eq(200)
     end
     it 'responds with success on show' do
-      get_as admin, :show, params: { id: course }
+      get_as instructor, :show, params: { id: course }
       expect(response.status).to eq(200)
     end
   end
@@ -40,7 +40,7 @@ describe CoursesController do
     end
 
     it 'accepts a valid file' do
-      post_as admin, :upload_assignments, params: { id: course.id, upload_file: @file_good }
+      post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good }
 
       expect(response.status).to eq(302)
       test1 = Assignment.find_by(short_identifier: @test_asn1)
@@ -54,7 +54,7 @@ describe CoursesController do
     end
 
     it 'accepts a valid YAML file' do
-      post_as admin, :upload_assignments, params: { id: course.id, upload_file: @file_good_yml }
+      post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good_yml }
 
       expect(response.status).to eq(302)
       test1 = Assignment.find_by_short_identifier(@test_asn1)
@@ -66,7 +66,7 @@ describe CoursesController do
     end
 
     it 'does not accept files with invalid columns' do
-      post_as admin, :upload_assignments, params: { id: course.id, upload_file: @file_invalid_column }
+      post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -82,13 +82,13 @@ describe CoursesController do
     let!(:assignment) { create(:assignment) }
 
     it 'responds with appropriate status' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'csv' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'csv' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -104,18 +104,18 @@ describe CoursesController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get_as admin, :download_assignments, params: { id: course.id, format: 'csv' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'csv' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
       expect(response.media_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'csv' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq 'assignments.csv'
     end
@@ -127,13 +127,13 @@ describe CoursesController do
     let!(:assignment) { create(:assignment) }
 
     it 'responds with appropriate status' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'yml' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'yml' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -154,18 +154,18 @@ describe CoursesController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get_as admin, :download_assignments, params: { id: course.id, format: 'yml' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
     end
 
     # parse header object to check for the right content type
     it 'returns text/yml type' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'yml' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
       expect(response.media_type).to eq 'text/yml'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get_as admin, :download_assignments, params: { id: course.id, format: 'yml' }
+      get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq 'assignments.yml'
     end

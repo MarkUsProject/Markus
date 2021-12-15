@@ -1,7 +1,7 @@
 describe AssignmentPolicy do
-  let(:context) { { role: role, real_user: role.human } }
+  let(:context) { { role: role, real_user: role.end_user } }
   let(:record) { assignment }
-  let(:role) { create :admin }
+  let(:role) { create :instructor }
   let(:assignment) { create :assignment }
 
   describe_rule :index? do
@@ -13,8 +13,8 @@ describe AssignmentPolicy do
   end
 
   describe_rule :manage? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
@@ -30,8 +30,8 @@ describe AssignmentPolicy do
   end
 
   describe_rule :view_test_options? do
-    context 'role is an admin' do
-      let(:role) { create(:admin) }
+    context 'role is an instructor' do
+      let(:role) { create(:instructor) }
       succeed 'when tests enabled' do
         let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
       end
@@ -187,8 +187,8 @@ describe AssignmentPolicy do
   end
 
   describe_rule :view? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create :ta }
@@ -199,8 +199,8 @@ describe AssignmentPolicy do
   end
 
   describe_rule :manage_tests? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
@@ -276,19 +276,19 @@ describe AssignmentPolicy do
                                              due_date: 2.days.from_now,
                                              is_hidden: false)
     end
-    context 'when the role is an admin' do
-      let(:admin_role) { create(:admin) }
+    context 'when the role is an instructor' do
+      let(:instructor_role) { create(:instructor) }
 
-      succeed 'role is an admin' do
+      succeed 'role is an instructor' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: admin_role, real_user: admin_role.human } }
+        let(:context) { { role: instructor_role, real_user: instructor_role.end_user } }
       end
     end
     context 'when the role is a TA' do
       let(:ta_role) { create(:ta) }
-      succeed 'user is an admin' do
+      succeed 'user is an instructor' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: ta_role, real_user: ta_role.human } }
+        let(:context) { { role: ta_role, real_user: ta_role.end_user } }
       end
     end
     context 'when there are no section due dates' do

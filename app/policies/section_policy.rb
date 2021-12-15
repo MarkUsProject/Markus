@@ -3,6 +3,6 @@ class SectionPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    role.admin?
+    role.instructor?
   end
 end

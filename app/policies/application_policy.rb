@@ -22,7 +22,7 @@ class ApplicationPolicy < ActionPolicy::Base
 
   # policies used to render menu bars (visible everywhere)
 
-  def view_admin_subtabs?
+  def view_instructor_subtabs?
     role && check?(:manage_assessments?, role)
   end
 
@@ -35,13 +35,13 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def view_sub_sub_tabs?
-    role&.admin? || role&.ta?
+    role&.instructor? || role&.ta?
   end
 
   # checks usable for all policies
 
-  def admin?
-    role.admin?
+  def instructor?
+    role.instructor?
   end
 
   def ta?

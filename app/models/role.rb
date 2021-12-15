@@ -1,9 +1,9 @@
 # Model representing a user's role in a given course.
 class Role < ApplicationRecord
-  belongs_to :human, foreign_key: 'user_id', inverse_of: :roles
+  belongs_to :end_user, foreign_key: 'user_id', inverse_of: :roles
   belongs_to :course, inverse_of: :roles
-  accepts_nested_attributes_for :human
-  delegate_missing_to :human
+  accepts_nested_attributes_for :end_user
+  delegate_missing_to :end_user
 
   # Group relationships
   has_many :memberships, dependent: :delete_all
@@ -15,18 +15,13 @@ class Role < ApplicationRecord
   has_many :assessments, through: :course
   has_many :tags
 
-  validates_format_of :type, with: /\AStudent|Admin|Ta\z/
+  validates_format_of :type, with: /\AStudent|Instructor|Ta\z/
   validates_uniqueness_of :user_id, scope: :course_id
-
-  # role constants
-  STUDENT = 'Student'.freeze
-  ADMIN = 'Admin'.freeze
-  TA = 'Ta'.freeze
 
   # Helper methods -----------------------------------------------------
 
-  def admin?
-    instance_of?(Admin)
+  def instructor?
+    instance_of?(Instructor)
   end
 
   def ta?

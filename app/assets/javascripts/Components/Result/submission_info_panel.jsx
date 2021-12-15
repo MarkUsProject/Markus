@@ -47,7 +47,7 @@ export class SubmissionInfoPanel extends React.Component {
         <ul className="tag-list">{this.renderTagList()}</ul>
         <h3>{I18n.t("tags.results.available_tags")}</h3>
         <ul className="tag-list">{this.renderAvailableTags()}</ul>
-        {this.props.role === "Admin" && (
+        {this.props.role === "Instructor" && (
           <p>
             <button className="inline-button" onClick={() => modal_create_new_tag.open()}>
               {I18n.t("helpers.submit.create", {

@@ -18,8 +18,8 @@ en:
         theme: Color Theme
         user_name: User Name
     models:
-      admin:
-        one: Admin
+      instructor:
+        one: Instructor
       student:
         one: Student
         other: Students

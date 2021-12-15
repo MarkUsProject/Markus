@@ -20,7 +20,7 @@
 
 <%# student results page (with instructor tests released) does not need the button %>
 <% unless @current_role.student? && ran_by == 'instructor' %>
-  <% route = @current_role.admin? ?
+  <% route = @current_role.instructor? ?
     run_tests_course_result_path(@current_course, @result) :
     execute_test_run_course_assignment_automated_tests_path(@current_course, @assignment) %>
   <div class="rt-action-box">

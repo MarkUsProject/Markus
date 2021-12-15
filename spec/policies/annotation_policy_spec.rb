@@ -1,15 +1,15 @@
 describe AnnotationPolicy do
   describe_rule :manage? do
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
-      let(:context) { { role: role, real_user: role.human } }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
     succeed 'role is a ta' do
       let(:role) { create :ta }
-      let(:context) { { role: role, real_user: role.human } }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
     context 'role is a student' do
-      let(:context) { { role: role, real_user: role.human } }
+      let(:context) { { role: role, real_user: role.end_user } }
       let(:role) { create :student }
       failed 'not associated with a peer review' do
         let(:record) { create :text_annotation }
@@ -28,13 +28,13 @@ describe AnnotationPolicy do
     end
   end
   describe_rule :add_existing_annotation? do
-    succeed 'role is an admin' do
-      let(:role) { create :admin }
-      let(:context) { { role: role, real_user: role.human } }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
     succeed 'role is a ta' do
       let(:role) { create :ta }
-      let(:context) { { role: role, real_user: role.human } }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
   end
 end

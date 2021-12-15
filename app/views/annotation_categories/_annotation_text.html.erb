@@ -61,9 +61,7 @@
       <div class='annotation-text-details'>
         <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
         <%= link_to annotation_text[:group_name],
-                    edit_assignment_submission_result_url(assignment_id: annotation_text[:assignment_id],
-                                                          submission_id: annotation_text[:submission_id],
-                                                          id: annotation_text[:result_id]) %>
+                    edit_course_result_url(@current_course, annotation_text[:result_id]) %>
       </div>
     <% else %>
       <div id='annotation-text-<%= annotation_text[:id] %>-usage-panel'></div>

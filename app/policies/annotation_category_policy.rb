@@ -8,6 +8,6 @@ class AnnotationCategoryPolicy < ApplicationPolicy
   end
 
   def read?
-    check?(:admin?) || check?(:ta?)
+    check?(:instructor?) || check?(:ta?)
   end
 end

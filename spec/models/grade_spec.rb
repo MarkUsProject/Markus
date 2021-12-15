@@ -1,5 +1,9 @@
 describe Grade do
-  subject { create :grade }
+  subject do
+    create :grade_entry_form
+    student = create :student
+    create :grade, grade_entry_student: student.grade_entry_students.first
+  end
   it { is_expected.to validate_numericality_of(:grade) }
 
   it { is_expected.to allow_value(0.0).for(:grade) }

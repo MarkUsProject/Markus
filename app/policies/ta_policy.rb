@@ -20,10 +20,10 @@ class TaPolicy < RolePolicy
   end
 
   def download?
-    role.admin?
+    role.instructor?
   end
 
   def upload?
-    role.admin?
+    role.instructor?
   end
 end

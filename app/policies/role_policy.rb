@@ -1,6 +1,6 @@
 # Role policy class
 class RolePolicy < ApplicationPolicy
   def manage?
-    role.admin?
+    role.instructor?
   end
 end

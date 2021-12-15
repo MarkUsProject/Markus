@@ -777,7 +777,7 @@ class SubmissionsController < ApplicationController
       if file_obj.is_a? Repository::RevisionFile
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, grouping.assignment.id,
+        data = get_file_info(basename, file_obj, grouping.course.id, grouping.assignment.id,
                              revision.revision_identifier, dirname, grouping.id)
         next if data.nil?
         data[:key] = file_name

@@ -1,5 +1,5 @@
 describe GenerateJob do
-  let(:admin) { create(:admin) }
+  let(:instructor) { create(:instructor) }
   let(:exam_template) { create(:exam_template_midterm) }
 
   context 'when running as a background job' do

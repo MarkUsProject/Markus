@@ -19,7 +19,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def see_hidden?
-    role.admin? || role.ta? || role.visible_assessments(assessment_id: record.id).exists?
+    role.instructor? || role.ta? || role.visible_assessments(assessment_id: record.id).exists?
   end
 
   # helper policies
@@ -72,7 +72,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def view?
-    role.admin? || role.ta?
+    role.instructor? || role.ta?
   end
 
   def manage_tests?

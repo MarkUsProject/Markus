@@ -30,9 +30,9 @@ describe Api::AssignmentsController do
   end
   context 'An authenticated request requesting' do
     before :each do
-      admin = create :admin, course: course
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      instructor = create :instructor, course: course
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
 
     context 'GET index' do

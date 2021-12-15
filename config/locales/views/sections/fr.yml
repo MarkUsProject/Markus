@@ -15,7 +15,7 @@ fr:
     new:
       title: Ajouter une nouvelle section
     none: Il n'y a pas encore de section.
+    not_found: UPDATE ME %{name}.
     update:
       error: Échec des modifications de la section.
       success: Section mise à jour.
-    not_found: UPDATE ME %{name}.

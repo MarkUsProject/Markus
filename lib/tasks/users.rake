@@ -1,34 +1,26 @@
 namespace :db do
 
   desc 'Create a single Instructor'
-  task :admin => :environment do
-    puts 'Populate database with Admins'
-    [['a',    'admin', 'admin'], # Standard admin
-     ['reid', 'Karen', 'Reid']]  # Reid
-    .each do |admin|
-      Admin.create!(course: Course.first, human_attributes: { user_name: admin[0],
-                                                              first_name: admin[1], last_name: admin[2] })
+  task instructor: :environment do
+    puts 'Populate database with Instructors'
+    [%w[a instructor instructor],
+     %w[reid Karen Reid]].each do |instructor|
+      Instructor.create!(course: Course.first, end_user_attributes: { user_name: instructor[0],
+                                                                      first_name: instructor[1],
+                                                                      last_name: instructor[2] })
     end
   end
 
   desc 'Add TA users to the database'
   # this task depends on :environment and :seed
-  task(:tas => :environment) do
-        puts 'Populate database with TAs'
-    [['c6conley', 'Mike',    'Conley'],
-     ['c6gehwol', 'Severin', 'Gehwolf'],
-     ['c9varoqu', 'Nelle',   'Varoquaux'],
-     ['c9rada',   'Mark',    'Rada']]
-        .each do |ta|
-      Ta.create!(course: Course.first, human_attributes: { user_name: ta[0], first_name: ta[1], last_name: ta[2] })
+  task tas: :environment do
+    puts 'Populate database with TAs'
+    [%w[c6conley Mike Conley],
+     %w[c6gehwol Severin Gehwolf],
+     %w[c9varoqu Nelle Varoquaux],
+     %w[c9rada Mark Rada]].each do |ta|
+      Ta.create!(course: Course.first, end_user_attributes: { user_name: ta[0], first_name: ta[1], last_name: ta[2] })
     end
-  end
-
-  desc 'Add a local TestServer account'
-  # this task depends on :environment and :seed
-  task(:test_servers => :environment) do
-    puts 'Populate database with TestServers'
-    TestServer.find_or_create
   end
 
   task student_users: :environment do
@@ -43,11 +35,11 @@ namespace :db do
           first_name_email = first_name.downcase.gsub(/\s+/, '')
           last_name_email = last_name.downcase.gsub(/\s+/, '')
           i += rand(10 ** 7)
-          Human.create!(user_name: user_name,
-                        first_name: first_name,
-                        last_name: last_name,
-                        id_number: format('%010d', i),
-                        email: "#{first_name_email}.#{last_name_email}@example.com")
+          EndUser.create!(user_name: user_name,
+                          first_name: first_name,
+                          last_name: last_name,
+                          id_number: format('%010d', i),
+                          email: "#{first_name_email}.#{last_name_email}@example.com")
         end
       end
     end
@@ -58,9 +50,12 @@ namespace :db do
   task students: :environment do
     puts 'Populate database with Students'
     STUDENT_CSV = 'db/data/students.csv'
+    course = Course.first
+    course.sections.create(name: :LEC0101)
+    course.sections.create(name: :LEC0201)
     if File.readable?(STUDENT_CSV)
       File.open(STUDENT_CSV) do |csv_students|
-        UploadRolesJob.perform_now(Student, Course.first, csv_students.read, nil)
+        UploadRolesJob.perform_now(Student, course, csv_students.read, nil)
       end
     end
     Student.find_each do |student|

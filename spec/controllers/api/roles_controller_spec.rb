@@ -1,6 +1,6 @@
 describe Api::RolesController do
   let(:course) { create :course }
-  let(:admin) { create :admin, course: course }
+  let(:instructor) { create :instructor, course: course }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -13,7 +13,7 @@ describe Api::RolesController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: admin.id, course_id: course.id }
+      get :show, params: { id: instructor.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
@@ -24,15 +24,15 @@ describe Api::RolesController do
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :update, params: { id: admin.id, course_id: course.id }
+      put :update, params: { id: instructor.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request' do
     let(:students) { create_list :student, 3, course: course }
     before :each do
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
     context 'GET index' do
       context 'for a different course' do
@@ -149,36 +149,34 @@ describe Api::RolesController do
       end
     end
     context 'POST create' do
-      let(:student) { build :student, course: course }
+      let(:end_user) { create :end_user }
+      let(:student) { build :student, end_user: end_user, course: course }
       let(:user_name) { student.user_name }
       let(:type) { student.type }
       let(:first_name) { student.first_name }
       let(:last_name) { student.last_name }
       context 'for a different course' do
         it 'should return a 403 error' do
-          post :create, params: { user_name: user_name, type: type, first_name: first_name,
-                                  last_name: last_name, course_id: create(:course).id }
+          post :create, params: { user_name: user_name, type: type, course_id: create(:course).id }
           expect(response.status).to eq(403)
         end
       end
       context 'for a non-existant course' do
         it 'should return a 404 error' do
-          post :create, params: { user_name: user_name, type: type, first_name: first_name,
-                                  last_name: last_name, course_id: Course.ids.max + 1 }
+          post :create, params: { user_name: user_name, type: type, course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
       context 'for the same course' do
         before :each do
-          post :create, params: { user_name: user_name, type: type, first_name: first_name,
-                                  last_name: last_name, course_id: course.id }
+          post :create, params: { user_name: user_name, type: type, course_id: course.id }
         end
         context 'when creating a new user' do
           it 'should be successful' do
             expect(response.status).to eq(201)
           end
           it 'should create a new user' do
-            expect(Student.joins(:human).where('users.user_name': student.user_name).first).not_to be_nil
+            expect(Student.joins(:end_user).where('users.user_name': student.user_name).first).not_to be_nil
           end
         end
         context 'when trying to create a user who already exists' do
@@ -218,30 +216,23 @@ describe Api::RolesController do
         end
       end
       context 'when updating an existing user' do
-        it 'should update a user name' do
+        it 'should not update a user name' do
           put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
           expect(response.status).to eq(200)
           student.reload
-          expect(student.user_name).to eq(tmp_student.user_name)
+          expect(student.user_name).not_to eq(tmp_student.user_name)
         end
-        it 'should update a first name' do
+        it 'should not update a first name' do
           put :update, params: { id: student.id, first_name: tmp_student.first_name, course_id: course.id }
           expect(response.status).to eq(200)
           student.reload
-          expect(student.first_name).to eq(tmp_student.first_name)
+          expect(student.first_name).not_to eq(tmp_student.first_name)
         end
-        it 'should update a last name' do
+        it 'should not update a last name' do
           put :update, params: { id: student.id, last_name: tmp_student.last_name, course_id: course.id }
           expect(response.status).to eq(200)
           student.reload
-          expect(student.last_name).to eq(tmp_student.last_name)
-        end
-        it 'should not update an a user name if another user with that name exists' do
-          tmp_student.save
-          put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
-          expect(response.status).to eq(422)
-          student.reload
-          expect(student.user_name).to eq(student.user_name)
+          expect(student.last_name).not_to eq(tmp_student.last_name)
         end
       end
       context 'when updating a user that does not exist' do

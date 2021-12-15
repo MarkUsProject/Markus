@@ -4,7 +4,7 @@ describe AnnotationCategoriesController do
   let(:assignment) { create(:assignment) }
   let(:annotation_category) { FactoryBot.create(:annotation_category, assignment: assignment) }
 
-  shared_examples 'A grader or admin accessing the index or find_annotation_text routes' do
+  shared_examples 'A grader or instructor accessing the index or find_annotation_text routes' do
     describe '#index' do
       before { create(:annotation_category, assignment: assignment) }
       it 'should respond with 200' do
@@ -57,7 +57,7 @@ describe AnnotationCategoriesController do
   end
 
   shared_examples 'An authorized user managing annotation categories' do
-    include_examples 'A grader or admin accessing the index or find_annotation_text routes'
+    include_examples 'A grader or instructor accessing the index or find_annotation_text routes'
     describe '#show' do
       it 'should respond with 200' do
         get_as role, :show, params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
@@ -501,7 +501,7 @@ describe AnnotationCategoriesController do
       let(:assignment_result) { assignment.groupings.first.current_result }
       let(:text) { create(:annotation_text, annotation_category: nil) }
       let(:different_text) { create(:annotation_text, annotation_category: nil) }
-      let(:last_editor) { create(:admin) }
+      let(:last_editor) { create(:instructor) }
       let(:text2) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
       it 'finds no instance of uncategorized annotations when there are no annotation texts' do
         get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
@@ -788,7 +788,7 @@ describe AnnotationCategoriesController do
     context 'CSV_One_Time_Downloads' do
       let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:assignment_result) { assignment.groupings.first.current_result }
-      let(:last_editor) { create(:admin) }
+      let(:last_editor) { create(:instructor) }
       let(:text) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
       let(:different_text) { create(:annotation_text, annotation_category: nil) }
 
@@ -1067,8 +1067,8 @@ describe AnnotationCategoriesController do
     end
   end
 
-  describe 'When the user is admin' do
-    let(:role) { create(:admin) }
+  describe 'When the user is instructor' do
+    let(:role) { create(:instructor) }
     include_examples 'An authorized user managing annotation categories'
   end
 
@@ -1081,7 +1081,7 @@ describe AnnotationCategoriesController do
       # By default all the grader permissions are set to false
       let(:role) { create(:ta) }
       include_examples 'An unauthorized user managing annotation categories'
-      include_examples 'A grader or admin accessing the index or find_annotation_text routes'
+      include_examples 'A grader or instructor accessing the index or find_annotation_text routes'
     end
   end
 end

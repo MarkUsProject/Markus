@@ -1,6 +1,6 @@
 describe UserPolicy do
   let(:context) { { real_user: user, user: user } }
-  let(:user) { create :human }
+  let(:user) { create :end_user }
   describe_rule :manage? do
     failed
   end
@@ -10,8 +10,8 @@ describe UserPolicy do
 
   describe_rule :reset_api_key? do
     failed
-    succeed 'user is an admin in at least one course' do
-      let(:user) { create(:admin).human }
+    succeed 'user is an instructor in at least one course' do
+      let(:user) { create(:instructor).end_user }
     end
   end
   describe_rule :settings? do

@@ -12,7 +12,7 @@ class User < ApplicationRecord
 
   # Group relationships
   has_many :key_pairs, dependent: :destroy
-  validates_format_of :type, with: /\AHuman|TestServer\z/
+  validates_format_of :type, with: /\AEndUser|AutotestUser|AdminUser\z/
 
   validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
   validates_uniqueness_of   :user_name
@@ -22,14 +22,11 @@ class User < ApplicationRecord
   validates                 :user_name,
                             format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                                       message: 'user_name must be alphanumeric, hyphen, or underscore' },
-                            unless: ->(u) { u.test_server? }
+                            unless: ->(u) { u.autotest_user? }
   after_initialize :set_display_name, :set_time_zone
 
   validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
 
-  # role constants
-  HUMAN = 'Human'.freeze
-  TEST_SERVER = 'TestServer'.freeze
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
@@ -82,8 +79,12 @@ class User < ApplicationRecord
   end
 
   # Helper methods -----------------------------------------------------
-  def test_server?
-    self.class == TestServer
+  def autotest_user?
+    self.class == AutotestUser
+  end
+
+  def admin_user?
+    self.class == AdminUser
   end
 
   def set_display_name

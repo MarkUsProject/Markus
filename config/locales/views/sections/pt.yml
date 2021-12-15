@@ -15,7 +15,7 @@ pt:
     new:
       title: Criar nova sessão
     none: Ainda não há sessões.
+    not_found: UPDATE ME %{name}.
     update:
       error: Falha ao atualizar sessão.
       success: Sessão %{name} atualizada com sucesso.
-    not_found: UPDATE ME %{name}.

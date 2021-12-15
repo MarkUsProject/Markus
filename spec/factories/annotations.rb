@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :annotation do
     association :annotation_text
     association :submission_file
-    association :creator, factory: :admin
+    association :creator, factory: :instructor
     association :result, factory: :complete_result
     sequence(:annotation_number)
     is_remark { false }

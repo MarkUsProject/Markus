@@ -11,7 +11,7 @@
     </div>
     <%= link_to '',
                 { action: 'download' },
-                class: 'make_div_clickable' if @current_role.admin? %>
+                class: 'make_div_clickable' if @current_role.instructor? %>
   </div>
   <section class='dialog-actions'>
     <input type='reset' id='download' value='<%= t(:cancel) %>'/>

@@ -277,24 +277,24 @@ describe NotesController do
     end
   end # TA context
 
-  context 'An authenticated and authorized admin doing a ' do
-    let(:course) { @admin.course }
+  context 'An authenticated and authorized instructor doing a ' do
+    let(:course) { @instructor.course }
     before :each do
-      @admin = create(:admin)
+      @instructor = create(:instructor)
     end
 
     it 'be able to get the index' do
-      get_as @admin, :index, params: { course_id: course.id }
+      get_as @instructor, :index, params: { course_id: course.id }
       expect(response.status).to eq 200
     end
 
     it 'to go on new' do
-      get_as @admin, :new, params: { course_id: course.id }
+      get_as @instructor, :new, params: { course_id: course.id }
       expect(response.status).to eq 200
     end
 
     it 'for Students' do
-      get_as @admin, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Student' }
+      get_as @instructor, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Student' }
       expect(assigns :students).not_to be_nil
       expect(assigns :assignments).to be_nil
       expect(assigns :groupings).to be_nil
@@ -302,7 +302,7 @@ describe NotesController do
     end
 
     it 'for Assignments' do
-      get_as @admin, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Assignment' }
+      get_as @instructor, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Assignment' }
       expect(assigns :assignments).not_to be_nil
       expect(assigns :students).to be_nil
       expect(assigns :groupings).to be_nil
@@ -310,7 +310,7 @@ describe NotesController do
     end
 
     it 'for invalid type' do
-      get_as @admin, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'gibberish' }
+      get_as @instructor, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'gibberish' }
       i18t_string = [I18n.t('notes.new.invalid_selector')].map { |f| extract_text f }
       expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       expect(assigns :assignments).not_to be_nil
@@ -330,7 +330,7 @@ describe NotesController do
       end
 
       it 'GET on :notes_dialog' do
-        get_as @admin,
+        get_as @instructor,
                :notes_dialog,
                params: { course_id: course.id, assignment_id: @assignment.id, noteable_type: 'Grouping',
                          noteable_id: @grouping.id, controller_to: @controller_to, action_to: @action_to }
@@ -338,7 +338,7 @@ describe NotesController do
       end
 
       it 'with a valid note' do
-        post_as @admin,
+        post_as @instructor,
                 :add_note,
                 params: { course_id: course.id, new_notes: @message, noteable_type: 'Grouping',
                           noteable_id: @grouping.id, controller_to: @controller_to, action_to: @action_to }
@@ -346,7 +346,7 @@ describe NotesController do
       end
 
       it 'with an invalid note' do
-        post_as @admin,
+        post_as @instructor,
                 :add_note,
                 params: { course_id: course.id, new_notes: '', noteable_type: 'Grouping', noteable_id: @grouping.id,
                           controller_to: @controller_to, action_to: @action_to }
@@ -354,7 +354,7 @@ describe NotesController do
       end
 
       it 'with empty note' do
-        post_as @admin, :create, params: { course_id: course.id, noteable_type: 'Grouping',
+        post_as @instructor, :create, params: { course_id: course.id, noteable_type: 'Grouping',
                                            note: { noteable_id: @grouping.id } }
         expect(assigns :note).not_to be_nil
         expect(flash.empty?).to be_truthy
@@ -366,7 +366,7 @@ describe NotesController do
       it "with good Grouping data" do
         grouping = create(:grouping)
         @notes = Note.count
-        post_as @admin,
+        post_as @instructor,
                 :create,
                 params: { course_id: course.id, noteable_type: 'Grouping',
                           note: { noteable_id: grouping.id, notes_message: @message } }
@@ -379,7 +379,7 @@ describe NotesController do
       it "with good Student data" do
         student = create(:student)
         @notes = Note.count
-        post_as @admin,
+        post_as @instructor,
                 :create,
                 params: { course_id: course.id, noteable_type: 'Student',
                           note: { noteable_id: student.id, notes_message: @message } }
@@ -392,7 +392,7 @@ describe NotesController do
       it "with good Assignment data" do
         assignment = create(:assignment)
         @notes = Note.count
-        post_as @admin,
+        post_as @instructor,
                 :create,
                 params: { course_id: course.id, noteable_type: 'Assignment',
                           note: { noteable_id: assignment.id, notes_message: @message } }
@@ -403,66 +403,68 @@ describe NotesController do
       end
 
       it 'GET on :new_update_groupings' do
-        get_as @admin, :new_update_groupings, params: { course_id: course.id, assignment_id: @assignment.id }
+        get_as @instructor, :new_update_groupings, params: { course_id: course.id, assignment_id: @assignment.id }
         expect(response.status).to eq 200
       end
 
       it 'for Groupings' do
-        get_as @admin, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Grouping' }
+        get_as @instructor, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Grouping' }
         expect(assigns :assignments).not_to be_nil
         expect(assigns :groupings).not_to be_nil
         expect(assigns :students).to be_nil
         expect(response.status).to eq 200
       end
 
-      it 'for a note belonging to themselves (get as Admin)' do
-        @note = create(:note, creator_id: @admin.id)
-        get_as @admin, :edit, params: { course_id: course.id, id: @note.id }
+      it 'for a note belonging to themselves (get as Instructor)' do
+        @note = create(:note, creator_id: @instructor.id)
+        get_as @instructor, :edit, params: { course_id: course.id, id: @note.id }
         expect(response.status).to eq 200
       end
 
-      it 'for a note belonging to someone else (get as Admin)' do
+      it 'for a note belonging to someone else (get as Instructor)' do
         @note = create(:note, creator_id: create(:ta).id)
-        get_as @admin, :edit, params: { course_id: course.id, id: @note.id }
+        get_as @instructor, :edit, params: { course_id: course.id, id: @note.id }
         expect(response.status).to eq 200
       end
 
       it 'with bad data' do
-        @note = create(:note, creator_id: @admin.id)
-        post_as @admin, :update, params: { course_id: course.id, id: @note.id, note: { notes_message: '' } }
+        @note = create(:note, creator_id: @instructor.id)
+        post_as @instructor, :update, params: { course_id: course.id, id: @note.id, note: { notes_message: '' } }
         expect(assigns :note).not_to be_nil
         expect(flash.empty?).to be_truthy
       end
 
       it 'with good data' do
-        @note = create(:note, creator_id: @admin.id)
+        @note = create(:note, creator_id: @instructor.id)
         @new_message = 'Changed message'
-        post_as @admin, :update, params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
+        post_as @instructor, :update,
+                params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
         expect(assigns :note).not_to be_nil
         expect(flash[:success]).to eq I18n.t('flash.actions.update.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
       end
 
-      it 'for a note belonging to someone else (post as Admin)' do
+      it 'for a note belonging to someone else (post as Instructor)' do
         @note = create(:note, creator_id: create(:ta).id)
         @new_message = 'Changed message'
-        post_as @admin, :update, params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
+        post_as @instructor, :update,
+                params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
         expect(assigns :note).not_to be_nil
         expect(flash[:success]).to eq I18n.t('flash.actions.update.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
       end
 
-      it 'for a note belonging to themselves (delete as Admin)' do
-        @note = create(:note, creator_id: @admin.id)
-        delete_as @admin, :destroy, params: { course_id: course.id, id: @note.id }
+      it 'for a note belonging to themselves (delete as Instructor)' do
+        @note = create(:note, creator_id: @instructor.id)
+        delete_as @instructor, :destroy, params: { course_id: course.id, id: @note.id }
         expect(assigns :note).not_to be_nil
         expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
       end
 
-      it 'for a note belonging to someone else (delete as Admin)' do
+      it 'for a note belonging to someone else (delete as Instructor)' do
         @note = create(:note, creator_id: create(:ta).id)
-        delete_as @admin, :destroy, params: { course_id: course.id, id: @note.id }
+        delete_as @instructor, :destroy, params: { course_id: course.id, id: @note.id }
         expect(assigns :note).not_to be_nil
         expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
@@ -470,24 +472,24 @@ describe NotesController do
 
       it 'have noteable options for selection when viewing noteable_type Grouping' do
         noteable = create(:grouping)
-        post_as @admin, :create, params: { course_id: course.id,
+        post_as @instructor, :create, params: { course_id: course.id,
                                            noteable_type: 'Grouping', note: { noteable_id: noteable.id } }
         expect(response).to have_http_status :success
       end
 
       it 'have noteable options for selection when viewing noteable_type Student' do
         noteable = create(:student)
-        post_as @admin, :create, params: { course_id: course.id,
+        post_as @instructor, :create, params: { course_id: course.id,
                                            noteable_type: 'Student', note: { noteable_id: noteable.id } }
         expect(response).to have_http_status :success
       end
 
       it 'have noteable options for selection when viewing noteable_type Assignment' do
         noteable = create(:assignment)
-        post_as @admin, :create, params: { course_id: course.id,
+        post_as @instructor, :create, params: { course_id: course.id,
                                            noteable_type: 'Assignment', note: { noteable_id: noteable.id } }
         expect(response).to have_http_status :success
       end
     end
-  end # admin context
+  end
 end

@@ -8,7 +8,7 @@
   <li class='<%= "active" if controller.controller_name == 'tas' %>'>
     <%= link_to Ta.model_name.human.pluralize, controller: 'tas' %>
   </li>
-  <li class='<%= "active" if controller.controller_name == 'admins' %>'>
-    <%= link_to Admin.model_name.human.pluralize, controller: 'admins' %>
+  <li class='<%= "active" if controller.controller_name == 'instructors' %>'>
+    <%= link_to Instructor.model_name.human.pluralize, controller: 'instructors' %>
   </li>
 </ul>

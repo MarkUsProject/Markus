@@ -16,7 +16,7 @@
       { link_text: MarkingScheme.model_name.human.pluralize,
         link_path: course_marking_schemes_path(@current_course) }
     ]
-    if @current_role.admin?
+    if @current_role.instructor?
       @heading_buttons += [
         { link_text: t('download_the', item: t('course_summary.grade_report')),
           link_path: download_csv_grades_report_course_course_summaries_path(@current_course) }

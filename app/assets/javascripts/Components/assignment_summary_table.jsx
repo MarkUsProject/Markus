@@ -148,7 +148,7 @@ class AssignmentSummaryTable extends React.Component {
             {I18n.t("submissions.state.complete")}
           </div>
         </div>
-        {this.props.is_admin && (
+        {this.props.is_instructor && (
           <form
             className="rt-action-box"
             action={Routes.summary_course_assignment_path({

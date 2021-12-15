@@ -93,7 +93,7 @@
     </tr>
   </table>
 </aside>
-<% if @current_role.admin? %>
+<% if @current_role.instructor? %>
   <aside class='dialog no-display' id='create_new_tag'>
     <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
     <%= form_for :tag,

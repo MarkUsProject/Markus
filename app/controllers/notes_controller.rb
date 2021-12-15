@@ -90,7 +90,7 @@ class NotesController < ApplicationController
   def noteable_object_selector
     case params[:noteable_type]
       when 'Student'
-        @students = current_course.students.order(:user_name)
+        @students = current_course.students.joins(:end_user).order(:user_name)
       when 'Assignment'
         @assignments = current_course.assignments.all
       when 'Grouping'

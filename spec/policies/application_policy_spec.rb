@@ -1,15 +1,15 @@
 describe ApplicationPolicy do
-  let(:context) { { role: role, real_user: role.human } }
-  let(:role) { create :admin }
+  let(:context) { { role: role, real_user: role.end_user } }
+  let(:role) { create :instructor }
   let(:policy) { ApplicationPolicy.new(**context) }
 
   describe_rule :manage? do
     failed
   end
 
-  describe_rule :view_admin_subtabs? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+  describe_rule :view_instructor_subtabs? do
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
@@ -25,8 +25,8 @@ describe ApplicationPolicy do
   end
 
   describe_rule :view_ta_subtabs? do
-    failed 'role is an admin' do
-      let(:role) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -37,8 +37,8 @@ describe ApplicationPolicy do
   end
 
   describe_rule :view_student_subtabs? do
-    failed 'role is an admin' do
-      let(:role) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     failed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -49,8 +49,8 @@ describe ApplicationPolicy do
   end
 
   describe_rule :view_sub_sub_tabs? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -60,9 +60,9 @@ describe ApplicationPolicy do
     end
   end
 
-  describe_rule :admin? do
-    succeed 'role is an admin' do
-      let(:role) { create(:admin) }
+  describe_rule :instructor? do
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     failed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -73,8 +73,8 @@ describe ApplicationPolicy do
   end
 
   describe_rule :ta? do
-    failed 'role is an admin' do
-      let(:role) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
       let(:role) { create(:ta) }
@@ -85,8 +85,8 @@ describe ApplicationPolicy do
   end
 
   describe_rule :student? do
-    failed 'role is an admin' do
-      let(:role) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     failed 'role is a ta' do
       let(:role) { create(:ta) }

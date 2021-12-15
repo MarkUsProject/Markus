@@ -43,7 +43,7 @@
       <%= mark.mark %>,
       <%= @annotation.result.get_subtotal %>,
       <%= @annotation.result.get_total_mark %>,
-      <%= @annotation.result.grouping.assignment.get_num_marked(@current_role.admin? ? nil : @current_role.id) %>
+      <%= @annotation.result.grouping.assignment.get_num_marked(@current_role.instructor? ? nil : @current_role.id) %>
     );
   <% end %>
 
