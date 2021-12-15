@@ -9,8 +9,8 @@ class MainController < ApplicationController
 
   # check for authorization
   authorize :real_user, through: :real_user
-  before_action(except: [:login, :page_not_found, :check_timeout]) { authorize! }
-  skip_verify_authorized only: [:login, :page_not_found, :check_timeout]
+  before_action(except: [:login, :page_not_found, :check_timeout, :login_remote_auth]) { authorize! }
+  skip_verify_authorized only: [:login, :page_not_found, :check_timeout, :login_remote_auth]
 
   layout 'main'
 
@@ -26,6 +26,9 @@ class MainController < ApplicationController
       redirect_to controller: 'courses', action: 'index'
       return
     end
+    unless Settings.remote_auth_login_url || Settings.validate_file
+      flash_now(:error, t('main.sign_in_not_supported'))
+    end
     return unless request.post?
 
     # Get information of the user that is trying to login if his or her
@@ -34,6 +37,8 @@ class MainController < ApplicationController
       render :login, locals: { user_login: params[:user_login] }
       return
     end
+
+    session[:auth_type] = :local
 
     found_user = User.find_by_user_name(params[:user_login])
     if found_user.nil?
@@ -50,6 +55,10 @@ class MainController < ApplicationController
     redirect_to(uri || { controller: 'courses', action: 'index' })
   end
 
+  def login_remote_auth
+    session[:auth_type] = :remote
+    redirect_to remote_user_name.nil? ? Settings.remote_auth_login_url : main_path
+  end
 
   # Clear the sesssion for current user and redirect to login page
   def logout
@@ -94,12 +103,14 @@ class MainController < ApplicationController
   # same for regular logins and are different on an assume role call.
   # If the login keyword is true then this method also authenticates the real_user
   #
-  # This function is called both by the login and login_as actions.
   def validate_login(user_name, password)
     if user_name.blank? || password.blank?
       flash_now(:error, get_blank_message(user_name, password))
       return false
     end
+
+    # No validate file means only remote authentication is allowed
+    return false unless Settings.validate_file
 
     ip = Settings.validate_ip ? request.remote_ip : nil
     authenticate_response = User.authenticate(user_name, password, ip: ip)

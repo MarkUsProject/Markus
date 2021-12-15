@@ -443,6 +443,7 @@ Rails.application.routes.draw do
       get 'about'
       get 'check_timeout'
       post 'refresh_session'
+      get 'login_remote_auth'
     end
   end
 
