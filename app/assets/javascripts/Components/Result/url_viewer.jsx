@@ -1,5 +1,5 @@
 import React from "react";
-import "../../../stylesheets/common/_url_viewer.scss"
+import "../../../stylesheets/common/_url_viewer.scss";
 
 export class URLViewer extends React.Component {
   constructor() {
@@ -24,10 +24,7 @@ export class URLViewer extends React.Component {
           className="annotation-holder-active"
           style={{display: "none"}}
         />
-        <iframe
-          id="url_display"
-          src={this.state.url}
-        />
+        <iframe id="url_display" src={this.state.url} />
       </div>
     );
   }
