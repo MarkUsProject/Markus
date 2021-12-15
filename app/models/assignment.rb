@@ -910,6 +910,10 @@ class Assignment < Assessment
     File.join(autotest_path, TestRun::SPECS_FILE)
   end
 
+  def scanned_exams_path
+    File.join(Settings.scanned_exams.path, course.name, short_identifier)
+  end
+
   # Retrieve current grader data.
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count

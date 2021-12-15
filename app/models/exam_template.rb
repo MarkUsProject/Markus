@@ -29,8 +29,7 @@ class ExamTemplate < ApplicationRecord
     name_input = attributes[:name]
     exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
-      Settings.scanned_exams.path,
-      assignment_name,
+      assignment.scanned_exams_path,
       exam_template_name
     )
     FileUtils.mkdir_p template_path unless Dir.exists? template_path
@@ -63,14 +62,8 @@ class ExamTemplate < ApplicationRecord
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
     return unless attributes.key? :assessment_id
-    assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
-    template_path = File.join(
-      Settings.scanned_exams.path,
-      assignment_name,
-      self.name
-    )
 
-    File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
+    File.open(File.join(base_bath, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
       f.write blob
     end
 
@@ -238,7 +231,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join Settings.scanned_exams.path, self.course.name, assignment.short_identifier, self.name
+    File.join self.assignment.scanned_exams_path, self.name
   end
 
   def num_cover_fields
@@ -292,13 +285,11 @@ class ExamTemplate < ApplicationRecord
     if self.name_changed?
       assignment_name = self.assignment.short_identifier
       old_directory_name = File.join(
-        Settings.scanned_exams.path,
-        assignment_name,
+        self.assignment.scanned_exams_path,
         name_was
       )
       new_directory_name = File.join(
-        Settings.scanned_exams.path,
-        assignment_name,
+        self.assignment.scanned_exams_path,
         name
       )
       File.rename old_directory_name, new_directory_name

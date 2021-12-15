@@ -36,7 +36,7 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.create.failure'))
       end
     end
-    redirect_to course_assignment_path(current_course, assignment)
+    redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
   def download
@@ -76,7 +76,7 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.update.failure'))
       end
     end
-    redirect_to course_assignment_path(current_course, assignment)
+    redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
   def generate
@@ -139,7 +139,7 @@ class ExamTemplatesController < ApplicationController
       exam_template.crop_height = nil
     end
     exam_template.save
-    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment, exam_template)
+    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
   end
 
   def split
@@ -148,7 +148,7 @@ class ExamTemplatesController < ApplicationController
     unless split_exam.nil?
       if split_exam.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.split.invalid'))
-        redirect_to course_assignment_path(current_course, exam_template.assignment)
+        redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
       else
         current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
         session[:job_id] = current_job.job_id
@@ -156,7 +156,7 @@ class ExamTemplatesController < ApplicationController
       end
     else
       flash_message(:error, t('exam_templates.split.missing'))
-      redirect_to course_assignment_path(current_course, exam_template.assignment)
+      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
     end
   end
 
@@ -167,7 +167,7 @@ class ExamTemplatesController < ApplicationController
     else
       flash_message(:failure, t('exam_templates.delete.failure'))
     end
-    redirect_to course_assignment_path(current_course, exam_template.assignment)
+    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
   end
 
   def view_logs
