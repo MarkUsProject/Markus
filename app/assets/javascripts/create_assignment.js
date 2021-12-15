@@ -114,10 +114,18 @@ function toggle_student_form_groups(student_form_groups) {
 }
 
 function toggle_remark_requests(bool) {
-  document.getElementById("assignment_assignment_properties_attributes_remark_due_date").disabled =
-    !bool;
-  document.getElementById("assignment_assignment_properties_attributes_remark_message").disabled =
-    !bool;
+  let due_date_elem = document.getElementById(
+    "assignment_assignment_properties_attributes_remark_due_date"
+  );
+  if (due_date_elem) {
+    due_date_elem.disabled = !bool;
+  }
+  let remark_message_elem = document.getElementById(
+    "assignment_assignment_properties_attributes_remark_message"
+  );
+  if (remark_message_elem) {
+    remark_message_elem.disabled = !bool;
+  }
 }
 
 function update_due_date(new_due_date) {

@@ -1288,15 +1288,14 @@ nav {
 }
 
 // Styling for graphs
+.data-chart-container {
+  display: flex;
+  justify-content: center;
+}
 
 .ta-grade-distribution-graph-wrapper {
   display: inline-block;
   width: 400px;
-}
-
-#gef_data_chart {
-  padding-bottom: 0;
-  text-align: center;
 }
 
 // for charts rendered in FireFox
