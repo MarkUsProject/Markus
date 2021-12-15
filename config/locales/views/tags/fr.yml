@@ -1,6 +1,7 @@
 ---
 fr:
   tags:
+    invalid_tag_data: UPDATE ME %{item}
     results:
       available_tags: Available Tags
       current_tags: Current Tags

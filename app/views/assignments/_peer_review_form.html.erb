@@ -10,8 +10,6 @@
              handlers: [:erb] %>
 <% end %>
 
-<%= render 'shared/flash_message' %>
-
 <%= form_for @assignment do |f| %>
   <%= f.fields_for :assignment_properties do |ap_f| %>
 

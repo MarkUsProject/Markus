@@ -1,0 +1,7 @@
+---
+default_starter_file_group: 'sample_starter_group'
+starter_file_groups:
+  - directory_name: 'sample_starter_group'
+    name: sample_starter_group
+    use_rename: false
+    entry_rename: ''

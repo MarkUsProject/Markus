@@ -1247,28 +1247,95 @@ class Assignment < Assessment
     self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
   end
 
+  # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
+  def assignment_properties_config
+    # Data to avoid including
+    exclude = %w[id created_at updated_at outstanding_remark_request_count repository_folder]
+    should_reject = ->(attr) { attr.end_with?('_id', '_created_at', '_updated_at') }
+    # Helper lambda functions for filtering attributes
+    filter_attr = ->(attributes) { attributes.except(*exclude).reject { |attr| should_reject.call(attr) } }
+    filter_table = ->(data, model) do
+      data.pluck_to_hash(*(model.column_names - exclude).reject { |attr| should_reject.call(attr) })
+    end
+    # Build properties
+    properties = self.attributes.except(*exclude).reject { |attr| should_reject.call(attr) || attr == 'type' }
+    properties['assignment_properties_attributes'] = filter_attr.call(self.assignment_properties.attributes)
+    properties['assignment_files_attributes'] = filter_table.call(self.assignment_files, AssignmentFile)
+    properties['submission_rule_attributes'] = filter_attr.call(self.submission_rule.attributes)
+    properties['submission_rule_attributes']['periods_attributes'] = filter_table.call(self.submission_rule.periods,
+                                                                                       Period)
+    properties
+  end
+
+  # Writes this assignment's starter file settings to the file located at +settings_filepath+ located in the
+  # +zip_file+. Also writes the starter files for this assignment in the same directory as +settings_filepath+.
+  def starter_file_config_to_zip(zip_file, settings_filepath)
+    default_starter_group = nil
+    group_data = []
+    directory_path = File.dirname(settings_filepath)
+    self.starter_file_groups.each do |starter_file_group|
+      group_name = ActiveStorage::Filename.new(starter_file_group.name).sanitized
+      starter_file_group.write_starter_files_to_zip(zip_file, File.join(directory_path, group_name))
+      if starter_file_group.id == self.default_starter_file_group_id
+        default_starter_group = group_name
+      end
+      group_data << {
+        directory_name: group_name,
+        name: starter_file_group.name,
+        use_rename: starter_file_group.use_rename,
+        entry_rename: starter_file_group.entry_rename
+      }
+    end
+    starter_file_settings = {
+      default_starter_file_group: default_starter_group,
+      starter_file_groups: group_data
+    }.to_yaml
+    zip_file.get_output_stream(settings_filepath) { |f| f.write starter_file_settings }
+  end
+
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(user)
     zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
-    files_dir = Pathname.new self.autotest_files_dir
     Zip::File.open(zip_path, create: true) do |zip_file|
-      self.autotest_files.map do |file|
-        path = File.join zip_name, file
-        abs_path = files_dir.join(file)
-        if abs_path.directory?
-          zip_file.mkdir(path)
-        else
-          zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
-        end
-      end
+      add_test_files_to_zip(zip_file, zip_name)
     end
     zip_path
   end
 
+  # Writes all of this assignment's automated test files to the +zip_dir+ in +zip_file+. Also writes
+  # the tester settings specified in this assignment's properties and spec file to the json file at
+  # +specs_file_path+ in the +zip_file+.
+  def automated_test_config_to_zip(zip_file, zip_dir, specs_file_path)
+    self.add_test_files_to_zip(zip_file, zip_dir)
+    test_specs_path = self.autotest_settings_file
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    test_specs['testers']&.each do |tester_info|
+      tester_info['test_data']&.each do |test_info|
+        test_info['extra_info']&.delete('test_group_id')
+      end
+    end
+    zip_file.get_output_stream(specs_file_path) do |f|
+      f.write(test_specs.to_json)
+    end
+  end
+
   private
+
+  def add_test_files_to_zip(zip_file, zip_name)
+    files_dir = Pathname.new self.autotest_files_dir
+    self.autotest_files.map do |file|
+      path = File.join zip_name, file
+      abs_path = files_dir.join(file)
+      if abs_path.directory?
+        zip_file.mkdir(path)
+      else
+        zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
+      end
+    end
+  end
 
   def create_autotest_dirs
     FileUtils.mkdir_p self.autotest_path

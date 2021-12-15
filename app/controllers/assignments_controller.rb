@@ -1,6 +1,9 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
+  include CriteriaHelper
+  include AnnotationCategoriesHelper
+  include AutomatedTestsHelper
   responders :flash
   before_action { authorize! }
 
@@ -9,6 +12,23 @@ class AssignmentsController < ApplicationController
     # dynamically. TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
   end
+
+  CONFIG_FILES = {
+    properties: 'properties.yml',
+    tags: 'tags.yml',
+    criteria: 'criteria.yml',
+    annotations: 'annotations.yml',
+    automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
+    automated_tests: File.join('automated-test-config-files', 'automated-test-specs.json'),
+    starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
+    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
+    peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
+    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
+    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml'),
+    peer_review_starter_files: File.join('peer-review-config-files',
+                                         'starter-file-config-files',
+                                         'starter-file-rules.yml')
+  }.freeze
 
   # Publicly accessible actions ---------------------------------------
 
@@ -170,6 +190,7 @@ class AssignmentsController < ApplicationController
     @assessment_section_properties.sort_by do |s|
       [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
     end
+    render :edit, layout: 'assignment_content'
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -208,7 +229,7 @@ class AssignmentsController < ApplicationController
     Section.all.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
-    render :new
+    render :new, layout: 'assignment_content'
   end
 
   # Called after a new assignment form is submitted.
@@ -562,7 +583,203 @@ class AssignmentsController < ApplicationController
     send_file zip_path, filename: zip_name
   end
 
+  # Downloads a zip file containing all the information and settings about an assignment
+  def download_config_files
+    assignment = Assignment.find(params[:id])
+    child_assignment = Assignment.find_by(parent_assessment_id: params[:id])
+
+    zip_name = "#{assignment.short_identifier}-config-files.zip"
+    zip_path = File.join('tmp', zip_name)
+
+    FileUtils.rm_f(zip_path)
+
+    Zip::File.open(zip_path, create: true) do |zipfile|
+      zipfile.get_output_stream(CONFIG_FILES[:properties]) do |f|
+        f.write(assignment.assignment_properties_config.to_yaml)
+      end
+      zipfile.get_output_stream(CONFIG_FILES[:criteria]) do |f|
+        yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
+        f.write yml_criteria.to_yaml
+      end
+      zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
+        f.write annotation_categories_to_yml(assignment.annotation_categories)
+      end
+      unless assignment.scanned_exam
+        assignment.automated_test_config_to_zip(zipfile, CONFIG_FILES[:automated_tests_dir_entry],
+                                                CONFIG_FILES[:automated_tests])
+      end
+      assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:starter_files])
+      zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
+        f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
+      end
+      unless child_assignment.nil?
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
+          f.write(child_assignment.assignment_properties_config.to_yaml)
+        end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_criteria]) do |f|
+          yml_criteria = child_assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
+          f.write yml_criteria.to_yaml
+        end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
+          f.write annotation_categories_to_yml(child_assignment.annotation_categories)
+        end
+        child_assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:peer_review_starter_files])
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
+          f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
+        end
+      end
+    end
+    send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
+  end
+
+  # Uploads a zip file containing all the files specified in download_config_files
+  # and modifies the assignment settings according to those files.
+  def upload_config_files
+    upload_file = params.require(:upload_files_for_config)
+    raise I18n.t('upload_errors.blank') if upload_file.size == 0
+    raise I18n.t('upload_errors.invalid_file_type', type: 'zip') unless File.extname(upload_file.path).casecmp?('.zip')
+
+    Zip::File.open(upload_file.path) do |zipfile|
+      ApplicationRecord.transaction do
+        # Build assignment from properties
+        prop_file = zipfile.get_entry(CONFIG_FILES[:properties])
+        assignment = build_uploaded_assignment(prop_file)
+        tag_prop = build_hash_from_zip(zipfile, :tags)
+        criteria_prop = build_hash_from_zip(zipfile, :criteria)
+        annotations_prop = build_hash_from_zip(zipfile, :annotations)
+        # Build peer review assignment if it exists
+        child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
+        unless child_prop_file.nil?
+          child_assignment = build_uploaded_assignment(child_prop_file, assignment)
+          child_assignment.save!
+          child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
+          Tag.from_yml(child_tag_prop, child_assignment.id, true)
+          child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
+          upload_criteria_from_yaml(child_assignment, child_criteria_prop)
+          child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
+          upload_annotations_from_yaml(child_annotations_prop, child_assignment)
+          config_starter_files(child_assignment, zipfile)
+          child_assignment.save!
+        end
+        assignment.save!
+        Tag.from_yml(tag_prop, assignment.id, true)
+        upload_criteria_from_yaml(assignment, criteria_prop)
+        upload_annotations_from_yaml(annotations_prop, assignment)
+        config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
+        config_starter_files(assignment, zipfile)
+        assignment.save!
+        redirect_to edit_assignment_path(assignment.id)
+      end
+    end
+  rescue StandardError => e
+    flash_message(:error, e.message)
+    redirect_to assignments_path
+  end
+
   private
+
+  # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+
+  def config_automated_tests(assignment, zip_file)
+    spec_file = zip_file.get_entry(CONFIG_FILES[:automated_tests])
+    spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+    begin
+      spec_data = JSON.parse(spec_content)
+    rescue JSON::ParserError
+      raise I18n.t('automated_tests.invalid_specs_file')
+    else
+      update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
+      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+      session[:job_id] = @current_job.job_id
+      test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
+      zip_file.glob(test_file_glob_pattern) do |entry|
+        zip_file_path = Pathname.new(entry.name)
+        filename = zip_file_path.relative_path_from(CONFIG_FILES[:automated_tests_dir_entry])
+        file_path = File.join(assignment.autotest_files_dir, filename.to_s)
+        if entry.directory?
+          FileUtils.mkdir_p(file_path)
+        else
+          FileUtils.mkdir_p(File.dirname(file_path))
+          test_file_content = entry.get_input_stream.read
+          File.write(file_path, test_file_content, mode: 'wb')
+        end
+      end
+    end
+  end
+
+  # Configures the starter files for an +assignment+ provided in the +zip_file+
+  def config_starter_files(assignment, zip_file)
+    starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
+    starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
+    starter_group_mappings = {}
+    starter_file_settings[:starter_file_groups].each do |group|
+      group = group.symbolize_keys
+      file_group = StarterFileGroup.create!(name: group[:name],
+                                            use_rename: group[:use_rename],
+                                            entry_rename: group[:entry_rename],
+                                            assignment: assignment)
+      starter_group_mappings[group[:directory_name]] = file_group
+    end
+    default_name = starter_file_settings[:default_starter_file_group]
+    if !default_name.nil? && starter_group_mappings.key?(default_name)
+      assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
+    end
+    zip_starter_dir = File.dirname(CONFIG_FILES[starter_config_file])
+    starter_file_glob_pattern = File.join(zip_starter_dir, '**', '*')
+    zip_file.glob(starter_file_glob_pattern) do |entry|
+      next if entry.name == CONFIG_FILES[starter_config_file]
+      # Set working directory to the location of all the starter file content, then find
+      # directory for a starter group and add the file found in that directory to group
+      zip_file_path = Pathname.new(entry.name)
+      starter_base_dir = zip_file_path.relative_path_from(zip_starter_dir)
+      grouping_dir = starter_base_dir.descend.first.to_s
+      starter_file_group = starter_group_mappings[grouping_dir]
+      sub_dir, filename = starter_base_dir.relative_path_from(grouping_dir).split
+      starter_file_dir_path = File.join(starter_file_group.path, sub_dir.to_s)
+      starter_file_name = filename.to_s
+      if entry.directory?
+        FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
+      else
+        FileUtils.mkdir_p(starter_file_dir_path)
+        starter_file_content = entry.get_input_stream.read
+        File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
+      end
+    end
+    assignment.starter_file_groups.find_each(&:update_entries)
+  end
+
+  # Build the tag/criteria/starter file settings file specified by +hash_to_build+ found in +zip_file+
+  # Delete the file from the +zip_file+ after loading in the content.
+  def build_hash_from_zip(zip_file, hash_to_build)
+    yaml_file = zip_file.get_entry(CONFIG_FILES[hash_to_build])
+    yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+    properties = parse_yaml_content(yaml_content)
+    if [:tags, :peer_review_tags].include?(hash_to_build)
+      properties.each { |row| row[:user] = @current_user.user_name }
+    end
+    properties
+  end
+
+  # Builds an uploaded assignment/peer review assignment from its properties file
+  # Precondition: prop_file must be a Zip::Entry object
+  #               If +parent_assignment+ is not nil, this is a peer review assignment.
+  def build_uploaded_assignment(prop_file, parent_assignment = nil)
+    yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+    properties = parse_yaml_content(yaml_content).deep_symbolize_keys
+    if parent_assignment.nil?
+      assignment = Assignment.new(properties)
+      assignment.repository_folder = assignment.short_identifier
+    else
+      # Filter properties not supported by peer review assignments, then build assignment
+      peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
+      assignment = Assignment.new(peer_review_properties)
+      parent_assignment.has_peer_review = true
+      assignment.has_peer_review = false
+      assignment.enable_test = false
+      assignment.parent_assignment = parent_assignment
+      assignment.repository_folder = parent_assignment.repository_folder
+    end
+    assignment
+  end
 
   def set_repo_vars(assignment, grouping)
     grouping.access_repo do |repo|

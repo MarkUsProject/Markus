@@ -130,12 +130,14 @@ describe TagsController do
         @tag1.name = 'tag1'
         @tag1.description = 'tag1_description'
         @tag1.user = @user
+        @tag1.assessment_id = assignment.id
         @tag1.save
 
         @tag2 = Tag.find_or_create_by(name: 'tag2')
         @tag2.name = 'tag2'
         @tag2.description = 'tag2_description'
         @tag2.user = @user
+        @tag2.assessment_id = assignment.id
         @tag2.save
       end
 
@@ -184,12 +186,14 @@ describe TagsController do
         @tag1.name = 'tag1'
         @tag1.description = 'tag1_description'
         @tag1.user = @user
+        @tag1.assessment_id = assignment.id
         @tag1.save
 
         @tag2 = Tag.find_or_create_by(name: 'tag2')
         @tag2.name = 'tag2'
         @tag2.description = 'tag2_description'
         @tag2.user = @user
+        @tag2.assessment_id = assignment.id
         @tag2.save
       end
 

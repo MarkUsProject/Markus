@@ -1,0 +1,4 @@
+- name: Late
+  description: Not Handed in on time
+- name: Plagiarized
+  description: Cheating

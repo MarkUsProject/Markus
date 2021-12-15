@@ -12,6 +12,7 @@ pt:
   upload: Carregar
   upload_errors:
     invalid_csv_row_format: Formato de linha inválida
+    invalid_file_type: UPDATE ME %{type}
     invalid_rows: 'As seguintes linhas do arquivo CSV são inválidas: '
     malformed_csv: O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus.
     syntax_error: 'Existe um erro no arquivo carregado: %{error}'

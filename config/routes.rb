@@ -69,11 +69,13 @@ Rails.application.routes.draw do
       get 'download'
       post 'upload'
       get 'batch_runs'
+      post 'upload_config_files'
     end
 
     member do
       get 'download_sample_starter_files'
       get 'download_starter_file_mappings'
+      get 'download_config_files'
       get 'view_summary'
       post 'update_starter_file'
       get 'peer_review'
