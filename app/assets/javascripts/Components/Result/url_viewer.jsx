@@ -1,10 +1,11 @@
 import React from "react";
+import "../../../stylesheets/common/_url_viewer.scss"
 
 export class URLViewer extends React.Component {
   constructor() {
     super();
     this.state = {
-      url: "https://youtu.be/sthMUE9fnfc",
+      url: "https://www.youtube.com/embed/sthMUE9fnfc",
     };
   }
 
@@ -23,7 +24,10 @@ export class URLViewer extends React.Component {
           className="annotation-holder-active"
           style={{display: "none"}}
         />
-        <iframe src={"https://www.youtube.com/embed/" + this.getYoutubeId(this.state.url)} />
+        <iframe
+          id="url_display"
+          src={this.state.url}
+        />
       </div>
     );
   }
