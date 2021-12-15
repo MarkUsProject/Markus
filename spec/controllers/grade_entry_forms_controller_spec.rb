@@ -334,10 +334,6 @@ describe GradeEntryFormsController do
   end
 
   describe '#student_interface' do
-    before :each do
-      allow(controller).to receive(:current_role).and_return(@student)
-    end
-
     it 'does not allow students to see hidden grade entry forms' do
       grade_entry_form.update!(is_hidden: true)
       get_as @student, :student_interface, params: { course_id: course.id, id: grade_entry_form.id }

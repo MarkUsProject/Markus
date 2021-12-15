@@ -2,10 +2,6 @@
 fr:
   action_policy:
     policy:
-      instructor:
-        manage_assessments?: UPDATE ME.
-        manage_submissions?: UPDATE ME.
-        run_tests?: UPDATE ME.
       annotation:
         add_existing_annotation?: UPDATE ME.
         manage?: UPDATE ME.
@@ -76,6 +72,10 @@ fr:
         tokens_available?: Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet.
         view_file_manager?: UPDATE ME.
       image_annotation: Vous n'êtes pas autorisé à effectuer cette action.
+      instructor:
+        manage_assessments?: UPDATE ME.
+        manage_submissions?: UPDATE ME.
+        run_tests?: UPDATE ME.
       job_message:
         manage?: UPDATE ME.
       key_pair:

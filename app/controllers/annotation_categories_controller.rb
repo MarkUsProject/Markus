@@ -116,6 +116,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def destroy_annotation_text
     @annotation_text = record
+    @assignment = Assignment.find_by(id: params[:assignment_id])
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
     else
@@ -126,9 +127,10 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation_text
     @annotation_text = record
+    @assignment = Assignment.find_by(id: params[:assignment_id])
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_role.id)
       flash_now(:success, t('annotation_categories.update.success'))
-      @text = annotation_text_data(@annotation_text.annotation_category).find do |text|
+      @text = annotation_text_data(@annotation_text.annotation_category, course: record.course).find do |text|
         text[:id] == @annotation_text.id
       end
     else

@@ -13,11 +13,6 @@ en:
         success: "%{resource_name} was successfully updated."
       update_files:
         success: Your changes have been made.
-    instructors:
-      create:
-        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
-      update:
-        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
     annotation_categories:
       create:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."
@@ -31,6 +26,11 @@ en:
     criteria:
       destroy:
         success: Criterion and all associated marks were successfully deleted.
+    instructors:
+      create:
+        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      update:
+        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
     students:
       create:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."

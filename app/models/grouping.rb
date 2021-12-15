@@ -100,7 +100,7 @@ class Grouping < ApplicationRecord
   def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
       # Assign TAs in a round-robin fashion to a list of random groupings.
-      grouping_ids.shuffle.zip(ta_ids.cycle)
+      grouping_ids.shuffle.zip(ta_ids.cycle).reject { |pair| pair.include?(nil) }
     end
   end
 

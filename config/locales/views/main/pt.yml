@@ -1,7 +1,6 @@
 ---
 pt:
   main:
-    account_disabled: Essa conta foi desativada.
     create_marking_scheme: UPDATE ME
     external_authentication_not_supported: Autenticação externa não é suportada pela sua plataforma!
     frequency: UPDATE ME
@@ -12,10 +11,7 @@ pt:
     login_failed: Falha de conexão.
     password: Senha
     password_not_blank: Sua senha não deve ser vazia.
-    please_log_in: Por favor faça o login.
     role_switch:
-      instructor_password: Senha do administrador
-      cannot_login_as_another_instructor: Você não pode conectar como outro administrador.
       clear_role_switch_session: Cancelar troca de papel
       log_in_as: Fazer login como
       switch_role: Trocar de papel

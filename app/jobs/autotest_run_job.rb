@@ -10,8 +10,8 @@ class AutotestRunJob < AutotestJob
 
   def perform(host_with_port, role_id, assignment_id, group_ids, collected: true)
     # create and enqueue test runs
-    test_batch = group_ids.size > 1 ? TestBatch.create : nil # create 1 batch object if needed
     role = Role.find(role_id)
+    test_batch = group_ids.size > 1 ? TestBatch.create(course: role.course) : nil # create 1 batch object if needed
     assignment = Assignment.find(assignment_id)
 
     group_ids.each_slice(Settings.autotest.max_batch_size) do |group_id_slice|

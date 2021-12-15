@@ -2,10 +2,6 @@
 es:
   action_policy:
     policy:
-      instructor:
-        manage_assessments?: UPDATE ME.
-        manage_submissions?: UPDATE ME.
-        run_tests?: UPDATE ME.
       annotation:
         add_existing_annotation?: UPDATE ME.
         manage?: UPDATE ME.
@@ -76,6 +72,10 @@ es:
         tokens_available?: No se encontraron fichas para este estudiante y para este proyecto.
         view_file_manager?: UPDATE ME.
       image_annotation: UPDATE ME.
+      instructor:
+        manage_assessments?: UPDATE ME.
+        manage_submissions?: UPDATE ME.
+        run_tests?: UPDATE ME.
       job_message:
         manage?: UPDATE ME.
       key_pair:

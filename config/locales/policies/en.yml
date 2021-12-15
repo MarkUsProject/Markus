@@ -2,10 +2,6 @@
 en:
   action_policy:
     policy:
-      instructor:
-        manage_assessments?: You do not have permission to manage assessments.
-        manage_submissions?: You do not have permission to manage submissions.
-        run_tests?: You do not have permission to run tests.
       annotation:
         add_existing_annotation?: You do not have permissions to add existing annotations.
         manage?: You do not have permissions to create, delete or modify annotations.
@@ -76,6 +72,10 @@ en:
         tokens_available?: You cannot run tests because you or your group do not have tokens available.
         view_file_manager?: You do not have permission to view the file manager.
       image_annotation: You are not authorized to perform this action.
+      instructor:
+        manage_assessments?: You do not have permission to manage assessments.
+        manage_submissions?: You do not have permission to manage submissions.
+        run_tests?: You do not have permission to run tests.
       job_message:
         manage?: You do not have permission to view background job messages.
       key_pair:

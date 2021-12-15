@@ -170,7 +170,7 @@ module Repository
     end
 
     def self.get_full_access_users
-      Instructor.pluck(:user_name)
+      Instructor.joins(:end_user).pluck(:user_name)
     end
 
     # Gets a list of users with permission to access the repo.

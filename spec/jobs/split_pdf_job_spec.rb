@@ -16,7 +16,7 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: instructor
+      role: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
@@ -36,7 +36,7 @@ describe SplitPdfJob do
                                                           num_groups_in_complete: 0,
                                                           num_groups_in_incomplete: 0,
                                                           num_pages_qr_scan_error: 0,
-                                                          user: instructor)
+                                                          role: instructor)
       [exam_template, '', split_pdf_log, 'midterm_scan_100.pdf', instructor]
     end
     include_examples 'background job'
@@ -50,7 +50,7 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: instructor
+      role: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
@@ -70,7 +70,7 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: instructor
+      role: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
@@ -95,7 +95,7 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: instructor
+      role: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
@@ -120,7 +120,7 @@ describe SplitPdfJob do
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: instructor
+      role: instructor
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")

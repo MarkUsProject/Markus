@@ -22,7 +22,7 @@ class ApplicationPolicy < ActionPolicy::Base
 
   # policies used to render menu bars (visible everywhere)
 
-  def view_admin_subtabs?
+  def view_instructor_subtabs?
     role && check?(:manage_assessments?, role)
   end
 

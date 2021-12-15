@@ -7,16 +7,16 @@ en:
     new: Add an Instructor
   students:
     active: Active
-    instructor_actions:
-      add_section: Add to section
-      give_grace_credits: Give grace credits
-      mark_active: Mark as active
-      mark_inactive: Mark as inactive
     display_inactive: Display inactive students
     edit: Edit a Student
     help:
       manage_students: Mark students as active or inactive, give them grace credits.
     inactive: Inactive
+    instructor_actions:
+      add_section: Add to section
+      give_grace_credits: Give grace credits
+      mark_active: Mark as active
+      mark_inactive: Mark as inactive
     new: Add a Student
     no_students_selected: No students were selected, so no changes were made.
     not_successfully_added_message_1: 'The following students have not been successfully added:'
@@ -35,8 +35,5 @@ en:
       help_html: The API key is used for authentication for the MarkUs API. See <a href="https://github.com/MarkUsProject/Markus/wiki/RESTful-API">MarkUs Wiki</a> for information on using the API.
       reset: Reset API key
       unavailable: Unavailable
-    upload:
-      errors:
-        duplicate_users: 'Duplicate user names: %{user_names}.'
-    verify_settings_update: Your settings have been updated!
     not_found: 'No user can be found with the user name: %{user_names}'
+    verify_settings_update: Your settings have been updated!

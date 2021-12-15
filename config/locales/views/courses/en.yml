@@ -1,5 +1,5 @@
 ---
 en:
   courses:
-    view_courses: Courses
     no_courses: No courses found.
+    view_courses: Courses

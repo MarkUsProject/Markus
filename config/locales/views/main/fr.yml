@@ -1,7 +1,6 @@
 ---
 fr:
   main:
-    account_disabled: Ce compte a été désactivé.
     create_marking_scheme: UPDATE ME
     external_authentication_not_supported: L'authentification externe n'est pas supportée sur votre plateforme.
     frequency: UPDATE ME
@@ -12,10 +11,7 @@ fr:
     login_failed: L'établissement de la connexion a échoué.
     password: Mot de passe
     password_not_blank: Veuillez entrer votre mot de passe.
-    please_log_in: Merci de vous connecter.
     role_switch:
-      instructor_password: Mot de passe Administrateur
-      cannot_login_as_another_instructor: Vous ne pouvez vous connecter à la place d'un autre administrateur.
       clear_role_switch_session: Annuler le changement d'utilisateur
       log_in_as: Connexion en tant que
       switch_role: Changer d'utilisateur
