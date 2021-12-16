@@ -13,7 +13,7 @@ class ExamTemplatesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @exam_templates = @assignment.exam_templates.includes(:template_divisions)
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
   end
 
   # Creates a new instance of the exam template.
@@ -80,8 +80,8 @@ class ExamTemplatesController < ApplicationController
   end
 
   def generate
-    copies = params[:numCopies].to_i
-    index = params[:examTemplateIndex].to_i
+    copies = params[:exam_template][:num_copies].to_i
+    index = params[:exam_template][:start_index].to_i
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
 
@@ -118,30 +118,18 @@ class ExamTemplatesController < ApplicationController
   def add_fields
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    if params[:automatic_parsing] == 'true'
-      exam_template.automatic_parsing = true
-      cover_field1 = params[:field1]
-      cover_field2 = params[:field2]
-      cover_field3 = params[:field3]
-      cover_field4 = params[:field4]
-      exam_template.crop_x = params[:x].to_f
-      exam_template.crop_y = params[:y].to_f
-      exam_template.crop_width = params[:width].to_f
-      exam_template.crop_height = params[:height].to_f
-
-      exam_template.cover_fields = cover_field1 != ' ' ? cover_field1 + ',' : ''
-      exam_template.cover_fields += cover_field2 != ' ' ? cover_field2 + ',' : ''
-      exam_template.cover_fields += cover_field3 != ' ' ? cover_field3 + ',' : ''
-      exam_template.cover_fields += cover_field4 != ' ' ? cover_field4 + ',' : ''
+    if params[:exam_template][:automatic_parsing] == '1'
+      exam_template.update(exam_template_crop_fields_params)
     else
-      exam_template.automatic_parsing = false
-      exam_template.cover_fields = ''
-      exam_template.crop_x = nil
-      exam_template.crop_y = nil
-      exam_template.crop_width = nil
-      exam_template.crop_height = nil
+      exam_template.update(
+        automatic_parsing: false,
+        cover_fields: '',
+        crop_x: nil,
+        crop_y: nil,
+        crop_width: nil,
+        crop_height: nil
+      )
     end
-    exam_template.save
     redirect_to action: 'index'
   end
 
@@ -312,5 +300,17 @@ class ExamTemplatesController < ApplicationController
          :name,
          template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
        )
+  end
+
+  def exam_template_crop_fields_params
+    params.require(:exam_template)
+          .permit(
+            :automatic_parsing,
+            :cover_fields,
+            :crop_x,
+            :crop_y,
+            :crop_width,
+            :crop_height
+          )
   end
 end

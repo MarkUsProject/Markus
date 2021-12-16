@@ -8,4 +8,3 @@ class AddLastTokenUsedDateToTokens < ActiveRecord::Migration[4.2]
     remove_column :tokens, :last_token_used_date
   end
 end
-

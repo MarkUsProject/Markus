@@ -143,14 +143,17 @@ class User < ApplicationRecord
     if assignment.nil?
       return false
     end
+
     group =  grouping_for(Integer(assignment.id))
     if group.nil?
       return false
     end
+
     prs = PeerReview.where(reviewer_id: group.id)
     if prs.first.nil?
       return false
     end
+
     pr = prs.find {|p| p.result_id == Integer(result.id)}
 
     is_a?(Student) && !pr.nil?
@@ -174,6 +177,7 @@ class User < ApplicationRecord
       if row[0].blank?
         raise CsvInvalidLineError
       end
+
       if user_names.include?(row[user_name_i])
         duplicate_user_names.add row[user_name_i]
         raise CsvInvalidLineError
@@ -210,6 +214,7 @@ class User < ApplicationRecord
     users.each { |u| u.push(Time.zone.name) }
     parsed[:invalid_records] = ''
     return parsed if users.empty?
+
     existing_user_ids = user_class.all.pluck(:id)
     imported_ids = []
     successful_imports = []
@@ -274,6 +279,30 @@ class User < ApplicationRecord
     md5.update(key)
     # base64 encode md5 hash
     self.update(api_key: Base64.encode64(md5.to_s).strip)
+  end
+
+  # Determine what assessments are visible to the user.
+  # By default, returns all assessments visible to the user.
+  # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,
+  # only returns assessments of that type. Otherwise returns all assessment types.
+  # Optional parameter assessment_id: if passed an assessment id, returns a collection containing
+  # only the assessment with the given id, if it is visible to the current user.
+  # If it is not visible, returns an empty collection.
+  def visible_assessments(assessment_type: nil, assessment_id: nil)
+    assessments = Assessment.where(type: assessment_type || Assessment.type)
+    assessments = assessments.where(id: assessment_id) if assessment_id
+    if self.section_id
+      assessments = assessments.left_outer_joins(:assessment_section_properties)
+                               .where(
+                                 'assessment_section_properties.section_id': [self.section_id, nil]
+                               )
+      assessments = assessments.where('assessment_section_properties.is_hidden': false)
+                               .or(assessments.where('assessment_section_properties.is_hidden': nil,
+                                                     'assessments.is_hidden': false))
+    else
+      assessments = assessments.where(is_hidden: false)
+    end
+    assessments
   end
 
   private

@@ -23,7 +23,7 @@
     run_tests_assignment_submission_result_path :
     execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
   <div class="rt-action-box">
-    <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized %>
+    <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized, remote: true %>
   </div>
 <% end %>
 

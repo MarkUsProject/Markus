@@ -1,48 +1,47 @@
-import React from 'react';
-import { render } from 'react-dom';
-import ReactTable from 'react-table';
-import { DataChart } from '../Helpers/data_chart'
-
+import React from "react";
+import {render} from "react-dom";
+import ReactTable from "react-table";
+import {DataChart} from "../Helpers/data_chart";
 
 export class SummaryPanel extends React.Component {
   static defaultProps = {
     criterionSummaryData: [],
     extra_marks: [],
     extraMarkSubtotal: 0,
-    graceTokenDeductions: []
+    graceTokenDeductions: [],
   };
 
   markDataSet = {
-    label: I18n.t('activerecord.models.mark.one'),
-    backgroundColor: 'rgba(58,106,179,0.35)',
-    borderColor: '#3a6ab3',
+    label: I18n.t("activerecord.models.mark.one"),
+    backgroundColor: "rgba(58,106,179,0.35)",
+    borderColor: "#3a6ab3",
     borderWidth: 1,
-    hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+    hoverBackgroundColor: "rgba(58,106,179,0.75)",
   };
 
   // Colors for chart are based on constants.css file, with modifications for opacity.
   oldMarkDataSet = {
-    label: I18n.t('results.remark.old_mark'),
-    backgroundColor: 'rgba(250,253,170,0.65)',
-    borderColor: '#dde426',
+    label: I18n.t("results.remark.old_mark"),
+    backgroundColor: "rgba(250,253,170,0.65)",
+    borderColor: "#dde426",
     borderWidth: 1,
-    hoverBackgroundColor: '#dde426'
+    hoverBackgroundColor: "#dde426",
   };
 
   constructor(props) {
     super(props);
     this.state = {
       showNewExtraMark: false,
-      xTitle: I18n.t('activerecord.models.criterion.one'),
-      yTitle: I18n.t('activerecord.models.mark.one') + ' (%)',
+      xTitle: I18n.t("activerecord.models.criterion.one"),
+      yTitle: I18n.t("activerecord.models.mark.one") + " (%)",
       datasets: [],
       labels: [],
-      chartLegend: false
-    }
+      chartLegend: false,
+    };
   }
 
   componentDidMount() {
-    this.marks_modal = new ModalMarkus('#marks_chart');
+    this.marks_modal = new ModalMarkus("#marks_chart");
   }
 
   toggleMarksChart = () => {
@@ -60,50 +59,56 @@ export class SummaryPanel extends React.Component {
     this.markDataSet.data = markData;
     if (oldMarksExist) {
       this.oldMarkDataSet.data = oldMarks;
-      this.markDataSet.label = I18n.t('results.current_mark');
-      this.setState({datasets: [this.oldMarkDataSet, this.markDataSet], labels: labels, chartLegend: true});
+      this.markDataSet.label = I18n.t("results.current_mark");
+      this.setState({
+        datasets: [this.oldMarkDataSet, this.markDataSet],
+        labels: labels,
+        chartLegend: true,
+      });
     } else {
-      this.setState({datasets: [this.markDataSet], labels: labels, chartLegend: false});
+      this.setState({
+        datasets: [this.markDataSet],
+        labels: labels,
+        chartLegend: false,
+      });
     }
     this.marks_modal.open();
   };
 
   criterionColumns = () => [
     {
-      Header: I18n.t('activerecord.models.criterion.one'),
-      accessor: 'criterion',
-      classes: ['left']
+      Header: I18n.t("activerecord.models.criterion.one"),
+      accessor: "criterion",
+      classes: ["left"],
     },
     {
-      Header: 'Old Mark',
-      accessor: 'old_mark',
-      className: 'number',
-      show: this.props.remark_submitted
+      Header: "Old Mark",
+      accessor: "old_mark",
+      className: "number",
+      show: this.props.remark_submitted,
     },
     {
-      Header: I18n.t('activerecord.models.mark.one'),
-      id: 'mark',
-      className: 'number',
+      Header: I18n.t("activerecord.models.mark.one"),
+      id: "mark",
+      className: "number",
       Cell: row => {
         let mark = row.original.mark;
         if (mark === undefined || mark === null) {
-          mark = '-';
+          mark = "-";
         }
         return `${mark} / ${row.original.max_mark}`;
-      }
-    }
+      },
+    },
   ];
 
   renderTotalMark = () => {
     const assignment_total = Math.round(this.props.assignment_max_mark * 100) / 100;
-    let oldTotal = '';
+    let oldTotal = "";
     if (this.props.remark_submitted) {
       oldTotal = (
-        <div className='highlight-bar'>
-          <span>
-            {I18n.t('results.remark.old_total')}
-          </span>
-          <span className='float-right'>
+        <div className="highlight-bar">
+          <span>{I18n.t("results.remark.old_total")}</span>
+          <span className="float-right">
             <span>{this.props.old_total}</span>
             &nbsp;/&nbsp;
             {assignment_total}
@@ -112,11 +117,9 @@ export class SummaryPanel extends React.Component {
       );
     }
     let currentTotal = (
-      <div className='highlight-bar'>
-        <span>
-          {I18n.t('activerecord.attributes.result.total_mark')}
-        </span>
-        <span className='float-right'>
+      <div className="highlight-bar">
+        <span>{I18n.t("activerecord.attributes.result.total_mark")}</span>
+        <span className="float-right">
           <span>{this.props.total}</span>
           &nbsp;/&nbsp;
           {assignment_total}
@@ -124,83 +127,89 @@ export class SummaryPanel extends React.Component {
       </div>
     );
 
-    return (<div>{oldTotal}{currentTotal}</div>)
+    return (
+      <div>
+        {oldTotal}
+        {currentTotal}
+      </div>
+    );
   };
 
   extraMarksColumns = () => [
     {
-      Header: I18n.t('activerecord.attributes.extra_mark.description'),
-      accessor: 'description',
+      Header: I18n.t("activerecord.attributes.extra_mark.description"),
+      accessor: "description",
       minWidth: 150,
-      Cell: (row) => {
+      Cell: row => {
         if (row.original._new) {
-          return <input type={'text'} defaultValue='' style={{width: '100%'}}/>;
+          return <input type={"text"} defaultValue="" style={{width: "100%"}} />;
         } else {
           return row.value;
         }
-      }
+      },
     },
     {
-      Header: I18n.t('activerecord.attributes.extra_mark.extra_mark'),
-      accessor: 'extra_mark',
+      Header: I18n.t("activerecord.attributes.extra_mark.extra_mark"),
+      accessor: "extra_mark",
       minWidth: 80,
-      className: 'number',
-      Cell: (row) => {
+      className: "number",
+      Cell: row => {
         if (row.original._new) {
-          return <input type={'number'} step='any' defaultValue={0} />;
-        } else if (row.original.unit === 'points') {
+          return <input type={"number"} step="any" defaultValue={0} />;
+        } else if (row.original.unit === "points") {
           return row.value;
         } else {
           // Percentage
-          let mark_value = (row.value * this.props.assignment_max_mark / 100).toFixed(2);
+          let mark_value = ((row.value * this.props.assignment_max_mark) / 100).toFixed(2);
           return `${mark_value} (${row.value}%)`;
         }
-      }
+      },
     },
     {
-      Header: '',
-      id: 'action',
+      Header: "",
+      id: "action",
       show: !this.props.released_to_students,
-      Cell: (row) => {
+      Cell: row => {
         if (row.original._new) {
           return (
-            <button
-              onClick={this.createExtraMark}
-              className='inline-button'>
-              {I18n.t('save')}
+            <button onClick={this.createExtraMark} className="inline-button">
+              {I18n.t("save")}
             </button>
           );
         } else {
           return (
             <button
               onClick={() => this.props.destroyExtraMark(row.original.id)}
-              className='inline-button'>
-              {I18n.t('delete')}
+              className="inline-button"
+            >
+              {I18n.t("delete")}
             </button>
           );
         }
-      }
-    }
+      },
+    },
   ];
 
   newExtraMark = () => {
     this.setState({showNewExtraMark: true});
   };
 
-  createExtraMark = (event) => {
+  createExtraMark = event => {
     let row = event.target.parentElement.parentElement;
     let description = row.children[0].children[0].value;
     let extra_mark = row.children[1].children[0].value;
-    this.props.createExtraMark(description, extra_mark).then(() =>
-      this.setState({showNewExtraMark: false})
-    );
+    this.props
+      .createExtraMark(description, extra_mark)
+      .then(() => this.setState({showNewExtraMark: false}));
   };
 
   renderExtraMarks = () => {
     // If there are no extra marks and this result is released, display nothing.
-    if (this.props.is_reviewer ||
-        (this.props.released_to_students && this.props.extra_marks.length === 0)) {
-      return '';
+    if (
+      this.props.is_reviewer ||
+      (this.props.released_to_students && this.props.extra_marks.length === 0)
+    ) {
+      return "";
     }
 
     let data;
@@ -209,9 +218,9 @@ export class SummaryPanel extends React.Component {
         {
           _new: true,
           extra_mark: 0,
-          description: '',
-          id: null
-        }
+          description: "",
+          id: null,
+        },
       ]);
     } else {
       data = this.props.extra_marks;
@@ -219,25 +228,20 @@ export class SummaryPanel extends React.Component {
 
     return (
       <div>
-        <h4>{I18n.t('activerecord.models.extra_mark.other')}</h4>
-        {data.length > 0 &&
-         <ReactTable
-           columns={this.extraMarksColumns()}
-           data={data} />
-        }
-        {!this.props.released_to_students &&
-         <p>
-           <button className='inline-button' onClick={this.newExtraMark}>
-             {I18n.t('helpers.submit.create',
-                     {model: I18n.t('activerecord.models.extra_mark.one')})}
-           </button>
-         </p>
-        }
-        <div className='highlight-bar'>
-          {I18n.t('results.total_extra_marks')}
-          <span className='float-right'>
-            {this.props.extraMarkSubtotal.toFixed(2)}
-          </span>
+        <h4>{I18n.t("activerecord.models.extra_mark.other")}</h4>
+        {data.length > 0 && <ReactTable columns={this.extraMarksColumns()} data={data} />}
+        {!this.props.released_to_students && (
+          <p>
+            <button className="inline-button" onClick={this.newExtraMark}>
+              {I18n.t("helpers.submit.create", {
+                model: I18n.t("activerecord.models.extra_mark.one"),
+              })}
+            </button>
+          </p>
+        )}
+        <div className="highlight-bar">
+          {I18n.t("results.total_extra_marks")}
+          <span className="float-right">{this.props.extraMarkSubtotal.toFixed(2)}</span>
         </div>
       </div>
     );
@@ -245,41 +249,38 @@ export class SummaryPanel extends React.Component {
 
   renderGraceTokenDeductions = () => {
     if (this.props.is_reviewer || this.props.graceTokenDeductions.length === 0) {
-      return '';
+      return "";
     } else {
       let rows = this.props.graceTokenDeductions.flatMap(d => {
         return [
-          <tr key={d['users.user_name']}>
-            <th colSpan={2}>
-              {`${d['users.user_name']} - (${d['users.first_name']} ${d['users.last_name']})`}
-            </th>
+          <tr key={d["users.user_name"]}>
+            <th colSpan={2}>{`${d["users.user_name"]} - (${d["users.display_name"]})`}</th>
           </tr>,
-          <tr key={d['users.user_name'] + '-deduction'}>
+          <tr key={d["users.user_name"] + "-deduction"}>
             <td>
-              {I18n.t('grace_period_submission_rules.credit',
-                {count: d.deduction})}
+              {I18n.t("grace_period_submission_rules.credit", {
+                count: d.deduction,
+              })}
             </td>
             <td>
-              {!this.props.released_to_students &&
-              <button
-                className='inline-button'
-                onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
-              >
-                {I18n.t('delete')}
-              </button>
-              }
+              {!this.props.released_to_students && (
+                <button
+                  className="inline-button"
+                  onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
+                >
+                  {I18n.t("delete")}
+                </button>
+              )}
             </td>
-          </tr>
-        ]
+          </tr>,
+        ];
       });
 
       return (
         <div>
-          <h3>{I18n.t('activerecord.models.grace_period_deduction.other')}</h3>
+          <h3>{I18n.t("activerecord.models.grace_period_deduction.other")}</h3>
           <table>
-            <tbody>
-            {rows}
-            </tbody>
+            <tbody>{rows}</tbody>
           </table>
         </div>
       );
@@ -288,17 +289,21 @@ export class SummaryPanel extends React.Component {
 
   render() {
     const style = {
-      width: window.innerWidth * 0.75 + 'px',
-      height: window.innerHeight * 0.6 + 'px',
-    }
+      width: window.innerWidth * 0.75 + "px",
+      height: window.innerHeight * 0.6 + "px",
+    };
     return (
       <div>
-        <p style={{textAlign: 'center'}}>
-          <button onClick={() => this.toggleMarksChart()} className={'mark-chart'} style={{width: '85%'}}>
-            {I18n.t('results.marks_chart')}
+        <p style={{textAlign: "center"}}>
+          <button
+            onClick={() => this.toggleMarksChart()}
+            className={"mark-chart"}
+            style={{width: "85%"}}
+          >
+            {I18n.t("results.marks_chart")}
           </button>
         </p>
-        <aside className='dialog' id={'marks_chart'} style={style}>
+        <aside className="dialog data-chart-container" id={"marks_chart"} style={style}>
           <DataChart
             labels={this.state.labels}
             datasets={this.state.datasets}
@@ -310,13 +315,14 @@ export class SummaryPanel extends React.Component {
         <ReactTable
           columns={this.criterionColumns()}
           data={this.props.criterionSummaryData}
-          className='auto-overflow'/>
-        <div className='highlight-bar'>
-          {I18n.t('results.subtotal')}
-          <span className='float-right'>
+          className="auto-overflow"
+        />
+        <div className="highlight-bar">
+          {I18n.t("results.subtotal")}
+          <span className="float-right">
             {this.props.subtotal}
             &nbsp;/&nbsp;
-            {+(this.props.assignment_max_mark)}
+            {+this.props.assignment_max_mark}
           </span>
         </div>
         {this.renderGraceTokenDeductions()}

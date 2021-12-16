@@ -1,5 +1,28 @@
 # Changelog
 
+## [v1.14.0]
+- Add the ability to hide assignments from individual sections (#5445)
+- Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
+- Fix bug with run test button in grading view when marks are released (#5527)
+- Update repository access permissions to take into account the Assignment
+  is_hidden and anonymize_groups attributes (#5547)
+- Support syntax highlighting for R (#5558)
+- Fixes in progress remark requests to display the remark request due date for students (#5562)
+- Preserve exam template paper size and orientation when stamping with QR codes (#5573)
+- Fix bugs in automatic parsing Python module (#5592)
+- Fix exam template automatic parsing to only accept one crop box, and parse either
+  ID number or user name (#5592)
+- Fix scanned exams when using automatic parsing with multiple exam templates (#5592)
+- Fixes assignment graders checkbox settings text to avoid double negatives (#5600)
+- Add test results download modal for assignment summary (#5561)
+- Improve accessibility of exam templates page (#5607)
+- Fix display bug with infinitely expanding chart in student results view for grade entry form (#5612)
+- Added the ability to copy over entire assignments (#5616)
+- Fix bug in User#visible_assessments for students in a section (#5634)
+- Fixed bug where tag edit modal closed whenever it is clicked (#5652)
+- Fix bug where the datetime selector wasn't being shown for peer review assessments (#5659)
+- Fix bug in displaying associated feedback files when switching between results (#5676)
+
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)
 - Add workaround for CSP rules in Safari (#5526)
@@ -27,7 +50,7 @@
 - Respect referrer url when navigating between assignments (#5409)
 - Remove delete link from TA table (#5407)
 - Persist file size and rotation when navigating between text and image files (#5413)
-- Improve student UI for timed assessments (#5417) 
+- Improve student UI for timed assessments (#5417)
 - When completing bulk actions, report errors instead of halting the whole process and rolling back (#5422)
 - Add ability to download data from submissions table as csv file (#5418)
 - Correctly update annotation category when creating annotation from "Did you mean" suggestion (#5448)
@@ -47,7 +70,7 @@
 - Add workaround for content security policy to allow loading blobs in Safari (#5273)
 
 ## [v1.12.2]
-- Require TestServer user to have a non-conflicting user name (#5268) 
+- Require TestServer user to have a non-conflicting user name (#5268)
 
 ## [v1.12.1]
 - Remove counter caches (#5222)
@@ -194,7 +217,7 @@
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
 - Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
-  criteria (#4656) 
+  criteria (#4656)
 - Fixed bug preventing graders from creating new notes in results view (#4668)
 - Fixed bug preventing new tags from being created from results view (#4669)
 - Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
@@ -253,8 +276,8 @@
 - Fixed bug where annotations were not removed when switching between PDF submission files (#4387)
 - Fixed bug where annotations disappeared on window resize (#4387)
 - Removed automatic saving of changes on the Autotesting Framework page and warn when redirecting instead (#4394)
-- Added progress message when uploading changes on Automated Testing tab (#4395) 
-- Fixed bug where the error message is appearing when the instructor is trying to collect the submission of the student 
+- Added progress message when uploading changes on Automated Testing tab (#4395)
+- Fixed bug where the error message is appearing when the instructor is trying to collect the submission of the student
   who hasn't submitted anything (#4373)
 - Ignore the "Total" column when uploading a csv file to a grade entry form. This makes the upload and download format
   for the csv file consistent (#4425)
@@ -264,10 +287,10 @@
 - Make bulk submission file downloads a background job (#4463)
 - Added option to download all test script files in the UI and through the API (#4494)
 - Added syntax highlighting support for .tex files (#4505)
-- Fixed annotation Markdown and MathJax rendering bug (#4506) 
+- Fixed annotation Markdown and MathJax rendering bug (#4506)
 - Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
 - Progress messages for background jobs now are hidden once the job is completed (#4519)
-- Fixed bug where a javascript submission/test/starter file can't be downloaded (#4520) 
+- Fixed bug where a javascript submission/test/starter file can't be downloaded (#4520)
 - Add ability to upload and download autotest settings as a json file/string through the UI and API (#4498)
 
 ## [v1.8.4]

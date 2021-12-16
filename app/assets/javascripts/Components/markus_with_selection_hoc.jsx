@@ -1,11 +1,10 @@
 /* Wrapper around react-table's CheckboxTable component.
  */
-import React from 'react';
-import {render} from 'react-dom';
+import React from "react";
+import {render} from "react-dom";
 
-import ReactTable from 'react-table';
-import checkboxHOC from 'react-table/lib/hoc/selectTable';
-
+import ReactTable from "react-table";
+import checkboxHOC from "react-table/lib/hoc/selectTable";
 
 function withSelection(WrappedComponent) {
   return class extends React.Component {
@@ -19,14 +18,14 @@ function withSelection(WrappedComponent) {
       this.state = {
         selection: [],
         selectAll: false,
-        last_selected: null
-      }
+        last_selected: null,
+      };
     }
 
     // From https://react-table.js.org/#/story/select-table-hoc.
     toggleSelection(key, shift, row) {
       // Input key is of the form `select-${id_}`.
-      key = parseInt(key.slice(key.indexOf('-') + 1), 10);
+      key = parseInt(key.slice(key.indexOf("-") + 1), 10);
       if (isNaN(key)) {
         return;
       }
@@ -38,8 +37,8 @@ function withSelection(WrappedComponent) {
         // the 'sortedData' property contains the currently accessible records based on the filter and sort
         const currentRecords = wrappedInstance.getResolvedState().sortedData;
         // find all keys between the last key selected and the current key selected
-        const keys_in_range = new Set;
-        currentRecords.some((record) => {
+        const keys_in_range = new Set();
+        currentRecords.some(record => {
           if (record._id === this.state.last_selected || record._id === key) {
             keys_in_range.add(record._id);
             if (keys_in_range.size > 1) {
@@ -49,13 +48,13 @@ function withSelection(WrappedComponent) {
             keys_in_range.add(record._id);
           }
           return false;
-        })
-        if (selection.indexOf(this.state.last_selected ) < 0) {
+        });
+        if (selection.indexOf(this.state.last_selected) < 0) {
           // if the last key selected unchecked the checkbox: remove all keys in range from the selection array
-          selection = [...new Set(selection.filter(x => !keys_in_range.has(x)))]
+          selection = [...new Set(selection.filter(x => !keys_in_range.has(x)))];
         } else {
           // otherwise add all keys in range to the selection array
-          selection = [...new Set([...selection, ...keys_in_range])]
+          selection = [...new Set([...selection, ...keys_in_range])];
         }
       } else {
         const keyIndex = selection.indexOf(key);
@@ -67,7 +66,7 @@ function withSelection(WrappedComponent) {
         last_selected = key;
       }
       // update the state
-      this.setState({ selection, last_selected });
+      this.setState({selection, last_selected});
     }
 
     toggleAll() {
@@ -80,11 +79,11 @@ function withSelection(WrappedComponent) {
         // the 'sortedData' property contains the currently accessible records based on the filter and sort
         const currentRecords = wrappedInstance.getResolvedState().sortedData;
         // we just push all the IDs onto the selection array
-        currentRecords.forEach((item) => {
+        currentRecords.forEach(item => {
           selection.push(item._original._id);
-        })
+        });
       }
-      this.setState({ selectAll, selection, last_selected });
+      this.setState({selectAll, selection, last_selected});
     }
 
     isSelected(key) {
@@ -101,15 +100,14 @@ function withSelection(WrappedComponent) {
         toggleSelection: this.toggleSelection,
         toggleAll: this.toggleAll,
         selectAll: this.state.selectAll,
-        selectType: 'checkbox',
+        selectType: "checkbox",
       };
     }
 
     render() {
       return (
         <WrappedComponent
-          ref={(r) => this.wrapped = r}
-
+          ref={r => (this.wrapped = r)}
           resetSelection={this.resetSelection}
           getCheckboxProps={this.getCheckboxProps}
           selectAll={this.state.selectAll}
@@ -118,12 +116,9 @@ function withSelection(WrappedComponent) {
         />
       );
     }
-  }
+  };
 }
-
 
 export const CheckboxTable = checkboxHOC(ReactTable);
 
-export {
-  withSelection
-};
+export {withSelection};

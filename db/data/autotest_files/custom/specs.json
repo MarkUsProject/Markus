@@ -10,7 +10,11 @@
           "category": [
             "admin"
           ],
-          "timeout": 30
+          "timeout": 30,
+          "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
+            "name": "Custom Test Group"
+          }
         }
       ]
     }

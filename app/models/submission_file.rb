@@ -119,4 +119,3 @@ class SubmissionFile < ApplicationRecord
     result
   end
 end
-

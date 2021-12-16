@@ -28,7 +28,6 @@ class GradeEntryFormsController < ApplicationController
 
   def update
     @grade_entry_form = GradeEntryForm.find(params[:id])
-
     # Process changes to input properties
     new_params = update_grade_entry_form_params(params)
 
@@ -63,7 +62,7 @@ class GradeEntryFormsController < ApplicationController
   # For students
   def student_interface
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    if @grade_entry_form.is_hidden
+    unless allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {

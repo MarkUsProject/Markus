@@ -1,0 +1,11 @@
+arrowParens: avoid
+bracketSpacing: false
+printWidth: 100
+semi: true
+
+overrides:
+  - files:
+      - "*.css"
+      - "*.scss"
+    options:
+      singleQuote: true

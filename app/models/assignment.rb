@@ -71,8 +71,6 @@ class Assignment < Assessment
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :section_due_dates
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
@@ -81,7 +79,12 @@ class Assignment < Assessment
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
-  after_save :update_permissions_if_vcs_changed
+  before_save do
+    @prev_assessment_section_property_ids = assessment_section_properties.ids
+    @prev_assignment_file_ids = assignment_files.ids
+  end
+  after_save_commit :update_repo_permissions
+  after_save_commit :update_repo_required_files
 
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
@@ -112,7 +115,7 @@ class Assignment < Assessment
   def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     return false if !due_date.nil? && Time.current < due_date
-    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
+    return false if assessment_section_properties.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
 
     true
   end
@@ -124,7 +127,7 @@ class Assignment < Assessment
     end
 
     sections_past = []
-    self.section_due_dates.each do |d|
+    self.assessment_section_properties.each do |d|
       if !d.due_date.nil? && Time.current > d.due_date
         sections_past << d.section.name
       end
@@ -153,7 +156,7 @@ class Assignment < Assessment
       return due_date
     end
 
-    SectionDueDate.due_date_for(section, self)
+    AssessmentSectionProperties.due_date_for(section, self)
   end
 
   # Return the start_time for +section+ if it is not nil, otherwise return this
@@ -161,13 +164,13 @@ class Assignment < Assessment
   def section_start_time(section)
     return start_time unless section_due_dates_type
 
-    section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
+    section&.assessment_section_properties&.find_by(assessment: self)&.start_time || start_time
   end
 
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
-    due_dates = section_due_dates.map(&:due_date) << due_date
+    due_dates = assessment_section_properties.map(&:due_date) << due_date
     due_dates.compact.max
   end
 
@@ -188,9 +191,9 @@ class Assignment < Assessment
 
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
-    section_due_dates = groupings.joins(inviter: [section: :section_due_dates])
-                                 .where('section_due_dates.assessment_id': id)
-                                 .pluck('groupings.id', 'section_due_dates.due_date')
+    section_due_dates = groupings.joins(inviter: [section: :assessment_section_properties])
+                                 .where('assessment_section_properties.assessment_id': id)
+                                 .pluck('groupings.id', 'assessment_section_properties.due_date')
 
     grouping_extensions = groupings.joins(:extension)
                                    .pluck(:id, :time_delta)
@@ -602,6 +605,73 @@ class Assignment < Assessment
       numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
+  # Generates the summary of the most test results associated with an assignment.
+  def summary_test_results
+    test_groups_query = self.test_groups
+                            .joins(test_group_results: { test_run: :grouping })
+                            .group('test_groups.id', 'groupings.id')
+                            .select('test_groups.id AS test_groups_id',
+                                    'MAX(test_group_results.created_at) AS test_group_results_created_at')
+                            .where.not('test_runs.submission_id': nil)
+                            .to_sql
+
+    TestGroup.joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
+             .joins("INNER JOIN (#{test_groups_query}) sub \
+                     ON test_groups.id = sub.test_groups_id \
+                     AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
+             .select('test_groups.name',
+                     'test_groups_id',
+                     'groups.group_name',
+                     'test_results.name as test_result_name',
+                     'test_results.status',
+                     'test_results.marks_earned',
+                     'test_results.marks_total',
+                     :output, :extra_info, :error_type)
+  end
+
+  # Generate a JSON summary of the most recent test results associated with an assignment.
+  def summary_test_result_json
+    self.summary_test_results.group_by(&:group_name).transform_values do |grouping|
+      grouping.group_by(&:name)
+    end.to_json
+  end
+
+  # Generate a CSV summary of the most recent test results associated with an assignment.
+  def summary_test_result_csv
+    results = {}
+    headers = SortedSet.new
+    summary_test_results = self.summary_test_results.as_json
+
+    summary_test_results.each do |test_result|
+      header = "#{test_result['name']}:#{test_result['test_result_name']}"
+
+      if results.key?(test_result['group_name'])
+        results[test_result['group_name']][header] = test_result['status']
+      else
+        results[test_result['group_name']] = Hash[header, test_result['status']]
+      end
+
+      headers << header
+    end
+
+    CSV.generate do |csv|
+      csv << [nil, *headers]
+
+      results.each do |group_name, _test_group|
+        row = [group_name]
+
+        headers.each do |header|
+          if results[group_name].key?(header)
+            row << results[group_name][header]
+          else
+            row << nil
+          end
+        end
+        csv << row
+      end
+    end
+  end
+
   # Generate CSV summary of grades for this assignment
   # for the current user. The user should be an admin or TA.
   def summary_csv(user)
@@ -893,6 +963,8 @@ class Assignment < Assessment
     end
   end
 
+  # Returns the assignments for which students have repository access.
+  #
   # Repository authentication subtleties:
   # 1) a repository is associated with a Group, but..
   # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
@@ -905,12 +977,31 @@ class Assignment < Assessment
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
     records = Assignment.joins(:assignment_properties)
-                        .includes(groupings: [:group, { accepted_student_memberships: :user }])
+                        .includes(groupings: [:group, accepted_students: :section])
                         .where(assignment_properties: { vcs_submit: true })
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
            .or(records.where.not(groupings: { start_time: nil }))
            .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+  end
+
+  # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
+  # is a boolean indicating whether the given assignment is visible to the given section.
+  def self.visibility_hash
+    records = Assignment.left_outer_joins(:assessment_section_properties)
+                        .pluck_to_hash('assessments.id',
+                                       'section_id',
+                                       'assessments.is_hidden',
+                                       'assessment_section_properties.is_hidden')
+    visibilities = records.uniq { |r| r['assessments.id'] }
+                          .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
+                          .to_h
+    records.each do |r|
+      unless r['assessment_section_properties.is_hidden'].nil?
+        visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']
+      end
+    end
+    visibilities
   end
 
   ### /REPO ###
@@ -1156,28 +1247,95 @@ class Assignment < Assessment
     self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
   end
 
+  # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
+  def assignment_properties_config
+    # Data to avoid including
+    exclude = %w[id created_at updated_at outstanding_remark_request_count repository_folder]
+    should_reject = ->(attr) { attr.end_with?('_id', '_created_at', '_updated_at') }
+    # Helper lambda functions for filtering attributes
+    filter_attr = ->(attributes) { attributes.except(*exclude).reject { |attr| should_reject.call(attr) } }
+    filter_table = ->(data, model) do
+      data.pluck_to_hash(*(model.column_names - exclude).reject { |attr| should_reject.call(attr) })
+    end
+    # Build properties
+    properties = self.attributes.except(*exclude).reject { |attr| should_reject.call(attr) || attr == 'type' }
+    properties['assignment_properties_attributes'] = filter_attr.call(self.assignment_properties.attributes)
+    properties['assignment_files_attributes'] = filter_table.call(self.assignment_files, AssignmentFile)
+    properties['submission_rule_attributes'] = filter_attr.call(self.submission_rule.attributes)
+    properties['submission_rule_attributes']['periods_attributes'] = filter_table.call(self.submission_rule.periods,
+                                                                                       Period)
+    properties
+  end
+
+  # Writes this assignment's starter file settings to the file located at +settings_filepath+ located in the
+  # +zip_file+. Also writes the starter files for this assignment in the same directory as +settings_filepath+.
+  def starter_file_config_to_zip(zip_file, settings_filepath)
+    default_starter_group = nil
+    group_data = []
+    directory_path = File.dirname(settings_filepath)
+    self.starter_file_groups.each do |starter_file_group|
+      group_name = ActiveStorage::Filename.new(starter_file_group.name).sanitized
+      starter_file_group.write_starter_files_to_zip(zip_file, File.join(directory_path, group_name))
+      if starter_file_group.id == self.default_starter_file_group_id
+        default_starter_group = group_name
+      end
+      group_data << {
+        directory_name: group_name,
+        name: starter_file_group.name,
+        use_rename: starter_file_group.use_rename,
+        entry_rename: starter_file_group.entry_rename
+      }
+    end
+    starter_file_settings = {
+      default_starter_file_group: default_starter_group,
+      starter_file_groups: group_data
+    }.to_yaml
+    zip_file.get_output_stream(settings_filepath) { |f| f.write starter_file_settings }
+  end
+
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(user)
     zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
-    files_dir = Pathname.new self.autotest_files_dir
     Zip::File.open(zip_path, create: true) do |zip_file|
-      self.autotest_files.map do |file|
-        path = File.join zip_name, file
-        abs_path = files_dir.join(file)
-        if abs_path.directory?
-          zip_file.mkdir(path)
-        else
-          zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
-        end
-      end
+      add_test_files_to_zip(zip_file, zip_name)
     end
     zip_path
   end
 
+  # Writes all of this assignment's automated test files to the +zip_dir+ in +zip_file+. Also writes
+  # the tester settings specified in this assignment's properties and spec file to the json file at
+  # +specs_file_path+ in the +zip_file+.
+  def automated_test_config_to_zip(zip_file, zip_dir, specs_file_path)
+    self.add_test_files_to_zip(zip_file, zip_dir)
+    test_specs_path = self.autotest_settings_file
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    test_specs['testers']&.each do |tester_info|
+      tester_info['test_data']&.each do |test_info|
+        test_info['extra_info']&.delete('test_group_id')
+      end
+    end
+    zip_file.get_output_stream(specs_file_path) do |f|
+      f.write(test_specs.to_json)
+    end
+  end
+
   private
+
+  def add_test_files_to_zip(zip_file, zip_name)
+    files_dir = Pathname.new self.autotest_files_dir
+    self.autotest_files.map do |file|
+      path = File.join zip_name, file
+      abs_path = files_dir.join(file)
+      if abs_path.directory?
+        zip_file.mkdir(path)
+      else
+        zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
+      end
+    end
+  end
 
   def create_autotest_dirs
     FileUtils.mkdir_p self.autotest_path
@@ -1286,5 +1444,41 @@ class Assignment < Assessment
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
     self.submission_rule ||= NoLateSubmissionRule.new
+  end
+
+  # Update the repository permissions file if one of the following attributes was changed after a save:
+  # - vcs_submit
+  # - is_hidden or section-specific is_hidden
+  # - anonymize_groups
+  def update_repo_permissions
+    return unless
+      saved_change_to_vcs_submit? ||
+        saved_change_to_anonymize_groups? ||
+        visibility_changed?
+
+    Repository.get_class.update_permissions
+  end
+
+  # Update list of required files in student repositories. Used for git hooks to prevent submitting
+  # non-required files. Updated when one of the following attributes was changed after a save:
+  # - only_required_files
+  # - is_hidden or section-specific is_hidden
+  # - any assignment files
+  def update_repo_required_files
+    return unless Settings.repository.type == 'git'
+    return unless
+      saved_change_to_only_required_files? ||
+        assignment_files.any?(&:saved_changes?) ||
+        visibility_changed? ||
+        @prev_assignment_file_ids != self.reload.assignment_files.ids
+
+    UpdateRepoRequiredFilesJob.perform_later(self.id)
+  end
+
+  # Returns whether the visibility for this assignment changed after a save.
+  def visibility_changed?
+    saved_change_to_is_hidden? ||
+      assessment_section_properties.any?(&:is_hidden_previously_changed?) ||
+      @prev_assessment_section_property_ids != self.reload.assessment_section_properties.ids
   end
 end

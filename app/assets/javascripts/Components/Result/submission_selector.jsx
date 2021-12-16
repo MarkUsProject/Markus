@@ -1,27 +1,24 @@
-import React from 'react';
-import { render } from 'react-dom';
-
+import React from "react";
+import {render} from "react-dom";
 
 export class SubmissionSelector extends React.Component {
   renderToggleMarkingStateButton = () => {
     let buttonText, className, disabled;
-    if (this.props.marking_state === 'complete') {
-      buttonText = I18n.t('results.set_to_incomplete');
-      className = 'set-incomplete';
+    if (this.props.marking_state === "complete") {
+      buttonText = I18n.t("results.set_to_incomplete");
+      className = "set-incomplete";
       disabled = this.props.released_to_students;
     } else {
-      buttonText = I18n.t('results.set_to_complete');
-      className = 'set-complete';
-      disabled = this.props.marks.some(mark =>
-        mark.mark === null || mark.mark === undefined
-      );
+      buttonText = I18n.t("results.set_to_complete");
+      className = "set-complete";
+      disabled = this.props.marks.some(mark => mark.mark === null || mark.mark === undefined);
     }
     return (
       <button
         onClick={this.props.toggleMarkingState}
         className={className}
         disabled={disabled}
-        style={{alignSelf: 'flex-end', width: '140px'}}
+        style={{alignSelf: "flex-end", width: "140px"}}
       >
         {buttonText}
       </button>
@@ -29,69 +26,74 @@ export class SubmissionSelector extends React.Component {
   };
 
   renderReleaseMarksButton() {
-    if (!this.props.can_release) return '';
+    if (!this.props.can_release) return "";
 
     let buttonText, disabled;
     if (this.props.released_to_students) {
-      buttonText = I18n.t('submissions.unrelease_marks');
+      buttonText = I18n.t("submissions.unrelease_marks");
       disabled = false;
     } else {
-      buttonText = I18n.t('submissions.release_marks');
-      disabled = this.props.marking_state !== 'complete';
+      buttonText = I18n.t("submissions.release_marks");
+      disabled = this.props.marking_state !== "complete";
     }
     return (
       <button
-        className='release'
+        className="release"
         onClick={this.props.setReleasedToStudents}
         disabled={disabled}
-        style={{alignSelf: 'flex-end'}}
+        style={{alignSelf: "flex-end"}}
       >
         {buttonText}
       </button>
     );
-  };
+  }
 
   renderFullscreenButton() {
     if (this.props.fullscreen) {
       return (
-        <button className="fullscreen-exit"
-                onClick={this.props.toggleFullscreen}
-                style={{alignSelf: 'flex-end'}}
-                title="Alt + Enter"
+        <button
+          className="fullscreen-exit"
+          onClick={this.props.toggleFullscreen}
+          style={{alignSelf: "flex-end"}}
+          title="Alt + Enter"
         >
-          {I18n.t('results.fullscreen_exit')}
+          {I18n.t("results.fullscreen_exit")}
         </button>
       );
     } else {
       return (
-        <button className="fullscreen-enter"
-                onClick={this.props.toggleFullscreen}
-                style={{alignSelf: 'flex-end'}}
-                title="Alt + Enter"
+        <button
+          className="fullscreen-enter"
+          onClick={this.props.toggleFullscreen}
+          style={{alignSelf: "flex-end"}}
+          title="Alt + Enter"
         >
-          {I18n.t('results.fullscreen_enter')}
+          {I18n.t("results.fullscreen_enter")}
         </button>
       );
     }
-  };
+  }
 
   render() {
-    if (this.props.role === 'Student' && !this.props.is_reviewer) {
-      return '';
+    if (this.props.role === "Student" && !this.props.is_reviewer) {
+      return "";
     }
 
     const url = Routes.next_grouping_assignment_submission_result_path(
-      this.props.assignment_id, this.props.submission_id, this.props.result_id
+      this.props.assignment_id,
+      this.props.submission_id,
+      this.props.result_id
     );
 
-    const progressBarWidth = this.props.num_collected > 0 ? this.props.num_marked/this.props.num_collected : 1;
+    const progressBarWidth =
+      this.props.num_collected > 0 ? this.props.num_marked / this.props.num_collected : 1;
     let progressBarColour;
     if (progressBarWidth > 0.75) {
-      progressBarColour = 'green';
+      progressBarColour = "green";
     } else if (progressBarWidth > 0.35) {
-      progressBarColour = '#FBC02D';
+      progressBarColour = "#FBC02D";
     } else {
-      progressBarColour = '#FE2A2A';
+      progressBarColour = "#FE2A2A";
     }
 
     let meterLow = 0;
@@ -102,20 +104,20 @@ export class SubmissionSelector extends React.Component {
     }
 
     return (
-      <div className='submission-selector-container'>
-        <div className='submission-selector'>
+      <div className="submission-selector-container">
+        <div className="submission-selector">
           <button
-            className='button previous'
+            className="button previous"
             onClick={this.props.previousSubmission}
-            title={`${I18n.t('results.previous_submission')} (Shift + ⇦)`} />
-          <h3 className='group-name'>
-            {this.props.group_name}
-          </h3>
+            title={`${I18n.t("results.previous_submission")} (Shift + ⇦)`}
+          />
+          <h3 className="group-name">{this.props.group_name}</h3>
           <button
-            className='button next'
+            className="button next"
             onClick={this.props.nextSubmission}
-            title={`${I18n.t('results.next_submission')} (Shift + ⇨)`} />
-          <div className='progress'>
+            title={`${I18n.t("results.next_submission")} (Shift + ⇨)`}
+          />
+          <div className="progress">
             <meter
               value={this.props.num_marked}
               min={0}
@@ -126,11 +128,14 @@ export class SubmissionSelector extends React.Component {
             >
               {this.props.num_marked}/{this.props.num_collected}
             </meter>
-            {this.props.num_marked}/{this.props.num_collected}&nbsp;{I18n.t('submissions.state.complete')}
+            {this.props.num_marked}/{this.props.num_collected}&nbsp;
+            {I18n.t("submissions.state.complete")}
           </div>
 
           <div style={{flexGrow: 1}} />
-          <h2 className='total'>{+(Math.round(this.props.total * 100) / 100)} / {+(this.props.assignment_max_mark)}</h2>
+          <h2 className="total">
+            {+(Math.round(this.props.total * 100) / 100)} / {+this.props.assignment_max_mark}
+          </h2>
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}

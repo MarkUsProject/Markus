@@ -1,10 +1,9 @@
-import React from 'react';
-import {render} from 'react-dom';
-import ReactTable from 'react-table';
-import {lookup} from 'mime-types';
-import {dateSort, selectFilter} from './Helpers/table_helpers';
-import {FileViewer} from './Result/file_viewer';
-
+import React from "react";
+import {render} from "react-dom";
+import ReactTable from "react-table";
+import {lookup} from "mime-types";
+import {dateSort, selectFilter} from "./Helpers/table_helpers";
+import {FileViewer} from "./Result/file_viewer";
 
 export class TestRunTable extends React.Component {
   constructor(props) {
@@ -12,7 +11,7 @@ export class TestRunTable extends React.Component {
     this.state = {
       data: [],
       loading: true,
-      expanded: {}
+      expanded: {},
     };
     this.testRuns = React.createRef();
   }
@@ -22,9 +21,11 @@ export class TestRunTable extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.result_id !== this.props.result_id ||
-        prevProps.instructor_run !== this.props.instructor_run ||
-        prevProps.instructor_view !== this.props.instructor_view) {
+    if (
+      prevProps.result_id !== this.props.result_id ||
+      prevProps.instructor_run !== this.props.instructor_run ||
+      prevProps.instructor_view !== this.props.instructor_view
+    ) {
       this.fetchData();
     }
   }
@@ -37,24 +38,27 @@ export class TestRunTable extends React.Component {
           url: Routes.get_test_runs_instructors_assignment_submission_result_path(
             this.props.assignment_id,
             this.props.submission_id,
-            this.props.result_id),
-          dataType: 'json',
-        }
+            this.props.result_id
+          ),
+          dataType: "json",
+        };
       } else {
         ajaxDetails = {
           url: Routes.get_test_runs_instructors_released_assignment_submission_result_path(
             this.props.assignment_id,
             this.props.submission_id,
-            this.props.result_id),
-          dataType: 'json',
-        }
+            this.props.result_id
+          ),
+          dataType: "json",
+        };
       }
     } else {
       ajaxDetails = {
         url: Routes.get_test_runs_students_assignment_automated_tests_path(
-          this.props.assignment_id),
-        dataType: 'json',
-      }
+          this.props.assignment_id
+        ),
+        dataType: "json",
+      };
     }
     $.ajax(ajaxDetails).then(res => {
       let rows = [];
@@ -63,31 +67,35 @@ export class TestRunTable extends React.Component {
           let test_data = res[test_run_id];
           let row = {
             id_: test_run_id,
-            'test_runs.created_at': test_data[0]['test_runs.created_at'],
-            'users.user_name': test_data[0]['users.user_name'],
-            'test_runs.status': test_data[0]['test_runs.status'],
-            'test_runs.problems': test_data[0]['test_runs.problems'],
-            'test_results': [],
+            "test_runs.created_at": test_data[0]["test_runs.created_at"],
+            "users.user_name": test_data[0]["users.user_name"],
+            "test_runs.status": test_data[0]["test_runs.status"],
+            "test_runs.problems": test_data[0]["test_runs.problems"],
+            test_results: [],
           };
           test_data.forEach(data => {
-            Array.prototype.push.apply(row['test_results'], data['test_data']);
+            Array.prototype.push.apply(row["test_results"], data["test_data"]);
           });
           rows.push(row);
         }
       }
-      this.setState({data: rows, loading: false, expanded: rows.length > 0 ? {0: true} : {}});
+      this.setState({
+        data: rows,
+        loading: false,
+        expanded: rows.length > 0 ? {0: true} : {},
+      });
     });
   };
 
-  onExpandedChange = (newExpanded) => this.setState({expanded: newExpanded});
+  onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
 
   render() {
     let height;
     if (this.props.instructor_view) {
       // 3.5em is the vertical space for the action bar (and run tests button)
-      height = 'calc(599px - 3.5em)';
+      height = "calc(599px - 3.5em)";
     } else {
-      height = '599px';
+      height = "599px";
     }
 
     return (
@@ -97,36 +105,39 @@ export class TestRunTable extends React.Component {
           data={this.state.data}
           columns={[
             {
-              id: 'created_at',
-              accessor: row => row['test_runs.created_at'],
+              id: "created_at",
+              accessor: row => row["test_runs.created_at"],
               sortMethod: dateSort,
               minWidth: 300,
             },
             {
-              id: 'user_name',
-              accessor: row => row['users.user_name'],
-              Cell: ({value}) => I18n.t('activerecord.attributes.test_run.user') + ' ' + value,
+              id: "user_name",
+              accessor: row => row["users.user_name"],
+              Cell: ({value}) => I18n.t("activerecord.attributes.test_run.user") + " " + value,
               show: !this.props.instructor_run || this.props.instructor_view,
               width: 120,
             },
             {
-              id: 'status',
-              accessor: row => I18n.t(`automated_tests.test_runs_statuses.${row['test_runs.status']}`),
+              id: "status",
+              accessor: row =>
+                I18n.t(`automated_tests.test_runs_statuses.${row["test_runs.status"]}`),
               width: 120,
-            }
+            },
           ]}
-          SubComponent={ row => (
-            row.original['test_runs.problems'] ?
-              row.original['test_runs.problems'] :
-              <TestGroupResultTable key={row.original.id_} data={row.original['test_results']}/>
-          )}
-          noDataText={I18n.t('automated_tests.no_results')}
-          getTheadProps={ () => {
+          SubComponent={row =>
+            row.original["test_runs.problems"] ? (
+              row.original["test_runs.problems"]
+            ) : (
+              <TestGroupResultTable key={row.original.id_} data={row.original["test_results"]} />
+            )
+          }
+          noDataText={I18n.t("automated_tests.no_results")}
+          getTheadProps={() => {
             return {
-              style: {display: 'none'}
-            }
+              style: {display: "none"},
+            };
           }}
-          defaultSorted={[{id: 'created_at', desc: true}]}
+          defaultSorted={[{id: "created_at", desc: true}]}
           expanded={this.state.expanded}
           onExpandedChange={this.onExpandedChange}
           loading={this.state.loading}
@@ -137,7 +148,6 @@ export class TestRunTable extends React.Component {
   }
 }
 
-
 class TestGroupResultTable extends React.Component {
   constructor(props) {
     super(props);
@@ -145,31 +155,31 @@ class TestGroupResultTable extends React.Component {
       show_output: this.showOutput(props.data),
       expanded: this.computeExpanded(props.data),
       filtered: [],
-      filteredData: props.data
+      filteredData: props.data,
     };
   }
 
-  computeExpanded = (data) => {
+  computeExpanded = data => {
     let expanded = {};
     let i = 0;
     let groups = new Set();
-    data.forEach((row) => {
-      if (!groups.has(row['test_groups.name'])) {
+    data.forEach(row => {
+      if (!groups.has(row["test_groups.name"])) {
         expanded[i] = {};
         i++;
-        groups.add(row['test_groups.name']);
+        groups.add(row["test_groups.name"]);
       }
     });
     return expanded;
-  }
+  };
 
-  onExpandedChange = (newExpanded) => {
+  onExpandedChange = newExpanded => {
     this.setState({expanded: newExpanded});
-  }
+  };
 
-  showOutput = (data) => {
+  showOutput = data => {
     if (data) {
-      return data.some((row) => 'test_results.output' in row);
+      return data.some(row => "test_results.output" in row);
     } else {
       return false;
     }
@@ -177,93 +187,102 @@ class TestGroupResultTable extends React.Component {
 
   columns = () => [
     {
-      id: 'test_group_name',
-      Header: '',
-      accessor: row => row['test_groups.name'],
+      id: "test_group_name",
+      Header: "",
+      accessor: row => row["test_groups.name"],
       maxWidth: 30,
     },
     {
-      id: 'name',
-      Header: I18n.t('activerecord.attributes.test_result.name'),
-      accessor: row => row['test_results.name'],
+      id: "name",
+      Header: I18n.t("activerecord.attributes.test_result.name"),
+      accessor: row => row["test_results.name"],
       aggregate: (values, rows) => {
         if (rows.length === 0) {
-          return '';
+          return "";
         } else {
-          return rows[0]['test_group_name'];
+          return rows[0]["test_group_name"];
         }
       },
-      minWidth: 200
+      minWidth: 200,
     },
     {
-      id: 'test_status',
-      Header: I18n.t('activerecord.attributes.test_result.status'),
-      accessor: 'test_results_status',
+      id: "test_status",
+      Header: I18n.t("activerecord.attributes.test_result.status"),
+      accessor: "test_results_status",
       width: 80,
-      aggregate: _ => '',
+      aggregate: _ => "",
       filterable: true,
       Filter: selectFilter,
-      filterOptions: ['pass', 'partial', 'fail', 'error', 'error_all'].map(
-        status => ({value: status, text: status})
-      ),
+      filterOptions: ["pass", "partial", "fail", "error", "error_all"].map(status => ({
+        value: status,
+        text: status,
+      })),
       // Disable the default filter method because this is a controlled component
-      filterMethod: () => true
+      filterMethod: () => true,
     },
     {
-      id: 'marks_earned',
-      Header: I18n.t('activerecord.attributes.test_result.marks_earned'),
-      accessor: row => row['test_results.marks_earned'],
+      id: "marks_earned",
+      Header: I18n.t("activerecord.attributes.test_result.marks_earned"),
+      accessor: row => row["test_results.marks_earned"],
       Cell: row => {
-        const marksEarned = row.original['test_results.marks_earned'];
-        const marksTotal = row.original['test_results.marks_total'];
+        const marksEarned = row.original["test_results.marks_earned"];
+        const marksTotal = row.original["test_results.marks_total"];
         if (marksEarned !== null && marksTotal !== null) {
           return `${marksEarned} / ${marksTotal}`;
         } else {
-          return '';
+          return "";
         }
       },
       width: 80,
-      className: 'number',
-      aggregate: (vals, rows) => rows.reduce(
-        (acc, row) => [acc[0] + (row._original['test_results.marks_earned'] || 0),
-                       acc[1] + (row._original['test_results.marks_total'] || 0)],
-        [0, 0]
-      ),
+      className: "number",
+      aggregate: (vals, rows) =>
+        rows.reduce(
+          (acc, row) => [
+            acc[0] + (row._original["test_results.marks_earned"] || 0),
+            acc[1] + (row._original["test_results.marks_total"] || 0),
+          ],
+          [0, 0]
+        ),
       Aggregated: row => {
         return `${row.value[0]} / ${row.value[1]}`;
-      }
+      },
     },
   ];
 
-  filterByStatus = (filtered) => {
+  filterByStatus = filtered => {
     let status;
     for (const filter of filtered) {
-      if (filter.id === 'test_status') {
+      if (filter.id === "test_status") {
         status = filter.value;
       }
     }
 
     let filteredData;
-    if (!!status && status !== 'all') {
+    if (!!status && status !== "all") {
       filteredData = this.props.data.filter(row => row.test_results_status === status);
     } else {
       filteredData = this.props.data;
     }
 
-    this.setState({filtered, filteredData, expanded: this.computeExpanded(filteredData)});
-  }
+    this.setState({
+      filtered,
+      filteredData,
+      expanded: this.computeExpanded(filteredData),
+    });
+  };
 
   render() {
-    const extraInfo = this.props.data[0]['test_group_results.extra_info'];
+    const extraInfo = this.props.data[0]["test_group_results.extra_info"];
     let extraInfoDisplay;
     if (extraInfo) {
       extraInfoDisplay = (
         <div>
-          <h4>{I18n.t('activerecord.attributes.test_group_result.extra_info')}</h4>
+          <h4>{I18n.t("activerecord.attributes.test_group_result.extra_info")}</h4>
           <pre>{extraInfo}</pre>
-        </div>);
+        </div>
+      );
     } else {
-      extraInfoDisplay = '';
+      extraInfoDisplay = "";
     }
     const feedbackFiles = [];
     this.props.data.forEach(data => {
@@ -275,19 +294,19 @@ class TestGroupResultTable extends React.Component {
     });
     let feedbackFileDisplay;
     if (feedbackFiles.length) {
-      feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles}/>;
+      feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles} />;
     } else {
-      feedbackFileDisplay = '';
+      feedbackFileDisplay = "";
     }
 
     return (
       <div>
         <ReactTable
-          className={this.state.loading ? 'auto-overflow' : 'auto-overflow display-block'}
+          className={this.state.loading ? "auto-overflow" : "auto-overflow display-block"}
           data={this.state.filteredData}
           columns={this.columns()}
-          pivotBy={['test_group_name']}
-          getTdProps={ (state, rowInfo) => {
+          pivotBy={["test_group_name"]}
+          getTdProps={(state, rowInfo) => {
             if (rowInfo) {
               let className = `-wrap test-result-${rowInfo.row["test_status"]}`;
               if (
@@ -296,62 +315,58 @@ class TestGroupResultTable extends React.Component {
               ) {
                 className += " hide-rt-expander";
               }
-              return {className: className}
+              return {className: className};
             } else {
               return {};
             }
           }}
-          PivotValueComponent={() => ''}
+          PivotValueComponent={() => ""}
           expanded={this.state.expanded}
           filtered={this.state.filtered}
           onFilteredChange={this.filterByStatus}
           onExpandedChange={this.onExpandedChange}
           collapseOnDataChange={false}
           collapseOnSortingChange={false}
-          SubComponent={ row => (
-            <pre className={`test-results-output test-result-${row.row['test_status']}`}>
-              {row.original['test_results.output']}
+          SubComponent={row => (
+            <pre className={`test-results-output test-result-${row.row["test_status"]}`}>
+              {row.original["test_results.output"]}
             </pre>
-            )
-          }
-          style={{maxHeight: 'initial'}}
+          )}
+          style={{maxHeight: "initial"}}
         />
         {extraInfoDisplay}
         {feedbackFileDisplay}
       </div>
-    )
+    );
   }
 }
-
 
 class TestGroupFeedbackFileTable extends React.Component {
   render() {
     const columns = [
       {
-        Header: I18n.t('activerecord.attributes.submission.feedback_files'),
-        accessor: 'filename'
+        Header: I18n.t("activerecord.attributes.submission.feedback_files"),
+        accessor: "filename",
       },
     ];
 
     return (
       <ReactTable
-        className={'auto-overflow test-result-feedback-files'}
+        className={"auto-overflow test-result-feedback-files"}
         data={this.props.data}
         columns={columns}
-        SubComponent={ row => (
+        SubComponent={row => (
           <FileViewer
             selectedFile={row.original.filename}
             selectedFileURL={Routes.feedback_file_path(row.original.id)}
-            mime_type={lookup(row['filename'])}
+            mime_type={lookup(row["filename"])}
             selectedFileType={row.original.type}
           />
-        )
-        }
+        )}
       />
     );
   }
 }
-
 
 export function makeTestRunTable(elem, props) {
   render(<TestRunTable {...props} />, elem);

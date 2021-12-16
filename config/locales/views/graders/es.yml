@@ -21,5 +21,6 @@ es:
     select_a_criterion: Seleccione al menos un criterio de calificación
     select_a_grader: Seleccione un evaluador.
     skip_empty_submissions: No se asignará Evaluadores a los grupos con entregas vacías (requiere que las entregas sean recolectadas)
+    skip_empty_submissions_tooltip: UPDATE ME
     upload:
       remove_existing_mappings: Remove existing grader assignments

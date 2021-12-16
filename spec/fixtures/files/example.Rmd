@@ -12,5 +12,3 @@ This is a sample file
 ```{r}
 2 + 2
 ```
-
-

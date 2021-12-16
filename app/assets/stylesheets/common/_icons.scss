@@ -1,115 +1,114 @@
 .add-new-button::before {
-  content: asset_url('icons/add.png');
+  content: asset-url('icons/add.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .assign-all-button::before {
-  content: asset_url('add_arrow.png');
+  content: asset-url('add_arrow.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .assign-randomly-button::before {
-  content: asset_url('random_arrow.png');
+  content: asset-url('random_arrow.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .unassign-all-button::before {
-  content: asset_url('remove_arrow.png');
+  content: asset-url('remove_arrow.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .download-button::before {
-  content: asset_url('icons/disk.png');
+  content: asset-url('icons/disk.png');
   padding-right: 5px;
   vertical-align: middle;
 }
 
 .upload-button::before {
-  content: asset_url('icons/page_white_add.png');
+  content: asset-url('icons/page_white_add.png');
   padding-right: 5px;
   vertical-align: middle;
 }
 
 .add-icon::after {
-  content: asset_url('icons/add.png');
+  content: asset-url('icons/add.png');
   padding-left: 5px;
   vertical-align: text-top;
 }
 
 .edit-icon::after {
-  content: asset_url('icons/pencil.png');
+  content: asset-url('icons/pencil.png');
   padding-left: 5px;
   vertical-align: text-top;
 }
 
 .remove-icon::after {
-  content: asset_url('icons/cross.png');
+  content: asset-url('icons/cross.png');
   padding-left: 5px;
   vertical-align: text-top;
 }
 
 .valid-icon::after {
-  content: asset_url('icons/tick.png');
+  content: asset-url('icons/tick.png');
   padding-left: 5px;
   vertical-align: text-top;
 }
 
 .invalid-icon::after {
-  content: asset_url('icons/cross.png');
+  content: asset-url('icons/cross.png');
   padding-left: 5px;
   vertical-align: text-top;
 }
 
 .button.previous {
-  background: asset_url('icons/arrow_left.png') no-repeat 0 0;
+  background: asset-url('icons/arrow_left.png') no-repeat 0 0;
   background-size: 100%;
 }
 
 .button.next {
-  background: asset_url('icons/arrow_right.png') no-repeat 0 0;
+  background: asset-url('icons/arrow_right.png') no-repeat 0 0;
   background-size: 100%;
 }
 
 .set-complete::before {
-  content: asset_url('icons/accept.png');
+  content: asset-url('icons/accept.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .set-incomplete::before {
-  content: asset_url('icons/pencil.png');
+  content: asset-url('icons/pencil.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .release::before {
-  content: asset_url('icons/email_go.png');
+  content: asset-url('icons/email_go.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .fullscreen-enter::before {
-  content: asset_url('icons/fullscreen_enter.png');
+  content: asset-url('icons/fullscreen_enter.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .fullscreen-exit::before {
-  content: asset_url('icons/fullscreen_exit.png');
+  content: asset-url('icons/fullscreen_exit.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
 
 .mark-chart::before {
-  content: asset_url('icons/chart_bar.png');
+  content: asset-url('icons/chart_bar.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
-
 
 // Miscellaneous icons
 .flexible-criteria-icon {
@@ -118,7 +117,7 @@
 }
 
 .switch-role::before {
-  content: asset_url('icons/group_go.png');
+  content: asset-url('icons/group_go.png');
   padding-right: 5px;
   vertical-align: text-top;
 }

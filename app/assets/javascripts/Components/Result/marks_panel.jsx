@@ -1,26 +1,27 @@
-import React from 'react';
-import { render } from 'react-dom';
-
+import React from "react";
+import {render} from "react-dom";
 
 export class MarksPanel extends React.Component {
   static defaultProps = {
-    marks: []
+    marks: [],
   };
 
   constructor(props) {
     super(props);
     this.state = {
       expanded: new Set(),
-    }
+    };
   }
 
   componentDidMount() {
     if (!this.props.released_to_students) {
       // TODO: Convert this to pure React
       // Capture the mouse event to add "active-criterion" to the clicked element
-      $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', (e) => {
-        let criterion = $(e.target).closest('.rubric_criterion, .flexible_criterion, .checkbox_criterion');
-        if (!criterion.hasClass('unassigned')) {
+      $(document).on("click", ".rubric_criterion, .flexible_criterion, .checkbox_criterion", e => {
+        let criterion = $(e.target).closest(
+          ".rubric_criterion, .flexible_criterion, .checkbox_criterion"
+        );
+        if (!criterion.hasClass("unassigned")) {
           e.preventDefault();
           activeCriterion(criterion);
         }
@@ -34,36 +35,38 @@ export class MarksPanel extends React.Component {
       let expanded = new Set();
       this.props.marks.forEach(data => {
         const key = data.id;
-        if ((data.mark === null || data.mark === undefined) &&
-            (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
+        if (
+          (data.mark === null || data.mark === undefined) &&
+          (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))
+        ) {
           expanded.add(key);
         }
       });
-      this.setState({ expanded });
+      this.setState({expanded});
     }
   }
 
-  expandAll = (onlyUnmarked) => {
+  expandAll = onlyUnmarked => {
     let expanded = new Set();
     this.props.marks.forEach(markData => {
       if (!onlyUnmarked || markData.mark === null || markData.mark === undefined) {
         expanded.add(markData.id);
       }
     });
-    this.setState({ expanded });
+    this.setState({expanded});
   };
 
   collapseAll = () => {
-    this.setState({ expanded: new Set() });
+    this.setState({expanded: new Set()});
   };
 
-  toggleExpanded = (key) => {
+  toggleExpanded = key => {
     if (this.state.expanded.has(key)) {
       this.state.expanded.delete(key);
     } else {
       this.state.expanded.add(key);
     }
-    this.setState({ expanded: this.state.expanded })
+    this.setState({expanded: this.state.expanded});
   };
 
   updateMark = (criterion_id, mark) => {
@@ -71,8 +74,8 @@ export class MarksPanel extends React.Component {
     if (result !== undefined) {
       result.then(() => {
         this.state.expanded.delete(criterion_id);
-        this.setState({ expanded: this.state.expanded });
-      })
+        this.setState({expanded: this.state.expanded});
+      });
     }
   };
 
@@ -81,9 +84,10 @@ export class MarksPanel extends React.Component {
     this.props.destroyMark(criterion_id);
   };
 
-  renderMarkComponent = (markData) => {
+  renderMarkComponent = markData => {
     const key = markData.id;
-    const unassigned = this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
+    const unassigned =
+      this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
 
     const props = {
       key: key,
@@ -97,14 +101,14 @@ export class MarksPanel extends React.Component {
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
       findDeductiveAnnotation: this.props.findDeductiveAnnotation,
-      ... markData
+      ...markData,
     };
-    if (markData.criterion_type === 'CheckboxCriterion') {
-      return <CheckboxCriterionInput {... props} />;
-    } else if (markData.criterion_type === 'FlexibleCriterion') {
-      return <FlexibleCriterionInput {... props} />;
-    } else if (markData.criterion_type === 'RubricCriterion') {
-      return <RubricCriterionInput {... props} />;
+    if (markData.criterion_type === "CheckboxCriterion") {
+      return <CheckboxCriterionInput {...props} />;
+    } else if (markData.criterion_type === "FlexibleCriterion") {
+      return <FlexibleCriterionInput {...props} />;
+    } else if (markData.criterion_type === "RubricCriterion") {
+      return <RubricCriterionInput {...props} />;
     } else {
       return null;
     }
@@ -114,30 +118,27 @@ export class MarksPanel extends React.Component {
     const markComponents = this.props.marks.map(this.renderMarkComponent);
 
     return (
-      <div id='mark_viewer' className='flex-col'>
-        {!this.props.released_to_students &&
-         <div className='text-center'>
-           <button className='inline-button' onClick={() => this.expandAll()}>
-             {I18n.t('results.expand_all')}
-           </button>
-           <button className='inline-button' onClick={() => this.expandAll(true)}>
-             {I18n.t('results.expand_unmarked')}
-           </button>
-           <button className='inline-button' onClick={() => this.collapseAll()}>
-             {I18n.t('results.collapse_all')}
-           </button>
-         </div>
-        }
-        <div id='mark_criteria'>
-          <ul className='marks-list'>
-            {markComponents}
-          </ul>
+      <div id="mark_viewer" className="flex-col">
+        {!this.props.released_to_students && (
+          <div className="text-center">
+            <button className="inline-button" onClick={() => this.expandAll()}>
+              {I18n.t("results.expand_all")}
+            </button>
+            <button className="inline-button" onClick={() => this.expandAll(true)}>
+              {I18n.t("results.expand_unmarked")}
+            </button>
+            <button className="inline-button" onClick={() => this.collapseAll()}>
+              {I18n.t("results.collapse_all")}
+            </button>
+          </div>
+        )}
+        <div id="mark_criteria">
+          <ul className="marks-list">{markComponents}</ul>
         </div>
       </div>
     );
   }
 }
-
 
 class CheckboxCriterionInput extends React.Component {
   constructor(props) {
@@ -145,56 +146,60 @@ class CheckboxCriterionInput extends React.Component {
   }
 
   render() {
-    const unassignedClass = this.props.unassigned ? 'unassigned' : '';
-    const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
+    const unassignedClass = this.props.unassigned ? "unassigned" : "";
+    const expandedClass = this.props.expanded ? "expanded" : "collapsed";
     return (
-      <li id={`checkbox_criterion_${this.props.id}`}
-          className={`checkbox_criterion ${expandedClass} ${unassignedClass}`}>
+      <li
+        id={`checkbox_criterion_${this.props.id}`}
+        className={`checkbox_criterion ${expandedClass} ${unassignedClass}`}
+      >
         <div data-id={this.props.id}>
-          <div className='criterion-name'
-               onClick={this.props.toggleExpanded}
-          >
-            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
-                 style={{float: 'left'}}
+          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+            <div
+              className={this.props.expanded ? "arrow-up" : "arrow-down"}
+              style={{float: "left"}}
             />
             {this.props.name}
-            {this.props.bonus && ` (${I18n.t('activerecord.attributes.criterion.bonus')})`}
+            {this.props.bonus && ` (${I18n.t("activerecord.attributes.criterion.bonus")})`}
             {!this.props.released_to_students &&
-             !this.props.unassigned &&
-             this.props.mark !== null &&
-             <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.id)}
-                style={{float: 'right'}}
-             >
-               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-             </a>
-            }
+              !this.props.unassigned &&
+              this.props.mark !== null && (
+                <a
+                  href="#"
+                  onClick={e => this.props.destroyMark(e, this.props.id)}
+                  style={{float: "right"}}
+                >
+                  {I18n.t("helpers.submit.delete", {
+                    model: I18n.t("activerecord.models.mark.one"),
+                  })}
+                </a>
+              )}
           </div>
           <div>
-            {!this.props.released_to_students &&
-             <span className='checkbox-criterion-inputs'>
-              <label onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}>
-                <input
-                  type='radio'
-                  readOnly={true}
-                  checked={this.props.mark === this.props.max_mark}
-                  disabled={this.props.released_to_students || this.props.unassigned}
-                />
-                {I18n.t('checkbox_criteria.answer_yes')}
-              </label>
-              <label onClick={() => this.props.updateMark(this.props.id, 0)}>
-                <input
-                  type='radio'
-                  readOnly={true}
-                  checked={this.props.mark === 0}
-                  disabled={this.props.released_to_students || this.props.unassigned}
-                />
-                {I18n.t('checkbox_criteria.answer_no')}
-              </label>
-            </span>
-            }
-            <span className='mark'>
-              {this.props.mark === null ? '-' : this.props.mark}
+            {!this.props.released_to_students && (
+              <span className="checkbox-criterion-inputs">
+                <label onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}>
+                  <input
+                    type="radio"
+                    readOnly={true}
+                    checked={this.props.mark === this.props.max_mark}
+                    disabled={this.props.released_to_students || this.props.unassigned}
+                  />
+                  {I18n.t("checkbox_criteria.answer_yes")}
+                </label>
+                <label onClick={() => this.props.updateMark(this.props.id, 0)}>
+                  <input
+                    type="radio"
+                    readOnly={true}
+                    checked={this.props.mark === 0}
+                    disabled={this.props.released_to_students || this.props.unassigned}
+                  />
+                  {I18n.t("checkbox_criteria.answer_no")}
+                </label>
+              </span>
+            )}
+            <span className="mark">
+              {this.props.mark === null ? "-" : this.props.mark}
               &nbsp;/&nbsp;
               {this.props.max_mark}
             </span>
@@ -214,81 +219,99 @@ class CheckboxCriterionInput extends React.Component {
   }
 }
 
-
 class FlexibleCriterionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rawText: this.props.mark === null ? '' : String(this.props.mark),
-      invalid: false
+      rawText: this.props.mark === null ? "" : String(this.props.mark),
+      invalid: false,
     };
     this.typing_timer = undefined;
   }
 
   listDeductions = () => {
-    let label = I18n.t('annotations.list_deductions');
+    let label = I18n.t("annotations.list_deductions");
     let deductiveAnnotations = this.props.annotations.filter(a => {
       return !!a.deduction && a.criterion_id === this.props.id;
     });
 
     if (deductiveAnnotations.length === 0) {
-      return '';
+      return "";
     }
 
     let hyperlinkedDeductions = deductiveAnnotations.map((a, index) => {
-      let full_path = a.path ? a.path + '/' + a.filename : a.filename;
-      return <span key={a.id}>
-               <a onClick={() =>
-                    this.props.findDeductiveAnnotation(
-                      full_path,
-                      a.submission_file_id,
-                      a.line_start,
-                      a.id
-                    )} className={'red-text'}>
-                 {'-' + a.deduction}
-               </a>
-               {index !== deductiveAnnotations.length - 1 ? ', ' : ''}
-             </span>;
+      let full_path = a.path ? a.path + "/" + a.filename : a.filename;
+      return (
+        <span key={a.id}>
+          <a
+            onClick={() =>
+              this.props.findDeductiveAnnotation(
+                full_path,
+                a.submission_file_id,
+                a.line_start,
+                a.id
+              )
+            }
+            className={"red-text"}
+          >
+            {"-" + a.deduction}
+          </a>
+          {index !== deductiveAnnotations.length - 1 ? ", " : ""}
+        </span>
+      );
     });
 
     if (this.props.override) {
-      label = '(' + I18n.t('results.overridden_deductions') + ') ' + label;
+      label = "(" + I18n.t("results.overridden_deductions") + ") " + label;
     }
 
     return (
-      <div className={'mark-deductions'}>
+      <div className={"mark-deductions"}>
         {label}
         {hyperlinkedDeductions}
-      </div>);
-  }
+      </div>
+    );
+  };
 
   deleteManualMarkLink = () => {
     if (!this.props.released_to_students && !this.props.unassigned) {
-      if (this.props.annotations.some(a => !!a.deduction && a.criterion_id === this.props.id) &&
-          this.props.override) {
-        return (<a href="#"
-                   onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
-                   style={{float: 'right'}}>
-                  {I18n.t('results.cancel_override')}
-                </a>);
+      if (
+        this.props.annotations.some(a => !!a.deduction && a.criterion_id === this.props.id) &&
+        this.props.override
+      ) {
+        return (
+          <a
+            href="#"
+            onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
+            style={{float: "right"}}
+          >
+            {I18n.t("results.cancel_override")}
+          </a>
+        );
       } else if (this.props.mark !== null && this.props.override) {
-        return (<a href="#"
-                   onClick={e => this.props.destroyMark(e, this.props.id)}
-                   style={{float: 'right'}}>
-                  {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-                </a>);
+        return (
+          <a
+            href="#"
+            onClick={e => this.props.destroyMark(e, this.props.id)}
+            style={{float: "right"}}
+          >
+            {I18n.t("helpers.submit.delete", {
+              model: I18n.t("activerecord.models.mark.one"),
+            })}
+          </a>
+        );
       }
     }
-    return '';
-  }
+    return "";
+  };
 
-  handleChange = (event) => {
+  handleChange = event => {
     if (this.typing_timer) {
       clearTimeout(this.typing_timer);
     }
 
     const mark = parseFloat(event.target.value);
-    if (event.target.value !== '' && isNaN(mark)) {
+    if (event.target.value !== "" && isNaN(mark)) {
       this.setState({rawText: event.target.value, invalid: true});
     } else if (mark === this.props.mark) {
       // This can happen if the user types a decimal point at the end of the input.
@@ -307,24 +330,25 @@ class FlexibleCriterionInput extends React.Component {
   componentDidUpdate(oldProps) {
     if (oldProps.mark !== this.props.mark) {
       this.setState({
-        rawText: this.props.mark === null ? '' : String(this.props.mark),
-        invalid: false
+        rawText: this.props.mark === null ? "" : String(this.props.mark),
+        invalid: false,
       });
     }
   }
 
   render() {
-    const unassignedClass = this.props.unassigned ? 'unassigned' : '';
-    const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
+    const unassignedClass = this.props.unassigned ? "unassigned" : "";
+    const expandedClass = this.props.expanded ? "expanded" : "collapsed";
 
     let markElement;
-    if (this.props.released_to_students) { // Student view
+    if (this.props.released_to_students) {
+      // Student view
       markElement = this.props.mark;
     } else {
       markElement = (
         <input
-          className={this.state.invalid ? 'invalid' : ''}
-          type='text'
+          className={this.state.invalid ? "invalid" : ""}
+          type="text"
           size={4}
           value={this.state.rawText}
           onChange={this.handleChange}
@@ -334,17 +358,18 @@ class FlexibleCriterionInput extends React.Component {
     }
 
     return (
-      <li id={`flexible_criterion_${this.props.id}`}
-          className={`flexible_criterion ${expandedClass} ${unassignedClass}`}>
+      <li
+        id={`flexible_criterion_${this.props.id}`}
+        className={`flexible_criterion ${expandedClass} ${unassignedClass}`}
+      >
         <div data-id={this.props.id}>
-          <div className='criterion-name'
-               onClick={this.props.toggleExpanded}
-          >
-            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
-                 style={{float: 'left'}}
+          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+            <div
+              className={this.props.expanded ? "arrow-up" : "arrow-down"}
+              style={{float: "left"}}
             />
             {this.props.name}
-            {this.props.bonus && ` (${I18n.t('activerecord.attributes.criterion.bonus')})`}
+            {this.props.bonus && ` (${I18n.t("activerecord.attributes.criterion.bonus")})`}
             {this.deleteManualMarkLink()}
           </div>
           <div
@@ -357,17 +382,16 @@ class FlexibleCriterionInput extends React.Component {
             {this.props.max_mark}
           </span>
           {this.listDeductions()}
-          {this.props.oldMark !== undefined &&
-           <div className='old-mark'>
-             {`(${I18n.t('results.remark.old_mark')}: ${this.props.oldMark})`}
-           </div>
-          }
+          {this.props.oldMark !== undefined && (
+            <div className="old-mark">{`(${I18n.t("results.remark.old_mark")}: ${
+              this.props.oldMark
+            })`}</div>
+          )}
         </div>
       </li>
     );
   }
 }
-
 
 class RubricCriterionInput extends React.Component {
   constructor(props) {
@@ -375,24 +399,28 @@ class RubricCriterionInput extends React.Component {
   }
 
   // The parameter `level` is the level object selected
-  handleChange = (level) => {
+  handleChange = level => {
     this.props.updateMark(this.props.id, level.mark);
   };
 
   // The parameter `level` is the level object selected
-  renderRubricLevel = (level) => {
+  renderRubricLevel = level => {
     const levelMark = level.mark.toFixed(2);
-    let selectedClass = '';
-    let oldMarkClass = '';
-    if (this.props.mark !== undefined &&
-        this.props.mark !== null &&
-        levelMark === this.props.mark.toFixed(2)) {
-      selectedClass = 'selected'
+    let selectedClass = "";
+    let oldMarkClass = "";
+    if (
+      this.props.mark !== undefined &&
+      this.props.mark !== null &&
+      levelMark === this.props.mark.toFixed(2)
+    ) {
+      selectedClass = "selected";
     }
-    if (this.props.oldMark !== undefined &&
-        this.props.oldMark !== null &&
-        levelMark === this.props.oldMark.toFixed(2)) {
-      oldMarkClass = 'old-mark';
+    if (
+      this.props.oldMark !== undefined &&
+      this.props.oldMark !== null &&
+      levelMark === this.props.oldMark.toFixed(2)
+    ) {
+      oldMarkClass = "old-mark";
     }
 
     return (
@@ -405,7 +433,7 @@ class RubricCriterionInput extends React.Component {
           <strong>{level.name}</strong>
           <span dangerouslySetInnerHTML={{__html: safe_marked(level.description)}} />
         </td>
-        <td className={'mark'}>
+        <td className={"mark"}>
           {levelMark}
           &nbsp;/&nbsp;
           {this.props.max_mark}
@@ -416,35 +444,37 @@ class RubricCriterionInput extends React.Component {
 
   render() {
     const levels = this.props.levels.map(this.renderRubricLevel);
-    const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
-    const unassignedClass = this.props.unassigned ? 'unassigned' : '';
+    const expandedClass = this.props.expanded ? "expanded" : "collapsed";
+    const unassignedClass = this.props.unassigned ? "unassigned" : "";
     return (
-      <li id={`rubric_criterion_${this.props.id}`}
-          className={`rubric_criterion ${expandedClass} ${unassignedClass}`}>
+      <li
+        id={`rubric_criterion_${this.props.id}`}
+        className={`rubric_criterion ${expandedClass} ${unassignedClass}`}
+      >
         <div data-id={this.props.id}>
-          <div className='criterion-name'
-               onClick={this.props.toggleExpanded}
-          >
-            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
-                 style={{float: 'left'}}
+          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+            <div
+              className={this.props.expanded ? "arrow-up" : "arrow-down"}
+              style={{float: "left"}}
             />
             {this.props.name}
-            {this.props.bonus && ` (${I18n.t('activerecord.attributes.criterion.bonus')})`}
+            {this.props.bonus && ` (${I18n.t("activerecord.attributes.criterion.bonus")})`}
             {!this.props.released_to_students &&
-             !this.props.unassigned &&
-             this.props.mark !== null &&
-             <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.id)}
-                style={{float: 'right'}}
-             >
-               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-             </a>
-            }
+              !this.props.unassigned &&
+              this.props.mark !== null && (
+                <a
+                  href="#"
+                  onClick={e => this.props.destroyMark(e, this.props.id)}
+                  style={{float: "right"}}
+                >
+                  {I18n.t("helpers.submit.delete", {
+                    model: I18n.t("activerecord.models.mark.one"),
+                  })}
+                </a>
+              )}
           </div>
-          <table className='rubric-levels'>
-            <tbody>
-              {levels}
-            </tbody>
+          <table className="rubric-levels">
+            <tbody>{levels}</tbody>
           </table>
         </div>
       </li>

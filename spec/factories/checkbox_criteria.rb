@@ -8,4 +8,3 @@ FactoryBot.define do
     sequence(:position)
   end
 end
-

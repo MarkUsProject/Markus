@@ -2,6 +2,7 @@
 fr:
   assignments:
     average_annotations: "%{average_annotations} annotations par soumission marquée"
+    configuration_zip_file: UPDATE ME
     deadline_with_extension: Vous avez une extension jusqu'au %{extension_deadline}.
     due_date:
       final_due_date_passed: La période de grâce pour ce projet est terminée
@@ -32,6 +33,11 @@ fr:
     none: Aucun devoir pour le moment.
     scanned_exam:
       under_review: Cet examen est marqué
+    section_hidden:
+      default: UPDATE ME
+      hidden: UPDATE ME
+      hidden_option: UPDATE ME
+      visible: UPDATE ME
     starter_file:
       available_after_due: UPDATE ME
       available_after_due_help: UPDATE ME
@@ -72,4 +78,5 @@ fr:
       started_on: UPDATE ME
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
+    upload_config_help_html: UPDATE ME %{section_id}
     upload_file_requirement: La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire

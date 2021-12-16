@@ -1,10 +1,9 @@
-import React from 'react';
-import {render} from 'react-dom';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import React from "react";
+import {render} from "react-dom";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
-import {selectFilter} from './Helpers/table_helpers';
-
+import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
+import {selectFilter} from "./Helpers/table_helpers";
 
 class GradersManager extends React.Component {
   constructor(props) {
@@ -15,12 +14,12 @@ class GradersManager extends React.Component {
       criteria: [],
       assign_graders_to_criteria: false,
       loading: true,
-      tableName: 'groups_table', // The first tab
+      tableName: "groups_table", // The first tab
       skip_empty_submissions: true,
       anonymize_groups: false,
       hide_unassigned_criteria: false,
-      sections: {}
-    }
+      sections: {},
+    };
   }
 
   componentDidMount() {
@@ -30,7 +29,7 @@ class GradersManager extends React.Component {
   fetchData = () => {
     $.get({
       url: Routes.assignment_graders_path(this.props.assignment_id),
-      dataType: 'json',
+      dataType: "json",
     }).then(res => {
       if (this.gradersTable) this.gradersTable.resetSelection();
       if (this.groupsTable) this.groupsTable.resetSelection();
@@ -44,7 +43,7 @@ class GradersManager extends React.Component {
         loading: false,
         sections: res.sections,
         anonymize_groups: res.anonymize_groups,
-        hide_unassigned_criteria: res.hide_unassigned_criteria
+        hide_unassigned_criteria: res.hide_unassigned_criteria,
       });
     });
   };
@@ -55,25 +54,25 @@ class GradersManager extends React.Component {
     let graders = this.gradersTable.state.selection;
 
     if (groups.length === 0 && criteria.length === 0) {
-      alert(I18n.t('groups.select_a_group'));
+      alert(I18n.t("groups.select_a_group"));
       return;
     }
 
     if (graders.length === 0) {
-      alert(I18n.t('graders.select_a_grader'));
+      alert(I18n.t("graders.select_a_grader"));
       return;
     }
 
     $.post({
       url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
       data: {
-        global_actions: 'assign',
+        global_actions: "assign",
         current_table: this.state.tableName,
         skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
-        graders: graders
-      }
+        graders: graders,
+      },
     }).then(this.fetchData);
   };
 
@@ -83,26 +82,26 @@ class GradersManager extends React.Component {
     let graders = this.gradersTable.state.selection;
 
     if (groups.length === 0 && criteria.length === 0) {
-      alert(I18n.t('groups.select_a_group'));
+      alert(I18n.t("groups.select_a_group"));
       return;
     }
 
     if (graders.length === 0) {
-      alert(I18n.t('graders.select_a_grader'));
+      alert(I18n.t("graders.select_a_grader"));
       return;
     }
 
     $.post({
       url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
       data: {
-        global_actions: 'random_assign',
+        global_actions: "random_assign",
         current_table: this.state.tableName,
         skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
-        graders: graders
-      }
-     }).then(this.fetchData);
+        graders: graders,
+      },
+    }).then(this.fetchData);
   };
 
   unassignAll = () => {
@@ -111,30 +110,30 @@ class GradersManager extends React.Component {
     let graders = this.gradersTable.state.selection;
 
     if (groups.length === 0 && criteria.length === 0) {
-      alert(I18n.t('groups.select_a_group'));
+      alert(I18n.t("groups.select_a_group"));
       return;
     }
 
     if (graders.length === 0) {
-      alert(I18n.t('graders.select_a_grader'));
+      alert(I18n.t("graders.select_a_grader"));
       return;
     }
 
     $.post({
       url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
       data: {
-        global_actions: 'unassign',
+        global_actions: "unassign",
         current_table: this.state.tableName,
         groupings: groups,
         criteria: criteria,
-        graders: graders
-      }
+        graders: graders,
+      },
     }).then(this.fetchData);
   };
 
   unassignSingle = (id, grader_user_name, origin) => {
     let groups, criteria;
-    if (origin === 'groups_table') {
+    if (origin === "groups_table") {
       groups = [id];
       criteria = [];
     } else {
@@ -145,17 +144,19 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
       data: {
-        global_actions: 'unassign',
+        global_actions: "unassign",
         current_table: origin,
         groupings: groups,
         criteria: criteria,
-        grader_user_names: [grader_user_name]
-      }
+        grader_user_names: [grader_user_name],
+      },
     }).then(this.fetchData);
   };
 
   toggleSkipEmptySubmissions = () => {
-    this.setState({skip_empty_submissions: !this.state.skip_empty_submissions});
+    this.setState({
+      skip_empty_submissions: !this.state.skip_empty_submissions,
+    });
   };
 
   toggleAssignGradersToCriteria = () => {
@@ -163,7 +164,11 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
       data: {
-        attribute: {assignment_properties_attributes: {assign_graders_to_criteria: assign}}
+        attribute: {
+          assignment_properties_attributes: {
+            assign_graders_to_criteria: assign,
+          },
+        },
       },
     }).then(() => this.setState({assign_graders_to_criteria: assign}));
   };
@@ -173,7 +178,9 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
       data: {
-        attribute: {assignment_properties_attributes: {anonymize_groups: assign}}
+        attribute: {
+          assignment_properties_attributes: {anonymize_groups: assign},
+        },
       },
     }).then(() => this.setState({anonymize_groups: assign}));
   };
@@ -183,31 +190,38 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
       data: {
-        attribute: {assignment_properties_attributes: {hide_unassigned_criteria: assign}}
+        attribute: {
+          assignment_properties_attributes: {
+            hide_unassigned_criteria: assign,
+          },
+        },
       },
     }).then(() => this.setState({hide_unassigned_criteria: assign}));
   };
 
   renderHideUnassignedCriteria = () => {
     if (this.state.assign_graders_to_criteria) {
-      return <div style={{marginBottom: '1em'}}>
-        <label>
-          <input type="checkbox"
-                 checked={this.state.hide_unassigned_criteria}
-                 onChange={this.toggleHideUnassignedCriteria}
-                 style={{marginRight: '5px'}}
-          />
-          {I18n.t('graders.hide_unassigned_criteria')}
-        </label>
-      </div>;
+      return (
+        <div style={{marginBottom: "1em"}}>
+          <label>
+            <input
+              type="checkbox"
+              checked={this.state.hide_unassigned_criteria}
+              onChange={this.toggleHideUnassignedCriteria}
+              style={{marginRight: "5px"}}
+            />
+            {I18n.t("graders.hide_unassigned_criteria")}
+          </label>
+        </div>
+      );
     }
   };
 
-  onSelectTable = (index) => {
+  onSelectTable = index => {
     if (index === 0) {
-      this.setState({tableName: 'groups_table'});
+      this.setState({tableName: "groups_table"});
     } else {
-      this.setState({tableName: 'criteria_table'});
+      this.setState({tableName: "criteria_table"});
     }
   };
 
@@ -219,46 +233,53 @@ class GradersManager extends React.Component {
           assignRandomly={this.assignRandomly}
           unassignAll={this.unassignAll}
         />
-        <div className='mapping-tables'>
-          <div className='mapping-table'>
+        <div className="mapping-tables">
+          <div className="mapping-table">
             <GradersTable
-              ref={(r) => this.gradersTable = r}
-              graders={this.state.graders} loading={this.state.loading}
+              ref={r => (this.gradersTable = r)}
+              graders={this.state.graders}
+              loading={this.state.loading}
               assign_graders_to_criteria={this.state.assign_graders_to_criteria}
               numCriteria={this.state.criteria.length}
             />
           </div>
-          <div className='mapping-table'>
+          <div className="mapping-table">
             <Tabs onSelect={this.onSelectTable}>
               <TabList>
-                <Tab>{I18n.t('activerecord.models.group.other')}</Tab>
-                <Tab>{I18n.t('activerecord.models.criterion.other')}</Tab>
+                <Tab>{I18n.t("activerecord.models.group.other")}</Tab>
+                <Tab>{I18n.t("activerecord.models.criterion.other")}</Tab>
               </TabList>
 
               <TabPanel>
-                <div style={{marginBottom: '1em'}}>
+                <div style={{marginBottom: "1em"}}>
                   <label>
-                    <input type="checkbox"
-                           checked={this.state.skip_empty_submissions}
-                           onChange={this.toggleSkipEmptySubmissions}
-                           style={{marginRight: '5px'}}
+                    <input
+                      type="checkbox"
+                      checked={!this.state.skip_empty_submissions}
+                      onChange={this.toggleSkipEmptySubmissions}
+                      style={{marginRight: "5px"}}
                     />
-                    {I18n.t('graders.skip_empty_submissions')}
+                    {I18n.t("graders.skip_empty_submissions")}
                   </label>
+                  <div className="inline-help">
+                    <p>{I18n.t("graders.skip_empty_submissions_tooltip")}</p>
+                  </div>
                 </div>
-                <div style={{marginBottom: '1em'}}>
+                <div style={{marginBottom: "1em"}}>
                   <label>
-                    <input type="checkbox"
-                           checked={this.state.anonymize_groups}
-                           onChange={this.toggleAnonymizeGroups}
-                           style={{marginRight: '5px'}}
+                    <input
+                      type="checkbox"
+                      checked={this.state.anonymize_groups}
+                      onChange={this.toggleAnonymizeGroups}
+                      style={{marginRight: "5px"}}
                     />
-                    {I18n.t('graders.anonymize_groups')}
+                    {I18n.t("graders.anonymize_groups")}
                   </label>
                 </div>
                 <GroupsTable
-                  ref={(r) => this.groupsTable = r}
-                  groups={this.state.groups} loading={this.state.loading}
+                  ref={r => (this.groupsTable = r)}
+                  groups={this.state.groups}
+                  loading={this.state.loading}
                   unassignSingle={this.unassignSingle}
                   showSections={this.props.showSections}
                   sections={this.state.sections}
@@ -267,21 +288,23 @@ class GradersManager extends React.Component {
                 />
               </TabPanel>
               <TabPanel>
-                <div style={{marginBottom: '1em'}}>
+                <div style={{marginBottom: "1em"}}>
                   <label>
-                    <input type="checkbox"
-                           onChange={this.toggleAssignGradersToCriteria}
-                           checked={this.state.assign_graders_to_criteria}
-                           style={{marginRight: '5px'}}
+                    <input
+                      type="checkbox"
+                      onChange={this.toggleAssignGradersToCriteria}
+                      checked={this.state.assign_graders_to_criteria}
+                      style={{marginRight: "5px"}}
                     />
-                    {I18n.t('graders.assign_to_criteria')}
+                    {I18n.t("graders.assign_to_criteria")}
                   </label>
                 </div>
-                { this.renderHideUnassignedCriteria() }
+                {this.renderHideUnassignedCriteria()}
                 <CriteriaTable
                   display={this.state.assign_graders_to_criteria}
-                  ref={(r) => this.criteriaTable = r}
-                  criteria={this.state.criteria} loading={this.state.loading}
+                  ref={r => (this.criteriaTable = r)}
+                  criteria={this.state.criteria}
+                  loading={this.state.loading}
                   unassignSingle={this.unassignSingle}
                   numGroups={this.state.groups.length}
                 />
@@ -294,125 +317,131 @@ class GradersManager extends React.Component {
   }
 }
 
-
 class RawGradersTable extends React.Component {
   getColumns = () => [
     {
       show: false,
-      accessor: '_id',
-      id: '_id'
+      accessor: "_id",
+      id: "_id",
     },
     {
-      Header: I18n.t('activerecord.attributes.user.user_name'),
-      accessor: 'user_name',
-      id: 'user_name'
+      Header: I18n.t("activerecord.attributes.user.user_name"),
+      accessor: "user_name",
+      id: "user_name",
     },
     {
-      Header: I18n.t('activerecord.attributes.user.full_name'),
+      Header: I18n.t("activerecord.attributes.user.full_name"),
       Cell: row => `${row.original.first_name} ${row.original.last_name}`,
-      minWidth: 170
+      minWidth: 170,
     },
     {
-      Header: I18n.t('activerecord.models.group.other'),
-      accessor: 'groups',
-      className: 'number',
-      filterable: false
+      Header: I18n.t("activerecord.models.group.other"),
+      accessor: "groups",
+      className: "number",
+      filterable: false,
     },
     {
-      Header: I18n.t('activerecord.models.criterion.other'),
-      accessor: 'criteria',
+      Header: I18n.t("activerecord.models.criterion.other"),
+      accessor: "criteria",
       filterable: false,
       Cell: ({value}) => {
         if (this.props.assign_graders_to_criteria) {
-          return <span>{value}/{this.props.numCriteria}</span>;
+          return (
+            <span>
+              {value}/{this.props.numCriteria}
+            </span>
+          );
         } else {
-          return I18n.t('all');
+          return I18n.t("all");
         }
-      }
+      },
     },
   ];
 
   render() {
     return (
       <CheckboxTable
-        ref={(r) => this.checkboxTable = r}
-
+        ref={r => (this.checkboxTable = r)}
         data={this.props.graders}
         columns={this.getColumns()}
         defaultSorted={[
           {
-            id: 'user_name'
-          }
+            id: "user_name",
+          },
         ]}
         loading={this.props.loading}
         filterable
-
         {...this.props.getCheckboxProps()}
       />
     );
   }
 }
 
-
 class RawGroupsTable extends React.Component {
   getColumns = () => {
     return [
       {
         show: false,
-        accessor: '_id',
-        id: '_id'
+        accessor: "_id",
+        id: "_id",
       },
       {
-        Header: I18n.t('activerecord.models.section', {count: 1}),
-        accessor: 'section',
-        id: 'section',
+        Header: I18n.t("activerecord.models.section", {count: 1}),
+        accessor: "section",
+        id: "section",
         show: this.props.showSections || false,
         minWidth: 70,
-        Cell: ({ value }) => {
-          return this.props.sections[value] || '';
+        Cell: ({value}) => {
+          return this.props.sections[value] || "";
         },
         filterMethod: (filter, row) => {
-          if (filter.value === 'all') {
+          if (filter.value === "all") {
             return true;
           } else {
             return this.props.sections[row[filter.id]] === filter.value;
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(
-          kv => ({value: kv[1], text: kv[1]})
-        ),
+        filterOptions: Object.entries(this.props.sections).map(kv => ({
+          value: kv[1],
+          text: kv[1],
+        })),
       },
       {
-        Header: I18n.t('activerecord.models.group.one'),
-        accessor: 'group_name',
-        id: 'group_name',
+        Header: I18n.t("activerecord.models.group.one"),
+        accessor: "group_name",
+        id: "group_name",
         minWidth: 150,
       },
       {
-        Header: I18n.t('activerecord.models.ta.other'),
-        accessor: 'graders',
+        Header: I18n.t("activerecord.models.ta.other"),
+        accessor: "graders",
         Cell: row => {
-          return row.value.map((ta) =>
+          return row.value.map(ta => (
             <div key={`${row.original._id}-${ta}`}>
               {ta}
-              <a href='#'
-                 className="remove-icon"
-                 onClick={() => this.props.unassignSingle(row.original._id, ta, 'groups_table')}
-                 title={I18n.t('graders.actions.unassign_grader')}
+              <a
+                href="#"
+                className="remove-icon"
+                onClick={() => this.props.unassignSingle(row.original._id, ta, "groups_table")}
+                title={I18n.t("graders.actions.unassign_grader")}
               />
             </div>
-          )
+          ));
         },
         filterable: false,
         minWidth: 100,
       },
       {
-        Header: I18n.t('graders.coverage'),
-        accessor: 'criteria_coverage_count',
-        Cell: ({value}) => <span>{value || 0}/{this.props.numCriteria}</span>,
+        Header: I18n.t("graders.coverage"),
+        accessor: "criteria_coverage_count",
+        Cell: ({value}) => (
+          <span>
+            {value || 0}/{this.props.numCriteria}
+          </span>
+        ),
         minWidth: 70,
-        className: 'number',
+        className: "number",
         filterable: false,
         show: this.props.showCoverage,
       },
@@ -422,64 +451,66 @@ class RawGroupsTable extends React.Component {
   render() {
     return (
       <CheckboxTable
-        ref={(r) => this.checkboxTable = r}
-
+        ref={r => (this.checkboxTable = r)}
         data={this.props.groups}
         columns={this.getColumns()}
         defaultSorted={[
           {
-            id: 'group_name'
-          }
+            id: "group_name",
+          },
         ]}
         loading={this.props.loading}
         filterable
-
         {...this.props.getCheckboxProps()}
       />
     );
   }
 }
 
-
 class RawCriteriaTable extends React.Component {
   getColumns = () => {
     return [
       {
         show: false,
-        accessor: '_id',
-        id: '_id'
+        accessor: "_id",
+        id: "_id",
       },
       {
-        Header: I18n.t('activerecord.attributes.criterion.name'),
-        accessor: 'name',
-        minWidth: 150
+        Header: I18n.t("activerecord.attributes.criterion.name"),
+        accessor: "name",
+        minWidth: 150,
       },
       {
-        Header: I18n.t('activerecord.models.ta.other'),
-        accessor: 'graders',
+        Header: I18n.t("activerecord.models.ta.other"),
+        accessor: "graders",
         Cell: row => {
-          return row.value.map((ta) =>
+          return row.value.map(ta => (
             <div key={`${row.original._id}-${ta}`}>
               {ta}
-              <a href='#'
-                 className="remove-icon"
-                 onClick={() => this.props.unassignSingle(row.original._id, ta, 'criteria_table')}
-                 title={I18n.t('graders.actions.unassign_grader')}
+              <a
+                href="#"
+                className="remove-icon"
+                onClick={() => this.props.unassignSingle(row.original._id, ta, "criteria_table")}
+                title={I18n.t("graders.actions.unassign_grader")}
               />
             </div>
-          )
+          ));
         },
         filterable: false,
-        minWidth: 70
+        minWidth: 70,
       },
       {
-        Header: I18n.t('graders.coverage'),
-        accessor: 'coverage',
-        Cell: ({value}) => <span>{value}/{this.props.numGroups}</span>,
+        Header: I18n.t("graders.coverage"),
+        accessor: "coverage",
+        Cell: ({value}) => (
+          <span>
+            {value}/{this.props.numGroups}
+          </span>
+        ),
         minWidth: 70,
-        className: 'number',
-        filterable: false
-      }
+        className: "number",
+        filterable: false,
+      },
     ];
   };
 
@@ -487,18 +518,16 @@ class RawCriteriaTable extends React.Component {
     if (this.props.display) {
       return (
         <CheckboxTable
-          ref={(r) => this.checkboxTable = r}
-
+          ref={r => (this.checkboxTable = r)}
           data={this.props.criteria}
           columns={this.getColumns()}
           defaultSorted={[
             {
-              id: '_id'
-            }
+              id: "_id",
+            },
           ]}
           loading={this.props.loading}
           filterable
-
           {...this.props.getCheckboxProps()}
         />
       );
@@ -508,39 +537,27 @@ class RawCriteriaTable extends React.Component {
   }
 }
 
-
 const GradersTable = withSelection(RawGradersTable);
 const GroupsTable = withSelection(RawGroupsTable);
 const CriteriaTable = withSelection(RawCriteriaTable);
 
-
 class GradersActionBox extends React.Component {
   render = () => {
     return (
-      <div className='rt-action-box'>
-        <button
-          className='assign-all-button'
-          onClick={this.props.assignAll}
-        >
-          {I18n.t('graders.actions.assign_grader')}
+      <div className="rt-action-box">
+        <button className="assign-all-button" onClick={this.props.assignAll}>
+          {I18n.t("graders.actions.assign_grader")}
         </button>
-        <button
-          className='assign-randomly-button'
-          onClick={this.props.assignRandomly}
-        >
-          {I18n.t('graders.actions.randomly_assign_graders')}
+        <button className="assign-randomly-button" onClick={this.props.assignRandomly}>
+          {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
-        <button
-          className='unassign-all-button'
-          onClick={this.props.unassignAll}
-        >
-          {I18n.t('graders.actions.unassign_grader')}
+        <button className="unassign-all-button" onClick={this.props.unassignAll}>
+          {I18n.t("graders.actions.unassign_grader")}
         </button>
       </div>
-    )
+    );
   };
 }
-
 
 export function makeGradersManager(elem, props) {
   render(<GradersManager {...props} />, elem);

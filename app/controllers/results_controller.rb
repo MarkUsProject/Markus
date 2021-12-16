@@ -75,7 +75,7 @@ class ResultsController < ApplicationController
                                                                           grouping: grouping,
                                                                           submission: submission })
           data[:enable_test] = true
-          data[:can_run_tests] = authorized
+          data[:can_run_tests] = authorized.value
         else
           data[:enable_test] = false
           data[:can_run_tests] = false
@@ -203,13 +203,19 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] = []
         elsif current_user.ta? && assignment.anonymize_groups
           data[:grace_token_deductions] = []
-
+        elsif current_user.student?
+          data[:grace_token_deductions] =
+            submission.grouping
+                      .grace_period_deductions
+                      .joins(membership: :user)
+                      .where('users.user_name': current_user.user_name)
+                      .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         else
           data[:grace_token_deductions] =
             submission.grouping
-              .grace_period_deductions
-              .joins(membership: :user)
-              .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .grace_period_deductions
+                      .joins(membership: :user)
+                      .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         end
 
         # Totals
@@ -272,8 +278,7 @@ class ResultsController < ApplicationController
                                                 submission.assignment.id,
                                                 [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
-    flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    redirect_back(fallback_location: root_path)
+    flash_message(:success, I18n.t('automated_tests.tests_running'))
   end
 
   def stop_test
