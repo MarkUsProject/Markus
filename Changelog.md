@@ -1,6 +1,8 @@
 # Changelog
 
 ## [unreleased]
+
+## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
 - Fix bug with run test button in grading view when marks are released (#5527)
