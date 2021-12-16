@@ -3,6 +3,7 @@ en:
   activerecord:
     attributes:
       exam_template:
+        cover_fields: Field to match by
         filename: Filename
         name: Name
         num_pages: Number of pages

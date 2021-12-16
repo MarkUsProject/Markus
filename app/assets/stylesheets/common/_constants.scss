@@ -57,16 +57,15 @@ $gridline: var(--gridline);
 $line: var(--line);
 $sharp-line: var(--sharp_line);
 
-
 // not sure what this does...
 $darker-orange: var(--darker-orange);
 
-           $fonts: 'Open Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
-      $mono-fonts: 'Consolas', 'Courier New', Courier, mono, serif;
-          $radius: 5px;
-      $time-quick: 0.25s;
-     $time-medium: 0.35s;
-  $dimen-vertical: 2em;
+$fonts: 'Open Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
+$mono-fonts: 'Consolas', 'Courier New', Courier, mono, serif;
+$radius: 5px;
+$time-quick: 0.25s;
+$time-medium: 0.35s;
+$dimen-vertical: 2em;
 $dimen-horizontal: 3.5em;
 $dimen-hor-mobile: 1.5em;
 $dimen-horizontal-nav: 0.5em;

@@ -14,7 +14,7 @@
   "noempty": true,
   "nonew": true,
   "predef": ["$", "jQuery"],
-  "quotmark": true,
+  "quotmark": "double",
   "trailing": true,
   "undef": false,
   "unused": true

@@ -11,18 +11,18 @@ function AnnotationText(annotation_text_id, annotation_category_id, content) {
 }
 
 // Getters and Setters
-AnnotationText.prototype.setContent = function(content) {
+AnnotationText.prototype.setContent = function (content) {
   this.content = content;
-}
+};
 
-AnnotationText.prototype.getContent = function() {
+AnnotationText.prototype.getContent = function () {
   return this.content;
-}
+};
 
-AnnotationText.prototype.getId = function() {
+AnnotationText.prototype.getId = function () {
   return this.annotation_text_id;
-}
+};
 
-AnnotationText.prototype.getCategoryId = function() {
+AnnotationText.prototype.getCategoryId = function () {
   return this.annotation_category_id;
-}
+};

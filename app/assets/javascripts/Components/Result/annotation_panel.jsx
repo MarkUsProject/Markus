@@ -1,6 +1,6 @@
 import React from "react";
-import { AnnotationTable } from "./annotation_table";
-import { TextForm } from "./autosave_text_form";
+import {AnnotationTable} from "./annotation_table";
+import {TextForm} from "./autosave_text_form";
 
 export class AnnotationPanel extends React.Component {
   constructor(props) {
@@ -33,7 +33,7 @@ export class AnnotationPanel extends React.Component {
   render() {
     let overallCommentElement;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
-      overallCommentElement = <div id='overall_comment_text' key='overall_comment_text' />;
+      overallCommentElement = <div id="overall_comment_text" key="overall_comment_text" />;
     } else {
       overallCommentElement = (
         <TextForm
@@ -44,10 +44,12 @@ export class AnnotationPanel extends React.Component {
       );
     }
     return [
-      <h3 key="h3-overall-comment">{I18n.t('activerecord.attributes.result.overall_comment')}</h3>,
+      <h3 key="h3-overall-comment">{I18n.t("activerecord.attributes.result.overall_comment")}</h3>,
       overallCommentElement,
-      <h3 key="h3-annotations">{I18n.t('activerecord.models.annotation.other')}</h3>,
-      <p key="annotations-desription">{I18n.t('results.annotation.across_all_submission_files')}</p>,
+      <h3 key="h3-annotations">{I18n.t("activerecord.models.annotation.other")}</h3>,
+      <p key="annotations-desription">
+        {I18n.t("results.annotation.across_all_submission_files")}
+      </p>,
       <AnnotationTable
         key="annotations-table"
         detailed={this.props.detailed}
@@ -57,7 +59,7 @@ export class AnnotationPanel extends React.Component {
         editAnnotation={this.props.editAnnotation}
         removeAnnotation={this.props.removeAnnotation}
         selectFile={this.props.selectFile}
-      />
+      />,
     ];
   }
 }

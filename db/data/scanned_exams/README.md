@@ -1,7 +1,7 @@
 # Description of Sample Exam Template Files
 
 - `midterm1-v2-test.pdf` is the original test paper (uploaded as the exam template).
-- `midterm_scan_1-20.pdf` contains scans of 20 copies of the the test paper. 
+- `midterm_scan_1-20.pdf` contains scans of 20 copies of the the test paper.
   All 120 pages scanned should be scanned successfully (any errors are flaws with the QR code decoding).
 - `midterm_scan_100.pdf` contains a single test paper with the pages in a mixed order.
   These pages should all be scanned correctly.
@@ -10,3 +10,7 @@
 - `midterm_scan_102.pdf` contains a single test paper with pages 2, 5, and 6 having an unparseable QR code.
 - `midterm_scan_103.pdf` contains a single test paper with page 1 (the cover page) having an unparseable QR code.
 - `midterm_scan_104.pdf` contains a single test paper with pages 1-5 having an unparseable QR code.
+- `test-auto-parse-scan-blank.pdf` contains a single test paper with a blank student number field on the cover page
+  (used to test automated parsing)
+- `test-auto-parse-scan-success.pdf` contains a single test paper with a filled in student number field on the cover page
+  (used to test automated parsing)

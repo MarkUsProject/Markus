@@ -10,4 +10,14 @@ FactoryBot.define do
       exam_template.template_divisions.create(start: 5, end: 6, label: 'Q3')
     end
   end
+
+  factory :exam_template_with_automatic_parsing, parent: :exam_template_midterm do
+    automatic_parsing { true }
+    cover_fields { 'id_number' }
+    crop_x { 0.2925 }
+    crop_y { 0.4216 }
+    crop_width { 0.37 }
+    crop_height { 0.0464 }
+    filename { 'test-auto-parse.pdf' }
+  end
 end

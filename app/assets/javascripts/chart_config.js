@@ -1,9 +1,9 @@
 // Requires Chart.js to have been loaded.
 $(document).ready(function () {
-  let bars = document.documentElement.style.getPropertyValue('--primary_one');
-  let ticksColor = document.documentElement.style.getPropertyValue('--line');
-  let labelColor = document.documentElement.style.getPropertyValue('--line');
-  let gridLineColor = document.documentElement.style.getPropertyValue('--gridline');
+  let bars = document.documentElement.style.getPropertyValue("--primary_one");
+  let ticksColor = document.documentElement.style.getPropertyValue("--line");
+  let labelColor = document.documentElement.style.getPropertyValue("--line");
+  let gridLineColor = document.documentElement.style.getPropertyValue("--gridline");
 
   Chart.defaults.color = labelColor;
   Chart.defaults.borderColor = bars;
@@ -13,26 +13,26 @@ $(document).ready(function () {
 
   Chart.overrides.bar.scales.y = {
     grid: {
-      color: gridLineColor
+      color: gridLineColor,
     },
     beginAtZero: true,
     ticks: {
-      color: ticksColor
-    }
+      color: ticksColor,
+    },
   };
 
-  Chart.defaults.type = 'bar';
+  Chart.defaults.type = "bar";
 
   Chart.overrides.bar.scales.x = {
     ticks: {
-      type: 'linear',
+      type: "linear",
       color: ticksColor,
     },
     grid: {
       color: gridLineColor,
-      offset: true
+      offset: true,
     },
-    offset: true
+    offset: true,
   };
 
   Chart.defaults.plugins.legend.display = false;

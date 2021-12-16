@@ -1,1 +1,1 @@
-import 'pdfjs-dist/build/pdf.worker.entry';
+import "pdfjs-dist/build/pdf.worker.entry";

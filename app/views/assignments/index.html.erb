@@ -7,12 +7,16 @@
       html_options: { id: 'downloadModal' } },
     { link_text: t('upload'),
       link_path: '#',
-      html_options: { id: 'uploadModal' } }
+      html_options: { id: 'uploadModal' } },
+    { link_text: t('upload_the', item: I18n.t('assignments.configuration_zip_file')),
+      link_path: '#',
+      html_options: { id: 'uploadModalConfig' } }
   ] %>
 
   <!-- Modals -->
   <%= render partial: 'assignment_download_modal', layout: 'layouts/modal_dialog'  %>
   <%= render partial: 'assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
+  <%= render partial: 'cp_assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
 
   <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
               new_assignment_path,

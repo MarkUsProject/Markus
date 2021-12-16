@@ -1,0 +1,8 @@
+extends: ["stylelint-config-sass-guidelines", "stylelint-config-prettier"]
+rules:
+  scss/at-extend-no-missing-placeholder: null
+  max-nesting-depth: 4
+  selector-class-pattern: null
+  selector-max-compound-selectors: 6
+  selector-max-id: 2
+  selector-no-qualifying-type: null

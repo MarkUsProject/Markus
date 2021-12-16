@@ -47,7 +47,7 @@ function getLeafNodes(root, _nodes) {
   if (!child) {
     _nodes.push(root);
   }
-  while(child) {
+  while (child) {
     getLeafNodes(child, _nodes);
     child = child.nextSibling;
   }
@@ -59,17 +59,19 @@ export function markupTextInRange(range, colour) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
     if (old_node.nodeType === 3) {
-      const new_node = document.createElement('span');
+      const new_node = document.createElement("span");
       new_node.style.backgroundColor = colour;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
-      const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset, range.endOffset));
+      const marked = document.createTextNode(
+        old_node.nodeValue.substring(range.startOffset, range.endOffset)
+      );
       const unmarked2 = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
       new_node.appendChild(marked);
       parent.replaceChild(unmarked1, old_node);
       parent.insertBefore(new_node, unmarked1.nextSibling);
       parent.insertBefore(unmarked2, new_node.nextSibling);
-    } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
-      const new_node = document.createElement('div');
+    } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
+      const new_node = document.createElement("div");
       new_node.style.border = `5px solid ${colour}`;
       new_node.appendChild(old_node.cloneNode(true));
       parent.replaceChild(new_node, old_node);
@@ -79,16 +81,20 @@ export function markupTextInRange(range, colour) {
       getLeafNodes(node).forEach(old_node => {
         const parent = old_node.parentNode;
         if (old_node.nodeType === 3) {
-          const new_node = document.createElement('span');
+          const new_node = document.createElement("span");
           new_node.style.backgroundColor = colour;
           if (old_node === range.startContainer) {
-            const unmarked = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
+            const unmarked = document.createTextNode(
+              old_node.nodeValue.substring(0, range.startOffset)
+            );
             const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset));
             new_node.appendChild(marked);
             parent.replaceChild(unmarked, old_node);
             parent.insertBefore(new_node, unmarked.nextSibling);
           } else if (old_node === range.endContainer) {
-            const marked = document.createTextNode(old_node.nodeValue.substring(0, range.endOffset));
+            const marked = document.createTextNode(
+              old_node.nodeValue.substring(0, range.endOffset)
+            );
             const unmarked = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
             new_node.appendChild(marked);
             parent.replaceChild(new_node, old_node);
@@ -97,8 +103,8 @@ export function markupTextInRange(range, colour) {
             new_node.appendChild(document.createTextNode(old_node.nodeValue));
             parent.replaceChild(new_node, old_node);
           }
-        } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
-          const new_node = document.createElement('div');
+        } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
+          const new_node = document.createElement("div");
           new_node.style.border = `5px solid ${colour}`;
           new_node.appendChild(old_node.cloneNode(true));
           parent.replaceChild(new_node, old_node);

@@ -13,11 +13,10 @@
 var TEXT_DISPLAY_X_OFFSET = 5;
 var TEXT_DISPLAY_Y_OFFSET = 5;
 
-
 function AnnotationTextDisplayer() {
   // Create the div that we will display in
-  this.display_node = document.createElement('div');
-  this.display_node.className = 'annotation_text_display';
+  this.display_node = document.createElement("div");
+  this.display_node.className = "annotation_text_display";
   this.display_node.onmousemove = hide_image_annotations;
 
   document.body.appendChild(this.display_node);
@@ -25,19 +24,21 @@ function AnnotationTextDisplayer() {
 }
 
 // x and y is the location on the screen where this collection will display
-AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y) {
+AnnotationTextDisplayer.prototype.displayCollection = function (collection, x, y) {
   // Are we already showing some Annotations?  Hide them then
   this.hideShowing();
 
   // Return if the collection is empty
-  if (collection.length == 0) { return; }
+  if (collection.length == 0) {
+    return;
+  }
 
   // Now, compile all the annotations in this collection into a single
   // string to display.
-  var final_string = '';
+  var final_string = "";
 
-  collection.forEach(function(element, index, array) {
-    final_string += element.getContent() + '\n\n';
+  collection.forEach(element => {
+    final_string += element.getContent() + "\n\n";
   });
 
   // Update the Display node (a div, in this case) to be in the right
@@ -46,37 +47,37 @@ AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y)
 
   // Show the Displayer
   this.show();
-}
+};
 
 // Hide all showing annotations
-AnnotationTextDisplayer.prototype.hideShowing = function() {
-  $('.annotation_text_display').hide();
-}
+AnnotationTextDisplayer.prototype.hideShowing = function () {
+  $(".annotation_text_display").hide();
+};
 
-AnnotationTextDisplayer.prototype.updateDisplayNode = function(text, x, y) {
+AnnotationTextDisplayer.prototype.updateDisplayNode = function (text, x, y) {
   var display_node = this.getDisplayNode();
-  display_node.innerHTML  = text;
-  display_node.style.left = (x + TEXT_DISPLAY_X_OFFSET)  + 'px';
-  display_node.style.top  = (y + TEXT_DISPLAY_Y_OFFSET)  + 'px';
-}
+  display_node.innerHTML = text;
+  display_node.style.left = x + TEXT_DISPLAY_X_OFFSET + "px";
+  display_node.style.top = y + TEXT_DISPLAY_Y_OFFSET + "px";
+};
 
 // Hide the displayer
-AnnotationTextDisplayer.prototype.hide = function() {
-  this.display_node.style.display = 'none';
-}
+AnnotationTextDisplayer.prototype.hide = function () {
+  this.display_node.style.display = "none";
+};
 
 // Show the displayer
-AnnotationTextDisplayer.prototype.show = function() {
-  this.display_node.style.display = 'block';
-  MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.display_node]);
-}
+AnnotationTextDisplayer.prototype.show = function () {
+  this.display_node.style.display = "block";
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.display_node]);
+};
 
 // Returns whether or not the Displayer is showing
-AnnotationTextDisplayer.prototype.getShowing = function() {
-  return this.getDisplayNode().style.display != 'none';
-}
+AnnotationTextDisplayer.prototype.getShowing = function () {
+  return this.getDisplayNode().style.display != "none";
+};
 
 // Returns the div that we're displaying in
-AnnotationTextDisplayer.prototype.getDisplayNode = function() {
+AnnotationTextDisplayer.prototype.getDisplayNode = function () {
   return this.display_node;
-}
+};

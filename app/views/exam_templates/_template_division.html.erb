@@ -1,8 +1,19 @@
 <%= f.fields_for :template_divisions do |form| %>
 <tr>
-  <td><%= form.text_field :label, required: true, disabled: disabled %></td>
-  <td><%= form.number_field :start, min: 1, disabled: disabled %></td>
-  <td><%= form.number_field :end, min: 1, disabled: disabled %></td>
-  <td><%= form.check_box :_destroy, disabled: disabled %></td>
+  <td>
+    <%= form.text_field :label, required: true, disabled: disabled,
+                        'aria-label': TemplateDivision.human_attribute_name('label') %>
+  </td>
+  <td>
+    <%= form.number_field :start, min: 1, disabled: disabled,
+                          'aria-label': TemplateDivision.human_attribute_name('start') %>
+  </td>
+  <td>
+    <%= form.number_field :end, min: 1, disabled: disabled,
+                          'aria-label': TemplateDivision.human_attribute_name('end') %>
+  </td>
+  <td>
+    <%= form.check_box :_destroy, disabled: disabled, 'aria-label': t(:delete) %>
+  </td>
 </tr>
 <% end %>
