@@ -199,6 +199,8 @@ export class FileViewer extends React.Component {
           {...commonProps}
         />
       );
+    } else if (this.state.type === "url") {
+      return <URLViewer url={this.state.url} {...commonProps} />;
     } else if (this.state.type !== "") {
       return (
         <TextViewer
