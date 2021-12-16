@@ -20,6 +20,8 @@ describe Course do
   describe '#get_assignment_list' # TODO
   describe '#upload_assignment_list' # TODO
   describe '#get_required_files' # TODO
+  describe '#max_file_size_settings' # TODO
+  describe '#update_autotest_url' # TODO
 
   describe '#get_current_assignment' do
     context 'when no assignments are found' do

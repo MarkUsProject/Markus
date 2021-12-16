@@ -8,7 +8,6 @@ en:
     display_output_title: Display test output to students?
     files: Test Files
     invalid_specs_file: Settings file is not a valid json file
-    loading_specs: Tester settings are being loaded. Please refresh the page in a minute.
     need_group_for_test: You must have a group to run tests.
     need_one_file: You must submit at least one file in order to run tests.
     need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.

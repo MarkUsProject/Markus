@@ -2,6 +2,14 @@ describe AutomatedTestsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:assignment) { create :assignment }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
+  before do
+    allow_any_instance_of(AutotestSetting).to(
+      receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
+    )
+    course = create(:course)
+    course.autotest_setting = create(:autotest_setting)
+    course.save
+  end
   shared_examples 'An authorized instructor and grader managing automated testing' do
     include_examples 'An unauthorized role accessing student interface'
     context 'PUT update' do
@@ -23,9 +31,8 @@ describe AutomatedTestsController do
       subject { get_as role, :populate_autotest_manager, params: params }
       let(:settings_content) { '{}' }
       before do
-        allow(AutotestTestersJob).to receive(:perform_later) { AutotestTestersJob.new }
         file = fixture_file_upload('automated_tests/minimal_testers.json')
-        File.write(File.join(Settings.autotest.client_dir, 'testers.json'), file.read)
+        assignment.course.autotest_setting.update!(schema: file.read)
         File.write(assignment.autotest_settings_file, settings_content)
       end
       after do
@@ -35,21 +42,6 @@ describe AutomatedTestsController do
       it 'should respond with success' do
         subject
         expect(response.status).to eq 200
-      end
-      context 'testers.json does not exist' do
-        before { FileUtils.rm_rf File.join(Settings.autotest.client_dir, 'testers.json') }
-        it 'should call the AutotestTestersJob' do
-          expect(AutotestTestersJob).to receive(:perform_later)
-          subject
-        end
-        it 'should return an empty schema' do
-          subject
-          expect(JSON.parse(response.body)['schema']).to eq({})
-        end
-        it 'should flash a notice' do
-          subject
-          expect(flash[:notice]).not_to be_nil
-        end
       end
       context 'tests.json does exist' do
         before { allow_any_instance_of(AutomatedTestsHelper).to receive(:fill_in_schema_data!) }

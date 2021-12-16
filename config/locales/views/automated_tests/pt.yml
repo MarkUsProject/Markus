@@ -8,7 +8,6 @@ pt:
     display_output_title: UPDATE ME
     files: UPDATE ME
     invalid_specs_file: UPDATE ME
-    loading_specs: UPDATE ME
     need_group_for_test: Você precisa possuir um grupo para executar os testes.
     need_one_file: Você precisa de pelo menos um arquivo enviado para executar os testes.
     need_submission: As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados.
