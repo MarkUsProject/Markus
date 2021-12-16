@@ -51,7 +51,7 @@
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: AutomatedTestPolicy) %>
-            <% if Settings.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
+            <% if @assignment.course.autotest_setting && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
               <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
                 <%= link_to t('automated_tests.title'),
                             manage_course_assignment_automated_tests_path(@current_course, @assignment) %>

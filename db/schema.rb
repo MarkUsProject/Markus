@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_13_200348) do
+ActiveRecord::Schema.define(version: 2021_12_16_152132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,12 +139,20 @@ ActiveRecord::Schema.define(version: 2021_12_13_200348) do
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
 
+  create_table "autotest_settings", force: :cascade do |t|
+    t.string "url", null: false
+    t.string "api_key", null: false
+    t.string "schema", null: false
+  end
+
   create_table "courses", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "is_hidden", default: true, null: false
     t.string "display_name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "autotest_setting_id"
+    t.index ["autotest_setting_id"], name: "index_courses_on_autotest_setting_id"
   end
 
   create_table "criteria", force: :cascade do |t|
@@ -649,6 +657,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_200348) do
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
+  add_foreign_key "courses", "autotest_settings"
   add_foreign_key "criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "exam_templates", "assessments"

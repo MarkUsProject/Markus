@@ -42,7 +42,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the subject' do
-      subject_line = 'MarkUs Notification (' + Settings.course_name + ') Your marks for ' +
+      subject_line = 'MarkUs Notification (' + submission.course.name + ') Your marks for ' +
           submission.assignment.short_identifier + ' have been released!'
       expect(mail.subject).to eq(subject_line)
     end
@@ -91,7 +91,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the subject' do
-      subject_line = 'MarkUs Notification (' + Settings.course_name + ') You have been invited to a group!'
+      subject_line = 'MarkUs Notification (' + grouping.course.name + ') You have been invited to a group!'
       expect(mail.subject).to eq(subject_line)
     end
 

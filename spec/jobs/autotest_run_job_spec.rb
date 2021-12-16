@@ -5,7 +5,14 @@ describe AutotestRunJob do
   let(:groupings) { create_list(:grouping_with_inviter_and_submission, n_groups, assignment: assignment) }
   let(:groups) { groupings.map(&:group) }
   let(:user) { create(:instructor) }
-  before { allow(File).to receive(:read).and_return("123456789\n") }
+  before do
+    allow_any_instance_of(AutotestSetting).to(
+      receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
+    )
+    course = create(:course)
+    course.autotest_setting = create(:autotest_setting)
+    course.save
+  end
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, user.id, assignment.id, groups.map(&:id)] }
     before { allow(AutotestResultsJob).to receive(:set) }
@@ -68,7 +75,7 @@ describe AutotestRunJob do
       it 'should send an api request to the autotester' do
         expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj, uri|
           expect(net_obj.instance_of?(Net::HTTP::Put)).to be true
-          expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/test"
+          expect(uri.to_s).to eq "#{assignment.course.autotest_setting.url}/settings/10/test"
           dummy_return
         end
         subject

@@ -135,56 +135,55 @@ module AutomatedTestsHelper
   # Sends RESTful api requests to the autotester
   module AutotestApi
     AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
-    AUTOTEST_KEY_FILE = File.join(::Rails.root, 'config', 'autotest.api_key').freeze
 
     class LimitExceededException < StandardError; end
+    class UnauthorizedException < StandardError; end
 
     # Register this MarkUs instance with the autotester by sending a unique user name and credentials that
     # the autotester can use to make get requests to MarkUs' API
-    def register
+    def register(autotest_url)
       autotest_user = AutotestUser.find_or_create
-      uri = URI("#{Settings.autotest.url}/register")
+      uri = URI("#{autotest_url}/register")
       req = Net::HTTP::Post.new(uri)
       req['Content-Type'] = 'application/json'
       req.body = { user_name: AUTOTEST_USERNAME,
                    auth_type: Api::MainApiController::AUTHTYPE,
                    credentials: autotest_user.api_key }.to_json
       res = send_request!(req, uri)
-      File.write(AUTOTEST_KEY_FILE, JSON.parse(res.body)['api_key'])
+      JSON.parse(res.body)['api_key']
     end
 
     # Send updated credentials to the autotester for this MarkUs instance
-    def update_credentials
+    def update_credentials(autotest_setting)
       autotest_user = AutotestUser.find_or_create
-      uri = URI("#{Settings.autotest.url}/reset_credentials")
+      uri = URI("#{autotest_setting.url}/reset_credentials")
       req = Net::HTTP::Put.new(uri)
       req.body = { auth_type: Api::MainApiController::AUTHTYPE, credentials: autotest_user.api_key }.to_json
-      set_headers(req)
+      set_headers(req, autotest_setting.api_key)
       send_request!(req, uri)
     end
 
     # Get the json schema from the autotester that we can use to render a form using so that users
     # can customize tests.
-    def schema
-      uri = URI("#{Settings.autotest.url}/schema")
+    def get_schema(autotest_setting)
+      uri = URI("#{autotest_setting.url}/schema")
       req = Net::HTTP::Get.new(uri)
-      set_headers(req)
+      set_headers(req, autotest_setting.api_key)
       res = send_request!(req, uri)
-      testers_path = File.join(Settings.autotest.client_dir, 'testers.json')
-      File.write(testers_path, JSON.parse(res.body).to_json)
+      JSON.parse(res.body).to_json
     end
 
     # Send settings (result of filling out the schema form and uploading files) to the autotester.
     # Each assignment can have one or zero settings associated with it on the autotester.
     def update_settings(assignment, host_with_port)
       if assignment.autotest_settings_id
-        uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}")
+        uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}")
         req = Net::HTTP::Put.new(uri)
       else
-        uri = URI("#{Settings.autotest.url}/settings")
+        uri = URI("#{assignment.course.autotest_setting.url}/settings")
         req = Net::HTTP::Post.new(uri)
       end
-      set_headers(req)
+      set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
       req.body = {
         settings: JSON.parse(File.read(assignment.autotest_settings_file)),
@@ -200,9 +199,9 @@ module AutomatedTestsHelper
     def run_tests(assignment, host_with_port, group_ids, role, collected: true, batch: nil)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
-      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/test")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}/test")
       req = Net::HTTP::Put.new(uri)
-      set_headers(req)
+      set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
       file_urls = group_ids.map do |id_|
         param = collected ? 'collected=true' : ''
@@ -235,10 +234,10 @@ module AutomatedTestsHelper
     def cancel_tests(assignment, test_runs)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
-      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/tests/cancel")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}/tests/cancel")
       req = Net::HTTP::Delete.new(uri)
       req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
-      set_headers(req)
+      set_headers(req, assignment.course.autotest_setting.api_key)
       send_request!(req, uri)
       test_runs.each(&:cancel)
     end
@@ -247,10 +246,10 @@ module AutomatedTestsHelper
     def statuses(assignment, test_runs)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
-      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/tests/status")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}/tests/status")
       req = Net::HTTP::Get.new(uri)
       req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
-      set_headers(req)
+      set_headers(req, assignment.course.autotest_setting.api_key)
       res = send_request!(req, uri)
       JSON.parse(res.body)
     end
@@ -262,14 +261,14 @@ module AutomatedTestsHelper
 
       test_id = test_run.autotest_test_id
       settings_id = assignment.autotest_settings_id
-      uri = URI("#{Settings.autotest.url}/settings/#{settings_id}/test/#{test_id}")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{settings_id}/test/#{test_id}")
       req = Net::HTTP::Get.new(uri)
-      set_headers(req)
+      set_headers(req, assignment.course.autotest_setting.api_key)
       res = send_request(req, uri)
       raise LimitExceededException if res.code == '429'
       if res.is_a?(Net::HTTPSuccess)
         results = JSON.parse(res.body)
-        add_feedback_data(results, settings_id, test_id)
+        add_feedback_data(results, settings_id, test_id, assignment.course.autotest_setting)
         test_run.update_results!(results)
       else
         test_run.failure(res.body)
@@ -288,6 +287,7 @@ module AutomatedTestsHelper
       res = send_request(req, uri)
       unless res.is_a?(Net::HTTPSuccess)
         raise LimitExceededException if res.code == '429'
+        raise UnauthorizedException if res.code == '401'
         begin
           raise JSON.parse(res.body)['message']
         rescue JSON::ParserError
@@ -298,8 +298,8 @@ module AutomatedTestsHelper
     end
 
     # Set default authentication and content type headers on the request object.
-    def set_headers(req)
-      req['Api-Key'] = File.read(AUTOTEST_KEY_FILE).strip
+    def set_headers(req, api_key)
+      req['Api-Key'] = api_key
       req['Content-Type'] = 'application/json'
     end
 
@@ -314,7 +314,7 @@ module AutomatedTestsHelper
 
     # Gets the feedback file data from the autotester for the TestRun with autotest_test_id = +test_id+
     # and adds it to the +results+ hash.
-    def add_feedback_data(results, settings_id, test_id)
+    def add_feedback_data(results, settings_id, test_id, autotest_setting)
       return if results['test_groups'].blank?
 
       results['test_groups'].each do |result|
@@ -323,9 +323,9 @@ module AutomatedTestsHelper
         feedback_id = result['feedback']['id']
         next if feedback_id.nil?
 
-        uri = URI("#{Settings.autotest.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
+        uri = URI("#{autotest_setting.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
         req = Net::HTTP::Get.new(uri)
-        set_headers(req)
+        set_headers(req, autotest_setting.api_key)
         res = send_request!(req, uri)
         result['feedback']['content'] = res.body
       end

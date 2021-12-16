@@ -10,7 +10,10 @@ Rails.application.routes.draw do
         put 'update_by_username'
       end
     end
-    resources :courses, only: [:index, :show] do
+    resources :courses, only: [:index, :show, :create, :update] do
+      member do
+        put 'update_autotest_url'
+      end
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
           post 'create_or_unhide'

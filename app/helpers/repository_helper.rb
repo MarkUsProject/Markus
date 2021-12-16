@@ -14,14 +14,14 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments.
   #
-  # If +check_size+ is true then check if the file size is greater than Settings.max_file_size
+  # If +check_size+ is true then check if the file size is greater than course.max_file_size_settings
   # or less than 0 bytes. If +required_files+ is an array of file paths, and some of the uploaded files are not
   # in that array, a message will be returned indicating that non-required files were uploaded.
-  def add_file(f, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
+  def add_file(f, role, repo, path: '/', txn: nil, check_size: true, required_files: nil)
     messages = []
 
     if txn.nil?
-      txn = repo.get_transaction(user.user_name)
+      txn = repo.get_transaction(role.user_name)
       commit_txn = true
     else
       commit_txn = false
@@ -31,7 +31,7 @@ module RepositoryHelper
     current_path = Pathname.new path
     new_files = []
     if check_size
-      if f.size > Settings.max_file_size
+      if f.size > role.course.max_file_size_settings
         messages << [:too_large, f.original_filename]
         return false, messages
       elsif f.size == 0
@@ -205,13 +205,13 @@ module RepositoryHelper
     [false, [:txn_conflicts, txn.conflicts]]
   end
 
-  def flash_repository_messages(messages, suppress: nil)
+  def flash_repository_messages(messages, course, suppress: nil)
     suppress ||= {}
     messages.each do |msg, other_info|
       next if suppress[msg]
       case msg
       when :too_large
-        max_size = (Settings.max_file_size / 1_000_000.00).round(2)
+        max_size = (course.max_file_size_settings / 1_000_000.00).round(2)
         flash_message(:error, I18n.t('student.submission.file_too_large',
                                      file_name: other_info,
                                      max_size: max_size))

@@ -42,4 +42,7 @@ class JobMessagesController < ApplicationController
   def parent_params
     []
   end
+
+  # Job messages are allowed while switching courses
+  def check_course_switch; end
 end

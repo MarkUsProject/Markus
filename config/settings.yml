@@ -30,7 +30,6 @@ queues:
 redis:
   url: 'redis://localhost:6379/1'
 
-course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
 validate_ip: false
 validate_custom_status_message: {}
 
@@ -65,9 +64,7 @@ logging:
   old_files: 10
 
 autotest:
-  enable: true
   student_test_buffer_minutes: 60
-  url: 'http://localhost:5000'
 
 scanned_exams:
   enable: true

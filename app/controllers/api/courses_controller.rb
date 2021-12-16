@@ -25,6 +25,42 @@ module Api
       end
     end
 
+    def create
+      Course.create!(params.permit(:name, :is_hidden, :display_name))
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '500', message:
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+    else
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
+    def update
+      current_course.update!(params.permit(:name, :is_hidden, :display_name))
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '500', message:
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+    else
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
+    def update_autotest_url
+      current_course.update_autotest_url(params[:url])
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '500', message:
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+    else
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
     private
 
     def check_course

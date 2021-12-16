@@ -40,6 +40,10 @@ class ApplicationPolicy < ActionPolicy::Base
 
   # checks usable for all policies
 
+  def admin_user?
+    real_user.admin_user?
+  end
+
   def instructor?
     role.instructor?
   end
