@@ -629,7 +629,6 @@ class AssignmentsController < ApplicationController
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-    raise
     redirect_to course_assignments_path(current_course)
   end
 
