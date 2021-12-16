@@ -2,17 +2,8 @@ import React from "react";
 import "../../../stylesheets/common/_url_viewer.scss"
 
 export class URLViewer extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      url: "https://www.youtube.com/embed/sthMUE9fnfc",
-    };
-  }
-
-  getYoutubeId = youtubeUrl => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = youtubeUrl.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
+  state = {
+    url: "https://www.youtube.com/embed/sthMUE9fnfc",
   };
 
   render() {
