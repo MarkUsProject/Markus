@@ -18,12 +18,7 @@ module UploadHelper
     elsif %w[.yml .yaml].include? filetype
       {
         type: '.yml',
-        contents: YAML.safe_load(
-          upload_file.read.encode(Encoding::UTF_8, encoding),
-          [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone],
-          [],
-          true # Allow aliases in YML file
-        )
+        contents: parse_yaml_content(upload_file.read.encode(Encoding::UTF_8, encoding))
       }
     else
       raise StandardError, I18n.t('upload_errors.malformed_csv')
@@ -54,5 +49,14 @@ module UploadHelper
         yield f
       end
     end
+  end
+
+  # Parse the +yaml_string+ and return the data as a hash.
+  def parse_yaml_content(yaml_string)
+    YAML.safe_load(yaml_string,
+                   [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+                    ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
+                   [],
+                   true)
   end
 end

@@ -97,7 +97,6 @@ class TagsController < ApplicationController
   end
 
   def upload
-    assignment = Assignment.find_by(id: params[:assignment_id])
     begin
       data = process_file_upload
     rescue Psych::SyntaxError => e
@@ -105,12 +104,13 @@ class TagsController < ApplicationController
     rescue StandardError => e
       flash_message(:error, e.message)
     else
+      assignment = Assignment.find(params[:assignment_id])
       if data[:type] == '.csv'
-        result = Tag.from_csv(data[:file].read, current_course, assignment)
+        result = Tag.from_csv(data[:file].read, current_course, assignment.id)
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       elsif data[:type] == '.yml'
-        result = Tag.from_yml(data[:contents], current_course, assignment)
+        result = Tag.from_yml(data[:contents], current_course, assignment&.id)
         if result.is_a?(StandardError)
           flash_message(:error, result.message)
         end

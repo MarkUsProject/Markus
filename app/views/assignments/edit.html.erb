@@ -1,12 +1,16 @@
-<div class='title_bar'>
-  <h1><%= @assignment.is_peer_review? ?
-            "#{t(:edit)} #{Assignment.model_name.human}: " +
-              "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
-            "#{t(:edit)} #{Assignment.model_name.human}: #{@assignment.short_identifier}" %></h1>
-</div>
+<% content_for :title,
+               @assignment.is_peer_review? ?
+                 "#{t(:edit)} #{Assignment.model_name.human}: " +
+                   "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
+                 "#{t(:edit)} #{Assignment.model_name.human}: #{@assignment.short_identifier}" %>
 
 <% if @assignment.is_peer_review? %>
   <%= render partial: 'peer_review_form' %>
 <% else %>
+  <% @heading_buttons = [
+    { link_text: t('download'),
+      link_path: download_config_files_assignment_path(format: 'zip') }
+  ] %>
+
   <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
 <% end %>

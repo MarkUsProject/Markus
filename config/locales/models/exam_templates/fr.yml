@@ -3,6 +3,7 @@ fr:
   activerecord:
     attributes:
       exam_template:
+        cover_fields: UPDATE ME
         filename: Nom du fichier
         name: prénom
         num_pages: Nombre de pages

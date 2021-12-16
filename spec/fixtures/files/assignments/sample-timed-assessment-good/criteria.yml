@@ -1,0 +1,14 @@
+Bonus Question:
+  type: checkbox
+  max_mark: 1.0
+  description: Extra bonus question
+  ta_visible: true
+  peer_visible: false
+  bonus: true
+Optimal:
+  type: checkbox
+  max_mark: 1.0
+  description: Solution is most optimal
+  ta_visible: true
+  peer_visible: false
+  bonus: true

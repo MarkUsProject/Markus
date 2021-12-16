@@ -4,15 +4,11 @@
   <%= form_for :create_template,
                url: course_assignment_exam_templates_path(@current_course, @assignment),
                html: { multipart: true, size: 1 } do |f| %>
-    <div>
-      <p class="alignleft"><%= f.label ExamTemplate.human_attribute_name('name') + ' (' + t(:optional) + ')' %></p>
-      <p class="clear-alignment">
-        <%= f.text_field :name %>
-      </p>
-      <p class="alignleft"><%= t('exam_templates.create.upload') %> <span class='required_field'>*</span></p>
-      <p class="clear-alignment">
-        <%= f.file_field :file_io %>
-      </p>
+    <div class="inline-labels">
+      <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
+      <%= f.text_field :name %>
+      <%= f.label :file_io, t('exam_templates.create.upload'), class: "required" %>
+      <%= f.file_field :file_io %>
     </div>
     <section class='dialog-actions'>
       <%= f.submit t(:save),

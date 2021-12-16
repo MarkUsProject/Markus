@@ -136,4 +136,55 @@ describe SplitPdfJob do
     error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
     expect(error_dir_entries.length).to eq 1
   end
+
+  context 'when automatic parsing is enabled' do
+    let(:exam_template) { create(:exam_template_with_automatic_parsing) }
+
+    it 'correctly parses a student number and assigns the paper to that student' do
+      create(:student, id_number: '0123456789')
+      filename = 'test-auto-parse-scan-success.pdf'
+      split_pdf_log = exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 6,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        user: admin
+      )
+      FileUtils.cp "db/data/scanned_exams/#{filename}",
+                   File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+
+      group = Group.find_by(group_name: 'test-auto-parse_paper_1')
+      expect(group).to_not be_nil
+      grouping = group.groupings.find_by(assessment_id: exam_template.assessment_id)
+      expect(grouping).to_not be_nil
+
+      expect(grouping.accepted_students.size).to eq 1
+      expect(grouping.accepted_students.first.id_number).to eq '0123456789'
+    end
+
+    it 'creates a group with no members when no text is parsed' do
+      create(:student, id_number: '0123456789')
+      filename = 'test-auto-parse-scan-blank.pdf'
+      split_pdf_log = exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 6,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        user: admin
+      )
+      FileUtils.cp "db/data/scanned_exams/#{filename}",
+                   File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+
+      group = Group.find_by(group_name: 'test-auto-parse_paper_3')
+      expect(group).to_not be_nil
+      grouping = group.groupings.find_by(assessment_id: exam_template.assessment_id)
+      expect(grouping).to_not be_nil
+
+      expect(grouping.accepted_students.size).to eq 0
+    end
+  end
 end

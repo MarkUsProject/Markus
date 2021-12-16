@@ -1,33 +1,34 @@
 <%= form_for [@current_course, exam_template],
+             namespace: exam_template.id,
              html: { multipart: true,
                      class: exam_template.id.to_s} do |f| %>
   <%# TODO: show this through flash messages properly. %>
   <%= exam_template.errors.full_messages.empty? ? '' : exam_template.errors.full_messages.empty? %>
 
-  <div class='exam-template-section'>
-    <p class='alignright'>
-      <%= link_to t('exam_templates.download'), download_course_exam_template_path(@current_course, exam_template) %>
-      <%= link_to t('exam_templates.delete.general'),
-                  [@current_course, exam_template],
-                  method: :delete,
-                  data: { confirm: t('exam_templates.delete.confirm', name: exam_template.name) } %>
-    </p>
+  <div class='float-right'>
+    <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id),
+                class: 'button' %>
+    <%= link_to t('exam_templates.delete.general'),
+                [@current_course, exam_template],
+                method: :delete,
+                class: 'button',
+                data: { confirm: t('exam_templates.delete.confirm', name: exam_template.name) } %>
   </div>
 
   <div class='inline-labels'>
-    <%= f.label ExamTemplate.human_attribute_name('name') %>
+    <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
     <%= f.text_field :name %>
-    <label>
+    <span class="label">
       <%= t('key_pairs.file') %>
-    </label>
+    </span>
     <span>
       <%= link_to exam_template.filename, download_course_exam_template_path(@current_course, exam_template) %>
     </span>
 
-    <%= f.label t('exam_templates.update.instruction') %>
+    <%= f.label :new_template, t('exam_templates.update.instruction') %>
     <%= f.file_field :new_template %>
 
-    <label><%= ExamTemplate.human_attribute_name('num_pages') %></label>
+    <span class="label"><%= ExamTemplate.human_attribute_name('num_pages') %></span>
     <span><%= exam_template.num_pages %></span>
   </div>
 
@@ -35,7 +36,7 @@
 
   <div class='exam-template-section'>
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
-    <p class='required'><%= t('required_fields') %> <span class='required_field'>*</span></p>
+    <p><%= t('grade_entry_forms.required_fields_html') %></p>
     <%= render partial: 'template_division_pane',
                locals: { f: f,
                          exam_template: exam_template } %>

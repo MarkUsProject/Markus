@@ -3,7 +3,9 @@
   [
     {
       "env_data":
-      {},
+      {
+        "requirements": "knitr"
+      },
       "test_data":
       [
         {
@@ -20,6 +22,22 @@
           "script_files":
           [
             "test.R"
+          ],
+          "timeout": 30
+        },
+        {
+          "category":
+          [
+            "admin"
+          ],
+          "extra_info":
+          {
+            "name": "R Test Group for Rmarkdown",
+            "display_output": "instructors"
+          },
+          "script_files":
+          [
+            "test_rmd.R"
           ],
           "timeout": 30
         }

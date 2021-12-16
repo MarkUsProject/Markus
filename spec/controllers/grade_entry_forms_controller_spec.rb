@@ -490,7 +490,7 @@ describe GradeEntryFormsController do
       name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:role).where('roles.hidden': false).count
       expected_summary = { name: name,
-                           date: I18n.l(grade_entry_form.due_date),
+                           date: I18n.l(grade_entry_form_with_data.due_date),
                            average: grade_entry_form_with_data.results_average,
                            median: grade_entry_form_with_data.results_median,
                            num_entries: grade_entry_form_with_data.count_non_nil.to_s +

@@ -2,6 +2,7 @@
 pt:
   assignments:
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"
+    configuration_zip_file: UPDATE ME
     deadline_with_extension: UPDATE ME
     due_date:
       final_due_date_passed: O período de tolerância para este projeto já passou
@@ -77,4 +78,5 @@ pt:
       started_on: UPDATE ME
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
+    upload_config_help_html: UPDATE ME %{section_id}
     upload_file_requirement: A lista de arquivos carregados não coincide com os arquivos de atribuição necessária

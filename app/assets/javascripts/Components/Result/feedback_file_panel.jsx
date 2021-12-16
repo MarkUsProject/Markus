@@ -5,16 +5,24 @@ import {lookup} from "mime-types";
 export class FeedbackFilePanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedFile: props.feedbackFiles ? props.feedbackFiles[0].id : null,
-    };
+    if (props.loading) {
+      this.state = {selectedFile: null};
+    } else {
+      this.state = {
+        selectedFile: props.feedbackFiles.length > 0 ? props.feedbackFiles[0].id : null,
+      };
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.feedbackFiles.find(file => file.id === this.state.selectedFile)) {
-      this.setState({
-        selectedFile: nextProps.feedbackFiles ? nextProps.feedbackFiles[0].id : null,
-      });
+  static getDerivedStateFromProps(props, state) {
+    if (props.loading && state.selectedFile !== null) {
+      return {selectedFile: null};
+    } else if (!props.feedbackFiles.find(file => file.id === state.selectedFile)) {
+      return {
+        selectedFile: props.feedbackFiles.length > 0 ? props.feedbackFiles[0].id : null,
+      };
+    } else {
+      return null;
     }
   }
 
@@ -23,6 +31,10 @@ export class FeedbackFilePanel extends React.Component {
   };
 
   render() {
+    if (this.props.loading) {
+      return "";
+    }
+
     let feedbackSelector;
     if (this.props.feedbackFiles) {
       feedbackSelector = (

@@ -3,10 +3,25 @@
 ## [unreleased]
 - Add the ability to hide assignments from individual sections (#5445)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
+- Fix bug with run test button in grading view when marks are released (#5527)
 - Update repository access permissions to take into account the Assignment
   is_hidden and anonymize_groups attributes (#5547)
 - Support syntax highlighting for R (#5558)
 - Fixes in progress remark requests to display the remark request due date for students (#5562)
+- Preserve exam template paper size and orientation when stamping with QR codes (#5573)
+- Fix bugs in automatic parsing Python module (#5592)
+- Fix exam template automatic parsing to only accept one crop box, and parse either
+  ID number or user name (#5592)
+- Fix scanned exams when using automatic parsing with multiple exam templates (#5592)
+- Fixes assignment graders checkbox settings text to avoid double negatives (#5600)
+- Add test results download modal for assignment summary (#5561)
+- Improve accessibility of exam templates page (#5607)
+- Fix display bug with infinitely expanding chart in student results view for grade entry form (#5612)
+- Added the ability to copy over entire assignments (#5616)
+- Fix bug in User#visible_assessments for students in a section (#5634)
+- Fixed bug where tag edit modal closed whenever it is clicked (#5652)
+- Fix bug where the datetime selector wasn't being shown for peer review assessments (#5659)
+- Fix bug in displaying associated feedback files when switching between results (#5676)
 
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)
