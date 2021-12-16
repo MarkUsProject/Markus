@@ -9,6 +9,7 @@ class SubmissionsController < ApplicationController
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
+    p.frame_src "https://www.youtube.com", "https://docs.google.com"
   end
 
   content_security_policy_report_only only: :notebook_content
