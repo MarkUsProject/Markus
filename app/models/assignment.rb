@@ -988,8 +988,8 @@ class Assignment < Assessment
                       .joins(tas: :end_user)
                       .group('user_name')
                       .count
-    graders = Ta.joins(:end_user)
-                .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
+    graders = self.course.tas.joins(:end_user)
+                  .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
         first_name: first_name,
@@ -1048,7 +1048,7 @@ class Assignment < Assessment
       assign_graders_to_criteria: self.assign_graders_to_criteria,
       anonymize_groups: self.anonymize_groups,
       hide_unassigned_criteria: self.hide_unassigned_criteria,
-      sections: Hash[Section.all.pluck(:id, :name)]
+      sections: Hash[assignment.course.sections.all.pluck(:id, :name)]
     }
   end
 

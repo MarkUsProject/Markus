@@ -278,7 +278,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_test_results
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
     respond_to do |format|
       format.json do
         data = @assignment.summary_test_result_json
@@ -541,7 +541,7 @@ class AssignmentsController < ApplicationController
 
   # Downloads a zip file containing all the information and settings about an assignment
   def download_config_files
-    assignment = Assignment.find(params[:id])
+    assignment = record
     child_assignment = Assignment.find_by(parent_assessment_id: params[:id])
 
     zip_name = "#{assignment.short_identifier}-config-files.zip"
@@ -624,12 +624,13 @@ class AssignmentsController < ApplicationController
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
         config_starter_files(assignment, zipfile)
         assignment.save!
-        redirect_to edit_assignment_path(assignment.id)
+        redirect_to edit_course_assignment_path(current_course, assignment)
       end
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-    redirect_to assignments_path
+    raise
+    redirect_to course_assignments_path(current_course)
   end
 
   private
@@ -644,8 +645,6 @@ class AssignmentsController < ApplicationController
       raise I18n.t('automated_tests.invalid_specs_file')
     else
       update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
-      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
-      session[:job_id] = @current_job.job_id
       test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
       zip_file.glob(test_file_glob_pattern) do |entry|
         zip_file_path = Pathname.new(entry.name)
@@ -710,7 +709,7 @@ class AssignmentsController < ApplicationController
     yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content)
     if [:tags, :peer_review_tags].include?(hash_to_build)
-      properties.each { |row| row[:user] = @current_user.user_name }
+      properties.each { |row| row[:user] = current_role.user_name }
     end
     properties
   end
@@ -722,12 +721,12 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     if parent_assignment.nil?
-      assignment = Assignment.new(properties)
+      assignment = current_course.assignments.new(properties)
       assignment.repository_folder = assignment.short_identifier
     else
       # Filter properties not supported by peer review assignments, then build assignment
       peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
-      assignment = Assignment.new(peer_review_properties)
+      assignment = current_course.assignments.new(peer_review_properties)
       parent_assignment.has_peer_review = true
       assignment.has_peer_review = false
       assignment.enable_test = false

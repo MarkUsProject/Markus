@@ -65,9 +65,8 @@ class AssignmentSummaryTable extends React.Component {
         accessor: "group_name",
         Cell: row => {
           if (row.original.result_id) {
-            const path = Routes.edit_assignment_submission_result_path(
-              this.props.assignment_id,
-              row.original.submission_id,
+            const path = Routes.edit_course_result_path(
+              this.props.course_id,
               row.original.result_id
             );
             return <a href={path}>{row.original.group_name}</a>;
@@ -231,6 +230,7 @@ class AssignmentSummaryTable extends React.Component {
           loading={this.state.loading}
         />
         <DownloadTestResultsModal
+          course_id={this.props.course_id}
           assignment_id={this.props.assignment_id}
           isOpen={this.state.showDownloadTestsModal}
           onRequestClose={() => this.setState({showDownloadTestsModal: false})}

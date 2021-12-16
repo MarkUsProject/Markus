@@ -205,7 +205,7 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] = []
         elsif current_role.ta? && assignment.anonymize_groups
           data[:grace_token_deductions] = []
-        elsif current_user.student?
+        elsif current_role.student?
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions

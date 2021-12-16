@@ -3,7 +3,7 @@ class GradersController < ApplicationController
   # The names of the associations of groupings required by the view, which
   # should be eagerly loaded.
   GROUPING_ASSOC = [:group, :students,
-                    ta_memberships: :user, inviter: :section]
+                    ta_memberships: :role, inviter: :section]
   # The names of the associations of criteria required by the view, which
   # should be eagerly loaded.
   CRITERION_ASSOC = [criterion_ta_associations: :ta]
