@@ -47,7 +47,8 @@
           <%= link_to t('automated_tests.title'),
                       controller: 'automated_tests',
                       action:'student_interface',
-                      id: @assignment.id %>
+                      course_id: @current_course.id,
+                      assignment_id: @assignment.id %>
         </li>
       <% end %>
 

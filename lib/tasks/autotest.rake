@@ -4,7 +4,8 @@ namespace :db do
     include AutomatedTestsHelper
     FileUtils.mkdir_p Settings.autotest.client_dir
     puts 'Set up testing environment for autotest'
-    Rake::Task['markus:setup_autotest'].invoke
+    autotest_setting = AutotestSetting.find_or_create_by!(url: ENV['AUTOTEST_URL'])
+    Course.first.update!(autotest_setting_id: autotest_setting.id)
 
     # Create dummy student for autotest submissions.
     user = EndUser.find_or_create_by(user_name: 'aaaautotest', first_name: 'Test', last_name: 'Otto')
@@ -19,8 +20,6 @@ end
 
 class AutotestSetup
   def initialize(root_dir)
-    testers_schema_path = File.join(Settings.autotest.client_dir, 'testers.json')
-
     # setup instance variables (mostly paths to directories)
     @assg_short_id = "autotest_#{File.basename(root_dir)}"
     script_dir = File.join(root_dir, 'script_files')
@@ -32,7 +31,7 @@ class AutotestSetup
     @student_files = Dir.glob(File.join(@student_dir, '*'))
 
     @assignment = create_new_assignment
-    @schema_data = JSON.parse(File.open(testers_schema_path, &:read))
+    @schema_data = JSON.parse(@assignment.course.autotest_setting.schema)
     fill_in_schema_data!(@schema_data, @test_scripts, @assignment)
 
     clear_old_files

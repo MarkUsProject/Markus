@@ -98,7 +98,6 @@ Config.setup do |config|
         optional(:autotest_cancel_job).filled(:string)
         optional(:autotest_run_job).filled(:string)
         optional(:autotest_specs_job).filled(:string)
-        optional(:autotest_testers_job).filled(:string)
         optional(:create_groups_job).filled(:string)
         optional(:download_submissions_job).filled(:string)
         optional(:generate_job).filled(:string)
@@ -112,7 +111,6 @@ Config.setup do |config|
       required(:redis).hash do
         required(:url).filled(:string)
       end
-      required(:course_name).filled(:string)
       optional(:validate_file).filled(:string)
       optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
@@ -153,9 +151,7 @@ Config.setup do |config|
         required(:default_locale).filled(:string)
       end
       required(:autotest).hash do
-        required(:enable).filled(:bool)
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
-        required(:url).filled(:string)
         required(:client_dir).filled(:string)
         required(:max_batch_size).value(:integer, gt?: 0)
       end

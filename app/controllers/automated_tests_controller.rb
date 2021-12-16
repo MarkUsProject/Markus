@@ -84,7 +84,6 @@ class AutomatedTestsController < ApplicationController
 
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
-    testers_schema_path = File.join(Settings.autotest.client_dir, 'testers.json')
     files_dir = Pathname.new assignment.autotest_files_dir
     file_keys = []
     files_data = assignment.autotest_files.map do |file|
@@ -100,15 +99,10 @@ class AutomatedTestsController < ApplicationController
           url: download_file_course_assignment_automated_tests_url(assignment.course, assignment, file_name: file) }
       end
     end
-    if File.exist? testers_schema_path
-      schema_data = JSON.parse(File.open(testers_schema_path, &:read))
-      fill_in_schema_data!(schema_data, file_keys, assignment)
-    else
-      flash_now(:notice, I18n.t('automated_tests.loading_specs'))
-      @current_job = AutotestTestersJob.perform_later
-      session[:job_id] = @current_job.job_id
-      schema_data = {}
-    end
+
+    schema_data = JSON.parse(assignment.course.autotest_setting.schema)
+    fill_in_schema_data!(schema_data, file_keys, assignment)
+
     test_specs_path = assignment.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
@@ -151,10 +145,10 @@ class AutomatedTestsController < ApplicationController
         folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
         FileUtils.mkdir_p(folder_path)
       else
-        if f.size > Settings.max_file_size
+        if f.size > assignment.course.max_file_size_settings
           flash_now(:error, t('student.submission.file_too_large',
                               file_name: f.original_filename,
-                              max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
+                              max_size: (assignment.course.max_file_size_settings / 1_000_000.00).round(2)))
           next
         elsif f.size == 0
           flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))

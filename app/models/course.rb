@@ -11,6 +11,7 @@ class Course < ApplicationRecord
   has_many :students
   has_many :marking_schemes
   has_many :tags, through: :roles
+  belongs_to :autotest_setting, optional: true
 
   validates_presence_of :name
   validates_uniqueness_of :name
@@ -104,5 +105,17 @@ class Course < ApplicationRecord
       required[assignment.repository_folder] = { required: files, required_only: required_only }
     end
     required
+  end
+
+  def max_file_size_settings
+    Settings[self.name]&.max_file_size || Settings.max_file_size
+  end
+
+  def update_autotest_url(url)
+    autotest_setting = AutotestSetting.find_or_create_by!(url)
+    if autotest_setting.id != self.autotest_setting.id
+      self.update!(autotest_setting_id: autotest_setting.id)
+      AssignmentProperties.where(assessment_id: self.ids).update_all(autotest_settings_id: nil)
+    end
   end
 end

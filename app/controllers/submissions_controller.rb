@@ -367,7 +367,7 @@ class SubmissionsController < ApplicationController
           head :unprocessable_entity
         end
       end
-      flash_repository_messages messages
+      flash_repository_messages messages, @grouping.course
       set_filebrowser_vars(@grouping)
       flash_file_manager_messages
     end
