@@ -216,8 +216,8 @@ class Assignment < Assessment
   end
 
   def past_all_collection_dates?
-    if section_due_dates_type && Section.any?
-      Section.all.all? do |s|
+    if section_due_dates_type && course.sections.any?
+      course.sections.all? do |s|
         past_collection_date? s
       end
     else

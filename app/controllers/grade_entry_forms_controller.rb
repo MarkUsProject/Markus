@@ -163,7 +163,7 @@ class GradeEntryFormsController < ApplicationController
       s
     end
     render json: { data: student_grades,
-                   sections: Hash[Section.all.pluck(:id, :name)] }
+                   sections: Hash[current_course.sections.pluck(:id, :name)] }
   end
 
   # Release/unrelease the marks for all the students or for a subset of students
