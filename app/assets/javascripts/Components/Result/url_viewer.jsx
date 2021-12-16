@@ -16,11 +16,7 @@ export class URLViewer extends React.Component {
   render() {
     return (
       <div id="url_container" key={"url_container"}>
-        <iframe
-          id="url_display"
-          src={this.state.url}
-          allowFullScreen
-        />
+        <iframe id="url_display" src={this.state.url} allowFullScreen />
       </div>
     );
   }
