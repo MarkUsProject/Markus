@@ -19,7 +19,7 @@ class SubmissionsController < ApplicationController
         assignment = Assignment.find(params[:assignment_id])
         render json: {
           groupings: assignment.current_submission_data(current_role),
-          sections: Hash[Section.all.pluck(:id, :name)]
+          sections: Hash[current_course.sections.pluck(:id, :name)]
         }
       end
     end

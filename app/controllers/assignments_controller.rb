@@ -88,7 +88,7 @@ class AssignmentsController < ApplicationController
       if @assignment.section_due_dates_type
         section_due_dates = Hash.new
         now = Time.current
-        Section.all.each do |section|
+        current_course.sections.find_each do |section|
           collection_time = @assignment.submission_rule.calculate_collection_time(section)
           collection_time = now if now >= collection_time
           if section_due_dates[collection_time].nil?
@@ -161,7 +161,7 @@ class AssignmentsController < ApplicationController
     end
 
     # build assessment_section_properties for each section that doesn't already have one
-    Section.all.each do |s|
+    current_course.sections.find_each do |s|
       unless AssessmentSectionProperties.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.assessment_section_properties.build(section: s)
       end

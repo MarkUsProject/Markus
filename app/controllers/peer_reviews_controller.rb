@@ -46,7 +46,7 @@ class PeerReviewsController < ApplicationController
       reviewee_to_reviewers_map: reviewee_to_reviewers_map,
       id_to_group_names_map: id_to_group_names_map,
       num_reviews_map: peer_reviews.group(:reviewer_id).count,
-      sections: Hash[Section.all.pluck(:id, :name)]
+      sections: Hash[current_course.sections.pluck(:id, :name)]
     }
   end
 
