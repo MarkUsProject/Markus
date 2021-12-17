@@ -173,6 +173,21 @@ class RawFileManager extends RawFileBrowser {
         </li>
       );
 
+      if (this.props.onSubmitLink !== undefined) {
+        actions.push(
+          <li key="action-add-link">
+            <a
+              onClick={event => this.props.onSubmitLink(event, selectedItem)}
+              href="#"
+              role="button"
+            >
+              <i className="fa fa-submit-link-o" aria-hidden="true" />
+              &nbsp;{I18n.t("submit_link")}
+            </a>
+          </li>
+        );
+      }
+
       actions.push(
         <li key="action-delete" style={{color: "#8d8d8d"}}>
           <i className="fa fa-trash-o" aria-hidden="true" />

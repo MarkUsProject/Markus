@@ -21,3 +21,4 @@ pt:
     other: "%{count} objeto carregado com sucesso."
   upload_the: Carregar %{item}
   uploading_please_wait: Carregando - por favor aguarde...
+  submit_link: UPDATE ME

@@ -23,3 +23,4 @@ en:
     other: "%{count} objects successfully uploaded."
   upload_the: Upload %{item}
   uploading_please_wait: Uploading - please wait...
+  submit_link: Submit Link

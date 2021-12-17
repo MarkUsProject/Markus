@@ -21,3 +21,4 @@ fr:
     other: "%{count} objets été envoyés."
   upload_the: Envoyer %{item}
   uploading_please_wait: Envoi en cours — veuillez patienter…
+  submit_link: UPDATE ME
