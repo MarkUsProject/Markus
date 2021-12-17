@@ -173,7 +173,7 @@ class RawFileManager extends RawFileBrowser {
         </li>
       );
 
-      if (this.props.onSubmitLink !== undefined) {
+      if (this.props.enableUrlSubmit === true) {
         actions.push(
           <li key="action-add-link">
             <a
@@ -373,6 +373,7 @@ FileManager.defaultProps = {
     File: <i className="fa fa-file-o" aria-hidden="true" />,
     Image: <i className="fa fa-file-image-o" aria-hidden="true" />,
     PDF: <i className="fa fa-file-pdf-o" aria-hidden="true" />,
+    URL: <i className="fa fa-submit-link-o" aria-hidden="true" />,
     Rename: <i className="fa fa-i-cursor" aria-hidden="true" />,
     Folder: <i className="fa fa-folder-o" aria-hidden="true" />,
     FolderOpen: <i className="fa fa-folder-open-o" aria-hidden="true" />,

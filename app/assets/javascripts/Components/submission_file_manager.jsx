@@ -230,7 +230,8 @@ class SubmissionFileManager extends React.Component {
             deleteFolder: !this.props.enableSubdirs,
           }}
           onSelectFile={this.updateViewFile}
-          onSubmitLink={this.props.readOnly ? undefined : true}
+          enableUrlSubmit={true}
+          onSubmitLink={this.props.readOnly ? undefined : 'TODO: Insert Link Submit handler here'}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showModal}
