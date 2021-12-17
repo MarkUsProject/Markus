@@ -262,7 +262,7 @@ class SplitPdfJob < ApplicationJob
         student = match_student(stdout.strip.split("\n"), exam_template)
 
         unless student.nil?
-          StudentMembership.find_or_create_by(user: student,
+          StudentMembership.find_or_create_by(role: student,
                                               grouping: grouping,
                                               membership_status: StudentMembership::STATUSES[:inviter])
         end
