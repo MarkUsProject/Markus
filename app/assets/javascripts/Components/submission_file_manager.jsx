@@ -2,6 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
+import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal"
 import {FileViewer} from "./Result/file_viewer";
 import {lookup} from "mime-types";
 
