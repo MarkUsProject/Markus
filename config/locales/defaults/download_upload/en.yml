@@ -5,6 +5,7 @@ en:
   download_csv: Download in CSV Format
   download_errors:
     unrecognized_format: Could not recognize %{format} format to download with
+  download_json: Download in JSON Format
   download_the: Download %{item}
   download_yml: Download in YML Format
   rename: Rename
@@ -12,6 +13,7 @@ en:
   upload_errors:
     blank: Uploaded file is blank.
     invalid_csv_row_format: Invalid row format
+    invalid_file_type: Wrong file type uploaded. File must be a %{type} file.
     invalid_rows: 'The following CSV rows were invalid: '
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
     syntax_error: 'There is an error in the file you uploaded: %{error}'

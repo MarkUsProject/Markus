@@ -40,7 +40,12 @@ export class FileViewer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.result_id && prevProps.selectedFile !== this.props.selectedFile) {
+    if (
+      !this.props.result_id &&
+      (prevProps.selectedFile !== this.props.selectedFile ||
+        prevProps.submission_id !== this.props.submission_id ||
+        prevProps.selectedFileURL !== this.props.selectedFileURL)
+    ) {
       this.set_submission_file("");
     }
   }

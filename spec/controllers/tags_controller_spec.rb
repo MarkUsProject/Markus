@@ -97,7 +97,7 @@ describe TagsController do
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 2)].map { |f| extract_text f })
-      expect(response).to redirect_to action: :index
+      expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
 
       expect(Tag.find_by(name: 'tag').description).to eq('desc')
       expect(Tag.find_by(name: 'tag1').description).to eq('desc1')
@@ -109,7 +109,7 @@ describe TagsController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      expect(response).to redirect_to action: :index
+      expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
 
       expect(Tag.find_by(name: 'tag').description).to eq('desc')
       expect(Tag.find_by(name: 'tag1').description).to eq('desc1')
@@ -121,7 +121,7 @@ describe TagsController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to action: :index
+      expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
     end
   end
 

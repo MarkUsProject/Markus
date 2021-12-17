@@ -15,7 +15,7 @@ module AnnotationCategoriesHelper
     result
   end
 
-  def convert_to_yml(annotation_categories)
+  def annotation_categories_to_yml(annotation_categories)
     categories_data = {}
     annotation_categories.each do |category|
       if category.flexible_criterion_id.nil?
@@ -28,5 +28,20 @@ module AnnotationCategoriesHelper
       end
     end
     categories_data.to_yaml
+  end
+
+  def upload_annotations_from_yaml(file_content, assignment)
+    successes = 0
+    file_content.each do |category, category_data|
+      if category_data.is_a?(Array)
+        AnnotationCategory.add_by_row([category, nil] + category_data, assignment, current_role)
+        successes += 1
+      elsif category_data.is_a?(Hash)
+        row = [category, category_data['criterion']] + category_data['texts'].flatten
+        AnnotationCategory.add_by_row(row, assignment, current_role)
+        successes += 1
+      end
+    end
+    successes
   end
 end

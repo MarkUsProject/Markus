@@ -1,6 +1,7 @@
 ---
 en:
   tags:
+    invalid_tag_data: Invalid tag data %{item}.
     results:
       available_tags: Available Tags
       current_tags: Current Tags

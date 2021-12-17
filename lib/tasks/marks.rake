@@ -28,8 +28,8 @@ namespace :db do
 
     feedback_files = submission_ids.flat_map do |sid|
       attrs = { submission_id: sid, created_at: Time.current, updated_at: Time.current }
-      [attrs.merge(filename: 'humanfb.txt', mime_type: 'text', file_content: text1),
-       attrs.merge(filename: 'machinefb.txt', mime_type: 'text', file_content: text2),
+      [attrs.merge(filename: 'humanfb.txt', mime_type: 'text', file_content: "#{sid}\n#{text1}"),
+       attrs.merge(filename: 'machinefb.txt', mime_type: 'text', file_content: "#{sid}\n#{text2}"),
        attrs.merge(filename: 'imagefb.png', mime_type: 'image/png', file_content: image)]
     end
     FeedbackFile.insert_all feedback_files

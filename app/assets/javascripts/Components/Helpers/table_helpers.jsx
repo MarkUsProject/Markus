@@ -121,7 +121,7 @@ export function selectFilter({filter, onChange, column}) {
   );
 }
 
-export function markingStateColumn(...override_keys) {
+export function markingStateColumn(marking_states, markingStateFilter, ...override_keys) {
   return {
     Header: I18n.t("activerecord.attributes.result.marking_state"),
     accessor: "marking_state",
@@ -159,21 +159,75 @@ export function markingStateColumn(...override_keys) {
         return filter.value === row[filter.id];
       }
     },
+    filterAllOptionText:
+      I18n.t("all") +
+      (markingStateFilter === "all"
+        ? ` (${Object.values(marking_states).reduce((a, b) => a + b)})`
+        : ""),
     filterOptions: [
       {
         value: "before_due_date",
-        text: I18n.t("submissions.state.before_due_date"),
+        text:
+          I18n.t("submissions.state.before_due_date") +
+          (["before_due_date", "all"].includes(markingStateFilter)
+            ? ` (${marking_states["before_due_date"]})`
+            : ""),
       },
       {
         value: "not_collected",
-        text: I18n.t("submissions.state.not_collected"),
+        text:
+          I18n.t("submissions.state.not_collected") +
+          (["not_collected", "all"].includes(markingStateFilter)
+            ? ` (${marking_states["not_collected"]})`
+            : ""),
       },
-      {value: "incomplete", text: I18n.t("submissions.state.in_progress")},
-      {value: "complete", text: I18n.t("submissions.state.complete")},
-      {value: "released", text: I18n.t("submissions.state.released")},
-      {value: "remark", text: I18n.t("submissions.state.remark_requested")},
+      {
+        value: "incomplete",
+        text:
+          I18n.t("submissions.state.in_progress") +
+          (["in_progress", "all"].includes(markingStateFilter)
+            ? ` (${marking_states["incomplete"]})`
+            : ""),
+      },
+      {
+        value: "complete",
+        text:
+          I18n.t("submissions.state.complete") +
+          (["complete", "all"].includes(markingStateFilter)
+            ? ` (${marking_states["complete"]})`
+            : ""),
+      },
+      {
+        value: "released",
+        text:
+          I18n.t("submissions.state.released") +
+          (["released", "all"].includes(markingStateFilter)
+            ? ` (${marking_states["released"]})`
+            : ""),
+      },
+      {
+        value: "remark",
+        text:
+          I18n.t("submissions.state.remark_requested") +
+          (["remark", "all"].includes(markingStateFilter) ? ` (${marking_states["remark"]})` : ""),
+      },
     ],
     Filter: selectFilter,
     ...override_keys,
   };
+}
+
+export function getMarkingStates(data) {
+  const markingStates = {
+    not_collected: 0,
+    incomplete: 0,
+    complete: 0,
+    released: 0,
+    remark: 0,
+    before_due_date: 0,
+  };
+  data.forEach(row => {
+    markingStates[row["marking_state"]] += 1;
+  });
+  return markingStates;
 }

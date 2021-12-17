@@ -2,6 +2,9 @@ import React from "react";
 import {render} from "react-dom";
 import {Bar} from "react-chartjs-2";
 
+import {Chart, registerables} from "chart.js";
+Chart.register(...registerables);
+
 export class DataChart extends React.Component {
   static defaultProps = {
     legend: true,

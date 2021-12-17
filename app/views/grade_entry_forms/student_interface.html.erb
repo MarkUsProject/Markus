@@ -28,7 +28,7 @@
       </tbody>
     </table>
   </div>
-  <fieldset id='gef_data_chart'></fieldset>
+  <fieldset id='gef_data_chart' class='data-chart-container'></fieldset>
   <%= content_for :head do %>
     <%= javascript_tag nonce: true do %>
       document.addEventListener('DOMContentLoaded', () => {
@@ -36,7 +36,6 @@
           { xTitle: '<%= t('activerecord.models.criterion.one') %>',
             yTitle: '<%= t('activerecord.models.mark.one') + ' (%)' %>',
             legend: false,
-            width: '<%= @labels.size > 5 ? 'auto' : (@labels.size * 150).to_s + 'px' %>',
             labels: <%= @labels.to_json.html_safe %>,
             datasets: [{
               data: <%= @item_percentages.to_json.html_safe %>,

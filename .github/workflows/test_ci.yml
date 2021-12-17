@@ -41,7 +41,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git
+          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
@@ -68,7 +68,7 @@ jobs:
       - name: Install python packages
         run: |
           python3.9 -m venv venv
-          ./venv/bin/pip install nbconvert==6.1.0 # install rest of requirements if needed for tests later
+          ./venv/bin/pip install -r requirements.txt
       - name: Configure server
         run: |
           sudo rm -f /etc/localtime

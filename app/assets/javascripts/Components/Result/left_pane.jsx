@@ -16,17 +16,40 @@ export class LeftPane extends React.Component {
     this.submissionFilePanel = React.createRef();
   }
 
-  disableRemarkPanel = () => {
-    if (this.props.is_reviewer || !this.props.allow_remarks) {
+  static getDerivedStateFromProps(props, state) {
+    // Reset selected tab state if props are changed and a tab becomes disabled.
+    // Affected tabs are "Test Results" (tabIndex 2), "Feedback Files" (tabIndex 3),
+    // and "Remark Request" (tabIndex 4).
+    if (
+      (state.tabIndex === 2 && LeftPane.disableTestResultsPanel(props)) ||
+      (state.tabIndex === 3 && LeftPane.disableFeedbackFilesPanel(props)) ||
+      (state.tabIndex === 4 && LeftPane.disableRemarkPanel(props))
+    ) {
+      return {tabIndex: 0};
+    } else {
+      return null;
+    }
+  }
+
+  static disableTestResultsPanel(props) {
+    return props.is_reviewer || !props.enable_test;
+  }
+
+  static disableFeedbackFilesPanel(props) {
+    return props.is_reviewer || props.feedback_files.length === 0;
+  }
+
+  static disableRemarkPanel(props) {
+    if (props.is_reviewer || !props.allow_remarks) {
       return true;
-    } else if (this.props.student_view) {
+    } else if (props.student_view) {
       return false;
-    } else if (this.props.remark_submitted) {
+    } else if (props.remark_submitted) {
       return false;
     } else {
       return true;
     }
-  };
+  }
 
   // Display a given file. Used to changes files from the annotations panel.
   selectFile = (file, submission_file_id, focus_line, annotation_focus) => {
@@ -45,13 +68,13 @@ export class LeftPane extends React.Component {
         <TabList>
           <Tab>{I18n.t("activerecord.attributes.submission.submission_files")}</Tab>
           <Tab>{I18n.t("activerecord.models.annotation.other")}</Tab>
-          <Tab disabled={this.props.is_reviewer || !this.props.enable_test}>
+          <Tab disabled={LeftPane.disableTestResultsPanel(this.props)}>
             {I18n.t("activerecord.models.test_result.other")}
           </Tab>
-          <Tab disabled={this.props.is_reviewer || this.props.feedback_files.length === 0}>
+          <Tab disabled={LeftPane.disableFeedbackFilesPanel(this.props)}>
             {I18n.t("activerecord.attributes.submission.feedback_files")}
           </Tab>
-          <Tab disabled={this.disableRemarkPanel()}>
+          <Tab disabled={LeftPane.disableRemarkPanel(this.props)}>
             {I18n.t("activerecord.attributes.submission.submitted_remark")}
           </Tab>
         </TabList>
@@ -138,6 +161,7 @@ export class LeftPane extends React.Component {
             feedbackFiles={this.props.feedback_files}
             submission_id={this.props.submission_id}
             course_id={this.props.course_id}
+            loading={this.props.loading}
           />
         </TabPanel>
         <TabPanel>

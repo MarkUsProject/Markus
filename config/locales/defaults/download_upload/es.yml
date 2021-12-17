@@ -5,12 +5,14 @@ es:
   download_csv: Descargar en formato CSV
   download_errors:
     unrecognized_format: No se pudo reconocer el formato %{format} para descargar
+  download_json: Descargar en formato JSON
   download_the: Descargar %{item}
   download_yml: Descargar en formato YML
   rename: UPDATE ME
   upload: Subir
   upload_errors:
     invalid_csv_row_format: El formato de la fila es inválido
+    invalid_file_type: UPDATE ME %{type}
     invalid_rows: 'Las siguientes líneas en formato CSV fueron inválidas: '
     malformed_csv: El archivo seleccionado fue formado inapropiadamente. Por favor asegúrese de que el archivo siga las especificaciones de MarkUs.
     syntax_error: 'Existe un error en el archivo que usted subió: %{error}'

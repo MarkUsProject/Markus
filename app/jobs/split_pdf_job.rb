@@ -256,38 +256,10 @@ class SplitPdfJob < ApplicationJob
 
         python_exe = File.join(Settings.python.bin, 'python')
         read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
-        stdout, _status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
-        tokens = stdout.split("\n")
+        stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
+        next unless status.success?
 
-        # check if python script correctly parsed out the student info
-        if tokens.length != 2 * exam_template.num_cover_fields
-          next
-        end
-
-        first_name = nil
-        last_name = nil
-        student_id = nil
-        username = nil
-
-        cover_fields = exam_template.cover_fields.split(',')
-        cover_fields.each_with_index do |field, i|
-          case field
-          when 'full_name'
-            name_tokens = tokens[2 * i].split
-            first_name = name_tokens[0]
-            last_name = name_tokens[1..-1].join(' ')
-          when 'first_name'
-            first_name = tokens[2 * i]
-          when 'last_name'
-            last_name = tokens[2 * i]
-          when 'student_id'
-            student_id = tokens[2 * i + 1]
-          when 'username'
-            username = tokens[2 * i]
-          end
-        end
-
-        student = match_student(first_name, last_name, student_id, username, exam_template.assignment)
+        student = match_student(stdout.strip.split("\n"), exam_template)
 
         unless student.nil?
           StudentMembership.find_or_create_by(user: student,
@@ -299,9 +271,21 @@ class SplitPdfJob < ApplicationJob
     num_complete
   end
 
-  # TODO: add in matching using name/username
-  def match_student(_first_name, _last_name, student_id, _username, _exam)
-    Student.find_by(id_number: student_id)
+  # Determine a match using the parsed handwritten text and the user identifying field (+exam_template.cover_fields+).
+  # If the parsing was successful, +parsed+ is a list of two strings parsed from the handwritten text:
+  # the first is the result of attempting to parse alphabetic characters, and the second is the result of
+  # attempting to parse numeric digits.
+  def match_student(parsed, exam_template)
+    return nil if parsed.size < 2
+
+    case exam_template.cover_fields
+    when 'id_number'
+      Student.find_by(id_number: parsed[1])
+    when 'user_name'
+      Student.find_by(Student.arel_table[:user_name].matches(parsed[0]))
+    else
+      nil
+    end
   end
 
   def group_name_for(exam_template, exam_num)

@@ -112,7 +112,6 @@ class User < ApplicationRecord
     self.update(api_key: Base64.encode64(md5.to_s).strip)
   end
 
-
   private
   # Create some random, hard to guess SHA2 512 bit long
   # digest.

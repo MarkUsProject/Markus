@@ -2,6 +2,7 @@
 es:
   assignments:
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"
+    configuration_zip_file: UPDATE ME
     deadline_with_extension: UPDATE ME
     due_date:
       final_due_date_passed: El plazo de aplazamiento de gracia para este proyecto ha pasado
@@ -77,4 +78,5 @@ es:
       started_on: UPDATE ME
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
+    upload_config_help_html: UPDATE ME %{section_id}
     upload_file_requirement: La lista de archivos entregados no coincide con los archivos necesarios para este proyecto.

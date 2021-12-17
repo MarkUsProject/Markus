@@ -106,17 +106,17 @@ class TagsController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = Tag.from_csv(data[:file].read, current_course, assignment)
+        result = Tag.from_csv(data[:file].read, current_course, assignment&.id)
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       elsif data[:type] == '.yml'
-        result = Tag.from_yml(data[:contents], current_course, assignment)
+        result = Tag.from_yml(data[:contents], current_course, assignment&.id)
         if result.is_a?(StandardError)
           flash_message(:error, result.message)
         end
       end
     end
-    redirect_to action: 'index'
+    redirect_to course_tags_path(current_course, assignment_id: assignment&.id)
   end
 
   private

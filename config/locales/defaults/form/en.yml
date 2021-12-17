@@ -7,6 +7,5 @@ en:
       create: Create %{model}
       delete: Delete %{model}
       update: Update %{model}
-  optional: Optional
   required_fields: Required Fields
   uncommitted_changes_warning: Your changes are not yet saved, do you still want to navigate away?

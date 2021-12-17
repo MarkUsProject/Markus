@@ -37,14 +37,20 @@ class StarterFileManager extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.populate_starter_file_manager_assignment_path(this.props.assignment_id),
+      url: Routes.populate_starter_file_manager_course_assignment_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       dataType: "json",
     }).then(res => this.setState({loading: false, ...res}));
   };
 
   createStarterFileGroup = () => {
     $.post({
-      url: Routes.assignment_starter_file_groups_path(this.props.assignment_id),
+      url: Routes.course_assignment_starter_file_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         name: I18n.t("assignments.starter_file.new_starter_file_group"),
       },
@@ -53,18 +59,15 @@ class StarterFileManager extends React.Component {
 
   deleteStarterFileGroup = starter_file_group_id => {
     $.ajax({
-      url: Routes.assignment_starter_file_group_path(
-        this.props.assignment_id,
-        starter_file_group_id
-      ),
+      url: Routes.course_starter_file_group_path(this.props.course_id, starter_file_group_id),
       method: "DELETE",
     }).then(this.fetchData);
   };
 
   handleDeleteFile = (groupUploadTarget, fileKeys) => {
     $.post({
-      url: Routes.update_files_assignment_starter_file_group_path(
-        this.props.assignment_id,
+      url: Routes.update_files_course_starter_file_group_path(
+        this.props.course_id,
         groupUploadTarget
       ),
       data: {delete_files: fileKeys},
@@ -80,8 +83,8 @@ class StarterFileManager extends React.Component {
     data.append("path", prefix);
     data.append("unzip", unzip);
     $.post({
-      url: Routes.update_files_assignment_starter_file_group_path(
-        this.props.assignment_id,
+      url: Routes.update_files_course_starter_file_group_path(
+        this.props.course_id,
         groupUploadTarget
       ),
       data: data,
@@ -100,8 +103,8 @@ class StarterFileManager extends React.Component {
 
   handleCreateFolder = (groupUploadTarget, folderKey) => {
     $.post({
-      url: Routes.update_files_assignment_starter_file_group_path(
-        this.props.assignment_id,
+      url: Routes.update_files_course_starter_file_group_path(
+        this.props.course_id,
         groupUploadTarget
       ),
       data: {new_folders: [folderKey]},
@@ -110,8 +113,8 @@ class StarterFileManager extends React.Component {
 
   handleDeleteFolder = (groupUploadTarget, folderKeys) => {
     $.post({
-      url: Routes.update_files_assignment_starter_file_group_path(
-        this.props.assignment_id,
+      url: Routes.update_files_course_starter_file_group_path(
+        this.props.course_id,
         groupUploadTarget
       ),
       data: {delete_folders: folderKeys},
@@ -131,7 +134,7 @@ class StarterFileManager extends React.Component {
     if (!!new_name && original_name !== new_name) {
       $.ajax({
         type: "PUT",
-        url: Routes.assignment_starter_file_group_path(this.props.assignment_id, groupUploadTarget),
+        url: Routes.course_starter_file_group_path(this.props.course_id, groupUploadTarget),
         data: {name: new_name},
       }).then(this.fetchData);
     }
@@ -152,7 +155,10 @@ class StarterFileManager extends React.Component {
     };
     $.ajax({
       type: "PUT",
-      url: Routes.update_starter_file_assignment_path(this.props.assignment_id),
+      url: Routes.update_starter_file_course_assignment_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: JSON.stringify(data),
       processData: false,
       contentType: "application/json",
@@ -218,8 +224,8 @@ class StarterFileManager extends React.Component {
                 }
                 onDeleteFolder={this.handleDeleteFolder}
                 onActionBarAddFileClick={this.openUploadModal}
-                downloadAllURL={Routes.download_files_assignment_starter_file_group_path(
-                  this.props.assignment_id,
+                downloadAllURL={Routes.download_files_course_starter_file_group_path(
+                  this.props.course_id,
                   id
                 )}
                 disableActions={{rename: true}}
@@ -483,7 +489,8 @@ class StarterFileManager extends React.Component {
           <div className={"title_bar"}>
             <div className={"float-right"}>
               <a
-                href={Routes.download_starter_file_mappings_assignment_path(
+                href={Routes.download_starter_file_mappings_course_assignment_path(
+                  this.props.course_id,
                   this.props.assignment_id
                 )}
               >
@@ -491,7 +498,8 @@ class StarterFileManager extends React.Component {
               </a>
               <span className={"menu_bar"} />
               <a
-                href={Routes.download_sample_starter_files_assignment_path(
+                href={Routes.download_starter_file_mappings_course_assignment_path(
+                  this.props.course_id,
                   this.props.assignment_id
                 )}
               >

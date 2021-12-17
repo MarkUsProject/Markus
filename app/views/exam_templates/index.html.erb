@@ -26,6 +26,7 @@
 
 <% @exam_templates.each do |exam_template| %>
   <fieldset>
+    <legend><span><%= exam_template.name %></span></legend>
     <%= render partial: 'form',
                locals: { exam_template: exam_template } %>
     <hr>

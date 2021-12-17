@@ -180,6 +180,7 @@ Rails.application.routes.draw do
       collection do
         get 'delete_rejected'
         get 'batch_runs'
+        post 'upload_config_files'
       end
 
       member do
@@ -199,6 +200,8 @@ Rails.application.routes.draw do
         get 'starter_file'
         put 'update_starter_file'
         get 'grade_distribution'
+        get 'download_config_files'
+        get 'download_test_results'
       end
 
       resources :starter_file_groups, only: [:create]
