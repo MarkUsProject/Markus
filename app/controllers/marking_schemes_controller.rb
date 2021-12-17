@@ -7,8 +7,8 @@ class MarkingSchemesController < ApplicationController
   layout 'assignment_content'
 
   def index
-    @assignments = current_course.assignments.all
-    @grade_entry_forms = current_course.grade_entry_forms.all
+    @assignments = current_course.assignments
+    @grade_entry_forms = current_course.grade_entry_forms
   end
 
   def populate
@@ -22,7 +22,7 @@ class MarkingSchemesController < ApplicationController
     end
 
     render json: {
-      data: get_table_json_data,
+      data: get_table_json_data(current_course),
       columns: columns
     }
   end
@@ -80,8 +80,8 @@ class MarkingSchemesController < ApplicationController
 
   def new
     @marking_scheme = current_course.marking_schemes.new
-    @assignments = current_course.assignments.all
-    @grade_entry_forms = current_course.grade_entry_forms.all
+    @assignments = current_course.assignments
+    @grade_entry_forms = current_course.grade_entry_forms
 
     @all_gradable_items = @assignments + @grade_entry_forms
     @all_gradable_items.count.times do
@@ -101,8 +101,8 @@ class MarkingSchemesController < ApplicationController
 
   def destroy
     record.destroy
-    @assignments = Assignment.all
-    @grade_entry_forms = GradeEntryForm.all
+    @assignments = current_course.assignments
+    @grade_entry_forms = current_course.assignments
     render :index
   end
 end

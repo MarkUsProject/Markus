@@ -1,7 +1,6 @@
 module MarkingSchemesHelper
-  def get_table_json_data
-    all_marking_schemes = MarkingScheme.all
-    req_data = all_marking_schemes.map do |ms|
+  def get_table_json_data(course)
+    req_data = course.marking_schemes.map do |ms|
       {
         name: ms.name,
         id: ms.id,
@@ -30,7 +29,7 @@ module MarkingSchemesHelper
 
   def get_marking_weights_for_all_gradable_item(weights_array)
     weights = {}
-    weights_array.all.each do |w|
+    weights_array.each do |w|
       weights[w.assessment_id] = w.weight.to_f
     end
     weights

@@ -28,7 +28,7 @@ class StudentsController < ApplicationController
           students: student_data,
           sections: sections,
           counts: {
-            all: current_course.students.all.size,
+            all: current_course.students.size,
             active: current_course.students.active.size,
             inactive: current_course.students.inactive.size
           }
@@ -108,7 +108,7 @@ class StudentsController < ApplicationController
         format = 'text/csv'
       else
         output = []
-        students.all.each do |student|
+        students.each do |student|
           output.push(user_name: student.user_name,
                       last_name: student.last_name,
                       first_name: student.first_name,

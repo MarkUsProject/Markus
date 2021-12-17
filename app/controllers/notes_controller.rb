@@ -92,7 +92,7 @@ class NotesController < ApplicationController
       when 'Student'
         @students = current_course.students.joins(:end_user).order(:user_name)
       when 'Assignment'
-        @assignments = current_course.assignments.all
+        @assignments = current_course.assignments
       when 'Grouping'
         new_retrieve
       else
@@ -139,7 +139,7 @@ class NotesController < ApplicationController
     end
 
     def new_retrieve
-      @assignments = current_course.assignments.all
+      @assignments = current_course.assignments
       retrieve_groupings(@assignments.first)
     end
 

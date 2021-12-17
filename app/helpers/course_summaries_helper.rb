@@ -2,13 +2,14 @@ module CourseSummariesHelper
 
   # Get JSON data for the table
   def get_table_json_data(current_role)
-    course_information
+    course = current_role.course
+    course_information(course)
 
     if current_role.student?
-      students = Student.where(id: current_role.id)
+      students = course.students.where(id: current_role.id)
       released = [true]
     else
-      students = current_role.course.students.all
+      students = course.students
       released = [true, false]
     end
 
@@ -50,27 +51,31 @@ module CourseSummariesHelper
     end
 
     unless current_role.student?
-      calculate_course_grades(student_data)
+      calculate_course_grades(course, student_data)
     end
     student_data.values.sort_by { |x| x[:user_name] }
   end
 
-  def course_information
-    @max_marks = Hash[Assignment.all.joins(:criteria)
-                                .where('criteria.bonus': false)
-                                .group('assessments.id')
-                                .sum('criteria.max_mark')]
+  def course_information(course)
+    @max_marks = Hash[
+      course.assignments
+            .joins(:criteria)
+            .where('criteria.bonus': false)
+            .group('assessments.id')
+            .sum('criteria.max_mark')
+    ]
 
-    @gef_max_marks = GradeEntryForm.unscoped
-                                   .joins(:grade_entry_items)
-                                   .where(grade_entry_items: { bonus: false })
-                                   .group('assessment_id')
-                                   .sum('grade_entry_items.out_of')
+    @gef_max_marks = course.grade_entry_forms
+                           .unscoped
+                           .joins(:grade_entry_items)
+                           .where(grade_entry_items: { bonus: false })
+                           .group('assessment_id')
+                           .sum('grade_entry_items.out_of')
   end
 
   # Update student hashes with weighted grades for every marking scheme.
-  def calculate_course_grades(students)
-    MarkingScheme.all.each do |scheme|
+  def calculate_course_grades(course, students)
+    course.marking_schemes.find_each do |scheme|
       students.each do |_, student|
         student[:weighted_marks] ||= {}
         weighted = 0

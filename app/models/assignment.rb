@@ -1048,7 +1048,7 @@ class Assignment < Assessment
       assign_graders_to_criteria: self.assign_graders_to_criteria,
       anonymize_groups: self.anonymize_groups,
       hide_unassigned_criteria: self.hide_unassigned_criteria,
-      sections: Hash[assignment.course.sections.all.pluck(:id, :name)]
+      sections: Hash[assignment.course.sections.pluck(:id, :name)]
     }
   end
 
