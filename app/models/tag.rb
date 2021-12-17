@@ -43,7 +43,7 @@ class Tag < ApplicationRecord
         author = instructors[row[:user]]
         # Allow TAs with proper permissions to upload yml tag data
         if allow_ta_upload && author.nil? && !row[:user].nil?
-          ta_author = Ta.joins(:end_user).find_by(user_name: row[:user])
+          ta_author = course.tas.joins(:end_user).find_by('users.user_name': row[:user])
           author = ta_author.id unless ta_author.nil? || !ta_author.grader_permission.manage_assessments
         end
         name, description, role_id = row[:name], row[:description], author

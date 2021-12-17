@@ -453,13 +453,12 @@ describe ResultsController do
   shared_examples 'showing json data' do |is_student|
     let(:student2) do
       partner = create(:student, grace_credits: 2)
-      create(:accepted_student_membership, user: partner, grouping: grouping)
+      create(:accepted_student_membership, role: partner, grouping: grouping)
       partner
     end
     subject do
       allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
-      get :show, params: { assignment_id: assignment.id,
-                           submission_id: submission.id,
+      get :show, params: { course_id: complete_result.course.id,
                            id: complete_result.id,
                            format: :json }
     end
@@ -506,10 +505,10 @@ describe ResultsController do
 
     context 'with grace token deductions' do
       let!(:grace_period_deduction1) do
-        create :grace_period_deduction, membership: grouping.memberships.find_by(user: student)
+        create :grace_period_deduction, membership: grouping.memberships.find_by(role: student)
       end
       let!(:grace_period_deduction2) do
-        create :grace_period_deduction, membership: grouping.memberships.find_by(user: student2)
+        create :grace_period_deduction, membership: grouping.memberships.find_by(role: student2)
       end
       it 'sends grace token deduction data' do
         subject

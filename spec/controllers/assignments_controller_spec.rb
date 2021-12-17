@@ -86,113 +86,39 @@ describe AssignmentsController do
     end
   end
 
-  context '#upload' do
-    before :each do
-      # Authenticate user is not timed out, and has administrator rights.
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
-    end
-
-    include_examples 'a controller supporting upload' do
-      let(:params) { {} }
-    end
-
-    before :each do
-      # We need to mock the rack file to return its content when
-      # the '.read' method is called to simulate the behaviour of
-      # the http uploaded file
-      @file_good = fixture_file_upload('assignments/form_good.csv', 'text/csv')
-      allow(@file_good).to receive(:read).and_return(
-        File.read(fixture_file_upload('assignments/form_good.csv', 'text/csv'))
-      )
-      @file_good_yml = fixture_file_upload('assignments/form_good.yml', 'text/yaml')
-      allow(@file_good_yml).to receive(:read).and_return(
-        File.read(fixture_file_upload('assignments/form_good.yml', 'text/yaml'))
-      )
-
-      @file_invalid_column = fixture_file_upload('assignments/form_invalid_column.csv', 'text/csv')
-      allow(@file_invalid_column).to receive(:read).and_return(
-        File.read(fixture_file_upload('assignments/form_invalid_column.csv', 'text/csv'))
-      )
-
-      # This must line up with the second entry in the file_good
-      @test_asn1 = 'ATest1'
-      @test_asn2 = 'ATest2'
-    end
-
-    it 'accepts a valid file' do
-      post :upload, params: { upload_file: @file_good }
-
-      expect(response.status).to eq(302)
-      test1 = Assignment.find_by(short_identifier: @test_asn1)
-      expect(test1).to_not be_nil
-      test2 = Assignment.find_by(short_identifier: @test_asn2)
-      expect(test2).to_not be_nil
-      expect(flash[:error]).to be_nil
-      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
-                                                                       count: 2)].map { |f| extract_text f })
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'assignments')
-    end
-
-    it 'accepts a valid YAML file' do
-      post :upload, params: { upload_file: @file_good_yml }
-
-      expect(response.status).to eq(302)
-      test1 = Assignment.find_by_short_identifier(@test_asn1)
-      expect(test1).to_not be_nil
-      test2 = Assignment.find_by_short_identifier(@test_asn2)
-      expect(test2).to_not be_nil
-      expect(flash[:error]).to be_nil
-      expect(response).to redirect_to(action: 'index', controller: 'assignments')
-    end
-
-    it 'does not accept files with invalid columns' do
-      post :upload, params: { upload_file: @file_invalid_column }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      test = Assignment.find_by_short_identifier(@test_asn2)
-      expect(test).to be_nil
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'assignments')
-    end
-  end
-
   context 'download the most recent test results as JSON' do
-    let(:user) { create(:admin) }
+    let(:user) { create(:instructor) }
     let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
     it 'responds with the appropriate status' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
       expect(response).to have_http_status :success
     end
 
     it 'responds with the appropriate header' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
       expect(response.header['Content-Type']).to eq('application/json')
     end
 
     it 'sets disposition as attachment' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
 
     it 'responds with the appropriate filename' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq("#{assignment.short_identifier}_test_results.json")
     end
 
     it 'returns application/json type' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
       expect(response.media_type).to eq 'application/json'
     end
 
     it 'returns the most recent test results' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
       body = response.parsed_body
 
       # We want to ensure that the test result's group name, test name and status exists
@@ -209,33 +135,33 @@ describe AssignmentsController do
   end
 
   context 'download the most recent test results as CSV' do
-    let(:user) { create(:admin) }
+    let(:user) { create(:instructor) }
     let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
     it 'responds with the appropriate status' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       expect(response).to have_http_status :success
     end
 
     it 'sets disposition as attachment' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
 
     it 'responds with the appropriate filename' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq("#{assignment.short_identifier}_test_results.csv")
     end
 
     it 'returns text/csv type' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       expect(response.media_type).to eq 'text/csv'
     end
 
     it 'returns the most recent test results of the correct size' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
 
       test_results = CSV.parse(response.body, headers: true)
 
@@ -244,7 +170,7 @@ describe AssignmentsController do
     end
 
     it 'returns the correct csv headers' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true)
 
       assignment_results = assignment.summary_test_results
@@ -256,7 +182,7 @@ describe AssignmentsController do
     end
 
     it 'returns the correct csv headers in the correct order' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true)
 
       headers = test_results.headers.drop(1)
@@ -267,7 +193,7 @@ describe AssignmentsController do
     end
 
     it 'returns the correct amount of passed tests per group' do
-      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true).to_a.drop(1)
       test_results.to_a.each do |row|
         count = 0
@@ -284,7 +210,7 @@ describe AssignmentsController do
       let(:assignment) { create(:static_assignment_with_criteria_and_test_results) }
 
       it 'returns the correct tests passed per group' do
-        get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+        get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
 
         test_results = CSV.parse(response.body, headers: true)
         test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
@@ -294,117 +220,6 @@ describe AssignmentsController do
           expect(line).to eq test_results_static[i]
         end
       end
-    end
-  end
-
-  context 'CSV_Downloads' do
-    before :each do
-      # Authenticate user is not timed out, and has administrator rights.
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
-    end
-
-    let(:csv_options) do
-      { type: 'text/csv', filename: 'assignments.csv', disposition: 'attachment' }
-    end
-    let!(:assignment) { create(:assignment) }
-
-    it 'responds with appropriate status' do
-      get :download, params: { format: 'csv' }
-      expect(response.status).to eq(200)
-    end
-
-    # parse header object to check for the right disposition
-    it 'sets disposition as attachment' do
-      get :download, params: { format: 'csv' }
-      d = response.header['Content-Disposition'].split.first
-      expect(d).to eq 'attachment;'
-    end
-
-    it 'expects a call to send_data' do
-      # generate the expected csv string
-      csv_data = []
-      DEFAULT_FIELDS.map do |f|
-        csv_data << assignment.send(f)
-      end
-      new_data = csv_data.join(',') + "\n"
-      expect(@controller).to receive(:send_data).with(new_data, csv_options) {
-        # to prevent a 'missing template' error
-        @controller.head :ok
-      }
-      get :download, params: { format: 'csv' }
-    end
-
-    # parse header object to check for the right content type
-    it 'returns text/csv type' do
-      get :download, params: { format: 'csv' }
-      expect(response.media_type).to eq 'text/csv'
-    end
-
-    # parse header object to check for the right file naming convention
-    it 'filename passes naming conventions' do
-      get :download, params: { format: 'csv' }
-      filename = response.header['Content-Disposition'].split[1].split('"').second
-      expect(filename).to eq 'assignments.csv'
-    end
-  end
-
-  context 'YML_Downloads' do
-    let(:yml_options) do
-      { type: 'text/yml', filename: 'assignments.yml', disposition: 'attachment' }
-    end
-    let!(:assignment) { create(:assignment) }
-
-    before :each do
-      # Authenticate user is not timed out, and has administrator rights.
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
-    end
-
-    it 'responds with appropriate status' do
-      get :download, params: { format: 'yml' }
-      expect(response.status).to eq(200)
-    end
-
-    # parse header object to check for the right disposition
-    it 'sets disposition as attachment' do
-      get :download, params: { format: 'yml' }
-      d = response.header['Content-Disposition'].split.first
-      expect(d).to eq 'attachment;'
-    end
-
-    it 'expects a call to send_data' do
-      # generate the expected yml string
-      assignments = Assignment.all
-      map = {}
-      map[:assignments] = assignments.map do |assignment|
-        m = {}
-        DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
-        end
-        m
-      end
-      map = map.to_yaml
-      expect(@controller).to receive(:send_data).with(map, yml_options) {
-        # to prevent a 'missing template' error
-        @controller.head :ok
-      }
-      get :download, params: { format: 'yml' }
-    end
-
-    # parse header object to check for the right content type
-    it 'returns text/yml type' do
-      get :download, params: { format: 'yml' }
-      expect(response.media_type).to eq 'text/yml'
-    end
-
-    # parse header object to check for the right file naming convention
-    it 'filename passes naming conventions' do
-      get :download, params: { format: 'yml' }
-      filename = response.header['Content-Disposition'].split[1].split('"').second
-      expect(filename).to eq 'assignments.yml'
     end
   end
 
@@ -1430,7 +1245,7 @@ describe AssignmentsController do
     let!(:criteria) { create :checkbox_criterion, assignment: assignment }
     let!(:annotation) { create :annotation_category, assignment: assignment }
     let!(:starter_files) { create :starter_file_group_with_entries, assignment: assignment }
-    subject { get_as user, :download_config_files, params: { id: assignment.id } }
+    subject { get_as user, :download_config_files, params: { id: assignment.id, course_id: assignment.course.id } }
 
     before :each do
       create_automated_test(assignment)
@@ -1603,8 +1418,8 @@ describe AssignmentsController do
         include_examples 'download sample config files'
       end
     end
-    context 'an admin' do
-      let(:user) { create :admin }
+    context 'an instructor' do
+      let(:user) { create :instructor }
       include_examples 'download sample config files'
     end
   end
@@ -1613,7 +1428,8 @@ describe AssignmentsController do
     subject do
       post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
                                                     is_timed: true,
-                                                    is_scanned: false }
+                                                    is_scanned: false,
+                                                    course_id: user.course.id }
     end
 
     after :each do
@@ -1840,14 +1656,14 @@ describe AssignmentsController do
         include_examples 'check valid assignment config files'
       end
     end
-    context 'an admin' do
-      let(:user) { create :admin }
+    context 'an instructor' do
+      let(:user) { create :instructor }
       include_examples 'check valid assignment config files'
     end
   end
 
   describe 'download_and_upload_config_file' do
-    let(:user) { create :admin }
+    let(:user) { create :instructor }
 
     shared_examples 'assignment content is copied over' do
       it 'copies over the main assignment attributes' do
@@ -1947,7 +1763,7 @@ describe AssignmentsController do
 
       before :each do
         # Download and upload assignment
-        get_as user, :download_config_files, params: { id: assignment.id }
+        get_as user, :download_config_files, params: { id: assignment.id, course_id: assignment.course.id }
         zip_name = 'assignment-copy-test-config-files.zip'
         zip_path = File.join('tmp', zip_name)
         FileUtils.rm_f(zip_path)
@@ -1956,7 +1772,8 @@ describe AssignmentsController do
         Tag.all.destroy_all
         Assignment.all.destroy_all
         post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
-                                                      is_timed: false, is_scanned: false }
+                                                      is_timed: false, is_scanned: false,
+                                                      course_id: assignment.course.id }
         expect(flash[:error]).to be_nil
       end
 
@@ -2027,7 +1844,8 @@ describe AssignmentsController do
       let!(:assignment_properties) { assignment.assignment_properties }
 
       before :each do
-        get_as user, :download_config_files, params: { id: parent_assignment.id }
+        get_as user, :download_config_files,
+               params: { id: parent_assignment.id, course_id: parent_assignment.course.id }
         zip_name = 'assignment-copy-test-config-files.zip'
         zip_path = File.join('tmp', zip_name)
         FileUtils.rm_f(zip_path)
@@ -2036,7 +1854,8 @@ describe AssignmentsController do
         Tag.all.destroy_all
         Assignment.all.destroy_all
         post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
-                                                      is_timed: false, is_scanned: false }
+                                                      is_timed: false, is_scanned: false,
+                                                      course_id: parent_assignment.course.id }
         expect(flash[:error]).to be_nil
       end
 

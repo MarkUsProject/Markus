@@ -149,11 +149,11 @@ describe SplitPdfJob do
         num_groups_in_complete: 0,
         num_groups_in_incomplete: 0,
         num_pages_qr_scan_error: 0,
-        user: admin
+        role: instructor
       )
       FileUtils.cp "db/data/scanned_exams/#{filename}",
                    File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
       group = Group.find_by(group_name: 'test-auto-parse_paper_1')
       expect(group).to_not be_nil
@@ -173,11 +173,11 @@ describe SplitPdfJob do
         num_groups_in_complete: 0,
         num_groups_in_incomplete: 0,
         num_pages_qr_scan_error: 0,
-        user: admin
+        role: instructor
       )
       FileUtils.cp "db/data/scanned_exams/#{filename}",
                    File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
       group = Group.find_by(group_name: 'test-auto-parse_paper_3')
       expect(group).to_not be_nil

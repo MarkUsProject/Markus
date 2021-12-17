@@ -77,7 +77,7 @@ class ResultsController < ApplicationController
                                                                          grouping: grouping,
                                                                          submission: submission })
           data[:enable_test] = true
-          data[:can_run_tests] = authorized.value
+          data[:can_run_tests] = authorized
         else
           data[:enable_test] = false
           data[:can_run_tests] = false
@@ -209,7 +209,7 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: :user)
+                      .joins(membership: [role: :end_user])
                       .where('users.user_name': current_user.user_name)
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         else
