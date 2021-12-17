@@ -8,7 +8,7 @@ class SectionsController < ApplicationController
   # Displays sections, and allows to create them
   #TODO Displays metrics concerning users and sections
   def index
-    @sections = current_course.sections.all.includes(:students)
+    @sections = current_course.sections.includes(:students)
   end
 
   def new
@@ -19,7 +19,7 @@ class SectionsController < ApplicationController
   def create
     @section = current_course.sections.new(section_params)
     if @section.save
-      @sections = current_course.sections.all
+      @sections = current_course.sections
       flash_message(:success, t('.success', name: @section.name))
       if params[:section_modal]
         render 'close_modal_add_section'

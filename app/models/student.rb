@@ -234,7 +234,7 @@ class Student < Role
 
   # Creates grade_entry_student for every marks spreadsheet
   def create_all_grade_entry_students
-    GradeEntryForm.all.each do |form|
+    course.grade_entry_forms.find_each do |form|
       unless form.grade_entry_students.exists?(role_id: id)
         form.grade_entry_students.create(role_id: id, released_to_student: false)
       end
