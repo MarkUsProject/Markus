@@ -262,7 +262,7 @@ class SplitPdfJob < ApplicationJob
         student = match_student(stdout.strip.split("\n"), exam_template)
 
         unless student.nil?
-          StudentMembership.find_or_create_by(user: student,
+          StudentMembership.find_or_create_by(role: student,
                                               grouping: grouping,
                                               membership_status: StudentMembership::STATUSES[:inviter])
         end
@@ -280,9 +280,9 @@ class SplitPdfJob < ApplicationJob
 
     case exam_template.cover_fields
     when 'id_number'
-      Student.find_by(id_number: parsed[1])
+      Student.joins(:end_user).find_by('end_user.id_number': parsed[1])
     when 'user_name'
-      Student.find_by(Student.arel_table[:user_name].matches(parsed[0]))
+      Student.joins(:end_user).find_by(EndUser.arel_table[:user_name].matches(parsed[0]))
     else
       nil
     end
