@@ -48,7 +48,8 @@ export class PDFViewer extends React.Component {
     window.annotation_manager = new PdfAnnotationManager(
       this.pdfViewer,
       "viewer",
-      !this.props.released_to_students
+      !this.props.released_to_students,
+      this.props.course_id
     );
     window.annotation_manager.resetAngle();
   };

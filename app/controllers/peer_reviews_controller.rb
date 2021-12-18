@@ -74,7 +74,7 @@ class PeerReviewsController < ApplicationController
     pr = current_role.grouping_for(assignment.id).peer_reviews.first
 
     if !pr.nil?
-      redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)
+      redirect_to show_result_course_peer_review_path(current_course.id, id: pr.id)
     else
       render 'shared/http_status',
              formats: [:html],

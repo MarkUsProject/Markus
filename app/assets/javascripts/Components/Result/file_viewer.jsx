@@ -156,6 +156,7 @@ export class FileViewer extends React.Component {
         annotations: this.props.annotations,
         released_to_students: this.props.released_to_students,
         resultView: !!this.props.result_id,
+        course_id: this.props.course_id,
       };
     } else {
       commonProps = {
@@ -163,6 +164,7 @@ export class FileViewer extends React.Component {
         annotations: [],
         released_to_students: null,
         resultView: !!this.props.result_id,
+        course_id: this.props.course_id,
       };
     }
     if (this.state.loading) {

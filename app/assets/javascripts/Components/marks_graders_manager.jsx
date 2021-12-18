@@ -91,7 +91,7 @@ class MarksGradersManager extends React.Component {
 
   unassignSingle = (student_id, grader_user_name) => {
     $.post({
-      url: Routes.unassign_course_single_grade_entry_form_marks_graders_path(
+      url: Routes.unassign_single_course_grade_entry_form_marks_graders_path(
         this.props.course_id,
         this.props.grade_entry_form_id
       ),

@@ -100,7 +100,7 @@
       optimum="<%= @assignment.get_num_collected %>">
     </meter>
     &nbsp;|&nbsp;
-    <%= link_to t('groups.manage_groups'), :assignment_groups %>
+    <%= link_to t('groups.manage_groups'), course_assignment_groups_path(@current_course, @assignment) %>
 <% end %>
 <div class='pane-wrapper mid-height'>
   <div class='pane scrollable'>
