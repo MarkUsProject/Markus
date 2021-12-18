@@ -121,7 +121,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :groups, only: [:destroy] do
+    resources :groups, only: [] do
       member do
         post 'rename_group'
       end
@@ -240,7 +240,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :groups, only: [:index, :create, :new] do
+      resources :groups, only: [:index, :create, :new, :destroy] do
         collection do
           get 'add_group'
           post 'use_another_assignment_groups'

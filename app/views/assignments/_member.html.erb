@@ -15,7 +15,9 @@
     </em>
      <% if grouping.is_inviter?(@current_role) %>
        <%= link_to t('groups.members.cancel_invitation'),
-                   disinvite_member_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
+                   disinvite_member_course_assignment_groups_path(course_id: @current_course.id,
+                                                                  assignment_id: @assignment.id,
+                                                                  membership: member.id),
                    method: 'PATCH',
                    class: 'delete inline-button',
                    data: { confirm: t('groups.members.cancel_invitation_confirm') }
@@ -29,7 +31,9 @@
         <%= "#{member.role.display_name} (#{t('groups.members.statuses.rejected')})" %>
       </em>
       <%= link_to t(:delete),
-                  delete_rejected_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
+                  delete_rejected_course_assignment_groups_path(course_id: @current_course.id,
+                                                                assignment_id: @assignment.id,
+                                                                membership: member.id),
                   method: 'DELETE' %>
     </li>
   <% end %>

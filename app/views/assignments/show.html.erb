@@ -65,7 +65,7 @@
                        inviter_first_name: grouping.inviter.first_name) %>
               </p>
               <ul>
-                <% grouping.student_memberships.includes(:user).each do |member|%>
+                <% grouping.student_memberships.includes(role: :end_user).each do |member|%>
                   <%= render partial: 'assignments/member',
                              locals: { member: member,
                                        grouping: grouping } %>
@@ -77,10 +77,14 @@
                 </p>
               <% else %>
                 <%= link_to t('groups.members.join'),
-                            accept_invitation_assignment_groups_path(assignment_id: @assignment.id, grouping_id: grouping.id),
+                            accept_invitation_course_assignment_groups_path(course_id: @current_course.id,
+                                                                            assignment_id: @assignment.id,
+                                                                            grouping_id: grouping.id),
                             { method: :patch, class: 'button' } %>
                 <%= link_to t('groups.members.decline'),
-                            decline_invitation_assignment_groups_path(assignment_id: @assignment.id, grouping_id: grouping.id),
+                            decline_invitation_course_assignment_groups_path(course_id: @current_course.id,
+                                                                             assignment_id: @assignment.id,
+                                                                             grouping_id: grouping.id),
                             { class: 'button',
                               method: :patch, data: { confirm: t('groups.members.decline_invitation_confirm') } } %>
               <% end %>
@@ -103,14 +107,18 @@
           <% if @assignment.group_min == 1 %>
             <p>
               <%= link_to t('groups.student_interface.work_alone'),
-                          assignment_groups_path(assignment_id: @assignment.id, workalone: 'true'),
+                          course_assignment_groups_path(
+                            course_id: @assignment.course_id,
+                            assignment_id: @assignment.id,
+                            workalone: 'true'
+                          ),
                           { class: 'button', method: :post,
                             data: { confirm: confirm, disable_with: t(:please_wait) } } %>
             </p>
           <% end %>
           <p>
             <%= link_to t('helpers.submit.create', model: Group.model_name.human),
-                        assignment_groups_path(@assignment.id),
+                        course_assignment_groups_path(@assignment.course_id, @assignment.id),
                         { class: 'button', method: :post,
                           data: { confirm: confirm,
                                   disable_with: t(:please_wait) } } %>
@@ -197,7 +205,7 @@
             @grouping.accepted_students.size == 1 &&
             @grouping.extension.nil? %>
             <%= button_to t('helpers.submit.delete', model: Group.model_name.human),
-                          assignment_group_path(@assignment.id),
+                          course_assignment_group_path(@current_course.id, @assignment.id),
                           method: :delete,
                           data: { confirm: t('groups.student_interface.confirm_delete_group') }
             %>

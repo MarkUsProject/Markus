@@ -1,8 +1,13 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeStudentPeerReviewsTable(document.getElementById('peer_submissions_table'),
-                                  {assignment_id: <%= @assignment.parent_assignment.id %>});
+      makeStudentPeerReviewsTable(
+        document.getElementById('peer_submissions_table'),
+        {
+          course_id: <%= @current_course.id %>,
+          assignment_id: <%= @assignment.parent_assignment.id %>
+        }
+      );
     })
   <% end %>
 <% end %>

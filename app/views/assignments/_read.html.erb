@@ -154,7 +154,7 @@
                   changed_date: I18n.l(@assignment.starter_file_updated_at)) %></p>
     <p><%= I18n.t('assignments.starter_file.download_instructions') %></p>
     <%= button_to t(:download),
-                  download_starter_file_assignment_groups_path(@assignment),
+                  download_starter_file_course_assignment_groups_path(@current_course, @assignment),
                   method: 'get' %>
   <% end %>
 <% end %>
