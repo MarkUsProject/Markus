@@ -25,11 +25,6 @@ class Result < ApplicationRecord
   before_update :check_for_released
   before_save :check_for_nil_marks
 
-  scope :submitted_remarks_and_all_non_remarks, lambda {
-    results = Result.arel_table
-    where(results[:remark_request_submitted_at].eq(nil))
-  }
-
   # Update the total mark attribute
   def update_total_mark
     update(total_mark: get_total_mark)

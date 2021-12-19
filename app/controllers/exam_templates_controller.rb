@@ -228,7 +228,7 @@ class ExamTemplatesController < ApplicationController
 
   def error_pages
     exam_template = record
-    exam_group = Group.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
+    exam_group = current_course.groups.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
     expected_pages = [*1..exam_template.num_pages]
     if exam_group.nil?
       pages = expected_pages

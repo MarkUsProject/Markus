@@ -13,7 +13,7 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}_with_data" }
     after(:create) do |grade_entry_form_with_data|
       item = create(:grade_entry_item, name: 'Test1', grade_entry_form: grade_entry_form_with_data)
-      Student.find_each do |student|
+      grade_entry_form_with_data.course.students.find_each do |student|
         ges = grade_entry_form_with_data.grade_entry_students.find_or_create_by(role: student)
         ges.grades.create(grade: Random.rand(item.out_of), grade_entry_item: item)
         ges.save

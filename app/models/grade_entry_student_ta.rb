@@ -45,7 +45,7 @@ class GradeEntryStudentTa < ApplicationRecord
     end
 
     new_mappings = []
-    tas = Hash[Ta.joins(:end_user).pluck('users.user_name', :id)]
+    tas = Hash[grade_entry_form.course.tas.joins(:end_user).pluck('users.user_name', :id)]
     grade_entry_students = Hash[
       grade_entry_form.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id)
     ]

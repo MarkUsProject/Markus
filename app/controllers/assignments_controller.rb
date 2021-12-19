@@ -321,7 +321,7 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        role_ids = current_role.instructor? ? Instructor.pluck(:id) : current_role.id
+        role_ids = current_role.instructor? ? current_course.instructors.ids : current_role.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: { role_id: role_ids },
                                   'groupings.assessment_id': @assignment.id)
@@ -413,12 +413,13 @@ class AssignmentsController < ApplicationController
                      use_rename: g.use_rename,
                      files: starter_file_group_file_data(g) }
     end
-    section_data = Section.left_outer_joins(:starter_file_groups)
-                          .order(:id)
-                          .pluck_to_hash('sections.id as section_id',
-                                         'sections.name as section_name',
-                                         'starter_file_groups.id as group_id',
-                                         'starter_file_groups.name as group_name')
+    section_data = current_course.sections
+                                 .left_outer_joins(:starter_file_groups)
+                                 .order(:id)
+                                 .pluck_to_hash('sections.id as section_id',
+                                                'sections.name as section_name',
+                                                'starter_file_groups.id as group_id',
+                                                'starter_file_groups.name as group_name')
     data = { files: file_data,
              sections: section_data,
              available_after_due: assignment.starter_files_after_due,
