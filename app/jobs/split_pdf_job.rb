@@ -81,7 +81,7 @@ class SplitPdfJob < ApplicationJob
           group = Group.find_or_create_by(
             group_name: group_name_for(exam_template, m[:exam_num].to_i),
             repo_name: group_name_for(exam_template, m[:exam_num].to_i),
-            course: exam_template.assignment.course
+            course: exam_template.course
           )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
@@ -116,7 +116,7 @@ class SplitPdfJob < ApplicationJob
 
   # Save the pages into groups for this assignment
   def save_pages(exam_template, partial_exams, filename=nil, split_pdf_log=nil)
-    return unless Instructor.exists?
+    return unless exam_template.course.instructors.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
@@ -130,7 +130,8 @@ class SplitPdfJob < ApplicationJob
 
       group = Group.find_by(
         group_name: group_name_for(exam_template, exam_num),
-        repo_name: group_name_for(exam_template, exam_num)
+        repo_name: group_name_for(exam_template, exam_num),
+        course: exam_template.course
       )
 
       grouping = Grouping.find_or_create_by(
@@ -172,7 +173,7 @@ class SplitPdfJob < ApplicationJob
 
       grouping.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        txn = repo.get_transaction(Instructor.first.user_name)
+        txn = repo.get_transaction(exam_template.course.instructors.first.user_name)
 
         # Pages that belong to a division
         exam_template.template_divisions.each do |division|

@@ -88,7 +88,7 @@ module Api
       ApplicationRecord.transaction do
         end_user = EndUser.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, end_user: end_user, course: @current_course)
-        role.section = Section.find_by(name: params[:section_name]) if params[:section_name]
+        role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
@@ -102,7 +102,7 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        role.section = Section.find_by(name: params[:section_name]) if params[:section_name]
+        role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.save!
       end

@@ -11,10 +11,12 @@ class MarksGradersController < ApplicationController
         gef = GradeEntryForm.find(params[:grade_entry_form_id])
 
         # Grader information
-        counts = Ta.joins(:grade_entry_students)
-                   .where('grade_entry_students.assessment_id': gef.id)
-                   .group('roles.id')
-                   .count
+        counts = gef.course
+                    .tas
+                    .joins(:grade_entry_students)
+                    .where('grade_entry_students.assessment_id': gef.id)
+                    .group('roles.id')
+                    .count
 
         graders = current_course.tas
                                 .joins(:end_user)
@@ -166,7 +168,7 @@ class MarksGradersController < ApplicationController
     end
 
     student_ids = [params[:student_id]]
-    grader_ids = [Ta.find_by(user_name: params[:grader_user_name]).id]
+    grader_ids = [current_course.tas.joins(:end_user).find_by('users.user_name': params[:grader_user_name]).id]
     GradeEntryStudent.unassign_tas(student_ids, grader_ids, @grade_entry_form)
     head :ok
   end

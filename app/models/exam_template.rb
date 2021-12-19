@@ -147,7 +147,7 @@ class ExamTemplate < ApplicationRecord
         group = Group.find_or_create_by(
           group_name: "#{self.name}_paper_#{exam_num}",
           repo_name: "#{self.name}_paper_#{exam_num}",
-          course: self.assignment.course
+          course: self.course
         )
         split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
         # This creates both a new grouping and a new folder in the group repository
@@ -161,7 +161,7 @@ class ExamTemplate < ApplicationRecord
         grouping.access_repo do |repo|
           revision = repo.get_latest_revision
           assignment_folder = self.assignment.repository_folder
-          txn = repo.get_transaction(Instructor.first.user_name)
+          txn = repo.get_transaction(self.course.instructors.first.user_name)
           self.template_divisions.each do |template_division|
             next unless template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
 

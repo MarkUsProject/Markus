@@ -110,7 +110,7 @@ class GradeEntryStudent < ApplicationRecord
     user_name = working_row.shift
 
     # Attempt to find the student
-    student = Student.joins(:user).where('users.user_name': user_name).first
+    student = grade_entry_form.course.students.joins(:user).where('users.user_name': user_name).first
     if student.nil?
       raise CsvInvalidLineError
     end

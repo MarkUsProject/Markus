@@ -54,7 +54,7 @@ module Api
         return
       end
 
-      students = Student.joins(:end_user).where('users.user_name': params[:members])
+      students = current_course.students.joins(:end_user).where('users.user_name': params[:members])
       students.each do |student|
         set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :

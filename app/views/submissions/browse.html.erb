@@ -6,7 +6,7 @@
           assignment_id: <%= @assignment.id %>,
           course_id: <%= @current_course.id %>,
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
-          show_sections: <%= Section.exists? %>,
+          show_sections: <%= @current_course.sections.exists? %>,
           is_timed: <%= @assignment.is_timed %>,
           can_collect: <%= allowed_to? :manage? %>,
           can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,

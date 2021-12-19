@@ -252,7 +252,7 @@ class Grouping < ApplicationRecord
     all_errors = []
     members.each do |m|
       m = m.strip
-      user = Student.joins(:end_user).where(hidden: false).find_by('users.user_name': m)
+      user = course.students.joins(:end_user).where(hidden: false).find_by('users.user_name': m)
       begin
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)

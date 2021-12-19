@@ -441,7 +441,7 @@ class Assignment < Assessment
   end
 
   def ungrouped_students
-    Student.where(hidden: false) - grouped_students
+    course.students.where(hidden: false) - grouped_students
   end
 
   def valid_groupings
@@ -603,18 +603,19 @@ class Assignment < Assessment
                             .where.not('test_runs.submission_id': nil)
                             .to_sql
 
-    TestGroup.joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
-             .joins("INNER JOIN (#{test_groups_query}) sub \
-                     ON test_groups.id = sub.test_groups_id \
-                     AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
-             .select('test_groups.name',
-                     'test_groups_id',
-                     'groups.group_name',
-                     'test_results.name as test_result_name',
-                     'test_results.status',
-                     'test_results.marks_earned',
-                     'test_results.marks_total',
-                     :output, :extra_info, :error_type)
+    self.test_groups
+        .joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
+        .joins("INNER JOIN (#{test_groups_query}) sub \
+                ON test_groups.id = sub.test_groups_id \
+                AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
+        .select('test_groups.name',
+                'test_groups_id',
+                'groups.group_name',
+                'test_results.name as test_result_name',
+                'test_results.status',
+                'test_results.marks_earned',
+                'test_results.marks_total',
+                :output, :extra_info, :error_type)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
@@ -802,6 +803,7 @@ class Assignment < Assessment
     end
   end
 
+  # Count annotations on all results for this assignment, including remark requests
   def num_annotations_all
     groupings = Grouping.arel_table
     submissions = Submission.arel_table
@@ -809,8 +811,7 @@ class Assignment < Assessment
                      .where(groupings[:assessment_id].eq(id)
                      .and(submissions[:submission_version_used].eq(true)))
 
-    res = Result.submitted_remarks_and_all_non_remarks
-                .where(submission_id: subs.pluck(:id))
+    res = Result.where(submission_id: subs.pluck(:id), remark_request_submitted_at: nil)
     filtered_subs = subs.where(id: res.pluck(:submission_id))
     Annotation.joins(:submission_file)
               .where(submission_files:
@@ -913,7 +914,7 @@ class Assignment < Assessment
     when 'simple'
       default_starter_file_group&.starter_file_entries || []
     when 'sections'
-      section = Section.find_by(id: Student.distinct.pluck(:section_id).sample)
+      section = Section.find_by(id: self.course.students.distinct.pluck(:section_id).sample)
       sf_group = section&.starter_file_group_for(self) || default_starter_file_group
       sf_group&.starter_file_entries || []
     when 'shuffle'
