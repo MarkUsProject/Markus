@@ -1,5 +1,5 @@
 class AdminUser < User
-  ADMIN_USERNAME = '.admin'
+  ADMIN_USERNAME = '.admin'.freeze
 
   def self.find_or_create
     user = AdminUser.find_or_create_by!(user_name: '.admin') do |admin|
