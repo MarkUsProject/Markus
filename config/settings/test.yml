@@ -22,6 +22,7 @@ validate_user_not_allowed_message: ~
 incorrect_login_message: ~
 
 validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
+remote_auth_login_url: https://www.example.com
 
 repository:
   type: mem

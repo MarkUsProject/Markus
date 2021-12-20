@@ -1,8 +1,13 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeStudentPeerReviewsTable(document.getElementById('peer_submissions_table'),
-                                  {assignment_id: <%= @assignment.parent_assignment.id %>});
+      makeStudentPeerReviewsTable(
+        document.getElementById('peer_submissions_table'),
+        {
+          course_id: <%= @current_course.id %>,
+          assignment_id: <%= @assignment.parent_assignment.id %>
+        }
+      );
     })
   <% end %>
 <% end %>
@@ -73,9 +78,9 @@
 
           <%# For each member of this group, display name %>
           <ul>
-            <% @grouping.student_memberships.includes(:user).each do |member|%>
+            <% @grouping.student_memberships.includes(:role).each do |member|%>
                 <li>
-                    <%= member.user.display_name %>
+                    <%= member.role.display_name %>
                 </li>
             <% end %>
           </ul>
@@ -89,7 +94,7 @@
           <ul>
             <% @prs.each_with_index do |pr, i| %>
                 <li><%= link_to("#{PeerReview.model_name.human} #{i + 1}",
-                            view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
+                            view_marks_course_result_path(@current_course.id, pr.result_id)) %> </li>
             <% end %>
           </ul>
         <% end %>

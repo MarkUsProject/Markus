@@ -9,7 +9,7 @@ public/
 
 config/database.yml
 config/local_environment_override.rb
-config/autotest.api_key
+config/autotest_api_keys/
 
 # Files created by sass
 .sass-cache

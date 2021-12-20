@@ -19,13 +19,13 @@
             <li <% if controller.controller_name == 'assignments' && controller.action_name != 'starter_file' %>
                 class='active'
                 <% end %>>
-              <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
+              <%= link_to t('menu.properties'), edit_course_assignment_path(@current_course, @assignment) %>
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: TagPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'tags' %>'>
               <%= link_to Tag.model_name.human.pluralize,
-                          assignment_tags_path(@assignment) %>
+                          course_tags_path(@current_course, assignment_id: @assignment.id) %>
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: CriterionPolicy) %>
@@ -33,7 +33,7 @@
                 class='active'
                 <% end %>>
               <%= link_to Criterion.model_name.human.pluralize,
-                          assignment_criteria_path(@assignment.id) %>
+                          course_assignment_criteria_path(@current_course, @assignment) %>
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: StarterFileGroupPolicy) %>
@@ -41,20 +41,20 @@
                 class='active'
                 <% end %>>
               <%= link_to I18n.t('assignments.starter_file.title'),
-                          starter_file_assignment_path(@assignment.id) %>
+                          starter_file_course_assignment_path(@current_course, @assignment) %>
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: AnnotationCategoryPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
               <%= link_to Annotation.model_name.human.pluralize,
-                          assignment_annotation_categories_path(@assignment) %>
+                          course_assignment_annotation_categories_path(@current_course, @assignment) %>
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: AutomatedTestPolicy) %>
-            <% if Settings.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
+            <% if @assignment.course.autotest_setting && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
               <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
                 <%= link_to t('automated_tests.title'),
-                            manage_assignment_automated_tests_path(@assignment) %>
+                            manage_course_assignment_automated_tests_path(@current_course, @assignment) %>
               </li>
             <% end %>
           <% end %>
@@ -62,7 +62,7 @@
             <% if allowed_to?(:manage?, with: ExamTemplatePolicy) %>
               <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
                 <%= link_to ExamTemplate.model_name.human.pluralize,
-                            assignment_exam_templates_path(@assignment) %>
+                            course_assignment_exam_templates_path(@current_course, @assignment) %>
               </li>
             <% end %>
           <% end %>

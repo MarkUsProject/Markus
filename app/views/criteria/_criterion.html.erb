@@ -10,8 +10,7 @@
     <%= link_to truncate(criterion.name,
                          length: 27,
                          omission: '...'),
-                edit_assignment_criterion_path(assignment_id: @assignment.id,
-                                               id: criterion.id),
+                edit_course_criterion_path(@current_course, criterion),
                 id: "criterion_title_#{criterion.class}#{criterion.id}",
                 remote: true %>
   </span>

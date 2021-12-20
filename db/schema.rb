@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_07_163338) do
+ActiveRecord::Schema.define(version: 2021_12_16_152132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,9 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_assessments_on_course_id"
+    t.index ["short_identifier", "course_id"], name: "index_assessments_on_short_identifier_and_course_id", unique: true
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
   end
 
@@ -134,6 +137,22 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.boolean "starter_files_after_due", default: true, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
+  end
+
+  create_table "autotest_settings", force: :cascade do |t|
+    t.string "url", null: false
+    t.string "api_key", null: false
+    t.string "schema", null: false
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.string "name", null: false
+    t.boolean "is_hidden", default: true, null: false
+    t.string "display_name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "autotest_setting_id"
+    t.index ["autotest_setting_id"], name: "index_courses_on_autotest_setting_id"
   end
 
   create_table "criteria", force: :cascade do |t|
@@ -237,13 +256,13 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   end
 
   create_table "grade_entry_students", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
     t.boolean "released_to_student", default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float "total_grade"
     t.bigint "assessment_id"
-    t.index ["user_id", "assessment_id"], name: "index_grade_entry_students_on_user_id_and_assessment_id", unique: true
+    t.bigint "role_id", null: false
+    t.index ["role_id", "assessment_id"], name: "index_grade_entry_students_on_role_id_and_assessment_id", unique: true
   end
 
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
@@ -253,11 +272,11 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   end
 
   create_table "grader_permissions", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.boolean "manage_submissions", default: false, null: false
     t.boolean "manage_assessments", default: false, null: false
     t.boolean "run_tests", default: false, null: false
-    t.index ["user_id"], name: "index_grader_permissions_on_user_id", unique: true
+    t.bigint "role_id", null: false
+    t.index ["role_id"], name: "index_grader_permissions_on_role_id"
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
@@ -280,7 +299,7 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.integer "group_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "admin_approved", default: false, null: false
+    t.boolean "instructor_approved", default: false, null: false
     t.boolean "is_collected", default: false, null: false
     t.integer "criteria_coverage_count", default: 0
     t.integer "test_tokens", default: 0, null: false
@@ -299,7 +318,9 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   create_table "groups", id: :serial, force: :cascade do |t|
     t.string "group_name", limit: 30
     t.string "repo_name"
-    t.index ["group_name"], name: "groups_name_unique", unique: true
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_groups_on_course_id"
+    t.index ["group_name", "course_id"], name: "index_groups_on_group_name_and_course_id", unique: true
   end
 
   create_table "job_messengers", id: :serial, force: :cascade do |t|
@@ -332,6 +353,9 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "course_id", null: false
+    t.index ["course_id", "name"], name: "index_marking_schemes_on_course_id_and_name", unique: true
+    t.index ["course_id"], name: "index_marking_schemes_on_course_id"
   end
 
   create_table "marking_weights", id: :serial, force: :cascade do |t|
@@ -355,13 +379,13 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   end
 
   create_table "memberships", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
     t.string "membership_status"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "grouping_id", null: false
     t.string "type"
-    t.index ["grouping_id", "user_id"], name: "memberships_u1", unique: true
+    t.bigint "role_id", null: false
+    t.index ["role_id"], name: "index_memberships_on_role_id"
   end
 
   create_table "notes", id: :serial, force: :cascade do |t|
@@ -408,6 +432,23 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.index ["peer_review_id"], name: "index_results_on_peer_review_id"
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "course_id", null: false
+    t.bigint "section_id"
+    t.string "type", null: false
+    t.boolean "hidden", default: false, null: false
+    t.integer "grace_credits", default: 0, null: false
+    t.boolean "receives_results_emails", default: false, null: false
+    t.boolean "receives_invite_emails", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["course_id"], name: "index_roles_on_course_id"
+    t.index ["section_id"], name: "index_roles_on_section_id"
+    t.index ["user_id", "course_id"], name: "index_roles_on_user_id_and_course_id", unique: true
+    t.index ["user_id"], name: "index_roles_on_user_id"
+  end
+
   create_table "section_starter_file_groups", force: :cascade do |t|
     t.bigint "section_id", null: false
     t.bigint "starter_file_group_id", null: false
@@ -419,6 +460,9 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_sections_on_course_id"
+    t.index ["name", "course_id"], name: "index_sections_on_name_and_course_id", unique: true
   end
 
   create_table "sessions", id: :serial, force: :cascade do |t|
@@ -447,7 +491,6 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.datetime "uploaded_when"
     t.string "error_description"
     t.string "filename"
-    t.integer "user_id"
     t.integer "num_groups_in_complete"
     t.integer "num_groups_in_incomplete"
     t.integer "num_pages_qr_scan_error"
@@ -456,8 +499,9 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "exam_template_id"
+    t.bigint "role_id", null: false
     t.index ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id"
-    t.index ["user_id"], name: "index_split_pdf_logs_on_user_id"
+    t.index ["role_id"], name: "index_split_pdf_logs_on_role_id"
   end
 
   create_table "starter_file_entries", force: :cascade do |t|
@@ -508,10 +552,10 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   create_table "tags", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "description"
-    t.integer "user_id"
     t.bigint "assessment_id"
+    t.bigint "role_id", null: false
     t.index ["assessment_id"], name: "index_tags_on_assessment_id"
-    t.index ["user_id"], name: "index_tags_on_user_id"
+    t.index ["role_id"], name: "index_tags_on_role_id"
   end
 
   create_table "template_divisions", id: :serial, force: :cascade do |t|
@@ -528,6 +572,8 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   create_table "test_batches", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_test_batches_on_course_id"
   end
 
   create_table "test_group_results", id: :serial, force: :cascade do |t|
@@ -570,7 +616,6 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   create_table "test_runs", id: :serial, force: :cascade do |t|
     t.integer "test_batch_id"
     t.integer "grouping_id", null: false
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "submission_id"
@@ -578,27 +623,23 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.text "problems"
     t.integer "autotest_test_id"
     t.integer "status", null: false
+    t.bigint "role_id", null: false
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
+    t.index ["role_id"], name: "index_test_runs_on_role_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"
-    t.index ["user_id"], name: "index_test_runs_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "user_name", null: false
     t.string "last_name"
     t.string "first_name"
-    t.integer "grace_credits", default: 0, null: false
     t.string "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "hidden", default: false, null: false
     t.string "api_key"
-    t.integer "section_id"
     t.string "email"
     t.string "id_number"
-    t.boolean "receives_results_emails", default: false, null: false
-    t.boolean "receives_invite_emails", default: false, null: false
     t.string "display_name", null: false
     t.string "locale", default: "en", null: false
     t.integer "theme", default: 1, null: false
@@ -612,9 +653,11 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
+  add_foreign_key "assessments", "courses"
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
+  add_foreign_key "courses", "autotest_settings"
   add_foreign_key "criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "exam_templates", "assessments"
@@ -622,41 +665,48 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "feedback_files", "test_group_results"
-  add_foreign_key "grader_permissions", "users"
+  add_foreign_key "grade_entry_students", "roles"
+  add_foreign_key "grader_permissions", "roles"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
+  add_foreign_key "groups", "courses"
   add_foreign_key "key_pairs", "users"
   add_foreign_key "levels", "criteria"
+  add_foreign_key "marking_schemes", "courses"
   add_foreign_key "marking_weights", "assessments"
   add_foreign_key "marks", "criteria"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
-  add_foreign_key "memberships", "users", name: "fk_memberships_users"
+  add_foreign_key "memberships", "roles"
   add_foreign_key "peer_reviews", "groupings", column: "reviewer_id"
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
+  add_foreign_key "roles", "courses"
+  add_foreign_key "roles", "sections"
+  add_foreign_key "roles", "users"
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
+  add_foreign_key "sections", "courses"
   add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pages", "split_pdf_logs"
   add_foreign_key "split_pdf_logs", "exam_templates"
-  add_foreign_key "split_pdf_logs", "users"
+  add_foreign_key "split_pdf_logs", "roles"
   add_foreign_key "starter_file_entries", "starter_file_groups"
   add_foreign_key "starter_file_groups", "assessments"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "assessments"
-  add_foreign_key "tags", "users"
+  add_foreign_key "tags", "roles"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
+  add_foreign_key "test_batches", "courses"
   add_foreign_key "test_group_results", "test_runs"
   add_foreign_key "test_groups", "assessments"
   add_foreign_key "test_results", "test_group_results"
   add_foreign_key "test_runs", "groupings"
+  add_foreign_key "test_runs", "roles"
   add_foreign_key "test_runs", "submissions"
   add_foreign_key "test_runs", "test_batches"
-  add_foreign_key "test_runs", "users"
-  add_foreign_key "users", "sections"
 end

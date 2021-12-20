@@ -28,7 +28,7 @@ class GradersManager extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.assignment_graders_path(this.props.assignment_id),
+      url: Routes.course_assignment_graders_path(this.props.course_id, this.props.assignment_id),
       dataType: "json",
     }).then(res => {
       if (this.gradersTable) this.gradersTable.resetSelection();
@@ -64,7 +64,10 @@ class GradersManager extends React.Component {
     }
 
     $.post({
-      url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
+      url: Routes.global_actions_course_assignment_graders_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         global_actions: "assign",
         current_table: this.state.tableName,
@@ -92,7 +95,10 @@ class GradersManager extends React.Component {
     }
 
     $.post({
-      url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
+      url: Routes.global_actions_course_assignment_graders_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         global_actions: "random_assign",
         current_table: this.state.tableName,
@@ -120,7 +126,10 @@ class GradersManager extends React.Component {
     }
 
     $.post({
-      url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
+      url: Routes.global_actions_course_assignment_graders_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         global_actions: "unassign",
         current_table: this.state.tableName,
@@ -142,7 +151,10 @@ class GradersManager extends React.Component {
     }
 
     $.post({
-      url: Routes.global_actions_assignment_graders_path(this.props.assignment_id),
+      url: Routes.global_actions_course_assignment_graders_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         global_actions: "unassign",
         current_table: origin,
@@ -162,7 +174,10 @@ class GradersManager extends React.Component {
   toggleAssignGradersToCriteria = () => {
     const assign = !this.state.assign_graders_to_criteria;
     $.post({
-      url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
+      url: Routes.set_boolean_graders_options_course_assignment_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         attribute: {
           assignment_properties_attributes: {
@@ -176,7 +191,10 @@ class GradersManager extends React.Component {
   toggleAnonymizeGroups = () => {
     const assign = !this.state.anonymize_groups;
     $.post({
-      url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
+      url: Routes.set_boolean_graders_options_course_assignment_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         attribute: {
           assignment_properties_attributes: {anonymize_groups: assign},
@@ -188,7 +206,10 @@ class GradersManager extends React.Component {
   toggleHideUnassignedCriteria = () => {
     const assign = !this.state.hide_unassigned_criteria;
     $.post({
-      url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
+      url: Routes.set_boolean_graders_options_course_assignment_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         attribute: {
           assignment_properties_attributes: {

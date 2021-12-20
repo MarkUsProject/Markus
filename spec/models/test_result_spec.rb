@@ -9,13 +9,14 @@ describe TestResult do
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:time) }
+  it { is_expected.to have_one(:course) }
 
   context 'test result' do
     before(:each) do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
-      @user = create(:admin)
+      @role = create(:instructor)
       @test_group = TestGroup.create(
         assessment_id: @asst.id,
         name: 'test_group'
@@ -23,7 +24,7 @@ describe TestResult do
       @test_run = TestRun.create(
         grouping: @grouping,
         submission: @sub,
-        user: @user,
+        role: @role,
         revision_identifier: '1',
         status: :complete
       )

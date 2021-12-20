@@ -1,23 +1,35 @@
 <header id='header'>
   <div id='course'>
-    <strong><%= Settings.course_name %></strong>
+    <% if @current_course %>
+      <strong><%= @current_course.display_name %></strong>
+    <% end %>
   </div>
   <div id='user-info'>
     <span id='logout_area'>
-      <span id='admin_logged_in_as'>
-        <% if session[:real_uid] %>
-          <strong><%= User.find_by_id(session[:real_uid]).first_name %></strong>
+      <span id='instructor_logged_in_as'>
+        <% if allowed_to?(:role_is_switched?) %>
+          <strong><%= @real_user.display_name %></strong>
         <% end %>
       </span>
       <span id='user-id'>
         <%= @current_user.display_name %>
         ( <strong><%= @current_user.user_name %></strong> )
       </span>
-      <% if @current_user.admin? || (session[:real_uid] &&
-              User.find_by_id(session[:real_uid]).admin?) %>
+      <% unless allowed_to?(:role_is_switched?) %>
+        <%= link_to t('menu.settings'),
+                    settings_users_path,
+                    class: 'button inline-button settings' %>
+      <% end %>
+      <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
         <%= link_to t('main.role_switch.switch_role'),
-                    role_switch_main_index_path,
+                    role_switch_course_path(@current_course.id),
                     remote: true,
+                    class: 'button inline-button switch-role' %>
+      <% end %>
+
+      <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
+        <%= link_to t('main.role_switch.clear_role_switch_session'),
+                    clear_role_switch_session_course_path(@current_course),
                     class: 'button inline-button switch-role' %>
       <% end %>
 
@@ -25,15 +37,7 @@
                   logout_main_index_path,
                   id: 'logout_link',
                   method: :post,
-                  class: 'button inline-button') unless
-            Settings.logout_redirect == 'NONE' %>
-
-      <% if Settings.remote_user_auth &&
-            !session[:real_uid].nil? %>
-        <%= link_to t('main.role_switch.clear_role_switch_session'),
-                    controller: 'main',
-                    action: 'clear_role_switch_session' %>
-      <% end %>
+                  class: 'button inline-button') %>
     </span>
   </div>
 

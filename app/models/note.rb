@@ -3,8 +3,11 @@ class Note < ApplicationRecord
 
   validates_presence_of :notes_message
 
-  belongs_to :user, foreign_key: :creator_id
-  validates_associated :user
+  belongs_to :role, foreign_key: :creator_id
+  validates_associated :role
+
+  has_one :course, through: :role
+  validate :courses_should_match
 
   NOTEABLES = %w(Grouping Student Assignment)
 

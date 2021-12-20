@@ -41,8 +41,8 @@ class GradeEntryForm < Assessment
     return @completed_result_marks if defined? @completed_result_marks
 
     @completed_result_marks = self.grade_entry_students
-                                  .joins(:user)
-                                  .where(users: { hidden: false })
+                                  .joins(:role)
+                                  .where(roles: { hidden: false })
                                   .where.not(total_grade: nil)
                                   .order(:total_grade)
                                   .pluck(:total_grade)
@@ -87,14 +87,14 @@ class GradeEntryForm < Assessment
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
     new_data = []
-    Student.all.each do |student|
-      new_data << { user_id: student.id, assessment_id: id, released_to_student: false }
+    course.students.each do |student|
+      new_data << { role_id: student.id, assessment_id: id, released_to_student: false }
     end
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
 
   def export_as_csv
-    students = Student.left_outer_joins(:grade_entry_students)
+    students = Student.left_outer_joins(:grade_entry_students, :end_user)
                       .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
                       .order(:user_name)
                       .pluck(:user_name, 'grade_entry_students.total_grade')
@@ -110,7 +110,7 @@ class GradeEntryForm < Assessment
     headers << totals
 
     grade_data = self.grades
-                     .joins(:grade_entry_item, grade_entry_student: :user)
+                     .joins(:grade_entry_item, grade_entry_student: [role: :end_user])
                      .pluck('users.user_name', 'grade_entry_items.position', :grade)
                      .group_by { |x| x[0] }
     num_items = self.grade_entry_items.count
@@ -134,7 +134,7 @@ class GradeEntryForm < Assessment
 
   def from_csv(grades_data, overwrite)
     grade_entry_students = Hash[
-      self.grade_entry_students.joins(:user).pluck('users.user_name', :id)
+      self.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id)
     ]
     all_grades = Set.new(
       self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)

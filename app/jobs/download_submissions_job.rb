@@ -11,14 +11,15 @@ class DownloadSubmissionsJob < ApplicationJob
   end
 
   def self.completed_message(status)
-    { partial: 'submissions/download_zip_file', locals: { assignment_id: status[:assignment_id] } }
+    { partial: 'submissions/download_zip_file', locals: { assignment_id: status[:assignment_id],
+                                                          course_id: status[:course_id] } }
   end
 
   before_enqueue do |job|
-    self.status.update(assignment_id: job.arguments[2])
+    self.status.update(assignment_id: job.arguments[2], course_id: job.arguments[3])
   end
 
-  def perform(grouping_ids, zip_path, _assignment_id)
+  def perform(grouping_ids, zip_path, _assignment_id, _course_id)
     ## delete the old file if it exists
     File.delete(zip_path) if File.exist?(zip_path)
 

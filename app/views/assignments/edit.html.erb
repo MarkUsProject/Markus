@@ -9,7 +9,7 @@
 <% else %>
   <% @heading_buttons = [
     { link_text: t('download'),
-      link_path: download_config_files_assignment_path(format: 'zip') }
+      link_path: download_config_files_course_assignment_path(@current_course, format: 'zip') }
   ] %>
 
   <%= render partial: 'form', formats: [:html], handlers: [:erb] %>

@@ -1,5 +1,5 @@
 <li id='new_criterion' class='new'>
-  <%= form_tag assignment_criteria_path(assignment_id: assignment.id),
+  <%= form_tag course_assignment_criteria_path(@current_course, assignment),
                method: :post,
                remote: true do %>
     <div class='inline-labels'>

@@ -16,7 +16,7 @@ module Api
     # Returns a list of assignments and their attributes
     # Optional: filter, fields
     def index
-      assignments = get_collection(Assignment) || return
+      assignments = get_collection(current_course.assessments) || return
 
       respond_to do |format|
         json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',') + ']'
@@ -30,7 +30,7 @@ module Api
     # Requires: id
     # Optional: filter, fields
     def show
-      assignment = Assignment.find_by_id(params[:id])
+      assignment = record
       if assignment.nil?
         # No assignment with that id
         render 'shared/http_status', locals: {code: '404', message:
@@ -68,7 +68,7 @@ module Api
       end
 
       # No assignment found so create new one
-      attributes = { short_identifier: params[:short_identifier] }
+      attributes = { short_identifier: params[:short_identifier], course_id: params[:course_id] }
       attributes = process_attributes(params, attributes)
 
       new_assignment = Assignment.new(attributes)
@@ -107,7 +107,7 @@ module Api
     # default_starter_file_group_id
     def update
       # If no assignment is found, render an error.
-      assignment = Assignment.find_by_id(params[:id])
+      assignment = record
       if assignment.nil?
         render 'shared/http_status', locals: {code: '404', message:
           'Assignment was not found'}, status: 404
@@ -185,7 +185,7 @@ module Api
 
     # Get test specs file content
     def test_specs
-      assignment = Assignment.find(params[:id])
+      assignment = record
       settings_file = assignment.autotest_settings_file
       content = File.exist?(settings_file) ? JSON.parse(File.open(settings_file, &:read)) : {}
       respond_to do |format|
@@ -197,7 +197,7 @@ module Api
 
     # Upload test specs file content in a json format
     def update_test_specs
-      assignment = Assignment.find(params[:id])
+      assignment = record
       content = nil
       if params[:specs].is_a? ActionController::Parameters
         content = params[:specs].permit!.to_h
@@ -253,8 +253,8 @@ module Api
     end
 
     def grades_summary
-      assignment = Assignment.find(params[:id])
-      send_data assignment.summary_csv(@current_user),
+      assignment = record
+      send_data assignment.summary_csv(current_role),
                 type: 'text/csv',
                 filename: "#{assignment.short_identifier}_grades_summary.csv",
                 disposition: 'inline'
@@ -263,11 +263,17 @@ module Api
     end
 
     def test_files
-      assignment = Assignment.find(params[:id])
+      assignment = record
       zip_path = assignment.zip_automated_test_files(current_user)
       send_file zip_path, filename: File.basename(zip_path)
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    end
+
+    protected
+
+    def implicit_authorization_target
+      Assignment
     end
   end # end AssignmentsController
 end

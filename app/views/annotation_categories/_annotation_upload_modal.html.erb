@@ -5,8 +5,7 @@
 <%= content_for :modal_content do %>
 
   <%= t('upload_help_html', section_id: AnnotationCategory.name.pluralize.underscore.dasherize) %>
-  <%= form_tag({ action: 'upload',
-                 id: @assignment.id },
+  <%= form_tag({ action: 'upload' },
                { multipart: true }) do %>
     <!-- Script for disabling upload button. -->
     <%= javascript_include_tag 'upload_button_control.js',

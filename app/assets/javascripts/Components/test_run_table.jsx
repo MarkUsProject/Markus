@@ -35,18 +35,16 @@ export class TestRunTable extends React.Component {
     if (this.props.instructor_run) {
       if (this.props.instructor_view) {
         ajaxDetails = {
-          url: Routes.get_test_runs_instructors_assignment_submission_result_path(
-            this.props.assignment_id,
-            this.props.submission_id,
+          url: Routes.get_test_runs_instructors_course_result_path(
+            this.props.course_id,
             this.props.result_id
           ),
           dataType: "json",
         };
       } else {
         ajaxDetails = {
-          url: Routes.get_test_runs_instructors_released_assignment_submission_result_path(
-            this.props.assignment_id,
-            this.props.submission_id,
+          url: Routes.get_test_runs_instructors_released_course_result_path(
+            this.props.course_id,
             this.props.result_id
           ),
           dataType: "json",
@@ -54,7 +52,8 @@ export class TestRunTable extends React.Component {
       }
     } else {
       ajaxDetails = {
-        url: Routes.get_test_runs_students_assignment_automated_tests_path(
+        url: Routes.get_test_runs_students_course_assignment_automated_tests_path(
+          this.props.course_id,
           this.props.assignment_id
         ),
         dataType: "json",
@@ -358,7 +357,10 @@ class TestGroupFeedbackFileTable extends React.Component {
         SubComponent={row => (
           <FileViewer
             selectedFile={row.original.filename}
-            selectedFileURL={Routes.feedback_file_path(row.original.id)}
+            selectedFileURL={Routes.course_feedback_file_path(
+              this.props.course_id,
+              row.original.id
+            )}
             mime_type={lookup(row["filename"])}
             selectedFileType={row.original.type}
           />

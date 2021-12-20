@@ -34,11 +34,11 @@ module AnnotationCategoriesHelper
     successes = 0
     file_content.each do |category, category_data|
       if category_data.is_a?(Array)
-        AnnotationCategory.add_by_row([category, nil] + category_data, assignment, current_user)
+        AnnotationCategory.add_by_row([category, nil] + category_data, assignment, current_role)
         successes += 1
       elsif category_data.is_a?(Hash)
         row = [category, category_data['criterion']] + category_data['texts'].flatten
-        AnnotationCategory.add_by_row(row, assignment, current_user)
+        AnnotationCategory.add_by_row(row, assignment, current_role)
         successes += 1
       end
     end

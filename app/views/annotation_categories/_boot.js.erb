@@ -45,7 +45,7 @@
           }
 
           ajaxRequest = $.ajax({
-            url:  '<%= update_positions_assignment_annotation_categories_path(@assignment) %>',
+            url:  '<%= update_positions_course_assignment_annotation_categories_path(@current_course, @assignment) %>',
             type: 'POST',
             data: $('.sortable ul').sortable('serialize'),
             success: function(response) {

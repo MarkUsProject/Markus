@@ -1,14 +1,14 @@
 describe TagPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    failed 'user is a ta' do
-      let(:user) { create(:ta) }
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 end

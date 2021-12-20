@@ -1,8 +1,9 @@
 # User policy class
 class UserPolicy < ApplicationPolicy
-  # Default rule: only admins can manage users.
+  skip_pre_check :role_exists?
+
   def manage?
-    user.admin?
+    false
   end
 
   # No one can delete users.
@@ -18,8 +19,8 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
-  # Students and TAs shouldn't be able to change their API key
+  # Only users that are instructors in at least one course
   def reset_api_key?
-    user.admin?
+    user.roles.pluck(:type).include?('Instructor')
   end
 end

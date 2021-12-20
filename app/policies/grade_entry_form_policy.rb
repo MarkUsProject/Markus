@@ -9,18 +9,18 @@ class GradeEntryFormPolicy < ApplicationPolicy
   end
 
   def grade?
-    user.admin? || user.ta?
+    role.instructor? || role.ta?
   end
 
   def manage?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 
   def see_hidden?
-    user.admin? || user.ta? || user.visible_assessments(assessment_id: record.id).exists?
+    role.instructor? || role.ta? || role.visible_assessments(assessment_id: record.id).exists?
   end
 
   def student_interface?
-    user.student?
+    role.student?
   end
 end

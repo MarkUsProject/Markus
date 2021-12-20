@@ -1,15 +1,15 @@
 describe ResultPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :view? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    succeed 'user is a ta' do
-      let(:user) { create(:ta) }
+    succeed 'role is a ta' do
+      let(:role) { create(:ta) }
     end
-    succeed 'user is a student' do
-      let(:user) { create(:student) }
+    succeed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
@@ -18,8 +18,8 @@ describe ResultPolicy do
     let(:submission) { create :submission, grouping: grouping }
     let(:grouping) { create :grouping, assignment: assignment }
     let(:assignment) { create :assignment }
-    context 'user is an admin' do
-      let(:user) { create :admin }
+    context 'role is an instructor' do
+      let(:role) { create :instructor }
       failed 'when result is released' do
         let(:record) { create :released_result }
       end
@@ -36,12 +36,12 @@ describe ResultPolicy do
         end
       end
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       failed 'without run test permissions' do
-        let(:user) { create :ta, run_tests: false }
+        let(:role) { create :ta, run_tests: false }
       end
       context 'with run test permissions' do
-        let(:user) { create :ta, run_tests: true }
+        let(:role) { create :ta, run_tests: true }
         failed 'when result is released' do
           let(:record) { create :released_result }
         end
@@ -59,21 +59,21 @@ describe ResultPolicy do
         end
       end
     end
-    context 'user is a student' do
-      let(:user) { create :student }
+    context 'role is a student' do
+      let(:role) { create :student }
       let(:assignment) { create :assignment, assignment_properties_attributes: assignment_attrs }
       let(:assignment_attrs) { {} }
-      context 'when the user is a member of the grouping' do
-        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user, test_tokens: 1 }
+      context 'when the role is a member of the grouping' do
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role, test_tokens: 1 }
         failed 'when there is a test in progress' do
           before { allow(grouping).to receive(:student_test_run_in_progress?).and_return true }
         end
         failed 'when there are no tokens available' do
-          let(:grouping) { create :grouping_with_inviter, inviter: user, test_tokens: 0 }
+          let(:grouping) { create :grouping_with_inviter, inviter: role, test_tokens: 0 }
         end
         failed 'when the due date has passed' do
           let(:assignment) { create :assignment, due_date: 1.day.ago }
-          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user, test_tokens: 1 }
+          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role, test_tokens: 1 }
         end
         failed 'with a released result' do
           let(:result) { create :released_result }
@@ -102,44 +102,44 @@ describe ResultPolicy do
           end
         end
       end
-      failed 'when the user is not a member of the grouping' do
+      failed 'when the role is not a member of the grouping' do
         let(:grouping) { create :grouping_with_inviter, test_tokens: 1 }
       end
     end
   end
 
   describe_rule :grade? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    succeed 'user is a ta' do
-      let(:user) { create(:ta) }
+    succeed 'role is a ta' do
+      let(:role) { create(:ta) }
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
   describe_rule :review? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    succeed 'user is a ta' do
-      let(:user) { create(:ta) }
+    succeed 'role is a ta' do
+      let(:role) { create(:ta) }
     end
-    context 'user is a student' do
-      let(:user) { create(:student) }
+    context 'role is a student' do
+      let(:role) { create(:student) }
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
-      let(:grouping) { create :grouping_with_inviter, inviter: user, assignment: assignment }
+      let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment }
       context 'when the assignment has a peer review' do
         let(:assignment) { create :assignment_with_peer_review }
-        succeed 'when the user is a reviewer for the result' do
+        succeed 'when the role is a reviewer for the result' do
           let(:record) { create :complete_result, submission: create(:submission, grouping: review_grouping) }
-          let(:grouping) { create :grouping_with_inviter, inviter: user, assignment: assignment.pr_assignment }
+          let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment.pr_assignment }
           let(:review_grouping) { create :grouping_with_inviter, assignment: assignment }
           before { create :peer_review, reviewer: grouping, result: record }
         end
-        failed 'when the user is not a reviewer for the result' do
+        failed 'when the role is not a reviewer for the result' do
           before { create :peer_review }
         end
       end
@@ -150,31 +150,72 @@ describe ResultPolicy do
   end
 
   describe_rule :set_released_to_students? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       succeed 'that can manage submissions' do
-        let(:user) { create :ta, manage_submissions: true }
+        let(:role) { create :ta, manage_submissions: true }
       end
       failed 'that cannot manage submissions' do
-        let(:user) { create :ta, manage_submissions: false }
+        let(:role) { create :ta, manage_submissions: false }
       end
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    failed 'user is a ta' do
-      let(:user) { create(:ta) }
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
+    end
+  end
+
+  describe_rule :download? do
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    succeed 'role is a ta' do
+      let(:role) { create(:ta) }
+    end
+    context 'role is a student' do
+      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
+      let(:record) { assignment.groupings.first.current_result }
+      context 'role is a reviewer for the current result' do
+        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
+        let(:role) { reviewer_grouping.accepted_students.first }
+        before { create :peer_review, reviewer: reviewer_grouping, result: record }
+        succeed 'from_codeviewer is true' do
+          let(:context) { { role: role, real_user: role.end_user, from_codeviewer: true } }
+        end
+        failed 'from_codeviewer is false' do
+          let(:context) { { role: role, real_user: role.end_user, from_codeviewer: false } }
+        end
+      end
+      context 'role is not a reviewer for the current result' do
+        context 'role is an accepted member of the results grouping' do
+          let(:role) { record.grouping.accepted_students.first }
+          succeed 'and there is no file selected'
+          succeed 'and the selected file is associated with the current submission' do
+            let(:select_file) { create(:submission_file, submission: record.submission) }
+            let(:context) { { role: role, real_user: role.end_user, select_file: select_file } }
+          end
+          failed 'and the selected file is associated with a different submission' do
+            let(:select_file) { create(:submission_file) }
+            let(:context) { { role: role, real_user: role.end_user, select_file: select_file } }
+          end
+        end
+        failed 'role is not an accepted member of the results grouping' do
+          let(:role) { create(:student) }
+        end
+      end
     end
   end
 end

@@ -1,0 +1,96 @@
+<ul class='sub'>
+  <li id='dropdown'>
+    <div class='dropdown'>
+      <%# Display an appropriate message in the dropdown menu %>
+      <% if assessment.nil? %>
+        <%= t('menu.choose') %>
+      <% elsif assessment.new_record? %>
+        <%= t('helpers.submit.create', model: assessment.class.model_name.human) %>
+      <% else %>
+        <% title = assessment.short_identifier %>
+        <% if assessment.is_a?(Assignment) && assessment.is_peer_review? %>
+          <% title = "#{assessment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" %>
+        <% end %>
+        <% if assessment.is_hidden %>
+          <% title = t('assignments.hidden', assignment_text: title) %>
+        <% end %>
+        <%= title %>
+      <% end %>
+      <ul>
+        <%= render partial: 'shared/assignments_dropdown_menu' %>
+      </ul>
+    </div>
+  </li>
+
+  <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
+    <% if allowed_to?(:manage?, with: GradeEntryFormPolicy) %>
+      <li class='<%= "active" if controller.action_name == 'edit' %>'>
+        <%= link_to t('menu.properties'),
+                    edit_course_grade_entry_form_path(@current_course, assessment) %>
+      </li>
+    <% end %>
+    <li class='<%= "active" if controller.action_name == 'grades' %>'>
+      <%= link_to GradeEntryForm.human_attribute_name(:grades),
+                  grades_course_grade_entry_form_path(@current_course, assessment) %>
+    </li>
+    <% if allowed_to?(:manage?, with: GraderPolicy) %>
+      <li class='<%= "active" if controller.controller_name == 'marks_graders' %>'>
+        <%= link_to Ta.model_name.human.pluralize,
+                    course_grade_entry_form_marks_graders_path(@current_course, assessment) %>
+      </li>
+    <% end %>
+  <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
+    <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
+                                                     assessment.id %>
+    <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+      <li <% if ['criteria',
+                 'annotation_categories',
+                 'automated_tests',
+                 'exam_templates'].include?(controller.controller_name) ||
+        (controller.controller_name == 'assignments' &&
+          controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
+          class='active'
+          <% end %>
+      >
+        <%= link_to t('menu.settings'),
+                    edit_course_assignment_path(@current_course, target_id) %>
+      </li>
+      <li class='<%= "active" if controller.controller_name == 'groups' %>'>
+        <%= link_to Group.model_name.human.pluralize,
+                    course_assignment_groups_path(@current_course, target_id) %>
+      </li>
+      <li class='<%= "active" if controller.controller_name == 'graders' %>'>
+        <%= link_to Ta.model_name.human.pluralize,
+                    course_assignment_graders_path(@current_course, target_id) %>
+      </li>
+    <% end %>
+    <% if assessment.is_peer_review? || @result&.is_a_review? %>
+      <% if allowed_to?(:manage_reviewers?, assessment, with: PeerReviewPolicy) %>
+        <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
+          <%= link_to t('peer_reviews.assign'),
+                      course_assignment_peer_reviews_path(@current_course, target_id) %>
+        </li>
+      <% end %>
+    <% end %>
+    <li
+      <% if controller.controller_name == 'submissions' ||
+            controller.controller_name == 'results' %>
+        class='active'
+      <% end %>
+    >
+      <%= link_to assessment.is_peer_review? || @result&.is_a_review? ?
+                    PeerReview.model_name.human.pluralize : Submission.model_name.human.pluralize,
+                  browse_course_assignment_submissions_path(@current_course, target_id) %>
+    </li>
+    <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
+      <%= link_to t('results.summary'),
+                  summary_course_assignment_path(@current_course, target_id) %>
+    </li>
+    <% if allowed_to?(:view_test_options?, assessment) %>
+      <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
+        <%= link_to t('automated_tests.test_runs_status'),
+                    batch_runs_course_assignment_path(@current_course, target_id) %>
+      </li>
+    <% end %>
+  <% end %>
+</ul>

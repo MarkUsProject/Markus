@@ -10,6 +10,7 @@ describe FlexibleCriterion do
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:max_mark) }
+    it { is_expected.to have_one(:course) }
 
     it do
       is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id)

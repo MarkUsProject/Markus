@@ -1,5 +1,6 @@
 class TestResult < ApplicationRecord
   belongs_to :test_group_result
+  has_one :course, through: :test_group_result
 
   validates :name, presence: true
   validates :status, presence: true, inclusion: { in: %w[pass partial fail error error_all] }

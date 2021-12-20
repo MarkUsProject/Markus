@@ -24,16 +24,16 @@ class Grouping < ApplicationRecord
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
-  has_many :tas, through: :ta_memberships, source: :user
-  has_many :students, through: :student_memberships, source: :user
+  has_many :tas, through: :ta_memberships, source: :role
+  has_many :students, through: :student_memberships, source: :role
   has_many :pending_students,
            class_name: 'Student',
            through: :pending_student_memberships,
-           source: :user
+           source: :role
   has_many :accepted_students,
            class_name: 'Student',
            through: :accepted_student_memberships,
-           source: :user
+           source: :role
   has_many :submissions
   has_one :current_submission_used,
           -> { where submission_version_used: true },
@@ -42,20 +42,24 @@ class Grouping < ApplicationRecord
   has_one :submitted_remark, through: :current_submission_used
 
   has_and_belongs_to_many :tags
+  validate :assignments_should_match
 
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
 
   has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { left_outer_joins(:user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
+           -> {
+             left_outer_joins(role: :end_user,
+                              test_group_results: [:test_group, :test_results]).order(created_at: :desc)
+           },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
           class_name: 'StudentMembership'
 
-  has_one :inviter, source: :user, through: :inviter_membership, class_name: 'Student'
+  has_one :inviter, source: :role, through: :inviter_membership, class_name: 'Student'
   has_one :section, through: :inviter
 
   # The following are chained
@@ -65,7 +69,7 @@ class Grouping < ApplicationRecord
   has_many :peer_reviews, through: :results
   has_many :peer_reviews_to_others, class_name: 'PeerReview', foreign_key: 'reviewer_id'
 
-  scope :approved_groupings, -> { where admin_approved: true }
+  scope :approved_groupings, -> { where instructor_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
@@ -75,6 +79,10 @@ class Grouping < ApplicationRecord
 
   belongs_to :group
   validates_associated :group
+
+  validate :courses_should_match
+
+  has_one :course, through: :assignment
 
   validates_inclusion_of :is_collected, in: [true, false]
 
@@ -92,7 +100,7 @@ class Grouping < ApplicationRecord
   def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
       # Assign TAs in a round-robin fashion to a list of random groupings.
-      grouping_ids.shuffle.zip(ta_ids.cycle)
+      grouping_ids.shuffle.zip(ta_ids.cycle).reject { |pair| pair.include?(nil) }
     end
   end
 
@@ -124,8 +132,8 @@ class Grouping < ApplicationRecord
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
-                      .where(grouping_id: grouping_ids, user_id: ta_ids)
-                      .pluck(:grouping_id, :user_id)
+                      .where(grouping_id: grouping_ids, role_id: ta_ids)
+                      .pluck(:grouping_id, :role_id)
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
@@ -133,7 +141,7 @@ class Grouping < ApplicationRecord
     membership_hash = values.map do |value|
       {
         grouping_id: value[0],
-        user_id: value[1],
+        role_id: value[1],
         type: 'TaMembership'
       }
     end
@@ -187,7 +195,7 @@ class Grouping < ApplicationRecord
   end
 
   def get_all_students_in_group
-    student_user_names = student_memberships.includes(:user).collect {|m| m.user.user_name }
+    student_user_names = student_memberships.includes(role: :end_user).collect { |m| m.role.user_name }
     return I18n.t('groups.empty') if student_user_names.empty?
 	  student_user_names.join(', ')
   end
@@ -229,27 +237,27 @@ class Grouping < ApplicationRecord
 
   # returns whether the user is the inviter of this group or not.
   def is_inviter?(user)
-    membership_status(user) ==  StudentMembership::STATUSES[:inviter]
+    membership_status(user) == StudentMembership::STATUSES[:inviter]
   end
 
   # invites each user in 'members' by its user name, to this group
-  # If the method is invoked by an admin, checks on whether the students can
+  # If the method is invoked by an instructor, checks on whether the students can
   # be part of the group are skipped.
   def invite(members,
-             set_membership_status=StudentMembership::STATUSES[:pending],
-             invoked_by_admin=false)
+             set_membership_status = StudentMembership::STATUSES[:pending],
+             invoked_by_instructor = false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
     all_errors = []
     members.each do |m|
       m = m.strip
-      user = Student.where(hidden: false).find_by(user_name: m)
+      user = course.students.joins(:end_user).where(hidden: false).find_by('users.user_name': m)
       begin
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
         end
-        if invoked_by_admin || self.can_invite?(user)
+        if invoked_by_instructor || self.can_invite?(user)
           self.add_member(user, set_membership_status)
         end
       rescue StandardError => e
@@ -260,11 +268,11 @@ class Grouping < ApplicationRecord
   end
 
   # Add a new member to base
-  def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if user.has_accepted_grouping_for?(self.assessment_id) || user.hidden
+  def add_member(role, set_membership_status = StudentMembership::STATUSES[:accepted])
+    if role.has_accepted_grouping_for?(self.assessment_id) || role.hidden
       nil
     else
-      member = StudentMembership.new(user: user, membership_status:
+      member = StudentMembership.new(role: role, membership_status:
       set_membership_status, grouping: self)
       member.save
 
@@ -282,26 +290,26 @@ class Grouping < ApplicationRecord
   end
 
   # define whether user can be invited in this grouping
-  def can_invite?(user)
-    if self.inviter == user
+  def can_invite?(role)
+    if self.inviter == role
       raise I18n.t('groups.invite_member.errors.inviting_self')
     elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
-      raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
-    elsif self.assignment.section_groups_only && user.section != self.section
-      raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user_name)
-    elsif user.has_accepted_grouping_for?(self.assignment.id)
-      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user_name)
-    elsif self.pending?(user)
-      raise I18n.t('groups.invite_member.errors.already_pending', user_name: user.user_name)
+      raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: role.user_name)
+    elsif self.assignment.section_groups_only && role.section != self.section
+      raise I18n.t('groups.invite_member.errors.not_same_section', user_name: role.user_name)
+    elsif role.has_accepted_grouping_for?(self.assignment.id)
+      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: role.user_name)
+    elsif self.pending?(role)
+      raise I18n.t('groups.invite_member.errors.already_pending', user_name: role.user_name)
     end
     true
   end
 
   # Returns the status of this user, or nil if user is not a member
-  def membership_status(user)
-    member = student_memberships.where(user_id: user.id).first
+  def membership_status(role)
+    member = student_memberships.where(role_id: role.id).first
     member ? member.membership_status : nil  # return nil if user is not a member
   end
 
@@ -314,24 +322,24 @@ class Grouping < ApplicationRecord
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    admin_approved || (non_rejected_student_memberships.size >= assignment.group_min)
+    instructor_approved || (non_rejected_student_memberships.size >= assignment.group_min)
   end
 
   # Validates a group
   def validate_grouping
-    self.admin_approved = true
+    self.instructor_approved = true
     self.save
   end
 
-  # Strips admin_approved privledge
+  # Strips instructor_approved privledge
   def invalidate_grouping
-    self.admin_approved = false
+    self.instructor_approved = false
     self.save
   end
 
   def update_repo_permissions_after_save
     return unless assignment.read_attribute(:vcs_submit)
-    return unless saved_change_to_attribute? :admin_approved
+    return unless saved_change_to_attribute? :instructor_approved
     Repository.get_class.update_permissions
   end
 
@@ -359,7 +367,7 @@ class Grouping < ApplicationRecord
 
   # remove all deductions for this assignment for a particular member
   def remove_grace_period_deduction(membership)
-    deductions = membership.user.grace_period_deductions
+    deductions = membership.role.grace_period_deductions
     deductions.each do |deduction|
       if deduction.membership.grouping.assignment.id == assignment.id
         membership.grace_period_deductions.delete(deduction)
@@ -402,7 +410,7 @@ class Grouping < ApplicationRecord
 
   def delete_grouping
     Repository.get_class.update_permissions_after(only_on_request: true) do
-      student_memberships.includes(:user).each(&:destroy)
+      student_memberships.includes(:role).each(&:destroy)
     end
     self.destroy
   end
@@ -415,7 +423,7 @@ class Grouping < ApplicationRecord
   end
 
   def decline_invitation(student)
-    membership = self.pending_student_memberships.find_by(user_id: student.id)
+    membership = self.pending_student_memberships.find_by(role_id: student.id)
     raise I18n.t('groups.members.errors.not_found') if membership.nil?
     membership.update!(membership_status: StudentMembership::STATUSES[:rejected])
   end
@@ -537,7 +545,7 @@ class Grouping < ApplicationRecord
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)
     subquery = StudentMembership.all.to_sql
     assignment.groupings.includes(:non_rejected_student_memberships)
-              .where(admin_approved: false)
+              .where(instructor_approved: false)
               .where('groupings.id > ?', grouping_id || 0)
               .joins(:current_submission_used)
               .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
@@ -682,13 +690,13 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = filter_test_runs(filters: { 'users.type': %w[Admin Ta], 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'roles.type': %w[Instructor Ta], 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     Grouping.group_hash_list(plucked)
   end
 
   def test_runs_instructors_released(submission)
-    filtered = filter_test_runs(filters: { 'users.type': %w[Admin Ta], 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'roles.type': %w[Instructor Ta], 'test_runs.submission': submission })
     latest_test_group_results = filtered.pluck_to_hash('test_groups.id as tgid',
                                                        'test_group_results.id as tgrid',
                                                        'test_group_results.created_at as date')
@@ -708,7 +716,7 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_students
-    filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
+    filtered = filter_test_runs(filters: { 'test_runs.role': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
       if data['test_groups.display_output'] == 'instructors'
@@ -721,7 +729,7 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_students_simple
-    filter_test_runs(filters: { 'test_runs.user': self.accepted_students }, all_data: false)
+    filter_test_runs(filters: { 'test_runs.role': self.accepted_students }, all_data: false)
   end
 
   # Checks whether a student test using tokens is currently being enqueued for execution
@@ -770,5 +778,12 @@ class Grouping < ApplicationRecord
       inviter.present? &&
       inviter.section.present? &&
       assignment.section_due_dates.present?
+  end
+
+  def assignments_should_match
+    return if assessment_id.nil?
+    unless self.tags.pluck(:assessment_id).compact.all? { |aid| aid == self.assessment_id }
+      errors.add(:base, 'tags must belong to the same assignment as this grouping')
+    end
   end
 end

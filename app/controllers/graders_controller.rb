@@ -3,7 +3,7 @@ class GradersController < ApplicationController
   # The names of the associations of groupings required by the view, which
   # should be eagerly loaded.
   GROUPING_ASSOC = [:group, :students,
-                    ta_memberships: :user, inviter: :section]
+                    ta_memberships: :role, inviter: :section]
   # The names of the associations of criteria required by the view, which
   # should be eagerly loaded.
   CRITERION_ASSOC = [criterion_ta_associations: :ta]
@@ -79,7 +79,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     grader_ids = params[:graders]
     if grader_ids.blank?
-      grader_ids = Ta.where(user_name: params[:grader_user_names]).pluck(:id)
+      grader_ids = current_course.tas.joins(:end_user).where('users.user_name': params[:grader_user_names]).pluck(:id)
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request
@@ -157,8 +157,7 @@ class GradersController < ApplicationController
   end
 
   def grader_summary
-    @current_user = current_user
-    if @current_user.student? || @current_user.ta?
+    if current_role.student? || current_role.ta?
       redirect_to controller: 'assignments', action: 'index'
       return
     end
@@ -177,7 +176,7 @@ class GradersController < ApplicationController
   end
 
   def unassign_graders(grouping_ids, grader_ids)
-    grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, user_id: grader_ids).pluck(:id)
+    grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, role_id: grader_ids).pluck(:id)
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 

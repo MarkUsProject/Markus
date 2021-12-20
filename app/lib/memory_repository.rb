@@ -46,7 +46,7 @@ class MemoryRepository < Repository::AbstractRepository
   end
 
   # Creates memory repository at "virtual" location (they are identifiable by location)
-  def self.create(location)
+  def self.create(location, _course)
     MemoryRepository.new(location) # always overwrite a previous one, we don't care about collisions
     true
   end

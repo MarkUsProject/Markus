@@ -2,6 +2,7 @@ require 'faker'
 
 FactoryBot.define do
   factory :assignment do
+    course { Course.order(:id).first || association(:course) }
     sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
@@ -82,7 +83,7 @@ FactoryBot.define do
     after(:create) do |a|
       a.groupings.each do |grouping|
         ta = create(:ta)
-        create(:ta_membership, user: ta, grouping: grouping)
+        create(:ta_membership, role: ta, grouping: grouping)
       end
     end
   end
@@ -146,8 +147,8 @@ FactoryBot.define do
         students = 6.times.map { (create(:student)) }
         groupings = 3.times.map { create(:grouping, assignment: assign) }
         pr_groupings = 3.times.map { create(:grouping, assignment: assign.pr_assignment) }
-        3.times.each { |i| create(:accepted_student_membership, user: students[i], grouping: groupings[i]) }
-        3.times.each { |i| create(:accepted_student_membership, user: students[i+3], grouping: pr_groupings[i]) }
+        3.times.each { |i| create(:accepted_student_membership, role: students[i], grouping: groupings[i]) }
+        3.times.each { |i| create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i]) }
         submissions = 3.times.map { |i| create(:version_used_submission, grouping: groupings[i]) }
         3.times.each { |i| create(:result, submission: submissions[i], marking_state: Result::MARKING_STATES[:complete]) }
     end

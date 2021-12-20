@@ -11,16 +11,12 @@
   </p>
   <div class="button_enclosure">
     <%= link_to t('.button_text'),
-                view_marks_assignment_submission_result_url(assignment_id: @grouping.assignment.id,
-                                                            submission_id: @grouping.current_submission_used.id,
-                                                            id: @grouping.current_result.id),
+                view_marks_course_result_url(@grouping.assignment.course, @grouping.current_result),
                 class: 'redirectbutton' %>
   </div>
   <p class="alert_text dark-scheme">
     <%= t('.explicit_link',
-          link: view_marks_assignment_submission_result_url(assignment_id: @grouping.assignment.id,
-                                                            submission_id: @grouping.current_submission_used.id,
-                                                            id: @grouping.current_result.id)) %>
+          link: view_marks_course_result_url(@grouping.assignment.course, @grouping.current_result)) %>
   </p>
   <p class="alert_text dark-scheme">
     <%= t('.disclaimer') %>

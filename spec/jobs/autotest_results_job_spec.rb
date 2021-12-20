@@ -2,10 +2,7 @@ describe AutotestResultsJob do
   let(:assignment) { create :assignment }
   let(:grouping) { create(:grouping, assignment: assignment) }
   let(:test_runs) { create_list(:test_run, 3, grouping: grouping, status: :in_progress) }
-  before do
-    test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) }
-    allow(File).to receive(:read).and_return("123456789\n")
-  end
+
   context 'when running as a background job' do
     let(:job_args) { [assignment.id] }
     let(:job) { described_class.perform_later(*job_args) }
@@ -35,7 +32,16 @@ describe AutotestResultsJob do
     end
   end
   describe '#perform' do
-    before { Redis::Namespace.new(Rails.root.to_s).del('autotest_results') }
+    before do
+      Redis::Namespace.new(Rails.root.to_s).del('autotest_results')
+      allow_any_instance_of(AutotestSetting).to(
+        receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
+      )
+      course = create(:course)
+      course.autotest_setting = create(:autotest_setting)
+      course.save
+      test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) }
+    end
     subject { described_class.perform_now }
     context 'tests are set up for an assignment' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
@@ -45,7 +51,7 @@ describe AutotestResultsJob do
       context 'when getting the statuses of the tests' do
         it 'should set headers' do
           expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj|
-            expect(net_obj['Api-Key']).to eq '123456789'
+            expect(net_obj['Api-Key']).to eq assignment.course.autotest_setting.api_key
             expect(net_obj['Content-Type']).to eq 'application/json'
             dummy_return
           end
@@ -54,7 +60,7 @@ describe AutotestResultsJob do
         it 'should send an api request to the autotester' do
           expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj, uri|
             expect(net_obj.instance_of?(Net::HTTP::Get)).to be true
-            expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/tests/status"
+            expect(uri.to_s).to eq "#{assignment.course.autotest_setting.url}/settings/10/tests/status"
             expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2, 3)
             dummy_return
           end
@@ -78,7 +84,7 @@ describe AutotestResultsJob do
             it 'should set headers' do
               allow_any_instance_of(TestRun).to receive(:update_results!)
               expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj|
-                expect(net_obj['Api-Key']).to eq '123456789'
+                expect(net_obj['Api-Key']).to eq assignment.course.autotest_setting.api_key
                 expect(net_obj['Content-Type']).to eq 'application/json'
                 dummy_return
               end
@@ -88,7 +94,7 @@ describe AutotestResultsJob do
               allow_any_instance_of(TestRun).to receive(:update_results!)
               expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj, uri|
                 expect(net_obj.instance_of?(Net::HTTP::Get)).to be true
-                expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/test/2"
+                expect(uri.to_s).to eq "#{assignment.course.autotest_setting.url}/settings/10/test/2"
                 dummy_return
               end
               subject

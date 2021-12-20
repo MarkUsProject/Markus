@@ -1,8 +1,9 @@
 ---
 pt:
   main:
-    account_disabled: Essa conta foi desativada.
     create_marking_scheme: UPDATE ME
+    external_authentication: UPDATE ME %{name}
+    external_authentication_default_name: UPDATE ME
     external_authentication_not_supported: Autenticação externa não é suportada pela sua plataforma!
     frequency: UPDATE ME
     grade: UPDATE ME
@@ -12,14 +13,12 @@ pt:
     login_failed: Falha de conexão.
     password: Senha
     password_not_blank: Sua senha não deve ser vazia.
-    please_log_in: Por favor faça o login.
     role_switch:
-      admin_password: Senha do administrador
-      cannot_login_as_another_admin: Você não pode conectar como outro administrador.
       clear_role_switch_session: Cancelar troca de papel
       log_in_as: Fazer login como
       switch_role: Trocar de papel
     session_expired: Sua sessão expirou. Por favor, conecte.
+    sign_in_not_supported: UPDATE ME.
     timeout_imminent: A sessão está prestes a expirar.
     username_and_password_not_blank: Seu nome e senha não podem ser vazios.
     username_not_blank: Seu nome de usuário não pode ser vazio.

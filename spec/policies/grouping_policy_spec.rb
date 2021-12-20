@@ -1,23 +1,23 @@
 describe GroupingPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
   let(:record) { grouping }
   let(:grouping) { create :grouping }
-  let(:user) { create :admin }
+  let(:role) { create :instructor }
 
   describe_rule :member? do
     let(:grouping) { create :grouping_with_inviter }
-    failed 'user is an admin' do
-      let(:user) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
-    failed 'user is an ta' do
-      let(:user) { create :ta }
+    failed 'role is an ta' do
+      let(:role) { create :ta }
     end
-    context 'user is a student' do
-      failed 'user is not a member' do
-        let(:user) { create :student }
+    context 'role is a student' do
+      failed 'role is not a member' do
+        let(:role) { create :student }
       end
-      succeed 'user is a member' do
-        let(:user) { grouping.inviter }
+      succeed 'role is a member' do
+        let(:role) { grouping.inviter }
       end
     end
   end
@@ -88,33 +88,33 @@ describe GroupingPolicy do
   end
 
   describe_rule :disinvite_member? do
-    let(:user) { create :student }
-    let(:context) { { user: user, membership: membership } }
-    succeed 'user is inviter and the membership status is pending' do
-      let(:grouping) { create :grouping_with_inviter, inviter: user }
+    let(:role) { create :student }
+    let(:context) { { role: role, real_user: role.end_user, membership: membership } }
+    succeed 'role is inviter and the membership status is pending' do
+      let(:grouping) { create :grouping_with_inviter, inviter: role }
       let(:membership) { create :student_membership, grouping: grouping }
     end
-    failed 'user is not the inviter and the membership status is pending' do
+    failed 'role is not the inviter and the membership status is pending' do
       let(:membership) { create :student_membership, grouping: grouping }
     end
-    failed 'user is inviter and the membership status is not pending' do
-      let(:grouping) { create :grouping_with_inviter, inviter: user }
+    failed 'role is inviter and the membership status is not pending' do
+      let(:grouping) { create :grouping_with_inviter, inviter: role }
       let(:membership) { create :accepted_student_membership, grouping: grouping }
     end
   end
 
   describe_rule :delete_rejected? do
-    let(:user) { create :student }
-    let(:context) { { user: user, membership: membership } }
-    succeed 'user is inviter and the membership status is rejected' do
-      let(:grouping) { create :grouping_with_inviter, inviter: user }
+    let(:role) { create :student }
+    let(:context) { { role: role, real_user: role.end_user, membership: membership } }
+    succeed 'role is inviter and the membership status is rejected' do
+      let(:grouping) { create :grouping_with_inviter, inviter: role }
       let(:membership) { create :rejected_student_membership, grouping: grouping }
     end
-    failed 'user is not the inviter and the membership status is rejected' do
+    failed 'role is not the inviter and the membership status is rejected' do
       let(:membership) { create :rejected_student_membership, grouping: grouping }
     end
-    failed 'user is inviter and the membership status is not rejected' do
-      let(:grouping) { create :grouping_with_inviter, inviter: user }
+    failed 'role is inviter and the membership status is not rejected' do
+      let(:grouping) { create :grouping_with_inviter, inviter: role }
       let(:membership) { create :student_membership, grouping: grouping }
     end
   end
@@ -156,14 +156,14 @@ describe GroupingPolicy do
   end
 
   describe_rule :view_file_manager? do
-    failed 'user is an admin' do
-      let(:user) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
-    failed 'user is a ta' do
-      let(:user) { create :ta }
+    failed 'role is a ta' do
+      let(:role) { create :ta }
     end
-    context 'user is a student' do
-      let(:user) { create :student }
+    context 'role is a student' do
+      let(:role) { create :student }
       let(:grouping) { create :grouping, assignment: assignment }
       succeed 'when the assignment is not scanned or a peer review or timed' do
         let(:assignment) { create :assignment }
@@ -185,14 +185,14 @@ describe GroupingPolicy do
   end
 
   describe_rule :start_timed_assignment? do
-    failed 'user is an admin' do
-      let(:user) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
-    failed 'user is a ta' do
-      let(:user) { create :ta }
+    failed 'role is a ta' do
+      let(:role) { create :ta }
     end
-    context 'user is a student' do
-      let(:user) { create :student }
+    context 'role is a student' do
+      let(:role) { create :student }
       let(:past_collection_date) { false }
       let(:past_assessment_start_time) { true }
       before do
@@ -213,14 +213,14 @@ describe GroupingPolicy do
   end
 
   describe_rule :download_starter_file? do
-    failed 'user is an admin' do
-      let(:user) { create :admin }
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
     failed 'user is a ta' do
-      let(:user) { create :ta }
+      let(:role) { create :ta }
     end
-    context 'user is a student' do
-      let(:user) { create :student }
+    context 'role is a student' do
+      let(:role) { create :student }
       let(:grouping) { create :grouping, assignment: assignment }
       context 'when the assignment is not timed' do
         failed 'and is hidden' do

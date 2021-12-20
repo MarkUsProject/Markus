@@ -2,6 +2,7 @@ describe Extension do
   let(:grouping) { create :grouping }
   let(:extension) { create :extension, grouping: grouping }
   it { is_expected.to belong_to(:grouping) }
+  it { is_expected.to have_one(:course) }
   describe 'check validations' do
     it 'should not be valid with a negative time_delta' do
       extension = Extension.new(grouping_id: grouping, time_delta: -1.day)

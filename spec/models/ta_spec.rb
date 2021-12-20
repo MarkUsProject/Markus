@@ -1,5 +1,7 @@
 describe Ta do
+  subject { create :ta }
   it { is_expected.to have_one(:grader_permission).dependent(:destroy) }
+  it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
   describe '#percentage_grades_array' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:ta) { create(:ta) }
@@ -12,8 +14,8 @@ describe Ta do
 
     context 'when the TA is assigned some groupings' do
       let!(:ta_associations) do
-        [create(:ta_membership, user: ta, grouping: assignment.groupings.first),
-         create(:ta_membership, user: ta, grouping: assignment.groupings.second)]
+        [create(:ta_membership, role: ta, grouping: assignment.groupings.first),
+         create(:ta_membership, role: ta, grouping: assignment.groupings.second)]
       end
 
       context 'when TAs are not assigned criteria' do

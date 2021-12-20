@@ -29,6 +29,7 @@ export class RightPane extends React.Component {
             destroyMark={this.props.destroyMark}
             revertToAutomaticDeductions={this.props.revertToAutomaticDeductions}
             findDeductiveAnnotation={this.props.findDeductiveAnnotation}
+            course_id={this.props.course_id}
           />
         </TabPanel>
         <TabPanel>
@@ -49,6 +50,7 @@ export class RightPane extends React.Component {
             deleteGraceTokenDeduction={this.props.deleteGraceTokenDeduction}
             createExtraMark={this.props.createExtraMark}
             destroyExtraMark={this.props.destroyExtraMark}
+            course_id={this.props.course_id}
           />
         </TabPanel>
         {this.canShowSubmissionInfoPanel() && (
@@ -65,6 +67,7 @@ export class RightPane extends React.Component {
               assignment_id={this.props.assignment_id}
               grouping_id={this.props.grouping_id}
               members={this.props.members}
+              course_id={this.props.course_id}
             />
           </TabPanel>
         )}

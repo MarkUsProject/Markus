@@ -8,18 +8,18 @@ class SectionsController < ApplicationController
   # Displays sections, and allows to create them
   #TODO Displays metrics concerning users and sections
   def index
-    @sections = Section.all.includes(:students)
+    @sections = current_course.sections.includes(:students)
   end
 
   def new
-    @section = Section.new
+    @section = current_course.sections.new
   end
 
   # Creates a new section
   def create
-    @section = Section.new(section_params)
+    @section = current_course.sections.new(section_params)
     if @section.save
-      @sections = Section.all
+      @sections = current_course.sections
       flash_message(:success, t('.success', name: @section.name))
       if params[:section_modal]
         render 'close_modal_add_section'
@@ -38,12 +38,12 @@ class SectionsController < ApplicationController
 
   # edit a section
   def edit
-    @section = Section.find(params[:id])
+    @section = record
     @students = @section.students
   end
 
   def update
-    @section = Section.find(params[:id])
+    @section = record
     if @section.update(section_params)
       flash_message(:success, t('.success', name: @section.name))
       redirect_to action: 'index'
@@ -54,7 +54,7 @@ class SectionsController < ApplicationController
   end
 
   def destroy
-    @section = Section.find(params[:id])
+    @section = record
 
     if @section.has_students?
       flash_message(:error, t('.not_empty'))

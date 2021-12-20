@@ -5,6 +5,13 @@ describe Mark do
   it { is_expected.to allow_value(false).for(:override) }
   it { is_expected.to allow_value(true).for(:override) }
   it { is_expected.to_not allow_value(nil).for(:override) }
+  it { is_expected.to have_one(:course) }
+
+  it 'should not allow associations to belong to different assignments' do
+    mark = create :rubric_mark
+    mark.criterion = create(:rubric_criterion)
+    expect(subject).not_to be_valid
+  end
 
   describe 'when mark belongs to rubric criterion and the max mark is exceeded' do
     let(:rubric_mark) do
@@ -97,8 +104,7 @@ describe Mark do
     end
 
     it 'returns 0 when criterion type is non flexible' do
-      rubric_criterion = create(:rubric_criterion, assignment: assignment)
-      non_flex_mark = create(:rubric_mark, criterion: rubric_criterion)
+      non_flex_mark = create(:rubric_mark)
       deducted = non_flex_mark.calculate_deduction
       expect(deducted).to eq(0)
     end
@@ -163,7 +169,8 @@ describe Mark do
                              assignment: assignment)
       create(:mark,
              criterion_id: new_criterion.id,
-             result: result)
+             result: result,
+             assignment: assignment)
       new_annotation_text = create(:annotation_text_with_deduction,
                                    annotation_category: new_criterion.annotation_categories.first)
       create(:text_annotation,

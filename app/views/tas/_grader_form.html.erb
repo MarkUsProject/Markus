@@ -4,21 +4,13 @@
       <%= render partial: 'shared/navigation_warning',
                  formats: [:js],
                  handlers: [:erb] %>
-      <%= form_with model: @user, scope: :user, local: true do |f| %>
-        <div class='inline-labels'>
-          <%= f.label :user_name, User.human_attribute_name(:user_name) %>
-          <%= f.text_field :user_name %>
-
-          <%= f.label :last_name, User.human_attribute_name(:last_name) %>
-          <%= f.text_field :last_name %>
-
-          <%= f.label :first_name, User.human_attribute_name(:first_name) %>
-          <%= f.text_field :first_name %>
-
-          <%= f.label :email, User.human_attribute_name(:email) %>
-          <%= f.text_field :email %>
-        </div>
-
+      <%= form_with model: [@current_course, @role], scope: :role, local: true do |f| %>
+        <%= f.fields_for(@role.end_user || EndUser.new) do |u_f| %>
+          <div class='inline-labels'>
+            <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
+            <%= u_f.text_field :user_name %>
+          </div>
+        <% end %>
         <%= f.fields_for :grader_permission do |ff| %>
           <h3><%= GraderPermission.model_name.human.pluralize %></h3>
           <div>

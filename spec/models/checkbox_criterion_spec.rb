@@ -20,6 +20,7 @@ describe CheckboxCriterion do
     it { is_expected.not_to allow_value(0.0).for(:max_mark) }
     it { is_expected.not_to allow_value(-1.0).for(:max_mark) }
     it { is_expected.not_to allow_value(-100.0).for(:max_mark) }
+    it { is_expected.to have_one(:course) }
 
     context 'when a result is released' do
       before(:each) do

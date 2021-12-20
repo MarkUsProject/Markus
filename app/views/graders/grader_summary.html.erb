@@ -1,10 +1,10 @@
 <% content_for :title do %>
   <% if @assignment.is_peer_review? %>
     <%= link_to "#{@assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human}",
-                browse_assignment_submissions_path(@assignment.id) %>
+                browse_course_assignment_submissions_path(@assignment.course_id, @assignment.id) %>
   <% else %>
     <%= link_to "#{@assignment.short_identifier}: #{@assignment.description}",
-                browse_assignment_submissions_path(@assignment.id) %>
+                browse_course_assignment_submissions_path(@assignment.course_id, @assignment.id) %>
   <% end %>
 <% end %>
 

@@ -1,4 +1,4 @@
-<% due_date = @assignment.section_due_date(@current_user&.section) %>
+<% due_date = @assignment.section_due_date(@current_role&.section) %>
 <p>
   <% duration = @assignment.duration + (@grouping&.extension&.time_delta || 0)
      parts = AssignmentProperties.duration_parts(duration)
@@ -16,7 +16,7 @@
 </p>
 <p>
   <strong><%= I18n.t('assignments.timed.start_time_instructions') %></strong>
-  <%= I18n.l @assignment.section_start_time(@current_user&.section) %>
+  <%= I18n.l @assignment.section_start_time(@current_role&.section) %>
 <p>
   <strong><%= I18n.t('assignments.timed.end_time_instructions') %></strong>
   <%= I18n.l due_date %>

@@ -1,16 +1,9 @@
 describe MainController do
   let(:student) { create :student }
   let(:ta) { create :ta }
-  let(:admin) { create :admin }
-  let(:admin2) { create :admin }
+  let(:instructor) { create :instructor }
+  let(:instructor2) { create :instructor }
   context 'A non-authenticated user' do
-    before(:each) { get :index }
-    it 'should be redirected to the login page' do
-      expect(response).to redirect_to action: 'login', controller: 'main'
-    end
-    it 'should have no initial errors on the login page' do
-      expect(flash[:error]).to be_nil
-    end
     it 'should not be able to login with a blank username' do
       post :login, params: { user_login: '', user_password: 'a' }
       expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.username_not_blank'))
@@ -19,8 +12,33 @@ describe MainController do
       post :login, params: { user_login: 'a', user_password: '' }
       expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.password_not_blank'))
     end
+    describe 'login_remote_auth' do
+      before do
+        env_hash = { 'HTTP_X_FORWARDED_USER': http_x_forwarded_user }
+        request.headers.merge! env_hash
+        get :login_remote_auth
+      end
+      context 'remote user is set' do
+        let(:http_x_forwarded_user) { 'a' }
+        it 'should set the auth_type to remote' do
+          expect(session[:auth_type]).to eq :remote
+        end
+        it 'should redirect to the main page' do
+          expect(response).to redirect_to(main_path)
+        end
+      end
+      context 'remote user is not set' do
+        let(:http_x_forwarded_user) { nil }
+        it 'should set the auth_type to remote' do
+          expect(session[:auth_type]).to eq :remote
+        end
+        it 'should redirect to the remote login page' do
+          expect(response).to redirect_to(Settings.remote_auth_login_url)
+        end
+      end
+    end
   end
-  context 'An Admin' do
+  context 'An Instructor' do
     let :all_assignments do
       a2 = create(:assignment, due_date: 1.day.ago)
       a1 = create(:assignment, due_date: 2.days.ago)
@@ -28,181 +46,75 @@ describe MainController do
       [a1, a2, a3]
     end
 
-    shared_examples 'admin tests' do
+    shared_examples 'instructor tests' do
       it 'should be able to login' do
-        expect(response).to redirect_to action: 'index'
+        expect(response).to redirect_to controller: 'courses', action: 'index'
       end
       it 'should not display any errors' do
         expect(flash[:error]).to be_nil
       end
-      it 'should set the session uid to the correct user' do
-        expect(session[:uid]).to eq(admin.id)
+      it 'should set the session real_user_name to the correct user' do
+        expect(session[:real_user_name]).to eq(instructor.user_name)
       end
       it 'should start the session timeout counter' do
         expect(session[:timeout]).not_to be_nil
       end
       it 'should redirect the login route to the index route' do
         get :login
-        expect(response).to redirect_to action: 'index', controller: 'main'
-      end
-      it 'should order the assignments in ascending order by due date' do
-        get :index
-        expect(assigns(:assignments)).to eq(all_assignments)
-      end
-      context 'while switching roles' do
-        before :each do
-          allow(Settings).to receive(:remote_user_auth).and_return(false)
-        end
-        it 'should not switch roles when switching to themself' do
-          post :login_as, params: { effective_user_login: '', user_login: admin.user_name, admin_password: 'a' }
-          expect(session[:real_uid]).to be_nil
-        end
-        it 'should not switch roles when switching to another admin' do
-          post :login_as,
-               params: { effective_user_login: admin2.user_name, user_login: admin.user_name, admin_password: 'a' }
-          expect(session[:real_uid]).to be_nil
-        end
-        context 'and switching to a student with the correct credentials' do
-          before :each do
-            post :login_as,
-                 params: { effective_user_login: student.user_name, user_login: admin.user_name, admin_password: 'a' }
-          end
-          it 'should render the _role_switch_handler view' do
-            is_expected.to render_template('_role_switch_handler')
-          end
-          it 'should set the real uid to the admin id' do
-            expect(session[:real_uid]).to eq(admin.id)
-          end
-          it 'should set the uid to the student id' do
-            expect(session[:uid]).to eq(student.id)
-          end
-          context 'and then logging out' do
-            before(:each) { post :logout }
-            it 'should unset the real uid' do
-              expect(session[:real_uid]).to be_nil
-            end
-            it 'should unset the uid' do
-              expect(session[:uid]).to be_nil
-            end
-          end
-        end
-        context 'and switching to a ta with the correct credentials' do
-          before :each do
-            post :login_as,
-                 params: { effective_user_login: ta.user_name, user_login: admin.user_name, admin_password: 'a' }
-          end
-          it 'should set the real uid to the admin id' do
-            expect(session[:real_uid]).to eq(admin.id)
-          end
-          it 'should set the uid to the ta id' do
-            expect(session[:uid]).to eq(ta.id)
-          end
-          context 'and then logging out' do
-            before(:each) { post :logout }
-            it 'should unset the real uid' do
-              expect(session[:real_uid]).to be_nil
-            end
-            it 'should unset the uid' do
-              expect(session[:uid]).to be_nil
-            end
-          end
-        end
+        expect(response).to redirect_to action: 'index', controller: 'courses'
       end
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow(Settings).to receive(:remote_user_auth).and_return(false)
-        sign_in admin
+        sign_in instructor
       end
-      include_examples 'admin tests'
-      it 'should not switch roles when providing an empty password' do
-        post :login_as,
-             params: { effective_user_login: student.user_name, user_login: admin.user_name, admin_password: '' }
-        expect(session[:real_uid]).to be_nil
-      end
+      include_examples 'instructor tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow(Settings).to receive(:remote_user_auth).and_return(true)
-        env_hash = { 'HTTP_X_FORWARDED_USER': admin.user_name }
+        env_hash = { 'HTTP_X_FORWARDED_USER': instructor.user_name }
         request.headers.merge! env_hash
-        sign_in admin
+        sign_in instructor
       end
-      include_examples 'admin tests'
-      it 'should switch roles when providing an empty password' do
-        post :login_as,
-             params: { effective_user_login: student.user_name, user_login: admin.user_name, admin_password: '' }
-        expect(session[:real_uid]).to be(admin.id)
-      end
+      include_examples 'instructor tests'
     end
     context 'after logging in with a bad username' do
       it 'should not be able to login with an incorrect username' do
-        post :login, params: { user_login: admin.user_name+'BAD', user_password: 'a' }
+        post :login, params: { user_login: instructor.user_name + 'BAD', user_password: 'a' }
         expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.login_failed'))
       end
     end
     context 'after logging out' do
       before(:each) do
-        post :login, params: { user_login: admin.user_name, user_password: 'a' }
+        post :login, params: { user_login: instructor.user_name, user_password: 'a' }
         get :logout
       end
-      it 'should unset the session uid' do
-        expect(session[:uid]).to be_nil
+      it 'should unset the session real_user_name' do
+        expect(session[:real_user_name]).to be_nil
       end
       it 'should unset the timeout counter' do
         expect(session[:timeout]).to be_nil
       end
       it 'should redirect all routes to the login page' do
-        get :index
+        get :about
         expect(response).to redirect_to action: 'login', controller: 'main'
       end
     end
   end
   context 'A student' do
     shared_examples 'student tests' do
-      it 'should redirect to the assignments controller' do
-        get :index
-        expect(response).to redirect_to controller: 'assignments', action: 'index'
-      end
-      context 'while switching roles' do
-        context 'and trying to log in as an admin' do
-          before :each do
-            post :login_as,
-                 params: { effective_user_login: student.user_name, user_login: admin.user_name, admin_password: 'a' }
-          end
-          it { is_expected.to respond_with 403 }
-          it 'should not change the uid' do
-            expect(session[:uid]).to eq(student.id)
-          end
-          it 'should not set the real_uid' do
-            expect(session[:real_uid]).to be_nil
-          end
-        end
-        context 'and trying to log in as a TA' do
-          before :each do
-            post :login_as,
-                 params: { effective_user_login: student.user_name, user_login: ta.user_name, admin_password: 'a' }
-          end
-          it { is_expected.to respond_with 403 }
-          it 'should not change the uid' do
-            expect(session[:uid]).to eq(student.id)
-          end
-          it 'should not set the real_uid' do
-            expect(session[:real_uid]).to be_nil
-          end
-        end
+      it 'should redirect to the courses controller' do
+        expect(response).to redirect_to controller: 'courses', action: 'index'
       end
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow(Settings).to receive(:remote_user_auth).and_return(false)
         sign_in student
       end
       include_examples 'student tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow(Settings).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': student.user_name }
         request.headers.merge! env_hash
         sign_in student
@@ -212,49 +124,18 @@ describe MainController do
   end
   context 'A TA' do
     shared_examples 'ta tests' do
-      it 'should redirect to the assignments controller' do
-        get :index
-        expect(response).to redirect_to controller: 'assignments', action: 'index'
-      end
-      context 'while switching roles' do
-        context 'and trying to log in as an admin' do
-          before :each do
-            post :login_as,
-                 params: { effective_user_login: ta.user_name, user_login: admin.user_name, admin_password: 'a' }
-          end
-          it { is_expected.to respond_with 403 }
-          it 'should not change the uid' do
-            expect(session[:uid]).to eq(ta.id)
-          end
-          it 'should not set the real_uid' do
-            expect(session[:real_uid]).to be_nil
-          end
-        end
-        context 'and trying to log in as a student' do
-          before :each do
-            post :login_as,
-                 params: { effective_user_login: ta.user_name, user_login: student.user_name, admin_password: 'a' }
-          end
-          it { is_expected.to respond_with 403 }
-          it 'should not change the uid' do
-            expect(session[:uid]).to eq(ta.id)
-          end
-          it 'should not set the real_uid' do
-            expect(session[:real_uid]).to be_nil
-          end
-        end
+      it 'should redirect to the courses controller' do
+        expect(response).to redirect_to controller: 'courses', action: 'index'
       end
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow(Settings).to receive(:remote_user_auth).and_return(false)
         sign_in ta
       end
       include_examples 'ta tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow(Settings).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': ta.user_name }
         request.headers.merge! env_hash
         sign_in ta

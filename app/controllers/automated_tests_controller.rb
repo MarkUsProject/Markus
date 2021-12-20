@@ -37,15 +37,15 @@ class AutomatedTestsController < ApplicationController
   end
 
   def student_interface
-    @assignment = Assignment.find(params[:id])
-    @student = current_user
+    @assignment = Assignment.find(params[:assignment_id])
+    @student = current_role
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
       @grouping.refresh_test_tokens
       @authorized = flash_allowance(:notice,
                                     allowance_to(:run_tests?,
-                                                 current_user,
+                                                 current_role,
                                                  context: { assignment: @assignment, grouping: @grouping })).value
     end
 
@@ -53,16 +53,16 @@ class AutomatedTestsController < ApplicationController
   end
 
   def execute_test_run
-    assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(assignment.id)
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = current_role.accepted_grouping_for(assignment.id)
     grouping.refresh_test_tokens
     allowed = flash_allowance(:error, allowance_to(:run_tests?,
-                                                   current_user,
+                                                   current_role,
                                                    context: { assignment: assignment, grouping: grouping })).value
     if allowed
       grouping.decrease_test_tokens
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                  current_user.id,
+                                                  current_role.id,
                                                   assignment.id,
                                                   [grouping.group_id],
                                                   collected: false)
@@ -74,7 +74,7 @@ class AutomatedTestsController < ApplicationController
   end
 
   def get_test_runs_students
-    @grouping = current_user.accepted_grouping_for(params[:assignment_id])
+    @grouping = current_role.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
     test_runs.each do |test_run|
       test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
@@ -84,7 +84,6 @@ class AutomatedTestsController < ApplicationController
 
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
-    testers_schema_path = File.join(Settings.autotest.client_dir, 'testers.json')
     files_dir = Pathname.new assignment.autotest_files_dir
     file_keys = []
     files_data = assignment.autotest_files.map do |file|
@@ -97,18 +96,13 @@ class AutomatedTestsController < ApplicationController
           time = I18n.l(File.mtime(files_dir.join(file)).in_time_zone(current_user.time_zone))
         end
         { key: file, size: 1, submitted_date: time,
-          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+          url: download_file_course_assignment_automated_tests_url(assignment.course, assignment, file_name: file) }
       end
     end
-    if File.exist? testers_schema_path
-      schema_data = JSON.parse(File.open(testers_schema_path, &:read))
-      fill_in_schema_data!(schema_data, file_keys, assignment)
-    else
-      flash_now(:notice, I18n.t('automated_tests.loading_specs'))
-      @current_job = AutotestTestersJob.perform_later
-      session[:job_id] = @current_job.job_id
-      schema_data = {}
-    end
+
+    schema_data = JSON.parse(assignment.course.autotest_setting.schema)
+    fill_in_schema_data!(schema_data, file_keys, assignment)
+
     test_specs_path = assignment.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
@@ -134,7 +128,7 @@ class AutomatedTestsController < ApplicationController
   ##
   def download_files
     assignment = Assignment.find(params[:assignment_id])
-    zip_path = assignment.zip_automated_test_files(current_user)
+    zip_path = assignment.zip_automated_test_files(current_role)
     send_file zip_path, filename: File.basename(zip_path)
   end
 
@@ -151,10 +145,10 @@ class AutomatedTestsController < ApplicationController
         folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
         FileUtils.mkdir_p(folder_path)
       else
-        if f.size > Settings.max_file_size
+        if f.size > assignment.course.max_file_size_settings
           flash_now(:error, t('student.submission.file_too_large',
                               file_name: f.original_filename,
-                              max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
+                              max_size: (assignment.course.max_file_size_settings / 1_000_000.00).round(2)))
           next
         elsif f.size == 0
           flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))

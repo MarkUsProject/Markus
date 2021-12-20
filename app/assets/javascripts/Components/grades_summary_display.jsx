@@ -47,7 +47,7 @@ class GradesSummaryDisplay extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.populate_course_summaries_path(),
+      url: Routes.populate_course_course_summaries_path(this.props.course_id),
       dataType: "json",
     }).then(res =>
       this.setState({

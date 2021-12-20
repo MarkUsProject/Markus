@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :student_membership, class: StudentMembership, parent: :membership do
-    association :user, factory: :student
+    association :role, factory: :student
     association :grouping
     membership_status {StudentMembership::STATUSES[:pending]}
 

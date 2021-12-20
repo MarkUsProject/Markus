@@ -1,37 +1,37 @@
 describe NotePolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :manage? do
-    succeed 'user is admin' do
-      let(:user) { create :admin }
+    succeed 'role is instructor' do
+      let(:role) { create :instructor }
     end
-    succeed 'user is ta' do
-      let(:user) { create :ta }
+    succeed 'role is ta' do
+      let(:role) { create :ta }
     end
-    failed 'user is student' do
-      let(:user) { create :student }
+    failed 'role is student' do
+      let(:role) { create :student }
     end
   end
 
   describe_rule :modify? do
-    succeed 'user is admin' do
-      let(:user) { create :admin }
+    succeed 'role is instructor' do
+      let(:role) { create :instructor }
     end
-    context 'user is ta' do
-      let(:user) { create :ta }
-      succeed 'user is the note creator' do
-        let(:record) { create :note, user: user }
+    context 'role is ta' do
+      let(:role) { create :ta }
+      succeed 'role is the note creator' do
+        let(:record) { create :note, role: role }
       end
-      failed 'user is not the note creator' do
+      failed 'role is not the note creator' do
         let(:record) { create :note }
       end
     end
-    context 'user is student' do
-      let(:user) { create :student }
-      succeed 'user is the note creator' do
-        let(:record) { create :note, user: user }
+    context 'role is student' do
+      let(:role) { create :student }
+      succeed 'role is the note creator' do
+        let(:record) { create :note, role: role }
       end
-      failed 'user is not the note creator' do
+      failed 'role is not the note creator' do
         let(:record) { create :note }
       end
     end

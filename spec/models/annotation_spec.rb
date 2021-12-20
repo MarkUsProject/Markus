@@ -3,6 +3,7 @@ describe Annotation do
     it { is_expected.to belong_to(:submission_file) }
     it { is_expected.to belong_to(:annotation_text) }
     it { is_expected.to belong_to(:result) }
+    it { is_expected.to have_one(:course) }
   end
 
   context 'requires items to be set' do

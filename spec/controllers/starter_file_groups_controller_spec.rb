@@ -1,24 +1,26 @@
 describe StarterFileGroupsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   shared_examples 'student and ta not permitted' do
     before { subject }
     context 'a grader' do
-      let(:user) { create :ta }
+      let(:role) { create :ta }
       it 'should not be permitted' do
         expect(response.status).to eq 403
       end
     end
     context 'a student' do
-      let(:user) { create :student }
+      let(:role) { create :student }
       it 'should not be permitted' do
         expect(response.status).to eq 403
       end
     end
   end
 
-  let(:user) { create :admin }
+  let(:role) { create :instructor }
   let(:assignment) { create :assignment }
+  let(:course) { assignment.course }
   describe '#create' do
-    subject { post_as user, :create, params: { name: 'b', assignment_id: assignment.id } }
+    subject { post_as role, :create, params: { name: 'b', assignment_id: assignment.id, course_id: course.id } }
     it_behaves_like 'student and ta not permitted'
     before { subject }
     it 'should create a new starter file group' do
@@ -30,7 +32,7 @@ describe StarterFileGroupsController do
   end
   describe '#destroy' do
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
-    subject { delete_as user, :destroy, params: { id: starter_file_group.id, assignment_id: assignment.id } }
+    subject { delete_as role, :destroy, params: { id: starter_file_group.id, course_id: course.id } }
     it_behaves_like 'student and ta not permitted'
 
     it 'should delete the starter file group' do
@@ -42,9 +44,9 @@ describe StarterFileGroupsController do
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
     let(:filename) { 'q2.txt' }
     subject do
-      get_as user, :download_file, params: { file_name: filename,
+      get_as role, :download_file, params: { file_name: filename,
                                              id: starter_file_group.id,
-                                             assignment_id: assignment.id }
+                                             course_id: course.id }
     end
     it_behaves_like 'student and ta not permitted'
     before { subject }
@@ -67,7 +69,7 @@ describe StarterFileGroupsController do
     end
   end
   describe '#update' do
-    subject { put_as user, :update, params: { name: 'b', assignment_id: assignment.id, id: starter_file_group.id } }
+    subject { put_as role, :update, params: { name: 'b', course_id: course.id, id: starter_file_group.id } }
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment, name: 'a' }
     it_behaves_like 'student and ta not permitted'
     it 'can update the name' do
@@ -76,7 +78,7 @@ describe StarterFileGroupsController do
     end
   end
   describe '#download_files' do
-    subject { get_as user, :download_files, params: { assignment_id: assignment.id, id: starter_file_group.id } }
+    subject { get_as role, :download_files, params: { course_id: course.id, id: starter_file_group.id } }
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment, structure: {} }
     it_behaves_like 'student and ta not permitted'
     context 'when the starter file exists' do
@@ -110,7 +112,7 @@ describe StarterFileGroupsController do
     let(:zipfile) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
     subject do
-      put_as user, :update_files, params: { assignment_id: assignment.id,
+      put_as role, :update_files, params: { course_id: course.id,
                                             id: starter_file_group.id,
                                             unzip: unzip,
                                             new_folders: new_folders,

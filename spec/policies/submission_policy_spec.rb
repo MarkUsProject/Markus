@@ -1,32 +1,32 @@
 describe SubmissionPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       succeed 'that can manage submissions' do
-        let(:user) { create :ta, manage_submissions: true }
+        let(:role) { create :ta, manage_submissions: true }
       end
       failed 'that cannot manage submissions' do
-        let(:user) { create :ta, manage_submissions: false }
+        let(:role) { create :ta, manage_submissions: false }
       end
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
   describe_rule :file_manager? do
-    failed 'user is an admin' do
-      let(:user) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    failed 'user is a ta' do
-      let(:user) { create(:ta) }
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
     end
-    succeed 'user is a student' do
-      let(:user) { create(:student) }
+    succeed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 end

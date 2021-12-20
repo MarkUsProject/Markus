@@ -26,7 +26,7 @@ namespace :markus do
       exit(1)
     end
     puts "Creating Instructor #{user_name} (#{first_name} #{last_name})"
-    a = Admin.new({user_name: user_name, first_name: first_name, last_name: last_name})
+    a = Instructor.new(user_name: user_name, first_name: first_name, last_name: last_name)
     if !a.save
       $stderr.puts "Error saving record:"
       a.errors.each do |error_message|

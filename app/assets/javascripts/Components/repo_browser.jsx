@@ -18,7 +18,8 @@ class RepoBrowser extends React.Component {
   // Update the list of revisions and set the currently-viewed revision to the most recent one.
   fetchRevisions = () => {
     fetch(
-      Routes.revisions_assignment_submissions_path({
+      Routes.revisions_course_assignment_submissions_path({
+        course_id: this.props.course_id,
         assignment_id: this.props.assignment_id,
         grouping_id: this.props.grouping_id,
       }),
@@ -103,6 +104,7 @@ class RepoBrowser extends React.Component {
           {this.props.collection_date}
         </p>
         <SubmissionFileManager
+          course_id={this.props.course_id}
           assignment_id={this.props.assignment_id}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
@@ -112,6 +114,7 @@ class RepoBrowser extends React.Component {
           readOnly={this.isReadOnly()}
         />
         <ManualCollectionForm
+          course_id={this.props.course_id}
           assignment_id={this.props.assignment_id}
           late_penalty={this.props.late_penalty}
           grouping_id={this.props.grouping_id}
@@ -128,9 +131,9 @@ class ManualCollectionForm extends React.Component {
   };
 
   render() {
-    const action = Routes.manually_collect_and_begin_grading_assignment_submission_path(
-      this.props.assignment_id,
-      this.props.grouping_id
+    const action = Routes.manually_collect_and_begin_grading_course_assignment_submissions_path(
+      this.props.course_id,
+      this.props.assignment_id
     );
 
     return (
@@ -144,6 +147,7 @@ class ManualCollectionForm extends React.Component {
             name="current_revision_identifier"
             value={this.props.revision_identifier}
           />
+          <input type="hidden" name="grouping_id" value={this.props.grouping_id} />
           <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
           <p className="inline-labels">
             <input

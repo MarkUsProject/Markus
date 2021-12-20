@@ -5,6 +5,7 @@ describe GradeEntryForm do
   it { is_expected.to have_many(:grade_entry_students) }
   it { is_expected.to have_many(:grades) }
   it { is_expected.to validate_presence_of(:short_identifier) }
+  it { is_expected.to belong_to(:course) }
 
   # Dates in the past should also be allowed
   it { is_expected.to allow_value(1.day.ago).for(:due_date) }
@@ -15,7 +16,7 @@ describe GradeEntryForm do
 
   describe 'uniqueness validation' do
     subject { create :grade_entry_form }
-    it { is_expected.to validate_uniqueness_of(:short_identifier) }
+    it { is_expected.to validate_uniqueness_of(:short_identifier).scoped_to(:course_id) }
   end
 
   describe '#max_mark' do
@@ -42,7 +43,7 @@ describe GradeEntryForm do
 
     it 'verify the correct value is returned when the student has grades for some of the questions' do
       student = create(:student)
-      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
       grade_entry_student_with_some_grades.save
@@ -51,7 +52,7 @@ describe GradeEntryForm do
 
     it 'when the student has grades for all of the questions' do
       student = create(:student)
-      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[2], grade: 60.5)
@@ -61,13 +62,13 @@ describe GradeEntryForm do
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
       student1 = create(:student)
-      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
+      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(role: student1)
       expect(grade_entry_student_with_no_grades.total_grade).to be_nil
     end
 
     it 'verify the correct value is returned when the student has zero for all of the questions' do
       student1 = create(:student)
-      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(user: student1)
+      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(role: student1)
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
       end
@@ -85,7 +86,7 @@ describe GradeEntryForm do
 
     it 'verify the correct percentage is returned when the student has grades for some of the questions' do
       student = create(:student)
-      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
       grade_entry_student_with_some_grades.save
@@ -94,7 +95,7 @@ describe GradeEntryForm do
 
     it 'verify the correct percentage is returned when the student has grades for all of the questions' do
       student = create(:student)
-      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[2], grade: 8)
@@ -104,14 +105,14 @@ describe GradeEntryForm do
 
     it 'verify the correct percentage is returned when the student has grades for none of the questions' do
       student1 = create(:student)
-      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
+      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(role: student1)
       grade_entry_student_with_no_grades.save
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_no_grades)).to eq ''
     end
 
     it 'verify the correct percentage is returned when the student has zero for all of the questions' do
       student1 = create(:student)
-      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(user: student1)
+      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(role: student1)
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
       end
@@ -129,7 +130,7 @@ describe GradeEntryForm do
 
     it 'verify the correct value is returned when the student has grades for some of the questions' do
       student = create(:student)
-      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
       expect(grade_entry_student_with_some_grades.all_blank_grades?).to be false
@@ -137,7 +138,7 @@ describe GradeEntryForm do
 
     it 'verify the correct value is returned when the student has grades for all of the questions' do
       student = create(:student)
-      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[2], grade: 8)
@@ -146,7 +147,7 @@ describe GradeEntryForm do
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
       student = create(:student)
-      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
+      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(role: student)
       expect(grade_entry_student_with_no_grades.all_blank_grades?).to be true
     end
   end
@@ -197,7 +198,7 @@ describe GradeEntryForm do
 
       describe 'when some students are inactive' do
         it 'calculates the correct average (excluding all inactive students)' do
-          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.user.update!(hidden: true) }
+          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.role.update!(hidden: true) }
           average_total_grade = ((3 + 5 + 9) / 3.0 * 10)
           expect(form.results_average).to eq((average_total_grade * 100 / form.max_mark).round(2))
         end
@@ -255,7 +256,7 @@ describe GradeEntryForm do
 
       describe 'when some students are inactive' do
         it 'calculates the correct median (excluding all inactive students)' do
-          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.user.update!(hidden: true) }
+          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.role.update!(hidden: true) }
           median_total_grade = 5 * 10
           expect(form.results_median).to eq(median_total_grade * 100 / form.max_mark)
         end
@@ -285,17 +286,10 @@ describe GradeEntryForm do
   end
 
   def make_grade_entry_form_with_multiple_grade_entry_items
-    grade_entry_form = GradeEntryForm.create(short_identifier: 'T1',
-                                             description: 'Test 1',
-                                             message: 'Test 1',
-                                             due_date: 1.day.ago,
-                                             is_hidden: false)
+    grade_entry_form = create :grade_entry_form
     grade_entry_items = []
     (1..3).each do |i|
-      grade_entry_items << GradeEntryItem.create(grade_entry_form: @grade_entry_form,
-                                                 out_of: 10,
-                                                 name: 'Q' + i.to_s,
-                                                 position: i)
+      grade_entry_items << create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, position: i)
     end
     grade_entry_form.grade_entry_items = grade_entry_items
     return grade_entry_form

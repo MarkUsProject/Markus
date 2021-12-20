@@ -27,7 +27,7 @@ class SubversionRepository < Repository::AbstractRepository
 
   # Static method: Creates a new Subversion repository at
   # location 'connect_string'
-  def self.create(connect_string)
+  def self.create(connect_string, _course)
     if SubversionRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end

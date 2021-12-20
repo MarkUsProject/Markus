@@ -12,6 +12,8 @@ class Result < ApplicationRecord
   has_many :annotations, dependent: :destroy
   has_many :peer_reviews, dependent: :destroy
 
+  has_one :course, through: :submission
+
   after_create :create_marks
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, in: MARKING_STATES.values
@@ -22,11 +24,6 @@ class Result < ApplicationRecord
 
   before_update :check_for_released
   before_save :check_for_nil_marks
-
-  scope :submitted_remarks_and_all_non_remarks, lambda {
-    results = Result.arel_table
-    where(results[:remark_request_submitted_at].eq(nil))
-  }
 
   # Update the total mark attribute
   def update_total_mark

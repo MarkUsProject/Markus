@@ -1,39 +1,39 @@
 describe FeedbackFilePolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
   let(:grouping) { create :grouping_with_inviter }
-  let(:test_run) { create :test_run, grouping: grouping, user: grouping.inviter }
+  let(:test_run) { create :test_run, grouping: grouping, role: grouping.inviter }
   let(:test_group_result) { create :test_group_result, test_run: test_run }
   let(:record) { create :feedback_file_with_test_run, test_group_result: test_group_result }
 
   describe_rule :show? do
-    succeed 'user is an admin' do
-      let(:user) { create :admin }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
     end
 
-    context 'user is a ta' do
+    context 'role is a ta' do
       let(:ta_membership) { create :ta_membership, grouping: record.grouping }
 
-      succeed 'when the user is assigned the grouping' do
-        let(:user) { ta_membership.user }
+      succeed 'when the role is assigned the grouping' do
+        let(:role) { ta_membership.role }
       end
 
-      failed 'when the user is not assigned the grouping' do
-        let(:user) { create :ta }
+      failed 'when the role is not assigned the grouping' do
+        let(:role) { create :ta }
       end
     end
 
-    context 'user is a student' do
+    context 'role is a student' do
       succeed 'who owns the test run' do
-        let(:user) { record.test_group_result.test_run.user }
+        let(:role) { record.test_group_result.test_run.role }
       end
 
       failed 'who does not own the test run' do
-        let(:user) { create :student }
+        let(:role) { create :student }
       end
 
       context 'when the feedback file is associated with a submission' do
-        let(:user) { create :student }
-        let(:grouping) { create :grouping_with_inviter, inviter: user }
+        let(:role) { create :student }
+        let(:grouping) { create :grouping_with_inviter, inviter: role }
         let(:submission) { create :version_used_submission, grouping: grouping }
         let(:record) { create :feedback_file, submission: submission }
 
@@ -44,7 +44,7 @@ describe FeedbackFilePolicy do
         failed 'and result is not released'
 
         failed 'and user is not a member of the grouping' do
-          let(:user) { create :student }
+          let(:role) { create :student }
         end
       end
     end

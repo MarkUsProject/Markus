@@ -1,52 +1,52 @@
 describe GradeEntryFormPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.end_user } }
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:user) { create :ta, manage_assessments: true }
+        let(:role) { create :ta, manage_assessments: true }
       end
       failed 'that cannot manage assessments' do
-        let(:user) { create :ta, manage_assessments: false }
+        let(:role) { create :ta, manage_assessments: false }
       end
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
   describe_rule :grade? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'that can manage assessments' do
-      let(:user) { create :ta }
+      let(:role) { create :ta }
     end
     failed 'user is a student' do
-      let(:user) { create(:student) }
+      let(:role) { create(:student) }
     end
   end
   describe_rule :student_interface? do
-    failed 'user is an admin' do
-      let(:user) { create(:admin) }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     failed 'that can manage assessments' do
-      let(:user) { create :ta }
+      let(:role) { create :ta }
     end
     succeed 'user is a student' do
-      let(:user) { create(:student) }
+      let(:role) { create(:student) }
     end
   end
   describe_rule :switch? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
     end
     succeed 'that can manage assessments' do
-      let(:user) { create :ta }
+      let(:role) { create :ta }
     end
     succeed 'user is a student' do
-      let(:user) { create(:student) }
+      let(:role) { create(:student) }
     end
   end
 end

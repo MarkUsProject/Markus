@@ -1,11 +1,15 @@
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ApplicationRecord
-  belongs_to :user
-  validates_associated :user, on: :create
+  belongs_to :role
+  validates_associated :role, on: :create
 
   belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
+
+  validates_uniqueness_of :role_id, scope: :assessment_id
+
+  has_one :course, through: :grade_entry_form
 
   has_many :grades, dependent: :destroy
 
@@ -18,6 +22,8 @@ class GradeEntryStudent < ApplicationRecord
 
   before_save :refresh_total_grade
 
+  validate :courses_should_match
+
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
   # entry form IDs and must return a list of (student ID, grade entry form IDs)
@@ -27,13 +33,13 @@ class GradeEntryStudent < ApplicationRecord
     student_ids = Student.where(id: Array(student_ids)).pluck(:id)
     form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
 
-    existing_values = GradeEntryStudent.where(user_id: student_ids, assessment_id: form_ids)
-                                       .pluck(:user_id, :assessment_id)
+    existing_values = GradeEntryStudent.where(role_id: student_ids, assessment_id: form_ids)
+                                       .pluck(:role_id, :assessment_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values
 
-    data = values.map { |sid, aid| { user_id: sid, assessment_id: aid } }
+    data = values.map { |sid, aid| { role_id: sid, assessment_id: aid } }
     insert_all data unless data.blank?
   end
 
@@ -82,13 +88,13 @@ class GradeEntryStudent < ApplicationRecord
     end
 
     # Create non-existing grade entry student TA associations.
-    ges_ids = form.grade_entry_students.where(user_id: student_ids).pluck(:id)
+    ges_ids = form.grade_entry_students.where(role_id: student_ids).pluck(:id)
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
   end
 
   def self.unassign_tas(student_ids, grader_ids, form)
     GradeEntryStudentTa.joins(:grade_entry_student)
-                       .where('grade_entry_students.user_id': student_ids,
+                       .where('grade_entry_students.role_id': student_ids,
                               'grade_entry_students_tas.ta_id': grader_ids,
                               'grade_entry_students.assessment_id': form.id)
                        .delete_all
@@ -104,13 +110,13 @@ class GradeEntryStudent < ApplicationRecord
     user_name = working_row.shift
 
     # Attempt to find the student
-    student = Student.where(user_name: user_name).first
+    student = grade_entry_form.course.students.joins(:user).where('users.user_name': user_name).first
     if student.nil?
       raise CsvInvalidLineError
     end
 
     # Create the GradeEntryStudent if it doesn't already exist
-    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
+    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role_id: student.id)
 
     # Create or update the student's grade for each question
     names.each do |grade_entry_name|
@@ -174,10 +180,11 @@ class GradeEntryStudent < ApplicationRecord
   # as an upsert/import operation since refresh_total_grade will not
   # be run as an after_save callback in that case.
   def self.refresh_total_grades(grade_entry_student_ids)
-    grades = Grade.where(grade_entry_student_id: grade_entry_student_ids)
-                  .pluck(:grade_entry_student_id, :grade)
+    grades = Grade.joins(:grade_entry_student)
+                  .where(grade_entry_student_id: grade_entry_student_ids)
+                  .pluck(:grade_entry_student_id, :role_id, :grade)
                   .group_by(&:first)
-                  .map { |k, v| { id: k, total_grade: v.map(&:last) } }
+                  .map { |k, v| { id: k, role_id: v.first.second, total_grade: v.map(&:last) } }
     total_grades = grades.map do |h|
       if h[:total_grade].all?(&:nil?)
         h[:total_grade] = nil

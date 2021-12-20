@@ -54,12 +54,12 @@ class ExtensionModal extends React.Component {
       if (!!this.props.extension_id) {
         $.ajax({
           type: "PUT",
-          url: Routes.extension_path(this.props.extension_id),
+          url: Routes.course_extension_path(this.props.course_id, this.props.extension_id),
           data: data,
         }).then(() => this.props.onRequestClose(true));
       } else {
         $.post({
-          url: Routes.extensions_path(),
+          url: Routes.course_extensions_path(this.props.course_id),
           data: data,
         }).then(() => this.props.onRequestClose(true));
       }
@@ -72,7 +72,7 @@ class ExtensionModal extends React.Component {
     event.preventDefault();
     $.ajax({
       type: "DELETE",
-      url: Routes.extension_path(this.props.extension_id),
+      url: Routes.course_extension_path(this.props.course_id, this.props.extension_id),
     }).then(() => this.props.onRequestClose(true));
   };
 

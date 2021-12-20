@@ -1,11 +1,11 @@
 describe StudentPolicy do
-  let(:user) { create :student }
-  let(:context) { { user: user } }
+  let(:role) { create :student }
+  let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :run_tests? do
     failed 'with not additional context'
     context 'authorized with an assignment' do
-      let(:context) { { user: user, assignment: assignment } }
+      let(:context) { { role: role, assignment: assignment, real_user: role.end_user } }
       let(:assignment) { create :assignment, assignment_properties_attributes: assignment_attrs }
       failed 'without student tests enabled' do
         let(:assignment_attrs) { { token_start_date: 1.hour.ago, enable_student_tests: false } }
@@ -28,26 +28,26 @@ describe StudentPolicy do
       end
     end
     context 'authorized with a grouping' do
-      let(:context) { { user: user, grouping: grouping } }
-      succeed 'when the user is a member' do
-        let(:grouping) { create :grouping_with_inviter, inviter: user, test_tokens: 1 }
+      let(:context) { { role: role, grouping: grouping, real_user: role.end_user } }
+      succeed 'when the role is a member' do
+        let(:grouping) { create :grouping_with_inviter, inviter: role, test_tokens: 1 }
         failed 'when there is a test in progress' do
           before { allow(grouping).to receive(:student_test_run_in_progress?).and_return true }
         end
         failed 'when there are no tokens available' do
-          let(:grouping) { create :grouping_with_inviter, inviter: user, test_tokens: 0 }
+          let(:grouping) { create :grouping_with_inviter, inviter: role, test_tokens: 0 }
         end
         failed 'when the due date has passed' do
           let(:assignment) { create :assignment, due_date: 1.day.ago }
-          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user, test_tokens: 1 }
+          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role, test_tokens: 1 }
         end
       end
-      failed 'when the user is not a member' do
+      failed 'when the role is not a member' do
         let(:grouping) { create :grouping_with_inviter, test_tokens: 1 }
       end
     end
     context 'authorized with a submission' do
-      let(:context) { { user: user, submission: result.submission } }
+      let(:context) { { role: role, submission: result.submission, real_user: role.end_user } }
       failed 'with a released result' do
         let(:result) { create :released_result }
       end
@@ -61,5 +61,16 @@ describe StudentPolicy do
   end
   describe_rule :manage_assessments? do
     failed
+  end
+  describe_rule :settings? do
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
+    end
+    failed 'role is a ta' do
+      let(:role) { create :ta }
+    end
+    succeed 'role is a student' do
+      let(:record) { create(:student) }
+    end
   end
 end

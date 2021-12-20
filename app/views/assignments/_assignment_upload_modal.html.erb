@@ -12,7 +12,7 @@
 
   <%= t('upload_help_html', section_id: Assignment.name.pluralize.underscore.dasherize) %>
 
-  <%= form_tag upload_assignments_path,
+  <%= form_tag upload_assignments_course_path(@current_course),
                { multipart: true } do %>
     <p>
       <%= label_tag t('encoding') %>

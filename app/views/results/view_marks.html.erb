@@ -10,11 +10,12 @@
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
         {
+          course_id: <%= @current_course.id %>,
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
-          role: '<%= @current_user.class.name %>',
+          role: '<%= @current_role.class.name %>',
         }
       );
     });
@@ -41,7 +42,7 @@
 <div class='title_bar'>
   <h1>
     <% if @result.is_a_review? %>
-      <% if @current_user.student? %>
+      <% if @current_role.student? %>
         <%= "#{t('results.results_for')} #{sanitize(@assignment.short_identifier)}" %>
       <% else %>
         <%= t('peer_reviews.review_title',
@@ -55,10 +56,10 @@
   </h1>
 </div>
 
-<% if @result.is_review_for?(@current_user, @assignment) ||
-    (@result.is_a_review? && !@current_user.student?) %>
+<% if @result.is_review_for?(@current_role, @assignment) ||
+    (@result.is_a_review? && !@current_role.student?) %>
   <%= render partial: 'results/common/peer_reviews',
-             locals: { current_user: @current_user,
+             locals: { current_role: @current_role,
                        assignment: @assignment,
                        result: @result,
                        submission: @submission,

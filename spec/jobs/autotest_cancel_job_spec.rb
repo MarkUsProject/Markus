@@ -3,7 +3,14 @@ describe AutotestCancelJob do
   let(:grouping) { create(:grouping, assignment: assignment) }
   let(:test_runs) { create_list(:test_run, 3, grouping: grouping, status: :in_progress) }
   let(:test_run_ids) { test_runs.map(&:id) }
-  before { allow(File).to receive(:read).and_return("123456789\n") }
+  before do
+    allow_any_instance_of(AutotestSetting).to(
+      receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
+    )
+    course = create(:course)
+    course.autotest_setting = create(:autotest_setting)
+    course.save
+  end
   context 'when running as a background job' do
     let(:job_args) { [assignment.id, test_run_ids] }
     include_examples 'background job'
@@ -16,14 +23,14 @@ describe AutotestCancelJob do
       it 'should send an api request to the autotester' do
         expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj, uri|
           expect(net_obj.instance_of?(Net::HTTP::Delete)).to be true
-          expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/tests/cancel"
+          expect(uri.to_s).to eq "#{assignment.course.autotest_setting.url}/settings/10/tests/cancel"
           expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2, 3)
         end
         subject
       end
       it 'should set headers' do
         expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj|
-          expect(net_obj['Api-Key']).to eq '123456789'
+          expect(net_obj['Api-Key']).to eq assignment.course.autotest_setting.api_key
           expect(net_obj['Content-Type']).to eq 'application/json'
         end
         subject

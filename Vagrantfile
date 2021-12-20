@@ -58,7 +58,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         $ vagrant ssh -c markus
 
       Then visit localhost:3000/csc108, and you should see the MarkUs login screen.
-      Login as an admin with username 'a' and any non-empty password.
+      Login as an instructor with username 'a' and any non-empty password.
 
       If you want to use MarkUs with subversion, run the following command:
 

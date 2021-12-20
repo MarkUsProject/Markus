@@ -17,7 +17,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_user)
+    @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_role)
                                                .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
@@ -61,14 +61,14 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def show
-    @assignment = Assignment.find(params[:assignment_id])
-    @annotation_category = AnnotationCategory.find(params[:id])
-    @annotation_texts = annotation_text_data(params[:id])
+    @annotation_category = record
+    @assignment = @annotation_category.assignment
+    @annotation_texts = annotation_text_data(record)
   end
 
   def destroy
-    @assignment = Assignment.find(params[:assignment_id])
-    @annotation_category = @assignment.annotation_categories.find(params[:id])
+    @annotation_category = record
+    @assignment = @annotation_category.assignment
     if @annotation_category.destroy
       flash_message(:success, t('.success'))
     else
@@ -78,9 +78,8 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def update
-    @assignment = Assignment.find(params[:assignment_id])
-    @annotation_category = @assignment.annotation_categories.find(params[:id])
-
+    @annotation_category = record
+    @assignment = @annotation_category.assignment
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
       render 'show', assignment_id: @assignment.id, id: @annotation_category.id
@@ -97,15 +96,15 @@ class AnnotationCategoriesController < ApplicationController
   def create_annotation_text
     @annotation_text = AnnotationText.new(
       **annotation_text_params.to_h.symbolize_keys,
-      creator_id: current_user.id,
-      last_editor_id: current_user.id
+      creator_id: current_role.id,
+      last_editor_id: current_role.id
     )
 
     if @annotation_text.save
       flash_now(:success, t('annotation_categories.update.success'))
-      @assignment = Assignment.find(params[:assignment_id])
       @annotation_category = @annotation_text.annotation_category
-      @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
+      @assignment = @annotation_category.assignment
+      @text = annotation_text_data(@annotation_category).find do |text|
         text[:id] == @annotation_text.id
       end
       render :insert_new_annotation_text
@@ -116,7 +115,8 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def destroy_annotation_text
-    @annotation_text = AnnotationText.find(params[:id])
+    @annotation_text = record
+    @assignment = Assignment.find_by(id: params[:assignment_id])
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
     else
@@ -126,10 +126,11 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def update_annotation_text
-    @annotation_text = AnnotationText.find(params[:id])
-    if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
+    @annotation_text = record
+    @assignment = Assignment.find_by(id: params[:assignment_id])
+    if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_role.id)
       flash_now(:success, t('annotation_categories.update.success'))
-      @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
+      @text = annotation_text_data(@annotation_text.annotation_category, course: record.course).find do |text|
         text[:id] == @annotation_text.id
       end
     else
@@ -145,7 +146,7 @@ class AnnotationCategoriesController < ApplicationController
                                                  .where('annotation_categories.assessment_id': params[:assignment_id])
     one_time_texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
                                    .where(
-                                     creator_id: current_user.id,
+                                     creator_id: current_role.id,
                                      'groupings.assessment_id': params[:assignment_id],
                                      annotation_category_id: nil
                                    )
@@ -212,7 +213,7 @@ class AnnotationCategoriesController < ApplicationController
         if data[:type] == '.csv'
           result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
             next if CSV.generate_line(row).strip.empty?
-            AnnotationCategory.add_by_row(row, @assignment, current_user)
+            AnnotationCategory.add_by_row(row, @assignment, current_role)
           end
           if result[:invalid_lines].empty?
             flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
@@ -234,17 +235,19 @@ class AnnotationCategoriesController < ApplicationController
         end
       end
     end
-    redirect_to assignment_annotation_categories_path(assignment_id: @assignment.id)
+    redirect_to course_assignment_annotation_categories_path(current_course, @assignment)
   end
 
-  def annotation_text_data(category)
+  def annotation_text_data(category, course: nil)
     shared_values = ['annotation_texts.id AS id',
-                     'last_editors_annotation_texts.user_name AS last_editor',
+                     'end_users_roles.user_name AS last_editor',
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
-    base_query = AnnotationText.joins(:creator)
-                               .left_outer_joins(:last_editor)
+    course ||= category&.course
+    base_query = AnnotationText.joins(creator: :end_user)
+                               .left_outer_joins(last_editor: :end_user)
                                .where('annotation_texts.annotation_category_id': category)
+                               .where('roles.course_id': course)
                                .order('users.user_name')
     if category.nil?
       text_data = base_query.joins(annotations: { result: { grouping: :group } })
@@ -279,12 +282,12 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def annotation_text_uses
-    render json: AnnotationText.find(params[:annotation_text_id]).uses
+    render json: record.uses
   end
 
   def uncategorized_annotations
     @assignment = Assignment.find(params[:assignment_id])
-    @texts = annotation_text_data(nil)
+    @texts = annotation_text_data(nil, course: @assignment.course)
     respond_to do |format|
       format.js {}
       format.json { render json: @texts }
@@ -313,6 +316,20 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_params
     params.permit(:id, :content, :deduction, :annotation_category_id)
+  end
+
+  # This override is necessary because this controller is acting as a controller
+  # for both annotation categories and annotation texts.
+  #
+  # TODO: move all annotation text routes into their own controller and remove this
+  def record
+    @record ||= if params[:annotation_category_id]
+                  AnnotationText.find_by(id: params[:id])
+                elsif params[:annotation_text_id]
+                  AnnotationText.find_by(id: params[:annotation_text_id])
+                else
+                  AnnotationCategory.find_by(id: params[:id])
+                end
   end
 
   def flash_interpolation_options

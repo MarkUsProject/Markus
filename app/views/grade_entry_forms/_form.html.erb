@@ -24,7 +24,7 @@
 <% end %>
 
 <p><%= t('grade_entry_forms.required_fields_html') %></p>
-<%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
+<%= form_for [@current_course, @grade_entry_form], as: :grade_entry_form do |f| %>
 
   <%= render partial: 'shared/error_explanation',
              locals: { model: @grade_entry_form } %>

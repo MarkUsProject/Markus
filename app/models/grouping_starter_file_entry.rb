@@ -4,7 +4,19 @@ class GroupingStarterFileEntry < ApplicationRecord
   belongs_to :starter_file_entry
   belongs_to :grouping
 
+  has_one :course, through: :grouping
+
+  validate :assignments_should_match
   validates_presence_of :grouping
   validates_presence_of :starter_file_entry
   validates_uniqueness_of :starter_file_entry_id, scope: :grouping_id
+
+  private
+
+  def assignments_should_match
+    return if starter_file_entry.nil? || grouping.nil?
+    unless grouping.assignment == starter_file_entry.starter_file_group.assignment
+      errors.add(:base, 'starter_file_entry and grouping must all belong to the same assignment')
+    end
+  end
 end

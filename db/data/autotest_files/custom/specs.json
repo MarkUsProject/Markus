@@ -8,7 +8,7 @@
             "autotest_01.sh"
           ],
           "category": [
-            "admin"
+            "instructor"
           ],
           "timeout": 30,
           "extra_info": {

@@ -1,4 +1,4 @@
-<% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+<% if allowed_to?(:manage?, Assignment) %>
   <li class='section'><%= t('menu.quick_links') %></li>
   <li>
     <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
@@ -28,13 +28,8 @@
 
 <li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
-<% if @current_user.student? %>
-  <% assignments = @current_user.visible_assessments(assessment_type: 'Assignment') %>
-  <% grade_entry_forms = @current_user.visible_assessments(assessment_type: 'GradeEntryForm') %>
-<% else %>
-  <% assignments = Assignment.all %>
-  <% grade_entry_forms = GradeEntryForm.all %>
-<% end %>
+<% assignments = @current_role.visible_assessments(assessment_type: 'Assignment') %>
+<% grade_entry_forms = @current_role.visible_assessments(assessment_type: 'GradeEntryForm') %>
 
 <%= render partial: 'shared/assignment_dropdown_link',
            collection: assignments,

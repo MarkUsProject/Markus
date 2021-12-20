@@ -9,7 +9,7 @@ class StudentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        student_data = Student.includes(:grace_period_deductions, :section).map do |s|
+        student_data = current_course.students.includes(:grace_period_deductions, :section).map do |s|
           {
             _id: s.id,
             user_name: s.user_name,
@@ -23,14 +23,14 @@ class StudentsController < ApplicationController
             remaining_grace_credits: s.remaining_grace_credits
           }
         end
-        sections = Hash[Section.all.map { |section| [section.id, section.name] }]
+        sections = Hash[current_course.sections.pluck(:id, :name)]
         render json: {
           students: student_data,
           sections: sections,
           counts: {
-            all: Student.all.size,
-            active: Student.active.size,
-            inactive: Student.inactive.size
+            all: current_course.students.size,
+            active: current_course.students.active.size,
+            inactive: current_course.students.inactive.size
           }
         }
       }
@@ -38,19 +38,19 @@ class StudentsController < ApplicationController
   end
 
   def edit
-    @user = Student.find_by_id(params[:id])
-    @sections = Section.order(:name)
+    @role = record
+    @sections = current_course.sections.order(:name)
   end
 
   def update
-    @user = Student.find(params[:id])
-    @user.update(user_params)
-    @sections = Section.order(:name)
-    respond_with(@user)
+    @role = record
+    @role.update(role_params)
+    @sections = current_course.sections.order(:name)
+    respond_with @role, location: course_students_path(@current_course)
   end
 
   def bulk_modify
-    student_ids = params[:student_ids]
+    student_ids = params[:student_ids].map(&:to_i)&.intersection(current_course.students.ids)
     begin
       if student_ids.nil? || student_ids.empty?
         raise I18n.t('students.no_students_selected')
@@ -74,14 +74,15 @@ class StudentsController < ApplicationController
   end
 
   def new
-    @user = Student.new
-    @sections = Section.order(:name)
+    @role = current_course.students.new
+    @sections = current_course.sections.order(:name)
   end
 
   def create
-    @user = Student.create(user_params)
-    @sections = Section.order(:name)
-    respond_with(@user)
+    end_user = EndUser.find_by_user_name(params[:role][:end_user][:user_name])
+    @role = current_course.students.create(end_user: end_user, **role_params)
+    @sections = current_course.sections.order(:name)
+    respond_with @role, location: course_students_path(current_course)
   end
 
   # dummy action for remote rjs calls
@@ -92,11 +93,11 @@ class StudentsController < ApplicationController
   end
 
   def download
-    students = Student.order(:user_name).includes(:section)
+    students = current_course.students.joins(:end_user).order('users.user_name').includes(:section)
     case params[:format]
       when 'csv'
         output = MarkusCsv.generate(students) do |student|
-          Student::CSV_UPLOAD_ORDER.map do |field|
+          Student::CSV_ORDER.map do |field|
             if field == :section_name
               student.section&.name
             else
@@ -107,7 +108,7 @@ class StudentsController < ApplicationController
         format = 'text/csv'
       else
         output = []
-        students.all.each do |student|
+        students.each do |student|
           output.push(user_name: student.user_name,
                       last_name: student.last_name,
                       first_name: student.first_name,
@@ -133,36 +134,44 @@ class StudentsController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = User.upload_user_list(Student, params[:upload_file].read, params[:encoding])
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
-        flash_message(:error, result[:invalid_records]) unless result[:invalid_records].empty?
+        @current_job = UploadRolesJob.perform_later(Student,
+                                                    current_course,
+                                                    params[:upload_file].read,
+                                                    params[:encoding])
+        session[:job_id] = @current_job.job_id
       end
     end
     redirect_to action: 'index'
   end
 
   def delete_grace_period_deduction
-    student = Student.find(params[:id])
+    student = record
     grace_deduction = student.grace_period_deductions.find(params[:deduction_id])
     grace_deduction.destroy
     @grace_period_deductions = student.grace_period_deductions
   end
 
+  def settings; end
+
+  def update_settings
+    role = current_role
+    role.update!(settings_params)
+    flash_message(:success, t('users.verify_settings_update'))
+    redirect_to action: 'settings'
+  end
+
   private
 
-  def user_params
-    params.require(:user).permit(:user_name,
-                                 :last_name,
-                                 :first_name,
-                                 :email,
-                                 :id_number,
-                                 :grace_credits,
-                                 :section_id)
+  def role_params
+    params.permit(:grace_credits, :section_id)
+  end
+
+  def settings_params
+    params.require(:role).permit(:receives_invite_emails, :receives_results_emails)
   end
 
   def flash_interpolation_options
-    { resource_name: @user.user_name.blank? ? @user.model_name.human : @user.user_name,
-      errors: @user.errors.full_messages.join('; ')}
+    { resource_name: @role.end_user&.user_name.blank? ? @role.model_name.human : @role.user_name,
+      errors: @role.errors.full_messages.join('; ') }
   end
 end
