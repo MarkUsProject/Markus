@@ -1,6 +1,8 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.0.0]
 - Support multiple courses in a single MarkUs instance (#5685)
 
 ## [v1.14.0]
