@@ -9,6 +9,7 @@ fr:
   download_the: Télécharger %{item}
   download_yml: Télécharger au format YML
   rename: Renommer
+  submit_link: UPDATE ME
   upload: Envoyer
   upload_errors:
     invalid_csv_row_format: Invalid format de ligne
@@ -21,4 +22,3 @@ fr:
     other: "%{count} objets été envoyés."
   upload_the: Envoyer %{item}
   uploading_please_wait: Envoi en cours — veuillez patienter…
-  submit_link: UPDATE ME

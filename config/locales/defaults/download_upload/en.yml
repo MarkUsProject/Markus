@@ -9,6 +9,7 @@ en:
   download_the: Download %{item}
   download_yml: Download in YML Format
   rename: Rename
+  submit_link: Submit Link
   upload: Upload
   upload_errors:
     blank: Uploaded file is blank.
@@ -23,4 +24,3 @@ en:
     other: "%{count} objects successfully uploaded."
   upload_the: Upload %{item}
   uploading_please_wait: Uploading - please wait...
-  submit_link: Submit Link
