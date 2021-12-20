@@ -14,27 +14,13 @@ describe MainController do
     end
     describe 'login_remote_auth' do
       before do
-        env_hash = { 'HTTP_X_FORWARDED_USER': http_x_forwarded_user }
-        request.headers.merge! env_hash
         get :login_remote_auth
       end
-      context 'remote user is set' do
-        let(:http_x_forwarded_user) { 'a' }
-        it 'should set the auth_type to remote' do
-          expect(session[:auth_type]).to eq :remote
-        end
-        it 'should redirect to the main page' do
-          expect(response).to redirect_to(main_path)
-        end
+      it 'should set the auth_type to remote' do
+        expect(session[:auth_type]).to eq 'remote'
       end
-      context 'remote user is not set' do
-        let(:http_x_forwarded_user) { nil }
-        it 'should set the auth_type to remote' do
-          expect(session[:auth_type]).to eq :remote
-        end
-        it 'should redirect to the remote login page' do
-          expect(response).to redirect_to(Settings.remote_auth_login_url)
-        end
+      it 'should redirect to the remote login page' do
+        expect(response).to redirect_to(Settings.remote_auth_login_url)
       end
     end
   end

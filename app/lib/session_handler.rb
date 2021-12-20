@@ -95,9 +95,6 @@ module SessionHandler
   def authenticate
     if real_user && !session_expired?
       refresh_timeout
-    elsif session[:auth_type] == :remote
-      refresh_timeout
-      session[:real_user_name] = remote_user_name
     else
       clear_session
       if request.xhr? # is this an XMLHttpRequest?
