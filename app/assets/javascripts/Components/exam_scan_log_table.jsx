@@ -19,7 +19,10 @@ class ExamScanLogTable extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.view_logs_assignment_exam_templates_path(this.props.assignment_id),
+      url: Routes.view_logs_course_assignment_exam_templates_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       dataType: "json",
     }).then(data => {
       this.setState({data: data, loading: false});
@@ -44,8 +47,8 @@ class ExamScanLogTable extends React.Component {
           Header: I18n.t("activerecord.attributes.split_pdf_log.filename"),
           id: "filename",
           Cell: row => {
-            const path = Routes.download_raw_split_file_assignment_exam_template_path(
-              this.props.assignment_id,
+            const path = Routes.download_raw_split_file_course_exam_template_path(
+              this.props.course_id,
               row.original.exam_template_id,
               {split_pdf_log_id: row.original.file_id}
             );
@@ -105,6 +108,7 @@ class ExamScanLogTable extends React.Component {
         defaultSorted={[{id: "date", desc: true}]}
         SubComponent={row => (
           <ExamScanErrorsTable
+            course_id={this.props.course_id}
             data={row.original.page_data}
             exam_template_id={row.original.exam_template_id}
             split_pdf_log_id={row.original.file_id}
@@ -140,8 +144,8 @@ class ExamScanErrorsTable extends React.Component {
             <span>
               {row.value}&nbsp; (
               <a
-                href={Routes.assign_errors_assignment_exam_template_path(
-                  this.props.assignment_id,
+                href={Routes.assign_errors_course_exam_template_path(
+                  this.props.course_id,
                   this.props.exam_template_id,
                   {
                     split_pdf_log_id: this.props.split_pdf_log_id,

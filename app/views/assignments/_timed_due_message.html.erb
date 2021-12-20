@@ -1,5 +1,5 @@
-<% due_date = assignment.section_due_date(@current_user&.section)
-   start_time = assignment.section_start_time(@current_user&.section)
+<% due_date = assignment.section_due_date(@current_role&.section)
+   start_time = assignment.section_start_time(@current_role&.section)
    simple ||= false %>
 <% if grouping&.start_time.nil? %>
   <% if simple %>
@@ -33,7 +33,8 @@
     </p>
   <% end %>
   <% unless simple %>
-    <%= form_with url: start_timed_assignment_assignment_path(assignment.id), method: 'put', local: true do |f| %>
+    <%= form_with url: start_timed_assignment_course_assignment_path(@current_course, assignment.id),
+                  method: 'put', local: true do |f| %>
       <%= f.submit I18n.t('assignments.timed.start_button'),
                    disabled: !allowed_to?(:start_timed_assignment?, assignment),
                    data: { confirm: t('assignments.timed.start_confirmation') } %>

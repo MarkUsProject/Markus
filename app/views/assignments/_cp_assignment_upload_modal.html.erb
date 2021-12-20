@@ -13,7 +13,7 @@
                              button_id: 'submit_upload_for_config',
                              nonce: true %>
 
-  <%= form_tag upload_config_files_assignments_path,
+  <%= form_tag upload_config_files_course_assignments_path(@current_course),
                { multipart: true } do %>
 
     <%= file_field_tag 'upload_files_for_config', required: true, accept: '.zip' %>

@@ -19,18 +19,18 @@
   <%= render partial: 'cp_assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
 
   <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
-              new_assignment_path,
+              new_course_assignment_path(@current_course),
               class: 'button' %>
   <% if Settings.scanned_exams.enable %>
     <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
-                new_assignment_path(scanned: true),
+                new_course_assignment_path(@current_course, scanned: true),
                 class: 'button' %>
   <% end %>
   <%= link_to t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one')),
-              new_assignment_path(timed: true),
+              new_course_assignment_path(@current_course, timed: true),
               class: 'button' %>
   <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
-              new_grade_entry_form_path,
+              new_course_grade_entry_form_path(@current_course),
               class: 'button' %>
 <% end %>
 

@@ -28,8 +28,8 @@ namespace :db do
         (rand(10) + 3).times do
           AnnotationText.create(annotation_category: ac,
                                 content: random_sentences(3),
-                                creator: Admin.first,
-                                last_editor: Admin.first)
+                                creator: Instructor.first,
+                                last_editor: Instructor.first)
         end
       end
 
@@ -64,8 +64,8 @@ namespace :db do
         AnnotationText.create(annotation_category: ac_with_criterion,
                               content: random_sentences(3),
                               deduction: criterion.max_mark,
-                              creator: Admin.first,
-                              last_editor: Admin.first)
+                              creator: Instructor.first,
+                              last_editor: Instructor.first)
       end
 
       other_criterion = assignment.criteria.where(type: 'FlexibleCriterion').second
@@ -77,8 +77,8 @@ namespace :db do
         AnnotationText.create(annotation_category: other_ac_with_criterion,
                               content: random_sentences(2),
                               deduction: other_criterion.max_mark,
-                              creator: Admin.first,
-                              last_editor: Admin.first)
+                              creator: Instructor.first,
+                              last_editor: Instructor.first)
       end
 
       3.times do |index|

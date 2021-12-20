@@ -1,0 +1,7 @@
+<% content_for :title, t('instructors.new') %>
+
+<div class='wrapper'>
+  <%= render partial: 'layouts/userform',
+             locals: { controller: 'instructors',
+                       action: 'create' } %>
+</div>

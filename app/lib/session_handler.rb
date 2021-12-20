@@ -4,33 +4,88 @@ module SessionHandler
 
   protected
 
-  # Note: setter method for current_user is defined in login controller
-  # since other controllers do not need ability to set this
+  # Sets current user for this session
+  def current_user=(user)
+    session[:user_name] = user&.is_a?(User) ? user.user_name : nil
+  end
+
+  def real_user=(user)
+    session[:real_user_name] = user&.is_a?(User) ? user.user_name : nil
+  end
 
   # Retrieve current user for this session, or nil if none exists
   def current_user
     # retrieve from database on every request instead of
     # storing it as global variable when current_user=
     # is called to prevent user information becoming stale.
-    @current_user ||= (session[:uid] && User.find_by_id(session[:uid])) || nil
+    @current_user ||= (session[:user_name] && User.find_by_user_name(session[:user_name])) || real_user
   end
 
   def real_user
-    @real_user ||= User.find_by_id(session[:real_uid])
+    @real_user ||= session[:real_user_name] && User.find_by_user_name(session[:real_user_name])
+  end
+
+  def current_role
+    @current_role ||= Role.find_by(end_user: current_user, course: current_course)
+  end
+
+  def real_role
+    @real_role ||= Role.find_by(end_user: real_user, course: current_course)
+  end
+
+  def current_course
+    @current_course ||= if controller_name == 'courses'
+                          record
+                        else
+                          parent_records.select { |r| r.is_a? Course }.first
+                        end
+  end
+
+  # Returns the record specified by params[:id]
+  def record
+    @record ||= if request.path_parameters[:id]
+                  controller_name.classify.constantize.find_by(id: request.path_parameters[:id])
+                end
+  end
+
+  # When the current route is a nested route, get the parameters whose name matches *_id.
+  def parent_params
+    request.path_parameters.keys.select { |k| k.end_with?('_id') }
+  end
+
+  def parent_records
+    @parent_records ||= parent_params.map do |key|
+      key.to_s.delete_suffix('_id').classify.constantize.find_by(id: params[key])
+    end
+  end
+
+  # Render a 404 error if a record or parent_records are expected to exist but does not because a non-existant id was
+  # passed as a parameter. Also renders a 404 if any of the records is not associated with the current course
+  #
+  # Note: his does not check if the record and parent_records are actually associated to each other when a parent record
+  # is not a Course. Because of this, non-shallow routes should check those associations themselves and render a 404
+  # error if needed.
+  def check_record
+    return page_not_found if request.path_parameters[:id] && record.nil?
+    return page_not_found if parent_params.length != parent_records.compact.length
+    page_not_found if [record, *parent_records].compact
+                                               .reject { |r| r.is_a? Course }
+                                               .any? { |r| r.try(:course) != current_course }
   end
 
   # Check if there's any user associated with this session
   def logged_in?
-    session[:uid] != nil
+    !session[:real_user_name].nil?
   end
 
-  # Check if current user matches given role.
-  def authorized?(type=Admin)
-    user = current_user
-    if user.nil?
-      return false
-    end
-    return user.is_a?(type)
+  def remote_user_name
+    @remote_user_name ||= request.env['HTTP_X_FORWARDED_USER']
+  end
+
+  def redirect_to_last_page
+    uri = session[:redirect_uri]
+    session[:redirect_uri] = nil
+    redirect_to(uri || { action: 'index' })
   end
 
   # Checks user satisfies the following conditions:
@@ -38,33 +93,20 @@ module SessionHandler
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
   def authenticate
-    # Note: testing depends on the fact that 'authenticated' means having the
-    # session['uid'] and session['timeout'] set appropriately.  Make sure to
-    # change AuthenticatedControllerTest if this is changed.
-    if !session_expired? && logged_in?
-      refresh_timeout  # renew timeout for this session
-      @current_user = current_user
+    if real_user && !session_expired?
+      refresh_timeout
+    elsif session[:auth_type] == :remote
+      refresh_timeout
+      session[:real_user_name] = remote_user_name
     else
-      # cleanup expired session stuff
       clear_session
-      cookies.delete :auth_token
-      reset_session
-
-      session[:redirect_uri] = request.fullpath  # save current uri
-
-      # figure out how we want to explain this to users
-      if session_expired?
-        flash[:login_notice] = I18n.t('main.session_expired')
-      else
-        flash[:login_notice] = I18n.t('main.please_log_in')
-      end
-
       if request.xhr? # is this an XMLHttpRequest?
         # Redirect users back to referer, or else
         # they might be redirected to an rjs page.
         session[:redirect_uri] = request.referer
         head :forbidden # 403
       else
+        session[:redirect_uri] = request.fullpath
         redirect_to controller: 'main', action: 'login'
       end
     end
@@ -76,38 +118,14 @@ module SessionHandler
   def refresh_timeout
     # a json session cookie will serialize time as strings, make the conversion explicit so that tests too see strings
     # (see config.action_dispatch.cookies_serializer)
-    session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now.to_s
+    session[:timeout] = Settings.session_timeout.seconds.from_now.to_s
     session[:has_warned] = false
   end
 
   # Check if this current user's session has not yet expired.
   def session_expired?
     return true if session[:timeout].nil?
-    if Settings.remote_user_auth
-      # expire session if there is not REMOTE_USER anymore.
-      return true if @markus_auth_remote_user.nil?
-      # If somebody switched role this state should be recorded
-      # in the session. Expire only if session timed out.
-      unless session[:real_uid].nil?
-        # Roles have been switched, make sure that
-        # real_user.user_name == @markus_auth_remote_user and
-        # that the real user is in fact an admin.
-        real_user = User.find_by_id(session[:real_uid])
-        if real_user.user_name != @markus_auth_remote_user ||
-           !real_user.admin?
-          return true
-        end
-        # Otherwise, expire only if the session timed out.
-        return Time.zone.parse(session[:timeout]) < Time.current
-      end
-      # Expire session if remote user does not match the session's uid.
-      # We cannot have switched roles at this point.
-      current_user = User.find_by_id(session[:uid])
-      unless current_user.nil?
-        return true if current_user.user_name != @markus_auth_remote_user
-      end
-    end
-    # No REMOTE_USER is involed.
+
     Time.zone.parse(session[:timeout]) < Time.current
   end
 
@@ -118,7 +136,12 @@ module SessionHandler
   # Clear this current user's session set by this app
   def clear_session
     session[:timeout] = nil
-    session[:uid] = nil
+    session[:user_name] = nil
+    session[:real_user_name] = nil
+    session[:job_id] = nil
+    session[:auth_type] = nil
+    cookies.delete :auth_token
+    reset_session
   end
 
 end

@@ -1,9 +1,12 @@
 describe AnnotationText do
   context 'checks relationships' do
+    subject { create :annotation_text }
     it { is_expected.to belong_to(:annotation_category).optional }
     it { is_expected.to have_many(:annotations) }
     it { is_expected.to belong_to(:creator) }
     it { is_expected.to belong_to(:last_editor).optional }
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
 
     describe '#escape_content' do
       it 'double escapes forward slash' do

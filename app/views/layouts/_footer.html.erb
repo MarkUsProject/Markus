@@ -3,9 +3,7 @@
               about_main_index_path,
               remote: true %>
 
-  <% if @current_user.admin? or @current_user.ta? %>
-    <span class="issues">
-      <a href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
-    </span>
-  <% end %>
+  <span class="issues">
+    <a href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
+  </span>
 </footer>

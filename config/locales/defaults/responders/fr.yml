@@ -13,11 +13,6 @@ fr:
         success: Mise à jour de %{resource_name}.
       update_files:
         success: Les changements ont été enregistrés.
-    admins:
-      create:
-        error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
-      update:
-        error: "%{resource_name} ne peut pas être modifié à cause de: %{errors}."
     annotation_categories:
       create:
         error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
@@ -26,6 +21,11 @@ fr:
     criteria:
       destroy:
         success: Criterion supprimé avec succès
+    instructors:
+      create:
+        error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
+      update:
+        error: "%{resource_name} ne peut pas être modifié à cause de: %{errors}."
     students:
       create:
         error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."

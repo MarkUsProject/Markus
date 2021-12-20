@@ -20,7 +20,7 @@ class MarkingSchemeTable extends React.Component {
 
   fetchData() {
     $.ajax({
-      url: Routes.populate_marking_schemes_path(),
+      url: Routes.populate_course_marking_schemes_path(this.props.course_id),
       dataType: "json",
     }).then(res => {
       this.setState({
@@ -73,6 +73,6 @@ class MarkingSchemeTable extends React.Component {
   }
 }
 
-export function makeMarkingSchemeTable(elem) {
-  render(<MarkingSchemeTable />, elem);
+export function makeMarkingSchemeTable(elem, props) {
+  render(<MarkingSchemeTable {...props} />, elem);
 }

@@ -18,7 +18,8 @@ class TagTable extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.assignment_tags_path(this.props.assignment_id),
+      url: Routes.course_tags_path(this.props.course_id),
+      data: {assignment_id: this.props.assignment_id},
       dataType: "json",
     }).then(res => {
       this.setState({
@@ -30,13 +31,13 @@ class TagTable extends React.Component {
 
   edit = tag_id => {
     $.get({
-      url: Routes.edit_tag_dialog_assignment_tag_path(this.props.assignment_id, tag_id),
+      url: Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id),
       dataType: "script",
     });
   };
 
   delete = tag_id => {
-    $.ajax(Routes.assignment_tag_path(this.props.assignment_id, tag_id), {
+    $.ajax(Routes.course_tag_path(this.props.course_id, tag_id), {
       method: "DELETE",
     }).then(this.fetchData);
   };

@@ -1,6 +1,6 @@
 describe UpdateRepoRequiredFilesJob do
   let(:assignment) { create :assignment }
-  let(:user) { create :admin }
+  let(:user) { create :instructor }
   context 'when running as a background job' do
     let(:job_args) { [assignment.id, user.user_name] }
     include_examples 'background job'
@@ -22,7 +22,7 @@ describe UpdateRepoRequiredFilesJob do
       UpdateRepoRequiredFilesJob.perform_now(assignment.id)
     end
     it 'should send the correct file content' do
-      required_files = Assignment.get_required_files.stringify_keys.transform_values(&:stringify_keys)
+      required_files = assignment.course.get_required_files.stringify_keys.transform_values(&:stringify_keys)
       allow_any_instance_of(Repository::Transaction).to receive(:replace) do |_txn, *args|
         expect(JSON.parse(args[1])).to eq required_files
       end

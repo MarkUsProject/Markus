@@ -2,7 +2,7 @@
 en:
   annotations:
     count: 'Number of times used: '
-    default_deduction: This annotation will have no deduction. Admins can configure deductions in assignment settings.
+    default_deduction: This annotation will have no deduction. Instructors can configure deductions in assignment settings.
     download_one_time_annotations: Download One Time Annotations
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"

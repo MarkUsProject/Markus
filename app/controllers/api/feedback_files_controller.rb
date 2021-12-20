@@ -30,12 +30,9 @@ module Api
     end
 
     # Sends the contents of the specified Feedback File
-    # Requires: assignment_id, group_id, id
+    # Requires: id
     def show
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
-
-      feedback_file = submission.feedback_files.find(params[:id])
+      feedback_file = record
 
       # Everything went fine; send file_content
       send_data feedback_file.file_content,
@@ -97,10 +94,7 @@ module Api
     # Deletes a Feedback File instance
     # Requires: assignment_id, group_id, id
     def destroy
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
-
-      feedback_file = submission.feedback_files.find(params[:id])
+      feedback_file = record
 
       if feedback_file.destroy
         # Successfully deleted the Feedback file; render success
@@ -118,19 +112,16 @@ module Api
     end
 
     # Updates a Feedback File instance
-    # Requires: assignment_id, group_id, id
+    # Requires: id
     # Optional:
     #  - filename: New name for the file
     #  - file_content: New contents of the feedback file file
     def update
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
-
-      feedback_file = submission.feedback_files.find(params[:id])
+      feedback_file = record
 
       # Render error if the filename is used by another
       # Feedback File for that submission
-      existing_file = submission.feedback_files.find_by_filename(params[:filename])
+      existing_file = feedback_file.submission.feedback_files.find_by_filename(params[:filename])
       if !existing_file.nil? && existing_file.id != params[:id].to_i
         render 'shared/http_status', locals: {code: '409', message:
           'A Feedback File with that filename already exists'}, status: 409

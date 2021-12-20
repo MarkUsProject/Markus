@@ -24,7 +24,7 @@ class RawStudentTable extends React.Component {
   fetchData = () => {
     $.ajax({
       method: "get",
-      url: Routes.students_path(),
+      url: Routes.course_students_path(this.props.course_id),
       dataType: "json",
     }).then(res => {
       this.setState({
@@ -50,7 +50,7 @@ class RawStudentTable extends React.Component {
     this.setState({loading: true});
     $.ajax({
       method: "patch",
-      url: Routes.bulk_modify_students_path(),
+      url: Routes.bulk_modify_course_students_path(this.props.course_id),
       data: data,
     }).then(this.fetchData);
   };
@@ -172,7 +172,9 @@ class RawStudentTable extends React.Component {
               accessor: "_id",
               Cell: data => (
                 <span>
-                  <a href={Routes.edit_student_path(data.value)}>{I18n.t("edit")}</a>
+                  <a href={Routes.edit_course_student_path(this.props.course_id, data.value)}>
+                    {I18n.t("edit")}
+                  </a>
                   &nbsp;
                 </span>
               ),
@@ -246,11 +248,13 @@ class StudentsActionBox extends React.Component {
       <form onSubmit={this.props.onSubmit}>
         <select value={this.state.action} onChange={this.actionChanged}>
           <option value="give_grace_credits">
-            {I18n.t("students.admin_actions.give_grace_credits")}
+            {I18n.t("students.instructor_actions.give_grace_credits")}
           </option>
-          <option value="update_section">{I18n.t("students.admin_actions.add_section")}</option>
-          <option value="hide">{I18n.t("students.admin_actions.mark_inactive")}</option>
-          <option value="unhide">{I18n.t("students.admin_actions.mark_active")}</option>
+          <option value="update_section">
+            {I18n.t("students.instructor_actions.add_section")}
+          </option>
+          <option value="hide">{I18n.t("students.instructor_actions.mark_inactive")}</option>
+          <option value="unhide">{I18n.t("students.instructor_actions.mark_active")}</option>
         </select>
         {optionalInputBox}
         <input type="submit" disabled={this.props.disabled} value={I18n.t("apply")}></input>

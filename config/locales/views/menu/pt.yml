@@ -3,6 +3,7 @@ pt:
   menu:
     choose: Escolher...
     dashboard: Painel
+    email_settings: Configurações de e-mail
     home: Home
     properties: Propriedades
     quick_links: Links rápidos

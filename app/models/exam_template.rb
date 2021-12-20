@@ -4,6 +4,7 @@ class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   after_update :rename_exam_template_directory
   belongs_to :assignment, foreign_key: :assessment_id
+  has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
   validates_uniqueness_of :name,
                           scope: :assignment
@@ -28,8 +29,7 @@ class ExamTemplate < ApplicationRecord
     name_input = attributes[:name]
     exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
-      Settings.scanned_exams.path,
-      assignment_name,
+      assignment.scanned_exams_path,
       exam_template_name
     )
     FileUtils.mkdir_p template_path unless Dir.exists? template_path
@@ -62,14 +62,8 @@ class ExamTemplate < ApplicationRecord
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
     return unless attributes.key? :assessment_id
-    assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
-    template_path = File.join(
-      Settings.scanned_exams.path,
-      assignment_name,
-      self.name
-    )
 
-    File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
+    File.open(File.join(base_bath, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
       f.write blob
     end
 
@@ -89,7 +83,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   # Split up PDF file based on this exam template.
-  def split_pdf(path, original_filename=nil, current_user=nil)
+  def split_pdf(path, original_filename = nil, current_role = nil)
     basename = File.basename path, '.pdf'
     filename = original_filename.nil? ? basename : File.basename(original_filename)
     pdf = CombinePDF.load path
@@ -103,14 +97,14 @@ class ExamTemplate < ApplicationRecord
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: current_user
+      role: current_role
     )
 
     raw_dir = File.join(self.base_path, 'raw')
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
+    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)
@@ -152,7 +146,8 @@ class ExamTemplate < ApplicationRecord
         split_page = SplitPage.find(split_page_id)
         group = Group.find_or_create_by(
           group_name: "#{self.name}_paper_#{exam_num}",
-          repo_name: "#{self.name}_paper_#{exam_num}"
+          repo_name: "#{self.name}_paper_#{exam_num}",
+          course: self.course
         )
         split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
         # This creates both a new grouping and a new folder in the group repository
@@ -166,7 +161,7 @@ class ExamTemplate < ApplicationRecord
         grouping.access_repo do |repo|
           revision = repo.get_latest_revision
           assignment_folder = self.assignment.repository_folder
-          txn = repo.get_transaction(Admin.first.user_name)
+          txn = repo.get_transaction(self.course.instructors.first.user_name)
           self.template_divisions.each do |template_division|
             next unless template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
 
@@ -236,8 +231,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join Settings.scanned_exams.path,
-              assignment.short_identifier, self.name
+    File.join self.assignment.scanned_exams_path, self.name
   end
 
   def num_cover_fields
@@ -291,13 +285,11 @@ class ExamTemplate < ApplicationRecord
     if self.name_changed?
       assignment_name = self.assignment.short_identifier
       old_directory_name = File.join(
-        Settings.scanned_exams.path,
-        assignment_name,
+        self.assignment.scanned_exams_path,
         name_was
       )
       new_directory_name = File.join(
-        Settings.scanned_exams.path,
-        assignment_name,
+        self.assignment.scanned_exams_path,
         name
       )
       File.rename old_directory_name, new_directory_name

@@ -4,8 +4,9 @@
       window.submissionTable = makeSubmissionTable(document.getElementById('submission-table'),
         {
           assignment_id: <%= @assignment.id %>,
+          course_id: <%= @current_course.id %>,
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
-          show_sections: <%= Section.exists? %>,
+          show_sections: <%= @current_course.sections.exists? %>,
           is_timed: <%= @assignment.is_timed %>,
           can_collect: <%= allowed_to? :manage? %>,
           can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,
@@ -24,10 +25,10 @@
   <% end %>
   <div class='title-help'>
     <p>
-      <% if @current_user.ta? %>
+      <% if @current_role.ta? %>
         <%= t('submissions.help.browse.tas') %>
       <% else %>
-        <%= t('submissions.help.browse.admins') %>
+        <%= t('submissions.help.browse.instructors') %>
       <% end %>
     </p>
   </div>
@@ -37,30 +38,30 @@
 <% @heading_buttons = [] %>
 
 <% unless @assignment.is_peer_review? %>
-  <% if @current_user.admin? %>
+  <% if @current_role.instructor? %>
     <% @heading_buttons += [
       { link_text: t('submissions.repo_list'),
-        link_path: download_repo_list_assignment_submissions_path(@assignment)},
+        link_path: download_repo_list_course_assignment_submissions_path(@current_course, @assignment)},
       { link_text: t('submissions.repo_checkout_file', type: 'HTTPS'),
-        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :https)}
+        link_path: download_repo_checkout_commands_course_assignment_submissions_path(@current_course, @assignment, url_type: :https)}
     ] %>
     <% if allowed_to?(:view?, with: KeyPairPolicy)
       @heading_buttons += [
         { link_text: t('submissions.repo_checkout_file', type: 'SSH'),
-          link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :ssh)}
+          link_path: download_repo_checkout_commands_course_assignment_submissions_path(@current_course, @assignment, url_type: :ssh)}
       ]
       end %>
     <% @heading_buttons += [{ link_text: t('submissions.submission_summary'),
-                              link_path: download_summary_assignment_submissions_path(@assignment) }] %>
+                              link_path: download_summary_course_assignment_submissions_path(@current_course, @assignment) }] %>
   <% end %>
 <% end %>
 
 <% content_for :additional_headings do %>
-  <% if @current_user.ta? %>
+  <% if @current_role.ta? %>
     <span class='menu_bar'></span>
     <%= t('submissions.how_many_marked_in_collected',
-          num_marked: @assignment.get_num_marked(@current_user.id),
-          num_collected: @assignment.get_num_collected(@current_user.id)) %>
+          num_marked: @assignment.get_num_marked(@current_role.id),
+          num_collected: @assignment.get_num_collected(@current_role.id)) %>
   <% end %>
 <% end %>
 

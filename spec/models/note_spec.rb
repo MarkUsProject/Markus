@@ -1,7 +1,10 @@
 describe Note do
+  subject { create :note }
   it { should validate_presence_of(:notes_message) }
   it { should belong_to(:noteable) }
-  it { should belong_to(:user) }
+  it { should belong_to(:role) }
+  it { is_expected.to have_one(:course) }
+  include_examples 'course associations'
 
   context 'noteables_exist?'  do
     it 'return false when no noteables exist' do

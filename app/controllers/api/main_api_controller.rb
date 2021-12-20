@@ -6,40 +6,23 @@ module Api
   class MainApiController < ActionController::Base
     include ActionPolicy::Controller, SessionHandler
 
-    before_action :check_format, :authenticate
+    before_action :check_format, :check_record, :authenticate
     skip_before_action :verify_authenticity_token
 
-    authorize :user, through: :current_user
+    authorize :real_user, through: :real_user
+    authorize :real_role, through: :real_role
+    authorize :role, through: :current_role
     verify_authorized
     rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
     before_action { authorize! }
 
     AUTHTYPE = 'MarkUsAuth'.freeze
 
-    # Unless overridden by a subclass, all routes are 404's by default
-    def index
-      render 'shared/http_status', locals: {code: '404', message:
-        HttpStatusHelper::ERROR_CODE['message']['404']}, status: 404
-    end
-
-    def show
-      render 'shared/http_status', locals: {code: '404', message:
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
-    end
-
-    def create
-      render 'shared/http_status', locals: {code: '404', message:
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
-    end
-
-    def update
-      render 'shared/http_status', locals: {code: '404', message:
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
-    end
-
-    def destroy
-      render 'shared/http_status', locals: {code: '404', message:
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
+    def page_not_found(message = HttpStatusHelper::ERROR_CODE['message']['404'])
+      render 'shared/http_status',
+             locals: { code: '404', message: message },
+             status: 404,
+             formats: request.format.symbol
     end
 
     private
@@ -48,21 +31,10 @@ module Api
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
     # Note that remote authentication is not supported. API key must be used.
     def authenticate
-      auth_token = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
-      # pretend resource not found if missing or authentication is invalid
-      if auth_token.nil?
-        render 'shared/http_status', locals: { code: '403', message:
-          HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403
-        return
-      end
-
-      # Find user by api_key_md5
-      @current_user = User.find_by_api_key(auth_token)
-      if @current_user.nil?
-        # Key/username does not exist, return 403 error
-        render 'shared/http_status', locals: {code: '403', message:
-          HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
-      end
+      api_key = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
+      return user_not_authorized if api_key.nil?
+      @real_user = User.find_by_api_key(parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
+      user_not_authorized if @real_user.nil?
     end
 
     # Make sure that the passed format is either xml or json
@@ -116,7 +88,8 @@ module Api
     def user_not_authorized
       render 'shared/http_status',
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-             status: 403
+             status: 403,
+             formats: request.format.symbol
     end
 
     protected

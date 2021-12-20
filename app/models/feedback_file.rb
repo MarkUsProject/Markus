@@ -7,6 +7,7 @@ class FeedbackFile < ApplicationRecord
   validates_presence_of :filename # we need a filename
   validates_presence_of :mime_type # we need a mime type
   validates_presence_of :file_content # we need some content
+  validate :courses_should_match
 
   # === Description
   # Updates the file_content attribute of a feedback file object
@@ -25,5 +26,9 @@ class FeedbackFile < ApplicationRecord
     else
       submission.grouping
     end
+  end
+
+  def course
+    self.submission&.course || self.test_group_result&.course
   end
 end

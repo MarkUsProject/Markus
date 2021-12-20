@@ -15,17 +15,17 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def manage?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 
   def see_hidden?
-    user.admin? || user.ta? || user.visible_assessments(assessment_id: record.id).exists?
+    role.instructor? || role.ta? || role.visible_assessments(assessment_id: record.id).exists?
   end
 
   # helper policies
 
   def view_test_options?
-    (check?(:run_tests?, user) && check?(:tests_enabled?)) || (user.student? && check?(:student_tests_enabled?))
+    (check?(:run_tests?, role) && check?(:tests_enabled?)) || (role.student? && check?(:student_tests_enabled?))
   end
 
   def student_tests_enabled?
@@ -56,7 +56,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def collection_date_passed?
-    record.past_collection_date?(user.section)
+    record.past_collection_date?(role.section)
   end
 
   def students_form_groups?
@@ -64,7 +64,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def not_yet_in_group?
-    !user.has_accepted_grouping_for?(record.id)
+    !role.has_accepted_grouping_for?(record.id)
   end
 
   def autogenerate_group_name?
@@ -72,7 +72,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def view?
-    user.admin? || user.ta?
+    role.instructor? || role.ta?
   end
 
   def manage_tests?
@@ -80,13 +80,13 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def start_timed_assignment?
-    user.student? && (
+    role.student? && (
       (check?(:not_yet_in_group?) &&
-        record.section_start_time(user.section) < Time.current &&
-        record.section_due_date(user.section) > Time.current &&
+        record.section_start_time(role.section) < Time.current &&
+        record.section_due_date(role.section) > Time.current &&
         record.group_max == 1) ||
       (!check?(:not_yet_in_group?) &&
-        check?(:start_timed_assignment?, user.accepted_grouping_for(record.id), with: GroupingPolicy))
+        check?(:start_timed_assignment?, role.accepted_grouping_for(record.id), with: GroupingPolicy))
     )
   end
 end

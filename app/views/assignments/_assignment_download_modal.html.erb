@@ -10,8 +10,8 @@
       <%= t('download_csv') %>
     </div>
     <%= link_to '',
-                download_assignments_path(format: 'csv'),
-                class: 'make_div_clickable' if @current_user.admin? %>
+                download_assignments_course_path(@current_course, format: 'csv'),
+                class: 'make_div_clickable' if @current_role.instructor? %>
   </div>
   <div class='clickable_links'>
     <div class='clickable_text'>
@@ -19,8 +19,8 @@
       <%= t('download_yml') %>
     </div>
     <%= link_to '',
-                download_assignments_path(format: 'yml'),
-                class: 'make_div_clickable' if @current_user.admin? %>
+                download_assignments_course_path(@current_course, format: 'yml'),
+                class: 'make_div_clickable' if @current_role.instructor? %>
   </div>
   <section class='dialog-actions'>
     <input type='reset' id='download' value='<%= t(:cancel) %>' />

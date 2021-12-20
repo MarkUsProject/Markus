@@ -13,7 +13,7 @@
   <p>
     <%= t('upload_help_html', section_id: 'students') %>
   </p>
-  <%= form_tag upload_tas_path, { multipart: true } do %>
+  <%= form_tag upload_course_tas_path(@current_course), { multipart: true } do %>
     <div>
       <%= file_field_tag 'upload_file' %>
     </div>

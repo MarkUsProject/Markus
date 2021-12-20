@@ -30,7 +30,7 @@ class StudentMembership < Membership
   after_destroy :update_repo_permissions_after_destroy
 
   def must_be_valid_student
-    if user && !user.is_a?(Student)
+    if role && !role.is_a?(Student)
       errors.add('base', 'User must be a student')
       return false
     end
@@ -72,9 +72,9 @@ class StudentMembership < Membership
 
   # Raises an error if this user already has an accepted membership for a different grouping for this assignment
   def one_accepted_per_assignment
-    return unless user.try(:student?)
+    return unless role.try(:student?)
 
-    all_memberships = user.accepted_memberships
+    all_memberships = role.accepted_memberships
                           .joins(:grouping)
                           .where('groupings.assessment_id': grouping.assessment_id)
     return if all_memberships.empty? || all_memberships.find_by(id: self.id)

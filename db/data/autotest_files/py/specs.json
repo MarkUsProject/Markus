@@ -9,7 +9,7 @@
       "test_data": [
         {
           "script_files": ["test.py"],
-          "category": ["admin"],
+          "category": ["instructor"],
           "timeout": 30,
           "tester": "unittest",
           "output_verbosity": 2,
@@ -20,7 +20,7 @@
         },
         {
           "script_files": ["test2.py"],
-          "category": ["admin"],
+          "category": ["instructor"],
           "timeout": 30,
           "tester": "pytest",
           "output_verbosity": "short",

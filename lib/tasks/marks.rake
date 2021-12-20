@@ -35,10 +35,10 @@ namespace :db do
     FeedbackFile.insert_all feedback_files
 
     # Add annotations to submissions
-    admin = Admin.first
+    instructor = Instructor.first
     now = Time.current
     annotation_attributes = {
-      is_remark: false, creator_id: admin.id, creator_type: 'Admin',
+      is_remark: false, creator_id: instructor.id, creator_type: 'Instructor',
       x1: nil, y1: nil, x2: nil, y2: nil, page: nil,
       line_start: nil, line_end: nil, column_start: nil, column_end: nil
     }
@@ -89,8 +89,8 @@ namespace :db do
     one_time_ids = AnnotationText.insert_all(groupings.map do |_|
       {
         content: random_sentences(3),
-        creator_id: admin.id,
-        last_editor_id: admin.id,
+        creator_id: instructor.id,
+        last_editor_id: instructor.id,
         created_at: now,
         updated_at: now
       }
@@ -223,7 +223,7 @@ namespace :db do
           grade: random_grade
         }
       end
-      students << { id: student.id, total_grade: total_grade, released_to_student: true }
+      students << { id: student.id, role_id: student.role.id, total_grade: total_grade, released_to_student: true }
     end
 
     Grade.insert_all grades

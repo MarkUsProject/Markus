@@ -65,9 +65,8 @@ export class SubmissionFilePanel extends React.Component {
         <DownloadSubmissionModal
           fileData={this.props.fileData}
           initialFile={selectedFile}
-          downloadURL={Routes.download_assignment_submission_result_url(
-            this.props.assignment_id,
-            this.props.submission_id,
+          downloadURL={Routes.download_course_result_url(
+            this.props.course_id,
             this.props.result_id
           )}
         />,
@@ -141,6 +140,7 @@ export class SubmissionFilePanel extends React.Component {
           fileData={this.props.fileData}
           onSelectFile={this.selectFile}
           selectedFile={this.state.selectedFile}
+          course_id={this.props.course_id}
         />
         {this.props.canDownload && (
           <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
@@ -150,6 +150,7 @@ export class SubmissionFilePanel extends React.Component {
             categories={this.props.annotation_categories}
             newAnnotation={this.props.newAnnotation}
             addExistingAnnotation={this.props.addExistingAnnotation}
+            course_id={this.props.course_id}
           />
         )}
       </div>,
@@ -165,6 +166,7 @@ export class SubmissionFilePanel extends React.Component {
           focusLine={this.state.focusLine}
           annotationFocus={this.state.annotationFocus}
           released_to_students={this.props.released_to_students}
+          course_id={this.props.course_id}
         />
       </div>,
     ];

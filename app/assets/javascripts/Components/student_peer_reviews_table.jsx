@@ -18,7 +18,10 @@ class StudentPeerReviewsTable extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.list_reviews_assignment_peer_reviews_path(this.props.assignment_id),
+      url: Routes.list_reviews_course_assignment_peer_reviews_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       dataType: "json",
     }).then(res => {
       this.setState({
@@ -34,7 +37,7 @@ class StudentPeerReviewsTable extends React.Component {
       accessor: "group_name",
       Cell: row => {
         return (
-          <a href={Routes.edit_assignment_result_path(this.props.assignment_id, row.original.id)}>
+          <a href={Routes.edit_course_result_path(this.props.course_id, row.original.id)}>
             {`${I18n.t("activerecord.models.peer_review.one")} ${row.index + 1}`}
           </a>
         );

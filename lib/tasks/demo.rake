@@ -27,7 +27,8 @@ namespace :markus do
       Group.find_by group_name: students[0].user_name
     else
       group = Group.create(
-        group_name: "#{ students[0].user_name } #{ a.short_identifier }"
+        group_name: "#{students[0].user_name} #{a.short_identifier}",
+        course: a.course
       )
       grouping = Grouping.create(
         group: group,
@@ -36,12 +37,14 @@ namespace :markus do
       grouping.invite(
         [students[0].user_name],
         StudentMembership::STATUSES[:inviter],
-        invoked_by_admin=true)
+        invoked_by_instructor = true
+      )
       students[1..-1].each do |student|
         grouping.invite(
           [student.user_name],
           StudentMembership::STATUSES[:accepted],
-          invoked_by_admin=true)
+          invoked_by_instructor = true
+        )
       end
       group
     end
@@ -146,11 +149,11 @@ namespace :markus do
 
     puts 'CREATE USERS'
 
-    # Only use admin if in dev mode
-    puts 'Admins'
-    admins = [%w[instructor William Wonka]]
-    admins.each do |admin|
-      Admin.create(user_name: admin[0], first_name: admin[1], last_name: admin[2])
+    # Only use instructor if in dev mode
+    puts 'Instructors'
+    instructors = [%w[instructor William Wonka]]
+    instructors.each do |instructor|
+      Instructor.create(user_name: instructor[0], first_name: instructor[1], last_name: instructor[2])
     end
 
     puts 'Students'
@@ -175,14 +178,11 @@ namespace :markus do
       Ta.create(user_name: ta[0], first_name: ta[1], last_name: ta[2])
     end
 
-    puts 'Server User'
-    TestServer.create(user_name: Settings.autotest.server_host,
-                      first_name: 'Test', last_name: 'Server', hidden: true)
-
     puts 'CREATE ASSIGNMENTS'
 
     puts '1: No Late Submissions'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A1NoLate',
       description: 'No Late Submissions',
       message: '',
@@ -201,6 +201,7 @@ namespace :markus do
 
     puts '2: Grace Period Submissions'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A2Grace',
       description: 'Grace Period Submissions',
       message: '',
@@ -221,6 +222,7 @@ namespace :markus do
 
     puts '3: Penalty Decay Submissions'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A3Penalty',
       description: 'Penalty Decay Submissions',
       message: '',
@@ -246,6 +248,7 @@ namespace :markus do
 
     puts '4: Students work in groups'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A4Groups',
       description: 'Students work in groups',
       message: '',
@@ -268,6 +271,7 @@ namespace :markus do
 
     puts '5: Nothing collected'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A5Collect',
       description: 'Nothing Collected',
       message: '',
@@ -293,6 +297,7 @@ namespace :markus do
 
     puts '6: Marking State examples'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A6MarkingState',
       description: 'Marking State examples',
       message: '',

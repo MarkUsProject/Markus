@@ -60,7 +60,7 @@ export class FeedbackFilePanel extends React.Component {
 
     let url, file_obj;
     if (this.state.selectedFile !== null) {
-      url = Routes.feedback_file_path(this.state.selectedFile);
+      url = Routes.course_feedback_file_path(this.props.course_id, this.state.selectedFile);
       file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
     }
 

@@ -3,7 +3,7 @@ class GroupingPolicy < ApplicationPolicy
   authorize :membership, optional: true
 
   def member?
-    record.accepted_students.include?(user)
+    record.accepted_students.include?(role)
   end
 
   def not_in_progress?
@@ -28,11 +28,11 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def disinvite_member?
-    user.user_name == record.inviter&.user_name && membership.membership_status == StudentMembership::STATUSES[:pending]
+    role.user_name == record.inviter&.user_name && membership.membership_status == StudentMembership::STATUSES[:pending]
   end
 
   def delete_rejected?
-    user.user_name == record.inviter&.user_name &&
+    role.user_name == record.inviter&.user_name &&
         membership.membership_status == StudentMembership::STATUSES[:rejected]
   end
 
@@ -41,7 +41,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def deletable_by?
-    record.deletable_by?(user)
+    record.deletable_by?(role)
   end
 
   def no_submission?
@@ -53,7 +53,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def view_file_manager?
-    return false unless user.student?
+    return false unless role.student?
     if record.assignment.scanned_exam? || record.assignment.is_peer_review?
       false
     elsif record.assignment.is_timed?
@@ -64,14 +64,14 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def start_timed_assignment?
-    user.student? &&
+    role.student? &&
       record.start_time.nil? &&
       !record.past_collection_date? &&
       record.past_assessment_start_time?
   end
 
   def download_starter_file?
-    return false unless user.student?
+    return false unless role.student?
     return false unless check?(:see_hidden?, record.assignment)
     return false if !record.assignment.starter_files_after_due && record.past_collection_date?
     return true unless record.assignment.is_timed?

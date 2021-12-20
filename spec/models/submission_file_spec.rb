@@ -4,6 +4,7 @@ describe SubmissionFile do
   it { is_expected.to have_many(:annotations) }
   it { is_expected.to validate_presence_of :filename }
   it { is_expected.to validate_presence_of :path }
+  it { is_expected.to have_one(:course) }
 
   context 'A .java Submission file' do
     before(:each) do
@@ -209,9 +210,9 @@ describe SubmissionFile do
       end
       context 'with valid annotations' do
         before(:each) do
-          @ta = Ta.new({user_name: 'exist_user',
-                        first_name: 'Nelle',
-                        last_name: 'Varoquaux'})
+          @ta = Ta.new(end_user_attributes: { user_name: 'exist_user',
+                                              first_name: 'Nelle',
+                                              last_name: 'Varoquaux' })
           @annot1 = ImageAnnotation.new({submission_file: @submission_file,
                                           x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
                                           annotation_text: AnnotationText.new({id: 1}),
@@ -245,9 +246,9 @@ describe SubmissionFile do
       end
       context 'with valid annotations' do
         before(:each) do
-          @ta = Ta.new({user_name: 'exist_user',
-                        first_name: 'Nelle',
-                        last_name: 'Varoquaux'})
+          @ta = Ta.new(end_user_attributes: { user_name: 'exist_user',
+                                              first_name: 'Nelle',
+                                              last_name: 'Varoquaux' })
           @annot1 = ImageAnnotation.new({submission_file: @submission_file,
                                           x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
                                           annotation_text: AnnotationText.new({id: 1}),

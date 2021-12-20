@@ -6,10 +6,11 @@
     makeMarksSpreadsheet(
       document.getElementById('react_grades_table'),
       {
+        course_id: <%= @current_course.id %>,
         grade_entry_form_id: <%= @grade_entry_form.id %>,
         show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
         max_mark: <%= @grade_entry_form.max_mark %>,
-        show_sections: <%= Section.exists? %>,
+        show_sections: <%= @current_course.sections.exists? %>,
         can_release: <%= allowed_to? :manage? %>
       }
     );

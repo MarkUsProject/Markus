@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :membership do
-    association :user
+    association :role
     association :grouping
   end
 end

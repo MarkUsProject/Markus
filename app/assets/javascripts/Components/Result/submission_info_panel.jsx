@@ -47,7 +47,7 @@ export class SubmissionInfoPanel extends React.Component {
         <ul className="tag-list">{this.renderTagList()}</ul>
         <h3>{I18n.t("tags.results.available_tags")}</h3>
         <ul className="tag-list">{this.renderAvailableTags()}</ul>
-        {this.props.role === "Admin" && (
+        {this.props.role === "Instructor" && (
           <p>
             <button className="inline-button" onClick={() => modal_create_new_tag.open()}>
               {I18n.t("helpers.submit.create", {
@@ -64,9 +64,12 @@ export class SubmissionInfoPanel extends React.Component {
         </p>
         <p>
           <a
-            href={Routes.repo_browser_assignment_submission_path(
+            href={Routes.repo_browser_course_assignment_submissions_path(
+              this.props.course_id,
               this.props.assignment_id,
-              this.props.grouping_id
+              {
+                grouping_id: this.props.grouping_id,
+              }
             )}
           >
             {I18n.t("results.view_group_repo")}

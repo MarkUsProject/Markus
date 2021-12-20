@@ -4,6 +4,7 @@ describe GradeEntryItem do
     it { is_expected.to belong_to(:grade_entry_form) }
     it { is_expected.to have_many(:grades).dependent(:delete_all) }
     it { is_expected.to have_many(:grade_entry_students).through(:grades) }
+    it { is_expected.to have_one(:course) }
 
     it { is_expected.to validate_presence_of(:name) }
 
@@ -36,16 +37,19 @@ describe GradeEntryItem do
   # Make sure different grade entry forms can have grade entry items
   # with the same name
   it 'allows same column name for different grade entry forms' do
+    course = create :course
     grade_entry_form1 = GradeEntryForm.create!(short_identifier: 'a',
                                                due_date: 1.days.from_now,
                                                description: '1',
                                                message: '1',
-                                               is_hidden: false)
+                                               is_hidden: false,
+                                               course: course)
     grade_entry_form2 = GradeEntryForm.create!(short_identifier: 'b',
                                                due_date: 1.days.from_now,
                                                description: '2',
                                                message: '2',
-                                               is_hidden: false)
+                                               is_hidden: false,
+                                               course: course)
     column = grade_entry_form1.grade_entry_items.create!(name: 'Q1', position: 1, out_of: 1)
 
     # Re-use the column name for a different grade entry form

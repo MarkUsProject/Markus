@@ -3,10 +3,6 @@ module Api
   class StarterFileGroupsController < MainApiController
     def create
       assignment = Assignment.find_by_id(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'Assignment was not found' }, status: 404
-        return
-      end
       name = params[:name] || I18n.t('assignments.starter_file.new_starter_file_group')
       other_params = params.permit(:entry_rename, :use_rename).to_h.symbolize_keys
       starter_file_group = StarterFileGroup.new(assessment_id: assignment.id, name: name, **other_params)
@@ -20,7 +16,7 @@ module Api
     end
 
     def update
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       if starter_file_group.update(params.permit(:name, :entry_rename, :use_rename))
         if starter_file_group.assignment.starter_file_type == 'shuffle' &&
             (starter_file_group.saved_change_to_entry_rename? || starter_file_group.saved_change_to_use_rename?)
@@ -35,7 +31,7 @@ module Api
     end
 
     def destroy
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       if starter_file_group.destroy
         render 'shared/http_status', locals: { code: '200', message:
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
@@ -47,10 +43,6 @@ module Api
 
     def index
       assignment = Assignment.find_by_id(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'Assignment was not found' }, status: 404
-        return
-      end
       respond_to do |format|
         format.xml { render xml: assignment.starter_file_groups.to_xml(skip_types: 'true') }
         format.json { render json: assignment.starter_file_groups.to_json }
@@ -58,7 +50,7 @@ module Api
     end
 
     def show
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       respond_to do |format|
         format.xml { render xml: starter_file_group.to_xml(skip_types: 'true') }
         format.json { render json: starter_file_group.to_json }
@@ -66,7 +58,7 @@ module Api
     end
 
     def create_file
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       if has_missing_params?([:filename, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
@@ -91,7 +83,7 @@ module Api
     end
 
     def create_folder
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
@@ -111,7 +103,7 @@ module Api
     end
 
     def remove_file
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
@@ -130,7 +122,7 @@ module Api
     end
 
     def remove_folder
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
@@ -150,13 +142,13 @@ module Api
     end
 
     def download_entries
-      starter_file_group = find_starter_file_group || return
-      zip_path = starter_file_group.zip_starter_file_files(current_user)
+      starter_file_group = record
+      zip_path = starter_file_group.zip_starter_file_files(current_role)
       send_file zip_path, filename: File.basename(zip_path)
     end
 
     def entries
-      starter_file_group = find_starter_file_group || return
+      starter_file_group = record
       respond_to do |format|
         paths = starter_file_group.files_and_dirs
         format.xml { render xml: paths.to_xml(root: 'paths', skip_types: 'true') }
@@ -171,17 +163,6 @@ module Api
     def update_entries_and_warn(starter_file_group)
       starter_file_group.assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
       starter_file_group.update_entries
-    end
-
-    def find_starter_file_group
-      assignment = Assignment.find_by_id(params[:assignment_id])
-      starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
-      if starter_file_group.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'Starter file group was not found' }, status: 404
-        false
-      else
-        starter_file_group
-      end
     end
   end
 end

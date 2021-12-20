@@ -5,6 +5,9 @@ class Annotation < ApplicationRecord
   belongs_to                :creator, polymorphic: true
   belongs_to                :result
 
+  has_one                   :course, through: :submission_file
+
+  validate                  :courses_should_match
   validates_presence_of     :annotation_number
   validates_inclusion_of    :is_remark, in: [true, false]
 

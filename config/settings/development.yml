@@ -24,6 +24,7 @@ validate_user_not_allowed_message: 'That is your correct University of Foo user 
 incorrect_login_message: 'Login incorrect. You can check your Foo U user name or reset your password at https://www.foo.example.edu/passwords.'
 
 validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
+remote_auth_login_url: https://www.example.com
 
 repository:
   storage: <%= "#{::Rails.root.to_s}/data/dev" %>/repos

@@ -10,7 +10,11 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :assignment, foreign_key: :assessment_id
 
+  has_one :course, through: :assignment
+
   belongs_to :flexible_criterion, required: false
+  # Note that there is no need to validate that courses match through courses_should_match
+  # because the flexible_criterion_id must be associated to the same assignment.
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
 
@@ -25,7 +29,7 @@ class AnnotationCategory < ApplicationRecord
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,flexible criterion,annotation_text[, deduction], annotation_text[, deduction]...
-  def self.add_by_row(row, assignment, current_user)
+  def self.add_by_row(row, assignment, current_role)
     # The first column is the annotation category name.
     name = row.shift
     annotation_category = assignment.annotation_categories.find_by(annotation_category_name: name)
@@ -45,8 +49,8 @@ class AnnotationCategory < ApplicationRecord
       row.each do |text|
         annotation_text = annotation_category.annotation_texts.build(
           content: text,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id
+          creator_id: current_role.id,
+          last_editor_id: current_role.id
         )
         unless annotation_text.save
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
@@ -76,8 +80,8 @@ class AnnotationCategory < ApplicationRecord
         end
         annotation_text = annotation_category.annotation_texts.build(
           content: text_with_deduction.first,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id,
+          creator_id: current_role.id,
+          last_editor_id: current_role.id,
           deduction: new_deduction.round(2)
         )
         unless annotation_text.save
@@ -146,16 +150,16 @@ class AnnotationCategory < ApplicationRecord
     end
   end
 
-  # Return all visible annotation categories associated with +assignment+ for +user+.
+  # Return all visible annotation categories associated with +assignment+ for +role+.
   #
-  # This will return all annotation categories for admins and no admin categories for students.
+  # This will return all annotation categories for instructors and no instructor categories for students.
   # If graders are assigned annotation categories, then only return assigned categories, otherwise
-  # treat graders the same as admins.
-  def self.visible_categories(assignment, user)
-    return AnnotationCategory.none unless user.ta? || user.admin?
+  # treat graders the same as instructors.
+  def self.visible_categories(assignment, role)
+    return AnnotationCategory.none unless role.ta? || role.instructor?
 
-    if user.ta? && assignment.assign_graders_to_criteria
-      visible = user.criterion_ta_associations.joins(:criterion).pluck(:criterion_id) + [nil]
+    if role.ta? && assignment.assign_graders_to_criteria
+      visible = role.criterion_ta_associations.joins(:criterion).pluck(:criterion_id) + [nil]
       assignment.annotation_categories.order(:position).where('annotation_categories.flexible_criterion_id': visible)
     else
       assignment.annotation_categories.order(:position)

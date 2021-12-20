@@ -10,6 +10,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       makeRepoBrowser(document.getElementById('file_manager'),
         {
+          course_id: <%= @current_course.id %>,
           assignment_id: <%= @grouping.assessment_id %>,
           late_penalty: <%= !@grouping.assignment.submission_rule.is_a? NoLateSubmissionRule %>,
           grouping_id: <%= @grouping.id %>,
@@ -25,10 +26,10 @@
 <% end %>
 
 <% content_for :title do %>
-  <% if !@current_user.admin? && @grouping.assignment.anonymize_groups %>
+  <% if !@current_role.instructor? && @grouping.assignment.anonymize_groups %>
     <%= t('submissions.repo_browser.repository_name', repository: "#{Group.model_name.human} #{@grouping.id}") %>
   <% else %>
-    <%= t('submissions.repo_browser.repository_name', repository: @grouping.group.repository_name) %>
+    <%= t('submissions.repo_browser.repository_name', repository: @grouping.group.repo_name) %>
     (<%= @grouping.get_all_students_in_group %>)
   <% end %>
 <% end %>

@@ -59,6 +59,7 @@ shared_examples 'due_date_calculations' do |assignment_past, section_past, secti
 end
 
 describe SubmissionRule do
+  it { is_expected.to have_one(:course) }
   context 'A newly initialized submission rule' do
     it 'belongs to an assignment' do
       is_expected.to belong_to(:assignment)
@@ -240,7 +241,7 @@ describe SubmissionRule do
       # create a group of one student from this section, for this assignment
       @student = create(:student, section: @section)
       @grouping = create(:grouping, assignment: @assignment)
-      @studentMembership = create(:student_membership, user: @student, grouping: @grouping,
+      @student_membership = create(:student_membership, role: @student, grouping: @grouping,
                                                        membership_status: StudentMembership::STATUSES[:inviter])
     end
 

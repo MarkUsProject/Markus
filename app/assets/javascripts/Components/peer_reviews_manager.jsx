@@ -27,7 +27,10 @@ class PeerReviewsManager extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.populate_assignment_peer_reviews_path(this.props.assignment_id),
+      url: Routes.populate_course_assignment_peer_reviews_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       dataType: "json",
     }).then(res => {
       this.studentsTable.resetSelection();
@@ -90,7 +93,10 @@ class PeerReviewsManager extends React.Component {
 
     this.setState({loading: true});
     $.post({
-      url: Routes.assign_groups_assignment_peer_reviews_path(this.props.assignment_id),
+      url: Routes.assign_groups_course_assignment_peer_reviews_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         actionString: action,
         selectedReviewerGroupIds: reviewers,

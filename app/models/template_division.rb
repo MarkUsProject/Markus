@@ -2,8 +2,11 @@ class TemplateDivision < ApplicationRecord
   belongs_to :exam_template
   belongs_to :assignment_file, optional: true
 
+  has_one :course, through: :exam_template
+
   accepts_nested_attributes_for :assignment_file, allow_destroy: true
 
+  validate :courses_should_match
   validates :start, numericality: { greater_than_or_equal_to: 1,
                                     less_than_or_equal_to: :end,
                                     only_integer: true }

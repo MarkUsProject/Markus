@@ -1,0 +1,5 @@
+<% content_for :title, t('instructors.edit') %>
+
+<%= render partial: 'layouts/userform',
+           locals: { controller: 'instructors',
+                     action: 'edit' } %>

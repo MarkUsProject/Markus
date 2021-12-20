@@ -32,7 +32,7 @@ class SubmissionFileManager extends React.Component {
   }
 
   fetchData = () => {
-    let data = {assignment_id: this.props.assignment_id};
+    let data = {course_id: this.props.course_id, assignment_id: this.props.assignment_id};
     if (typeof this.props.grouping_id !== "undefined") {
       data.grouping_id = this.props.grouping_id;
     }
@@ -40,7 +40,7 @@ class SubmissionFileManager extends React.Component {
       data.revision_identifier = this.props.revision_identifier;
     }
 
-    fetch(Routes.populate_file_manager_assignment_submissions_path(data), {
+    fetch(Routes.populate_file_manager_course_assignment_submissions_path(data), {
       credentials: "same-origin",
       headers: {
         "content-type": "application/json",
@@ -79,7 +79,10 @@ class SubmissionFileManager extends React.Component {
       }
       data.append("unzip", unzip);
       $.post({
-        url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+        url: Routes.update_files_course_assignment_submissions_path(
+          this.props.course_id,
+          this.props.assignment_id
+        ),
         data: data,
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
@@ -95,7 +98,10 @@ class SubmissionFileManager extends React.Component {
     }
 
     $.post({
-      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.update_files_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         delete_files: fileKeys,
         grouping_id: this.props.grouping_id,
@@ -119,7 +125,10 @@ class SubmissionFileManager extends React.Component {
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
       $.post({
-        url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+        url: Routes.update_files_course_assignment_submissions_path(
+          this.props.course_id,
+          this.props.assignment_id
+        ),
         data: {
           new_folders: [folderKey],
           grouping_id: this.props.grouping_id,
@@ -132,7 +141,10 @@ class SubmissionFileManager extends React.Component {
 
   handleDeleteFolder = folderKeys => {
     $.post({
-      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.update_files_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         delete_folders: folderKeys,
         grouping_id: this.props.grouping_id,
@@ -150,7 +162,8 @@ class SubmissionFileManager extends React.Component {
   };
 
   getDownloadAllURL = () => {
-    return Routes.downloads_assignment_submission_path(
+    return Routes.downloads_course_assignment_submissions_path(
+      this.props.course_id,
       this.props.assignment_id,
       this.props.grouping_id,
       {

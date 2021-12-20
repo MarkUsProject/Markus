@@ -3,10 +3,8 @@
   <h2><%= t('about.version') %></h2>
 
   <p><%= t('about.markus_version') %><strong><%= @markus_version %></strong></p>
-  <% if @current_user.admin? %>
-    <p><%= t('about.ruby_version') %><strong><%= RUBY_VERSION %></strong> </p>
-    <p><%= t('about.rails_version') %><strong><%= Rails::VERSION::STRING %></strong> </p>
-  <% end %>
+  <p><%= t('about.ruby_version') %><strong><%= RUBY_VERSION %></strong> </p>
+  <p><%= t('about.rails_version') %><strong><%= Rails::VERSION::STRING %></strong> </p>
 
   <h2><%= t('about.license') %></h2>
   <%= t('about.license_text_html') %>

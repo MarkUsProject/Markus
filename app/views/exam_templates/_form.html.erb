@@ -1,4 +1,4 @@
-<%= form_for [@assignment, exam_template],
+<%= form_for [@current_course, exam_template],
              namespace: exam_template.id,
              html: { multipart: true,
                      class: exam_template.id.to_s} do |f| %>
@@ -6,10 +6,10 @@
   <%= exam_template.errors.full_messages.empty? ? '' : exam_template.errors.full_messages.empty? %>
 
   <div class='float-right'>
-    <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id),
+    <%= link_to t('exam_templates.download'), download_course_exam_template_path(@current_course, exam_template),
                 class: 'button' %>
     <%= link_to t('exam_templates.delete.general'),
-                [@assignment, exam_template],
+                [@current_course, exam_template],
                 method: :delete,
                 class: 'button',
                 data: { confirm: t('exam_templates.delete.confirm', name: exam_template.name) } %>
@@ -22,7 +22,7 @@
       <%= t('key_pairs.file') %>
     </span>
     <span>
-      <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %>
+      <%= link_to exam_template.filename, download_course_exam_template_path(@current_course, exam_template) %>
     </span>
 
     <%= f.label :new_template, t('exam_templates.update.instruction') %>

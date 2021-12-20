@@ -15,15 +15,18 @@
         <% grouping = grace_period_deduction.membership.grouping %>
         <% if grouping.has_submission? %>
           <%= link_to(grouping.assignment.short_identifier,
-                      edit_assignment_submission_result_path(
-                          grouping.assignment.id,
-                          grouping.current_submission_used.id,
+                      edit_course_result_path(
+                          grouping.assignment.course_id,
                           grouping.current_submission_used.get_original_result.id)) %>
         <% end %>
       </td>
       <td>
         <%= button_to t('delete'),
-                      delete_grace_period_deduction_student_path(deduction_id: grace_period_deduction.id),
+                      delete_grace_period_deduction_course_student_path(
+                        grouping.assignment.course_id,
+                        @role.id,
+                        deduction_id: grace_period_deduction.id
+                      ),
                       method: :delete,
                       data: { confirm: t('grace_period_submission_rules.confirm_remove_deduction') },
                       remote: true %>

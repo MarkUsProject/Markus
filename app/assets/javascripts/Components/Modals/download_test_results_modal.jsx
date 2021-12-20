@@ -20,7 +20,8 @@ class DownloadTestResultsModal extends React.Component {
         </h2>
         <div className={"modal-container-vertical"} style={{alignItems: "center"}}>
           <a
-            href={Routes.download_test_results_assignment_path({
+            href={Routes.download_test_results_course_assignment_path({
+              course_id: this.props.course_id,
               id: this.props.assignment_id,
               format: "json",
               _options: true,
@@ -36,7 +37,8 @@ class DownloadTestResultsModal extends React.Component {
             </button>
           </a>
           <a
-            href={Routes.download_test_results_assignment_path({
+            href={Routes.download_test_results_course_assignment_path({
+              course_id: this.props.course_id,
               id: this.props.assignment_id,
               format: "csv",
               _options: true,

@@ -1,0 +1,17 @@
+<div class='section'>
+  <% unless @grade_entry_forms.empty? && @assignments.empty? %>
+    <div class="table">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <%= link_to t('course_summary.title'),
+                          view_summary_course_course_summaries_path(@current_course),
+                          data: { remote: true } %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

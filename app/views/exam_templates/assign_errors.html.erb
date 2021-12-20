@@ -25,7 +25,7 @@
 
 <% @heading_buttons = [
     { link_text: t('exam_templates.back_to_log_page'),
-      link_path: view_logs_assignment_exam_templates_path },
+      link_path: view_logs_course_assignment_exam_templates_path(@current_course, @assignment) },
 ] %>
 
 <div class='pane-wrapper mid-height'>
@@ -37,7 +37,7 @@
 
   <div class='pane slim-fixed'>
     <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
-    <%= form_tag fix_error_assignment_exam_template_path(id: @exam_template.id),
+    <%= form_tag fix_error_course_exam_template_path(@current_course, @exam_template),
                  id: 'info_form',
                  remote: true do %>
       <%= hidden_field_tag :split_pdf_log_id, @split_pdf_log.id %>

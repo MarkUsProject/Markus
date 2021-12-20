@@ -98,7 +98,6 @@ Config.setup do |config|
         optional(:autotest_cancel_job).filled(:string)
         optional(:autotest_run_job).filled(:string)
         optional(:autotest_specs_job).filled(:string)
-        optional(:autotest_testers_job).filled(:string)
         optional(:create_groups_job).filled(:string)
         optional(:download_submissions_job).filled(:string)
         optional(:generate_job).filled(:string)
@@ -112,14 +111,17 @@ Config.setup do |config|
       required(:redis).hash do
         required(:url).filled(:string)
       end
-      required(:course_name).filled(:string)
-      required(:validate_file).filled(:string)
-      required(:validate_ip).filled(:bool)
+      optional(:validate_file).filled(:string)
+      optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
       required(:validate_user_not_allowed_message).maybe(:string)
       required(:incorrect_login_message).maybe(:string)
-      required(:remote_user_auth).filled(:bool)
+      optional(:remote_auth_login_url).filled(:string)
+      optional(:remote_auth_login_name).filled(:string)
       required(:logout_redirect).filled(:string)
+      optional(:student_csv_order).array(
+        included_in?: %w[user_name last_name first_name section_name id_number email]
+      )
       required(:repository).hash do
         required(:storage).filled(:string)
         required(:type).value(included_in?: %w[git svn mem])
@@ -129,14 +131,8 @@ Config.setup do |config|
         required(:is_repository_admin).filled(:bool)
       end
       required(:max_file_size).value(:integer, gt?: 0)
-      required(:student_session_timeout).value(:integer, gt?: 0)
-      required(:ta_session_timeout).value(:integer, gt?: 0)
-      required(:admin_session_timeout).value(:integer, gt?: 0)
+      required(:session_timeout).value(:integer, gt?: 0)
       required(:enable_key_storage).filled(:bool)
-      required(:student_csv_upload_order).array(
-        included_in?: %w[user_name last_name first_name section_name id_number email]
-      )
-      required(:ta_csv_upload_order).array(included_in?: %w[user_name last_name first_name email])
       required(:logging).hash do
         required(:enabled).filled(:bool)
         required(:rotate_by_interval).filled(:bool)
@@ -155,9 +151,7 @@ Config.setup do |config|
         required(:default_locale).filled(:string)
       end
       required(:autotest).hash do
-        required(:enable).filled(:bool)
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
-        required(:url).filled(:string)
         required(:client_dir).filled(:string)
         required(:max_batch_size).value(:integer, gt?: 0)
       end

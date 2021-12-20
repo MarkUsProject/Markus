@@ -73,23 +73,26 @@ end
 
 describe StudentMembership do
   context 'does validation' do
+    subject { create :student_membership }
     it { is_expected.to validate_presence_of(:membership_status) }
     it { is_expected.to_not allow_value('blah').for :membership_status }
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
     it 'should belong to a student' do
-      expect(create(:student_membership, user: create(:student))).to be_valid
+      expect(create(:student_membership, role: create(:student))).to be_valid
     end
-    it 'should not belong to an admin' do
-      expect { create :student_membership, user: create(:admin) }.to raise_error(ActiveRecord::RecordInvalid)
+    it 'should not belong to an instructor' do
+      expect { create :student_membership, role: create(:instructor) }.to raise_error(ActiveRecord::RecordInvalid)
     end
     it 'should not belong to an ta' do
-      expect { create :student_membership, user: create(:ta) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { create :student_membership, role: create(:ta) }.to raise_error(ActiveRecord::RecordInvalid)
     end
     context 'validates if a student is accepted to multiple memberships for a single assignment' do
       let(:student) { create :student }
       let(:assignment) { create :assignment }
       let(:grouping) { create :grouping, assignment: assignment }
-      let(:accepted_membership) { create :accepted_student_membership, user: student, grouping: grouping }
-      let(:pending_membership) { create :student_membership, user: student, grouping: grouping }
+      let(:accepted_membership) { create :accepted_student_membership, role: student, grouping: grouping }
+      let(:pending_membership) { create :student_membership, role: student, grouping: grouping }
       it 'should not allow if both are accepted' do
         create :grouping_with_inviter, inviter: student, assignment: assignment
         expect { accepted_membership }.to raise_error(ActiveRecord::RecordInvalid)
@@ -100,12 +103,12 @@ describe StudentMembership do
       end
       it 'should allow if there is already a pending grouping and the new one is accepted' do
         first_grouping = create :grouping, assignment: assignment
-        create :student_membership, user: student, grouping: first_grouping
+        create :student_membership, role: student, grouping: first_grouping
         expect { accepted_membership }.not_to raise_error
       end
       it 'should allow if both memberships are pending' do
         first_grouping = create :grouping, assignment: assignment
-        create :student_membership, user: student, grouping: first_grouping
+        create :student_membership, role: student, grouping: first_grouping
         expect { pending_membership }.not_to raise_error
       end
       it 'should allow you to modify an existing accepted grouping' do
@@ -114,7 +117,7 @@ describe StudentMembership do
         expect { membership.update!(membership_status: StudentMembership::STATUSES[:pending]) }.not_to raise_error
       end
       it 'should allow you to modify an existing pending grouping' do
-        membership = create :student_membership, user: student, grouping: create(:grouping, assignment: assignment)
+        membership = create :student_membership, role: student, grouping: create(:grouping, assignment: assignment)
         expect { membership.update!(membership_status: StudentMembership::STATUSES[:accepted]) }.not_to raise_error
       end
     end

@@ -3,7 +3,7 @@ class CourseSummaryPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    user.admin?
+    role.instructor?
   end
 
   def populate?

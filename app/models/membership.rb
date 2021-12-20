@@ -3,10 +3,12 @@ class Membership < ApplicationRecord
 
   has_many :grace_period_deductions, dependent: :destroy
 
-  belongs_to :user
-  validates_associated :user
+  belongs_to :role
+  validates_associated :role
 
   belongs_to :grouping
   validates_associated :grouping
 
+  has_one :course, through: :grouping
+  validate :courses_should_match
 end

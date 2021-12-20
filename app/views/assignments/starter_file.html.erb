@@ -4,6 +4,7 @@
       makeStarterFileManager(
         document.getElementById('starter_file_manager'),
         {
+          course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>
         }
       );

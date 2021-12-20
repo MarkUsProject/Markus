@@ -13,11 +13,6 @@ pt:
         success: "%{resource_name} atualizado com sucesso."
       update_files:
         success: As alterações foram feitas.
-    admins:
-      create:
-        error: "%{resource_name} UPDATE ME: %{errors}."
-      update:
-        error: "%{resource_name} UPDATE ME: %{errors}."
     annotation_categories:
       create:
         error: "%{resource_name} UPDATE ME: %{errors}."
@@ -26,6 +21,11 @@ pt:
     criteria:
       destroy:
         success: Criterion suprimido com sucesso.
+    instructors:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
     students:
       create:
         error: "%{resource_name} UPDATE ME: %{errors}."

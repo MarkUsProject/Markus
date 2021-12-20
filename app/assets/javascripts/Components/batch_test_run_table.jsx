@@ -24,7 +24,7 @@ class BatchTestRunTable extends React.Component {
 
   fetchData() {
     $.ajax({
-      url: Routes.batch_runs_assignment_path(this.props.assignment_id),
+      url: Routes.batch_runs_course_assignment_path(this.props.course_id, this.props.assignment_id),
       dataType: "json",
     }).then(res => {
       this.processData(res);
@@ -37,15 +37,14 @@ class BatchTestRunTable extends React.Component {
       if (!(row.test_batch_id in status)) {
         status[row.test_batch_id] = {total: 0, in_progress: 0};
       }
-      const result_url = Routes.edit_assignment_submission_result_path(
-        this.props.assignment_id,
-        row.submission_id,
-        row.result_id
-      );
+      const result_url = Routes.edit_course_result_path(this.props.course_id, row.result_id);
       row.group_name = <a href={result_url}>{row.group_name}</a>;
 
       if (row.status === "in_progress") {
-        const stop_tests_url = Routes.stop_test_assignment_path(this.props.assignment_id);
+        const stop_tests_url = Routes.stop_test_course_assignment_path(
+          this.props.course_id,
+          this.props.assignment_id
+        );
         row.action = (
           <a href={stop_tests_url + "?test_run_id=" + row.id}>
             {I18n.t("automated_tests.stop_test")}
@@ -129,7 +128,8 @@ class BatchTestRunTable extends React.Component {
                   if (row.value[0] === null) {
                     return row.value[2];
                   } else {
-                    const stop_tests_url = Routes.stop_batch_tests_assignment_path(
+                    const stop_tests_url = Routes.stop_batch_tests_course_assignment_path(
+                      this.props.course_id,
                       this.props.assignment_id
                     );
                     return (

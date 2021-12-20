@@ -4,6 +4,7 @@ describe StarterFileGroup do
   it { is_expected.to have_many(:sections) }
   it { is_expected.to have_many(:starter_file_entries) }
   it { is_expected.to validate_exclusion_of(:entry_rename).in_array(%w[.. .]) }
+  it { is_expected.to have_one(:course) }
 
   context 'more validations' do
     let(:starter_file_group) { create :starter_file_group }
@@ -77,7 +78,7 @@ describe StarterFileGroup do
 
   describe '#zip_starter_file_files' do
     let(:starter_file_group) { create :starter_file_group_with_entries }
-    let(:user) { create :admin }
+    let(:user) { create :instructor }
     it 'should contain the correct entries' do
       zip_path = starter_file_group.zip_starter_file_files(user)
       Zip::File.open(zip_path) do |zip_file|

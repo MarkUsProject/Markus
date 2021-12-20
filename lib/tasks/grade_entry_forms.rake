@@ -2,6 +2,7 @@ namespace :db do
   task grade_entry_forms: :environment do
     puts 'Marks Spreadsheet 1: Marks Spreadsheet Visible with Marks'
     grade_entry_form = GradeEntryForm.create(
+      course: Course.first,
       short_identifier: 'Quiz1',
       description: 'Class Quiz on Variables',
       message: 'Class quiz on variables',
@@ -20,6 +21,7 @@ namespace :db do
 
     puts 'Marks Spreadsheet 2: Marks Spreadsheet Hidden'
     grade_entry_form = GradeEntryForm.create(
+      course: Course.first,
       short_identifier: 'Quiz2',
       description: 'Class Quiz on Conditionals',
       message: 'Class quiz on conditional statements',

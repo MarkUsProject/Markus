@@ -18,12 +18,13 @@
    * @param {PDFView} pdfView      PDF Viewer
    * @param {String}  pageParentId The ID of the parent container of the pages.
    */
-  function PdfAnnotationManager(pdfView, pageParentId, enableAnnotations) {
+  function PdfAnnotationManager(pdfView, pageParentId, enableAnnotations, course_id) {
     // Members
     this.pdfView = pdfView;
     this.annotationTextManager = new AnnotationTextManager();
     this.pageParentId = pageParentId;
     this.angle = 0; //current orientation of the PDF
+    this.course_id = course_id;
 
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
     this.annotationsByPageNumber = {}; // Lookup of annotations by page number
@@ -236,7 +237,7 @@
           var data = get_pdf_annotation_data_with_ids();
           data.content = "Good!";
           data.category_id = "";
-          $.post(Routes.annotations_path(), data, undefined, "script");
+          $.post(Routes.course_annotations_path(self.course_id), data, undefined, "script");
           return;
         }
       }
@@ -321,7 +322,7 @@
           data.content = "Good!";
           data.category_id = "";
 
-          $.post(Routes.annotations_path(), data, undefined, "script");
+          $.post(Routes.course_annotations_path(self.course_id), data, undefined, "script");
         }
       });
     }

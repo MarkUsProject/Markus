@@ -10,6 +10,10 @@ class CriterionTaAssociation < ApplicationRecord
 
   before_validation       :add_assignment_reference, on: :create
 
+  has_one :course, through: :assignment
+
+  validate :courses_should_match
+
   def self.from_csv(assignment, csv_data, remove_existing)
     criteria = assignment.ta_criteria.includes(:criterion_ta_associations)
     if remove_existing
@@ -26,12 +30,13 @@ class CriterionTaAssociation < ApplicationRecord
       criterion = criteria.find { |crit| crit.name == criterion_name }
       raise CsvInvalidLineError if criterion.nil?
 
-      unless ta_user_names.all? { |g| Ta.exists?(user_name: g) }
+      course_tas = assignment.course.tas
+      unless ta_user_names.all? { |g| course_tas.joins(:end_user).exists?('users.user_name': g) }
         raise CsvInvalidLineError
       end
 
       ta_user_names.each do |user_name|
-        ta_id = Ta.find_by(user_name: user_name).id
+        ta_id = course_tas.joins(:end_user).find_by('users.user_name': user_name).id
         new_ta_mappings << {
           criterion_id: criterion.id,
           ta_id: ta_id,

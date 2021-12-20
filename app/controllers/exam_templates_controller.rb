@@ -36,12 +36,11 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.create.failure'))
       end
     end
-    redirect_to action: 'index'
+    redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
   def download
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find_by(id: params[:id]) # look up a specific exam template based on the params[:id]
+    exam_template = record
     filename = exam_template.filename
     send_file(File.join(exam_template.base_path, filename),
               filename: "#{filename}",
@@ -49,8 +48,8 @@ class ExamTemplatesController < ApplicationController
   end
 
   def update
-    assignment = Assignment.find(params[:assignment_id])
-    old_exam_template = assignment.exam_templates.find_by(id: params[:id])
+    old_exam_template = record
+    assignment = record.assignment
     # updating exam template file
     new_uploaded_io = params[:exam_template][:new_template]
     unless new_uploaded_io.nil?
@@ -65,7 +64,8 @@ class ExamTemplatesController < ApplicationController
                                             old_filename: old_template_filename,
                                             new_filename: new_template_filename)
         old_exam_template.update(exam_template_params)
-        respond_with(old_exam_template, location: assignment_exam_templates_url)
+        respond_with(old_exam_template,
+                     location: course_assignment_exam_templates_url(assignment.course, assignment, old_exam_template))
         return
       end
     else
@@ -76,19 +76,19 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.update.failure'))
       end
     end
-    redirect_to action: 'index'
+    redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
   def generate
     copies = params[:exam_template][:num_copies].to_i
     index = params[:exam_template][:start_index].to_i
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
+    assignment = exam_template.assignment
 
     current_job = exam_template.generate_copies(copies, index)
     current_job.status.update(file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf")
     current_job.status.update(exam_id: exam_template.id)
-    current_job.status.update(id: assignment.id)
+    current_job.status.update(course_id: assignment.course.id)
     session[:job_id] = current_job.job_id
 
     respond_to do |format|
@@ -97,16 +97,14 @@ class ExamTemplatesController < ApplicationController
   end
 
   def download_generate
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     send_file(File.join(exam_template.base_path, params[:file_name]),
               filename: params[:file_name],
               type: "application/pdf")
   end
 
   def show_cover
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     cover_file = File.join(exam_template.base_path, 'cover.jpg')
     if File.file?(cover_file)
       send_file cover_file, disposition: 'inline', filename: 'cover.jpg'
@@ -116,8 +114,7 @@ class ExamTemplatesController < ApplicationController
   end
 
   def add_fields
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     if params[:exam_template][:automatic_parsing] == '1'
       exam_template.update(exam_template_crop_fields_params)
     else
@@ -130,37 +127,36 @@ class ExamTemplatesController < ApplicationController
         crop_height: nil
       )
     end
-    redirect_to action: 'index'
+    exam_template.save
+    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
   end
 
   def split
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     split_exam = params[:exam_template]&.fetch(:pdf_to_split) { nil }
     unless split_exam.nil?
       if split_exam.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.split.invalid'))
-        redirect_to action: 'index'
+        redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
       else
-        current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
+        current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
         session[:job_id] = current_job.job_id
-        redirect_to view_logs_assignment_exam_templates_path
+        redirect_to view_logs_course_assignment_exam_templates_path(current_course, exam_template.assignment)
       end
     else
       flash_message(:error, t('exam_templates.split.missing'))
-      redirect_to action: 'index'
+      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
     end
   end
 
   def destroy
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     if exam_template.delete_with_file
       flash_message(:success, t('exam_templates.delete.success'))
     else
       flash_message(:failure, t('exam_templates.delete.failure'))
     end
-    redirect_to action: 'index'
+    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
   end
 
   def view_logs
@@ -172,7 +168,7 @@ class ExamTemplatesController < ApplicationController
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
                                     .where(assessments: { id: @assignment.id })
                                     .includes(:exam_template)
-                                    .includes(:user)
+                                    .includes(:role)
                                     .includes(split_pages: :group)
 
         data = split_pdf_logs.map do |log|
@@ -210,8 +206,8 @@ class ExamTemplatesController < ApplicationController
   end
 
   def assign_errors
-    @assignment = Assignment.find(params[:assignment_id])
-    @exam_template = @assignment.exam_templates.find(params[:id])
+    @exam_template = record
+    @assignment = @exam_template.assignment
     @error_files = []
     @split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])
     if params[:split_page_id]
@@ -231,9 +227,8 @@ class ExamTemplatesController < ApplicationController
   end
 
   def error_pages
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
-    exam_group = Group.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
+    exam_template = record
+    exam_group = current_course.groups.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
     expected_pages = [*1..exam_template.num_pages]
     if exam_group.nil?
       pages = expected_pages
@@ -244,8 +239,7 @@ class ExamTemplatesController < ApplicationController
   end
 
   def download_raw_split_file
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     split_pdf_log = exam_template.split_pdf_logs.find(params[:split_pdf_log_id])
     split_file = "raw_upload_#{split_pdf_log.id}.pdf"
     send_file(File.join(exam_template.base_path, 'raw', split_file),
@@ -254,16 +248,15 @@ class ExamTemplatesController < ApplicationController
   end
 
   def download_error_file
-    @assignment = Assignment.find(params[:assignment_id])
-    exam_template = @assignment.exam_templates.find(params[:id])
+    exam_template = record
+    @assignment = record.assignment
     send_file(File.join(exam_template.base_path, 'error', params[:file_name]),
               filename: params[:file_name],
               type: 'application/pdf')
   end
 
   def fix_error
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template = record
     split_page_id = params[:split_page_id]
 
     if params[:commit] == 'Save'

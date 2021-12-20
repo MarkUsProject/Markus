@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :grade_entry_student do
-    association :user, factory: :student
+    association :role, factory: :student
+    association :grade_entry_form
   end
 end

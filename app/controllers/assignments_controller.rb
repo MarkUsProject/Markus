@@ -33,7 +33,7 @@ class AssignmentsController < ApplicationController
   # Publicly accessible actions ---------------------------------------
 
   def show
-    assignment = Assignment.find(params[:id])
+    assignment = record
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     unless allowed_to?(:see_hidden?)
       render 'shared/http_status',
@@ -47,21 +47,21 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
       if @assignment.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
       elsif @assignment.group_max == 1 && (!@assignment.is_timed ||
-                                           Time.current > assignment.section_due_date(@current_user&.section))
+                                           Time.current > assignment.section_due_date(current_role&.section))
         begin
-          current_user.create_group_for_working_alone_student(@assignment.id)
+          current_role.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
           return
         end
-        @grouping = @current_user.accepted_grouping_for(@assignment.id)
+        @grouping = current_role.accepted_grouping_for(@assignment.id)
       end
     end
     unless @grouping.nil?
@@ -80,7 +80,7 @@ class AssignmentsController < ApplicationController
   end
 
   def peer_review
-    assignment = Assignment.find(params[:id])
+    assignment = record
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
     if @assignment.nil? || !allowed_to?(:see_hidden?)
       render 'shared/http_status',
@@ -94,9 +94,9 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @student = current_user
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
-    @prs = current_user.grouping_for(@assignment.parent_assignment.id)&.
+    @student = current_role
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
+    @prs = current_role.grouping_for(@assignment.parent_assignment.id)&.
         peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
@@ -108,7 +108,7 @@ class AssignmentsController < ApplicationController
       if @assignment.section_due_dates_type
         section_due_dates = Hash.new
         now = Time.current
-        Section.all.each do |section|
+        current_course.sections.find_each do |section|
           collection_time = @assignment.submission_rule.calculate_collection_time(section)
           collection_time = now if now >= collection_time
           if section_due_dates[collection_time].nil?
@@ -138,9 +138,9 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing assignment information.
   # Acts as dashboard for students and TAs.
   def index
-    if current_user.student?
+    if current_role.student?
       @a_id_results = {}
-      accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
+      accepted_groupings = current_role.accepted_groupings.includes(:assignment, current_submission_used: :results)
       accepted_groupings.each do |grouping|
         if allowed_to?(:see_hidden?, grouping.assignment) && grouping.has_submission?
           submission = grouping.current_submission_used
@@ -153,7 +153,7 @@ class AssignmentsController < ApplicationController
       end
 
       @g_id_entries = {}
-      current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
+      current_role.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
         if allowed_to?(:see_hidden?, g.grade_entry_form)
           @g_id_entries[g.assessment_id] = g
         end
@@ -167,10 +167,10 @@ class AssignmentsController < ApplicationController
 
   # Called on editing assignments (GET)
   def edit
-    @assignment = Assignment.find_by_id(params[:id])
+    @assignment = record
     past_date = @assignment.section_names_past_due_date
-    @assignments = Assignment.all
-    @sections = Section.all
+    @assignments = current_course.assignments
+    @sections = current_course.sections
 
     unless @assignment.scanned_exam
       if @assignment.past_collection_date?
@@ -181,7 +181,7 @@ class AssignmentsController < ApplicationController
     end
 
     # build assessment_section_properties for each section that doesn't already have one
-    Section.all.each do |s|
+    current_course.sections.find_each do |s|
       unless AssessmentSectionProperties.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.assessment_section_properties.build(section: s)
       end
@@ -195,10 +195,9 @@ class AssignmentsController < ApplicationController
 
   # Called when editing assignments form is submitted (PUT).
   def update
-    @assignment = Assignment.find_by_id(params[:id])
-    @assignments = Assignment.all
-    @sections = Section.all
-
+    @assignment = record
+    @assignments = current_course.assignments
+    @sections = current_course.sections
     begin
       @assignment.transaction do
         @assignment = process_assignment_form(@assignment)
@@ -206,27 +205,27 @@ class AssignmentsController < ApplicationController
       end
     rescue
     end
-    respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
+    respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
   end
 
   # Called in order to generate a form for creating a new assignment.
   # i.e. GET request on assignments/new
   def new
-    @assignments = Assignment.all
-    @assignment = Assignment.new
+    @assignments = current_course.assignments
+    @assignment = @assignments.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
     if params[:timed].present?
       @assignment.is_timed = true
     end
-    @clone_assignments = Assignment.joins(:assignment_properties)
-                                   .where(assignment_properties: { vcs_submit: true })
-                                   .order(:id)
-    @sections = Section.all
+    @clone_assignments = @assignments.joins(:assignment_properties)
+                                     .where(assignment_properties: { vcs_submit: true })
+                                     .order(:id)
+    @sections = current_course.sections
 
     # build assessment_section_properties for each section
-    Section.all.each { |s| @assignment.assessment_section_properties.build(section: s) }
+    @sections.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
     render :new, layout: 'assignment_content'
@@ -234,7 +233,7 @@ class AssignmentsController < ApplicationController
 
   # Called after a new assignment form is submitted.
   def create
-    @assignment = Assignment.new
+    @assignment = current_course.assignments.new
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment)
@@ -244,12 +243,12 @@ class AssignmentsController < ApplicationController
         @assignment.errors.add(:base, e.message)
       end
       unless @assignment.save
-        @assignments = Assignment.all
-        @sections = Section.all
-        @clone_assignments = Assignment.joins(:assignment_properties)
-                                       .where(assignment_properties: { vcs_submit: true })
-                                       .order(:id)
-        respond_with @assignment, location: -> { new_assignment_path(@assignment) }
+        @assignments = current_course.assignments
+        @sections = current_course.sections
+        @clone_assignments = @assignments.joins(:assignment_properties)
+                                         .where(assignment_properties: { vcs_submit: true })
+                                         .order(:id)
+        respond_with @assignment, location: -> { new_course_assignment_path(current_course, @assignment) }
         return
       end
       if params[:persist_groups_assignment]
@@ -259,16 +258,16 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
+    respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
   end
 
   def summary
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
-      format.json { render json: @assignment.summary_json(@current_user) }
+      format.json { render json: @assignment.summary_json(current_role) }
       format.csv do
-        data = @assignment.summary_csv(@current_user)
+        data = @assignment.summary_csv(current_role)
         filename = "#{@assignment.short_identifier}_summary.csv"
         send_data data,
                   disposition: 'attachment',
@@ -279,7 +278,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_test_results
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
     respond_to do |format|
       format.json do
         data = @assignment.summary_test_result_json
@@ -317,14 +316,14 @@ class AssignmentsController < ApplicationController
   end
 
   def batch_runs
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
 
     respond_to do |format|
       format.html
       format.json do
-        user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
+        role_ids = current_role.instructor? ? current_course.instructors.ids : current_role.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                           .where(test_runs: {user_id: user_ids},
+                           .where(test_runs: { role_id: role_ids },
                                   'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
@@ -349,7 +348,7 @@ class AssignmentsController < ApplicationController
 
   # Return assignment grade distributions
   def grade_distribution
-    assignment = Assignment.find(params[:id])
+    assignment = record
     summary = {
       name: assignment.short_identifier + ': ' + assignment.description,
       average: assignment.results_average || 0,
@@ -386,54 +385,11 @@ class AssignmentsController < ApplicationController
   end
 
   def view_summary
-    @assignment = Assignment.find(params[:id])
-  end
-
-  def download
-    format = params[:format]
-    case format
-    when 'csv'
-      output = Assignment.get_assignment_list(format)
-      send_data(output,
-                filename: 'assignments.csv',
-                type: 'text/csv',
-                disposition: 'attachment')
-    when 'yml'
-      output = Assignment.get_assignment_list(format)
-      send_data(output,
-                filename: 'assignments.yml',
-                type: 'text/yml',
-                disposition: 'attachment')
-    else
-      flash[:error] = t('download_errors.unrecognized_format', format: format)
-      redirect_to action: 'index', id: params[:id]
-    end
-  end
-
-  def upload
-    begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
-    rescue StandardError => e
-      flash_message(:error, e.message)
-    else
-      if data[:type] == '.csv'
-        result = Assignment.upload_assignment_list('csv', data[:file].read)
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
-      elsif data[:type] == '.yml'
-        result = Assignment.upload_assignment_list('yml', data[:contents])
-        if result.is_a?(StandardError)
-          flash_message(:error, result.message)
-        end
-      end
-    end
-    redirect_to action: 'index'
+    @assignment = record
   end
 
   def starter_file
-    @assignment = Assignment.find_by_id(params[:id])
+    @assignment = record
     if @assignment.nil?
       render 'shared/http_status',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
@@ -444,7 +400,7 @@ class AssignmentsController < ApplicationController
   end
 
   def populate_starter_file_manager
-    assignment = Assignment.find(params[:id])
+    assignment = record
     if assignment.groupings.exists?
       flash_message(:warning,
                     I18n.t('assignments.starter_file.groupings_exist_warning_html'))
@@ -457,12 +413,13 @@ class AssignmentsController < ApplicationController
                      use_rename: g.use_rename,
                      files: starter_file_group_file_data(g) }
     end
-    section_data = Section.left_outer_joins(:starter_file_groups)
-                          .order(:id)
-                          .pluck_to_hash('sections.id as section_id',
-                                         'sections.name as section_name',
-                                         'starter_file_groups.id as group_id',
-                                         'starter_file_groups.name as group_name')
+    section_data = current_course.sections
+                                 .left_outer_joins(:starter_file_groups)
+                                 .order(:id)
+                                 .pluck_to_hash('sections.id as section_id',
+                                                'sections.name as section_name',
+                                                'starter_file_groups.id as group_id',
+                                                'starter_file_groups.name as group_name')
     data = { files: file_data,
              sections: section_data,
              available_after_due: assignment.starter_files_after_due,
@@ -472,7 +429,7 @@ class AssignmentsController < ApplicationController
   end
 
   def update_starter_file
-    assignment = Assignment.find(params[:id])
+    assignment = record
     all_changed = false
     success = true
     ApplicationRecord.transaction do
@@ -506,7 +463,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_starter_file_mappings
-    assignment = Assignment.find(params[:id])
+    assignment = record
     mappings = assignment.starter_file_mappings
     file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact, &:values)
     send_data(file_out,
@@ -518,24 +475,24 @@ class AssignmentsController < ApplicationController
   # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
   # as the referer url for the new assignment if possible. Otherwise redirect to a
   # default action depending on the type of user:
-  #   - edit for admins
+  #   - edit for instructors
   #   - summary for TAs
   #   - show for students
   def switch
     options = referer_options
     if switch_to_same(options)
       redirect_to options
-    elsif current_user.admin?
-      redirect_to edit_assignment_path(params[:id])
-    elsif current_user.ta?
-      redirect_to summary_assignment_path(params[:id])
-    else # current_user.student?
-      redirect_to assignment_path(params[:id])
+    elsif current_role.instructor?
+      redirect_to edit_course_assignment_path(current_course, params[:id])
+    elsif current_role.ta?
+      redirect_to summary_course_assignment_path(current_course, params[:id])
+    else # current_role.student?
+      redirect_to course_assignment_path(current_course, params[:id])
     end
   end
 
   def set_boolean_graders_options
-    assignment = Assignment.find(params[:id])
+    assignment = record
     attributes = graders_options_params
     return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
 
@@ -549,12 +506,12 @@ class AssignmentsController < ApplicationController
 
   # Start timed assignment for the current user's grouping for this assignment
   def start_timed_assignment
-    assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(assignment.id)
+    assignment = record
+    grouping = current_role.accepted_grouping_for(assignment.id)
     if grouping.nil? && assignment.group_max == 1
       begin
-        current_user.create_group_for_working_alone_student(assignment.id)
-        grouping = current_user.accepted_grouping_for(assignment.id)
+        current_role.create_group_for_working_alone_student(assignment.id)
+        grouping = current_role.accepted_grouping_for(assignment.id)
         set_repo_vars(assignment, grouping)
       rescue StandardError => e
         flash_message(:error, e.message)
@@ -570,7 +527,7 @@ class AssignmentsController < ApplicationController
 
   # Download a zip file containing an example of starter files that might be assigned to a grouping
   def download_sample_starter_files
-    assignment = Assignment.find(params[:id])
+    assignment = record
 
     zip_name = "#{assignment.short_identifier}-sample-starter-files.zip"
     zip_path = File.join('tmp', zip_name)
@@ -585,7 +542,7 @@ class AssignmentsController < ApplicationController
 
   # Downloads a zip file containing all the information and settings about an assignment
   def download_config_files
-    assignment = Assignment.find(params[:id])
+    assignment = record
     child_assignment = Assignment.find_by(parent_assessment_id: params[:id])
 
     zip_name = "#{assignment.short_identifier}-config-files.zip"
@@ -653,7 +610,7 @@ class AssignmentsController < ApplicationController
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
           child_assignment.save!
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
-          Tag.from_yml(child_tag_prop, child_assignment.id, true)
+          Tag.from_yml(child_tag_prop, current_course, child_assignment.id, true)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           upload_criteria_from_yaml(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
@@ -662,18 +619,18 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
         end
         assignment.save!
-        Tag.from_yml(tag_prop, assignment.id, true)
+        Tag.from_yml(tag_prop, current_course, assignment.id, true)
         upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
         config_starter_files(assignment, zipfile)
         assignment.save!
-        redirect_to edit_assignment_path(assignment.id)
+        redirect_to edit_course_assignment_path(current_course, assignment)
       end
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-    redirect_to assignments_path
+    redirect_to course_assignments_path(current_course)
   end
 
   private
@@ -688,8 +645,6 @@ class AssignmentsController < ApplicationController
       raise I18n.t('automated_tests.invalid_specs_file')
     else
       update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
-      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
-      session[:job_id] = @current_job.job_id
       test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
       zip_file.glob(test_file_glob_pattern) do |entry|
         zip_file_path = Pathname.new(entry.name)
@@ -754,7 +709,7 @@ class AssignmentsController < ApplicationController
     yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content)
     if [:tags, :peer_review_tags].include?(hash_to_build)
-      properties.each { |row| row[:user] = @current_user.user_name }
+      properties.each { |row| row[:user] = current_role.user_name }
     end
     properties
   end
@@ -766,12 +721,12 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     if parent_assignment.nil?
-      assignment = Assignment.new(properties)
+      assignment = current_course.assignments.new(properties)
       assignment.repository_folder = assignment.short_identifier
     else
       # Filter properties not supported by peer review assignments, then build assignment
       peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
-      assignment = Assignment.new(peer_review_properties)
+      assignment = current_course.assignments.new(peer_review_properties)
       parent_assignment.has_peer_review = true
       assignment.has_peer_review = false
       assignment.enable_test = false
@@ -851,11 +806,11 @@ class AssignmentsController < ApplicationController
       if (starter_file_group.path + file).directory?
         { key: "#{file}/" }
       else
-        submitted_date = l(File.mtime(starter_file_group.path + file).in_time_zone(current_user.time_zone))
+        submitted_date = l(File.mtime(starter_file_group.path + file).in_time_zone(current_role.time_zone))
         { key: file, size: 1, submitted_date: submitted_date,
-          url: download_file_assignment_starter_file_group_url(starter_file_group.assignment.id,
-                                                               starter_file_group.id,
-                                                               file_name: file) }
+          url: download_file_course_starter_file_group_url(starter_file_group.assignment.course,
+                                                           starter_file_group,
+                                                           file_name: file) }
       end
     end
   end
@@ -973,7 +928,7 @@ class AssignmentsController < ApplicationController
   end
 
   def switch_to_same(options)
-    return false if options[:controller] == 'submissions' && options[:action] == 'file_manager'
+    return false if options[:controller] == 'submissions' && %w[file_manager repo_browser].include?(options[:action])
     return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
 
     if options[:controller] == 'assignments'

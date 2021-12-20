@@ -1,22 +1,22 @@
 ---
 pt:
-  admins:
+  instructors:
     edit: Editar Administrador
     help:
-      manage_admins: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
+      manage_instructors: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
     new: Criar novo Administrador
   students:
     active: Ativo
-    admin_actions:
-      add_section: Adicionar a sessão
-      give_grace_credits: Dar créditos de tolerância
-      mark_active: Marcar como ativo
-      mark_inactive: Marcar como inativo
     display_inactive: UPDATE ME
     edit: Editar um Aluno
     help:
       manage_students: Mark students as active or inactive, give them grace credits.
     inactive: Não ativo
+    instructor_actions:
+      add_section: Adicionar a sessão
+      give_grace_credits: Dar créditos de tolerância
+      mark_active: Marcar como ativo
+      mark_inactive: Marcar como inativo
     new: Criar um novo aluno
     no_students_selected: Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva.
     not_successfully_added_message_1: 'Os seguintes alunos não foram adicionados com êxito:'
@@ -34,7 +34,5 @@ pt:
     api_key:
       reset: Gerar outra chave para a API
       unavailable: Indisponível
-    upload:
-      errors:
-        duplicate_users: 'Nome de usuário duplicado detectado: %{user_names}.'
+    not_found: 'UPDATE ME: %{user_names}'
     verify_settings_update: UPDATE ME

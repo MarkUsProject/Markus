@@ -9,11 +9,11 @@ class PeerReviewPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin?
+    role.instructor?
   end
 
-  # Only admin and authorized grader can manage reviewers.
+  # Only instructor and authorized grader can manage reviewers.
   def manage_reviewers?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 end

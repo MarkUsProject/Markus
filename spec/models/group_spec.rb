@@ -1,8 +1,12 @@
 describe Group do
 
   describe 'validations' do
+    subject { build :group }
+
+    it { is_expected.to belong_to(:course) }
+
     it { is_expected.to validate_presence_of(:group_name) }
-    it { is_expected.to validate_uniqueness_of(:group_name) }
+    it { is_expected.to validate_uniqueness_of(:group_name).scoped_to(:course_id) }
     it { is_expected.to validate_length_of(:group_name).is_at_most(30) }
 
     it { is_expected.not_to allow_value('Mike !Ooh').for(:group_name) }
@@ -50,11 +54,11 @@ describe Group do
     end
   end
 
-  describe '#repository_name' do
+  describe '#repository_relative_path' do
     let(:group) { create(:group, repo_name: 'g2markus') }
 
     it 'returns the group\'s repository name' do
-      expect(group.repository_name).to eq 'g2markus'
+      expect(group.repository_relative_path).to eq File.join(group.course.name, 'g2markus')
     end
 
     it 'rejects special chars repo_name' do
@@ -85,6 +89,10 @@ describe Group do
 
     it 'returns the repository URL' do
       expect(group.repository_external_access_url).to end_with(group.repo_name)
+    end
+
+    it 'should contain the course name in the path' do
+      expect(group.repository_external_access_url).to match("#{File::SEPARATOR}#{group.course.name}#{File::SEPARATOR}")
     end
   end
 

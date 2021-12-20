@@ -16,7 +16,7 @@
       <% end %>
     </p>
     <p>
-      <%= t('submissions.student.maximum_file_size', file_size: Settings.max_file_size / 1000000) %>
+      <%= t('submissions.student.maximum_file_size', file_size: assignment.course.max_file_size_settings / 1000000) %>
     </p>
   </div>
 </div>

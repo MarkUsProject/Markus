@@ -13,7 +13,7 @@
   <p>
     <%= t('upload_help_html', section_id: 'groups') %>
   </p>
-  <%= form_tag upload_assignment_groups_path(assignment_id: @assignment.id),
+  <%= form_tag upload_course_assignment_groups_path(@current_course, @assignment),
                { multipart: true } do %>
     <p>
       <%= label_tag t('encoding') %>
