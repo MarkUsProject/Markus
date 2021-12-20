@@ -1,10 +1,8 @@
 namespace :db do
 
   task admin: :environment do
-    puts 'create an AdminUser' do
-      user = AdminUser.create(user_name: 'admin', first_name: 'admin', last_name: 'admin')
-      user.reset_api_key
-    end
+    user = AdminUser.find_or_create
+    puts user.api_key
   end
 
   desc 'Create a single Instructor'

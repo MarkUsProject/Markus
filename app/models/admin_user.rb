@@ -1,1 +1,12 @@
-class AdminUser < User; end
+class AdminUser < User
+  ADMIN_USERNAME = '.admin'
+
+  def self.find_or_create
+    user = AdminUser.find_or_create_by!(user_name: '.admin') do |admin|
+      admin.first_name = 'admin'
+      admin.last_name = 'admin'
+    end
+    user.reset_api_key
+    user
+  end
+end
