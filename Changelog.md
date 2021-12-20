@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Support multiple courses in a single MarkUs instance (#5685)
+- Allow admin user to have a unique user name (#5691)
 
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
