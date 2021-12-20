@@ -24,7 +24,7 @@ class RawFileManager extends RawFileBrowser {
   onActionBarSubmitURLClick = (event, selectedItem) => {
     event.preventDefault();
     this.props.onActionBarSubmitURLClick(selectedItem);
-  }
+  };
 
   folderTarget = selectedItem => {
     // treat multiple selections as not targeting a folder

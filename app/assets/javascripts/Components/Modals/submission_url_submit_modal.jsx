@@ -3,8 +3,8 @@ import Modal from "react-modal";
 
 class SubmitUrlUploadModal extends React.Component {
   state = {
-    newUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-  }
+    newUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+  };
 
   componentDidMount() {
     Modal.setAppElement("body");
@@ -20,22 +20,14 @@ class SubmitUrlUploadModal extends React.Component {
   };
 
   render() {
-    const { isOpen, onRequestClose } = this.props
+    const {isOpen, onRequestClose} = this.props;
     return (
-      <Modal
-        className="react-modal"
-        isOpen={isOpen}
-        onRequestClose={onRequestClose}
-      >
+      <Modal className="react-modal" isOpen={isOpen} onRequestClose={onRequestClose}>
         <h2>{I18n.t("submit_link")}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <div className={"modal-container"}>
-              <input
-                type={"url"}
-                name={"new_url"}
-                onChange={this.handleUrlSubmit}
-              />
+              <input type={"url"} name={"new_url"} onChange={this.handleUrlSubmit} />
             </div>
             <div className={"modal-container"}>
               <input type="submit" value={I18n.t("save")} />
