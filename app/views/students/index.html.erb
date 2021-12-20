@@ -4,7 +4,9 @@
       makeStudentTable(document.getElementById('students_table'),
         {
           authenticity_token: '<%= form_authenticity_token(
-                                      form_options: {action: bulk_modify_students_url, method: 'patch'}) %>'
+                                      form_options: {action: bulk_modify_course_students_url(@current_course),
+                                                     method: 'patch'}) %>',
+          course_id: <%= @current_course.id %>
         }
       );
     })
@@ -21,7 +23,7 @@
 
 <% @heading_buttons = [
   { link_text: t('students.new'),
-    link_path: new_student_path },
+    link_path: new_course_student_path(@current_course) },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },

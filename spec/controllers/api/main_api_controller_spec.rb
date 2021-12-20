@@ -1,66 +1,7 @@
 describe Api::MainApiController do
-  context 'An unauthenticated request' do
-    before :each do
-      request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
-      request.env['HTTP_ACCEPT'] = 'application/xml'
-    end
-
-    it 'should fail to authenticate a GET index request' do
-      get :index
-      expect(response).to have_http_status(403)
-    end
-
-    it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1 }
-      expect(response).to have_http_status(403)
-    end
-
-    it 'should fail to authenticate a POST create request' do
-      post :create
-
-      expect(response).to have_http_status(403)
-    end
-
-    it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1 }
-      expect(response).to have_http_status(403)
-    end
-
-    it 'should fail to authenticate a DELETE destroy request' do
-      delete :destroy, params: { id: 1 }
-      expect(response).to have_http_status(403)
-    end
-  end
-  context 'An authenticated request' do
-    before :each do
-      admin = create :admin
-      admin.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
-    end
-    it 'should return a 404 error for a generic GET index request' do
-      get :index
-      expect(response.status).to eq(404)
-    end
-
-    it 'should return a 404 error for a generic GET show request' do
-      get :show, params: { id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'should return a 404 error for a generic POST create request' do
-      post :create
-
-      expect(response.status).to eq(404)
-    end
-
-    it 'should return a 404 error for a generic PUT update request' do
-      put :create, params: { id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'should return a 404 error for a generic DELETE destroy request' do
-      delete :destroy, params: { id: 1 }
-      expect(response.status).to eq(404)
+  context 'a non-existant route' do
+    it 'should reroute to page_not_found' do
+      expect(get: '/api/badroute').to route_to(controller: 'api/main_api', action: 'page_not_found', path: 'badroute')
     end
   end
 end

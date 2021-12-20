@@ -10,5 +10,5 @@
 <h3><%= GracePeriodDeduction.model_name.human.pluralize %></h3>
 <div id='grace_period_deductions'>
   <%= render partial: 'grace_period_deductions',
-             locals: { grace_period_deductions: @user.grace_period_deductions } %>
+             locals: { grace_period_deductions: @role.grace_period_deductions } %>
 </div>

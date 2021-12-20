@@ -9,12 +9,12 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    table_data = get_table_json_data(current_user)
-    assessments = current_user.student? ? current_user.visible_assessments : Assessment
-    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
+    table_data = get_table_json_data(current_role)
+    assessments = current_role.student? ? current_role.visible_assessments : current_course.assessments
+    marking_schemes = current_role.student? ? MarkingScheme.none : current_course.marking_schemes
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
-    single = current_user.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
+    single = current_role.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
 
     assessments.order(id: :asc).each do |a|
       info = assessment_overview(a)
@@ -47,13 +47,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def grade_distribution
-    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme.order(id: :asc)
+    marking_schemes = current_role.student? ? MarkingScheme.none : current_course.marking_schemes.order(id: :asc)
     intervals = 20
-    table_data = marking_schemes.map { |m| { data: m.students_grade_distribution(current_user, intervals) } }
+    table_data = marking_schemes.map { |m| { data: m.students_grade_distribution(current_role, intervals) } }
     labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
 
     summary = marking_schemes.map do |m|
-      grades = m.students_weighted_grades_array(current_user)
+      grades = m.students_weighted_grades_array(current_role)
       {
         name: m.name,
         average: DescriptiveStatistics.mean(grades) || 0,
@@ -76,9 +76,9 @@ class CourseSummariesController < ApplicationController
   end
 
   def download_csv_grades_report
-    assessments = Assessment.all.order(id: :asc).pluck(:id)
-    marking_schemes = MarkingScheme.all.pluck(:id)
-    grades_data = get_table_json_data(current_user)
+    assessments = current_course.assessments.order(id: :asc).pluck(:id)
+    marking_schemes = current_course.marking_schemes.pluck(:id)
+    grades_data = get_table_json_data(current_role)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|
       row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
@@ -94,8 +94,8 @@ class CourseSummariesController < ApplicationController
   def generate_out_of_row
     # This function creates the second row of the grades summary, containing the max mark of every assessment.
     # Given that each assessment has a maximum possible mark achievable, this row represents this data.
-    assessments = Assessment.all.order(id: :asc)
-    marking_schemes = MarkingScheme.all.order(id: :asc)
+    assessments = current_course.assessments.order(id: :asc)
+    marking_schemes = current_course.marking_schemes.order(id: :asc)
     out_of_row = [Assessment.human_attribute_name(:max_mark), '', '', '']
     out_of_row.concat(assessments.collect(&:max_mark))
     out_of_row.concat([''] * marking_schemes.size)
@@ -104,8 +104,8 @@ class CourseSummariesController < ApplicationController
   end
 
   def generate_csv_header
-    assessments = Assessment.all.order(id: :asc)
-    marking_schemes = MarkingScheme.all
+    assessments = current_course.assessments.order(id: :asc)
+    marking_schemes = current_course.marking_schemes
 
     header = [User.human_attribute_name(:user_name),
               User.human_attribute_name(:first_name),
@@ -118,7 +118,7 @@ class CourseSummariesController < ApplicationController
   end
 
   def name_grades_report_file(csv_string)
-    course_name = Settings.course_name.squish.downcase.tr(' ', '_')
+    course_name = current_course.name.squish.downcase.tr(' ', '_')
     send_data csv_string,
               disposition: 'attachment',
               filename: "#{course_name}_grades_report.csv"
@@ -144,9 +144,9 @@ class CourseSummariesController < ApplicationController
       average: nil,
       median: nil
     }
-    if current_user.admin? || (current_user.student? && current_user.released_result_for?(assessment))
+    if current_role.instructor? || (current_role.student? && current_role.released_result_for?(assessment))
       data[:average] = get_assessment_data(assessment, :average)
-      if current_user.admin? || assessment.display_median_to_students
+      if current_role.instructor? || assessment.display_median_to_students
         data[:median] = get_assessment_data(assessment, :median)
       end
     end

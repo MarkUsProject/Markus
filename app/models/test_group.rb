@@ -5,8 +5,9 @@ class TestGroup < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   belongs_to :criterion, optional: true
   has_many :test_group_results, dependent: :delete_all
+  has_one :course, through: :assignment
 
   validates :name, presence: true
   validates :display_output, presence: true
-
+  validate :courses_should_match
 end

@@ -2,7 +2,7 @@
 <%= render partial: 'shared/error_explanation',
            locals: { model: @section } %>
 
-<%= form_for @section, as: :section do |f| %>
+<%= form_for [@current_course, @section], as: :section do |f| %>
   <p>
     <%= f.label :name, Section.human_attribute_name(:name) %>:
     <%= f.text_field :name, required: true, pattern: '[a-zA-Z0-9\-_ ]+' %>

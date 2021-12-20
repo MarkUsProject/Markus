@@ -38,4 +38,11 @@ class JobMessagesController < ApplicationController
   def implicit_authorization_target
     OpenStruct.new policy_class: JobMessagePolicy
   end
+
+  def parent_params
+    []
+  end
+
+  # Job messages are allowed while switching courses
+  def check_course_switch; end
 end

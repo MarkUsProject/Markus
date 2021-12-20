@@ -30,11 +30,8 @@ queues:
 redis:
   url: 'redis://localhost:6379/1'
 
-course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
 validate_ip: false
 validate_custom_status_message: {}
-
-remote_user_auth: false
 
 logout_redirect: DEFAULT
 
@@ -47,24 +44,16 @@ repository:
 
 max_file_size: 5000000
 
-student_session_timeout: 1800
-ta_session_timeout: 1800
-admin_session_timeout: 1800
+session_timeout: 1800
 
 enable_key_storage: true
 
-student_csv_upload_order:
+student_csv_order:
   - user_name
   - last_name
   - first_name
   - section_name
   - id_number
-  - email
-
-ta_csv_upload_order:
-  - user_name
-  - last_name
-  - first_name
   - email
 
 logging:
@@ -75,9 +64,7 @@ logging:
   old_files: 10
 
 autotest:
-  enable: true
   student_test_buffer_minutes: 60
-  url: 'http://localhost:5000'
 
 scanned_exams:
   enable: true

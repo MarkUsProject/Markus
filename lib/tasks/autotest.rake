@@ -4,10 +4,12 @@ namespace :db do
     include AutomatedTestsHelper
     FileUtils.mkdir_p Settings.autotest.client_dir
     puts 'Set up testing environment for autotest'
-    Rake::Task['markus:setup_autotest'].invoke
+    autotest_setting = AutotestSetting.find_or_create_by!(url: ENV['AUTOTEST_URL'])
+    Course.first.update!(autotest_setting_id: autotest_setting.id)
 
     # Create dummy student for autotest submissions.
-    Student.find_or_create_by(user_name: 'aaaautotest', first_name: 'Test', last_name: 'Otto')
+    user = EndUser.find_or_create_by(user_name: 'aaaautotest', first_name: 'Test', last_name: 'Otto')
+    Course.first.students.find_or_create_by!(end_user: user)
 
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|
@@ -18,8 +20,6 @@ end
 
 class AutotestSetup
   def initialize(root_dir)
-    testers_schema_path = File.join(Settings.autotest.client_dir, 'testers.json')
-
     # setup instance variables (mostly paths to directories)
     @assg_short_id = "autotest_#{File.basename(root_dir)}"
     script_dir = File.join(root_dir, 'script_files')
@@ -31,7 +31,7 @@ class AutotestSetup
     @student_files = Dir.glob(File.join(@student_dir, '*'))
 
     @assignment = create_new_assignment
-    @schema_data = JSON.parse(File.open(testers_schema_path, &:read))
+    @schema_data = JSON.parse(@assignment.course.autotest_setting.schema)
     fill_in_schema_data!(@schema_data, @test_scripts, @assignment)
 
     clear_old_files
@@ -47,6 +47,7 @@ class AutotestSetup
   def create_new_assignment
     puts "Creating sample autotesting assignment #{@assg_short_id}"
     Assignment.create(
+      course: Course.first,
       short_identifier: @assg_short_id,
       description: 'Assignment for testing the autotester',
       message: '',
@@ -103,7 +104,8 @@ class AutotestSetup
   end
 
   def create_submission
-    student = Student.find_by(user_name: 'aaaautotest')
+    user = EndUser.find_by(user_name: 'aaaautotest')
+    student = Course.first.students.find_by(end_user: user)
     student.create_group_for_working_alone_student(@assignment.id)
     group = Group.find_by group_name: student.user_name
     grouping = Grouping.find_by(group_id: group, assessment_id: @assignment.id)

@@ -1,5 +1,5 @@
 # This migration gives us Single Table Inheritence on User model
-# for Admins, TAs, and Students
+# for Instructors, TAs, and Students
 class UsersStiAdminsStudentsTas < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :users, :role, :type

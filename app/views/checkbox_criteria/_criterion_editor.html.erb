@@ -1,7 +1,6 @@
 <div class='float-right'>
   <%= button_to t(:delete),
-                assignment_criterion_path(assignment_id: criterion.assignment.id,
-                                          id: criterion.id),
+                course_criterion_path(@current_course, criterion),
                 data: { confirm: t('helpers.confirm.delete', model: Criterion.model_name.human) },
                 method: :delete,
                 class: 'delete',
@@ -20,7 +19,7 @@
 </h2>
 
 <%= form_for criterion,
-             url: assignment_criterion_path(id: criterion.id),
+             url: course_criterion_path(@current_course, criterion),
              method: :patch,
              remote: true do |f| %>
 

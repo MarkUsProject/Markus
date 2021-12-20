@@ -48,13 +48,7 @@ class AnnotationUsagePanel extends React.Component {
       },
       Cell: row => {
         return (
-          <a
-            href={Routes.edit_assignment_submission_result_path(
-              row.original["assignment_id"],
-              row.original["submission_id"],
-              row.original["result_id"]
-            )}
-          >
+          <a href={Routes.edit_course_result_path(this.props.course_id, row.original["result_id"])}>
             {row.original["group_name"] +
               (row.original["count"] > 1 ? " (" + row.original["count"] + ")" : "")}
           </a>
@@ -65,7 +59,8 @@ class AnnotationUsagePanel extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.annotation_text_uses_assignment_annotation_categories_path(
+      url: Routes.annotation_text_uses_course_assignment_annotation_categories_path(
+        this.props.course_id,
         this.props.assignment_id
       ),
       data: {

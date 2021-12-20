@@ -1,11 +1,14 @@
 class Section < ApplicationRecord
-  validates :name, presence: true, uniqueness: true, allow_blank: false,
+  validates :name, presence: true, allow_blank: false,
                    format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
                              message: 'user_name must be alphanumeric, hyphen, whitespace, or underscore' }
+  validates_uniqueness_of :name, scope: :course_id
   has_many :students
   has_many :assessment_section_properties, class_name: 'AssessmentSectionProperties'
   has_many :section_starter_file_groups
   has_many :starter_file_groups, through: :section_starter_file_groups
+
+  belongs_to :course, inverse_of: :sections
 
   # Returns true when students are part of this section
   def has_students?
@@ -33,7 +36,7 @@ class Section < ApplicationRecord
 
     # mark all groupings with starter file that was changed as changed
     Grouping.joins(:inviter)
-            .where('users.section_id': self.id)
+            .where('roles.section_id': self.id)
             .where(assessment_id: assessment_id)
             .update_all(starter_file_changed: true)
   end

@@ -8,7 +8,6 @@ fr:
     display_output_title: Montrez le sortie des tests aux étudiants?
     files: UPDATE ME
     invalid_specs_file: Ce fichier n'est pas un fichier JSON valide
-    loading_specs: UPDATE ME
     need_group_for_test: UPDATE ME
     need_one_file: Vous devez avoir au moins un fichier envoyé pour exécuter un test.
     need_submission: Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté.

@@ -101,7 +101,7 @@ module Repository
 
     # Static method: Creates a new repository at given location; returns
     # an AbstractRepository instance, with the repository opened.
-    def self.create(connect_string)
+    def self.create(connect_string, course)
       raise NotImplementedError, "Repository::create Not yet implemented"
     end
 
@@ -170,7 +170,7 @@ module Repository
     end
 
     def self.get_full_access_users
-      Admin.pluck(:user_name)
+      Instructor.joins(:end_user).pluck(:user_name)
     end
 
     # Gets a list of users with permission to access the repo.
@@ -242,11 +242,52 @@ module Repository
       nil
     end
 
+    # Returns the assignments for which students have repository access.
+    #
+    # Repository authentication subtleties:
+    # 1) a repository is associated with a Group, but..
+    # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
+    # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
+    # the assignment level, allowing the same Group repo to have different students according to the assignment.
+    # The two extremes to implement it are using the union of all students (permissive) or the intersection
+    # (restrictive). Instead, we are going to take a last-deadline approach, where we assume that the valid students at
+    # any point in time are the ones valid for the last assignment due. (Basically, it's nice for a group to share a
+    # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
+    # some students from it)
+    def self.get_repo_auth_records
+      records = Assignment.joins(:assignment_properties)
+                          .includes(groupings: [:group, accepted_students: :section])
+                          .where(assignment_properties: { vcs_submit: true })
+                          .order(due_date: :desc)
+      records.where(assignment_properties: { is_timed: false })
+             .or(records.where.not(groupings: { start_time: nil }))
+             .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+    end
+
+    # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
+    # is a boolean indicating whether the given assignment is visible to the given section.
+    def self.visibility_hash
+      records = Assignment.left_outer_joins(:assessment_section_properties)
+                          .pluck_to_hash('assessments.id',
+                                         'section_id',
+                                         'assessments.is_hidden',
+                                         'assessment_section_properties.is_hidden')
+      visibilities = records.uniq { |r| r['assessments.id'] }
+                            .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
+                            .to_h
+      records.each do |r|
+        unless r['assessment_section_properties.is_hidden'].nil?
+          visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']
+        end
+      end
+      visibilities
+    end
+
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
-      visibility = Assignment.visibility_hash
+      visibility = self.visibility_hash
       permissions = Hash.new { |h,k| h[k]=[] }
-      Assignment.get_repo_auth_records.each do |assignment|
+      self.get_repo_auth_records.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
           next unless visibility[assignment.id][valid_grouping.inviter&.section&.id]
           repo_name = valid_grouping.group.repo_name
@@ -256,7 +297,7 @@ module Repository
       end
       # NOTE: this will allow graders to access the files in the entire repository
       # even if they are the grader for only a single assignment
-      graders_info = TaMembership.joins(:user, grouping: [:group, assignment: :assignment_properties])
+      graders_info = TaMembership.joins(role: :end_user, grouping: [:group, assignment: :assignment_properties])
                                  .where('assignment_properties.anonymize_groups': false)
                                  .pluck(:repo_name, :user_name)
       graders_info.each do |repo_name, user_name|

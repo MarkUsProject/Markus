@@ -2,21 +2,17 @@
 es:
   action_policy:
     policy:
-      admin:
-        manage_assessments?: UPDATE ME.
-        manage_submissions?: UPDATE ME.
-        run_tests?: UPDATE ME.
       annotation:
         add_existing_annotation?: UPDATE ME.
         manage?: UPDATE ME.
       annotation_category:
         manage?: UPDATE ME.
       application:
-        admin?: UPDATE ME.
+        instructor?: UPDATE ME.
         manage?: UPDATE ME.
         student?: UPDATE ME.
         ta?: UPDATE ME.
-        view_admin_subtabs?: UPDATE ME.
+        view_instructor_subtabs?: UPDATE ME.
         view_student_subtabs?: UPDATE ME.
         view_sub_sub_tabs?: UPDATE ME.
         view_ta_subtabs?: UPDATE ME.
@@ -76,6 +72,10 @@ es:
         tokens_available?: No se encontraron fichas para este estudiante y para este proyecto.
         view_file_manager?: UPDATE ME.
       image_annotation: UPDATE ME.
+      instructor:
+        manage_assessments?: UPDATE ME.
+        manage_submissions?: UPDATE ME.
+        run_tests?: UPDATE ME.
       job_message:
         manage?: UPDATE ME.
       key_pair:

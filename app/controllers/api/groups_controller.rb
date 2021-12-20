@@ -10,15 +10,7 @@ module Api
     # Requires: assignment_id
     # Optional: filter, fields
     def index
-      assignment = Assignment.find_by(id: params[:assignment_id])
-      if assignment.nil?
-        # No assignment with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No assignment exists with that id'}, status: 404
-        return
-      end
-
-      groups = get_collection(Group) || return
+      groups = get_collection(assignment.groups) || return
 
       group_data = include_memberships(groups)
 
@@ -31,26 +23,10 @@ module Api
     end
 
     # Returns a single group along with its attributes
-    # Requires: assignment_id, id
+    # Requires: id
     # Optional: fields
     def show
-      # Error if no assignment exists with that id
-      assignment = Assignment.find_by(id: params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-          'No assignment exists with that id'}, status: 404
-        return
-      end
-
-      # Error if no group exists with that id
-      group = Group.joins(:groupings).where(id: params[:id], 'groupings.assessment_id': params[:assignment_id])
-      unless group.exists?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No group exists with that id for that assignment' }, status: 404
-        return
-      end
-
-      group_data = include_memberships(group)
+      group_data = include_memberships(Group.where(id: record.id))
 
       # We found a grouping for that assignment
       respond_to do |format|
@@ -63,7 +39,7 @@ module Api
 
     # Include student_memberships and user info
     def include_memberships(groups)
-      groups.joins(groupings: [:assignment, student_memberships: :user])
+      groups.joins(groupings: [:assignment, student_memberships: [role: :end_user]])
             .where('assessments.id': params[:assignment_id])
             .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
             .group_by { |h| h.slice(*DEFAULT_FIELDS) }
@@ -71,28 +47,14 @@ module Api
     end
 
     def add_members
-      assignment = Assignment.find(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No assignment exists with that id' }, status: 404
-        return
-      end
-
-      group = Group.find(params[:id])
-      if group.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No group exists with that id' }, status: 404
-        return
-      end
-      grouping = group.grouping_for_assignment(assignment.id)
-      if grouping.nil?
+      if self.grouping.nil?
         # The group doesn't have a grouping associated with that assignment
         render 'shared/http_status', locals: {code: '422', message:
           'The group is not involved with that assignment'}, status: 422
         return
       end
 
-      students = Student.where(user_name: params[:members])
+      students = current_course.students.joins(:end_user).where('users.user_name': params[:members])
       students.each do |student|
         set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :
@@ -107,29 +69,8 @@ module Api
 
     # Update the group's marks for the given assignment.
     def update_marks
-      assignment = Assignment.find(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No assignment exists with that id' }, status: 404
-        return
-      end
-
-      group = Group.find(params[:id])
-      if group.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No group exists with that id' }, status: 404
-        return
-      end
-      if group.grouping_for_assignment(params[:assignment_id])
-              .has_submission?
-        result = group.grouping_for_assignment(params[:assignment_id])
-                      .current_submission_used
-                      .get_latest_result
-      else
-        render 'shared/http_status', locals: { code: '404', message:
-          'No submissions exist for that group' }, status: 404
-        return
-      end
+      result = self.grouping&.current_submission_used&.get_latest_result
+      return page_not_found('No submission exists for that group') if result.nil?
 
       # We shouldn't be able to update marks if marking is already complete.
       if result.marking_state == Result::MARKING_STATES[:complete]
@@ -162,28 +103,9 @@ module Api
     end
 
     def create_extra_marks
-      assignment = Assignment.find_by_id(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-            'No assignment exists with that id' }, status: 404
-        return
-      end
-      group = Group.find_by_id(params[:id])
-      if group.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-            'No group exists with that id' }, status: 404
-        return
-      end
-      if group.grouping_for_assignment(params[:assignment_id])
-              .has_submission?
-        result = group.grouping_for_assignment(params[:assignment_id])
-                      .current_submission_used
-                      .get_latest_result
-      else
-        render 'shared/http_status', locals: { code: '404', message:
-            'No submissions exist for that group' }, status: 404
-        return
-      end
+      result = self.grouping&.current_submission_used&.get_latest_result
+      return page_not_found('No submission exists for that group') if result.nil?
+
       begin
         ExtraMark.create!(result_id: result.id, extra_mark: params[:extra_marks],
                           description: params[:description], unit: ExtraMark::POINTS)
@@ -199,29 +121,8 @@ module Api
     end
 
     def remove_extra_marks
-      assignment = Assignment.find_by_id(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-            'No assignment exists with that id' }, status: 404
-        return
-      end
-
-      group = Group.find_by_id(params[:id])
-      if group.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-            'No group exists with that id' }, status: 404
-        return
-      end
-      if group.grouping_for_assignment(params[:assignment_id])
-              .has_submission?
-        result = group.grouping_for_assignment(params[:assignment_id])
-                      .current_submission_used
-                      .get_latest_result
-      else
-        render 'shared/http_status', locals: { code: '404', message:
-            'No submissions exist for that group' }, status: 404
-        return
-      end
+      result = self.grouping&.current_submission_used&.get_latest_result
+      return page_not_found('No submission exists for that group') if result.nil?
       extra_mark = ExtraMark.find_by(result_id: result.id,
                                      description: params[:description],
                                      extra_mark: params[:extra_marks])
@@ -245,10 +146,10 @@ module Api
     end
 
     def annotations
-      if params[:id]
-        grouping_relation = Grouping.where(group_id: params[:id])
-      else
-        grouping_relation = Grouping
+      if record # this is a member route
+        grouping_relation = assignment.groupings.where(group_id: record.id)
+      else # this is a collection route
+        grouping_relation = assignment.groupings
       end
 
       pluck_keys = ['annotations.type as type',
@@ -287,35 +188,13 @@ module Api
     end
 
     def add_annotations
-      assignment = Assignment.find(params[:assignment_id])
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No assignment exists with that id' }, status: 404
-        return
-      end
-
-      group = Group.find(params[:id])
-      if group.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No group exists with that id' }, status: 404
-        return
-      end
-      if group.grouping_for_assignment(params[:assignment_id])
-           .has_submission?
-        result = group.grouping_for_assignment(params[:assignment_id])
-                      .current_result
-      else
-        render 'shared/http_status', locals: { code: '404', message:
-          'No submissions exist for that group' }, status: 404
-        return
-      end
+      result = self.grouping&.current_result
+      return page_not_found('No submission exists for that group') if result.nil?
 
       force_complete = params.fetch(:force_complete, false)
       # We shouldn't be able to update annotations if marking is already complete, unless forced.
       if result.marking_state == Result::MARKING_STATES[:complete] && !force_complete
-        render 'shared/http_status', locals: { code: '404', message:
-          'Marking for that submission is already completed' }, status: 404
-        return
+        return page_not_found('Marking for that submission is already completed')
       end
 
       annotation_texts = []
@@ -341,8 +220,8 @@ module Api
         annotation_texts << {
           content: annot_params[:content],
           annotation_category_id: annotation_category_id,
-          creator_id: @current_user.id,
-          last_editor_id: @current_user.id
+          creator_id: current_role.id,
+          last_editor_id: current_role.id
         }
         annotations << {
           line_start: annot_params[:line_start],
@@ -351,8 +230,8 @@ module Api
           column_end: annot_params[:column_end],
           annotation_text_id: nil,
           submission_file_id: submission_file.id,
-          creator_id: @current_user.id,
-          creator_type: @current_user.type,
+          creator_id: current_role.id,
+          creator_type: current_role.type,
           is_remark: !result.remark_request_submitted_at.nil?,
           annotation_number: count + i,
           result_id: result.id
@@ -369,9 +248,7 @@ module Api
 
     # Return key:value pairs of group_name:group_id
     def group_ids_by_name
-      groups = Assignment.find(params[:assignment_id])
-                        .groups
-      reversed = Hash[groups.map { |g| [g.group_name, g.id] }]
+      reversed = assignment.groups.pluck(:group_name, :id).to_h
       respond_to do |format|
         format.xml do
           render xml: reversed.to_xml(root: 'groups', skip_types: 'true')
@@ -390,28 +267,27 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
         return
       end
-      group = Group.find(params[:id])
-      if group.grouping_for_assignment(params[:assignment_id])
-             .has_submission?
-        result = group.grouping_for_assignment(params[:assignment_id])
-                      .current_submission_used
-                      .get_latest_result
-        result.marking_state = params[:marking_state]
-        if result.save
-          render 'shared/http_status', locals: { code: '200', message:
+      result = self.grouping&.current_submission_used&.get_latest_result
+      return page_not_found('No submission exists for that group') if result.nil?
+      result.marking_state = params[:marking_state]
+      if result.save
+        render 'shared/http_status', locals: { code: '200', message:
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
-        else
-          render 'shared/http_status', locals: { code: '500', message:
-            result.errors.full_messages.first }, status: 500
-        end
       else
-        render 'shared/http_status', locals: { code: '404', message:
-            'No submissions exist for that group' }, status: 404
-        return
+        render 'shared/http_status', locals: { code: '500', message:
+            result.errors.full_messages.first }, status: 500
       end
     end
 
     private
+
+    def assignment
+      @assignment ||= Assignment.find_by_id(params[:assignment_id])
+    end
+
+    def grouping
+      @grouping ||= record.grouping_for_assignment(assignment.id)
+    end
 
     def annotations_params
       params.require(annotations: [

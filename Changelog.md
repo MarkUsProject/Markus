@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Support multiple courses in a single MarkUs instance (#5685)
 
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)

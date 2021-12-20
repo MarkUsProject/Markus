@@ -1,6 +1,6 @@
 describe AnnotationCategory do
   let(:assignment) { create(:assignment) }
-  let(:admin) { create(:admin) }
+  let(:instructor) { create(:instructor) }
 
   describe 'validations hold' do
     subject { FactoryBot.create(:annotation_category) }
@@ -8,6 +8,7 @@ describe AnnotationCategory do
     it { is_expected.to validate_presence_of(:annotation_category_name) }
     it { is_expected.to have_many(:annotation_texts) }
     it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to have_one(:course) }
 
     it { is_expected.to allow_value(nil).for(:flexible_criterion_id) }
 
@@ -38,16 +39,16 @@ describe AnnotationCategory do
     it 'returns an error message if the category name is blank' do
       row = [nil, 'criterion_name', 'text_content', '1.0']
       expected_message = I18n.t('annotation_categories.upload.empty_category_name')
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     it 'returns an error message if a criterion with the name given does not exist' do
       row = ['category_name', 'criterion_name', 'text_content', '1.0']
       expected_message = I18n.t('annotation_categories.upload.criterion_not_found',
                                 missing_criterion: 'criterion_name')
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     it 'returns an error message if a criterion with the name given exists only as a non flexible criterion' do
@@ -55,8 +56,8 @@ describe AnnotationCategory do
       create(:rubric_criterion, assignment: assignment, name: 'criterion_name')
       expected_message = I18n.t('annotation_categories.upload.criterion_not_found',
                                 missing_criterion: 'criterion_name')
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     it 'returns an error message if a deduction given for an annotation text '\
@@ -67,8 +68,8 @@ describe AnnotationCategory do
                                 annotation_content: 'text_content',
                                 criterion_name: 'criterion_name',
                                 value: 1.0)
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     it 'returns an error message if a deduction given for an annotation text is negative' do
@@ -78,14 +79,14 @@ describe AnnotationCategory do
                                 annotation_content: 'text_content',
                                 criterion_name: 'criterion_name',
                                 value: -1.0)
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     it 'rounds value if a deduction given for an annotation text is specified past two decimal points' do
       row = ['category_name', 'criterion_name', 'text_content', '1.333']
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 1.5)
-      AnnotationCategory.add_by_row(row, assignment, admin)
+      AnnotationCategory.add_by_row(row, assignment, instructor)
       expect(AnnotationText.find_by(content: 'text_content').deduction).to eq(1.33)
     end
 
@@ -96,8 +97,8 @@ describe AnnotationCategory do
       expected_message = I18n.t('annotation_categories.upload.deduction_absent',
                                 value: 'other_text_content',
                                 annotation_category: 'category_name')
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     it 'returns an error message if given nil rather than a deduction for an annotation text '\
@@ -107,8 +108,8 @@ describe AnnotationCategory do
       expected_message = I18n.t('annotation_categories.upload.deduction_absent',
                                 value: nil,
                                 annotation_category: 'category_name')
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
+      expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                           expected_message)
     end
 
     context 'when no annotation categories exists' do
@@ -121,7 +122,7 @@ describe AnnotationCategory do
       end
 
       it 'saves the annotation' do
-        AnnotationCategory.add_by_row(@row, assignment, admin)
+        AnnotationCategory.add_by_row(@row, assignment, instructor)
         expect(AnnotationCategory
                  .where(annotation_category_name: @row[0])).not_to be_nil
       end
@@ -132,13 +133,13 @@ describe AnnotationCategory do
 
       it 'adds annotation texts to that category when the criterion column is nil' do
         row = [category.annotation_category_name, nil, 'new text 1', 'new text 2']
-        AnnotationCategory.add_by_row(row, category.assignment, admin)
+        AnnotationCategory.add_by_row(row, category.assignment, instructor)
         expect(category.reload.annotation_texts.size).to eq 2
       end
 
       it 'adds annotation texts to that category when the criterion column is an empty string' do
         row = [category.annotation_category_name, '', 'new text 1', 'new text 2']
-        AnnotationCategory.add_by_row(row, category.assignment, admin)
+        AnnotationCategory.add_by_row(row, category.assignment, instructor)
         expect(category.reload.annotation_texts.size).to eq 2
       end
 
@@ -150,8 +151,8 @@ describe AnnotationCategory do
           row = [category.annotation_category_name, nil, 'text 1']
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
                                     annotation_category: category.annotation_category_name)
-          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                          expected_message)
+          expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                               expected_message)
         end
 
         it 'does not allow the flexible criterion for the category to change to a different criterion' do
@@ -159,8 +160,8 @@ describe AnnotationCategory do
           row = [category.annotation_category_name, other_criterion.name, 'text 1', 1.0]
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
                                     annotation_category: category.annotation_category_name)
-          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                          expected_message)
+          expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                               expected_message)
         end
 
         it 'does not allow a criterion to be specified for the category if the category did not have one previously' do
@@ -170,8 +171,8 @@ describe AnnotationCategory do
                  'text 1', 1.0]
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
                                     annotation_category: other_category.annotation_category_name)
-          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                          expected_message)
+          expect { AnnotationCategory.add_by_row(row, assignment, instructor) }.to raise_error(CsvInvalidLineError,
+                                                                                               expected_message)
         end
       end
     end
@@ -188,7 +189,7 @@ describe AnnotationCategory do
       end
 
       it 'updates the numeber of annotation texts' do
-        AnnotationCategory.add_by_row(@row, assignment, admin)
+        AnnotationCategory.add_by_row(@row, assignment, instructor)
         expect(@initial_size + 2).to eq(AnnotationText.all.size)
       end
     end
@@ -200,7 +201,7 @@ describe AnnotationCategory do
       end
 
       it 'creates an annotation category' do
-        AnnotationCategory.add_by_row(@row, assignment, admin)
+        AnnotationCategory.add_by_row(@row, assignment, instructor)
         expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
       end
     end
@@ -286,9 +287,9 @@ describe AnnotationCategory do
     let!(:annotation_category2) { create :annotation_category, assignment: assignment, flexible_criterion: criterion2 }
     let!(:annotation_category3) { create :annotation_category, assignment: assignment }
 
-    shared_examples 'visible category for admin and student' do
-      context 'an admin user' do
-        let(:user) { create :admin }
+    shared_examples 'visible category for instructor and student' do
+      context 'an instructor user' do
+        let(:user) { create :instructor }
         it 'should return all three annotation categories' do
           category_ids = AnnotationCategory.ids
           expect(AnnotationCategory.visible_categories(assignment, user).ids).to contain_exactly(*category_ids)
@@ -303,7 +304,7 @@ describe AnnotationCategory do
     end
     context 'criteria are assigned to graders' do
       before { assignment.assignment_properties.update!(assign_graders_to_criteria: true) }
-      include_examples 'visible category for admin and student'
+      include_examples 'visible category for instructor and student'
       context 'a grader user' do
         let(:user) { create :ta }
         context 'not assigned to any criteria' do
@@ -322,7 +323,7 @@ describe AnnotationCategory do
       end
     end
     context 'criteria are not assigned to graders' do
-      include_examples 'visible category for admin and student'
+      include_examples 'visible category for instructor and student'
       context 'a grader user' do
         let(:user) { create :ta }
         it 'should return all three annotation categories' do

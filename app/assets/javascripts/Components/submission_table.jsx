@@ -30,7 +30,10 @@ class RawSubmissionTable extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.assignment_submissions_path(this.props.assignment_id),
+      url: Routes.course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       dataType: "json",
     }).then(res => {
       this.props.resetSelection();
@@ -76,9 +79,8 @@ class RawSubmissionTable extends React.Component {
           members = ` (${row.original.members.join(", ")})`;
         }
         if (row.original.result_id) {
-          const result_url = Routes.edit_assignment_submission_result_path(
-            this.props.assignment_id,
-            row.original.result_id,
+          const result_url = Routes.edit_course_result_path(
+            this.props.course_id,
             row.original.result_id
           );
           return <a href={result_url}>{row.value + members}</a>;
@@ -110,9 +112,12 @@ class RawSubmissionTable extends React.Component {
       Cell: row => {
         return (
           <a
-            href={Routes.repo_browser_assignment_submission_path(
+            href={Routes.repo_browser_course_assignment_submissions_path(
+              this.props.course_id,
               this.props.assignment_id,
-              row.original._id
+              {
+                grouping_id: row.original._id,
+              }
             )}
           >
             {row.original.group_name}
@@ -216,7 +221,10 @@ class RawSubmissionTable extends React.Component {
   collectSubmissions = override => {
     this.setState({showModal: false});
     $.post({
-      url: Routes.collect_submissions_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.collect_submissions_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {groupings: this.props.selection, override: override},
     });
   };
@@ -227,14 +235,20 @@ class RawSubmissionTable extends React.Component {
     }
 
     $.get({
-      url: Routes.uncollect_all_submissions_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.uncollect_all_submissions_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {groupings: this.props.selection},
     });
   };
 
   setMarkingStates = marking_state => {
     $.post({
-      url: Routes.set_result_marking_state_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.set_result_marking_state_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         groupings: this.props.selection,
         marking_state: marking_state,
@@ -245,7 +259,10 @@ class RawSubmissionTable extends React.Component {
   prepareGroupingFiles = () => {
     if (window.confirm(I18n.t("submissions.marking_incomplete_warning"))) {
       $.post({
-        url: Routes.zip_groupings_files_assignment_submissions_url(this.props.assignment_id),
+        url: Routes.zip_groupings_files_course_assignment_submissions_url(
+          this.props.course_id,
+          this.props.assignment_id
+        ),
         data: {
           groupings: this.props.selection,
         },
@@ -255,7 +272,10 @@ class RawSubmissionTable extends React.Component {
 
   runTests = () => {
     $.post({
-      url: Routes.run_tests_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.run_tests_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {groupings: this.props.selection},
     });
   };
@@ -263,7 +283,10 @@ class RawSubmissionTable extends React.Component {
   toggleRelease = released => {
     this.setState({loading: true}, () => {
       $.post({
-        url: Routes.update_submissions_assignment_submissions_path(this.props.assignment_id),
+        url: Routes.update_submissions_course_assignment_submissions_path(
+          this.props.course_id,
+          this.props.assignment_id
+        ),
         data: {
           release_results: released,
           groupings: this.props.selection,

@@ -14,7 +14,7 @@ class SplitPdfJob < ApplicationJob
     status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_user = nil)
+  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil)
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed
@@ -80,7 +80,8 @@ class SplitPdfJob < ApplicationJob
         else
           group = Group.find_or_create_by(
             group_name: group_name_for(exam_template, m[:exam_num].to_i),
-            repo_name: group_name_for(exam_template, m[:exam_num].to_i)
+            repo_name: group_name_for(exam_template, m[:exam_num].to_i),
+            course: exam_template.course
           )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
@@ -115,7 +116,7 @@ class SplitPdfJob < ApplicationJob
 
   # Save the pages into groups for this assignment
   def save_pages(exam_template, partial_exams, filename=nil, split_pdf_log=nil)
-    return unless Admin.exists?
+    return unless exam_template.course.instructors.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
@@ -129,7 +130,8 @@ class SplitPdfJob < ApplicationJob
 
       group = Group.find_by(
         group_name: group_name_for(exam_template, exam_num),
-        repo_name: group_name_for(exam_template, exam_num)
+        repo_name: group_name_for(exam_template, exam_num),
+        course: exam_template.course
       )
 
       grouping = Grouping.find_or_create_by(
@@ -171,7 +173,7 @@ class SplitPdfJob < ApplicationJob
 
       grouping.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        txn = repo.get_transaction(Admin.first.user_name)
+        txn = repo.get_transaction(exam_template.course.instructors.first.user_name)
 
         # Pages that belong to a division
         exam_template.template_divisions.each do |division|
@@ -261,7 +263,7 @@ class SplitPdfJob < ApplicationJob
         student = match_student(stdout.strip.split("\n"), exam_template)
 
         unless student.nil?
-          StudentMembership.find_or_create_by(user: student,
+          StudentMembership.find_or_create_by(role: student,
                                               grouping: grouping,
                                               membership_status: StudentMembership::STATUSES[:inviter])
         end
@@ -279,9 +281,9 @@ class SplitPdfJob < ApplicationJob
 
     case exam_template.cover_fields
     when 'id_number'
-      Student.find_by(id_number: parsed[1])
+      Student.joins(:end_user).find_by('end_user.id_number': parsed[1])
     when 'user_name'
-      Student.find_by(Student.arel_table[:user_name].matches(parsed[0]))
+      Student.joins(:end_user).find_by(EndUser.arel_table[:user_name].matches(parsed[0]))
     else
       nil
     end

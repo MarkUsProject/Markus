@@ -1,0 +1,73 @@
+.course-list {
+  display: flex;
+  flex-flow: row wrap;
+  height: 100%;
+  width: 100%;
+}
+
+.course-card {
+  border: 2px solid $sub-menu;
+  border-radius: 5px;
+  box-shadow: 0 0 10px $primary-two;
+  box-sizing: border-box;
+  flex-basis: 300px;
+  flex-grow: 1;
+  font-size: 16px;
+  height: 200px;
+  margin: 15px;
+  max-width: 300px;
+  text-align: center;
+
+  @include breakpoint(mobile) {
+    max-width: 100%;
+    min-width: 300px;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.course-info {
+  background-color: $background-support;
+  border-bottom: 2px solid $sub-menu;
+  color: $primary-one;
+  height: 80%;
+  position: relative;
+
+  &:hover {
+    background: $primary-one;
+    color: $active-menu-item;
+  }
+}
+
+.course-code {
+  font-size: 24px;
+  left: 50%;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.course-role {
+  font-size: 12px;
+  position: relative;
+  right: 16px;
+  top: 8px;
+}
+
+.course-name {
+  color: $link;
+  height: 20%;
+  overflow: hidden;
+  padding: 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

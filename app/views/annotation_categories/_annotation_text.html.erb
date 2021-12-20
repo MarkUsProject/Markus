@@ -24,7 +24,11 @@
                   key: annotation_text[:id],
                   class: 'button inline-button' %>
       <%= button_to t(:delete),
-                    destroy_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
+                    destroy_annotation_text_course_assignment_annotation_categories_path(
+                      @current_course,
+                      @assignment,
+                      annotation_text_id: annotation_text[:id]
+                    ),
                     method: 'delete',
                     data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
                     remote: true,
@@ -57,9 +61,7 @@
       <div class='annotation-text-details'>
         <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
         <%= link_to annotation_text[:group_name],
-                    edit_assignment_submission_result_url(assignment_id: annotation_text[:assignment_id],
-                                                          submission_id: annotation_text[:submission_id],
-                                                          id: annotation_text[:result_id]) %>
+                    edit_course_result_url(@current_course, annotation_text[:result_id]) %>
       </div>
     <% else %>
       <div id='annotation-text-<%= annotation_text[:id] %>-usage-panel'></div>
@@ -67,7 +69,9 @@
   </div>
 
   <div id='annotation_text_<%= annotation_text[:id] %>_edit' class="no-display">
-    <%= form_with url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
+    <%= form_with url: update_annotation_text_course_assignment_annotation_categories_path(
+                         @current_course, @assignment, annotation_text_id: annotation_text[:id]
+                       ),
                   method: 'put',
                   id: "annotation-text-edit-#{annotation_text[:id]}",
                   remote: true do |f| %>
@@ -105,6 +109,7 @@
       window.AnnotationUsagePanel = window.makeAnnotationUsagePanel(
         usagePanel,
         {
+          course_id: <%= @current_course.id %>,
           annotation_id: <%= annotation_text[:id] %>,
           assignment_id: <%= annotation_text[:assignment_id] %>,
           num_used: <%= annotation_text[:num_uses] %>

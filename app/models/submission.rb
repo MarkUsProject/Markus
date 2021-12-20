@@ -30,6 +30,7 @@ class Submission < ApplicationRecord
   has_many   :test_group_results, through: :test_runs
   has_many   :feedback_files, dependent: :destroy
 
+  has_one    :course, through: :grouping
 
   def self.create_by_timestamp(grouping, timestamp)
      unless timestamp.kind_of? Time

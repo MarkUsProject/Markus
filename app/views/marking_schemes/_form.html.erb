@@ -8,7 +8,7 @@
                  model: I18n.t('activerecord.models.marking_scheme.one')) %>
     <% end %>
   </h3>
-  <%= form_for @marking_scheme, as: :marking_scheme do |f| %>
+  <%= form_for [@current_course, @marking_scheme], as: :marking_scheme do |f| %>
 
     <%= render 'shared/flash_message' %>
 
@@ -37,7 +37,7 @@
                    name: 'submit',
                    data: { disable_with: t('working') },
                    class: 'button' %>
-      <%= link_to t(:cancel), marking_schemes_path, class: 'button' %>
+      <%= link_to t(:cancel), course_marking_schemes_path(@current_course), class: 'button' %>
     </p>
 
   <% end %>

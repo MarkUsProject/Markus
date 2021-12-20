@@ -16,6 +16,7 @@ en:
     new:
       title: Add a new section
     none: There are no sections yet.
+    not_found: No section exists with name %{name}.
     update:
       error: Failed to update section.
       success: Successfully updated section %{name}.

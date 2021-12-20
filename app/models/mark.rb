@@ -20,6 +20,10 @@ class Mark < ApplicationRecord
 
   validates_inclusion_of :override, in: [true, false]
 
+  has_one :course, through: :criterion
+
+  validate :assignments_should_match
+
   def calculate_deduction
     return 0 if self.override? || self.criterion.type != 'FlexibleCriterion'
 
@@ -80,6 +84,13 @@ class Mark < ApplicationRecord
     end
     if mark.nil?
       result.update(marking_state: Result::MARKING_STATES[:incomplete])
+    end
+  end
+
+  def assignments_should_match
+    return if result.nil? || criterion.nil?
+    unless result.submission.grouping.assignment == criterion.assignment
+      errors.add(:base, 'result and criterion must all belong to the same assignment')
     end
   end
 end

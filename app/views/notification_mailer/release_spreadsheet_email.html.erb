@@ -4,19 +4,19 @@
   </div>
   <hr class="divider">
   <p class="to_text dark-scheme">
-    <%= t('.greeting', first_name: @student.user.first_name, last_name: @student.user.last_name) %>
+    <%= t('.greeting', first_name: @student.role.first_name, last_name: @student.role.last_name) %>
   </p>
   <p class="body_text dark-scheme">
     <%= t('.text_body', form: @form.short_identifier) %>
   </p>
   <div class="button_enclosure">
     <%= link_to t('.button_text'),
-                student_interface_grade_entry_form_url(id: @form.id),
+                student_interface_course_grade_entry_form_url(@course, @form),
                 class: 'redirectbutton' %>
   </div>
   <p class="alert_text dark-scheme">
     <%= t('.explicit_link',
-          link: student_interface_grade_entry_form_url(id: @form.id)) %>
+          link: student_interface_course_grade_entry_form_url(@course, @form)) %>
   </p>
   <p class="alert_text dark-scheme">
     <%= t('.disclaimer') %>

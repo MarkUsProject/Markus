@@ -7,6 +7,12 @@ class Period < ApplicationRecord
 
   before_create -> { self.submission_rule_type = submission_rule.type }
 
+  # This is used instead of a has_one through: :submission_rule because Rails
+  # does not support associations through other polymorphic associations
+  def course
+    self.submission_rule.course
+  end
+
   private
 
   def check_deduction

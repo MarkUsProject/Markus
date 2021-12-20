@@ -1,8 +1,9 @@
 ---
 en:
   main:
-    account_disabled: This account has been disabled.
     create_marking_scheme: Create a Marking Scheme to display course summary graph.
+    external_authentication: Login with %{name}
+    external_authentication_default_name: remote authentication
     external_authentication_not_supported: External authentication not supported on your platform!
     frequency: Frequency
     grade: Grade (%)
@@ -12,14 +13,12 @@ en:
     login_failed: Login failed.
     password: Password
     password_not_blank: Your password must not be blank.
-    please_log_in: Please log in.
     role_switch:
-      admin_password: Admin Password
-      cannot_login_as_another_admin: You cannot log in as another admin.
       clear_role_switch_session: Cancel role switch
       log_in_as: Log in as
       switch_role: Switch Role
     session_expired: Your session has expired. Please log in.
+    sign_in_not_supported: No sign in method has been enabled. Please report this error to your system administrator.
     timeout_imminent: Your session is about to expire, and you will be logged out shortly. Press the Continue button or refresh the current page in the next few seconds to remain logged in.
     username_and_password_not_blank: Your username and password must not be blank.
     username_not_blank: Your username must not be blank.

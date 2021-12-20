@@ -34,9 +34,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:recipient) { create(:student) }
     let(:submission) { create(:version_used_submission) }
     let(:relevant_link) do
-      view_marks_assignment_submission_result_url(assignment_id: submission.grouping.assignment.id,
-                                                  submission_id: submission.id,
-                                                  id: submission.grouping.current_result.id)
+      view_marks_course_result_url(submission.course, submission.grouping.current_result)
     end
     let(:mail) do
       submission.grouping.reload
@@ -44,7 +42,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the subject' do
-      subject_line = 'MarkUs Notification (' + Settings.course_name + ') Your marks for ' +
+      subject_line = 'MarkUs Notification (' + submission.course.name + ') Your marks for ' +
           submission.assignment.short_identifier + ' have been released!'
       expect(mail.subject).to eq(subject_line)
     end
@@ -59,16 +57,17 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_spreadsheet_email' do
     let(:recipient) { create(:student) }
     let(:grade_entry_form) { create(:grade_entry_form_with_data) }
-    let(:relevant_link) { student_interface_grade_entry_form_url(id: grade_entry_form.id) }
+    let(:relevant_link) { student_interface_course_grade_entry_form_url(grade_entry_form.course, grade_entry_form) }
     let(:mail) do
-      described_class.with(student: grade_entry_form.grade_entry_students.find_or_create_by(user: recipient),
-                           form: grade_entry_form)
+      described_class.with(student: grade_entry_form.grade_entry_students.find_or_create_by(role: recipient),
+                           form: grade_entry_form,
+                           course: grade_entry_form.course)
                      .release_spreadsheet_email
                      .deliver_now
     end
 
     it 'renders the subject' do
-      subject_line = 'MarkUs Notification (' + Settings.course_name + ') Your marks for ' +
+      subject_line = 'MarkUs Notification (' + grade_entry_form.course.name + ') Your marks for ' +
       grade_entry_form.short_identifier + ' have been released!'
       expect(mail.subject).to eq(subject_line)
     end
@@ -84,7 +83,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:inviter) { create(:student) }
     let(:recipient) { create(:student) }
     let(:grouping) { create(:grouping) }
-    let(:relevant_link) { assignment_url(id: grouping.assignment.id) }
+    let(:relevant_link) { course_assignment_url(grouping.course, grouping.assignment) }
     let(:mail) do
       described_class.with(invited: recipient, inviter: inviter, grouping: grouping)
                      .grouping_invite_email
@@ -92,7 +91,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the subject' do
-      subject_line = 'MarkUs Notification (' + Settings.course_name + ') You have been invited to a group!'
+      subject_line = 'MarkUs Notification (' + grouping.course.name + ') You have been invited to a group!'
       expect(mail.subject).to eq(subject_line)
     end
 

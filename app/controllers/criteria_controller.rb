@@ -48,7 +48,7 @@ class CriteriaController < ApplicationController
   end
 
   def edit
-    @criterion = Criterion.find(params[:id])
+    @criterion = record
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
@@ -56,7 +56,7 @@ class CriteriaController < ApplicationController
   end
 
   def destroy
-    @criterion = Criterion.find(params[:id])
+    @criterion = record
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
@@ -68,7 +68,7 @@ class CriteriaController < ApplicationController
   end
 
   def update
-    @criterion = Criterion.find(params[:id])
+    @criterion = record
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))

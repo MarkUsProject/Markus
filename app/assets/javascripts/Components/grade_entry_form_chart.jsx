@@ -33,7 +33,12 @@ export class GradeEntryFormChart extends React.Component {
   }
 
   fetchData = () => {
-    fetch(Routes.grade_distribution_grade_entry_form_path(this.props.assessment_id))
+    fetch(
+      Routes.grade_distribution_course_grade_entry_form_path(
+        this.props.course_id,
+        this.props.assessment_id
+      )
+    )
       .then(data => data.json())
       .then(res => {
         for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
@@ -63,7 +68,12 @@ export class GradeEntryFormChart extends React.Component {
     return (
       <React.Fragment>
         <h2>
-          <a href={Routes.edit_grade_entry_form_path(this.props.assessment_id)}>
+          <a
+            href={Routes.edit_course_grade_entry_form_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
             {this.state.info_data.name}
           </a>
         </h2>

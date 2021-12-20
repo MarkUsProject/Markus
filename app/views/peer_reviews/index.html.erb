@@ -4,8 +4,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       makePeerReviewsManager(document.getElementById('peer_reviews_manager'),
         {
+          course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>,
-          showSections: <%= Section.exists? %>
+          showSections: <%= @current_course.sections.exists? %>
         }
       );
     });

@@ -1,14 +1,16 @@
 describe AnnotationPolicy do
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:context) { { user: create(:admin) } }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
-    succeed 'user is a ta' do
-      let(:context) { { user: create(:ta) } }
+    succeed 'role is a ta' do
+      let(:role) { create :ta }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
-    context 'user is a student' do
-      let(:context) { { user: user } }
-      let(:user) { create :student }
+    context 'role is a student' do
+      let(:context) { { role: role, real_user: role.end_user } }
+      let(:role) { create :student }
       failed 'not associated with a peer review' do
         let(:record) { create :text_annotation }
       end
@@ -18,19 +20,21 @@ describe AnnotationPolicy do
         let(:submission) { create(:submission, grouping: grouping) }
         let(:result) { create :complete_result, submission: submission }
         let(:record) { create :text_annotation, result: result }
-        failed 'when the user is not a reviewer for the submission'
-        succeed 'when the user is a reviewer' do
-          before { allow(user).to receive(:is_reviewer_for?).and_return(true) }
+        failed 'when the role is not a reviewer for the submission'
+        succeed 'when the role is a reviewer' do
+          before { allow(role).to receive(:is_reviewer_for?).and_return(true) }
         end
       end
     end
   end
   describe_rule :add_existing_annotation? do
-    succeed 'user is an admin' do
-      let(:context) { { user: create(:admin) } }
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
-    succeed 'user is a ta' do
-      let(:context) { { user: create(:ta) } }
+    succeed 'role is a ta' do
+      let(:role) { create :ta }
+      let(:context) { { role: role, real_user: role.end_user } }
     end
   end
 end

@@ -3,10 +3,10 @@ namespace :db do
   desc 'Create assignments'
   task :assignments => :environment do
     # Assignments
-
     rule = GracePeriodSubmissionRule.new
     puts 'Assignment 0: Grace Credit usage'
     Assignment.create(
+      course: Course.first,
       short_identifier: 'A0',
       description: 'Variables and Simple Operations',
       message: 'using basic operators and assigning variables',
@@ -26,6 +26,7 @@ namespace :db do
 
     puts 'Assignment 1: Single Student Assignment No Marks'
     Assignment.create(
+        course: Course.first,
         short_identifier: 'A1',
         description: 'Conditionals and Loops',
         message: 'Learn to use conditional statements, and loops.',
@@ -46,6 +47,7 @@ namespace :db do
     EOS
     puts 'Assignment 2: Group Assignment No Marks'
     Assignment.create(
+        course: Course.first,
         short_identifier: 'A2',
         description: 'Cats and Dogs',
         message: assignment_msg,
@@ -63,6 +65,7 @@ namespace :db do
 
     puts 'Assignment 3: Single Student Sporadic Marks'
     Assignment.create(
+        course: Course.first,
         short_identifier: 'A3',
         description: 'Ode to a Python program',
         message: 'Learn to use files, dictionaries, and testing.',
@@ -78,6 +81,7 @@ namespace :db do
 
     puts 'Assignment 4: Group Assignment Sporadic Marks'
     Assignment.create(
+        course: Course.first,
         short_identifier: 'A4',
         description: 'Introduction to Recursion',
         message: 'Implement functions using Recursion',
@@ -96,6 +100,7 @@ namespace :db do
 
     puts 'Assignment 5: Timed Assessment'
     Assignment.create(
+      course: Course.first,
       short_identifier: 'A5',
       description: 'Timed Assessment',
       message: 'A timed assessment',
@@ -118,7 +123,7 @@ namespace :db do
     Assignment.joins(:assignment_properties)
               .where(assignment_properties: { section_due_dates_type: true })
               .find_each do |assignment|
-      Section.all.find_each.with_index do |section, i|
+      assignment.course.sections.find_each.with_index do |section, i|
         AssessmentSectionProperties.create(assessment: assignment,
                                            section: section, due_date: assignment.due_date + (i + 1).days)
       end

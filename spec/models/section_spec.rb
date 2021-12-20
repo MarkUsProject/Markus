@@ -1,29 +1,36 @@
 describe Section do
-  it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_uniqueness_of(:name) }
-  it { is_expected.to have_many(:students) }
-  it { is_expected.to have_many(:assessment_section_properties) }
+  context 'validations' do
+    subject { build :section }
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_id) }
+    it { is_expected.to have_many(:students) }
+    it { is_expected.to have_many(:assessment_section_properties) }
 
-  it { is_expected.not_to allow_value('A!a.sa').for(:name) }
-  it { is_expected.not_to allow_value('<abc').for(:name) }
+    it { is_expected.not_to allow_value('A!a.sa').for(:name) }
+    it { is_expected.not_to allow_value('<abc').for(:name) }
 
-  it { is_expected.to allow_value('abc 234').for(:name) }
-  it { is_expected.to allow_value('Ads_-hb').for(:name) }
-  it { is_expected.to allow_value('-22125-k1lj42_').for(:name) }
+    it { is_expected.to allow_value('abc 234').for(:name) }
+    it { is_expected.to allow_value('Ads_-hb').for(:name) }
+    it { is_expected.to allow_value('-22125-k1lj42_').for(:name) }
+
+    it { is_expected.to belong_to(:course) }
+  end
+
+  let(:section) { create :section }
 
   describe '.has_students?' do
     context 'A section with students associated to' do
       it 'return true to has_students?' do
-        section_1 = Section.create!(name: "Shrek")
-        section_1.students.create!(user_name: 'exist_student', first_name: 'Nelle', last_name: 'Varoquaux')
-        expect(section_1.has_students?).to be true
+        section.students.create!(course: section.course, end_user_attributes: { user_name: 'exist_student',
+                                                                                first_name: 'Nelle',
+                                                                                last_name: 'Varoquaux' })
+        expect(section.has_students?).to be true
       end
     end
 
     context 'A section with no student associated to' do
       it 'return false to has_students?' do
-        section_2 = Section.create!(name: "Shrek")
-        expect(section_2.has_students?).to be false
+        expect(section.has_students?).to be false
       end
     end
   end
@@ -31,16 +38,16 @@ describe Section do
   describe '.count_students' do
     context 'A section with students associated to' do
       it 'return 1 to students associated to' do
-        section_3 = Section.create!(name: "Shrek")
-        section_3.students.create!(user_name: 'exist_student', first_name: 'Shrek', last_name: 'Varoquaux')
-        expect(section_3.count_students).to eq(1)
+        section.students.create!(course: section.course, end_user_attributes: { user_name: 'exist_student',
+                                                                                first_name: 'Shrek',
+                                                                                last_name: 'Varoquaux' })
+        expect(section.count_students).to eq(1)
       end
     end
 
     context 'A section with no student associated to' do
       it 'return 0 to count_student' do
-        section_4 = Section.create!(name: "Shrek")
-        expect(section_4.count_students).to eq(0)
+        expect(section.count_students).to eq(0)
       end
     end
   end

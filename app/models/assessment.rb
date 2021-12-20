@@ -6,6 +6,7 @@ class Assessment < ApplicationRecord
 
   has_many :marking_weights, dependent: :destroy
   has_many :tags
+  belongs_to :course, inverse_of: :assessments
 
   has_many :assessment_section_properties, inverse_of: :assessment, class_name: 'AssessmentSectionProperties'
   accepts_nested_attributes_for :assessment_section_properties
@@ -15,7 +16,7 @@ class Assessment < ApplicationRecord
   # Look in lib/validators/* for more info
   validates :due_date, date: true
 
-  validates_uniqueness_of :short_identifier, case_sensitive: true
+  validates_uniqueness_of :short_identifier, scope: :course_id
   validates_presence_of :short_identifier
   validate :short_identifier_unchanged, on: :update
   validates_presence_of :description

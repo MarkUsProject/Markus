@@ -18,16 +18,17 @@ class SubmissionsController < ApplicationController
       format.json do
         assignment = Assignment.find(params[:assignment_id])
         render json: {
-          groupings: assignment.current_submission_data(current_user),
-          sections: Hash[Section.all.pluck(:id, :name)]
+          groupings: assignment.current_submission_data(current_role),
+          sections: Hash[current_course.sections.pluck(:id, :name)]
         }
       end
     end
   end
 
   def repo_browser
-    @grouping = Grouping.find(params[:id])
-    @assignment = @grouping.assignment
+    # TODO: move this to a new groupings controller
+    @assignment = Assignment.find_by(id: params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:grouping_id])
     @collected_revision = nil
     @revision = nil
     @grouping.access_repo do |repo|
@@ -63,7 +64,8 @@ class SubmissionsController < ApplicationController
   end
 
   def revisions
-    grouping = Grouping.find(params[:grouping_id])
+    assignment = Assignment.find_by(id: params[:assignment_id])
+    grouping = assignment.groupings.find(params[:grouping_id])
     grouping.access_repo do |repo|
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
       assignment_path = grouping.assignment.repository_folder
@@ -88,7 +90,7 @@ class SubmissionsController < ApplicationController
 
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
       head 400
       return
@@ -108,14 +110,14 @@ class SubmissionsController < ApplicationController
 
   def populate_file_manager
     assignment = Assignment.find(params[:assignment_id])
-    if current_user.student?
-      grouping = current_user.accepted_grouping_for(assignment)
+    if current_role.student?
+      grouping = current_role.accepted_grouping_for(assignment)
     else
       grouping = assignment.groupings.find(params[:grouping_id])
     end
     entries = []
     grouping.access_repo do |repo|
-      if current_user.student? || params[:revision_identifier].blank?
+      if current_role.student? || params[:revision_identifier].blank?
         revision = repo.get_latest_revision
       else
         revision = repo.get_revision(params[:revision_identifier])
@@ -126,7 +128,8 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
-    @grouping = Grouping.find(params[:id])
+    assignment = Assignment.find_by(id: params[:assignment_id])
+    @grouping = assignment.groupings.find(params[:grouping_id])
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = params[:apply_late_penalty].nil? ?
                          false : params[:apply_late_penalty]
@@ -135,10 +138,7 @@ class SubmissionsController < ApplicationController
                                revision_identifier: @revision_identifier)
 
     submission = @grouping.reload.current_submission_used
-    redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assessment_id,
-      submission_id: submission.id,
-      id: submission.get_latest_result.id)
+    redirect_to edit_course_result_path(course_id: current_course.id, id: submission.get_latest_result.id)
   end
 
   def uncollect_all_submissions
@@ -207,7 +207,7 @@ class SubmissionsController < ApplicationController
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
     group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
-      unless flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { submission: submission })).value
+      unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
         head 400
         return
       end
@@ -217,9 +217,9 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if !group_ids.empty?
-        if flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { assignment: assignment })).value
+        if flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { assignment: assignment })).value
           @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                      current_user.id,
+                                                      current_role.id,
                                                       assignment.id,
                                                       group_ids)
           session[:job_id] = @current_job.job_id
@@ -245,7 +245,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     self.class.layout 'assignment_content'
 
-    return if current_user.ta?
+    return if current_role.ta?
     return if @assignment.scanned_exam
 
     if @assignment.past_all_collection_dates?
@@ -256,7 +256,7 @@ class SubmissionsController < ApplicationController
     if @assignment.section_due_dates_type
       section_due_dates = Hash.new
       now = Time.current
-      Section.find_each do |section|
+      current_course.sections.find_each do |section|
         collection_time = @assignment.submission_rule
                                      .calculate_collection_time(section)
         collection_time = now if now >= collection_time
@@ -288,12 +288,12 @@ class SubmissionsController < ApplicationController
     assignment_id = params[:assignment_id]
     unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
-    raise t('student.submission.external_submit_only') if current_user.student? && !@assignment.allow_web_submits
+    raise t('student.submission.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
 
     @path = params[:path].blank? ? '/' : params[:path]
 
-    if current_user.student?
-      @grouping = current_user.accepted_grouping_for(assignment_id)
+    if current_role.student?
+      @grouping = current_role.accepted_grouping_for(assignment_id)
       unless @grouping.is_valid?
         set_filebrowser_vars(@grouping)
         flash_file_manager_messages
@@ -330,7 +330,7 @@ class SubmissionsController < ApplicationController
         should_commit = true
         path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
 
-        if current_user.student? && @grouping.assignment.only_required_files
+        if current_role.student? && @grouping.assignment.only_required_files
           required_files = @grouping.assignment.assignment_files.pluck(:filename)
                                     .map { |name| File.join(@grouping.assignment.repository_folder, name) }
         else
@@ -339,23 +339,23 @@ class SubmissionsController < ApplicationController
 
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
           if f.is_a?(String) # is a directory
-            success, msgs = add_folder(f, current_user, repo, path: path, txn: txn)
+            success, msgs = add_folder(f, current_role, repo, path: path, txn: txn)
             should_commit &&= success
             messages = messages.concat msgs
           else
-            success, msgs = add_file(f, current_user, repo,
+            success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
             should_commit &&= success
             messages.concat msgs
           end
         end
         if delete_files.present?
-          success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
+          success, msgs = remove_files(delete_files, current_role, repo, path: path, txn: txn)
           should_commit &&= success
           messages.concat msgs
         end
         if delete_folders.present?
-          success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
+          success, msgs = remove_folders(delete_folders, current_role, repo, path: path, txn: txn)
           should_commit &&= success
           messages = messages.concat msgs
         end
@@ -367,7 +367,7 @@ class SubmissionsController < ApplicationController
           head :unprocessable_entity
         end
       end
-      flash_repository_messages messages
+      flash_repository_messages messages, @grouping.course
       set_filebrowser_vars(@grouping)
       flash_file_manager_messages
     end
@@ -377,12 +377,12 @@ class SubmissionsController < ApplicationController
   end
 
   def get_file
-    assignment = Assignment.find(params[:assignment_id])
-    submission = Submission.find(params[:id])
+    submission = record
     grouping = submission.grouping
+    assignment = grouping.assignment
 
-    if !@current_user.is_a_reviewer?(assignment.pr_assignment) && @current_user.student? &&
-        @current_user.accepted_grouping_for(assignment.id).id != grouping.id
+    if !current_role.is_a_reviewer?(assignment.pr_assignment) && current_role.student? &&
+      current_role.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
                     t('submission_file.error.no_access',
                           submission_file_id: params[:submission_file_id]))
@@ -427,6 +427,7 @@ class SubmissionsController < ApplicationController
 
     if %(jupyter-notebook rmarkdown).include?(FileHelper.get_file_type(params[:file_name])) && preview
       redirect_to action: :notebook_content,
+                  course_id: current_course.id,
                   assignment_id: params[:assignment_id],
                   grouping_id: params[:grouping_id],
                   revision_identifier: params[:revision_identifier],
@@ -475,7 +476,7 @@ class SubmissionsController < ApplicationController
   # to the current user.
   def download_summary
     assignment = Assignment.find(params[:assignment_id])
-    data = assignment.current_submission_data(current_user)
+    data = assignment.current_submission_data(current_role)
 
     # This hash matches what is displayed by the RawSubmissionTable react component.
     # Ensure that changes to what is displayed in that table are reflected here as well.
@@ -545,15 +546,17 @@ class SubmissionsController < ApplicationController
   def zip_groupings_files
     assignment = Assignment.find(params[:assignment_id])
 
+    course = Course.find(params[:course_id])
+
     groupings = assignment.groupings.where(id: params[:groupings]&.map(&:to_i))
 
     zip_path = zipped_grouping_file_name(assignment)
 
-    if current_user.ta?
-      groupings = groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
+    if current_role.ta?
+      groupings = groupings.joins(:ta_memberships).where('memberships.role_id': current_role.id)
     end
 
-    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id)
+    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id)
     session[:job_id] = @current_job.job_id
 
     render 'shared/_poll_job.js.erb'
@@ -577,15 +580,16 @@ class SubmissionsController < ApplicationController
   # Download all files from a repository folder in a Zip file.
   ##
   def downloads
+    # TODO: move this to a grouping controller
     assignment = Assignment.find(params[:assignment_id])
-    if current_user.student?
-      grouping = current_user.accepted_grouping_for(assignment)
+    if current_role.student?
+      grouping = current_role.accepted_grouping_for(assignment)
     else
       grouping = assignment.groupings.find(params[:grouping_id])
     end
     zip_name = "#{assignment.short_identifier}-#{grouping.group.group_name}"
     grouping.access_repo do |repo|
-      if current_user.student? || params[:revision_identifier].nil?
+      if current_role.student? || params[:revision_identifier].nil?
         revision = repo.get_latest_revision
       else
         begin
@@ -716,7 +720,7 @@ class SubmissionsController < ApplicationController
   def zipped_grouping_file_name(assignment)
     # create the zip name with the user name so that we avoid downloading files created by another user
     short_id = assignment.short_identifier
-    Pathname.new('tmp') + Pathname.new(short_id + '_' + current_user.user_name + '.zip')
+    Pathname.new('tmp') + Pathname.new(short_id + '_' + current_role.user_name + '.zip')
   end
 
   # Used in update_files and file_manager actions
@@ -764,7 +768,7 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    anonymize = current_user.ta? && grouping.assignment.anonymize_groups
+    anonymize = current_role.ta? && grouping.assignment.anonymize_groups
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
@@ -773,7 +777,7 @@ class SubmissionsController < ApplicationController
       if file_obj.is_a? Repository::RevisionFile
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, grouping.assignment.id,
+        data = get_file_info(basename, file_obj, grouping.course.id, grouping.assignment.id,
                              revision.revision_identifier, dirname, grouping.id)
         next if data.nil?
         data[:key] = file_name
@@ -784,5 +788,11 @@ class SubmissionsController < ApplicationController
         { key: "#{file_name}/" }
       end
     end.compact
+  end
+
+  # Include grouping_id param in parent_params so that check_record can ensure that
+  # the grouping is in the same course as the current course
+  def parent_params
+    params[:grouping_id].nil? ? super : [*super, :grouping_id]
   end
 end

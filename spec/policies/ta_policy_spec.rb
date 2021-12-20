@@ -1,15 +1,15 @@
 describe TaPolicy do
-  let(:context) { { user: user } }
-  let(:record) { user }
+  let(:context) { { role: role, real_user: role.end_user } }
+  let(:record) { role }
 
   describe_rule :run_tests? do
     failed 'without run_tests permissions' do
-      let(:user) { create :ta, run_tests: false }
+      let(:role) { create :ta, run_tests: false }
     end
     succeed 'with run_tests permissions' do
-      let(:user) { create :ta, run_tests: true }
+      let(:role) { create :ta, run_tests: true }
       context 'authorized with an assignment' do
-        let(:context) { { user: user, assignment: assignment } }
+        let(:context) { { role: role, real_user: role.end_user, assignment: assignment } }
         failed 'without tests enabled' do
           let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
         end
@@ -22,7 +22,7 @@ describe TaPolicy do
         end
       end
       context 'authorized with a submission' do
-        let(:context) { { user: user, submission: result.submission } }
+        let(:context) { { role: role, real_user: role.end_user, submission: result.submission } }
         failed 'with a released result' do
           let(:result) { create :released_result }
         end
@@ -35,19 +35,19 @@ describe TaPolicy do
 
   describe_rule :manage_submissions? do
     succeed 'with manage_submissions permissions' do
-      let(:user) { create :ta, manage_submissions: true }
+      let(:role) { create :ta, manage_submissions: true }
     end
     failed 'without manage_submissions permissions' do
-      let(:user) { create :ta, manage_submissions: false }
+      let(:role) { create :ta, manage_submissions: false }
     end
   end
 
   describe_rule :manage_assessments? do
     succeed 'with manage_assessments permissions' do
-      let(:user) { create :ta, manage_assessments: true }
+      let(:role) { create :ta, manage_assessments: true }
     end
     failed 'without manage_assessments permissions' do
-      let(:user) { create :ta, manage_assessments: false }
+      let(:role) { create :ta, manage_assessments: false }
     end
   end
 end

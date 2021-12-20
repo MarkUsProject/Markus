@@ -2,9 +2,10 @@
   <%= render partial: 'annotation_categories/annotation_category_edit',
              locals: { annotation_category: annotation_category } %>
 
-  <% path = new_annotation_text_assignment_annotation_categories_path(
-    assignment_id: annotation_category.assignment.id,
-    annotation_category_id: annotation_category.id
+  <% path = new_annotation_text_course_assignment_annotation_categories_path(
+    @current_course,
+    annotation_category.assignment,
+    annotation_category_id: annotation_category
   ) %>
   <%= javascript_tag nonce: true do %>
     $(function() {

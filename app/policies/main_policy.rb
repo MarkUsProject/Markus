@@ -1,13 +1,10 @@
 # Main policy class
 class MainPolicy < ApplicationPolicy
-  authorize :real_user, optional: true
+  skip_pre_check :role_exists?
+
   default_rule :manage?
 
-  def login_as?
-    user.admin? || real_user&.admin?
-  end
-
   def manage?
-    user.is_a?(User)
+    true
   end
 end

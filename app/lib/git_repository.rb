@@ -1,3 +1,5 @@
+require 'csv'
+
 # Implements AbstractRepository for Git repositories
 # It implements the following paradigm:
 #   1. Repositories are created by using ???
@@ -43,7 +45,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Static method: Creates a new Git repository at
   # location 'connect_string'
-  def self.create(connect_string)
+  def self.create(connect_string, course)
     if GitRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -63,7 +65,7 @@ class GitRepository < Repository::AbstractRepository
       repo = Rugged::Repository.clone_at(barepath, tmp_repo_path)
 
       # Do an initial commit with the .required_files.json
-      required = Assignment.get_required_files
+      required = course.get_required_files
       required_path = File.join(tmp_repo_path, '.required.json')
       File.open(required_path, 'w') do |req|
         req.write(required.to_json)
@@ -75,7 +77,7 @@ class GitRepository < Repository::AbstractRepository
       FileUtils.copy_entry client_hooks, dest
       too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
       content = File.open(too_large_hook) do |f|
-        f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{Settings.max_file_size}")
+        f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{course.max_file_size_settings}")
       end
       File.open(too_large_hook, 'w') { |f| f.write(content) }
       FileUtils.chmod 0755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
@@ -85,7 +87,10 @@ class GitRepository < Repository::AbstractRepository
       server_hooks.each do |hook_symbol, hook_script|
         FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
       end
-      max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size'
+      max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size' + course.name
+      unless File.exist?(max_file_size_file)
+        max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size' + '.default'
+      end
       FileUtils.ln_s(max_file_size_file, File.join(barepath, 'hooks', 'max_file_size'))
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))

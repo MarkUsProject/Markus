@@ -74,8 +74,8 @@ import {makeDashboard} from "javascripts/Components/dashboard";
 window.makeDashboard = makeDashboard;
 import {makeTATable} from "javascripts/Components/ta_table";
 window.makeTATable = makeTATable;
-import {makeAdminTable} from "javascripts/Components/admin_table";
-window.makeAdminTable = makeAdminTable;
+import {makeInstructorTable} from "javascripts/Components/instructor_table";
+window.makeInstructorTable = makeInstructorTable;
 import {makeStudentTable} from "javascripts/Components/student_table";
 window.makeStudentTable = makeStudentTable;
 import {makeAssignmentSummaryTable} from "javascripts/Components/assignment_summary_table";
@@ -122,3 +122,5 @@ import {makeStarterFileManager} from "javascripts/Components/starter_file_manage
 window.makeStarterFileManager = makeStarterFileManager;
 import {makeNotesTable} from "javascripts/Components/notes_table";
 window.makeNotesTable = makeNotesTable;
+import {makeCourseList} from "javascripts/Components/course_list";
+window.makeCourseList = makeCourseList;

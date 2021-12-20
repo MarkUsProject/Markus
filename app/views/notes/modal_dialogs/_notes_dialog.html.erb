@@ -9,7 +9,7 @@
     <div class='notes_existing_list'>
       <% @notes.each do |note| %>
         <div class='note'>
-          <p><strong><%= note.user.user_name %>: </strong></p>
+          <p><strong><%= note.role.user_name %>: </strong></p>
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
           <% if allowed_to?(:modify?, note) %>
@@ -30,9 +30,9 @@
   <div class='notes_new'>
     <h3><%= Note.human_attribute_name(:notes_message) %></h3>
     <%= form_tag(
-        add_note_notes_path(noteable_id: @noteable,
+        add_note_course_notes_path(course_id: @current_course, noteable_id: @noteable,
                             noteable_type: @cls,
-                            user: @current_user,
+                            role: @current_role,
                             action_to: @action,
                             controller_to: @cont,
                             highlight_field: @highlight_field,

@@ -29,7 +29,8 @@ class CreateModifyAnnotationPanel extends React.Component {
 
     $.ajax({
       method: "get",
-      url: Routes.find_annotation_text_assignment_annotation_categories_url(
+      url: Routes.find_annotation_text_course_assignment_annotation_categories_url(
+        this.props.course_id,
         this.props.assignment_id
       ),
       dataType: "json",

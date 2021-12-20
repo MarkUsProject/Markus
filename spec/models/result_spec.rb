@@ -9,6 +9,7 @@ describe Result do
   it { is_expected.to callback(:create_marks).after(:create) }
   it { is_expected.to callback(:check_for_released).before(:update) }
   it { is_expected.to callback(:check_for_nil_marks).before(:save) }
+  it { is_expected.to have_one(:course) }
 
   shared_context 'get subtotals context' do
     let!(:assignment) { create :assignment_with_criteria_and_results }
@@ -34,10 +35,11 @@ describe Result do
   end
   shared_context 'get subtotal context' do
     let(:result) { create :incomplete_result }
-    let(:criterion) { create :flexible_criterion, assignment: result.submission.grouping.assignment, max_mark: 10 }
-    let(:criterion2) { create :flexible_criterion, assignment: result.submission.grouping.assignment, max_mark: 10 }
-    let!(:mark) { create :flexible_mark, criterion: criterion, result: result, mark: 5 }
-    let!(:mark2) { create :flexible_mark, criterion: criterion2, result: result, mark: 7 }
+    let(:assignment) { result.submission.grouping.assignment }
+    let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+    let(:criterion2) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+    let!(:mark) { create :flexible_mark, criterion: criterion, result: result, mark: 5, assignment: assignment }
+    let!(:mark2) { create :flexible_mark, criterion: criterion2, result: result, mark: 7, assignment: assignment }
   end
   shared_examples 'get subtotal only' do |method_name|
     context 'there are no extra marks' do

@@ -1,28 +1,30 @@
 describe MarkingSchemesController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:assignment) { create(:assignment) }
   let(:assignment_with_criteria_and_results) { create(:assignment_with_criteria_and_results) }
-  let(:admin) { create(:admin) }
+  let(:instructor) { create(:instructor) }
+  let(:course) { instructor.course }
 
   describe 'An unauthenticated and unauthorized user' do
     context '#index' do
       it 'should respond with redirect' do
-        get :index
+        get :index, params: { course_id: course.id }
         is_expected.to respond_with :redirect
       end
     end
 
     context '#new' do
       it 'should respond with redirect' do
-        post :new
+        post :new, params: { course_id: course.id }
         is_expected.to respond_with :redirect
       end
     end
 
     context '#populate' do
       it 'should respond with redirect' do
-        get :populate
+        get :populate, params: { course_id: course.id }
         is_expected.to respond_with :redirect
       end
     end
@@ -38,7 +40,7 @@ describe MarkingSchemesController do
       end
       before do
         create :marking_scheme, assessments: assessments
-        get_as admin, :populate, format: :json
+        get_as instructor, :populate, params: { course_id: course.id }, format: :json
       end
       it 'returns a hash with the correct keys' do
         expect(response.parsed_body.keys).to contain_exactly('data', 'columns')
@@ -60,6 +62,7 @@ describe MarkingSchemesController do
     context '#create' do
       it 'creates a marking scheme with marking weights' do
         params = {
+          course_id: course.id,
           'marking_scheme': {
             'name': 'Test Marking Scheme',
             'marking_weights_attributes': {
@@ -69,7 +72,7 @@ describe MarkingSchemesController do
           }
         }
 
-        post_as admin, :create, params: params
+        post_as instructor, :create, params: params
         marking_scheme = MarkingScheme.first
         marking_weights = marking_scheme.marking_weights
         expect(marking_scheme.name).to eq 'Test Marking Scheme'
@@ -80,11 +83,9 @@ describe MarkingSchemesController do
       end
 
       it 'creates a marking scheme when there are no assessments' do
-        params = {
-          'marking_scheme': { 'name': 'Test Marking Scheme' }
-        }
+        params = { course_id: course.id, 'marking_scheme': { 'name': 'Test Marking Scheme' } }
 
-        post_as admin, :create, params: params
+        post_as instructor, :create, params: params
         marking_scheme = MarkingScheme.first
         marking_weights = marking_scheme.marking_weights
         expect(marking_scheme.name).to eq 'Test Marking Scheme'
@@ -100,6 +101,7 @@ describe MarkingSchemesController do
                              assignment,
                              assignment_with_criteria_and_results])
         params = {
+          course_id: course.id,
           'id': MarkingScheme.first.id,
           'marking_scheme': {
             'name': 'Test Marking Scheme 2',
@@ -112,7 +114,7 @@ describe MarkingSchemesController do
           }
         }
 
-        post_as admin, :update, params: params
+        post_as instructor, :update, params: params
         marking_scheme = MarkingScheme.first
         marking_weights = marking_scheme.marking_weights
         expected_weights = [2.5, 3.5, 1.5, 0]
@@ -124,11 +126,12 @@ describe MarkingSchemesController do
       it 'updates an existing marking scheme with no assessments' do
         create(:marking_scheme)
         params = {
+          course_id: course.id,
           'id': MarkingScheme.first.id,
           'marking_scheme': { 'name': 'Test Marking Scheme 2' }
         }
 
-        post_as admin, :update, params: params
+        post_as instructor, :update, params: params
         marking_scheme = MarkingScheme.first
         marking_weights = marking_scheme.marking_weights
         expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
@@ -138,7 +141,7 @@ describe MarkingSchemesController do
 
     context '#new' do
       before(:each) do
-        get_as admin, :new, format: :js
+        get_as instructor, :new, params: { course_id: course.id }, format: :js
       end
 
       it 'should render the new template' do
@@ -162,9 +165,9 @@ describe MarkingSchemesController do
           ]
         )
 
-        post_as admin,
+        post_as instructor,
                 :edit,
-                params: { id: MarkingScheme.first.id },
+                params: { course_id: course.id, id: MarkingScheme.first.id },
                 format: :js
       end
 
@@ -190,9 +193,9 @@ describe MarkingSchemesController do
         )
 
         ms = MarkingScheme.first
-        delete_as admin,
+        delete_as instructor,
                   :destroy,
-                  params: { id: ms.id },
+                  params: { course_id: course.id, id: ms.id },
                   format: :js
         is_expected.to respond_with(:success)
         expect { MarkingScheme.find(ms.id) }.to raise_error(ActiveRecord::RecordNotFound)

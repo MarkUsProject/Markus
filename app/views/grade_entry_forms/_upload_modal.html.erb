@@ -5,7 +5,7 @@
 <%= content_for :modal_content do %>
   <%= t('upload_help_html', section_id: 'marks-spreadsheet-grades') %>
 
-  <%= form_tag upload_grade_entry_form_path(@grade_entry_form),
+  <%= form_tag upload_course_grade_entry_form_path(@current_course, @grade_entry_form),
                { multipart: true, size: 1 } do %>
 
     <p><%= file_field_tag 'upload_file', required: true %></p>
