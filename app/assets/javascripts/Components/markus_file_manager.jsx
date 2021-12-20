@@ -21,6 +21,11 @@ class RawFileManager extends RawFileBrowser {
     this.handleActionBarAddFolderClick(event);
   };
 
+  onActionBarSubmitURLClick = (event, selectedItem) => {
+    event.preventDefault();
+    this.props.onActionBarSubmitURLClick(selectedItem);
+  }
+
   folderTarget = selectedItem => {
     // treat multiple selections as not targeting a folder
     const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith("/");
@@ -176,11 +181,7 @@ class RawFileManager extends RawFileBrowser {
       if (this.props.enableUrlSubmit === true) {
         actions.push(
           <li key="action-add-link">
-            <a
-              onClick={event => this.props.onSubmitLink(event, selectedItem)}
-              href="#"
-              role="button"
-            >
+            <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
               <i className="fa fa-submit-link-o" aria-hidden="true" />
               &nbsp;{I18n.t("submit_link")}
             </a>

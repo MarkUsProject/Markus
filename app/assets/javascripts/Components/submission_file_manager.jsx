@@ -11,7 +11,8 @@ class SubmissionFileManager extends React.Component {
     super(props);
     this.state = {
       files: [],
-      showModal: false,
+      showUploadModal: false,
+      showURLModal: false,
       uploadTarget: undefined,
       viewFile: null,
       viewFileType: null,
@@ -64,6 +65,8 @@ class SubmissionFileManager extends React.Component {
       this.fetchData();
     }
   }
+
+  handleCreateUrl = (url) => { return null }
 
   handleCreateFiles = (files, unzip) => {
     if (
@@ -162,8 +165,12 @@ class SubmissionFileManager extends React.Component {
   };
 
   openUploadModal = uploadTarget => {
-    this.setState({showModal: true, uploadTarget: uploadTarget});
+    this.setState({showUploadModal: true, uploadTarget: uploadTarget});
   };
+
+  openSubmitURLModal = uploadTarget => {
+    this.setState({showURLModal: true, uploadTarget: uploadTarget});
+  }
 
   updateViewFile = item => {
     this.setState({
@@ -232,12 +239,17 @@ class SubmissionFileManager extends React.Component {
           }}
           onSelectFile={this.updateViewFile}
           enableUrlSubmit={true}
-          onSubmitLink={this.props.readOnly ? undefined : 'TODO: Insert Link Submit handler here'}
+          onActionBarSubmitURLClick={this.props.readOnly ? undefined : this.openSubmitURLModal}
         />
         <SubmissionFileUploadModal
-          isOpen={this.state.showModal}
-          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          isOpen={this.state.showUploadModal}
+          onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+        />
+        <SubmitUrlUploadModal
+          isOpen={this.state.showURLModal}
+          onRequestClose={() => this.setState({showURLModal: false, uploadTarget: undefined})}
+          onSubmit={this.handleCreateUrl}
         />
         {this.renderFileViewer()}
       </div>

@@ -2,6 +2,9 @@ import React from "react";
 import Modal from "react-modal";
 
 class SubmitUrlUploadModal extends React.Component {
+  state = {
+    newUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  }
 
   componentDidMount() {
     Modal.setAppElement("body");
@@ -9,19 +12,15 @@ class SubmitUrlUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    //this.props.onSubmit(this.state.newFiles, this.state.unzip);
+    this.props.onSubmit(this.state.newUrl);
   };
 
-  handleFileUpload = event => {
-    //this.setState({newFiles: event.target.files});
-  };
-
-  toggleUnzip = () => {
-    //this.setState({unzip: !this.state.unzip});
+  handleUrlSubmit = event => {
+    this.setState({newUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"});
   };
 
   render() {
-    const [isOpen, onRequestClose] = this.props
+    const { isOpen, onRequestClose } = this.props
     return (
       <Modal
         className="react-modal"
@@ -33,10 +32,9 @@ class SubmitUrlUploadModal extends React.Component {
           <div className={"modal-container-vertical"}>
             <div className={"modal-container"}>
               <input
-                type={"file"}
-                name={"new_files"}
-                multiple={true}
-                onChange={this.handleFileUpload}
+                type={"url"}
+                name={"new_url"}
+                onChange={this.handleUrlSubmit}
               />
             </div>
             <div className={"modal-container"}>
