@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Fix bug where a login with remote authentication failed to redirect to the landing page (#5690)
 
 ## [v2.0.0]
 - Support multiple courses in a single MarkUs instance (#5685)

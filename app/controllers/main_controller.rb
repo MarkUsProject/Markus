@@ -29,6 +29,14 @@ class MainController < ApplicationController
     unless Settings.remote_auth_login_url || Settings.validate_file
       flash_now(:error, t('main.sign_in_not_supported'))
     end
+    if session[:auth_type] == 'remote'
+      self.real_user = EndUser.find_by_user_name(remote_user_name)
+      unless real_user.nil?
+        refresh_timeout
+        redirect_to controller: 'courses', action: 'index'
+        return
+      end
+    end
     return unless request.post?
 
     # Get information of the user that is trying to login if his or her
@@ -38,9 +46,9 @@ class MainController < ApplicationController
       return
     end
 
-    session[:auth_type] = :local
+    session[:auth_type] = 'local'
 
-    found_user = User.find_by_user_name(params[:user_login])
+    found_user = EndUser.find_by_user_name(params[:user_login])
     if found_user.nil?
       flash_now(:error, Settings.validate_user_not_allowed_message || I18n.t('main.login_failed'))
       render :login, locals: { user_login: params[:user_login] }
@@ -56,8 +64,8 @@ class MainController < ApplicationController
   end
 
   def login_remote_auth
-    session[:auth_type] = :remote
-    redirect_to remote_user_name.nil? ? Settings.remote_auth_login_url : main_path
+    session[:auth_type] = 'remote'
+    redirect_to Settings.remote_auth_login_url
   end
 
   # Clear the sesssion for current user and redirect to login page
