@@ -22,7 +22,7 @@ class User < ApplicationRecord
   validates                 :user_name,
                             format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                                       message: 'user_name must be alphanumeric, hyphen, or underscore' },
-                            unless: ->(u) { u.autotest_user? }
+                            unless: ->(u) { u.autotest_user? || u.admin_user? }
   after_initialize :set_display_name, :set_time_zone
 
   validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
