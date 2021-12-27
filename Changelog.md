@@ -1,8 +1,11 @@
 # Changelog
 
 ## [unreleased]
-- Support multiple courses in a single MarkUs instance (#5685)
+- Fix bug where a login with remote authentication failed to redirect to the landing page (#5690)
 - Allow admin user to have a unique user name (#5691)
+
+## [v2.0.0]
+- Support multiple courses in a single MarkUs instance (#5685)
 
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
