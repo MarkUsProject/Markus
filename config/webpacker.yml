@@ -48,7 +48,6 @@ default: &default
     - .gif
     - .jpeg
     - .jpg
-    - .js.erb
 
 development:
   <<: *default
