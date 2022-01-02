@@ -78,6 +78,7 @@ jobs:
       - name: Build assets
         run: |
           bundle exec rake i18n:js:export &&
+          bundle exec rake js:routes &&
           chmod u+x bin/webpack &&
           bundle exec rake webpacker:compile
       - name: Set up database
