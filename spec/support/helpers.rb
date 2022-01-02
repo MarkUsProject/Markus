@@ -67,10 +67,11 @@ module Helpers
         case filetype
         when '.yml', '.yaml'
           YAML.safe_load(file_content,
-                         [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-                          ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
-                         [],
-                         true)
+                         permitted_classes: [
+                           Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+                           ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess
+                         ],
+                         aliases: true)
         when '.json'
           JSON.parse(file_content)
         end
