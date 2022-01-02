@@ -67,7 +67,7 @@ FactoryBot.define do
     after(:create) do |a|
       3.times { create(:flexible_criterion, assignment: a) }
       3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
-      3.times { create(:test_group_with_ordered_name, assignment: a) }
+      3.times { create(:test_group, assignment: a) }
 
       a.groupings.each do |grouping|
         a.test_groups.each do |test_group|

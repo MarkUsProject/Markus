@@ -216,9 +216,7 @@ describe AssignmentsController do
         test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
         test_results_static = CSV.parse(test_results_fixture, headers: true)
 
-        test_results.each_with_index do |line, i|
-          expect(line).to eq test_results_static[i]
-        end
+        expect(test_results).to match_array test_results_static
       end
     end
   end
