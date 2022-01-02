@@ -1020,7 +1020,7 @@ describe CriteriaController do
                                                  upload_file: test_upload_download_file }
           get :download, params: { course_id: course.id, assignment_id: assignment.id }
 
-          expect(YAML.safe_load(response.body, [Symbol], symbolize_names: true))
+          expect(YAML.safe_load(response.body, permitted_classes: [Symbol], symbolize_names: true))
             .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
         end
       end
