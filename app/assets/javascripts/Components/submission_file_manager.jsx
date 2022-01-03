@@ -66,7 +66,7 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
-  handleCreateUrl = url => {
+  handleCreateUrl = (url, alias) => {
     return null;
   };
 

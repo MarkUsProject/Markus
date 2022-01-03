@@ -63,6 +63,7 @@ en:
       remark_requested: Remark Requested
     status: Status
     student:
+      create_link: Create Link
       file_manager: "%{short_identifier}: Submissions"
       files_submitted:
         one: One file submitted
@@ -78,6 +79,8 @@ en:
       no_submission: You have not submitted any work yet.
       only_required_files: You may only submit the required files listed above.
       select_file: Select a file to view
+      url: URL
+      url_alias: URL Name
       version_control_warning: Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting.
     submission_summary: Submission Report
     successfully_changed: Successfully updated %{changed} results.

@@ -61,6 +61,7 @@ es:
       remark_requested: Recalificación solicitada
     status: Estado
     student:
+      create_link: UPDATE ME
       file_manager: "%{short_identifier}: Administrador de Archivos"
       files_submitted:
         one: "%{count} archivos"
@@ -76,6 +77,8 @@ es:
       no_submission: Usted no ha enviado ninguna entrega todavía
       only_required_files: UPDATE ME
       select_file: UPDATE ME!
+      url: UPDATE ME
+      url_alias: UPDATE ME
       version_control_warning: Entregar archivos aquí reescribe todos los cambios realizados usando version control. Asegúrese que haya trabajado en los archivos más recientes antes de realizar la entrega.
     submission_summary: UPDATE ME
     successfully_changed: "%{changed} resultados han sido actualizados exitosamente"

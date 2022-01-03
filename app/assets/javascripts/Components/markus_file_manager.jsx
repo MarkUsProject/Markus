@@ -183,7 +183,7 @@ class RawFileManager extends RawFileBrowser {
           <li key="action-add-link">
             <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
               <i className="fa fa-submit-link-o" aria-hidden="true" />
-              &nbsp;{I18n.t("submit_link")}
+              &nbsp;{I18n.t("submissions.student.create_link")}
             </a>
           </li>
         );

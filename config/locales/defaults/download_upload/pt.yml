@@ -9,7 +9,6 @@ pt:
   download_the: Baixar %{item}
   download_yml: Baixar em formato YML
   rename: UPDATE ME
-  submit_link: UPDATE ME
   upload: Carregar
   upload_errors:
     invalid_csv_row_format: Formato de linha inválida

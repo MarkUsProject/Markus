@@ -9,7 +9,7 @@ class SubmissionsController < ApplicationController
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
-    p.frame_src 'https://www.youtube.com'
+    p.frame_src 'https://www.youtube.com', 'https://drive.google.com', 'https://play.library.utoronto.ca'
   end
 
   content_security_policy_report_only only: :notebook_content
@@ -123,6 +123,7 @@ class SubmissionsController < ApplicationController
       end
       entries = get_all_file_data(revision, grouping, '')
     end
+    puts entries
     render json: entries
   end
 
