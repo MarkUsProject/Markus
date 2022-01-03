@@ -3,7 +3,7 @@ module Api
   class StarterFileGroupsController < MainApiController
     def create
       assignment = Assignment.find_by_id(params[:assignment_id])
-      name = params[:name] || I18n.t('assignments.starter_file.new_starter_file_group')
+      name = params[:name] || StarterFileGroup.autogenerate_starter_file_group_name(assignment)
       other_params = params.permit(:entry_rename, :use_rename).to_h.symbolize_keys
       starter_file_group = StarterFileGroup.new(assessment_id: assignment.id, name: name, **other_params)
       if starter_file_group.save

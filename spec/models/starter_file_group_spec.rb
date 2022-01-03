@@ -1,10 +1,15 @@
 describe StarterFileGroup do
-  it { is_expected.to belong_to(:assignment) }
-  it { is_expected.to have_many(:section_starter_file_groups) }
-  it { is_expected.to have_many(:sections) }
-  it { is_expected.to have_many(:starter_file_entries) }
-  it { is_expected.to validate_exclusion_of(:entry_rename).in_array(%w[.. .]) }
-  it { is_expected.to have_one(:course) }
+  describe 'validations' do
+    subject { create :starter_file_group }
+
+    it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to have_many(:section_starter_file_groups) }
+    it { is_expected.to have_many(:sections) }
+    it { is_expected.to have_many(:starter_file_entries) }
+    it { is_expected.to validate_exclusion_of(:entry_rename).in_array(%w[.. .]) }
+    it { is_expected.to have_one(:course) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id) }
+  end
 
   context 'more validations' do
     let(:starter_file_group) { create :starter_file_group }
@@ -144,6 +149,44 @@ describe StarterFileGroup do
           end
         end
       end
+    end
+  end
+
+  describe '.autogenerate_starter_file_group_name' do
+    let(:assignment) { create :assignment }
+    let(:assignment2) { create :assignment }
+    let(:new_name) { StarterFileGroup.autogenerate_starter_file_group_name(assignment) }
+
+    it 'returns the default name when there are no starter file groups' do
+      expect(new_name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
+    end
+
+    it 'returns a fresh name when there are name collisions' do
+      create(:starter_file_group,
+             assignment: assignment,
+             name: I18n.t('assignments.starter_file.new_starter_file_group'))
+      create(:starter_file_group,
+             assignment: assignment,
+             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (1)")
+      create(:starter_file_group,
+             assignment: assignment,
+             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (2)")
+
+      expect(new_name).to eq "#{I18n.t('assignments.starter_file.new_starter_file_group')} (3)"
+    end
+
+    it 'returns the default name when there are name collisions for a different assignment' do
+      create(:starter_file_group,
+             assignment: assignment2,
+             name: I18n.t('assignments.starter_file.new_starter_file_group'))
+      create(:starter_file_group,
+             assignment: assignment2,
+             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (1)")
+      create(:starter_file_group,
+             assignment: assignment2,
+             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (2)")
+
+      expect(new_name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
     end
   end
 end

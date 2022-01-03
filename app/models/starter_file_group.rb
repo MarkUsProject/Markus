@@ -13,6 +13,9 @@ class StarterFileGroup < ApplicationRecord
   before_destroy :warn_affected_groupings, prepend: true
   after_save :update_timestamp
 
+  validates_presence_of :name
+  validates_uniqueness_of :name, scope: :assessment_id
+
   validates_exclusion_of :entry_rename, in: %w[.. .]
   validates_presence_of :entry_rename, if: -> { self.use_rename }
 
@@ -68,6 +71,18 @@ class StarterFileGroup < ApplicationRecord
 
   def should_rename
     use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
+  end
+
+  # Generate a unique starter file group name for +assignment+
+  def self.autogenerate_starter_file_group_name(assignment)
+    current_names = assignment.starter_file_groups.pluck(:name).to_set
+    new_name = I18n.t('assignments.starter_file.new_starter_file_group')
+    i = 1
+    while current_names.include? new_name
+      new_name = "#{I18n.t('assignments.starter_file.new_starter_file_group')} (#{i})"
+      i += 1
+    end
+    new_name
   end
 
   private

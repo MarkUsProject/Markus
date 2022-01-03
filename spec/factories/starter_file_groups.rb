@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :starter_file_group do
     association :assignment
-    name { Faker::Lorem.word }
+    sequence(:name) { |n| "Starter File Group #{n}" }
     entry_rename { Faker::Lorem.word }
     use_rename { false }
 
