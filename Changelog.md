@@ -1,6 +1,8 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.0.1]
 - Fix bug where a login with remote authentication failed to redirect to the landing page (#5690)
 - Allow admin user to have a unique user name (#5691)
 
