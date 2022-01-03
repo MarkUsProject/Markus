@@ -4,7 +4,7 @@ import Modal from "react-modal";
 class SubmitUrlUploadModal extends React.Component {
   state = {
     newUrl: "",
-    newUrlAlias: ""
+    newUrlAlias: "",
   };
 
   componentDidMount() {
@@ -32,7 +32,9 @@ class SubmitUrlUploadModal extends React.Component {
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <div className={"modal-container"}>
-              <label>{I18n.t("submissions.student.url")}<br/>
+              <label>
+                {I18n.t("submissions.student.url")}
+                <br />
                 <input
                   type={"url"}
                   name={"new_url"}
@@ -43,7 +45,9 @@ class SubmitUrlUploadModal extends React.Component {
               </label>
             </div>
             <div className={"modal-container"}>
-              <label>{I18n.t("submissions.student.url_alias")}<br/>
+              <label>
+                {I18n.t("submissions.student.url_alias")}
+                <br />
                 <input
                   type={"text"}
                   name={"new_url_alias"}
