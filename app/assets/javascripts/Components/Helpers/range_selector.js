@@ -54,6 +54,21 @@ function getLeafNodes(root, _nodes) {
   return _nodes;
 }
 
+export function absoluteXpath(node) {
+  if (node.parentNode) {
+    if (node.nodeType === 3) {
+      return `${absoluteXpath(node.parentNode)}/text()`;
+    } else {
+      const index = [...node.parentNode.childNodes]
+        .filter(n => n.tagName === node.tagName)
+        .indexOf(node);
+      return `${absoluteXpath(node.parentNode)}/${node.tagName}[${index + 1}]`;
+    }
+  } else {
+    return "";
+  }
+}
+
 export function markupTextInRange(range, colour) {
   if (range.startContainer === range.endContainer) {
     const old_node = range.startContainer;

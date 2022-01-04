@@ -11,7 +11,8 @@
   var ANNOTATION_TYPES = {
     CODE: 0,
     IMAGE: 1,
-    PDF: 2
+    PDF: 2,
+    NOTEBOOK: 3
   };
 
   // Enum to tell the code if an image, code, or pdf is being shown
@@ -308,6 +309,12 @@
       y1: box.y1,
       y2: box.y2,
     };
+  }
+
+  function get_notebook_annotation_range() {
+    const notebook_iframe = document.getElementById("notebook");
+    const target = notebook_iframe.contentWindow || notebook_iframe.contentDocument;
+    return target.getSelection().getRangeAt(0);
   }
 
   // Retrieve PDF annotation data with model ids.
