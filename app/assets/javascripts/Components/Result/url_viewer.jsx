@@ -1,5 +1,4 @@
 import React from "react";
-import "../../../stylesheets/common/_url_viewer.scss";
 
 export class URLViewer extends React.Component {
   state = {
