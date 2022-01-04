@@ -498,7 +498,7 @@ class StarterFileManager extends React.Component {
               </a>
               <span className={"menu_bar"} />
               <a
-                href={Routes.download_starter_file_mappings_course_assignment_path(
+                href={Routes.download_sample_starter_files_course_assignment_path(
                   this.props.course_id,
                   this.props.assignment_id
                 )}
