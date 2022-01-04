@@ -2,10 +2,13 @@ import React from "react";
 import Modal from "react-modal";
 
 class SubmitUrlUploadModal extends React.Component {
-  state = {
-    newUrl: "",
-    newUrlAlias: "",
-  };
+  constructor() {
+    super()
+    this.state = {
+      newUrl: "",
+      newUrlAlias: "",
+    };
+  }
 
   componentDidMount() {
     Modal.setAppElement("body");
