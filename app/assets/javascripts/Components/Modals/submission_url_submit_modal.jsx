@@ -37,7 +37,6 @@ class SubmitUrlUploadModal extends React.Component {
             <div className={"modal-container"}>
               <label>
                 {I18n.t("submissions.student.url")}
-                <br />
                 <input
                   type={"url"}
                   name={"new_url"}
@@ -50,7 +49,6 @@ class SubmitUrlUploadModal extends React.Component {
             <div className={"modal-container"}>
               <label>
                 {I18n.t("submissions.student.url_alias")}
-                <br />
                 <input
                   type={"text"}
                   name={"new_url_alias"}
