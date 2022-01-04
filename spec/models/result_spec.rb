@@ -4,7 +4,7 @@ describe Result do
   it { is_expected.to have_many(:extra_marks) }
   it { is_expected.to have_many(:annotations) }
   it { is_expected.to validate_presence_of(:marking_state) }
-  it { is_expected.to validate_inclusion_of(:marking_state).in_array(['complete', 'incomplete']) }
+  it { is_expected.to validate_inclusion_of(:marking_state).in_array(%w[complete incomplete]) }
   it { is_expected.to validate_numericality_of(:total_mark).is_greater_than_or_equal_to(0) }
   it { is_expected.to callback(:create_marks).after(:create) }
   it { is_expected.to callback(:check_for_released).before(:update) }
@@ -44,7 +44,7 @@ describe Result do
   shared_examples 'get subtotal only' do |method_name|
     context 'there are no extra marks' do
       it 'should return the subtotal' do
-        expect(result.send(method_name)).to eq 12
+        expect(result.public_send(method_name)).to eq 12
       end
     end
     context 'one criterion is peer_visible only' do
@@ -58,13 +58,13 @@ describe Result do
       context 'the result is a review' do
         before { allow(result).to receive(:is_a_review?).and_return(true) }
         it 'should return a subtotal of the peer_visible marks' do
-          expect(result.send(method_name)).to eq 5
+          expect(result.public_send(method_name)).to eq 5
         end
       end
       context 'the result is not a review' do
         before { allow(result).to receive(:is_a_review?).and_return(false) }
         it 'should return a subtotal of the peer_visible marks' do
-          expect(result.send(method_name)).to eq 7
+          expect(result.public_send(method_name)).to eq 7
         end
       end
     end
@@ -73,7 +73,10 @@ describe Result do
     context 'there are no extra marks' do
       it 'should return a hash containing the subtotal for each result' do
         ids = Result.pluck(:id)
-        expect(Result.send(method_name, ids)).to eq(ids.map { |id| [id, Result.find(id).marks.pluck(:mark).sum] }.to_h)
+        expected = ids.map do |id|
+          [id, Result.find(id).marks.pluck(:mark).sum]
+        end.to_h
+        expect(Result.public_send(method_name, ids)).to eq expected
       end
     end
     context 'some criteria are peer_visible only' do
@@ -84,7 +87,7 @@ describe Result do
           expected = ids.map do |id|
             [id, Result.find(id).marks.joins(:criterion).where('criteria.ta_visible': true).pluck(:mark).sum]
           end.to_h
-          expect(Result.send(method_name, ids, user_visibility: :ta_visible)).to eq expected
+          expect(Result.public_send(method_name, ids, user_visibility: :ta_visible)).to eq expected
         end
       end
       context 'user_visibility is set to peer_visible' do
@@ -93,7 +96,7 @@ describe Result do
           expected = ids.map do |id|
             [id, Result.find(id).marks.joins(:criterion).where('criteria.peer_visible': true).pluck(:mark).sum]
           end.to_h
-          expect(Result.send(method_name, ids, user_visibility: :peer_visible)).to eq expected
+          expect(Result.public_send(method_name, ids, user_visibility: :peer_visible)).to eq expected
         end
       end
     end

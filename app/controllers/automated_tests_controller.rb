@@ -104,7 +104,7 @@ class AutomatedTestsController < ApplicationController
     fill_in_schema_data!(schema_data, file_keys, assignment)
 
     test_specs_path = assignment.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.read(test_specs_path)) : {}
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
     assignment_data['token_start_date'] ||= Time.current
     assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')

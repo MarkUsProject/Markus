@@ -1,5 +1,4 @@
 namespace :coverage do
-
   task :clean do
     rm_f 'test/coverage'
     rm_f 'test/coverage.data'
@@ -25,7 +24,6 @@ namespace :coverage do
   task all: :clean do
     Rake::Task['test'].execute
   end
-
 end
 
 task :coverage do

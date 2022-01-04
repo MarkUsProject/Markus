@@ -1,12 +1,11 @@
 # clean up existing repos first
-if Dir.exists?(Settings.repository.storage)
+if Dir.exist?(Settings.repository.storage)
   FileUtils.rm_rf(Dir.glob(File.join(Settings.repository.storage, '*')))
 else
   FileUtils.mkdir_p(Settings.repository.storage)
 end
 
 FileUtils.mkdir_p('tmp')
-
 
 # run tasks
 Rake::Task['db:courses'].invoke

@@ -19,7 +19,7 @@ describe TestGroup do
 
   # create
   context 'A valid test group' do
-    before(:each)  do
+    before(:each) do
       @asst = create(:assignment,
                      due_date: 2.days.from_now,
                      assignment_properties_attributes: { section_due_dates_type: false })
@@ -39,13 +39,13 @@ describe TestGroup do
                      due_date: 2.days.from_now,
                      assignment_properties_attributes: { section_due_dates_type: false })
 
-      @valid_test_group = TestGroup.create(assessment_id:        @asst.id,
-                                           name:                 'valid_test_group',
-                                           display_output:       :instructors_and_students)
+      @valid_test_group = TestGroup.create(assessment_id: @asst.id,
+                                           name: 'valid_test_group',
+                                           display_output: :instructors_and_students)
 
-      @invalid_test_group = TestGroup.create(assessment_id:      @asst.id,
-                                             name:               'invalid_test_group',
-                                             display_output:     :instructors)
+      @invalid_test_group = TestGroup.create(assessment_id: @asst.id,
+                                             name: 'invalid_test_group',
+                                             display_output: :instructors)
     end
 
     context 'test group expected to be invalid when assignment is nil' do

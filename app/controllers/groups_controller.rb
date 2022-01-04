@@ -18,7 +18,7 @@ class GroupsController < ApplicationController
       assignment.add_group(params[:new_group_name])
       flash_now(:success, I18n.t('flash.actions.create.success',
                                  resource_name: Group.model_name.human))
-    rescue Exception => e
+    rescue StandardError => e
       flash[:error] = e.message
     ensure
       head :ok
@@ -59,18 +59,11 @@ class GroupsController < ApplicationController
 
     # Checking if a group with this name already exists
     if (@groups = current_course.groups.where(group_name: params[:new_groupname]).first)
-       existing = true
-       groupexist_id = @groups.id
+      existing = true
+      groupexist_id = @groups.id
     end
 
-    unless existing
-      # We update the group_name
-      @group.group_name = params[:new_groupname]
-      if @group.save
-        flash_now(:success, I18n.t('flash.actions.update.success',
-                                   resource_name: Group.human_attribute_name(:group_name)))
-      end
-    else
+    if existing
 
       # We link the grouping to the group already existing
 
@@ -83,6 +76,13 @@ class GroupsController < ApplicationController
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
+      end
+    else
+      # We update the group_name
+      @group.group_name = params[:new_groupname]
+      if @group.save
+        flash_now(:success, I18n.t('flash.actions.update.success',
+                                   resource_name: Group.human_attribute_name(:group_name)))
       end
     end
     head :ok
@@ -136,7 +136,7 @@ class GroupsController < ApplicationController
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|
-      u.user.first_name + ' ' + u.user.last_name
+      "#{u.user.first_name} #{u.user.last_name}"
     end
     num_valid = @assignment.get_num_valid
     num_total = @assignment.groupings.size
@@ -154,7 +154,8 @@ class GroupsController < ApplicationController
     if next_file.nil?
       flash_message(:warning, I18n.t('exam_templates.assign_scans.no_cover_page'))
     else
-      @data[:filelink] = download_course_assignment_groups_path(current_course, @assignment,
+      @data[:filelink] = download_course_assignment_groups_path(
+        current_course, @assignment,
         select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
         show_in_browser: true
       )
@@ -196,7 +197,7 @@ class GroupsController < ApplicationController
         student = current_course.students.find(params[:s_id])
       end
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
-      if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
+      if student.nil? || ("#{student.first_name} #{student.last_name}") != params[:names]
         student = current_course.students.where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
           params[:names].downcase, params[:names].downcase
@@ -215,7 +216,7 @@ class GroupsController < ApplicationController
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
     names = next_grouping.non_rejected_student_memberships.map do |u|
-      u.user.first_name + ' ' + u.user.last_name
+      "#{u.user.first_name} #{u.user.last_name}"
     end
     num_valid = @assignment.get_num_valid
     num_total = @assignment.groupings.size
@@ -357,10 +358,7 @@ class GroupsController < ApplicationController
     @grouping = @assignment.groupings.find(params[:grouping_id])
     begin
       current_role.join(@grouping)
-    rescue ActiveRecord::RecordInvalid => e
-      flash_message(:error, e.message)
-      status = :unprocessable_entity
-    rescue RuntimeError => e
+    rescue ActiveRecord::RecordInvalid, RuntimeError => e
       flash_message(:error, e.message)
       status = :unprocessable_entity
     else
@@ -417,7 +415,7 @@ class GroupsController < ApplicationController
     m_logger = MarkusLogger.instance
     if @grouping.nil?
       m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
-            "User: '#{current_role.user_name}'.", MarkusLogger::ERROR)
+                   "User: '#{current_role.user_name}'.", MarkusLogger::ERROR)
       flash_message(:error, I18n.t('groups.destroy.errors.do_not_have_a_group'))
       redirect_to course_assignment_path(current_course, @assignment)
       return
@@ -435,7 +433,7 @@ class GroupsController < ApplicationController
                      "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
       rescue RuntimeError => e
         m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '"\
-                       "#{current_role.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
+                     "#{current_role.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
     redirect_to course_assignment_path(current_course, @assignment)
@@ -532,10 +530,10 @@ class GroupsController < ApplicationController
       when 'assign'
         add_members(students, groupings, assignment)
       when 'unassign'
-        remove_members(students_to_remove, groupings, assignment)
+        remove_members(students_to_remove, groupings)
       end
       head :ok
-    rescue => e
+    rescue StandardError => e
       flash_now(:error, e.message)
       head 400
     end
@@ -559,6 +557,7 @@ class GroupsController < ApplicationController
   end
 
   private
+
   # These methods are called through global actions.
 
   # Check that there is at least one grouping selected
@@ -570,16 +569,12 @@ class GroupsController < ApplicationController
 
   # Given a list of grouping, sets their group status to invalid if possible
   def invalidate_groupings(groupings)
-    groupings.each do |grouping|
-     grouping.invalidate_grouping
-    end
+    groupings.each(&:invalidate_grouping)
   end
 
   # Given a list of grouping, sets their group status to valid if possible
   def validate_groupings(groupings)
-    groupings.each do |grouping|
-      grouping.validate_grouping
-    end
+    groupings.each(&:validate_grouping)
   end
 
   # Deletes the given list of groupings if possible. Removes each member first.
@@ -621,18 +616,18 @@ class GroupsController < ApplicationController
     # the maximum size of a group
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
-    if assignment.student_form_groups
-      if students_in_group > assignment.group_max
-        raise I18n.t('groups.assign_over_limit', group: group_name)
-      end
+    if assignment.student_form_groups && (students_in_group > assignment.group_max)
+      raise I18n.t('groups.assign_over_limit', group: group_name)
     end
   end
 
   # Adds the student given in student_id to the grouping given in grouping
   def add_member(student, grouping, assignment)
-    set_membership_status = grouping.student_memberships.empty? ?
-          StudentMembership::STATUSES[:inviter] :
-          StudentMembership::STATUSES[:accepted]
+    set_membership_status = if grouping.student_memberships.empty?
+                              StudentMembership::STATUSES[:inviter]
+                            else
+                              StudentMembership::STATUSES[:accepted]
+                            end
     @bad_user_names = []
 
     if student.hidden
@@ -641,16 +636,12 @@ class GroupsController < ApplicationController
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
-    errors = grouping.invite(student.user_name, set_membership_status, true)
+    errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
     unless errors.blank?
       raise errors.join(' ')
     end
-
-    # Only the first student should be the "inviter"
-    # (and only update this if it succeeded)
-    set_membership_status = StudentMembership::STATUSES[:accepted]
 
     # Generate a warning if a member is added to a group and they
     # have fewer grace days credits than already used by that group
@@ -666,20 +657,20 @@ class GroupsController < ApplicationController
   # even pending memberships.
   #
   # This is meant to be called with the params from global_actions
-  def remove_members(member_names, groupings, assignment)
+  def remove_members(member_names, groupings)
     members_to_remove = current_course.students.joins(:end_user).where('users.user_name': member_names)
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         groupings.each do |grouping|
           membership = grouping.student_memberships.find_by_role_id(member.id)
-          remove_member(membership, grouping, assignment)
+          remove_member(membership, grouping)
         end
       end
     end
   end
 
   # Removes the given student membership from the given grouping
-  def remove_member(membership, grouping, assignment)
+  def remove_member(membership, grouping)
     grouping.remove_member(membership.id)
     grouping.reload
   end

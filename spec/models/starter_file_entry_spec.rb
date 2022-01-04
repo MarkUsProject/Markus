@@ -40,7 +40,7 @@ describe StarterFileEntry do
 
   describe '#add_files_to_zip_file' do
     let(:zip_path) { File.join(::Rails.root, 'tmp', 'test-file.zip') }
-    let(:content) { { 'subdir': nil, 'subdir2': nil, 'subdir/file.txt': 'other content' } }
+    let(:content) { { subdir: nil, subdir2: nil, 'subdir/file.txt': 'other content' } }
     let(:starter_file_entry) { create :starter_file_entry, is_file: false, extra_structure: content }
     it 'should add files to an open zip file' do
       FileUtils.rm_f(zip_path)

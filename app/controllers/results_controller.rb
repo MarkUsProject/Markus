@@ -1,8 +1,8 @@
 class ResultsController < ApplicationController
   before_action { authorize! }
-  after_action  :update_remark_request_count,
-                only: [:update_remark_request, :cancel_remark_request,
-                       :set_released_to_students]
+  after_action :update_remark_request_count,
+               only: [:update_remark_request, :cancel_remark_request,
+                      :set_released_to_students]
 
   authorize :from_codeviewer, through: :from_codeviewer_param
   authorize :select_file, through: :select_file
@@ -101,7 +101,7 @@ class ResultsController < ApplicationController
         end
 
         data[:annotations] = all_annotations.map do |annotation|
-          annotation.get_data(current_role.instructor? || current_role.ta?)
+          annotation.get_data(include_creator: current_role.instructor? || current_role.ta?)
         end
 
         # Annotation categories
@@ -157,7 +157,7 @@ class ResultsController < ApplicationController
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
-            info = marks_info[cr[:id]]&.first || cr.merge('mark': nil)
+            info = marks_info[cr[:id]]&.first || cr.merge(mark: nil)
 
             # adds a levels field to the marks info hash with the same rubric criterion id
             if klass == RubricCriterion
@@ -201,9 +201,7 @@ class ResultsController < ApplicationController
                                    .pluck_to_hash(:id, :description, :extra_mark, :unit)
 
         # Grace token deductions
-        if is_reviewer
-          data[:grace_token_deductions] = []
-        elsif current_role.ta? && assignment.anonymize_groups
+        if is_reviewer || (current_role.ta? && assignment.anonymize_groups)
           data[:grace_token_deductions] = []
         elsif current_role.student?
           data[:grace_token_deductions] =
@@ -392,21 +390,21 @@ class ResultsController < ApplicationController
 
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?
-        file_contents = file.retrieve_file(true)
+        file_contents = file.retrieve_file(include_annotations: true)
       else
         file_contents = file.retrieve_file
       end
-    rescue Exception => e
+    rescue StandardError => e
       flash_message(:error, e.message)
       redirect_to edit_course_result_path(current_course, record)
       return
     end
     filename = file.filename
-    #Display the file in the page if it is an image/pdf, and download button
-    #was not explicitly pressed
+    # Display the file in the page if it is an image/pdf, and download button
+    # was not explicitly pressed
     if file.is_supported_image? && !params[:show_in_browser].nil?
       send_data file_contents, type: 'image', disposition: 'inline',
-        filename: filename
+                               filename: filename
     else
       send_data_download file_contents, filename: filename
     end
@@ -427,11 +425,11 @@ class ResultsController < ApplicationController
     zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
 
     zip_path = if params[:include_annotations] == 'true'
-                 "tmp/#{assignment.short_identifier}_" +
-                     "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
+                 "tmp/#{assignment.short_identifier}_" \
+                   "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
                else
-                 "tmp/#{assignment.short_identifier}_" +
-                     "#{grouping.group.group_name}_r#{revision_identifier}.zip"
+                 "tmp/#{assignment.short_identifier}_" \
+                   "#{grouping.group.group_name}_r#{revision_identifier}.zip"
                end
 
     files = submission.submission_files
@@ -440,13 +438,15 @@ class ResultsController < ApplicationController
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
-          submission_file&.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
+          submission_file&.retrieve_file(
+            include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
+          )
         end
       end
     end
     # Send the Zip file
     send_file zip_path, disposition: 'inline',
-              filename: zip_name + '.zip'
+                        filename: zip_name + '.zip'
   end
 
   def get_annotations
@@ -458,7 +458,7 @@ class ResultsController < ApplicationController
     end
 
     annotation_data = all_annots.map do |annotation|
-      annotation.get_data(current_role.instructor? || current_role.ta?)
+      annotation.get_data(include_creator: current_role.instructor? || current_role.ta?)
     end
 
     render json: annotation_data
@@ -568,7 +568,7 @@ class ResultsController < ApplicationController
       @grouping = @submission.grouping
     end
 
-    # TODO Review the various code flows, the duplicate checks are a temporary stop-gap
+    # TODO: Review the various code flows, the duplicate checks are a temporary stop-gap
     if @grouping.nil?
       redirect_to course_assignment_path(current_course, @assignment)
       return

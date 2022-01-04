@@ -1,7 +1,5 @@
 module Api
-
   class GradeEntryFormsController < MainApiController
-
     DEFAULT_FIELDS = [:id, :short_identifier, :description, :due_date, :is_hidden, :show_total].freeze
 
     # Sends the contents of the specified grade entry form

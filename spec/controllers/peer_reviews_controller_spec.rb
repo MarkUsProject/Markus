@@ -81,9 +81,7 @@ describe PeerReviewsController do
           @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
           # Now allow uploading by placing the data in a temporary file and reading
           # the data back through 'uploading' (requires a clean database)
-          File.open(@path, 'w') do |f|
-            f.write(@downloaded_text)
-          end
+          File.write(@path, @downloaded_text)
           csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
 
           post_as instructor, :upload,

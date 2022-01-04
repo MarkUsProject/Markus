@@ -81,7 +81,7 @@ class SubversionRevision < Repository::AbstractRevision
 
   private
 
-  def files_at_path_helper(path = '/', only_changed = false)
+  def files_at_path_helper(path = '/', only_changed: false)
     if path.nil?
       path = '/'
     end

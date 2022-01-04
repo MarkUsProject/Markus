@@ -210,7 +210,7 @@ Rails.application.routes.draw do
         collection do
           post 'update_positions'
           post 'upload'
-          get  'download'
+          get 'download'
         end
       end
 
@@ -420,7 +420,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tas, only: [:create, :new, :index, :edit, :update]  do
+    resources :tas, only: [:create, :new, :index, :edit, :update] do
       collection do
         get 'download'
         post 'upload'

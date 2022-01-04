@@ -1,14 +1,13 @@
 class CriterionTaAssociation < ApplicationRecord
+  belongs_to :ta
+  validates_associated :ta
 
-  belongs_to              :ta
-  validates_associated    :ta
+  belongs_to :criterion
+  validates_associated :criterion
 
-  belongs_to              :criterion
-  validates_associated    :criterion
+  belongs_to :assignment, foreign_key: :assessment_id
 
-  belongs_to              :assignment, foreign_key: :assessment_id
-
-  before_validation       :add_assignment_reference, on: :create
+  before_validation :add_assignment_reference, on: :create
 
   has_one :course, through: :assignment
 

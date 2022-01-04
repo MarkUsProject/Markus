@@ -158,9 +158,9 @@ describe Grouping do
         expect(grouping.tas).to match_array(tas)
 
         # The rest of the groupings gets only the first TA.
-        groupings.each do |grouping|
-          grouping.reload
-          expect(grouping.tas).to eq [tas.first]
+        groupings.each do |other_grouping|
+          other_grouping.reload
+          expect(other_grouping.tas).to eq [tas.first]
         end
       end
 
@@ -206,8 +206,8 @@ describe Grouping do
       it 'can bulk unassign TAs' do
         Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
         ta_membership_ids = groupings
-          .map { |grouping| grouping.memberships.pluck(:id) }
-          .reduce(:+)
+                            .map { |grouping| grouping.memberships.pluck(:id) }
+                            .reduce(:+)
         Grouping.unassign_tas(ta_membership_ids, grouping_ids, assignment)
 
         groupings.each do |grouping|
@@ -737,7 +737,7 @@ describe Grouping do
       describe '#invite' do
         it 'adds students in any scenario possible when invoked by instructor' do
           members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
+          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
       end
@@ -756,7 +756,7 @@ describe Grouping do
       describe '#invite' do
         it 'adds students to groups without checking their sections' do
           members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
+          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
       end
@@ -765,7 +765,7 @@ describe Grouping do
     context 'with students in sections' do
       before :each do
         @section = create(:section)
-        student  = create(:student, section: @section)
+        student = create(:student, section: @section)
         @student_can_invite = create(:student, section: @section)
         @student_cannot_invite = create(:student)
 

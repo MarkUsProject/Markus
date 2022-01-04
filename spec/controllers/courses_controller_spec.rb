@@ -97,7 +97,7 @@ describe CoursesController do
       # generate the expected csv string
       csv_data = []
       Assignment::DEFAULT_FIELDS.map do |f|
-        csv_data << assignment.send(f)
+        csv_data << assignment.public_send(f)
       end
       new_data = csv_data.join(',') + "\n"
       expect(@controller).to receive(:send_data).with(new_data, csv_options) {
@@ -145,7 +145,7 @@ describe CoursesController do
       map[:assignments] = assignments.map do |assignment|
         m = {}
         Assignment::DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
+          m[f] = assignment.public_send(f)
         end
         m
       end

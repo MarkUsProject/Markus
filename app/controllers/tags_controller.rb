@@ -37,11 +37,9 @@ class TagsController < ApplicationController
     tag_params = params.require(:tag).permit(:name, :description)
     new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find_by(id: params[:assignment_id])))
 
-    if new_tag.save
-      if params[:grouping_id]
-        grouping = Grouping.find(params[:grouping_id])
-        grouping.tags << new_tag
-      end
+    if new_tag.save && params[:grouping_id]
+      grouping = Grouping.find(params[:grouping_id])
+      grouping.tags << new_tag
     end
 
     respond_with new_tag, location: -> { request.headers['Referer'] || root_path }

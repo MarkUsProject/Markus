@@ -58,7 +58,7 @@ describe MainController do
     end
     context 'after logging in with remote user auth' do
       before :each do
-        env_hash = { 'HTTP_X_FORWARDED_USER': instructor.user_name }
+        env_hash = { HTTP_X_FORWARDED_USER: instructor.user_name }
         request.headers.merge! env_hash
         sign_in instructor
       end
@@ -101,7 +101,7 @@ describe MainController do
     end
     context 'after logging in with remote user auth' do
       before :each do
-        env_hash = { 'HTTP_X_FORWARDED_USER': student.user_name }
+        env_hash = { HTTP_X_FORWARDED_USER: student.user_name }
         request.headers.merge! env_hash
         sign_in student
       end
@@ -122,7 +122,7 @@ describe MainController do
     end
     context 'after logging in with remote user auth' do
       before :each do
-        env_hash = { 'HTTP_X_FORWARDED_USER': ta.user_name }
+        env_hash = { HTTP_X_FORWARDED_USER: ta.user_name }
         request.headers.merge! env_hash
         sign_in ta
       end

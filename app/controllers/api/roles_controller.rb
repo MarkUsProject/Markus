@@ -137,7 +137,7 @@ module Api
       collection = Role.includes(:end_user).where(params.permit(:course_id)).order(:id)
       if params[:filter]&.present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
-        end_user_filter = params[:filter].permit(*END_USER_FIELDS).to_h.map { |k, v| ["users.#{k}", v] }.to_h
+        end_user_filter = params[:filter].permit(*END_USER_FIELDS).to_h.transform_keys { |k| "users.#{k}" }
         filter_params = { **role_filter, **end_user_filter }
         if filter_params.empty?
           render 'shared/http_status',

@@ -95,9 +95,9 @@ shared_examples 'a criterion' do
         expect(criterion.tas).to match_array(tas)
 
         # The rest of the criteria gets only the first TA.
-        criteria.each do |criterion|
-          criterion.reload
-          expect(criterion.tas).to eq [tas.first]
+        criteria.each do |other_criterion|
+          other_criterion.reload
+          expect(other_criterion.tas).to eq [tas.first]
         end
       end
 
@@ -120,11 +120,11 @@ shared_examples 'a criterion' do
 
       it 'can bulk unassign TAs' do
         Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
-        criteria.each { |criterion| criterion.reload }
+        criteria.each(&:reload)
 
         criterion_ta_ids = criteria
-          .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
-          .reduce(:+)
+                           .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
+                           .reduce(:+)
 
         Criterion.unassign_tas(criterion_ta_ids, assignment)
 
@@ -150,7 +150,6 @@ shared_examples 'a criterion' do
   describe '.update_assigned_groups_counts' do
     let(:assignment) { FactoryBot.create(:assignment) }
     let(:criterion) { create(criterion_factory_name, assignment: assignment) }
-
 
     context 'when no criterion IDs are specified' do
       # Verifies the assigned groups count of +criterion+ is equal to
@@ -229,7 +228,7 @@ shared_examples 'a criterion' do
               expect_updated_assigned_groups_count_to_eq tas.size
             end
 
-            context 'when TAs are also assigned to groups of another ' +
+            context 'when TAs are also assigned to groups of another ' \
                     'assignment' do
               before :each do
                 # Creating a new criterion also creates a new assignment.

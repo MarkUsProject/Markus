@@ -1,5 +1,5 @@
 describe 'routing', type: :routing do
-  BAD_MATCH = %r{^/rails|^/assets|^/cable|.*\*path\(.:format\)}
+  BAD_MATCH = %r{^/rails|^/assets|^/cable|.*\*path\(.:format\)}.freeze
   Rails.application.routes.routes.map do |r|
     spec = r.path.spec.to_s
     next if spec.match BAD_MATCH

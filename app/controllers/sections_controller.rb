@@ -6,7 +6,7 @@ class SectionsController < ApplicationController
   # Controller corresponding to the users management part
 
   # Displays sections, and allows to create them
-  #TODO Displays metrics concerning users and sections
+  # TODO Displays metrics concerning users and sections
   def index
     @sections = current_course.sections.includes(:students)
   end

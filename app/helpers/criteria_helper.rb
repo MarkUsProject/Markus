@@ -27,9 +27,7 @@ module CriteriaHelper
         criterion.save!
         pos += 1
         successes += 1
-      rescue ActiveRecord::RecordInvalid # E.g., both visibility options are false.
-        crit_format_errors << criterion_yml[0]
-      rescue RuntimeError # An error occurred.
+      rescue ActiveRecord::RecordInvalid, RuntimeError # E.g., both visibility options are false.
         crit_format_errors << criterion_yml[0]
       end
     end

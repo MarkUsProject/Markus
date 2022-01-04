@@ -1,6 +1,6 @@
 module MarkingSchemesHelper
   def get_table_json_data(course)
-    req_data = course.marking_schemes.map do |ms|
+    course.marking_schemes.map do |ms|
       {
         name: ms.name,
         id: ms.id,
@@ -9,22 +9,22 @@ module MarkingSchemesHelper
         delete_link: get_delete_link_for_marking_scheme_id(ms.id)
       }
     end
-
-    req_data
   end
 
   def get_edit_link_for_marking_scheme_id(id)
     url_for(
       controller: 'marking_schemes',
       action: 'edit',
-      id: id)
+      id: id
+    )
   end
 
   def get_delete_link_for_marking_scheme_id(id)
     url_for(
       controller: 'marking_schemes',
       action: 'destroy',
-      id: id)
+      id: id
+    )
   end
 
   def get_marking_weights_for_all_gradable_item(weights_array)

@@ -64,7 +64,7 @@ describe Assignment do
     end
 
     it 'should catch an invalid date' do
-      assignment = create(:assignment, due_date:'2020/02/31')  # 31st day of february
+      assignment = create(:assignment, due_date: '2020/02/31')  # 31st day of february
       expect(assignment.due_date).not_to eq '2020/02/31'
     end
     it 'should be a peer review if it has a parent_assessment_id' do
@@ -182,15 +182,17 @@ describe Assignment do
         context 'when rubric criteria are found' do
           before do
             @ta_criteria = Array.new(2) { create(:rubric_criterion, assignment: @assignment) }
-            @peer_criteria = Array.new(2) { create(:rubric_criterion,
-                                                   assignment: @assignment,
-                                                   ta_visible: false,
-                                                   peer_visible: true)
-            }
-            @ta_and_peer_criteria = Array.new(2) { create(:rubric_criterion,
-                                                          assignment: @assignment,
-                                                          peer_visible: true)
-            }
+            @peer_criteria = Array.new(2) do
+              create(:rubric_criterion,
+                     assignment: @assignment,
+                     ta_visible: false,
+                     peer_visible: true)
+            end
+            @ta_and_peer_criteria = Array.new(2) do
+              create(:rubric_criterion,
+                     assignment: @assignment,
+                     peer_visible: true)
+            end
           end
 
           it 'shows the criteria visible to tas only' do
@@ -684,7 +686,7 @@ describe Assignment do
                                grouping: @grouping)
         end
         @source = @assignment
-        @group =  @grouping.group
+        @group = @grouping.group
       end
       context 'with another fresh assignment' do
         before :each do
@@ -1365,7 +1367,7 @@ describe Assignment do
           @assessment_section_properties = @sections.map do |section|
             AssessmentSectionProperties.create(section: section, assessment: @assignment)
           end
-          @section_names = @sections.map { |section| section.name }
+          @section_names = @sections.map(&:name)
         end
 
         context 'where both are past due' do
@@ -2173,12 +2175,12 @@ describe Assignment do
       let!(:starter_file_groups) { create_list :starter_file_group, 3, assignment: assignment }
       context 'default_starter_file_group_id is nil' do
         it 'should return the first starter file group' do
-          expect(assignment.default_starter_file_group).to eq starter_file_groups.sort_by(&:id).first
+          expect(assignment.default_starter_file_group).to eq starter_file_groups.min_by(&:id)
         end
       end
       context 'default_starter_file_group_id refers to an existing object' do
         it 'should return the specified starter file group' do
-          target = starter_file_groups.sort_by(&:id).last
+          target = starter_file_groups.max_by(&:id)
           assignment.update!(default_starter_file_group_id: target.id)
           expect(assignment.default_starter_file_group).to eq target
         end
@@ -2463,7 +2465,7 @@ describe Assignment do
       let(:ta) { create :ta }
       it 'returns correct graders' do
         Grouping.assign_all_tas([grouping], [ta.id], assignment)
-        expect(assignment.current_grader_data[:graders][0][:_id]). to eq(ta.id)
+        expect(assignment.current_grader_data[:graders][0][:_id]).to eq(ta.id)
       end
     end
   end

@@ -1,9 +1,7 @@
 class GracePeriodSubmissionRule < SubmissionRule
-
   # This message will be displayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
-
     # We need to know how many grace credits this grouping has left...
     grace_credits_remaining = grouping.available_grace_credits
     # How far are we into overtime?
@@ -32,8 +30,8 @@ class GracePeriodSubmissionRule < SubmissionRule
     # Now we need to figure out how many Grace Credits to deduct
     deduction_amount = calculate_deduction_amount(overtime_hours)
 
-    #Get rid of any previous deductions for this assignment, so as not to
-    #give duplicate deductions upon multiple calls to this method
+    # Get rid of any previous deductions for this assignment, so as not to
+    # give duplicate deductions upon multiple calls to this method
     remove_deductions(grouping)
 
     # And how many grace credits are available to this grouping
@@ -73,8 +71,8 @@ class GracePeriodSubmissionRule < SubmissionRule
     submission
   end
 
-  #Remove all deductions for this assignment from all accepted members of
-  #grouping, so that any new deductions for the assignemnt will not be duplicates
+  # Remove all deductions for this assignment from all accepted members of
+  # grouping, so that any new deductions for the assignemnt will not be duplicates
   def remove_deductions(grouping)
     student_memberships = grouping.accepted_student_memberships
 
@@ -101,8 +99,8 @@ class GracePeriodSubmissionRule < SubmissionRule
   def calculate_deduction_amount(overtime_hours)
     total_deduction = 0
     periods.each do |period|
-      total_deduction = total_deduction + 1
-      overtime_hours = overtime_hours - period.hours
+      total_deduction += 1
+      overtime_hours -= period.hours
       break if overtime_hours <= 0
     end
     total_deduction
@@ -113,11 +111,10 @@ class GracePeriodSubmissionRule < SubmissionRule
   def calculate_collection_date_from_credits(grace_credits, due_date)
     hours_after_due_date = 0
     periods.each do |period|
-      hours_after_due_date = hours_after_due_date + period.hours
-      grace_credits = grace_credits - 1
+      hours_after_due_date += period.hours
+      grace_credits -= 1
       break if grace_credits == 0
     end
     due_date + hours_after_due_date.hours
   end
-
 end

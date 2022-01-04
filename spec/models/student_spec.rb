@@ -13,7 +13,6 @@
 #  - with an invalid file
 
 describe Student do
-
   context 'A good Student model' do
     subject { create :student }
     it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
@@ -94,14 +93,14 @@ describe Student do
       Student.hide_students(@student_id_list)
     end
 
-    [{type: 'negative', grace_credits: '-10', expected: 0 },
-     {type: 'positive', grace_credits: '10', expected: 15 }].each do |item|
-    it "should not error when given #{item[:type]} grace credits" do
-      expect(Student.give_grace_credits(@student_id_list, item[:grace_credits]))
+    [{ type: 'negative', grace_credits: '-10', expected: 0 },
+     { type: 'positive', grace_credits: '10', expected: 15 }].each do |item|
+      it "should not error when given #{item[:type]} grace credits" do
+        expect(Student.give_grace_credits(@student_id_list, item[:grace_credits]))
 
-      expect(item[:expected]).eql?(@student1.grace_credits)
-      expect(item[:expected]).eql?(@student2.grace_credits)
-    end
+        expect(item[:expected]).eql?(@student1.grace_credits)
+        expect(item[:expected]).eql?(@student2.grace_credits)
+      end
     end
   end
 
@@ -120,7 +119,7 @@ describe Student do
     end
 
     it 'should unhide without error' do
-      #TODO test the repo with mocks
+      # TODO: test the repo with mocks
       Student.unhide_students(@student_id_list)
 
       expect(@student1.reload.hidden).to be false
@@ -269,8 +268,10 @@ describe Student do
         context 'working alone but has an existing group' do
           before(:each) do
             @grouping = create(:grouping, assignment: @assignment)
-            @membership2 = create(:student_membership, role: @student,
-                                  membership_status: StudentMembership::STATUSES[:inviter], grouping: @grouping)
+            @membership2 = create(:student_membership,
+                                  role: @student,
+                                  membership_status: StudentMembership::STATUSES[:inviter],
+                                  grouping: @grouping)
           end
 
           it 'will raise a validation error' do
@@ -287,12 +288,12 @@ describe Student do
         expect(@student.remaining_grace_credits).to eq 5
       end
 
-      #FAILING
+      # FAILING
       it 'return normally when over deducted' do
         membership = create(:student_membership, role: @student)
         create(:grace_period_deduction, membership: membership, deduction: 10)
         create(:grace_period_deduction, membership: membership, deduction: 20)
-        expect(@student.remaining_grace_credits).to eq -25
+        expect(@student.remaining_grace_credits).to eq(-25)
       end
     end
 
@@ -333,6 +334,5 @@ describe Student do
 
       expect(students[0].section).to be_nil
     end
-
-   end
+  end
 end

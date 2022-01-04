@@ -1,5 +1,4 @@
 namespace :db do
-
   task admin: :environment do
     user = AdminUser.find_or_create
     puts user.api_key
@@ -30,7 +29,7 @@ namespace :db do
 
   task student_users: :environment do
     puts 'Populate database with users'
-    STUDENT_CSV = 'db/data/students.csv'
+    STUDENT_CSV = 'db/data/students.csv'.freeze
     if File.readable?(STUDENT_CSV)
       i = 0
       File.open(STUDENT_CSV) do |data|
@@ -54,7 +53,7 @@ namespace :db do
   # this task depends on :environment and :seed
   task students: :environment do
     puts 'Populate database with Students'
-    STUDENT_CSV = 'db/data/students.csv'
+    STUDENT_CSV = 'db/data/students.csv'.freeze
     course = Course.first
     course.sections.create(name: :LEC0101)
     course.sections.create(name: :LEC0201)

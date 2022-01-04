@@ -1,5 +1,4 @@
 module Api
-
   # Allows for listing Markus groups for a particular assignment.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class GroupsController < MainApiController
@@ -39,7 +38,7 @@ module Api
 
     # Include student_memberships and user info
     def include_memberships(groups)
-      groups.joins(groupings: [:assignment, student_memberships: [role: :end_user]])
+      groups.joins(groupings: [:assignment, { student_memberships: [role: :end_user] }])
             .where('assessments.id': params[:assignment_id])
             .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
             .group_by { |h| h.slice(*DEFAULT_FIELDS) }
@@ -49,17 +48,19 @@ module Api
     def add_members
       if self.grouping.nil?
         # The group doesn't have a grouping associated with that assignment
-        render 'shared/http_status', locals: {code: '422', message:
-          'The group is not involved with that assignment'}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          'The group is not involved with that assignment' }, status: 422
         return
       end
 
       students = current_course.students.joins(:end_user).where('users.user_name': params[:members])
       students.each do |student|
-        set_membership_status = grouping.student_memberships.empty? ?
-          StudentMembership::STATUSES[:inviter] :
-          StudentMembership::STATUSES[:accepted]
-        grouping.invite(student.user_name, set_membership_status, true)
+        set_membership_status = if grouping.student_memberships.empty?
+                                  StudentMembership::STATUSES[:inviter]
+                                else
+                                  StudentMembership::STATUSES[:accepted]
+                                end
+        grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
         grouping.reload
       end
 
@@ -174,7 +175,7 @@ module Api
                                               [submission_files:
                                                  [annotations:
                                                     [annotation_text: :annotation_category]]])
-                                     .where('assessment_id': params[:assignment_id])
+                                     .where(assessment_id: params[:assignment_id])
                                      .where.not('annotations.id': nil)
                                      .pluck_to_hash(*pluck_keys)
       respond_to do |format|
@@ -206,9 +207,10 @@ module Api
         if annot_params[:annotation_category_name].nil?
           annotation_category_id = nil
         else
-          if annotation_category.nil? || annotation_category.annotation_category_name != annot_params[:annotation_category_name]
+          name = annot_params[:annotation_category_name]
+          if annotation_category.nil? || annotation_category.annotation_category_name != name
             annotation_category = assignment.annotation_categories.find_or_create_by(
-              annotation_category_name: annot_params[:annotation_category_name]
+              annotation_category_name: name
             )
           end
           annotation_category_id = annotation_category.id
@@ -263,8 +265,8 @@ module Api
     def update_marking_state
       if has_missing_params?([:marking_state])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
       result = self.grouping&.current_submission_used&.get_latest_result
@@ -300,5 +302,5 @@ module Api
         :line_start
       ])
     end
-  end # end GroupsController
+  end
 end

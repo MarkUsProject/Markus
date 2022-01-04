@@ -9,7 +9,7 @@ describe Repository::AbstractRepository do
         end
         it 'at the end of a batch update' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after {}
+          Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
         end
         it 'at the end of a batch update only if requested' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
@@ -20,7 +20,7 @@ describe Repository::AbstractRepository do
         it 'at the end of the most outer nested batch update' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
           Repository.get_class.update_permissions_after do
-            Repository.get_class.update_permissions_after {}
+            Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
           end
         end
       end
@@ -40,12 +40,12 @@ describe Repository::AbstractRepository do
       end
       it 'at the end of a batch update if not requested' do
         expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions_after(only_on_request: true) {}
+        Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
       end
       it 'at the end of the most outer nested batch update only if requested' do
         expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
         Repository.get_class.update_permissions_after(only_on_request: true) do
-          Repository.get_class.update_permissions_after(only_on_request: true) {}
+          Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
         end
       end
     end

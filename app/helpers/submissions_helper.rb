@@ -1,5 +1,4 @@
 module SubmissionsHelper
-
   def find_appropriate_grouping(assignment_id, params)
     if current_role.instructor? || current_role.ta?
       Grouping.find(params[:grouping_id])

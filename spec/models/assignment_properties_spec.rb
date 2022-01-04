@@ -58,7 +58,7 @@ describe AssignmentProperties do
     let(:assignment) { create(:timed_assignment) }
     let(:parts) { assignment.duration_parts }
     it 'should return the duration attribute calculated as DURATION_PARTS' do
-      duration_from_parts = AssignmentProperties::DURATION_PARTS.map { |part| parts[part].to_i.send(part) }.sum
+      duration_from_parts = AssignmentProperties::DURATION_PARTS.map { |part| parts[part].to_i.public_send(part) }.sum
       expect(assignment.duration).to eq(duration_from_parts)
     end
     it 'should return only the parts in DURATION_PARTS' do

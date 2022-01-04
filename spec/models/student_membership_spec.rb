@@ -29,7 +29,6 @@ def namer(bool)
 end
 
 shared_examples 'vcs_submit=true' do |class_type, update_hash|
-
   let!(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
   let!(:grouping) { create :grouping, assignment: assignment }
   let(:membership) { create class_type, grouping: grouping }
@@ -54,7 +53,7 @@ shared_examples 'vcs_submit=true' do |class_type, update_hash|
       m.destroy
     end
 
-    status_hash = update_hash.select { |key| ![:create, :destroy].include?(key) }
+    status_hash = update_hash.reject { |key| [:create, :destroy].include?(key) }
 
     status_hash.each do |key, val|
       it "#{namer update_hash[key]} permission file when status is changed to #{key}" do

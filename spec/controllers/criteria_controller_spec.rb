@@ -797,10 +797,9 @@ describe CriteriaController do
     let(:round_max_mark_file) { fixture_file_upload('criteria/round_max_mark.yaml', 'text/yaml') }
     let(:partially_valid_file) { fixture_file_upload('criteria/partially_valid_file.yaml', 'text/yaml') }
     let(:uploaded_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
-    let(:no_type_file)  { fixture_file_upload('criteria/marking_criteria_no_type.yml', 'text/yaml') }
+    let(:no_type_file) { fixture_file_upload('criteria/marking_criteria_no_type.yml', 'text/yaml') }
 
     context 'When a file containing a mixture of entries is uploaded' do
-
       it 'raises an error if the file does not include any criteria' do
         post_as instructor, :upload,
                 params: { course_id: course.id, assignment_id: assignment.id, upload_file: empty_file }

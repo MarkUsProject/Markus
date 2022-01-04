@@ -27,7 +27,7 @@ describe ResultsController do
 
   def self.test_assigns_not_nil(key)
     it "should assign #{key}" do
-      expect(assigns key).not_to be_nil
+      expect(assigns(key)).not_to be_nil
     end
   end
 
@@ -167,16 +167,16 @@ describe ResultsController do
           @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
         end
         file = SubmissionFile.find_by_submission_id(@submission.id)
-        @annotation = TextAnnotation.create  line_start: 1,
-                                             line_end: 2,
-                                             column_start: 1,
-                                             column_end: 2,
-                                             submission_file_id: file.id,
-                                             is_remark: false,
-                                             annotation_number: @submission.annotations.count + 1,
-                                             annotation_text: create(:annotation_text, creator: instructor),
-                                             result: complete_result,
-                                             creator: instructor
+        @annotation = TextAnnotation.create line_start: 1,
+                                            line_end: 2,
+                                            column_start: 1,
+                                            column_end: 2,
+                                            submission_file_id: file.id,
+                                            is_remark: false,
+                                            annotation_number: @submission.annotations.count + 1,
+                                            annotation_text: create(:annotation_text, creator: instructor),
+                                            result: complete_result,
+                                            creator: instructor
         file_name_snippet = grouping.group.access_repo do |repo|
           "#{assignment.short_identifier}_#{grouping.group.group_name}_r#{repo.get_latest_revision.revision_identifier}"
         end

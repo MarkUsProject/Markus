@@ -1,9 +1,8 @@
 class Result < ApplicationRecord
-
   MARKING_STATES = {
     complete: 'complete',
     incomplete: 'incomplete'
-  }
+  }.freeze
 
   belongs_to :submission
   has_one :grouping, through: :submission
@@ -101,7 +100,7 @@ class Result < ApplicationRecord
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
     extra_marks_hash = Hash.new { |h, k| h[k] = nil }
-    max_mark_hash = Hash.new
+    max_mark_hash = {}
     result_data.each do |id, extra_mark, unit, assessment_id|
       if extra_marks_hash[id].nil?
         extra_marks_hash[id] = 0
@@ -170,11 +169,9 @@ class Result < ApplicationRecord
   # Returns a hash of all marks for this result.
   # TODO: make it include extra marks as well.
   def mark_hash
-    Hash[
-      marks.map do |mark|
-        [mark.criterion_id, mark.mark]
-      end
-    ]
+    marks.map do |mark|
+      [mark.criterion_id, mark.mark]
+    end.to_h
   end
 
   private

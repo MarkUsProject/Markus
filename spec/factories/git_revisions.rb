@@ -1,5 +1,3 @@
 FactoryBot.define do
-  factory :git_revision, class: GitRevision do
-
-  end
+  factory :git_revision, class: GitRevision
 end

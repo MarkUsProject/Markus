@@ -65,7 +65,7 @@ describe Api::AssignmentsController do
             expect(response.status).to eq(200)
           end
           it 'should return empty content' do
-            expect(Hash.from_xml(response.body).dig('assignments')).to be_nil
+            expect(Hash.from_xml(response.body)['assignments']).to be_nil
           end
         end
         context 'with multiple assignments' do
@@ -90,7 +90,7 @@ describe Api::AssignmentsController do
             expect(response.status).to eq(200)
           end
           it 'should return empty content' do
-            expect(Hash.from_xml(response.body).dig('assignments')).to be_nil
+            expect(Hash.from_xml(response.body)['assignments']).to be_nil
           end
         end
       end
@@ -166,7 +166,7 @@ describe Api::AssignmentsController do
           expect(Hash.from_xml(response.body).dig('assignment', 'id')).to eq(assignment.id.to_s)
         end
         it 'should return all default fields' do
-          keys = Hash.from_xml(response.body).dig('assignment').keys.map(&:to_sym).sort
+          keys = Hash.from_xml(response.body)['assignment'].keys.map(&:to_sym).sort
           expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
         end
       end

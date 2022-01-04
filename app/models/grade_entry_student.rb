@@ -125,37 +125,33 @@ class GradeEntryStudent < ApplicationRecord
 
       # Don't add empty grades and remove grades that did exist but are now empty
       old_grade = grade_entry_student.grades
-                  .where(grade_entry_item_id: grade_entry_item.id)
-                  .first
+                                     .where(grade_entry_item_id: grade_entry_item.id)
+                                     .first
 
       if overwrite
         if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
 
-          unless old_grade.nil?
-            old_grade.destroy
-          end
+          old_grade&.destroy
         else
           grade = grade_entry_student.grades
-                  .find_or_create_by(grade_entry_item: grade_entry_item)
+                                     .find_or_create_by(grade_entry_item: grade_entry_item)
           grade.grade = grade_for_grade_entry_item
 
           unless grade.save
-            raise RuntimeError.new(grade.errors)
+            raise grade.errors
           end
         end
 
-      else
-        if old_grade.nil? &&
+      elsif old_grade.nil? &&
            (grade_for_grade_entry_item && !grade_for_grade_entry_item.empty?)
+        grade = grade_entry_student.grades
+                                   .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
+        grade.grade = grade_for_grade_entry_item
 
-          grade = grade_entry_student.grades
-                  .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
-          grade.grade = grade_for_grade_entry_item
-
-          unless grade.save
-            raise RuntimeError.new(grade.errors)
-          end
+        unless grade.save
+          raise grade.errors
         end
+
       end
     end
 
@@ -168,8 +164,8 @@ class GradeEntryStudent < ApplicationRecord
   #  between a total mark of 0 and a blank mark.)
   def all_blank_grades?
     grades = self.grades
-    grades_without_nils = grades.select do |grade|
-      !grade.grade.nil?
+    grades_without_nils = grades.reject do |grade|
+      grade.grade.nil?
     end
     grades_without_nils.blank?
   end

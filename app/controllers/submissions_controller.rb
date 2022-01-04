@@ -19,7 +19,7 @@ class SubmissionsController < ApplicationController
         assignment = Assignment.find(params[:assignment_id])
         render json: {
           groupings: assignment.current_submission_data(current_role),
-          sections: Hash[current_course.sections.pluck(:id, :name)]
+          sections: current_course.sections.pluck(:id, :name).to_h
         }
       end
     end
@@ -47,13 +47,11 @@ class SubmissionsController < ApplicationController
           @collected_revision = revision
         end
         # store the displayed revision
-        if @revision.nil?
-          if (params[:revision_identifier] &&
+        if @revision.nil? && ((params[:revision_identifier] &&
             params[:revision_identifier] == revision.revision_identifier.to_s) ||
             (params[:revision_timestamp] &&
-              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
-            @revision = revision
-          end
+              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp))
+          @revision = revision
         end
       end
       # find another relevant revision to display if @revision.nil?
@@ -131,8 +129,11 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find_by(id: params[:assignment_id])
     @grouping = assignment.groupings.find(params[:grouping_id])
     @revision_identifier = params[:current_revision_identifier]
-    apply_late_penalty = params[:apply_late_penalty].nil? ?
-                         false : params[:apply_late_penalty]
+    apply_late_penalty = if params[:apply_late_penalty].nil?
+                           false
+                         else
+                           params[:apply_late_penalty]
+                         end
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
@@ -152,7 +153,7 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_submissions
-    if !params.has_key?(:groupings) || params[:groupings].empty?
+    if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
       head 400
       return
@@ -197,7 +198,7 @@ class SubmissionsController < ApplicationController
   end
 
   def run_tests
-    if !params.has_key?(:groupings) || params[:groupings].empty?
+    if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
       head 400
       return
@@ -254,14 +255,14 @@ class SubmissionsController < ApplicationController
     end
 
     if @assignment.section_due_dates_type
-      section_due_dates = Hash.new
+      section_due_dates = {}
       now = Time.current
       current_course.sections.find_each do |section|
         collection_time = @assignment.submission_rule
                                      .calculate_collection_time(section)
         collection_time = now if now >= collection_time
         if section_due_dates[collection_time].nil?
-          section_due_dates[collection_time] = Array.new
+          section_due_dates[collection_time] = []
         end
         section_due_dates[collection_time].push(section.name)
       end
@@ -340,14 +341,12 @@ class SubmissionsController < ApplicationController
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
           if f.is_a?(String) # is a directory
             success, msgs = add_folder(f, current_role, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages = messages.concat msgs
           else
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
-            should_commit &&= success
-            messages.concat msgs
           end
+          should_commit &&= success
+          messages.concat msgs
         end
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_role, repo, path: path, txn: txn)
@@ -357,7 +356,7 @@ class SubmissionsController < ApplicationController
         if delete_folders.present?
           success, msgs = remove_folders(delete_folders, current_role, repo, path: path, txn: txn)
           should_commit &&= success
-          messages = messages.concat msgs
+          messages.concat msgs
         end
         if should_commit
           commit_success, commit_msg = commit_transaction(repo, txn)
@@ -385,7 +384,7 @@ class SubmissionsController < ApplicationController
       current_role.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
                     t('submission_file.error.no_access',
-                          submission_file_id: params[:submission_file_id]))
+                      submission_file_id: params[:submission_file_id]))
       redirect_back(fallback_location: root_path)
       return
     end
@@ -461,10 +460,10 @@ class SubmissionsController < ApplicationController
         else
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
         end
-      rescue Exception => e
+      rescue StandardError => e
         flash_message(:error, e.message)
         render plain: I18n.t('student.submission.missing_file',
-                            file_name: params[:file_name], message: e.message)
+                             file_name: params[:file_name], message: e.message)
         return
       end
 
@@ -621,7 +620,7 @@ class SubmissionsController < ApplicationController
 
   # Release or unrelease submissions
   def update_submissions
-    if !params.has_key?(:groupings) || params[:groupings].empty?
+    if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
       head 400
       return
@@ -631,9 +630,11 @@ class SubmissionsController < ApplicationController
     release = params[:release_results] == 'true'
 
     begin
-      changed = assignment.is_peer_review? ?
-          set_pr_release_on_results(groupings, release) :
-          set_release_on_results(groupings, release)
+      changed = if assignment.is_peer_review?
+                  set_pr_release_on_results(groupings, release)
+                else
+                  set_release_on_results(groupings, release)
+                end
 
       if changed > 0
         assignment.update_remark_request_count
@@ -643,14 +644,16 @@ class SubmissionsController < ApplicationController
                                    changed: changed))
         if release
           MarkusLogger.instance.log(
-            'Marks released for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' for #{changed} group(s).")
+            'Marks released for assignment' \
+            " '#{assignment.short_identifier}', ID: '" \
+            "#{assignment.id}' for #{changed} group(s)."
+          )
         else
           MarkusLogger.instance.log(
-            'Marks unreleased for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' for #{changed} group(s).")
+            'Marks unreleased for assignment' \
+            " '#{assignment.short_identifier}', ID: '" \
+            "#{assignment.id}' for #{changed} group(s)."
+          )
         end
       end
 
@@ -720,7 +723,7 @@ class SubmissionsController < ApplicationController
   def zipped_grouping_file_name(assignment)
     # create the zip name with the user name so that we avoid downloading files created by another user
     short_id = assignment.short_identifier
-    Pathname.new('tmp') + Pathname.new(short_id + '_' + current_role.user_name + '.zip')
+    Pathname.new('tmp') + Pathname.new("#{short_id}_#{current_role.user_name}.zip")
   end
 
   # Used in update_files and file_manager actions
@@ -738,13 +741,13 @@ class SubmissionsController < ApplicationController
   def flash_file_manager_messages
     if @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
       flash_message(:warning,
-                    I18n.t('assignments.timed.past_end_time') + ' ' + I18n.t('submissions.past_collection_time'))
+                    "#{I18n.t('assignments.timed.past_end_time')} #{I18n.t('submissions.past_collection_time')}")
     elsif @assignment.is_timed && !@grouping.start_time.nil? && !@assignment.grouping_past_due_date?(@grouping)
       flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
     elsif @grouping.past_collection_date?
       flash_message(:warning,
-                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message) + ' ' +
-                      I18n.t('submissions.past_collection_time'))
+                    "#{@assignment.submission_rule.class.human_attribute_name(:after_collection_message)} " \
+                    "#{I18n.t('submissions.past_collection_time')}")
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end

@@ -1,5 +1,4 @@
 class AnnotationText < ApplicationRecord
-
   belongs_to :creator, class_name: 'Role', foreign_key: :creator_id
   belongs_to :last_editor, class_name: 'Role', foreign_key: :last_editor_id, optional: true
 
@@ -45,7 +44,7 @@ class AnnotationText < ApplicationRecord
 
     return if annotation_results.where('results.released_to_students': true).empty? &&
               Result.where(submission_id: annotation_results.pluck('submissions.id'))
-                    .where.not('remark_request_submitted_at': nil)
+                    .where.not(remark_request_submitted_at: nil)
                     .empty?
     errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
     throw(:abort)

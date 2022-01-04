@@ -1,8 +1,6 @@
-
 # Controller responsible for providing login and logout processes
 # as well as displaying main page
 class MainController < ApplicationController
-
   include ApplicationHelper
 
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
@@ -91,7 +89,7 @@ class MainController < ApplicationController
 
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
-  def page_not_found
+  def page_not_found # rubocop:disable Lint/UselessMethodDefinition
     super
   end
 

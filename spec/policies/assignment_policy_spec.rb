@@ -292,8 +292,7 @@ describe AssignmentPolicy do
       end
     end
     context 'when there are no section due dates' do
-      succeed 'when the assignment is not hidden' do
-      end
+      succeed 'when the assignment is not hidden'
       failed 'when the assignment is hidden' do
         before { assignment.update(is_hidden: true) }
       end
@@ -303,8 +302,7 @@ describe AssignmentPolicy do
         assignment.assignment_properties.update(section_due_dates_type: true)
         assessment_section_properties
       end
-      succeed 'when visible with section due date and assignment' do
-      end
+      succeed 'when visible with section due date and assignment'
       succeed 'when assignment hidden but section do date ' do
         before { assignment.update(is_hidden: true) }
       end

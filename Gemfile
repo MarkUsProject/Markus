@@ -57,12 +57,12 @@ gem 'rubyzip', require: 'zip'
 gem 'rugged'
 
 # Rails miscellany
+gem 'activemodel-serializers-xml'
 gem 'activerecord-session_store'
+gem 'config'
 gem 'cookies_eu'
 gem 'rails-html-sanitizer'
 gem 'responders'
-gem 'activemodel-serializers-xml'
-gem 'config'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -104,12 +104,12 @@ group :test do
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'machinist', '< 3'
+  gem 'rails-controller-testing'
   gem 'shoulda'
+  gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'time-warp'
-  gem 'shoulda-callback-matchers', '~> 1.1.1'
-  gem 'rails-controller-testing'
 end
 
 # Gems needed (wanted) for both development and test can be

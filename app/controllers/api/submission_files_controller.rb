@@ -16,8 +16,8 @@ module Api
       grouping = group&.grouping_for_assignment(assignment.id)
       if group.nil? || grouping.nil?
         # No group exists with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No group exists with that id'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id' }, status: 404
         return
       end
 
@@ -29,7 +29,7 @@ module Api
       if params[:filename].present?
         path = File.dirname(params[:filename])
         file_name = File.basename(params[:filename])
-        path = path == '.' ? '/' : path
+        path = '/' if path == '.'
         grouping.access_repo do |repo|
           if params[:collected].present?
             revision_id = submission.revision_identifier

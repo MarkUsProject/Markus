@@ -29,24 +29,22 @@ class MarkingSchemesController < ApplicationController
 
   def create
     ApplicationRecord.transaction do
-      begin
-        # save marking scheme
-        marking_scheme = current_course.marking_schemes.new(name: params['marking_scheme']['name'])
-        marking_scheme.save!
+      # save marking scheme
+      marking_scheme = current_course.marking_schemes.new(name: params['marking_scheme']['name'])
+      marking_scheme.save!
 
-        # save marking weights
-        params['marking_scheme']['marking_weights_attributes']&.each do |_key, obj|
+      # save marking weights
+      params['marking_scheme']['marking_weights_attributes']&.each do |_key, obj|
+        marking_weight = MarkingWeight.new(
+          assessment_id: obj['id'],
+          marking_scheme_id: marking_scheme.id,
+          weight: obj['weight']
+        )
 
-          marking_weight = MarkingWeight.new(
-            assessment_id: obj['id'],
-            marking_scheme_id: marking_scheme.id,
-            weight: obj['weight'])
-
-          marking_weight.save!
-        end
-      rescue ActiveRecord::RecordInvalid => invalid
-        # Rollback
+        marking_weight.save!
       end
+    rescue ActiveRecord::RecordInvalid
+      # Rollback
     end
 
     redirect_to course_marking_schemes_path(current_course)
@@ -54,25 +52,23 @@ class MarkingSchemesController < ApplicationController
 
   def update
     ApplicationRecord.transaction do
-      begin
-        # save marking scheme
-        marking_scheme = record
-        marking_scheme.name = params['marking_scheme']['name']
-        marking_scheme.save!
+      # save marking scheme
+      marking_scheme = record
+      marking_scheme.name = params['marking_scheme']['name']
+      marking_scheme.save!
 
-        # save marking weights
-        params['marking_scheme']['marking_weights_attributes']&.each do |_key, obj|
+      # save marking weights
+      params['marking_scheme']['marking_weights_attributes']&.each do |_key, obj|
+        marking_weight = MarkingWeight.where(
+          assessment_id: obj['id'],
+          marking_scheme_id: marking_scheme.id
+        ).first
 
-          marking_weight = MarkingWeight.where(
-            assessment_id: obj['id'],
-            marking_scheme_id: marking_scheme.id).first
-
-          marking_weight.weight = obj['weight']
-          marking_weight.save!
-        end
-      rescue ActiveRecord::RecordInvalid => invalid
-        # Rollback
+        marking_weight.weight = obj['weight']
+        marking_weight.save!
       end
+    rescue ActiveRecord::RecordInvalid
+      # Rollback
     end
 
     redirect_to course_marking_schemes_path(current_course)

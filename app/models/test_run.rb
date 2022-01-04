@@ -62,7 +62,7 @@ class TestRun < ApplicationRecord
   private
 
   def extra_info_string(result)
-    return nil if result['stderr'].blank? && result['malformed'].blank?
+    return if result['stderr'].blank? && result['malformed'].blank?
 
     extra = ''
     extra += I18n.t('automated_tests.results.extra_stderr', extra: result['stderr']) unless result['stderr'].blank?
@@ -73,7 +73,7 @@ class TestRun < ApplicationRecord
   end
 
   def error_type(result)
-    return nil unless result['tests'].blank?
+    return unless result['tests'].blank?
     return TestGroupResult::ERROR_TYPE[:timeout] if result['timeout']
 
     TestGroupResult::ERROR_TYPE[:no_results]

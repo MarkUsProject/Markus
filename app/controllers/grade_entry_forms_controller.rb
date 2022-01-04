@@ -163,7 +163,7 @@ class GradeEntryFormsController < ApplicationController
       s
     end
     render json: { data: student_grades,
-                   sections: Hash[current_course.sections.pluck(:id, :name)] }
+                   sections: current_course.sections.pluck(:id, :name).to_h }
   end
 
   # Release/unrelease the marks for all the students or for a subset of students
@@ -248,11 +248,12 @@ class GradeEntryFormsController < ApplicationController
       datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }]
     }
 
-    num_entries = grade_entry_form.count_non_nil.to_s +
-      '/' + grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count.to_s
+    num_non_nil = grade_entry_form.count_non_nil
+    num_students = grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count
+    num_entries = "#{num_non_nil}/#{num_students}"
 
     info_summary = {
-      name: grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
+      name: "#{grade_entry_form.short_identifier}: #{grade_entry_form.description}",
       date: I18n.l(grade_entry_form.due_date),
       average: grade_entry_form.results_average || 0,
       median: grade_entry_form.results_median || 0,

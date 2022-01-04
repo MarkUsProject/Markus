@@ -4,7 +4,7 @@ class Mark < ApplicationRecord
   before_save :ensure_not_released_to_students
 
   after_save :update_result
-  after_update :update_deduction, if: lambda { |m|
+  after_update :update_deduction, if: ->(m) {
     m.previous_changes.key?('override') && !m.override && m.criterion.type == 'FlexibleCriterion'
   }
 
@@ -49,11 +49,11 @@ class Mark < ApplicationRecord
     return if self.override?
     deduction = calculate_deduction
     if deduction == 0
-      return self.update!(mark: nil)
+      self.update!(mark: nil)
     elsif deduction > self.criterion.max_mark
-      return self.update!(mark: 0.0)
+      self.update!(mark: 0.0)
     else
-      return self.update!(mark: self.criterion.max_mark - deduction)
+      self.update!(mark: self.criterion.max_mark - deduction)
     end
   end
 

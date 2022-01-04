@@ -1,16 +1,15 @@
 # Responsible for maintaining sessions and querying session status
 # All controllers are expected to extend this module (already by default)
 module SessionHandler
-
   protected
 
   # Sets current user for this session
   def current_user=(user)
-    session[:user_name] = user&.is_a?(User) ? user.user_name : nil
+    session[:user_name] = user.is_a?(User) ? user.user_name : nil
   end
 
   def real_user=(user)
-    session[:real_user_name] = user&.is_a?(User) ? user.user_name : nil
+    session[:real_user_name] = user.is_a?(User) ? user.user_name : nil
   end
 
   # Retrieve current user for this session, or nil if none exists
@@ -140,5 +139,4 @@ module SessionHandler
     cookies.delete :auth_token
     reset_session
   end
-
 end
