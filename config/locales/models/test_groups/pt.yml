@@ -1,6 +1,0 @@
----
-pt:
-  activerecord:
-    attributes:
-      test_group:
-        display_output: UPDATE ME
