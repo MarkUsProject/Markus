@@ -1,8 +1,8 @@
 import React from "react";
 
 export class URLViewer extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     //TODO: Remove state url and replace its usage with url props when backend is working
     this.state = {
       url: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Sample Youtube embed link

@@ -21,9 +21,9 @@ class RawFileManager extends RawFileBrowser {
     this.handleActionBarAddFolderClick(event);
   };
 
-  onActionBarSubmitURLClick = (event, selectedItem) => {
+  onActionBarSubmitURLClick = (event) => {
     event.preventDefault();
-    this.props.onActionBarSubmitURLClick(selectedItem);
+    this.props.onActionBarSubmitURLClick();
   };
 
   folderTarget = selectedItem => {
@@ -116,6 +116,16 @@ class RawFileManager extends RawFileBrowser {
             </li>
           );
         }
+        if (this.props.enableUrlSubmit) {
+          actions.push(
+            <li key="action-add-link">
+              <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
+                <i className="fa fa-submit-link-o" aria-hidden="true" />
+                &nbsp;{I18n.t("submissions.student.create_link")}
+              </a>
+            </li>
+          );
+        }
         if (
           selectedItem.keyDerived &&
           ((!selectionIsFolder &&
@@ -178,7 +188,7 @@ class RawFileManager extends RawFileBrowser {
         </li>
       );
 
-      if (this.props.enableUrlSubmit === true) {
+      if (this.props.enableUrlSubmit) {
         actions.push(
           <li key="action-add-link">
             <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
