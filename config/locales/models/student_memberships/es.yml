@@ -1,7 +1,0 @@
----
-es:
-  activerecord:
-    errors:
-      models:
-        student_membership:
-          memberships_not_unique: El estudiante ya pertenece a un grupo diferente para el proyecto.

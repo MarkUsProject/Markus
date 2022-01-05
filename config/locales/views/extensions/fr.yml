@@ -1,6 +1,0 @@
----
-fr:
-  extensions:
-    apply_penalty: UPDATE ME
-    create_extension: Extension créée
-    delete_extension: Extension supprimée

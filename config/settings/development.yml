@@ -15,9 +15,6 @@ rails:
 i18n:
   available_locales:
     - en
-    - fr
-    - es
-    - pt
   default_locale: en
 
 validate_user_not_allowed_message: 'That is your correct University of Foo user name and password, but you have not been added to this particular MarkUs database.  Please contact your instructor or check your course web page.'
