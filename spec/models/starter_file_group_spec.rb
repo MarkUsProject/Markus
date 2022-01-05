@@ -63,6 +63,43 @@ describe StarterFileGroup do
       create(:starter_file_group, assignment: assignment)
       expect(assignment.starter_file_updated_at).to be_within(1.second).of(Time.current)
     end
+    context 'setting the name when it is nil' do
+      let(:assignment) { create :assignment }
+      let(:assignment2) { create :assignment }
+      let(:starter_file_group) { create :starter_file_group, assignment: assignment, name: nil }
+
+      it 'returns the default name when there are no starter file groups' do
+        expect(starter_file_group.name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
+      end
+
+      it 'returns a fresh name when there are name collisions' do
+        create(:starter_file_group,
+               assignment: assignment,
+               name: I18n.t('assignments.starter_file.new_starter_file_group'))
+        create(:starter_file_group,
+               assignment: assignment,
+               name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (1)")
+        create(:starter_file_group,
+               assignment: assignment,
+               name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (2)")
+
+        expect(starter_file_group.name).to eq "#{I18n.t('assignments.starter_file.new_starter_file_group')} (3)"
+      end
+
+      it 'returns the default name when there are name collisions for a different assignment' do
+        create(:starter_file_group,
+               assignment: assignment2,
+               name: I18n.t('assignments.starter_file.new_starter_file_group'))
+        create(:starter_file_group,
+               assignment: assignment2,
+               name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (1)")
+        create(:starter_file_group,
+               assignment: assignment2,
+               name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (2)")
+
+        expect(starter_file_group.name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
+      end
+    end
   end
 
   describe '#path' do
@@ -149,44 +186,6 @@ describe StarterFileGroup do
           end
         end
       end
-    end
-  end
-
-  describe '.autogenerate_starter_file_group_name' do
-    let(:assignment) { create :assignment }
-    let(:assignment2) { create :assignment }
-    let(:new_name) { StarterFileGroup.autogenerate_starter_file_group_name(assignment) }
-
-    it 'returns the default name when there are no starter file groups' do
-      expect(new_name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
-    end
-
-    it 'returns a fresh name when there are name collisions' do
-      create(:starter_file_group,
-             assignment: assignment,
-             name: I18n.t('assignments.starter_file.new_starter_file_group'))
-      create(:starter_file_group,
-             assignment: assignment,
-             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (1)")
-      create(:starter_file_group,
-             assignment: assignment,
-             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (2)")
-
-      expect(new_name).to eq "#{I18n.t('assignments.starter_file.new_starter_file_group')} (3)"
-    end
-
-    it 'returns the default name when there are name collisions for a different assignment' do
-      create(:starter_file_group,
-             assignment: assignment2,
-             name: I18n.t('assignments.starter_file.new_starter_file_group'))
-      create(:starter_file_group,
-             assignment: assignment2,
-             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (1)")
-      create(:starter_file_group,
-             assignment: assignment2,
-             name: "#{I18n.t('assignments.starter_file.new_starter_file_group')} (2)")
-
-      expect(new_name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
     end
   end
 end

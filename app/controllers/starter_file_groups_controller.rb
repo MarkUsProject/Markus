@@ -6,11 +6,7 @@ class StarterFileGroupsController < ApplicationController
 
   def create
     assignment = Assignment.find_by(id: params[:assignment_id])
-
-    new_params = update_params
-    new_params[:name] ||= StarterFileGroup.autogenerate_starter_file_group_name(assignment)
-
-    assignment.starter_file_groups.create(new_params)
+    assignment.starter_file_groups.create(update_params)
   end
 
   def destroy
