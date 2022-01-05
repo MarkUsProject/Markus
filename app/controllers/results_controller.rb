@@ -4,6 +4,7 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
+  PERMITTED_IFRAME_SRC = 'https://www.youtube.com', 'https://drive.google.com', 'https://play.library.utoronto.ca'
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
@@ -13,7 +14,7 @@ class ResultsController < ApplicationController
     # required because MathJax dynamically changes
     # style. # TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
-    p.frame_src 'https://www.youtube.com', 'https://drive.google.com', 'https://play.library.utoronto.ca'
+    p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
   def show

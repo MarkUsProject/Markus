@@ -3,13 +3,14 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  PERMITTED_IFRAME_SRC = 'https://www.youtube.com', 'https://drive.google.com', 'https://play.library.utoronto.ca'
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
-    p.frame_src 'https://www.youtube.com', 'https://drive.google.com', 'https://play.library.utoronto.ca'
+    p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
   content_security_policy_report_only only: :notebook_content
@@ -123,7 +124,6 @@ class SubmissionsController < ApplicationController
       end
       entries = get_all_file_data(revision, grouping, '')
     end
-    puts entries
     render json: entries
   end
 
