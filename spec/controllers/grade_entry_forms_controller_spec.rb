@@ -487,14 +487,13 @@ describe GradeEntryFormsController do
     it('should respond with 200') { expect(response).to have_http_status 200 }
 
     it 'should return the expected info summary' do
-      name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
+      name = "#{grade_entry_form_with_data.short_identifier}: #{grade_entry_form_with_data.description}"
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:role).where('roles.hidden': false).count
       expected_summary = { name: name,
                            date: I18n.l(grade_entry_form_with_data.due_date),
                            average: grade_entry_form_with_data.results_average,
                            median: grade_entry_form_with_data.results_median,
-                           num_entries: grade_entry_form_with_data.count_non_nil.to_s +
-                             '/' + total_students.to_s,
+                           num_entries: "#{grade_entry_form_with_data.count_non_nil}/#{total_students}",
                            num_fails: grade_entry_form_with_data.results_fails,
                            num_zeros: grade_entry_form.results_zeros }
       expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
@@ -506,7 +505,7 @@ describe GradeEntryFormsController do
     let(:gef2) { create :grade_entry_form }
 
     shared_examples 'switch assignment tests' do
-      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      before { controller.request.headers.merge(HTTP_REFERER: referer) }
       subject { expect get_as user, 'switch', params: { course_id: course.id, id: gef2.id } }
       context 'referred from a grade entry form url' do
         let(:referer) { course_grade_entry_form_url(course_id: course.id, id: gef.id) }

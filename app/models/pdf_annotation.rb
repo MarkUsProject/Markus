@@ -25,7 +25,7 @@ class PdfAnnotation < Annotation
     }
   end
 
-  def get_data(include_creator=false)
+  def get_data(include_creator: false)
     horiz_range = { start: [x1, x2].min, end: [x1, x2].max }
     vert_range = { start: [y1, y2].min, end: [y1, y2].max }
 

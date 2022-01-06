@@ -10,10 +10,10 @@ Rails.configuration.to_prepare do
     installed, _status = Open3.capture2("#{pip_exe} freeze")
     missing = requirements - installed.lines.map(&:chomp)
     unless missing.empty?
-      STDERR.puts "MARKUS WARNING: Python environment at #{Settings.python.bin} "\
-                  "missing the following required packages:\n\t#{requirements.join("\n\t")}"
+      warn "MARKUS WARNING: Python environment at #{Settings.python.bin} "\
+           "missing the following required packages:\n\t#{requirements.join("\n\t")}"
     end
   else
-    STDERR.puts "MARKUS WARNING: No python/pip executable found at #{Settings.python.bin}. Python code cannot be run."
+    warn "MARKUS WARNING: No python/pip executable found at #{Settings.python.bin}. Python code cannot be run."
   end
 end

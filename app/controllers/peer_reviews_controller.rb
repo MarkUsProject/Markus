@@ -34,11 +34,9 @@ class PeerReviewsController < ApplicationController
     reviewee_to_reviewers_map.transform_values! { |rows| rows.map { |row| row[1] } }
 
     # A map of grouping_id => group_name (both assignment and parent assignment groupings).
-    id_to_group_names_map = Hash[
-      assignment.groupings.or(assignment.parent_assignment.groupings)
-                .joins(:group)
-                .pluck('groupings.id', 'groups.group_name')
-    ]
+    id_to_group_names_map = assignment.groupings.or(assignment.parent_assignment.groupings)
+                                      .joins(:group)
+                                      .pluck('groupings.id', 'groups.group_name').to_h
 
     render json: {
       reviewer_groups: assignment.all_grouping_data,
@@ -46,7 +44,7 @@ class PeerReviewsController < ApplicationController
       reviewee_to_reviewers_map: reviewee_to_reviewers_map,
       id_to_group_names_map: id_to_group_names_map,
       num_reviews_map: peer_reviews.group(:reviewer_id).count,
-      sections: Hash[current_course.sections.pluck(:id, :name)]
+      sections: current_course.sections.pluck(:id, :name).to_h
     }
   end
 
@@ -96,7 +94,7 @@ class PeerReviewsController < ApplicationController
     action_string = params[:actionString]
     num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
-    if action_string == 'assign' || action_string == 'random_assign'
+    if %w[assign random_assign].include?(action_string)
       if selected_reviewer_group_ids.empty?
         flash_now(:error, t('peer_reviews.errors.select_a_reviewer'))
         head 400
@@ -109,36 +107,36 @@ class PeerReviewsController < ApplicationController
     end
 
     case action_string
-      when 'random_assign'
-        begin
-          perform_random_assignment(@assignment, num_groups_for_reviewers,
-                                    selected_reviewer_group_ids, selected_reviewee_group_ids)
-        rescue UnableToRandomlyAssignGroupException
-          flash_now(:error, t('peer_reviews.errors.random_assign_failure'))
-          head 400
-          return
-        end
-      when 'assign'
-        reviewer_groups = Grouping.joins(:assignment).where(id: selected_reviewer_group_ids,
-                                                            'assessments.course_id': current_course.id)
-        reviewee_groups = Grouping.joins(:assignment).where(id: selected_reviewee_group_ids,
-                                                            'assessments.course_id': current_course.id)
-        begin
-          PeerReview.assign(reviewer_groups, reviewee_groups)
-        rescue ActiveRecord::RecordInvalid => e
-          flash_now(:error, e.message)
-          head 400
-          return
-        rescue SubmissionsNotCollectedException
-          flash_now(:error, t('peer_reviews.errors.collect_submissions_first'))
-          head 400
-          return
-        end
-      when 'unassign'
-        PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
-      else
+    when 'random_assign'
+      begin
+        perform_random_assignment(@assignment, num_groups_for_reviewers,
+                                  selected_reviewer_group_ids, selected_reviewee_group_ids)
+      rescue UnableToRandomlyAssignGroupException
+        flash_now(:error, t('peer_reviews.errors.random_assign_failure'))
         head 400
         return
+      end
+    when 'assign'
+      reviewer_groups = Grouping.joins(:assignment).where(id: selected_reviewer_group_ids,
+                                                          'assessments.course_id': current_course.id)
+      reviewee_groups = Grouping.joins(:assignment).where(id: selected_reviewee_group_ids,
+                                                          'assessments.course_id': current_course.id)
+      begin
+        PeerReview.assign(reviewer_groups, reviewee_groups)
+      rescue ActiveRecord::RecordInvalid => e
+        flash_now(:error, e.message)
+        head 400
+        return
+      rescue SubmissionsNotCollectedException
+        flash_now(:error, t('peer_reviews.errors.collect_submissions_first'))
+        head 400
+        return
+      end
+    when 'unassign'
+      PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    else
+      head 400
+      return
     end
 
     head :ok

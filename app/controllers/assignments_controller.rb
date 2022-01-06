@@ -86,8 +86,8 @@ class AssignmentsController < ApplicationController
       render 'shared/http_status',
              formats: [:html],
              locals: {
-                 code: '404',
-                 message: HttpStatusHelper::ERROR_CODE['message']['404']
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
              status: 404,
              layout: false
@@ -96,42 +96,40 @@ class AssignmentsController < ApplicationController
 
     @student = current_role
     @grouping = current_role.accepted_grouping_for(@assignment.id)
-    @prs = current_role.grouping_for(@assignment.parent_assignment.id)&.
-        peer_reviews&.where(results: { released_to_students: true })
+    @prs = current_role.grouping_for(@assignment.parent_assignment.id)
+        &.peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
     end
 
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('submissions.grading_can_begin'))
-    else
-      if @assignment.section_due_dates_type
-        section_due_dates = Hash.new
-        now = Time.current
-        current_course.sections.find_each do |section|
-          collection_time = @assignment.submission_rule.calculate_collection_time(section)
-          collection_time = now if now >= collection_time
-          if section_due_dates[collection_time].nil?
-            section_due_dates[collection_time] = Array.new
-          end
-          section_due_dates[collection_time].push(section.name)
+    elsif @assignment.section_due_dates_type
+      section_due_dates = {}
+      now = Time.current
+      current_course.sections.find_each do |section|
+        collection_time = @assignment.submission_rule.calculate_collection_time(section)
+        collection_time = now if now >= collection_time
+        if section_due_dates[collection_time].nil?
+          section_due_dates[collection_time] = []
         end
-        section_due_dates.each do |collection_time, sections|
-          sections = sections.join(', ')
-          if collection_time == now
-            flash_now(:notice, t('submissions.grading_can_begin_for_sections',
-                                 sections: sections))
-          else
-            flash_now(:notice, t('submissions.grading_can_begin_after_for_sections',
-                                 time: l(collection_time),
-                                 sections: sections))
-          end
-        end
-      else
-        collection_time = @assignment.submission_rule.calculate_collection_time
-        flash_now(:notice, t('submissions.grading_can_begin_after',
-                             time: l(collection_time)))
+        section_due_dates[collection_time].push(section.name)
       end
+      section_due_dates.each do |collection_time, sections|
+        sections = sections.join(', ')
+        if collection_time == now
+          flash_now(:notice, t('submissions.grading_can_begin_for_sections',
+                               sections: sections))
+        else
+          flash_now(:notice, t('submissions.grading_can_begin_after_for_sections',
+                               time: l(collection_time),
+                               sections: sections))
+        end
+      end
+    else
+      collection_time = @assignment.submission_rule.calculate_collection_time
+      flash_now(:notice, t('submissions.grading_can_begin_after',
+                           time: l(collection_time)))
     end
   end
 
@@ -203,7 +201,8 @@ class AssignmentsController < ApplicationController
         @assignment = process_assignment_form(@assignment)
         @assignment.save!
       end
-    rescue
+    rescue StandardError
+      # Do nothing
     end
     respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
   end
@@ -239,7 +238,7 @@ class AssignmentsController < ApplicationController
         @assignment = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
-      rescue Exception, RuntimeError => e
+      rescue StandardError => e
         @assignment.errors.add(:base, e.message)
       end
       unless @assignment.save
@@ -350,7 +349,7 @@ class AssignmentsController < ApplicationController
   def grade_distribution
     assignment = record
     summary = {
-      name: assignment.short_identifier + ': ' + assignment.description,
+      name: "#{assignment.short_identifier}: #{assignment.description}",
       average: assignment.results_average || 0,
       median: assignment.results_median || 0,
       num_submissions_collected: assignment.current_submissions_used.size,
@@ -445,11 +444,7 @@ class AssignmentsController < ApplicationController
         all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
       end
       assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
-    rescue ActiveRecord::RecordInvalid => e
-      flash_message(:error, e.message)
-      success = false
-      raise ActiveRecord::Rollback
-    rescue StandardError => e
+    rescue ActiveRecord::RecordInvalid, StandardError => e
       flash_message(:error, e.message)
       success = false
       raise ActiveRecord::Rollback
@@ -610,7 +605,7 @@ class AssignmentsController < ApplicationController
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
           child_assignment.save!
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
-          Tag.from_yml(child_tag_prop, current_course, child_assignment.id, true)
+          Tag.from_yml(child_tag_prop, current_course, child_assignment.id, allow_ta_upload: true)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           upload_criteria_from_yaml(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
@@ -619,7 +614,7 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
         end
         assignment.save!
-        Tag.from_yml(tag_prop, current_course, assignment.id, true)
+        Tag.from_yml(tag_prop, current_course, assignment.id, allow_ta_upload: true)
         upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
@@ -752,7 +747,6 @@ class AssignmentsController < ApplicationController
   end
 
   def process_assignment_form(assignment)
-    num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
     # remove potentially invalid periods before updating
     unless assignment_params[:assignment_properties_attributes][:scanned_exam] == 'true'
@@ -818,10 +812,10 @@ class AssignmentsController < ApplicationController
   def graders_options_params
     params.require(:attribute)
           .permit(assignment_properties_attributes: [
-                    :assign_graders_to_criteria,
-                    :anonymize_groups,
-                    :hide_unassigned_criteria
-                  ])
+            :assign_graders_to_criteria,
+            :anonymize_groups,
+            :hide_unassigned_criteria
+          ])
   end
 
   def assignment_params
@@ -866,7 +860,7 @@ class AssignmentsController < ApplicationController
         :start_time,
         :is_hidden
       ],
-      assignment_files_attributes:  [
+      assignment_files_attributes: [
         :_destroy,
         :id,
         :filename

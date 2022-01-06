@@ -8,9 +8,9 @@ class TasController < ApplicationController
   def index
     respond_to do |format|
       format.html
-      format.json {
+      format.json do
         render json: current_course.tas.joins(:end_user).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
-      }
+      end
     end
   end
 

@@ -3,18 +3,18 @@
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < Assessment
-  has_many                  :grade_entry_items,
-                            -> { order(:position) },
-                            dependent: :destroy,
-                            inverse_of: :grade_entry_form,
-                            foreign_key: :assessment_id
+  has_many :grade_entry_items,
+           -> { order(:position) },
+           dependent: :destroy,
+           inverse_of: :grade_entry_form,
+           foreign_key: :assessment_id
 
-  has_many                  :grade_entry_students,
-                            dependent: :destroy,
-                            inverse_of: :grade_entry_form,
-                            foreign_key: :assessment_id
+  has_many :grade_entry_students,
+           dependent: :destroy,
+           inverse_of: :grade_entry_form,
+           foreign_key: :assessment_id
 
-  has_many                  :grades, through: :grade_entry_items
+  has_many :grades, through: :grade_entry_items
 
   accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 
@@ -24,7 +24,7 @@ class GradeEntryForm < Assessment
   default_scope { order('id ASC') }
 
   # Constants
-  BLANK_MARK = ''
+  BLANK_MARK = ''.freeze
 
   # The total number of marks for this grade entry form
   def max_mark
@@ -60,7 +60,7 @@ class GradeEntryForm < Assessment
 
     # Check for NA mark f or division by 0
     unless ges_total_grade.nil? || out_of == 0
-        percent = (ges_total_grade / out_of) * 100
+      percent = (ges_total_grade / out_of) * 100
     end
 
     percent
@@ -72,9 +72,7 @@ class GradeEntryForm < Assessment
       return @ges_total_grades
     end
 
-    total_grades = Hash[
-      grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade)
-    ]
+    total_grades = grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade).to_h
     @ges_total_grades = total_grades
     total_grades
   end
@@ -133,9 +131,7 @@ class GradeEntryForm < Assessment
   end
 
   def from_csv(grades_data, overwrite)
-    grade_entry_students = Hash[
-      self.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id)
-    ]
+    grade_entry_students = self.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id).to_h
     all_grades = Set.new(
       self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)
     )

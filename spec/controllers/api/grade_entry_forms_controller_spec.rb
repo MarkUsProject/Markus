@@ -66,7 +66,7 @@ describe Api::GradeEntryFormsController do
             expect(response.status).to eq(200)
           end
           it 'should return empty content' do
-            expect(Hash.from_xml(response.body).dig('grade_entry_forms')).to be_nil
+            expect(Hash.from_xml(response.body)['grade_entry_forms']).to be_nil
           end
         end
         context 'with multiple assignments' do
@@ -93,7 +93,7 @@ describe Api::GradeEntryFormsController do
             expect(response.status).to eq(200)
           end
           it 'should return empty content' do
-            expect(Hash.from_xml(response.body).dig('grade_entry_forms')).to be_nil
+            expect(Hash.from_xml(response.body)['grade_entry_forms']).to be_nil
           end
         end
       end

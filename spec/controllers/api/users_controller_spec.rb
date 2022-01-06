@@ -110,11 +110,11 @@ describe Api::UsersController do
           end
           it 'should return info about the user' do
             get :show, params: { id: end_users[0].id }
-            expect(Hash.from_xml(response.body).dig('user')['user_name']).to eq(end_users[0].user_name)
+            expect(Hash.from_xml(response.body)['user']['user_name']).to eq(end_users[0].user_name)
           end
           it 'should return all information in the default fields' do
             get :show, params: { id: end_users[0].id }
-            info = Hash.from_xml(response.body).dig('user')
+            info = Hash.from_xml(response.body)['user']
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
           end
         end

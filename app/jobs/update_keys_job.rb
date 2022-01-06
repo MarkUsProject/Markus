@@ -1,7 +1,6 @@
 # updates authorized_key file by rewriting the entire file
 # according to the current state of the database
 class UpdateKeysJob < ApplicationJob
-
   def self.show_status(_status); end
 
   # If another job that will update the authorized_keys file is alread enqueued, then

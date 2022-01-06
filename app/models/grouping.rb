@@ -15,7 +15,10 @@ class Grouping < ApplicationRecord
            class_name: 'StudentMembership'
 
   has_many :accepted_student_memberships,
-           -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           -> {
+             where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted],
+                                                       StudentMembership::STATUSES[:inviter]]
+           },
            class_name: 'StudentMembership'
 
   has_many :pending_student_memberships,
@@ -98,9 +101,9 @@ class Grouping < ApplicationRecord
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, ta_ids_|
       # Assign TAs in a round-robin fashion to a list of random groupings.
-      grouping_ids.shuffle.zip(ta_ids.cycle).reject { |pair| pair.include?(nil) }
+      grouping_ids_.shuffle.zip(ta_ids_.cycle).reject { |pair| pair.include?(nil) }
     end
   end
 
@@ -108,9 +111,9 @@ class Grouping < ApplicationRecord
   # a list of groupings specified by +grouping_ids+. The groupings must belong
   # to the given assignment +assignment+.
   def self.assign_all_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, ta_ids_|
       # Get the Cartesian product of grouping IDs and TA IDs.
-      grouping_ids.product(ta_ids)
+      grouping_ids_.product(ta_ids_)
     end
   end
 
@@ -197,7 +200,7 @@ class Grouping < ApplicationRecord
   def get_all_students_in_group
     student_user_names = student_memberships.includes(role: :end_user).collect { |m| m.role.user_name }
     return I18n.t('groups.empty') if student_user_names.empty?
-	  student_user_names.join(', ')
+    student_user_names.join(', ')
   end
 
   def does_not_share_any_students?(grouping)
@@ -205,17 +208,17 @@ class Grouping < ApplicationRecord
     other_group_student_ids = Set.new
     students.each { |student| current_student_ids.add(student.id) }
     grouping.students.each { |student| other_group_student_ids.add(student.id) }
-    not current_student_ids.intersect?(other_group_student_ids)
+    !current_student_ids.intersect?(other_group_student_ids)
   end
 
   def group_name_with_student_user_names
     user_names = get_all_students_in_group
     return group.group_name if user_names == I18n.t('groups.empty')
-    group.group_name + ': ' + user_names
+    "#{group.group_name}: #{user_names}"
   end
 
   def display_for_note
-    assignment.short_identifier + ': ' + group_name_with_student_user_names
+    "#{assignment.short_identifier}: #{group_name_with_student_user_names}"
   end
 
   # Query Functions ------------------------------------------------------
@@ -245,10 +248,9 @@ class Grouping < ApplicationRecord
   # be part of the group are skipped.
   def invite(members,
              set_membership_status = StudentMembership::STATUSES[:pending],
-             invoked_by_instructor = false)
+             invoked_by_instructor: false)
     # overloading invite() to accept members arg as both a string and a array
-    members = [members] if !members.instance_of?(Array) # put a string in an
-                                                 # array
+    members = [members] unless members.instance_of?(Array) # put a string in an array
     all_errors = []
     members.each do |m|
       m = m.strip
@@ -316,7 +318,7 @@ class Grouping < ApplicationRecord
   # returns the numbers of memberships, all includ (inviter, pending,
   # accepted
   def student_membership_number
-     accepted_students.size + pending_students.size
+    accepted_students.size + pending_students.size
   end
 
   # Returns true if either this Grouping has met the assignment group
@@ -378,8 +380,8 @@ class Grouping < ApplicationRecord
 
   # Submission Functions
   def has_submission?
-    #Return true if and only if this grouping has at least one submission
-    #with attribute submission_version_used == true.
+    # Return true if and only if this grouping has at least one submission
+    # with attribute submission_version_used == true.
     !current_submission_used.nil?
   end
 
@@ -398,12 +400,11 @@ class Grouping < ApplicationRecord
     if member
       # Remove repository permissions first
       member.destroy
-      if member.membership_status == StudentMembership::STATUSES[:inviter]
-         if member.grouping.accepted_student_memberships.length > 0
-            membership = member.grouping.accepted_student_memberships.first
-            membership.membership_status = StudentMembership::STATUSES[:inviter]
-            membership.save
-         end
+      if member.membership_status == StudentMembership::STATUSES[:inviter] &&
+          (member.grouping.accepted_student_memberships.length > 0)
+        membership = member.grouping.accepted_student_memberships.first
+        membership.membership_status = StudentMembership::STATUSES[:inviter]
+        membership.save
       end
     end
   end
@@ -434,7 +435,7 @@ class Grouping < ApplicationRecord
   # Additionally, the grace period for the assignment should not have passed.
   def deletable_by?(user)
     return false unless self.inviter == user
-    (!self.is_valid?) || (self.is_valid? &&
+    !self.is_valid? || (self.is_valid? &&
                           accepted_students.size == 1 &&
                           self.assignment.group_assignment? &&
                           !assignment.past_collection_date?(self.section))
@@ -475,7 +476,7 @@ class Grouping < ApplicationRecord
   # Returns a list of missing assignment (required) files.
   # A repo revision can be passed directly if the caller already opened the repo.
   def missing_assignment_files(revision = nil)
-    get_missing_assignment_files = lambda do |open_revision|
+    get_missing_assignment_files = ->(open_revision) do
       assignment.assignment_files.reject do |assignment_file|
         open_revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
       end
@@ -518,11 +519,7 @@ class Grouping < ApplicationRecord
       # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
       revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, grouping_due_date)
     end
-    if revision.nil? || revision.server_timestamp <= grouping_due_date
-      false
-    else
-      true
-    end
+    !(revision.nil? || revision.server_timestamp <= grouping_due_date)
   end
 
   def collection_date
@@ -677,8 +674,8 @@ class Grouping < ApplicationRecord
     new_hash_list = []
     group_by_keys = %w[test_runs.id test_runs.created_at test_runs.problems
                        users.user_name test_groups.name test_runs.status]
-    hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
-      h = Hash.new
+    hash_list.group_by { |g| g.values_at(*group_by_keys) }.each_value do |val|
+      h = {}
       group_by_keys.each do |key|
         h[key] = val[0][key]
       end
@@ -702,7 +699,7 @@ class Grouping < ApplicationRecord
                                                        'test_group_results.created_at as date')
                                         .group_by { |h| h['tgid'] }
                                         .values
-                                        .map { |v| v.sort_by { |h| h['date'] }.last['tgrid'] }
+                                        .map { |v| v.max_by { |h| h['date'] }['tgrid'] }
                                         .compact
     plucked = Grouping.pluck_test_runs(filtered.where('test_group_results.id': latest_test_group_results))
     plucked.map! do |data|
@@ -765,10 +762,8 @@ class Grouping < ApplicationRecord
                                                         assignment: self.assignment.short_identifier))
       txn.add_path(assignment_folder)
 
-      if txn.has_jobs?
-        unless group_repo.commit(txn)
-          raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
-        end
+      if txn.has_jobs? && !group_repo.commit(txn)
+        raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
       end
     end
   end

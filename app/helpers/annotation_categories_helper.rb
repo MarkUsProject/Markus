@@ -1,5 +1,4 @@
 module AnnotationCategoriesHelper
-
   def prepare_for_conversion(annotation_categories)
     result = {}
     annotation_categories.each do |annotation_category|

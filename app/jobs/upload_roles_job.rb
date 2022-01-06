@@ -21,9 +21,9 @@ class UploadRolesJob < ApplicationJob
   end
 
   def find_section_id(row)
-    return nil if @section_index.nil?
+    return if @section_index.nil?
     section_name = row[@section_index]&.strip
-    return nil if section_name.blank?
+    return if section_name.blank?
     section_id = @sections[row[@section_index]&.strip]
     raise I18n.t('sections.not_found', name: row[@section_index]&.strip) if section_id.nil?
     section_id

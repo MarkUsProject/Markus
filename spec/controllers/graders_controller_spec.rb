@@ -31,7 +31,7 @@ describe GradersController do
       post_as @student, :global_actions, params: { course_id: course.id, assignment_id: assignment.id }
       expect(response).to have_http_status(403)
     end
-  end # student context
+  end
 
   context 'An authenticated and authorized instructor' do
     let(:course) { @assignment.course }
@@ -43,8 +43,8 @@ describe GradersController do
     it 'doing a GET on :index(graders_controller)' do
       get_as @instructor, :index, params: { course_id: course.id, assignment_id: @assignment.id }
       expect(response.status).to eq(200)
-      expect(assigns :assignment).not_to be_nil
-    end #manage
+      expect(assigns(:assignment)).not_to be_nil
+    end
 
     context 'doing a POST on :upload' do
       include_examples 'a controller supporting upload' do
@@ -177,7 +177,7 @@ describe GradersController do
         expect(response).to be_redirect
         expect(@grouping4.tas.count).to eq 0
       end
-    end #groups csv upload
+    end
 
     context 'doing a POST on :upload' do
       include_examples 'a controller supporting upload' do
@@ -257,7 +257,7 @@ describe GradersController do
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
         end
-      end # rubric criteria
+      end
 
       context 'with flexible criteria' do
         before :each do
@@ -334,8 +334,8 @@ describe GradersController do
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
         end
-      end # flexible criteria
-    end # criteria csv upload
+      end
+    end
 
     context 'with groups table selected doing a' do
       context 'POST on :global_actions on random_assign' do
@@ -439,7 +439,7 @@ describe GradersController do
           expect(@grouping2.tas.size).to eq 1
           expect(@grouping3.tas.size).to eq 1
         end
-      end #random assign
+      end
 
       context 'POST on :global_actions on assign' do
         before :each do
@@ -597,7 +597,7 @@ describe GradersController do
             end
           end
         end
-      end #assign
+      end
 
       context 'POST on :global_actions on unassign' do
         before :each do
@@ -642,11 +642,9 @@ describe GradersController do
         it 'and all groupings from one grader are selected' do
           create(:ta_membership, role: @ta1, grouping: @grouping1)
           create(:ta_membership, role: @ta2, grouping: @grouping1)
-          ta_memberships = [
-            create(:ta_membership, role: @ta3, grouping: @grouping1),
-            create(:ta_membership, role: @ta3, grouping: @grouping2),
-            create(:ta_membership, role: @ta3, grouping: @grouping3)
-          ]
+          create(:ta_membership, role: @ta3, grouping: @grouping1)
+          create(:ta_membership, role: @ta3, grouping: @grouping2)
+          create(:ta_membership, role: @ta3, grouping: @grouping3)
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
@@ -710,9 +708,8 @@ describe GradersController do
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
         end
-      end #unassign
-
-    end #groupings table
+      end
+    end
 
     context 'With criteria table selected' do
       context 'with rubric marking scheme doing a' do
@@ -822,7 +819,7 @@ describe GradersController do
             expect(@criterion2.tas.size).to eq(1)
             expect(@criterion3.tas.size).to eq(1)
           end
-        end #random assign
+        end
 
         context 'POST on :global_actions on assign' do
           before :each do
@@ -966,7 +963,7 @@ describe GradersController do
             expect(@criterion2.tas).to include(@ta2)
             expect(@criterion3.tas).to eq []
           end
-        end #assign
+        end
 
         context 'POST on :global_actions on unassign' do
           before :each do
@@ -1093,9 +1090,8 @@ describe GradersController do
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
           end
-        end #unassign
-
-      end #rubric scheme
+        end
+      end
 
       context 'with flexible marking scheme doing a' do
         before :each do
@@ -1226,7 +1222,7 @@ describe GradersController do
             expect(@criterion2.tas.size).to eq 1
             expect(@criterion3.tas.size).to eq 1
           end
-        end #random assign
+        end
 
         context 'POST on :global_actions on assign' do
           before :each do
@@ -1384,7 +1380,7 @@ describe GradersController do
             expect(@criterion2.tas).to include(@ta2)
             expect(@criterion3.tas).to eq []
           end
-        end #assign
+        end
 
         context 'POST on :global_actions on unassign' do
           before :each do
@@ -1460,7 +1456,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
-            criterion_ta = CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
@@ -1508,10 +1504,8 @@ describe GradersController do
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
           end
-        end #unassign
-
-      end #flexible scheme
-    end #criteria table
-
+        end
+      end
+    end
   end
 end

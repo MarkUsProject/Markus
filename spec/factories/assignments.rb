@@ -144,13 +144,16 @@ FactoryBot.define do
   # be created from this using such functions as random assignment.
   factory :assignment_with_peer_review_and_groupings_results, parent: :assignment_with_peer_review do
     after(:create) do |assign|
-        students = 6.times.map { (create(:student)) }
-        groupings = 3.times.map { create(:grouping, assignment: assign) }
-        pr_groupings = 3.times.map { create(:grouping, assignment: assign.pr_assignment) }
-        3.times.each { |i| create(:accepted_student_membership, role: students[i], grouping: groupings[i]) }
-        3.times.each { |i| create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i]) }
-        submissions = 3.times.map { |i| create(:version_used_submission, grouping: groupings[i]) }
-        3.times.each { |i| create(:result, submission: submissions[i], marking_state: Result::MARKING_STATES[:complete]) }
+      students = 6.times.map { create(:student) }
+      groupings = 3.times.map { create(:grouping, assignment: assign) }
+      pr_groupings = 3.times.map { create(:grouping, assignment: assign.pr_assignment) }
+      3.times.each do |i|
+        create(:accepted_student_membership, role: students[i], grouping: groupings[i])
+        create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i])
+
+        submission = create(:version_used_submission, grouping: groupings[i])
+        create(:result, submission: submission, marking_state: Result::MARKING_STATES[:complete])
+      end
     end
   end
 
@@ -174,14 +177,14 @@ FactoryBot.define do
 
   factory :assignment_for_scanned_exam, parent: :assignment do
     after :build do |_assignment, evaluator|
-      properties =  { scanned_exam: true }
+      properties = { scanned_exam: true }
       evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
     end
   end
 
   factory :timed_assignment, parent: :assignment do
     after :build do |_assignment, evaluator|
-      properties =  { is_timed: true, duration: 1.hour + 30.minutes, start_time: 10.hours.ago }
+      properties = { is_timed: true, duration: 1.hour + 30.minutes, start_time: 10.hours.ago }
       evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
     end
   end

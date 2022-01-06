@@ -14,5 +14,4 @@ class AssessmentSectionProperties < ApplicationRecord
       where(section_id: section.id, assessment_id: assignment.id).first
     section_due_date.try(:due_date) || assignment.due_date
   end
-
 end

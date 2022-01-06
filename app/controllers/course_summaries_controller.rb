@@ -5,8 +5,7 @@ class CourseSummariesController < ApplicationController
 
   layout 'assignment_content'
 
-  def index
-  end
+  def index; end
 
   def populate
     table_data = get_table_json_data(current_role)
@@ -14,7 +13,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_role.student? ? MarkingScheme.none : current_course.marking_schemes
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
-    single = current_role.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
+    single = current_role.student? ? table_data.first[:assessment_marks].transform_values { |v| v[:percentage] } : {}
 
     assessments.order(id: :asc).each do |a|
       info = assessment_overview(a)
@@ -68,8 +67,7 @@ class CourseSummariesController < ApplicationController
     }
   end
 
-  def view_summary
-  end
+  def view_summary; end
 
   def get_marking_scheme_details
     redirect_to url_for(controller: 'marking_schemes', action: 'populate')
@@ -132,8 +130,6 @@ class CourseSummariesController < ApplicationController
       assessment.results_average&.round(2)
     when :total
       assessment.max_mark
-    else
-      nil
     end
   end
 

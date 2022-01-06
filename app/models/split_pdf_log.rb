@@ -11,7 +11,9 @@ class SplitPdfLog < ApplicationRecord
                             only_integer: true }
 
   validate :courses_should_match
+
   private
+
   def set_defaults_for_uploaded_when
     # Attribute 'uploaded_when' of split_pdf_log is by default set to the time the object gets created.
     self.uploaded_when = Time.current

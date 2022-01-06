@@ -137,13 +137,11 @@ class AnnotationsController < ApplicationController
   def update
     @annotation = record
     @annotation_text = @annotation.annotation_text
-    unless @annotation_text.deduction.nil?
-      if current_role.ta? || @annotation_text.annotations.joins(:result)
-                                             .where('results.released_to_students' => true).exists?
-        flash_message(:error, t('annotations.prevent_update'))
-        head :bad_request
-        return
-      end
+    if !@annotation_text.deduction.nil? && (current_role.ta? || @annotation_text.annotations.joins(:result)
+                                             .where('results.released_to_students' => true).exists?)
+      flash_message(:error, t('annotations.prevent_update'))
+      head :bad_request
+      return
     end
 
     change_all = !params[:annotation_text] || !params[:annotation_text][:change_all] ||

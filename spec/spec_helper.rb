@@ -22,7 +22,7 @@ end
 
 ENV['RAILS_ENV'] ||= 'test'
 ENV['NODE_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
 require 'rspec/rails'
 require 'action_policy/rspec'
 require 'action_policy/rspec/dsl'
@@ -32,7 +32,7 @@ require 'time-warp'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 begin
@@ -104,9 +104,9 @@ RSpec.configure do |config|
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
 
-  RSpec::Matchers.define :same_time_within_ms do |e|
-    match do |a|
-      e.to_i == a.to_i
+  RSpec::Matchers.define :same_time_within_ms do |t1|
+    match do |t2|
+      t1.to_i == t2.to_i
     end
   end
 

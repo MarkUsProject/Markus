@@ -1040,8 +1040,7 @@ describe AssignmentsController do
 
       it 'should contain the right values' do
         summary = response.parsed_body['summary']
-        expected = { name: assignment.short_identifier +
-          ': ' + assignment.description,
+        expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
                      average: assignment.results_average || 0,
                      median: assignment.results_median,
                      num_submissions_collected: assignment.current_submissions_used.size,
@@ -1096,7 +1095,7 @@ describe AssignmentsController do
     let(:result) { create :incomplete_result, submission: submission }
 
     shared_examples 'switch assignment tests' do
-      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      before { controller.request.headers.merge(HTTP_REFERER: referer) }
       subject { expect get_as role, 'switch', params: { course_id: course.id, id: assignment2.id } }
       context 'referred from an assignment url' do
         let(:referer) { course_assignment_url(course_id: course.id, id: assignment.id) }
@@ -1560,7 +1559,7 @@ describe AssignmentsController do
       it 'properly uploads all the automated test files for an assignment' do
         subject
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-        spec_data = JSON.parse File.open(uploaded_assignment.autotest_settings_file, &:read)
+        spec_data = JSON.parse File.read(uploaded_assignment.autotest_settings_file)
         received_automated_test_data = {
           num_test_groups: spec_data['testers'].length,
           num_test_data: spec_data['testers'][0]['test_data'].length,
@@ -1786,12 +1785,12 @@ describe AssignmentsController do
       it 'copies over submission rules' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         received_rule = {
-          'type': uploaded_assignment.submission_rule.type,
-          'periods': uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+          type: uploaded_assignment.submission_rule.type,
+          periods: uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
         }
         expected_rule = {
-          'type': submission_rule.type,
-          'periods': submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+          type: submission_rule.type,
+          periods: submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
         }
         expect(received_rule).to eq(expected_rule)
       end
@@ -1812,7 +1811,7 @@ describe AssignmentsController do
         uploaded_test_groups = uploaded_assignment.test_groups
         received_automated_test_data = {
           uploaded_a_test_group: uploaded_test_groups.count == 1,
-          spec_file: JSON.parse(File.open(uploaded_assignment.autotest_settings_file, &:read)),
+          spec_file: JSON.parse(File.read(uploaded_assignment.autotest_settings_file)),
           autotest_files: uploaded_assignment.autotest_files.to_set
         }
         sample_spec_file = create_sample_spec_file(uploaded_criteria)

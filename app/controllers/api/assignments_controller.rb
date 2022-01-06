@@ -1,5 +1,4 @@
 module Api
-
   # Allows for adding, modifying and showing Markus assignments.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class AssignmentsController < MainApiController
@@ -19,7 +18,7 @@ module Api
       assignments = get_collection(current_course.assessments) || return
 
       respond_to do |format|
-        json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',') + ']'
+        json_response = "[#{assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',')}]"
 
         format.xml { render xml: assignments.to_xml(only: DEFAULT_FIELDS, root: 'assignments', skip_types: 'true') }
         format.json { render json: json_response }
@@ -33,8 +32,8 @@ module Api
       assignment = record
       if assignment.nil?
         # No assignment with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No assignment exists with that id'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'No assignment exists with that id' }, status: 404
       else
         respond_to do |format|
           format.xml { render xml: assignment.to_xml(only: DEFAULT_FIELDS, root: 'assignment', skip_types: 'true') }
@@ -54,16 +53,16 @@ module Api
     def create
       if has_missing_params?([:short_identifier, :due_date, :description])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
 
       # check if there is an existing assignment
       assignment = Assignment.find_by_short_identifier(params[:short_identifier])
       unless assignment.nil?
-        render 'shared/http_status', locals: {code: '409', message:
-          'Assignment already exists'}, status: 409
+        render 'shared/http_status', locals: { code: '409', message:
+          'Assignment already exists' }, status: 409
         return
       end
 
@@ -77,8 +76,8 @@ module Api
       submission_rule = get_submission_rule(params)
 
       if submission_rule.nil?
-        render 'shared/http_status', locals: {code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500']}, status: 500
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
         return
       end
 
@@ -86,14 +85,14 @@ module Api
 
       unless new_assignment.save
         # Some error occurred
-        render 'shared/http_status', locals: {code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500']}, status: 500
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
         return
       end
 
       # Otherwise everything went alright.
-      render 'shared/http_status', locals: {code: '201', message:
-        HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
+      render 'shared/http_status', locals: { code: '201', message:
+        HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
     end
 
     # Updates an existing assignment
@@ -109,8 +108,8 @@ module Api
       # If no assignment is found, render an error.
       assignment = record
       if assignment.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-          'Assignment was not found'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'Assignment was not found' }, status: 404
         return
       end
 
@@ -120,10 +119,11 @@ module Api
       unless params[:short_identifier].blank?
         # Make sure another assignment isn't using the new short_identifier
         other_assignment = Assignment.find_by_short_identifier(
-          params[:short_identifier])
+          params[:short_identifier]
+        )
         if !other_assignment.nil? && other_assignment != assignment
-          render 'shared/http_status', locals: {code: '409', message:
-            'short_identifier already in use'}, status: 409
+          render 'shared/http_status', locals: { code: '409', message:
+            'short_identifier already in use' }, status: 409
           return
         end
         attributes[:short_identifier] = params[:short_identifier]
@@ -136,28 +136,26 @@ module Api
       unless params[:submission_rule_type].nil?
         submission_rule = get_submission_rule(params)
         if submission_rule.nil?
-          render 'shared/http_status', locals: {code: '500', message:
-            HttpStatusHelper::ERROR_CODE['message']['500']}, status: 500
+          render 'shared/http_status', locals: { code: '500', message:
+            HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
           return
-        else
+        elsif submission_rule.valid?
           # If it's a valid submission rule, replace the existing one
-          if submission_rule.valid?
-            assignment.submission_rule.destroy
-            assignment.submission_rule = submission_rule
-          end
+          assignment.submission_rule.destroy
+          assignment.submission_rule = submission_rule
         end
       end
 
       unless assignment.save
         # Some error occurred
-        render 'shared/http_status', locals: {code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500']}, status: 500
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
         return
       end
 
       # Made it this far, render success
-      render 'shared/http_status', locals: {code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
     # Process the parameters passed for assignment creation and update
@@ -166,7 +164,7 @@ module Api
       fields = Array.new(DEFAULT_FIELDS)
       fields.delete(:id)
       fields.each do |field|
-        attributes[field] = params[field] if !params[field].nil?
+        attributes[field] = params[field] unless params[field].nil?
       end
 
       # Some attributes have to be set with default values when creating a new
@@ -187,7 +185,7 @@ module Api
     def test_specs
       assignment = record
       settings_file = assignment.autotest_settings_file
-      content = File.exist?(settings_file) ? JSON.parse(File.open(settings_file, &:read)) : {}
+      content = File.exist?(settings_file) ? JSON.parse(File.read(settings_file)) : {}
       respond_to do |format|
         format.any { render json: content }
       end
@@ -275,5 +273,5 @@ module Api
     def implicit_authorization_target
       Assignment
     end
-  end # end AssignmentsController
+  end
 end

@@ -2,7 +2,7 @@
 # for example lib/tasks/capistrano.rake, and they will automatically
 # be available to Rake.
 
-require File.expand_path('../config/application', __FILE__)
+require File.expand_path('config/application', __dir__)
 require 'rake'
 require 'rdoc/task'
 require 'resque/scheduler/tasks'

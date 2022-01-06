@@ -36,7 +36,7 @@ describe TagsController do
 
     it 'creates a new tag' do
       post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
-                                        assignment_id: assignment.id, course_id: course.id }
+                                             assignment_id: assignment.id, course_id: course.id }
       expect(Tag.find_by(name: 'tag', description: 'tag description')).to_not be_nil
     end
 

@@ -27,10 +27,8 @@ module UploadHelper
 
   # Unzip the file at +zip_file_path+ and yield the name of each directory and an
   # UploadedFile object for each file.
-  def upload_files_helper(new_folders, new_files, unzip: false)
-    new_folders.each do |f|
-      yield f
-    end
+  def upload_files_helper(new_folders, new_files, unzip: false, &block)
+    new_folders.each(&block)
     new_files.each do |f|
       if unzip && File.extname(f.path).casecmp?('.zip')
         Zip::File.open(f.path) do |zipfile|

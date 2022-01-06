@@ -121,11 +121,11 @@ describe Api::RolesController do
         end
         it 'should return info about the user' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          expect(Hash.from_xml(response.body).dig('role')['user_name']).to eq(students[0].user_name)
+          expect(Hash.from_xml(response.body)['role']['user_name']).to eq(students[0].user_name)
         end
         it 'should return all information in the default fields' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          info = Hash.from_xml(response.body).dig('role')
+          info = Hash.from_xml(response.body)['role']
           expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::RolesController::DEFAULT_FIELDS)
         end
       end

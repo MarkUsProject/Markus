@@ -1,6 +1,5 @@
 # create groups job
 class CreateGroupsJob < ApplicationJob
-
   def self.on_complete_js(_status)
     '() => {window.groupsManager && window.groupsManager.fetchData()}'
   end
@@ -33,7 +32,8 @@ class CreateGroupsJob < ApplicationJob
               gr.repo_name = group_name if assignment.group_max == 1 && group_name == inviter.user_name
             end
             grouping = Grouping.find_or_create_by(group: group, assignment: assignment)
-            errors += grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter], true)
+            errors += grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter],
+                                      invoked_by_instructor: true)
           end
           errors += grouping.invite(others.map(&:user_name), StudentMembership::STATUSES[:accepted])
           unless errors.empty?

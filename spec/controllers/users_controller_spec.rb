@@ -8,7 +8,7 @@ describe UsersController do
         display_name = 'First Last'
         patch_as user,
                  'update_settings',
-                 params: { 'user': { 'display_name': display_name } }
+                 params: { user: { display_name: display_name } }
         expect(user.reload.display_name).to eq display_name
       end
 
@@ -16,7 +16,7 @@ describe UsersController do
         time_zone = 'Pacific Time (US & Canada)'
         patch_as user,
                  'update_settings',
-                 params: { 'user': { 'time_zone': time_zone } }
+                 params: { user: { time_zone: time_zone } }
         expect(user.reload.time_zone).to eq time_zone
       end
 
@@ -24,7 +24,7 @@ describe UsersController do
         display_name = 'First Last'
         patch_as user,
                  'update_settings',
-                 params: { 'user': { 'display_name': display_name } }
+                 params: { user: { display_name: display_name } }
         expect(user.reload.display_name).to eq display_name
       end
     end

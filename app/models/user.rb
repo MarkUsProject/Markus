@@ -1,3 +1,4 @@
+require 'English'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
 
@@ -14,19 +15,18 @@ class User < ApplicationRecord
   has_many :key_pairs, dependent: :destroy
   validates_format_of :type, with: /\AEndUser|AutotestUser|AdminUser\z/
 
-  validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
-  validates_uniqueness_of   :user_name
-  validates_uniqueness_of   :email, :allow_nil => true
-  validates_uniqueness_of   :id_number, :allow_nil => true
-  validates_inclusion_of    :time_zone, :in => ActiveSupport::TimeZone.all.map(&:name)
-  validates                 :user_name,
-                            format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                                      message: 'user_name must be alphanumeric, hyphen, or underscore' },
-                            unless: ->(u) { u.autotest_user? || u.admin_user? }
+  validates_presence_of :user_name, :last_name, :first_name, :time_zone, :display_name
+  validates_uniqueness_of :user_name
+  validates_uniqueness_of :email, allow_nil: true
+  validates_uniqueness_of :id_number, allow_nil: true
+  validates_inclusion_of :time_zone, in: ActiveSupport::TimeZone.all.map(&:name)
+  validates :user_name,
+            format: { with: /\A[a-zA-Z0-9\-_]+\z/,
+                      message: 'user_name must be alphanumeric, hyphen, or underscore' },
+            unless: ->(u) { u.autotest_user? || u.admin_user? }
   after_initialize :set_display_name, :set_time_zone
 
-  validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
-
+  validates_inclusion_of :locale, in: I18n.available_locales.map(&:to_s)
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
@@ -44,8 +44,8 @@ class User < ApplicationRecord
     not_allowed_regexp = Regexp.new(/[\n\0]+/)
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
       m_logger = MarkusLogger.instance
-      m_logger.log("User '#{login}' failed to log in. Username/password contained " +
-                       'illegal characters', MarkusLogger::ERROR)
+      m_logger.log("User '#{login}' failed to log in. Username/password contained " \
+                   'illegal characters', MarkusLogger::ERROR)
       AUTHENTICATE_BAD_CHAR
     else
       # Open a pipe and write to stdin of the program specified by Settings.validate_file.
@@ -60,31 +60,31 @@ class User < ApplicationRecord
       # In general, the external password validation program should exit with 0 for success
       # and exit with any other integer for failure.
       pipe = IO.popen("'#{Settings.validate_file}'", 'w+') # quotes to avoid choking on spaces
-      to_stdin = [login, password, ip].reject(&:nil?).join("\n")
+      to_stdin = [login, password, ip].compact.join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
       m_logger = MarkusLogger.instance
-      custom_message = Settings.validate_custom_status_message[$?.exitstatus.to_s]
-      if $?.exitstatus == 0
+      custom_message = Settings.validate_custom_status_message[$CHILD_STATUS.exitstatus.to_s]
+      if $CHILD_STATUS.exitstatus == 0
         m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
-        return AUTHENTICATE_SUCCESS
+        AUTHENTICATE_SUCCESS
       elsif custom_message
         m_logger.log("Login failed for user #{login}. Reason: #{custom_message}", MarkusLogger::ERROR)
-        return $?.exitstatus.to_s
+        $CHILD_STATUS.exitstatus.to_s
       else
         m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
-        return AUTHENTICATE_ERROR
+        AUTHENTICATE_ERROR
       end
     end
   end
 
   # Helper methods -----------------------------------------------------
   def autotest_user?
-    self.class == AutotestUser
+    self.instance_of?(AutotestUser)
   end
 
   def admin_user?
-    self.class == AdminUser
+    self.instance_of?(AdminUser)
   end
 
   def set_display_name
@@ -95,7 +95,6 @@ class User < ApplicationRecord
   def set_time_zone
     self.time_zone ||= Time.zone.name
   end
-
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
   # which is in turn MD5 digested and Base64 encoded so that it doesn't
@@ -113,6 +112,7 @@ class User < ApplicationRecord
   end
 
   private
+
   # Create some random, hard to guess SHA2 512 bit long
   # digest.
   def generate_api_key

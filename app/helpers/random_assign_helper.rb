@@ -1,6 +1,6 @@
 require 'set'
 
-class UnableToRandomlyAssignGroupException < Exception
+class UnableToRandomlyAssignGroupException < RuntimeError
 end
 
 module RandomAssignHelper
@@ -160,9 +160,9 @@ module RandomAssignHelper
     groupings = Grouping.includes(:current_submission_used)
                         .where(id: @reviewees)
 
-    submission_map = Hash[groupings.map do |g|
+    submission_map = groupings.map do |g|
       [g.id, g.current_submission_used.id]
-    end]
+    end.to_h
 
     now = Time.current
     results = Result.insert_all(

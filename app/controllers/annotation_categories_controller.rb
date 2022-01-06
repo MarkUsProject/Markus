@@ -21,7 +21,7 @@ class AnnotationCategoriesController < ApplicationController
                                                .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
-      format.json {
+      format.json do
         data = @annotation_categories.map do |cat|
           {
             id: cat.id,
@@ -37,7 +37,7 @@ class AnnotationCategoriesController < ApplicationController
           }
         end
         render json: data
-      }
+      end
     end
   end
 
@@ -177,26 +177,27 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
-      when 'csv'
-        ac = prepare_for_conversion(@annotation_categories)
-        file_out = MarkusCsv.generate(
-          ac) do |annotation_category_name, annotation_texts|
-          # csv format is annotation_category.name, annotation_category.flexible_criterion,
-          # annotation_text.content[, optional: annotation_text.deduction ]
-          annotation_texts.unshift(annotation_category_name)
-        end
-        send_data file_out,
-                  filename: "#{@assignment.short_identifier}_annotations.csv",
-                  disposition: 'attachment'
-      when 'yml'
-        send_data annotation_categories_to_yml(@annotation_categories),
-                  filename: "#{@assignment.short_identifier}_annotations.yml",
-                  disposition: 'attachment'
-      else
-        flash[:error] = t('download_errors.unrecognized_format',
-                          format: params[:format])
-        redirect_to action: 'index',
-                    id: params[:id]
+    when 'csv'
+      ac = prepare_for_conversion(@annotation_categories)
+      file_out = MarkusCsv.generate(
+        ac
+      ) do |annotation_category_name, annotation_texts|
+        # csv format is annotation_category.name, annotation_category.flexible_criterion,
+        # annotation_text.content[, optional: annotation_text.deduction ]
+        annotation_texts.unshift(annotation_category_name)
+      end
+      send_data file_out,
+                filename: "#{@assignment.short_identifier}_annotations.csv",
+                disposition: 'attachment'
+    when 'yml'
+      send_data annotation_categories_to_yml(@annotation_categories),
+                filename: "#{@assignment.short_identifier}_annotations.yml",
+                disposition: 'attachment'
+    else
+      flash[:error] = t('download_errors.unrecognized_format',
+                        format: params[:format])
+      redirect_to action: 'index',
+                  id: params[:id]
     end
   end
 
@@ -289,7 +290,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @texts = annotation_text_data(nil, course: @assignment.course)
     respond_to do |format|
-      format.js {}
+      format.js
       format.json { render json: @texts }
       format.csv do
         data = MarkusCsv.generate(

@@ -1,5 +1,4 @@
 describe TestResult do
-
   it { is_expected.to belong_to(:test_group_result) }
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:status) }
@@ -46,7 +45,6 @@ describe TestResult do
     end
 
     context 'A valid test result' do
-
       it 'can be saved' do
         expect(@test_group_result).to be_valid
         expect(@test_group_result.save).to be true
@@ -103,12 +101,11 @@ describe TestResult do
 
       it 'can be deleted' do
         expect(@test_result).to be_valid
-        expect{@test_result.destroy}.to change {TestResult.count}.by(-1)
+        expect { @test_result.destroy }.to change { TestResult.count }.by(-1)
       end
     end
 
     context 'An invalid test result' do
-
       it 'has a nil output' do
         @test_result.output = nil
         expect(@test_result).not_to be_valid

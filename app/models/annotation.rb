@@ -1,19 +1,18 @@
 class Annotation < ApplicationRecord
+  belongs_to :submission_file
+  belongs_to :annotation_text
+  belongs_to :creator, polymorphic: true
+  belongs_to :result
 
-  belongs_to                :submission_file
-  belongs_to                :annotation_text
-  belongs_to                :creator, polymorphic: true
-  belongs_to                :result
+  has_one :course, through: :submission_file
 
-  has_one                   :course, through: :submission_file
+  validate :courses_should_match
+  validates_presence_of :annotation_number
+  validates_inclusion_of :is_remark, in: [true, false]
 
-  validate                  :courses_should_match
-  validates_presence_of     :annotation_number
-  validates_inclusion_of    :is_remark, in: [true, false]
-
-  validates_associated      :submission_file, on: :create
-  validates_associated      :annotation_text, on: :create
-  validates_associated      :result, on: :create
+  validates_associated :submission_file, on: :create
+  validates_associated :annotation_text, on: :create
+  validates_associated :result, on: :create
 
   validates_numericality_of :annotation_number,
                             only_integer: true,
@@ -33,7 +32,7 @@ class Annotation < ApplicationRecord
     self.result.marks.find_or_create_by(criterion: criterion).update_deduction
   end
 
-  def get_data(include_creator=false)
+  def get_data(include_creator: false)
     data = {
       id: id,
       filename: submission_file.filename,
@@ -66,7 +65,7 @@ class Annotation < ApplicationRecord
     annotation_results = result.submission.results
 
     return if annotation_results.where('results.released_to_students': true).empty? &&
-              annotation_results.where.not('remark_request_submitted_at': nil).empty?
+              annotation_results.where.not(remark_request_submitted_at: nil).empty?
 
     errors.add(:base, 'Cannot create/destroy annotation once results are released.')
     throw(:abort)

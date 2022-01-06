@@ -13,7 +13,7 @@ class MarkingScheme < ApplicationRecord
     return @grades_array unless @grades_array.nil?
 
     all_grades = get_table_json_data(current_role)
-    @grades_array = all_grades.map { |s| s[:weighted_marks][self.id][:mark] } # Note: this returns the assigned value
+    @grades_array = all_grades.map { |s| s[:weighted_marks][self.id][:mark] } # NOTE: this returns the assigned value
   end
 
   # Returns a weighted grade distribution for all students' total weighted grades
@@ -27,7 +27,7 @@ class MarkingScheme < ApplicationRecord
     distribution[0] = distribution.first + data.count { |x| x < 0 }
     distribution[-1] = distribution.last + data.count { |x| x > max }
 
-    { 'data': distribution, 'max': max }
+    { data: distribution, max: max }
   end
 
   def students_grade_distribution(current_role, intervals = 20)

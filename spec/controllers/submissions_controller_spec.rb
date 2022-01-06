@@ -94,23 +94,23 @@ describe SubmissionsController do
     end
 
     it 'should be able to add and access files' do
-      file_1 = fixture_file_upload('Shapes.java', 'text/java')
-      file_2 = fixture_file_upload('TestShapes.java', 'text/java')
+      file1 = fixture_file_upload('Shapes.java', 'text/java')
+      file2 = fixture_file_upload('TestShapes.java', 'text/java')
 
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student, :update_files,
-              params: { course_id: course.id, assignment_id: @assignment.id, new_files: [file_1, file_2] }
+              params: { course_id: course.id, assignment_id: @assignment.id, new_files: [file1, file2] }
 
       expect(response).to have_http_status :ok
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      expect(assigns :assignment).to_not be_nil
-      expect(assigns :grouping).to_not be_nil
-      expect(assigns :path).to_not be_nil
-      expect(assigns :revision).to_not be_nil
-      expect(assigns :files).to_not be_nil
-      expect(assigns :missing_assignment_files).to_not be_nil
+      expect(assigns(:assignment)).to_not be_nil
+      expect(assigns(:grouping)).to_not be_nil
+      expect(assigns(:path)).to_not be_nil
+      expect(assigns(:revision)).to_not be_nil
+      expect(assigns(:files)).to_not be_nil
+      expect(assigns(:missing_assignment_files)).to_not be_nil
 
       # Check to see if the file was added
       @grouping.group.access_repo do |repo|
@@ -234,12 +234,12 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
       # file_manager action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      expect(assigns :assignment).to_not be_nil
-      expect(assigns :grouping).to_not be_nil
-      expect(assigns :path).to_not be_nil
-      expect(assigns :revision).to_not be_nil
-      expect(assigns :files).to_not be_nil
-      expect(assigns :missing_assignment_files).to_not be_nil
+      expect(assigns(:assignment)).to_not be_nil
+      expect(assigns(:grouping)).to_not be_nil
+      expect(assigns(:path)).to_not be_nil
+      expect(assigns(:revision)).to_not be_nil
+      expect(assigns(:files)).to_not be_nil
+      expect(assigns(:missing_assignment_files)).to_not be_nil
     end
 
     it 'should render with the assignment content layout' do
@@ -248,7 +248,7 @@ describe SubmissionsController do
       expect(response).to render_template('layouts/assignment_content')
     end
 
-    # TODO figure out how to test this test into the one above
+    # TODO: figure out how to test this test into the one above
     # TODO Figure out how to remove fixture_file_upload
     it 'should be able to replace files' do
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
@@ -265,26 +265,26 @@ describe SubmissionsController do
         # revision 2
         revision = repo.get_latest_revision
         old_files = revision.files_at_path(@assignment.repository_folder)
-        old_file_1 = old_files['Shapes.java']
-        old_file_2 = old_files['TestShapes.java']
+        old_file1 = old_files['Shapes.java']
+        old_file2 = old_files['TestShapes.java']
 
-        @file_1 = fixture_file_upload('Shapes.java', 'text/java')
-        @file_2 = fixture_file_upload('TestShapes.java', 'text/java')
+        @file1 = fixture_file_upload('Shapes.java', 'text/java')
+        @file2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         post_as @student,
                 :update_files,
-                params: { course_id: course.id, assignment_id: @assignment.id, new_files: [@file_1, @file_2],
-                          file_revisions: { 'Shapes.java' => old_file_1.from_revision,
-                                            'TestShapes.java' => old_file_2.from_revision } }
+                params: { course_id: course.id, assignment_id: @assignment.id, new_files: [@file1, @file2],
+                          file_revisions: { 'Shapes.java' => old_file1.from_revision,
+                                            'TestShapes.java' => old_file2.from_revision } }
       end
       expect(response).to have_http_status :ok
 
-      expect(assigns :assignment).to_not be_nil
-      expect(assigns :grouping).to_not be_nil
-      expect(assigns :path).to_not be_nil
-      expect(assigns :revision).to_not be_nil
-      expect(assigns :files).to_not be_nil
-      expect(assigns :missing_assignment_files).to_not be_nil
+      expect(assigns(:assignment)).to_not be_nil
+      expect(assigns(:grouping)).to_not be_nil
+      expect(assigns(:path)).to_not be_nil
+      expect(assigns(:revision)).to_not be_nil
+      expect(assigns(:files)).to_not be_nil
+      expect(assigns(:missing_assignment_files)).to_not be_nil
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -293,13 +293,13 @@ describe SubmissionsController do
         expect(files['TestShapes.java']).to_not be_nil
 
         # Test to make sure that the contents were successfully updated
-        @file_1.rewind
-        @file_2.rewind
+        @file1.rewind
+        @file2.rewind
         file_1_new_contents = repo.download_as_string(files['Shapes.java'])
         file_2_new_contents = repo.download_as_string(files['TestShapes.java'])
 
-        expect(@file_1.read).to eq(file_1_new_contents)
-        expect(@file_2.read).to eq(file_2_new_contents)
+        expect(@file1.read).to eq(file_1_new_contents)
+        expect(@file2.read).to eq(file_2_new_contents)
       end
     end
 
@@ -315,24 +315,24 @@ describe SubmissionsController do
         repo.commit(txn)
         revision = repo.get_latest_revision
         old_files = revision.files_at_path(@assignment.repository_folder)
-        old_file_1 = old_files['Shapes.java']
-        old_file_2 = old_files['TestShapes.java']
+        old_file1 = old_files['Shapes.java']
+        old_file2 = old_files['TestShapes.java']
 
         post_as @student,
                 :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id, delete_files: ['Shapes.java'],
-                          file_revisions: { 'Shapes.java' => old_file_1.from_revision,
-                                            'TestShapes.java' => old_file_2.from_revision } }
+                          file_revisions: { 'Shapes.java' => old_file1.from_revision,
+                                            'TestShapes.java' => old_file2.from_revision } }
       end
 
       expect(response).to have_http_status :ok
 
-      expect(assigns :assignment).to_not be_nil
-      expect(assigns :grouping).to_not be_nil
-      expect(assigns :path).to_not be_nil
-      expect(assigns :revision).to_not be_nil
-      expect(assigns :files).to_not be_nil
-      expect(assigns :missing_assignment_files).to_not be_nil
+      expect(assigns(:assignment)).to_not be_nil
+      expect(assigns(:grouping)).to_not be_nil
+      expect(assigns(:path)).to_not be_nil
+      expect(assigns(:revision)).to_not be_nil
+      expect(assigns(:files)).to_not be_nil
+      expect(assigns(:missing_assignment_files)).to_not be_nil
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -388,7 +388,7 @@ describe SubmissionsController do
 
         # Generate submission
         submission = Submission.generate_new_submission(Grouping.last,
-                                           repo.get_latest_revision)
+                                                        repo.get_latest_revision)
         result = submission.get_latest_result
         result.marking_state = Result::MARKING_STATES[:complete]
         result.save
@@ -553,8 +553,8 @@ describe SubmissionsController do
 
           # Generate submission
           submission =
-              Submission.generate_new_submission(@grouping,
-                                                 repo.get_latest_revision)
+            Submission.generate_new_submission(@grouping,
+                                               repo.get_latest_revision)
           result = submission.get_latest_result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
@@ -590,9 +590,9 @@ describe SubmissionsController do
             collection_dates: hash_including
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                          assignment_id: @assignment.id,
-                                                          groupings: [@grouping.id, uncollected_grouping.id],
-                                                          override: true }
+                                                               assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id, uncollected_grouping.id],
+                                                               override: true }
         end
 
         it 'should collect the uncollected grouping only when override is false' do
@@ -603,9 +603,9 @@ describe SubmissionsController do
             collection_dates: hash_including
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                          assignment_id: @assignment.id,
-                                                          groupings: [@grouping.id, uncollected_grouping.id],
-                                                          override: false }
+                                                               assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id, uncollected_grouping.id],
+                                                               override: false }
         end
       end
 
@@ -730,7 +730,8 @@ describe SubmissionsController do
           it 'should get an error if it is before the section due date' do
             @assessment_section_properties.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
-              :includes, :find) { @assignment }
+              :includes, :find
+            ) { @assignment }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
@@ -740,13 +741,14 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
           end
 
           it 'should succeed if it is after the section due date' do
             @assessment_section_properties.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
-              :includes, :find) { @assignment }
+              :includes, :find
+            ) { @assignment }
             expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
@@ -755,7 +757,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
           end
         end
 
@@ -768,7 +770,8 @@ describe SubmissionsController do
           it 'should get an error if it is before the global due date' do
             @assignment.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
-              :includes, :find) { @assignment }
+              :includes, :find
+            ) { @assignment }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
@@ -778,13 +781,14 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
           end
 
           it 'should succeed if it is after the global due date' do
             @assignment.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
-              :includes, :find) { @assignment }
+              :includes, :find
+            ) { @assignment }
             expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
@@ -793,7 +797,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
           end
         end
       end
@@ -816,7 +820,8 @@ describe SubmissionsController do
         # Generate submission
         @submission = Submission.generate_new_submission(
           @grouping,
-          repo.get_latest_revision)
+          repo.get_latest_revision
+        )
       end
       get_as @instructor,
              :downloads,
@@ -825,14 +830,14 @@ describe SubmissionsController do
       expect('application/zip').to eq(response.header['Content-Type'])
       is_expected.to respond_with(:success)
       revision_identifier = @grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-      zip_path = "tmp/#{@assignment.short_identifier}_" +
+      zip_path = "tmp/#{@assignment.short_identifier}_" \
                  "#{@grouping.group.group_name}_#{revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
         file1_path = File.join("#{@assignment.short_identifier}-" +
-                                   "#{@grouping.group.group_name}",
+                                   @grouping.group.group_name.to_s,
                                @file1_name)
         file2_path = File.join("#{@assignment.short_identifier}-" +
-                                   "#{@grouping.group.group_name}",
+                                   @grouping.group.group_name.to_s,
                                @file2_name)
         expect(zip_file.find_entry(file1_path)).to_not be_nil
         expect(zip_file.find_entry(file2_path)).to_not be_nil
@@ -850,7 +855,8 @@ describe SubmissionsController do
         # Generate submission
         @submission = Submission.generate_new_submission(
           @grouping,
-          repo.get_latest_revision)
+          repo.get_latest_revision
+        )
       end
 
       request.env['HTTP_REFERER'] = 'back'
@@ -871,7 +877,8 @@ describe SubmissionsController do
         # Generate submission
         @submission = Submission.generate_new_submission(
           @grouping,
-          repo.get_latest_revision)
+          repo.get_latest_revision
+        )
       end
       request.env['HTTP_REFERER'] = 'back'
       get_as @instructor,
@@ -1183,8 +1190,8 @@ describe SubmissionsController do
       it 'should download a warning instead of the file content' do
         submission_file = submission.submission_files.find_by(filename: file2.original_filename)
         get_as instructor, :get_file, params: { course_id: course.id,
-                                           id: submission.id,
-                                           submission_file_id: submission_file.id }
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id }
         expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
         expect(JSON.parse(response.body)['content']).to eq(expected)
       end
@@ -1192,9 +1199,9 @@ describe SubmissionsController do
         it 'should download the file content' do
           submission_file = submission.submission_files.find_by(filename: file2.original_filename)
           get_as instructor, :get_file, params: { course_id: course.id,
-                                             id: submission.id,
-                                             force_text: true,
-                                             submission_file_id: submission_file.id }
+                                                  id: submission.id,
+                                                  force_text: true,
+                                                  submission_file_id: submission_file.id }
           file2.seek(0)
           actual = JSON.parse(JSON.parse(response.body)['content'])
           expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')

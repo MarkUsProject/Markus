@@ -1,6 +1,5 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-
   # A more robust flash method. Easier to add multiple messages of each type:
   # :error, :success, :warning and :notice
   def flash_message(type, text = '', flash_type = flash, **kwargs)

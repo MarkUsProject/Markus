@@ -11,7 +11,7 @@ module CourseAssociationHelper
       record.save!
     else
       record.class.reflect_on_all_associations(:has_one).each do |ref|
-        set_course!(record.send(ref.options[:through]), course) if ref.name == :course
+        set_course!(record.public_send(ref.options[:through]), course) if ref.name == :course
       end
     end
   end

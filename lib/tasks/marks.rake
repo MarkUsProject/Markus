@@ -1,7 +1,6 @@
 namespace :db do
-
   desc 'Update fake marks for assignments'
-  task :marks => :environment do
+  task marks: :environment do
     puts 'Assign Marks for Assignments 0-2'
 
     Assignment.find_by(short_identifier: 'A0').update(due_date: 24.hours.ago)
@@ -81,10 +80,9 @@ namespace :db do
       end
     end
 
-    criteria = Hash[Assignment.includes(:criteria).where('assessments.short_identifier': %w[A0 A1 A2]).map do |a|
+    criteria = Assignment.includes(:criteria).where('assessments.short_identifier': %w[A0 A1 A2]).map do |a|
       [a.id, a.criteria.pluck_to_hash(:id, :type, :max_mark)]
-    end
-    ]
+    end.to_h
 
     one_time_ids = AnnotationText.insert_all(groupings.map do |_|
       {
@@ -170,15 +168,13 @@ namespace :db do
           random_mark = criterion[:max_mark] / 4 * rand(0..4)
         elsif criterion[:type] == 'CheckboxCriterion'
           random_mark = rand(0..1)
-        else # FlexibleCriterion, which may involve a deductive annotation
-          if criterion[:id] == cat1[:criterion_id] # Deductive annotation causes mark of 0
-            random_mark = 0
-          elsif criterion[:id] == cat2[:criterion_id] # Deductive annotation is overridden
-            override = true
-            random_mark = criterion[:max_mark]
-          else
-            random_mark = rand(0..criterion[:max_mark])
-          end
+        elsif criterion[:id] == cat1[:criterion_id] # FlexibleCriterion, which may involve a deductive annotation
+          random_mark = 0 # Deductive annotation causes mark of 0
+        elsif criterion[:id] == cat2[:criterion_id] # Deductive annotation is overridden
+          override = true
+          random_mark = criterion[:max_mark]
+        else
+          random_mark = rand(0..criterion[:max_mark])
         end
         total_mark += random_mark
         marks << {

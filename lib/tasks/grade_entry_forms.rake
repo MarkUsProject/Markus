@@ -11,11 +11,14 @@ namespace :db do
     )
 
     grade_entry_form.grade_entry_items << GradeEntryItem.new(
-      name: 'Q1', out_of: 3, position: 1)
+      name: 'Q1', out_of: 3, position: 1
+    )
     grade_entry_form.grade_entry_items << GradeEntryItem.new(
-      name: 'Q2', out_of: 4, position: 2)
+      name: 'Q2', out_of: 4, position: 2
+    )
     grade_entry_form.grade_entry_items << GradeEntryItem.new(
-      name: 'Q3', out_of: 5, position: 3)
+      name: 'Q3', out_of: 5, position: 3
+    )
     grade_entry_form.grade_entry_items.each { |item| item.save validate: false }
     grade_entry_form.save validate: false
 
@@ -30,11 +33,14 @@ namespace :db do
     )
 
     grade_entry_form.grade_entry_items << GradeEntryItem.new(
-      name: 'Q1', out_of: 6, position: 1)
+      name: 'Q1', out_of: 6, position: 1
+    )
     grade_entry_form.grade_entry_items << GradeEntryItem.new(
-      name: 'Q2', out_of: 7, position: 2)
+      name: 'Q2', out_of: 7, position: 2
+    )
     grade_entry_form.grade_entry_items << GradeEntryItem.new(
-      name: 'Q3', out_of: 8, position: 3)
+      name: 'Q3', out_of: 8, position: 3
+    )
     grade_entry_form.grade_entry_items.each { |item| item.save validate: false }
     grade_entry_form.save validate: false
   end

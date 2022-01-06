@@ -113,7 +113,7 @@ describe CourseSummariesController do
               first_name: student.first_name,
               last_name: student.last_name,
               hidden: student.hidden,
-              assessment_marks: Hash[GradeEntryForm.all.map do |ges|
+              assessment_marks: GradeEntryForm.all.map do |ges|
                 total_grade = ges.grade_entry_students.find_by(role: student).total_grade
                 out_of = ges.grade_entry_items.sum(:out_of)
                 percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
@@ -121,8 +121,7 @@ describe CourseSummariesController do
                   mark: total_grade,
                   percentage: percent
                 }]
-              end
-              ]
+              end.to_h
             }
             student.accepted_groupings.each do |g|
               expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
@@ -214,7 +213,6 @@ describe CourseSummariesController do
           student = grouping.inviter
           gef = GradeEntryForm.all.first
           gef.update(is_hidden: false)
-          averages = [nil, assignment.results_average&.round(2)]
           expected_assessment_marks = {}
           expected_assessment_marks[assignment.id.to_s] = {
             'mark' => grouping.current_result.total_mark,

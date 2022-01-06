@@ -1,6 +1,4 @@
-
 class DateValidator < ActiveModel::EachValidator
-
   def validate_each(record, attribute, value)
     if Time.zone.parse(value.to_s).nil? &&
        !record.read_attribute_before_type_cast(attribute).blank?
@@ -8,5 +6,4 @@ class DateValidator < ActiveModel::EachValidator
       false
     end
   end
-
 end

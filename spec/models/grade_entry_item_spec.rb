@@ -1,5 +1,4 @@
 describe GradeEntryItem do
-
   context 'checks relationships' do
     it { is_expected.to belong_to(:grade_entry_form) }
     it { is_expected.to have_many(:grades).dependent(:delete_all) }

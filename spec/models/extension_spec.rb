@@ -23,7 +23,7 @@ describe Extension do
     it 'should return the time_delta attribute calculated as PARTS' do
       time_delta = extension.time_delta
       parts = extension.to_parts
-      duration_from_parts = Extension::PARTS.map { |part| parts[part].to_i.send(part) }.sum
+      duration_from_parts = Extension::PARTS.map { |part| parts[part].to_i.public_send(part) }.sum
       expect(time_delta).to eq(duration_from_parts)
     end
     it 'should return only the parts in PARTS' do
@@ -31,10 +31,10 @@ describe Extension do
     end
   end
   describe '.to_parts' do
-    let(:duration) { Extension::PARTS.map { |part| rand(1..10).send(part) }.sum }
+    let(:duration) { Extension::PARTS.map { |part| rand(1..10).public_send(part) }.sum }
     it 'should return the duration calculated as PARTS' do
       parts = Extension.to_parts duration
-      duration_from_parts = Extension::PARTS.map { |part| parts[part].to_i.send(part) }.sum
+      duration_from_parts = Extension::PARTS.map { |part| parts[part].to_i.public_send(part) }.sum
       expect(duration).to eq(duration_from_parts)
     end
     it 'should return only the parts in PARTS' do

@@ -3,7 +3,7 @@ FactoryBot.define do
     association :exam_template, factory: :exam_template_midterm
     association :assignment_file
     start { 1 }
-    self.send('end') { 1 }
+    add_attribute(:end) { 1 }
     label { 'section' }
   end
 end

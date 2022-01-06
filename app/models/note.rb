@@ -9,7 +9,7 @@ class Note < ApplicationRecord
   has_one :course, through: :role
   validate :courses_should_match
 
-  NOTEABLES = %w(Grouping Student Assignment)
+  NOTEABLES = %w[Grouping Student Assignment].freeze
 
   def format_date
     I18n.l(created_at)

@@ -95,7 +95,7 @@ describe RubricCriterion do
         row = %w[name 1.0]
         levels = 5
         (0..levels).each do |i|
-          row << 'name' + i.to_s
+          row << "name#{i}"
           it 'raises' do
             expect do
               RubricCriterion.create_or_update_from_csv_row(row, @assignment)
@@ -130,9 +130,9 @@ describe RubricCriterion do
         rubric_levels = 5
         # order is name, number, description, mark
         (0..rubric_levels - 1).each do |i|
-          row << 'name' + i.to_s
+          row << "name#{i}"
           # ...containing commas and quotes in the descriptions
-          row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
+          row << "description#{i} with comma (,) and \"\"quotes\"\""
           row << i + 10
         end
         @csv_base_row = row
@@ -162,7 +162,7 @@ describe RubricCriterion do
             @criterion.levels.size.times do |i|
               row << names[i]
               # ...containing commas and quotes in the descriptions
-              row << 'new description number ' + i.to_s
+              row << "new description number #{i}"
               row << i + 0.5
             end
 
@@ -172,7 +172,7 @@ describe RubricCriterion do
             expect(levels.length).to eq(5)
             levels.size.times do |i|
               expect(names[i]).to eq(levels[i].name)
-              expect('new description number ' + i.to_s).to eq(levels[i].description)
+              expect("new description number #{i}").to eq(levels[i].description)
               expect(i + 0.5).to eq(levels[i].mark)
             end
           end

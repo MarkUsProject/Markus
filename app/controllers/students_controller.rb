@@ -8,7 +8,7 @@ class StudentsController < ApplicationController
   def index
     respond_to do |format|
       format.html
-      format.json {
+      format.json do
         student_data = current_course.students.includes(:grace_period_deductions, :section).map do |s|
           {
             _id: s.id,
@@ -23,7 +23,7 @@ class StudentsController < ApplicationController
             remaining_grace_credits: s.remaining_grace_credits
           }
         end
-        sections = Hash[current_course.sections.pluck(:id, :name)]
+        sections = current_course.sections.pluck(:id, :name).to_h
         render json: {
           students: student_data,
           sections: sections,
@@ -33,7 +33,7 @@ class StudentsController < ApplicationController
             inactive: current_course.students.inactive.size
           }
         }
-      }
+      end
     end
   end
 
@@ -89,35 +89,35 @@ class StudentsController < ApplicationController
   # triggered by clicking on the "add a new section" link in the new student page
   # please keep.
   def add_new_section
-     @section = Section.new
+    @section = Section.new
   end
 
   def download
     students = current_course.students.joins(:end_user).order('users.user_name').includes(:section)
     case params[:format]
-      when 'csv'
-        output = MarkusCsv.generate(students) do |student|
-          Student::CSV_ORDER.map do |field|
-            if field == :section_name
-              student.section&.name
-            else
-              student.send(field)
-            end
+    when 'csv'
+      output = MarkusCsv.generate(students) do |student|
+        Student::CSV_ORDER.map do |field|
+          if field == :section_name
+            student.section&.name
+          else
+            student.public_send(field)
           end
         end
-        format = 'text/csv'
-      else
-        output = []
-        students.each do |student|
-          output.push(user_name: student.user_name,
-                      last_name: student.last_name,
-                      first_name: student.first_name,
-                      email: student.email,
-                      id_number: student.id_number,
-                      section_name: student.section&.name)
-        end
-        output = output.to_yaml
-        format = 'text/yaml'
+      end
+      format = 'text/csv'
+    else
+      output = []
+      students.each do |student|
+        output.push(user_name: student.user_name,
+                    last_name: student.last_name,
+                    first_name: student.first_name,
+                    email: student.email,
+                    id_number: student.id_number,
+                    section_name: student.section&.name)
+      end
+      output = output.to_yaml
+      format = 'text/yaml'
     end
     send_data(output,
               type: format,

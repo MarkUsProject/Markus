@@ -14,8 +14,8 @@ class Extension < ApplicationRecord
   def self.to_parts(duration)
     duration = duration.to_i
     PARTS.map do |part|
-      amt = (duration / 1.send(part)).to_i
-      duration -= amt.send(part)
+      amt = (duration / 1.public_send(part)).to_i
+      duration -= amt.public_send(part)
       [part, amt]
     end.to_h
   end

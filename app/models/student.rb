@@ -1,6 +1,5 @@
 # Student user for a given course.
 class Student < Role
-
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
   has_many :grade_entry_students, foreign_key: :role_id
@@ -12,7 +11,10 @@ class Student < Role
            class_name: 'Membership',
            foreign_key: :role_id
   has_many :accepted_groupings,
-           -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           -> {
+             where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted],
+                                                       StudentMembership::STATUSES[:inviter]]
+           },
            class_name: 'Grouping',
            through: :memberships,
            source: :grouping
@@ -75,7 +77,7 @@ class Student < Role
   end
 
   def remaining_grace_credits
-    return @remaining_grace_credits if !@remaining_grace_credits.nil?
+    return @remaining_grace_credits unless @remaining_grace_credits.nil?
     total_deductions = 0
     grace_period_deductions.each do |grace_period_deduction|
       total_deductions += grace_period_deduction.deduction
@@ -84,7 +86,7 @@ class Student < Role
   end
 
   def display_for_note
-    end_user.user_name + ': ' + end_user.last_name + ', ' + end_user.first_name
+    "#{end_user.user_name}: #{end_user.last_name}, #{end_user.first_name}"
   end
 
   # invites a student
@@ -129,12 +131,12 @@ class Student < Role
       unless @group.save
         m_logger = MarkusLogger.instance
         m_logger.log("Could not create a group for Student '#{user_name}'."\
-            " The group was #{@group.inspect} - errors:"\
-            " #{@group.errors.inspect}", MarkusLogger::ERROR)
+                     " The group was #{@group.inspect} - errors:"\
+                     " #{@group.errors.inspect}", MarkusLogger::ERROR)
         raise 'Sorry!  For some reason, your group could not be created.'\
-            '  Please wait a few seconds, then hit refresh to try again.  If'\
-            ' you come back to this page, you should inform the course'\
-            ' instructor.'
+              '  Please wait a few seconds, then hit refresh to try again.  If'\
+              ' you come back to this page, you should inform the course'\
+              ' instructor.'
       end
 
       # a grouping can be found if the student has an (empty) existing grouping that he is not a member of
@@ -143,11 +145,11 @@ class Student < Role
       unless @grouping.save
         m_logger = MarkusLogger.instance
         m_logger.log("Could not create a grouping for Student '#{user_name}'"\
-          ". The grouping was:  #{@grouping.inspect} - errors: "\
-          "#{@grouping.errors.inspect}", MarkusLogger::ERROR)
+                     ". The grouping was:  #{@grouping.inspect} - errors: "\
+                     "#{@grouping.errors.inspect}", MarkusLogger::ERROR)
         raise 'Sorry!  For some reason, your grouping could not be created. '\
-          ' Please wait a few seconds, and hit refresh to try again.  If you'\
-          ' come back to this page, you should inform the course instructor.'
+              ' Please wait a few seconds, and hit refresh to try again.  If you'\
+              ' come back to this page, you should inform the course instructor.'
       end
 
       # Create the membership
@@ -194,7 +196,7 @@ class Student < Role
   def self.hide_students(student_id_list)
     update_list = {}
     student_id_list.each do |student_id|
-      update_list[student_id] = {hidden: true}
+      update_list[student_id] = { hidden: true }
     end
     Student.update(update_list.keys, update_list.values)
   end
@@ -204,7 +206,7 @@ class Student < Role
   def self.unhide_students(student_id_list)
     update_list = {}
     student_id_list.each do |student_id|
-      update_list[student_id] = {hidden: false}
+      update_list[student_id] = { hidden: false }
     end
     Student.update(update_list.keys, update_list.values)
   end
@@ -228,7 +230,7 @@ class Student < Role
   # Updates the section of a list of students
   def self.update_section(students_ids, nsection)
     students_ids.each do |sid|
-      Student.update(sid, {section_id: nsection})
+      Student.update(sid, { section_id: nsection })
     end
   end
 

@@ -20,8 +20,8 @@ class GradeEntryStudentTa < ApplicationRecord
     ta_ids = Ta.where(id: Array(ta_ids)).pluck(:id)
     # Get all existing associations to avoid violating the unique constraint.
     existing_values = GradeEntryStudentTa
-      .where(grade_entry_student_id: grade_entry_student_ids, ta_id: ta_ids)
-      .pluck(:grade_entry_student_id, :ta_id)
+                      .where(grade_entry_student_id: grade_entry_student_ids, ta_id: ta_ids)
+                      .pluck(:grade_entry_student_id, :ta_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(grade_entry_student_ids, ta_ids) - existing_values
@@ -45,10 +45,9 @@ class GradeEntryStudentTa < ApplicationRecord
     end
 
     new_mappings = []
-    tas = Hash[grade_entry_form.course.tas.joins(:end_user).pluck('users.user_name', :id)]
-    grade_entry_students = Hash[
-      grade_entry_form.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id)
-    ]
+    tas = grade_entry_form.course.tas.joins(:end_user).pluck('users.user_name', :id).to_h
+    grade_entry_students = grade_entry_form.grade_entry_students.joins(role: :end_user).pluck('users.user_name',
+                                                                                              :id).to_h
 
     result = MarkusCsv.parse(csv_data.read) do |row|
       raise CsvInvalidLineError if row.empty?

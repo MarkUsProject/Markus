@@ -31,7 +31,7 @@ class Course < ApplicationRecord
       map[:assignments] = assignments.map do |assignment|
         m = {}
         Assignment::DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
+          m[f] = assignment.public_send(f)
         end
         m
       end
@@ -39,7 +39,7 @@ class Course < ApplicationRecord
     when 'csv'
       MarkusCsv.generate(assignments) do |assignment|
         Assignment::DEFAULT_FIELDS.map do |f|
-          assignment.send(f)
+          assignment.public_send(f)
         end
       end
     end
@@ -48,9 +48,9 @@ class Course < ApplicationRecord
   def upload_assignment_list(file_format, assignment_data)
     case file_format
     when 'csv'
-      result = MarkusCsv.parse(assignment_data) do |row|
+      MarkusCsv.parse(assignment_data) do |row|
         assignment = self.assignments.find_or_create_by(short_identifier: row[0])
-        attrs = Hash[Assignment::DEFAULT_FIELDS.zip(row)]
+        attrs = Assignment::DEFAULT_FIELDS.zip(row).to_h
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
           assignment.assignment_properties.repository_folder = row[0]
@@ -60,7 +60,7 @@ class Course < ApplicationRecord
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
       end
-      result
+
     when 'yml'
       begin
         map = assignment_data.deep_symbolize_keys

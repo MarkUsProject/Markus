@@ -12,7 +12,6 @@ Bundler.require(*Rails.groups)
 # the framework and any gems in your application.
 module Markus
   class Application < Rails::Application
-
     # Initialize configuration defaults for originally generated Rails version
     config.load_defaults 6.0
 
@@ -92,7 +91,7 @@ module Markus
 
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
-    # TODO review initializers 01 and 02
+    # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib
     # TODO migrate all javascript to webpack

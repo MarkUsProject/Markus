@@ -25,7 +25,7 @@ class AutotestSetup
     script_dir = File.join(root_dir, 'script_files')
     @test_scripts = Dir.glob(File.join(script_dir, '*'))
     @specs_file = File.join(root_dir, 'specs.json')
-    @specs_data = JSON.parse(File.open(@specs_file, &:read))
+    @specs_data = JSON.parse(File.read(@specs_file))
 
     @student_dir = File.join(root_dir, 'student_files')
     @student_files = Dir.glob(File.join(@student_dir, '*'))
@@ -61,7 +61,7 @@ class AutotestSetup
         token_period: 1,
         enable_student_tests: true,
         unlimited_tokens: true
-      },
+      }
     )
   end
 
@@ -88,7 +88,7 @@ class AutotestSetup
     marking_scheme = MarkingScheme.find_or_create_by(name: 'Scheme Autotest')
     marking_weight = MarkingWeight.find_or_create_by(
       assessment_id: @assignment.id,
-      weight: 1,
+      weight: 1
     )
     marking_scheme.marking_weights << marking_weight
   end

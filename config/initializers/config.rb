@@ -45,7 +45,7 @@ Config.setup do |config|
   config.env_parse_values = true
 
   # Validate presence and type of specific config values. Check https://github.com/dry-rb/dry-validation for details.
-  unless ENV.fetch('NO_SCHEMA_VALIDATE') { false }
+  unless ENV.fetch('NO_SCHEMA_VALIDATE', false)
     config.schema do
       required(:rails).hash do
         required(:time_zone).value(included_in?: ActiveSupport::TimeZone::MAPPING.keys)

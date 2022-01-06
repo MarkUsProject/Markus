@@ -1,11 +1,10 @@
 class StudentMembership < Membership
-
   STATUSES = {
     accepted: 'accepted',
     inviter: 'inviter',
     pending: 'pending',
     rejected: 'rejected'
-  }
+  }.freeze
 
   scope :accepted,
         -> { where membership_status: STATUSES[:accepted] }
@@ -66,7 +65,7 @@ class StudentMembership < Membership
     access = [STATUSES[:accepted], STATUSES[:inviter]]
     no_access = [STATUSES[:pending], STATUSES[:rejected]]
     if access.include?(old) && no_access.include?(new) || access.include?(new) && no_access.include?(old)
-       Repository.get_class.update_permissions
+      Repository.get_class.update_permissions
     end
   end
 

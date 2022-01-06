@@ -9,13 +9,13 @@ class Tag < ApplicationRecord
   # Constants
   NUM_CSV_FIELDS = 3
 
-  def ==(another_tag)
-    description == another_tag.description &&
-        name == another_tag.name
+  def ==(other)
+    description == other.description &&
+        name == other.name
   end
 
   def self.from_csv(data, course, assignment_id)
-    instructors = Hash[course.instructors.joins(:end_user).pluck(:user_name, 'roles.id')]
+    instructors = course.instructors.joins(:end_user).pluck(:user_name, 'roles.id').to_h
     tag_data = []
     result = MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
@@ -35,8 +35,8 @@ class Tag < ApplicationRecord
     result
   end
 
-  def self.from_yml(data, course, assignment_id, allow_ta_upload = false)
-    instructors = Hash[course.instructors.joins(:end_user).pluck(:user_name, 'roles.id')]
+  def self.from_yml(data, course, assignment_id, allow_ta_upload: false)
+    instructors = course.instructors.joins(:end_user).pluck(:user_name, 'roles.id').to_h
     begin
       tag_data = data.map do |row|
         row = row.symbolize_keys

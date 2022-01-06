@@ -32,13 +32,13 @@ describe CriterionTaAssociation do
     it 'should not create a ta that does not exist' do
       file = file_fixture('criteria_ta_association/bad_ta.csv')
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.not_to(
-          change { CriterionTaAssociation.count }
+        change { CriterionTaAssociation.count }
       )
     end
     it 'should not create a criterion that does not exist' do
       file = file_fixture('criteria_ta_association/bad_criterion.csv')
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.not_to(
-          change { CriterionTaAssociation.count }
+        change { CriterionTaAssociation.count }
       )
     end
     it 'should update criterion coverage counts' do
@@ -46,7 +46,7 @@ describe CriterionTaAssociation do
       grouping = create(:grouping, assignment: criterion.assignment)
       create :ta_membership, grouping: grouping, role: grader
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.to(
-          change { grouping.reload.criteria_coverage_count }
+        change { grouping.reload.criteria_coverage_count }
       )
     end
     it 'should update assigned groups counts' do
@@ -54,7 +54,7 @@ describe CriterionTaAssociation do
       grouping = create(:grouping, assignment: criterion.assignment)
       create :ta_membership, grouping: grouping, role: grader
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.to(
-          change { criterion.reload.assigned_groups_count }
+        change { criterion.reload.assigned_groups_count }
       )
     end
   end

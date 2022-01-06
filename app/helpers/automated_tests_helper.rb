@@ -79,7 +79,7 @@ module AutomatedTestsHelper
     end
   ensure
     # save modified specs
-    File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }
+    File.write(test_specs_path, test_specs.to_json)
   end
 
   def server_params(markus_address, assignment_id)
@@ -205,7 +205,8 @@ module AutomatedTestsHelper
       markus_address = get_markus_address(host_with_port)
       file_urls = group_ids.map do |id_|
         param = collected ? 'collected=true' : ''
-        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/groups/#{id_}/submission_files?#{param}"
+        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/"\
+          "groups/#{id_}/submission_files?#{param}"
       end
       req.body = {
         file_urls: file_urls,

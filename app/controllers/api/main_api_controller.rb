@@ -1,10 +1,10 @@
 # Scripting API handlers for MarkUs
 module Api
-
   # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
   class MainApiController < ActionController::Base
-    include ActionPolicy::Controller, SessionHandler
+    include SessionHandler
+    include ActionPolicy::Controller
 
     before_action :check_format, :check_record, :authenticate
     skip_before_action :verify_authenticity_token
@@ -26,6 +26,7 @@ module Api
     end
 
     private
+
     # Auth handler for the MarkUs API. It uses the Authorization HTTP header to
     # determine the user who issued the request. With the Authorization
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
@@ -54,11 +55,9 @@ module Api
 
     # Helper method for parsing the authentication token
     def parse_auth_token(token)
-      return nil if token.nil?
+      return if token.nil?
       if token =~ /#{AUTHTYPE} ([^\s,]+)/
-        $1 # return matched part
-      else
-        nil
+        Regexp.last_match(1) # return matched part
       end
     end
 
@@ -98,4 +97,4 @@ module Api
       OpenStruct.new policy_class: MainApiPolicy
     end
   end
-end # end Api module
+end

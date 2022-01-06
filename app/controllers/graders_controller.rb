@@ -3,10 +3,10 @@ class GradersController < ApplicationController
   # The names of the associations of groupings required by the view, which
   # should be eagerly loaded.
   GROUPING_ASSOC = [:group, :students,
-                    ta_memberships: :role, inviter: :section]
+                    { ta_memberships: :role, inviter: :section }].freeze
   # The names of the associations of criteria required by the view, which
   # should be eagerly loaded.
-  CRITERION_ASSOC = [criterion_ta_associations: :ta]
+  CRITERION_ASSOC = [criterion_ta_associations: :ta].freeze
 
   before_action { authorize! }
 
@@ -74,7 +74,7 @@ class GradersController < ApplicationController
               filename: "#{assignment.short_identifier}_grader_criteria_mapping.csv"
   end
 
-  #These actions act on all currently selected graders & groups
+  # These actions act on all currently selected graders & groups
   def global_actions
     @assignment = Assignment.find(params[:assignment_id])
     grader_ids = params[:graders]
