@@ -2,6 +2,7 @@
 
 ## [v2.0.2]
 - Fix bug in displaying feedback files for test results (#5719)
+- Require starter group names to be unique for an assignment (#5721)
 - Fix bug in updating the autotester url for a given course (#5724)
 
 ## [v2.0.1]

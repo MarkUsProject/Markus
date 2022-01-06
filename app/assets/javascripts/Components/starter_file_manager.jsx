@@ -51,9 +51,6 @@ class StarterFileManager extends React.Component {
         this.props.course_id,
         this.props.assignment_id
       ),
-      data: {
-        name: I18n.t("assignments.starter_file.new_starter_file_group"),
-      },
     }).then(this.fetchData);
   };
 
@@ -200,15 +197,14 @@ class StarterFileManager extends React.Component {
   renderFileManagers = () => {
     return (
       <React.Fragment>
-        {Object.entries(this.state.files).map((data, index) => {
+        {Object.entries(this.state.files).map(data => {
           const {id, name, files} = data[1];
           return (
-            <fieldset key={index}>
+            <fieldset key={id}>
               <legend>
                 <StarterFileGroupName
                   name={name}
                   groupUploadTarget={id}
-                  index={index}
                   changeGroupName={this.changeGroupName}
                 />
               </legend>
@@ -342,11 +338,11 @@ class StarterFileManager extends React.Component {
             value={this.state.defaultStarterFileGroup}
             disabled={!this.state.files.length}
           >
-            {Object.entries(this.state.files).map((data, index) => {
+            {Object.entries(this.state.files).map(data => {
               const {id, name} = data[1];
               return (
                 <option value={id} key={id}>
-                  {index + 1}: {name}
+                  {name}
                 </option>
               );
             })}
@@ -374,12 +370,12 @@ class StarterFileManager extends React.Component {
                       disabled={!this.state.files.length}
                     >
                       <option value={`${row.original.section_id}_`} />
-                      {Object.entries(this.state.files).map((data, index) => {
+                      {Object.entries(this.state.files).map(data => {
                         const {id, name} = data[1];
                         const value = `${row.original.section_id}_${id}`;
                         return (
                           <option value={value} key={id}>
-                            {index + 1}: {name}
+                            {name}
                           </option>
                         );
                       })}
@@ -409,7 +405,7 @@ class StarterFileManager extends React.Component {
           columns={[
             {
               Header: I18n.t("activerecord.models.starter_file_group.one"),
-              Cell: row => `${row.index + 1}: ${row.original.name}`,
+              Cell: row => row.original.name,
             },
             {
               Header: I18n.t("assignments.starter_file.rename"),
@@ -554,7 +550,6 @@ class StarterFileGroupName extends React.Component {
     } else {
       return (
         <h3>
-          {`${this.props.index + 1}: `}
           <a
             href={"#"}
             onClick={() => {
