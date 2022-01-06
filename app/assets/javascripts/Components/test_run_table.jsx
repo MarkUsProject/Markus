@@ -127,7 +127,11 @@ export class TestRunTable extends React.Component {
             row.original["test_runs.problems"] ? (
               row.original["test_runs.problems"]
             ) : (
-              <TestGroupResultTable key={row.original.id_} data={row.original["test_results"]} />
+              <TestGroupResultTable
+                key={row.original.id_}
+                data={row.original["test_results"]}
+                course_id={this.props.course_id}
+              />
             )
           }
           noDataText={I18n.t("automated_tests.no_results")}
@@ -293,7 +297,9 @@ class TestGroupResultTable extends React.Component {
     });
     let feedbackFileDisplay;
     if (feedbackFiles.length) {
-      feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles} />;
+      feedbackFileDisplay = (
+        <TestGroupFeedbackFileTable data={feedbackFiles} course_id={this.props.course_id} />
+      );
     } else {
       feedbackFileDisplay = "";
     }
