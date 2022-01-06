@@ -2,32 +2,14 @@ import React from "react";
 import {markupTextInRange} from "../Helpers/range_selector";
 
 export class NotebookViewer extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      annotations: [],
-    };
-  }
-
   componentDidMount() {
     if (this.props.resultView) {
       this.readyAnnotations();
     }
   }
 
-  getSelection = () => {
-    const iframe = document.getElementById("notebook");
-    const target = iframe.contentWindow || iframe.contentDocument;
-    const range = target.getSelection().getRangeAt(0);
-    this.setState(prevState => ({
-      annotations: prevState.annotations.concat([range]),
-    }));
-    markupTextInRange(range, "yellow");
-  };
-
   readyAnnotations = () => {
     annotation_type = ANNOTATION_TYPES.NOTEBOOK;
-    // this.renderAnnotations()
   };
 
   renderAnnotations = () => {
@@ -46,7 +28,12 @@ export class NotebookViewer extends React.Component {
   render() {
     return (
       <div>
-        <iframe className={"notebook"} id={"notebook"} src={this.props.url + "&preview=true"} />
+        <iframe
+          className={"notebook"}
+          id={"notebook"}
+          onLoad={this.renderAnnotations}
+          src={this.props.url + "&preview=true"}
+        />
       </div>
     );
   }
