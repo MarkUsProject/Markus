@@ -9,9 +9,13 @@ class StarterFileGroup < ApplicationRecord
   after_destroy_commit :delete_files
   after_create_commit :create_dir
   before_validation :sanitize_rename_entry
+  before_validation :set_name, on: :create
   before_destroy :update_default
   before_destroy :warn_affected_groupings, prepend: true
   after_save :update_timestamp
+
+  validates_presence_of :name
+  validates_uniqueness_of :name, scope: :assessment_id
 
   validates_exclusion_of :entry_rename, in: %w[.. .]
   validates_presence_of :entry_rename, if: -> { self.use_rename }
@@ -103,5 +107,18 @@ class StarterFileGroup < ApplicationRecord
 
   def update_timestamp
     assignment.assignment_properties.update(starter_file_updated_at: Time.current)
+  end
+
+  def set_name
+    return if self.name || self.assignment.nil?
+
+    current_names = self.assignment.starter_file_groups.pluck(:name).to_set
+    new_name = I18n.t('assignments.starter_file.new_starter_file_group')
+    i = 1
+    while current_names.include? new_name
+      new_name = "#{I18n.t('assignments.starter_file.new_starter_file_group')} (#{i})"
+      i += 1
+    end
+    self.name = new_name
   end
 end
