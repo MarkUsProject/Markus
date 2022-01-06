@@ -1,9 +1,10 @@
 # Changelog
 
 ## [unreleased]
-
 - Fix bug in displaying feedback files for test results (#5719)
 - Require starter group names to be unique for an assignment (#5721)
+- Fix bug in updating the autotester url for a given course (#5724)
+- Remove unmaintained locales (#5727)
 
 ## [v2.0.1]
 - Fix bug where a login with remote authentication failed to redirect to the landing page (#5690)

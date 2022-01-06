@@ -1,9 +1,0 @@
----
-pt:
-  activerecord:
-    attributes:
-      extensions:
-        note: Nota
-    models:
-      extensions:
-        one: Extensão

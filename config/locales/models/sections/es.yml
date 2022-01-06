@@ -1,9 +1,0 @@
----
-es:
-  activerecord:
-    attributes:
-      section:
-        name: Nombre
-    models:
-      section:
-        one: Sección
