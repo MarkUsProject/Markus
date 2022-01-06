@@ -170,8 +170,8 @@ class SubmissionFileManager extends React.Component {
     this.setState({showUploadModal: true, uploadTarget: uploadTarget});
   };
 
-  openSubmitURLModal = uploadTarget => {
-    this.setState({showURLModal: true, uploadTarget: uploadTarget});
+  openSubmitURLModal = () => {
+    this.setState({showURLModal: true});
   };
 
   updateViewFile = item => {
@@ -250,7 +250,7 @@ class SubmissionFileManager extends React.Component {
         />
         <SubmitUrlUploadModal
           isOpen={this.state.showURLModal}
-          onRequestClose={() => this.setState({showURLModal: false, uploadTarget: undefined})}
+          onRequestClose={() => this.setState({showURLModal: false})}
           onSubmit={this.handleCreateUrl}
         />
         {this.renderFileViewer()}
