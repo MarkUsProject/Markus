@@ -112,10 +112,10 @@ class Course < ApplicationRecord
   end
 
   def update_autotest_url(url)
-    autotest_setting = AutotestSetting.find_or_create_by!(url)
-    if autotest_setting.id != self.autotest_setting.id
+    autotest_setting = AutotestSetting.find_or_create_by!(url: url)
+    if autotest_setting.id != self.autotest_setting&.id
       self.update!(autotest_setting_id: autotest_setting.id)
-      AssignmentProperties.where(assessment_id: self.ids).update_all(autotest_settings_id: nil)
+      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(autotest_settings_id: nil)
     end
   end
 end

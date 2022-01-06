@@ -4,15 +4,6 @@ describe UsersController do
 
   shared_examples 'settings' do
     describe '#update_settings' do
-      it 'updates locale' do
-        I18n.locale = :en
-        locale = 'es'
-        patch_as user, 'update_settings', params: { user: { locale: locale } }
-
-        expect(user.reload.locale).to eq locale
-        expect(I18n.locale).to eq locale.to_sym
-      end
-
       it 'updates display_name' do
         display_name = 'First Last'
         patch_as user,

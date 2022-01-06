@@ -1,7 +1,0 @@
----
-es:
-  activerecord:
-    models:
-      starter_file_group:
-        one: UPDATE ME
-        other: UPDATE ME
