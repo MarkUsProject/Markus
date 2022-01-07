@@ -54,27 +54,36 @@ function getLeafNodes(root, _nodes) {
   return _nodes;
 }
 
-export function absoluteXpath(node) {
-  if (node.parentNode) {
+export function pathToNode(node) {
+  if (node.id) {
+    return `//*[@id="${node.id}"]`;
+  } else if (node.parentNode) {
     if (node.nodeType === 3) {
-      return `${absoluteXpath(node.parentNode)}/text()`;
+      return `${pathToNode(node.parentNode)}/text()`;
     } else {
       const index = [...node.parentNode.childNodes]
         .filter(n => n.tagName === node.tagName)
         .indexOf(node);
-      return `${absoluteXpath(node.parentNode)}/${node.tagName}[${index + 1}]`;
+      return `${pathToNode(node.parentNode)}/${node.tagName}[${index + 1}]`;
     }
   } else {
     return "";
   }
 }
 
-export function markupTextInRange(range, colour) {
+function addMouseOverToNode(node, content) {
+  node.addEventListener("mouseover", () => {
+    // TODO: show content (rendered with MathJax) when hovering
+  });
+}
+
+export function markupTextInRange(range, colour, content) {
   if (range.startContainer === range.endContainer) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
+    let new_node;
     if (old_node.nodeType === 3) {
-      const new_node = document.createElement("span");
+      new_node = document.createElement("span");
       new_node.style.backgroundColor = colour;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
       const marked = document.createTextNode(
@@ -86,17 +95,19 @@ export function markupTextInRange(range, colour) {
       parent.insertBefore(new_node, unmarked1.nextSibling);
       parent.insertBefore(unmarked2, new_node.nextSibling);
     } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
-      const new_node = document.createElement("div");
+      new_node = document.createElement("div");
       new_node.style.border = `5px solid ${colour}`;
       new_node.appendChild(old_node.cloneNode(true));
       parent.replaceChild(new_node, old_node);
     }
+    addMouseOverToNode(new_node, content);
   } else {
     getAllNodesInRange(range).forEach(node => {
       getLeafNodes(node).forEach(old_node => {
         const parent = old_node.parentNode;
+        let new_node;
         if (old_node.nodeType === 3) {
-          const new_node = document.createElement("span");
+          new_node = document.createElement("span");
           new_node.style.backgroundColor = colour;
           if (old_node === range.startContainer) {
             const unmarked = document.createTextNode(
@@ -119,11 +130,12 @@ export function markupTextInRange(range, colour) {
             parent.replaceChild(new_node, old_node);
           }
         } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
-          const new_node = document.createElement("div");
+          new_node = document.createElement("div");
           new_node.style.border = `5px solid ${colour}`;
           new_node.appendChild(old_node.cloneNode(true));
           parent.replaceChild(new_node, old_node);
         }
+        addMouseOverToNode(new_node, content);
       });
     });
   }

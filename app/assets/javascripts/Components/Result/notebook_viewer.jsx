@@ -21,7 +21,7 @@ export class NotebookViewer extends React.Component {
       const newRange = doc.createRange();
       newRange.setStart(start_node, annotation.start_offset);
       newRange.setEnd(end_node, annotation.end_offset);
-      markupTextInRange(range, "yellow");
+      markupTextInRange(newRange, "yellow", annotation.content);
     });
   };
 
@@ -31,6 +31,7 @@ export class NotebookViewer extends React.Component {
         <iframe
           className={"notebook"}
           id={"notebook"}
+          key={this.props.annotations} // reload the iframe when the annotations change
           onLoad={this.renderAnnotations}
           src={this.props.url + "&preview=true"}
         />
