@@ -226,8 +226,7 @@ class MemoryRepository < Repository::AbstractRepository
     expanded
   end
 
-  def self.update_permissions_file(permissions, full_access_users)
-    @@permissions = { '*' => full_access_users }
+  def self.update_permissions_file(permissions)
     permissions.each do |repo_loc, users|
       @@permissions[repo_loc] = users
     end
