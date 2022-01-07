@@ -21,7 +21,7 @@ class RawFileManager extends RawFileBrowser {
     this.handleActionBarAddFolderClick(event);
   };
 
-  onActionBarSubmitURLClick = (event) => {
+  onActionBarSubmitURLClick = event => {
     event.preventDefault();
     this.props.onActionBarSubmitURLClick();
   };

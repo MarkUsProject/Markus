@@ -3,7 +3,7 @@ import Modal from "react-modal";
 
 class SubmitUrlUploadModal extends React.Component {
   constructor() {
-    super()
+    super();
     this.state = {
       newUrl: "",
       newUrlText: "",
@@ -44,11 +44,15 @@ class SubmitUrlUploadModal extends React.Component {
       newUrlText: "",
     });
     this.props.onRequestClose();
-  }
+  };
 
   render() {
     return (
-      <Modal className="react-modal" isOpen={this.props.isOpen} onRequestClose={this.handleModalClose}>
+      <Modal
+        className="react-modal"
+        isOpen={this.props.isOpen}
+        onRequestClose={this.handleModalClose}
+      >
         <h2>{I18n.t("submissions.student.create_link")}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
