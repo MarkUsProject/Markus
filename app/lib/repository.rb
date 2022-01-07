@@ -169,34 +169,7 @@ module Repository
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
-    def self.get_full_access_users
-      Instructor.joins(:end_user).pluck(:user_name)
-    end
-
-    # Gets a list of users with permission to access the repo.
-    # All permissions are rw for the time being
-    def get_users
-      unless Settings.repository.is_repository_admin # are we admin?
-        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
-      end
-      repo_name = get_repo_name
-      permissions = self.get_all_permissions
-      permissions.fetch(repo_name, []) + self.get_full_access_users
-    end
-
-    # TODO All permissions are rw for the time being
-    def get_permissions(user_name)
-      unless Settings.repository.is_repository_admin # are we admin?
-        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
-      end
-      unless get_users.include?(user_name)
-        raise UserNotFound.new("User #{user_name} not found in this repo")
-      end
-
-      Repository::Permission::READ_WRITE
-    end
-
-    #Converts a pathname to an absolute pathname
+    # Converts a pathname to an absolute pathname
     def expand_path(file_name, dir_string)
       raise NotImplementedError, "Repository.expand_path: Not yet implemented"
     end
@@ -290,18 +263,29 @@ module Repository
       self.get_repo_auth_records.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
           next unless visibility[assignment.id][valid_grouping.inviter&.section&.id]
-          repo_name = valid_grouping.group.repo_name
+          repo_name = valid_grouping.group.repository_relative_path
           accepted_students = valid_grouping.accepted_students.map(&:user_name)
           permissions[repo_name] = accepted_students
         end
       end
       # NOTE: this will allow graders to access the files in the entire repository
       # even if they are the grader for only a single assignment
-      graders_info = TaMembership.joins(role: :end_user, grouping: [:group, assignment: :assignment_properties])
+      graders_info = TaMembership.joins(role: [:end_user, :course],
+                                        grouping: [:group, { assignment: :assignment_properties }])
                                  .where('assignment_properties.anonymize_groups': false)
-                                 .pluck(:repo_name, :user_name)
-      graders_info.each do |repo_name, user_name|
-        permissions[repo_name] << user_name
+                                 .pluck(:repo_name, :user_name, 'courses.name')
+      graders_info.each do |repo_name, user_name, course_name|
+        repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path
+        permissions[repo_path] << user_name
+      end
+      instructors = Instructor.joins(:course, :end_user)
+                              .pluck('courses.name', 'users.user_name')
+                              .group_by(&:first)
+                              .transform_values { |val| val.map(&:second) }
+      Group.includes(:course).pluck(:repo_name, 'courses.name').each do |repo_name, course_name|
+        repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path
+        instrs = instructors[course_name] || []
+        permissions[repo_path] += instrs
       end
       permissions
     end
@@ -313,8 +297,8 @@ module Repository
     end
 
     # Generate and write the the authorization file for all repos.
-    def self.update_permissions_file(_permissions, _full_access_users)
-      raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
+    def self.update_permissions_file(_permissions)
+      raise NotImplementedError
     end
 
     # Returns a set of file names that are used internally by the repository and are not part of any student submission.
