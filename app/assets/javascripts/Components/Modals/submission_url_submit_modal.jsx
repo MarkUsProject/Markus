@@ -6,7 +6,7 @@ class SubmitUrlUploadModal extends React.Component {
     super()
     this.state = {
       newUrl: "",
-      newUrlAlias: "",
+      newUrlText: "",
     };
   }
 
@@ -20,17 +20,35 @@ class SubmitUrlUploadModal extends React.Component {
   };
 
   handleUrlChange = event => {
-    this.setState({newUrl: event.target.value});
+    const urlInput = event.target.value;
+    try {
+      const validatedURL = new URL(urlInput);
+      if (this.state.newUrlText === "") {
+        const suggestedText = validatedURL.hostname.concat(" link");
+        this.setState({newUrlText: suggestedText});
+      }
+    } catch (e) {
+      // If here, URL object creation failed and URL is invalid. Thus, no recommended text
+    } finally {
+      this.setState({newUrl: urlInput});
+    }
   };
 
   handleUrlAliasChange = event => {
-    this.setState({newUrlAlias: event.target.value});
+    this.setState({newUrlText: event.target.value});
   };
 
+  handleModalClose = () => {
+    this.setState({
+      newUrl: "",
+      newUrlText: "",
+    });
+    this.props.onRequestClose();
+  }
+
   render() {
-    const {isOpen, onRequestClose} = this.props;
     return (
-      <Modal className="react-modal" isOpen={isOpen} onRequestClose={onRequestClose}>
+      <Modal className="react-modal" isOpen={this.props.isOpen} onRequestClose={this.handleModalClose}>
         <h2>{I18n.t("submissions.student.create_link")}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
@@ -51,8 +69,8 @@ class SubmitUrlUploadModal extends React.Component {
                 {I18n.t("submissions.student.url_alias")}
                 <input
                   type={"text"}
-                  name={"new_url_alias"}
-                  value={this.state.newUrlAlias}
+                  name={"new_url_text"}
+                  value={this.state.newUrlText}
                   onChange={this.handleUrlAliasChange}
                 />
               </label>
