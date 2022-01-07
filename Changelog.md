@@ -2,6 +2,8 @@
 
 ## [unreleased]
 - Remove unmaintained locales (#5727)
+- Fix bug where repository access files were not taking multiple courses into account (#5731)
+- Introduce standalone ruby script as an alternative method to checking for repository access (#5731)
 
 ## [v2.0.2]
 - Fix bug in displaying feedback files for test results (#5719)
