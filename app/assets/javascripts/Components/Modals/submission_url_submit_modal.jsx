@@ -53,7 +53,7 @@ class SubmitUrlUploadModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.handleModalClose}
       >
-        <h2>{I18n.t("submissions.student.create_link")}</h2>
+        <h2>{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <div className={"modal-container"}>
@@ -70,7 +70,7 @@ class SubmitUrlUploadModal extends React.Component {
             </div>
             <div className={"modal-container"}>
               <label>
-                {I18n.t("submissions.student.url_alias")}
+                {I18n.t("submissions.student.url_text")}
                 <input
                   type={"text"}
                   name={"new_url_text"}

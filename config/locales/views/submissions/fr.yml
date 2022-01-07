@@ -55,7 +55,6 @@ fr:
       remark_requested: Réévaluation demandée
     status: Statut
     student:
-      create_link: UPDATE ME
       file_manager: "%{short_identifier} : Gestionnaire de fichiers"
       files_submitted:
         one: "%{count} fichiers"
@@ -63,6 +62,7 @@ fr:
         zero: "%{count} fichiers"
       invalid_group_cannot_submit: Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment.
       last_revision_date: Dernière révision
+      link: UPDATE ME
       maximum_file_size: UPDATE ME
       missing_required_files:
         one: "%{count} fichier(s) requis sont manquants"
@@ -72,7 +72,7 @@ fr:
       only_required_files: UPDATE ME
       select_file: UPDATE ME!
       url: UPDATE ME
-      url_alias: UPDATE ME
+      url_text: UPDATE ME
       version_control_warning: Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre.
     submission_summary: UPDATE ME
     successfully_changed: Les %{changed} résultats ont été mis à jour.

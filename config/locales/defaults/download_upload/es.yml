@@ -9,6 +9,7 @@ es:
   download_the: Descargar %{item}
   download_yml: Descargar en formato YML
   rename: UPDATE ME
+  submit_the: UPDATE ME
   upload: Subir
   upload_errors:
     invalid_csv_row_format: El formato de la fila es inválido

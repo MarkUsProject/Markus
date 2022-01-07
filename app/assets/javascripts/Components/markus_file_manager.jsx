@@ -121,7 +121,7 @@ class RawFileManager extends RawFileBrowser {
             <li key="action-add-link">
               <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
                 <i className="fa fa-submit-link-o" aria-hidden="true" />
-                &nbsp;{I18n.t("submissions.student.create_link")}
+                &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
               </a>
             </li>
           );
@@ -153,7 +153,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-add-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("upload_the", {item: I18n.t("file")})}
+              &nbsp;{I18n.t("submit_the", {item: I18n.t("file")})}
             </a>
           </li>
         );
@@ -183,7 +183,7 @@ class RawFileManager extends RawFileBrowser {
             role="button"
           >
             <i className="fa fa-add-file-o" aria-hidden="true" />
-            &nbsp;{I18n.t("upload_the", {item: I18n.t("file")})}
+            &nbsp;{I18n.t("submit_the", {item: I18n.t("file")})}
           </a>
         </li>
       );
@@ -193,7 +193,7 @@ class RawFileManager extends RawFileBrowser {
           <li key="action-add-link">
             <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
               <i className="fa fa-submit-link-o" aria-hidden="true" />
-              &nbsp;{I18n.t("submissions.student.create_link")}
+              &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
             </a>
           </li>
         );

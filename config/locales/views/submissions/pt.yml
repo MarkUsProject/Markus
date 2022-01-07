@@ -59,7 +59,6 @@ pt:
       remark_requested: Pedido de revisão
     status: Status
     student:
-      create_link: UPDATE ME
       file_manager: "%{short_identifier}: Gerenciador de Arquivos"
       files_submitted:
         one: "%{count} arquivos"
@@ -67,6 +66,7 @@ pt:
         zero: "%{count} arquivos"
       invalid_group_cannot_submit: Seu grupo não é válido. Você não pode enviar nada.
       last_revision_date: Última data de revisão
+      link: UPDATE ME
       maximum_file_size: UPDATE ME
       missing_required_files:
         one: "%{count} arquivos exigidos"
@@ -76,7 +76,7 @@ pt:
       only_required_files: UPDATE ME
       select_file: UPDATE ME!
       url: UPDATE ME
-      url_alias: UPDATE ME
+      url_text: UPDATE ME
       version_control_warning: Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar.
     submission_summary: UPDATE ME
     successfully_changed: "%{changed} resultados atualizados."
