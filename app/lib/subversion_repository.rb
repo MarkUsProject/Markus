@@ -464,13 +464,9 @@ class SubversionRepository < Repository::AbstractRepository
   ####################################################################
 
   # Generate and write the SVN authorization file for the repo.
-  def self.update_permissions_file(permissions, full_access_users)
+  def self.update_permissions_file(permissions)
     return true unless Settings.repository.is_repository_admin
-    authz_string = "[/]\n"
-    full_access_users.each do |user_name|
-      authz_string += "#{user_name} = rw\n"
-    end
-    authz_string += "\n"
+    authz_string = ''
     permissions.each do |repo_name, users|
       authz_string += "[#{repo_name}:/]\n"
       users.each do |user_name|
