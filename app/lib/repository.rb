@@ -259,7 +259,14 @@ module Repository
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
       visibility = self.visibility_hash
-      permissions = Hash.new { |h,k| h[k]=[] }
+      permissions = Hash.new { |h, k| h[k] = [] }
+      instructors = Instructor.joins(:course, :end_user)
+                              .pluck('courses.name', 'users.user_name')
+                              .group_by(&:first)
+                              .transform_values { |val| val.map(&:second) }
+      instructors.each do |course_name, instructor_names|
+        permissions[File.join(course_name, '*')] = instructor_names
+      end
       self.get_repo_auth_records.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
           next unless visibility[assignment.id][valid_grouping.inviter&.section&.id]
@@ -277,15 +284,6 @@ module Repository
       graders_info.each do |repo_name, user_name, course_name|
         repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path
         permissions[repo_path] << user_name
-      end
-      instructors = Instructor.joins(:course, :end_user)
-                              .pluck('courses.name', 'users.user_name')
-                              .group_by(&:first)
-                              .transform_values { |val| val.map(&:second) }
-      Group.includes(:course).pluck(:repo_name, 'courses.name').each do |repo_name, course_name|
-        repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path
-        instrs = instructors[course_name] || []
-        permissions[repo_path] += instrs
       end
       permissions
     end
