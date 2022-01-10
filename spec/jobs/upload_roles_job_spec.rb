@@ -15,13 +15,6 @@ describe UploadRolesJob do
           create :end_user, user_name: :c6conley
           create :end_user, user_name: :c8rada
         end
-        context 'and there are duplicates in the file' do
-          let(:data) { fixture_file_upload('tas/form_invalid_record.csv', 'text/csv').read }
-          it 'does not create roles' do
-            expect { subject }.to raise_exception(RuntimeError)
-            expect(role_type.count).to eq 0
-          end
-        end
         context 'and a user already has a role in the course' do
           before do
             create :instructor, end_user: EndUser.find_by_user_name(:c6conley), course: course

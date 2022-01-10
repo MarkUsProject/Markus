@@ -13,7 +13,8 @@ class UploadRolesJob < ApplicationJob
         next if user_name.blank?
         end_user = EndUser.find_by_user_name(user_name)
         raise I18n.t('users.not_found', user_names: user_name) if end_user.nil?
-        role = role_class.new(end_user: end_user, course: course, section_id: find_section_id(row))
+        role = role_class.find_or_initialize_by(end_user: end_user, course: course)
+        role.section_id = find_section_id(row)
         raise "#{user_name}: #{role.errors.full_messages.join('; ')}" unless role.save
         progress.increment
       end
