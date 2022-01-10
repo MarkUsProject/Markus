@@ -120,12 +120,14 @@ module SessionHandler
 
   # Check if this current user's session has not yet expired.
   def session_expired?
+    return false if session[:auth_type] == 'remote'
     return true if session[:timeout].nil?
 
     Time.zone.parse(session[:timeout]) < Time.current
   end
 
   def check_imminent_expiry
+    return false if session[:auth_type] == 'remote'
     !session[:timeout].nil? && (Time.zone.parse(session[:timeout]) - Time.current) <= 5.minutes
   end
 
