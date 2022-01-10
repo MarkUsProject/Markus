@@ -409,20 +409,18 @@ class GitRepository < Repository::AbstractRepository
   # Helper method to generate all the permissions for students for all groupings in all assignments.
   # This is done as a single operation to mirror the SVN repo code. We found
   # a substantial performance improvement by writing the auth file only once in the SVN case.
-  def self.update_permissions_file(permissions, full_access_users)
+  def self.update_permissions_file(permissions)
     # If we're not in authoritative mode, bail out
     unless Settings.repository.is_repository_admin
       raise NotAuthorityError, 'Unable to set bulk permissions: Not in authoritative mode!'
     end
 
     # Create auth csv file
-    sorted_permissions = permissions.sort.to_h
     FileUtils.mkdir_p(File.dirname(Repository::PERMISSION_FILE))
     CSV.open(Repository::PERMISSION_FILE, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       begin
-        csv << ['*'] + full_access_users
-        sorted_permissions.each do |repo_name, users|
+        permissions.each do |repo_name, users|
           csv << [repo_name] + users
         end
       ensure

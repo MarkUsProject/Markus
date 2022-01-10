@@ -18,8 +18,7 @@ class UpdateRepoPermissionsJob < ApplicationJob
     redis = Redis::Namespace.new(Rails.root.to_s)
     redis.del('repo_permissions')
     permissions = repo_class.get_all_permissions
-    full_access_users = repo_class.get_full_access_users
-    repo_class.update_permissions_file(permissions, full_access_users)
+    repo_class.update_permissions_file(permissions)
   ensure
     redis = Redis::Namespace.new(Rails.root.to_s)
     if redis.get('repo_permissions') == self.job_id
