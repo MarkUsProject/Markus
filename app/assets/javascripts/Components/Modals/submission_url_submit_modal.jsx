@@ -24,7 +24,7 @@ class SubmitUrlUploadModal extends React.Component {
     try {
       const validatedURL = new URL(urlInput);
       if (this.state.newUrlText === "") {
-        const suggestedText = validatedURL.hostname.concat(" link");
+        const suggestedText = validatedURL.hostname;
         this.setState({newUrlText: suggestedText});
       }
     } catch (e) {
@@ -57,31 +57,30 @@ class SubmitUrlUploadModal extends React.Component {
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <div className={"modal-container"}>
-              <label>
-                {I18n.t("submissions.student.url")}
-                <input
-                  type={"url"}
-                  name={"new_url"}
-                  value={this.state.newUrl}
-                  onChange={this.handleUrlChange}
-                  required={true}
-                />
-              </label>
+              <label className={"modal-inline-label"}>{I18n.t("submissions.student.url")}</label>
+              <input
+                type={"url"}
+                name={"new_url"}
+                value={this.state.newUrl}
+                onChange={this.handleUrlChange}
+                required={true}
+              />
             </div>
             <div className={"modal-container"}>
-              <label>
+              <label className={"modal-inline-label"}>
                 {I18n.t("submissions.student.url_text")}
-                <input
-                  type={"text"}
-                  name={"new_url_text"}
-                  value={this.state.newUrlText}
-                  onChange={this.handleUrlAliasChange}
-                />
               </label>
+              <input
+                type={"text"}
+                name={"new_url_text"}
+                value={this.state.newUrlText}
+                onChange={this.handleUrlAliasChange}
+                required={true}
+              />
             </div>
-            <div className={"modal-container"}>
-              <input type="submit" value={I18n.t("save")} />
-            </div>
+          </div>
+          <div className={"modal-container"}>
+            <input type="submit" value={I18n.t("save")} />
           </div>
         </form>
       </Modal>
