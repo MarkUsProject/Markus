@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Remove unmaintained locales (#5727)
+- Fix bug where sections and grace credits could not be updated from the student edit view (#5739)
 
 ## [v2.0.2]
 - Fix bug in displaying feedback files for test results (#5719)
