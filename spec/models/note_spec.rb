@@ -7,11 +7,12 @@ describe Note do
   include_examples 'course associations'
 
   context 'noteables_exist?' do
-    it 'return false when no noteables exist' do
+    it 'returns false when no noteables exist' do
+      course = create(:course)
       Assignment.destroy_all
       Grouping.destroy_all
       Student.destroy_all
-      expect(Note.noteables_exist?).to be false
+      expect(Note.noteables_exist?(course.id)).to be false
     end
   end
 
@@ -22,8 +23,12 @@ describe Note do
       before do
         @noteable = noteable.call
       end
-      it 'return true' do
-        expect(Note.noteables_exist?).to be true
+      it 'returns true for the notable\'s course' do
+        expect(Note.noteables_exist?(@noteable.course.id)).to be true
+      end
+      it 'returns false for a different course' do
+        course = create(:course)
+        expect(Note.noteables_exist?(course.id)).to be false
       end
     end
   end
