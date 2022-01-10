@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.0.3]
+- Fix bug where repository access files were not taking multiple courses into account (#5731)
+
 ## [v2.0.2]
 - Fix bug in displaying feedback files for test results (#5719)
 - Require starter group names to be unique for an assignment (#5721)
