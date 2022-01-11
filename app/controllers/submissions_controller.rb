@@ -319,11 +319,14 @@ class SubmissionsController < ApplicationController
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
 
+    # The new url that will be added
+    new_url = params[:new_url] || {}
+
     unless delete_folders.empty? && new_folders.empty?
       authorize! to: :manage_subdirectories?
     end
 
-    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty? && new_url.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
       messages = []
@@ -338,6 +341,15 @@ class SubmissionsController < ApplicationController
                                     .map { |name| File.join(@grouping.assignment.repository_folder, name) }
         else
           required_files = nil
+        end
+
+        if new_url.present?
+          if [:url, :url_text].include?(new_url)
+            filename = "#{new_url[:url_text]}.url"
+            file_content = "[InternetShortcut]\nURL=#{new_url[:url]}"
+            url_file = Tempfile.create(filename) { |f| f << file_content }
+            new_files << url_file
+          end
         end
 
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
@@ -616,7 +628,7 @@ class SubmissionsController < ApplicationController
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
       end
 
-      send_file zip_path, filename: zip_name + '.zip'
+      send_file zip_path, filename: "#{zip_name}.zip"
     end
   end
 
