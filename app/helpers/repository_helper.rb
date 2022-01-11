@@ -17,7 +17,18 @@ module RepositoryHelper
   # If +check_size+ is true then check if the file size is greater than course.max_file_size_settings
   # or less than 0 bytes. If +required_files+ is an array of file paths, and some of the uploaded files are not
   # in that array, a message will be returned indicating that non-required files were uploaded.
-  def add_file(f, role, repo, path: '/', txn: nil, check_size: true, required_files: nil)
+  def add_file(f, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
+    filename = f.original_filename
+    if filename.nil?
+      messages << [:invalid_filename, f.original_filename]
+      return false, messages
+    end
+    add_tempfile(f, filename, f.content_type, user, repo, path, txn, check_size, required_files)
+  end
+
+  # Does what is described in the add_file method, but generalizes +f+ to be a Tempfile object.
+  # To do so, a +filename+ and MIME +content_type+ must also be provided.
+  def add_tempfile(f, filename, content_type, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
     messages = []
 
     if txn.nil?
@@ -31,17 +42,12 @@ module RepositoryHelper
     current_path = Pathname.new path
     new_files = []
     if check_size
-      if f.size > role.course.max_file_size_settings
-        messages << [:too_large, f.original_filename]
+      if f.size > Settings.max_file_size
+        messages << [:too_large, filename]
         return false, messages
       elsif f.size == 0
-        messages << [:too_small, f.original_filename]
+        messages << [:too_small, filename]
       end
-    end
-    filename = f.original_filename
-    if filename.nil?
-      messages << [:invalid_filename, f.original_filename]
-      return false, messages
     end
     subdir_path, filename = File.split(filename)
     filename = FileHelper.sanitize_file_name(filename)
@@ -52,9 +58,9 @@ module RepositoryHelper
     f.rewind
     # Branch on whether the file is new or a replacement
     if revision.path_exists?(file_path)
-      txn.replace(file_path, f.read, f.content_type, revision.revision_identifier)
+      txn.replace(file_path, f.read, content_type, revision.revision_identifier)
     else
-      txn.add(file_path, f.read, f.content_type)
+      txn.add(file_path, f.read, content_type)
     end
     # check if only required files are allowed for a submission
     # required_files = assignment.assignment_files.pluck(:filename)

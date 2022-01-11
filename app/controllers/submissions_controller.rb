@@ -320,7 +320,7 @@ class SubmissionsController < ApplicationController
     delete_folders = params[:delete_folders] || []
 
     # The new url that will be added
-    new_url = params[:new_url] || {}
+    new_url = params[:new_url] || ""
 
     unless delete_folders.empty? && new_folders.empty?
       authorize! to: :manage_subdirectories?
@@ -344,11 +344,18 @@ class SubmissionsController < ApplicationController
         end
 
         if new_url.present?
-          if [:url, :url_text].include?(new_url)
-            filename = "#{new_url[:url_text]}.url"
-            file_content = "[InternetShortcut]\nURL=#{new_url[:url]}"
-            url_file = Tempfile.create(filename) { |f| f << file_content }
-            new_files << url_file
+          url_filename = params[:url_text]
+          if url_filename.present?
+            file_content = "[InternetShortcut]\nURL=#{new_url}"
+            url_file = Tempfile.new([url_filename, '.url'])
+            url_file.write(file_content)
+            url_file.rewind
+            success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_user,
+                                         repo, path: path, txn: txn, check_size: true, required_files: required_files)
+            should_commit &&= success
+            messages.concat msgs
+          else
+            raise "No url name given"
           end
         end
 
@@ -385,7 +392,8 @@ class SubmissionsController < ApplicationController
       flash_file_manager_messages
     end
   rescue StandardError => e
-    flash_message(:error, e.message)
+    raise e
+    #flash_message(:error, e.message)
     head :bad_request
   end
 
