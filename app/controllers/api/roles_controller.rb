@@ -65,6 +65,10 @@ module Api
     # Requires: user_name
     def update_by_username
       role = find_role_by_username
+      if role.nil?
+        render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: 404
+        return
+      end
       update_role(role) unless role.nil?
     end
 
@@ -89,6 +93,8 @@ module Api
         end_user = EndUser.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, end_user: end_user, course: @current_course)
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
+        role.grace_credits = params[:grace_credits] if params[:grace_credits]
+        role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
@@ -104,6 +110,7 @@ module Api
       ApplicationRecord.transaction do
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
+        role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
         role.save!
       end
       render 'shared/http_status', locals: { code: '200', message:
@@ -125,12 +132,7 @@ module Api
 
       # Check if that user_name is taken
       end_user = EndUser.find_by_user_name(params[:user_name])
-      role = Role.find_by(end_user: end_user, course: @current_course)
-      if role.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: 404
-        return
-      end
-      role
+      Role.find_by(end_user: end_user, course: @current_course)
     end
 
     def filtered_roles
@@ -151,7 +153,7 @@ module Api
     end
 
     def role_params
-      params.permit(:type, :grace_credits)
+      params.permit(:type, :grace_credits, :hidden)
     end
   end
 end
