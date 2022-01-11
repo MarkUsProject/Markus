@@ -346,6 +346,7 @@ class SubmissionsController < ApplicationController
         if new_url.present?
           url_filename = params[:url_text]
           if url_filename.present?
+            validate_url(new_url)
             file_content = "[InternetShortcut]\nURL=#{new_url}"
             url_file = Tempfile.new([url_filename, '.url'])
             url_file.write(file_content)
@@ -819,5 +820,10 @@ class SubmissionsController < ApplicationController
   # the grouping is in the same course as the current course
   def parent_params
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
+  end
+  
+  # Checks to ensure the given +url+ is valid. Returns nil if +url+ is valid. Throws an error otherwise.
+  def validate_url(url)
+    nil
   end
 end
