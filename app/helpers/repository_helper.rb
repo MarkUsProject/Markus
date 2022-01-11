@@ -18,6 +18,7 @@ module RepositoryHelper
   # or less than 0 bytes. If +required_files+ is an array of file paths, and some of the uploaded files are not
   # in that array, a message will be returned indicating that non-required files were uploaded.
   def add_file(f, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
+    messages = []
     filename = f.original_filename
     if filename.nil?
       messages << [:invalid_filename, f.original_filename]
@@ -28,7 +29,7 @@ module RepositoryHelper
 
   # Does what is described in the add_file method, but generalizes +f+ to be a Tempfile object.
   # To do so, a +filename+ and MIME +content_type+ must also be provided.
-  def add_tempfile(f, filename, content_type, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
+  def add_tempfile(f, filename, content_type, user, repo, path, txn, check_size, required_files)
     messages = []
 
     if txn.nil?
