@@ -4,6 +4,7 @@
 - Remove unmaintained locales (#5727)
 - Fix bug where repository access files were not taking multiple courses into account (#5734)
 - Fix bug where sections and grace credits could not be updated from the student edit view (#5739)
+- Allow setting optional role attributes through the api (#5748)
 
 ## [v2.0.2]
 - Fix bug in displaying feedback files for test results (#5719)
