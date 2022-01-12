@@ -51,10 +51,11 @@ describe MainController do
       end
     end
     context 'after logging in with remote user auth' do
+      let(:user_name) { instructor.user_name }
       before :each do
         allow(self).to receive(:reset_session)
         clear_session
-        env_hash = { HTTP_X_FORWARDED_USER: instructor.user_name }
+        env_hash = { HTTP_X_FORWARDED_USER: user_name }
         request.headers.merge! env_hash
         session[:auth_type] = 'remote'
       end
@@ -66,12 +67,27 @@ describe MainController do
         expect(response).to redirect_to action: 'index', controller: 'courses'
       end
       context 'going to a page that requires authentication' do
-        before { get :check_timeout }
-        it 'should respond with 200' do
-          expect(response).to have_http_status(:ok)
+        before { post :logout }
+        it 'should respond with redirect' do
+          expect(response).to have_http_status(:redirect)
         end
         it 'should not start the session timeout counter' do
           expect(session[:timeout]).to be_nil
+        end
+      end
+      context 'when there is no user with the given user_name' do
+        let(:user_name) { build(:end_user).user_name }
+        it 'should redirect to the login page' do
+          post :logout
+          expect(response).to redirect_to action: 'login', controller: 'main'
+        end
+        it 'should flash an error message when going to login' do
+          get :login
+          expect(flash[:error]).not_to be_empty
+        end
+        it 'should flash an error message when going a non-login page' do
+          post :logout
+          expect(flash[:error]).not_to be_empty
         end
       end
     end
