@@ -1,27 +1,98 @@
 import React from "react";
+import {TextViewer} from "./text_viewer";
 
 export class URLViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      url: `https://www.youtube.com/embed/${this.extract_youtube_id(this.props.web_link)}`, // Sample Youtube embed link
-      //url: "https://drive.google.com/file/d/1yQh8bzo4IzmtSt-qZ0Vb-BzzEXsp45v_/preview" // sample google drive embed link
-      //url: "https://play.library.utoronto.ca/watch/4493e554354a7e51bdf90f3197185b5f" // sample mymedia link
+      url: "",
+      show_iframe_preview: false,
     };
   }
 
-  extract_youtube_id = url => {
+  componentDidMount() {
+    //this.set_display()
+  }
+
+  componentDidUpdate() {
+    //this.set_display()
+  }
+
+  set_display = () => {
+    const file_pattern = /^\[InternetShortcut]\nURL=/;
+    const internet_shortcut = this.props.content.replace(file_pattern, "");
+    const youtube_id_is_set = this.configure_youtube_preview(internet_shortcut);
+    if (!youtube_id_is_set) {
+      const url = new URL(internet_shortcut);
+      switch (url.hostname) {
+        case "docs.google.com":
+        case "drive.google.com":
+          this.configure_google_drive_preview(internet_shortcut);
+          break;
+        case "play.library.utoronto.ca":
+          this.setState({
+            url: internet_shortcut,
+            show_iframe_preview: false,
+          });
+          break;
+        default:
+          this.setState({
+            url: "",
+            show_iframe_preview: false,
+          });
+      }
+    }
+  };
+
+  configure_google_drive_preview = url => {
+    const regex = /\/d\/(.+)\//;
+    const match = url.match(regex);
+    if (match.length === 2) {
+      this.setState({
+        url: `https://drive.google.com/file/d/${match[1]}/preview`,
+        show_iframe_preview: true,
+      });
+    } else {
+      this.setState({
+        url: "",
+        show_iframe_preview: false,
+      });
+    }
+  };
+
+  configure_youtube_preview = url => {
     // Taken from https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
-    return match && match[7].length == 11 ? match[7] : false;
+    if (match && match[7].length === 11) {
+      this.setState({
+        url: `https://www.youtube.com/embed/${match[7]}`,
+        show_iframe_preview: true,
+      });
+      return true;
+    }
+    return false;
   };
 
   render() {
-    return (
-      <div className="url-container" key={"url_container"}>
-        <iframe className="url-display" src={this.state.url} allowFullScreen />
-      </div>
-    );
+    if (this.state.show_iframe_preview) {
+      return (
+        <div className="url-container" key={"url_container"}>
+          <iframe className="url-display" src={this.state.url} allowFullScreen />
+        </div>
+      );
+    } else {
+      return (
+        <TextViewer
+          type={"text"}
+          content={this.props.content}
+          focusLine={this.props.focusLine}
+          submission_file_id={this.props.submission_file_id}
+          annotations={this.props.annotations}
+          released_to_students={this.props.released_to_students}
+          resultView={this.props.resultView}
+        />
+      );
+    }
   }
 }
