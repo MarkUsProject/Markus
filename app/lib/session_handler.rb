@@ -97,7 +97,14 @@ module SessionHandler
     if logged_in? && !session_expired?
       refresh_timeout
     else
+      remote_login_error = remote_auth? && remote_user_name
       clear_session
+      if remote_login_error
+        flash_message(:error,
+                      I18n.t('main.external_authentication_user_not_found',
+                             name: Settings.remote_auth_login_name ||
+                                   I18n.t('main.external_authentication_default_name')))
+      end
       if request.xhr? # is this an XMLHttpRequest?
         # Redirect users back to referer, or else
         # they might be redirected to an rjs page.
@@ -122,7 +129,7 @@ module SessionHandler
 
   # Check if this current user's session has not yet expired.
   def session_expired?
-    return false if remote_auth?
+    return remote_user_name.nil? if remote_auth?
     return true if session[:timeout].nil?
 
     Time.zone.parse(session[:timeout]) < Time.current

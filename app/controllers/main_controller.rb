@@ -27,6 +27,12 @@ class MainController < ApplicationController
     unless Settings.remote_auth_login_url || Settings.validate_file
       flash_now(:error, t('main.sign_in_not_supported'))
     end
+    if remote_auth? && remote_user_name
+      flash_message(:error,
+                    I18n.t('main.external_authentication_user_not_found',
+                           name: Settings.remote_auth_login_name ||
+                                 I18n.t('main.external_authentication_default_name')))
+    end
     return unless request.post?
 
     # Get information of the user that is trying to login if his or her
