@@ -33,8 +33,8 @@
                   name: Settings.local_auth_login_name || t('main.local_authentication_default_name') ) %>
           </a>
         </div>
+        <div id='login-or-container'><h4 id="login-or"><%= I18n.t('or').upcase %></h4></div>
       <% end %>
-      <div id='login-or-container'><h4 id="login-or"><%= I18n.t('or').upcase %></h4></div>
       <%= form_tag({ action: 'login' },
                    { id: 'local-login-form', class: Settings.remote_auth_login_url ? 'no-display' : '' }) do %>
         <% unless defined? user_login
