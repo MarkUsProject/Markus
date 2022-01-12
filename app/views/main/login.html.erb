@@ -1,5 +1,17 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'cookies_eu', nonce: true %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('local-login-selector').addEventListener('click', () => {
+        const formElem = document.getElementById('local-login-form');
+        if (getComputedStyle(formElem).display === 'none') {
+          formElem.style.display = 'block';
+        } else {
+          formElem.style.display = 'none';
+        }
+      })
+    })
+  <% end %>
 <% end %>
 
 <main class='login'>
@@ -11,7 +23,16 @@
 
   <div class='login-form'>
     <% if Settings.validate_file %>
-      <%= form_tag({ action: 'login' }) do %>
+      <% if Settings.remote_auth_login_url %>
+        <div class="login-selector">
+          <a class="button" id="local-login-selector">
+            <%= t('main.login_with',
+                  name: Settings.local_auth_login_name || t('main.local_authentication_default_name') ) %>
+          </a>
+        </div>
+      <% end %>
+      <%= form_tag({ action: 'login' },
+                   { id: 'local-login-form', class: Settings.remote_auth_login_url ? 'no-display' : '' }) do %>
         <% unless defined? user_login
              user_login = ''
            end %>
@@ -36,9 +57,9 @@
       <% end %>
     <% end %>
     <% if Settings.remote_auth_login_url %>
-      <div class="remote-login">
+      <div class="login-selector">
         <a class="button" href="<%= login_remote_auth_main_index_path %>">
-          <%= t('main.external_authentication',
+          <%= t('main.login_with',
                 name: Settings.remote_auth_login_name || t('main.external_authentication_default_name') ) %>
         </a>
       </div>
