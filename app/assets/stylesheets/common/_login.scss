@@ -1,4 +1,5 @@
 @import 'mixins';
+@import 'constants';
 /**
  * Login screen
  */
@@ -55,6 +56,24 @@
         padding: 10px;
         width: 100%;
       }
+    }
+    #login-or {
+      display: flex;
+      flex-direction: row;
+    }
+    #login-or::before,
+    #login-or::after {
+      border-bottom: 1px solid;
+      border-color: $gridline;
+      content: '';
+      flex: 1 1;
+      margin: auto;
+    }
+    #login-or::before {
+      margin-right: 10px;
+    }
+    #login-or::after {
+      margin-left: 10px;
     }
   }
 
