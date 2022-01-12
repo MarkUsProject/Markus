@@ -3,6 +3,7 @@
 ## [unreleased]
 - Remove unmaintained locales (#5727)
 - Fix bug where "Create Note" button was displaying when a course had no noteables (#5745)
+- Redesign login page for multiple authentication options (#5752)
 
 ## [v2.0.3]
 - Fix bug where repository access files were not taking multiple courses into account (#5734)
