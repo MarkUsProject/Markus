@@ -27,14 +27,6 @@ class MainController < ApplicationController
     unless Settings.remote_auth_login_url || Settings.validate_file
       flash_now(:error, t('main.sign_in_not_supported'))
     end
-    if session[:auth_type] == 'remote'
-      self.real_user = EndUser.find_by_user_name(remote_user_name)
-      unless real_user.nil?
-        refresh_timeout
-        redirect_to controller: 'courses', action: 'index'
-        return
-      end
-    end
     return unless request.post?
 
     # Get information of the user that is trying to login if his or her

@@ -21,7 +21,9 @@ module SessionHandler
   end
 
   def real_user
-    @real_user ||= session[:real_user_name] && User.find_by_user_name(session[:real_user_name])
+    return @real_user if defined? @real_user
+    real_user_name = remote_auth? ? remote_user_name : session[:real_user_name]
+    @real_user = User.find_by_user_name(real_user_name) if real_user_name
   end
 
   def current_role
@@ -74,7 +76,7 @@ module SessionHandler
 
   # Check if there's any user associated with this session
   def logged_in?
-    !session[:real_user_name].nil?
+    !real_user.nil?
   end
 
   def remote_user_name
@@ -92,7 +94,7 @@ module SessionHandler
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
   def authenticate
-    if real_user && !session_expired?
+    if logged_in? && !session_expired?
       refresh_timeout
     else
       clear_session
@@ -120,14 +122,14 @@ module SessionHandler
 
   # Check if this current user's session has not yet expired.
   def session_expired?
-    return false if session[:auth_type] == 'remote'
+    return false if remote_auth?
     return true if session[:timeout].nil?
 
     Time.zone.parse(session[:timeout]) < Time.current
   end
 
   def check_imminent_expiry
-    return false if session[:auth_type] == 'remote'
+    return false if remote_auth?
     !session[:timeout].nil? && (Time.zone.parse(session[:timeout]) - Time.current) <= 5.minutes
   end
 
@@ -140,5 +142,9 @@ module SessionHandler
     session[:auth_type] = nil
     cookies.delete :auth_token
     reset_session
+  end
+
+  def remote_auth?
+    session[:auth_type] == 'remote'
   end
 end

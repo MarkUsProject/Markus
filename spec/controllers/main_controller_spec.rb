@@ -1,4 +1,5 @@
 describe MainController do
+  include SessionHandler
   let(:student) { create :student }
   let(:ta) { create :ta }
   let(:instructor) { create :instructor }
@@ -31,38 +32,48 @@ describe MainController do
       a3 = create(:assignment, due_date: 1.day.from_now)
       [a1, a2, a3]
     end
-
-    shared_examples 'instructor tests' do
-      it 'should be able to login' do
-        expect(response).to redirect_to controller: 'courses', action: 'index'
-      end
-      it 'should not display any errors' do
-        expect(flash[:error]).to be_nil
-      end
-      it 'should set the session real_user_name to the correct user' do
-        expect(session[:real_user_name]).to eq(instructor.user_name)
-      end
-      it 'should start the session timeout counter' do
-        expect(session[:timeout]).not_to be_nil
-      end
-      it 'should redirect the login route to the index route' do
-        get :login
-        expect(response).to redirect_to action: 'index', controller: 'courses'
-      end
-    end
     context 'after logging in without remote user auth' do
       before(:each) do
         sign_in instructor
       end
-      include_examples 'instructor tests'
+      it 'should not display any errors' do
+        expect(flash[:error]).to be_nil
+      end
+      it 'should set the session real_user to the correct user' do
+        expect(real_user&.user_name).to eq(instructor.user_name)
+      end
+      it 'should start the session timeout counter' do
+        expect(session[:timeout]).not_to be_nil
+      end
+      it 'should redirect the login route to the courses index route' do
+        get :login
+        expect(response).to redirect_to action: 'index', controller: 'courses'
+      end
     end
     context 'after logging in with remote user auth' do
       before :each do
+        allow(self).to receive(:reset_session)
+        clear_session
         env_hash = { HTTP_X_FORWARDED_USER: instructor.user_name }
         request.headers.merge! env_hash
-        sign_in instructor
+        session[:auth_type] = 'remote'
       end
-      include_examples 'instructor tests'
+      it 'should set the session real_user to the correct user' do
+        expect(real_user&.user_name).to eq(instructor.user_name)
+      end
+      it 'should redirect the login route to the courses index route' do
+        get :login
+        expect(response).to redirect_to action: 'index', controller: 'courses'
+      end
+      context 'going to a page that requires authentication' do
+        before { get :check_timeout }
+        it 'should respond with 200' do
+          expect(response).to have_http_status(:ok)
+        end
+        it 'should not start the session timeout counter' do
+          expect(session[:timeout]).to be_nil
+        end
+      end
     end
     context 'after logging in with a bad username' do
       it 'should not be able to login with an incorrect username' do
