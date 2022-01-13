@@ -320,7 +320,7 @@ class SubmissionsController < ApplicationController
     delete_folders = params[:delete_folders] || []
 
     # The new url that will be added
-    new_url = params[:new_url] || ""
+    new_url = params[:new_url] || ''
 
     unless delete_folders.empty? && new_folders.empty?
       authorize! to: :manage_subdirectories?
@@ -356,7 +356,7 @@ class SubmissionsController < ApplicationController
             should_commit &&= success
             messages.concat msgs
           else
-            raise "No url name given"
+            raise 'No url name given'
           end
         end
 
@@ -394,7 +394,7 @@ class SubmissionsController < ApplicationController
     end
   rescue StandardError => e
     raise e
-    #flash_message(:error, e.message)
+    # flash_message(:error, e.message)
     head :bad_request
   end
 
@@ -821,9 +821,9 @@ class SubmissionsController < ApplicationController
   def parent_params
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
   end
-  
+
   # Checks to ensure the given +url+ is valid. Returns nil if +url+ is valid. Throws an error otherwise.
-  def validate_url(url)
+  def validate_url(_url)
     nil
   end
 end

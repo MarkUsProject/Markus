@@ -29,7 +29,7 @@ module RepositoryHelper
 
   # Does what is described in the add_file method, but generalizes +f+ to be a Tempfile object.
   # To do so, a +filename+ and MIME +content_type+ must also be provided.
-  def add_tempfile(f, filename, content_type, user, repo, path, txn, check_size, required_files)
+  def add_tempfile(f, filename, content_type, _user, repo, path, txn, check_size, required_files)
     messages = []
 
     if txn.nil?
