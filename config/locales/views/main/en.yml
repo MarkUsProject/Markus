@@ -12,7 +12,7 @@ en:
     log_out: Log out
     logging_in: Logging in...
     login_failed: Login failed.
-    login_with: Login with %{name}
+    login_with: Log in with %{name}
     password: Password
     password_not_blank: Your password must not be blank.
     role_switch:
