@@ -2,16 +2,16 @@
 en:
   main:
     create_marking_scheme: Create a Marking Scheme to display course summary graph.
-    login_with: Login with %{name}
     external_authentication_default_name: remote authentication
-    local_authentication_default_name: MarkUs authentication
     external_authentication_not_supported: External authentication not supported on your platform!
     frequency: Frequency
     grade: Grade (%)
+    local_authentication_default_name: MarkUs authentication
     log_in: Log in
     log_out: Log out
     logging_in: Logging in...
     login_failed: Login failed.
+    login_with: Login with %{name}
     password: Password
     password_not_blank: Your password must not be blank.
     role_switch:

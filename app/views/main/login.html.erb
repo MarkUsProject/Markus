@@ -4,13 +4,10 @@
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('local-login-selector').addEventListener('click', () => {
         const formElem = document.getElementById('local-login-form');
-        const orElem = document.getElementById('login-or-container');
         if (getComputedStyle(formElem).display === 'none') {
           formElem.style.display = 'block';
-          orElem.style.display = 'none';
         } else {
           formElem.style.display = 'none';
-          orElem.style.display = 'block';
         }
       })
     })
@@ -33,7 +30,6 @@
                   name: Settings.local_auth_login_name || t('main.local_authentication_default_name') ) %>
           </a>
         </div>
-        <div id='login-or-container'><h4 id="login-or"><%= I18n.t('or').upcase %></h4></div>
       <% end %>
       <%= form_tag({ action: 'login' },
                    { id: 'local-login-form', class: Settings.remote_auth_login_url ? 'no-display' : '' }) do %>
@@ -59,7 +55,10 @@
                          data: { disable_with: t('main.logging_in') } %>
         </div>
       <% end %>
-    <% end %>
+      <% if Settings.remote_auth_login_url %>
+        <div id='login-or-container'><h4 id="login-or"><%= I18n.t('or').upcase %></h4></div>
+      <% end %>
+  <% end %>
     <% if Settings.remote_auth_login_url %>
       <div class="login-selector">
         <a class="button" href="<%= login_remote_auth_main_index_path %>">
