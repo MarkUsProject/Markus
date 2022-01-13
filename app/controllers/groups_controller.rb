@@ -556,6 +556,26 @@ class GroupsController < ApplicationController
     send_file zip_path, filename: File.basename(zip_path)
   end
 
+  def populate_repo_with_starter_files
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = current_role.accepted_grouping_for(assignment.id)
+
+    authorize! grouping, with: GroupingPolicy
+
+    grouping.reset_starter_file_entries if grouping.starter_file_changed
+
+    grouping.access_repo do |repo|
+      txn = repo.get_transaction(current_role.user_name)
+      grouping.starter_file_entries.reload.each { |entry| entry.add_files_to_repo(repo, txn) }
+      if repo.commit(txn)
+        flash_message(:success, I18n.t('assignments.starter_file.populate_repo_success'))
+      else
+        flash_message(:error, I18n.t('assignments.starter_file.populate_repo_error'))
+      end
+    end
+    redirect_to course_assignment_path(current_course, assignment)
+  end
+
   private
 
   # These methods are called through global actions.

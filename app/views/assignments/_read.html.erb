@@ -152,10 +152,24 @@
     <p><%= I18n.t('assignments.starter_file.provided') %></p>
     <p><%= I18n.t('assignments.starter_file.changed_at',
                   changed_date: I18n.l(@assignment.starter_file_updated_at)) %></p>
-    <p><%= I18n.t('assignments.starter_file.download_instructions') %></p>
-    <%= button_to t(:download),
-                  download_starter_file_course_assignment_groups_path(@current_course, @assignment),
-                  method: 'get' %>
+    <p>
+      <%= button_to t(:download_the, item: t('assignments.starter_file.title')),
+                    download_starter_file_course_assignment_groups_path(@current_course, @assignment),
+                    method: 'get' %>
+    </p>
+    <% # Display the URL of this group's repository if applicable
+       if allowed_to?(:access_repo?, @grouping) %>
+       <p>
+         <%= button_to t('assignments.starter_file.populate_repo'),
+                       populate_repo_with_starter_files_course_assignment_groups_path(
+                         course_id: @assignment.course_id,
+                         assignment_id: @assignment.id
+                       ),
+                       { method: :patch,
+                         data: { confirm: t('assignments.starter_file.populate_repo_confirm'),
+                                 disable_with: t(:please_wait) } } %>
+       </p>
+    <% end %>
   <% end %>
 <% end %>
 </div>
