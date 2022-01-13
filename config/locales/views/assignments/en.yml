@@ -44,11 +44,14 @@ en:
       changed_at: Starter files were last updated on %{changed_date}
       changed_warning: The starter files for this assignment have changed. Please download the newest version of the starter files below and update your submission accordingly.
       default_starter_file_group: Default Starter File Group
-      download_instructions: Click below to download a new copy of the starter files
       download_mappings_csv: Download assigned starter files csv
       download_sample_starter_files: Download starter files example
       groupings_exist_warning_html: Groups already have been created for this assessment.<br/>If any changes are made, students will need to log in to MarkUs to download a new version of their starter files.
       new_starter_file_group: New Starter File Group
+      populate_repo: Add Starter Files to Repository
+      populate_repo_confirm: Are you sure you want to add the starter files to your repository? If they already exist in the repository, any changes will be overwritten.
+      populate_repo_error: Unfortunately, the starter files could not be added to your repository. Please download them as a zip file instead.
+      populate_repo_success: Starter files successfully added to your repository.
       provided: Starter files have been provided for this assignment
       rename: Rename Selected File or Directory
       starter_file_rule: Starter File Assignment Rules

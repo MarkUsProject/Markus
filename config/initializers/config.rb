@@ -118,6 +118,7 @@ Config.setup do |config|
       required(:incorrect_login_message).maybe(:string)
       optional(:remote_auth_login_url).filled(:string)
       optional(:remote_auth_login_name).filled(:string)
+      optional(:local_auth_login_name).filled(:string)
       required(:logout_redirect).filled(:string)
       optional(:student_csv_order).array(
         included_in?: %w[user_name last_name first_name section_name id_number email]

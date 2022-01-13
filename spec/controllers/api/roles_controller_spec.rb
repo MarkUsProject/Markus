@@ -148,7 +148,7 @@ describe Api::RolesController do
         end
       end
     end
-    context 'POST create' do
+    shared_examples 'creating' do |method|
       let(:end_user) { create :end_user }
       let(:student) { build :student, end_user: end_user, course: course }
       let(:user_name) { student.user_name }
@@ -157,36 +157,45 @@ describe Api::RolesController do
       let(:last_name) { student.last_name }
       context 'for a different course' do
         it 'should return a 403 error' do
-          post :create, params: { user_name: user_name, type: type, course_id: create(:course).id }
+          post method, params: { user_name: user_name, type: type, course_id: create(:course).id }
           expect(response.status).to eq(403)
         end
       end
       context 'for a non-existant course' do
         it 'should return a 404 error' do
-          post :create, params: { user_name: user_name, type: type, course_id: Course.ids.max + 1 }
+          post method, params: { user_name: user_name, type: type, course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
       context 'for the same course' do
+        let(:other_params) { {} }
         before :each do
-          post :create, params: { user_name: user_name, type: type, course_id: course.id }
+          post method, params: { user_name: user_name, type: type, course_id: course.id, **other_params }
         end
         context 'when creating a new user' do
+          let(:created_student) { Student.joins(:end_user).where('users.user_name': student.user_name).first }
           it 'should be successful' do
             expect(response.status).to eq(201)
           end
           it 'should create a new user' do
-            expect(Student.joins(:end_user).where('users.user_name': student.user_name).first).not_to be_nil
+            expect(created_student).not_to be_nil
           end
-        end
-        context 'when trying to create a user who already exists' do
-          let(:student) { create :student, course: course }
-          it 'should raise a 422 error' do
-            expect(response.status).to eq(422)
+          context 'with other params' do
+            let(:section) { create :section }
+            let(:other_params) { { section_name: section.name, grace_credits: 5, hidden: true } }
+            it 'should set the section' do
+              expect(created_student.section.id).to eq section.id
+            end
+            it 'should set the grace credits' do
+              expect(created_student.grace_credits).to eq 5
+            end
+            it 'should set the hidden value' do
+              expect(created_student.hidden).to eq true
+            end
           end
         end
         context 'when creating a student with an invalid user_name' do
-          let(:user_name) { students[0].user_name }
+          let(:user_name) { 'a!!' }
           it 'should raise a 422 error' do
             expect(response.status).to eq(422)
           end
@@ -199,8 +208,28 @@ describe Api::RolesController do
         end
       end
     end
+    context 'PUT create_or_unhide' do
+      it_behaves_like 'creating', :create_or_unhide
+      context 'when trying to create a user who already exists' do
+        it 'should unhide the user' do
+          student = create :student, course: course, hidden: true
+          post :create_or_unhide, params: { user_name: student.user_name, type: :student, course_id: course.id }
+          expect(student.reload.hidden).to be false
+        end
+      end
+    end
+    context 'POST create' do
+      it_behaves_like 'creating', :create
+      context 'when trying to create a user who already exists' do
+        it 'should raise a 422 error' do
+          student = create :student, course: course
+          post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
+          expect(response.status).to eq(422)
+        end
+      end
+    end
     context 'PUT update' do
-      let(:student) { create :student, course: course }
+      let(:student) { create :student, course: course, hidden: false }
       let(:tmp_student) { build :student, course: course }
       context 'for a different course' do
         let(:student) { create :student, course: create(:course) }
@@ -233,6 +262,26 @@ describe Api::RolesController do
           expect(response.status).to eq(200)
           student.reload
           expect(student.last_name).not_to eq(tmp_student.last_name)
+        end
+        it 'should update a section' do
+          section = create :section
+          put :update, params: { id: student.id, section_name: section.name, course_id: course.id }
+          expect(response.status).to eq(200)
+          student.reload
+          expect(student.section.id).to eq(section.id)
+        end
+        it 'should update grace credits' do
+          old_credits = student.grace_credits
+          put :update, params: { id: student.id, grace_credits: old_credits + 1, course_id: course.id }
+          expect(response.status).to eq(200)
+          student.reload
+          expect(student.grace_credits).to eq(old_credits + 1)
+        end
+        it 'should update hidden' do
+          put :update, params: { id: student.id, hidden: true, course_id: course.id }
+          expect(response.status).to eq(200)
+          student.reload
+          expect(student.hidden).to eq(true)
         end
       end
       context 'when updating a user that does not exist' do

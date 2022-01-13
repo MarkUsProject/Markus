@@ -248,6 +248,7 @@ Rails.application.routes.draw do
           get 'assign_scans'
           get 'download'
           get 'download_starter_file'
+          patch 'populate_repo_with_starter_files'
           get 'get_names'
           get 'assign_student_and_next'
           get 'next_grouping'

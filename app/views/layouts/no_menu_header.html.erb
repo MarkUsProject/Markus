@@ -6,7 +6,7 @@
   <%= javascript_pack_tag 'application', nonce: true %>
   <%= javascript_include_tag 'application', nonce: true %>
   <%= javascript_include_tag 'menu', nonce: true %>
-  <% if @remote_user_name.nil? %>
+  <% unless session[:auth_type] == 'remote' %>
     <%= javascript_include_tag 'check_timeout', nonce: true %>
   <% end %>
   <%= yield :head %>

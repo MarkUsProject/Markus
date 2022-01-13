@@ -77,4 +77,12 @@ class GroupingPolicy < ApplicationPolicy
     return true unless record.assignment.is_timed?
     !record.start_time.nil? || record.past_collection_date?
   end
+
+  def populate_repo_with_starter_files?
+    check?(:download_starter_file?) && check?(:access_repo?)
+  end
+
+  def access_repo?
+    record.assignment.vcs_submit? && (!record.assignment.is_timed || !record.start_time.nil?)
+  end
 end
