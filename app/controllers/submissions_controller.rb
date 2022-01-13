@@ -3,12 +3,14 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com https://play.library.utoronto.ca].freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
+    p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
   content_security_policy_report_only only: :notebook_content

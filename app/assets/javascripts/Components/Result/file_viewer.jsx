@@ -6,6 +6,7 @@ import {TextViewer} from "./text_viewer";
 import {PDFViewer} from "./pdf_viewer";
 import {NotebookViewer} from "./notebook_viewer";
 import {BinaryViewer} from "./binary_viewer";
+import {URLViewer} from "./url_viewer";
 
 export class FileViewer extends React.Component {
   // this.props.result_id is used as a flag for the component to
@@ -195,6 +196,8 @@ export class FileViewer extends React.Component {
           {...commonProps}
         />
       );
+    } else if (this.state.type === "url") {
+      return <URLViewer url={this.state.url} {...commonProps} />;
     } else if (this.state.type !== "") {
       return (
         <TextViewer
