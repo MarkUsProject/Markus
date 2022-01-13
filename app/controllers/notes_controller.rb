@@ -39,7 +39,7 @@ class NotesController < ApplicationController
     respond_to do |format|
       format.html do
         # Notes are attached to noteables, if there are no noteables, we can't make notes.
-        @noteables_available = Note.noteables_exist?
+        @noteables_available = Note.noteables_exist?(current_course.id)
         render 'index', formats: [:html]
       end
 

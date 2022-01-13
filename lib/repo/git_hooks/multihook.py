@@ -7,7 +7,7 @@ import sys
 if __name__ == '__main__':
 
     hook_type = os.path.basename(__file__)
-    real_dir = os.path.dirname(os.path.realpath(__file__))
+    real_dir = os.path.dirname(os.path.abspath(__file__))
     with open(os.path.join(real_dir, 'max_file_size')) as f:
         max_file_size = f.read().strip()
     hooks_dir = os.path.join(real_dir, '{}.d'.format(hook_type))

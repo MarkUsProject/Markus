@@ -15,9 +15,9 @@ class Note < ApplicationRecord
     I18n.l(created_at)
   end
 
-  def self.noteables_exist?
+  def self.noteables_exist?(course_id)
     NOTEABLES.each do |classname|
-      unless Kernel.const_get(classname).all.empty?
+      unless classname.constantize.joins(:course).where('courses.id': course_id).empty?
         return true
       end
     end
