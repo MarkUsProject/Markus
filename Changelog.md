@@ -3,6 +3,7 @@
 ## [unreleased]
 - Remove unmaintained locales (#5727)
 - Fix bug where "Create Note" button was displaying when a course had no noteables (#5745)
+- Redesign login page for multiple authentication options (#5752)
 - Do not timeout users who are logged in using remote authentication (#5738)
 - Ensure users logged in using remote authentication have their session expired when logging out from remote authentication (#5738)
 - Display error message for users logging in using remote authentication if they do not exist in MarkUs database (#5738)
