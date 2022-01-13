@@ -8,7 +8,7 @@
 - Display error message for users logging in using remote authentication if they do not exist in MarkUs database (#5738)
 - Fix bug where git hooks were not finding the correct file containing the maximum file size for a given course (#5744)
 - Allow setting optional role attributes through the api (#5748)
-- Allow students to populate their repositories with starter files (#5753)
+- Allow students to populate their repositories with starter files (#5754)
 
 ## [v2.0.3]
 - Fix bug where repository access files were not taking multiple courses into account (#5734)
