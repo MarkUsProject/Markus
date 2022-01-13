@@ -21,6 +21,11 @@ class RawFileManager extends RawFileBrowser {
     this.handleActionBarAddFolderClick(event);
   };
 
+  onActionBarSubmitURLClick = event => {
+    event.preventDefault();
+    this.props.onActionBarSubmitURLClick();
+  };
+
   folderTarget = selectedItem => {
     // treat multiple selections as not targeting a folder
     const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith("/");
@@ -111,6 +116,16 @@ class RawFileManager extends RawFileBrowser {
             </li>
           );
         }
+        if (this.props.enableUrlSubmit) {
+          actions.push(
+            <li key="action-add-link">
+              <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
+                <i className="fa fa-submit-link-o" aria-hidden="true" />
+                &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
+              </a>
+            </li>
+          );
+        }
         if (
           selectedItem.keyDerived &&
           ((!selectionIsFolder &&
@@ -138,7 +153,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-add-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("upload_the", {item: I18n.t("file")})}
+              &nbsp;{I18n.t("submit_the", {item: I18n.t("file")})}
             </a>
           </li>
         );
@@ -168,10 +183,21 @@ class RawFileManager extends RawFileBrowser {
             role="button"
           >
             <i className="fa fa-add-file-o" aria-hidden="true" />
-            &nbsp;{I18n.t("upload_the", {item: I18n.t("file")})}
+            &nbsp;{I18n.t("submit_the", {item: I18n.t("file")})}
           </a>
         </li>
       );
+
+      if (this.props.enableUrlSubmit) {
+        actions.push(
+          <li key="action-add-link">
+            <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
+              <i className="fa fa-submit-link-o" aria-hidden="true" />
+              &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
+            </a>
+          </li>
+        );
+      }
 
       actions.push(
         <li key="action-delete" style={{color: "#8d8d8d"}}>
@@ -358,6 +384,7 @@ FileManager.defaultProps = {
     File: <i className="fa fa-file-o" aria-hidden="true" />,
     Image: <i className="fa fa-file-image-o" aria-hidden="true" />,
     PDF: <i className="fa fa-file-pdf-o" aria-hidden="true" />,
+    URL: <i className="fa fa-submit-link-o" aria-hidden="true" />,
     Rename: <i className="fa fa-i-cursor" aria-hidden="true" />,
     Folder: <i className="fa fa-folder-o" aria-hidden="true" />,
     FolderOpen: <i className="fa fa-folder-open-o" aria-hidden="true" />,

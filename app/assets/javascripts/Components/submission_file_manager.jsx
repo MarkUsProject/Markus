@@ -2,6 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
+import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
 import {lookup} from "mime-types";
 
@@ -10,7 +11,8 @@ class SubmissionFileManager extends React.Component {
     super(props);
     this.state = {
       files: [],
-      showModal: false,
+      showUploadModal: false,
+      showURLModal: false,
       uploadTarget: undefined,
       viewFile: null,
       viewFileType: null,
@@ -63,6 +65,10 @@ class SubmissionFileManager extends React.Component {
       this.fetchData();
     }
   }
+
+  handleCreateUrl = (url, alias) => {
+    return null;
+  };
 
   handleCreateFiles = (files, unzip) => {
     if (
@@ -174,7 +180,11 @@ class SubmissionFileManager extends React.Component {
   };
 
   openUploadModal = uploadTarget => {
-    this.setState({showModal: true, uploadTarget: uploadTarget});
+    this.setState({showUploadModal: true, uploadTarget: uploadTarget});
+  };
+
+  openSubmitURLModal = () => {
+    this.setState({showURLModal: true});
   };
 
   updateViewFile = item => {
@@ -243,11 +253,18 @@ class SubmissionFileManager extends React.Component {
             deleteFolder: !this.props.enableSubdirs,
           }}
           onSelectFile={this.updateViewFile}
+          enableUrlSubmit={true}
+          onActionBarSubmitURLClick={this.props.readOnly ? undefined : this.openSubmitURLModal}
         />
         <SubmissionFileUploadModal
-          isOpen={this.state.showModal}
-          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          isOpen={this.state.showUploadModal}
+          onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+        />
+        <SubmitUrlUploadModal
+          isOpen={this.state.showURLModal}
+          onRequestClose={() => this.setState({showURLModal: false})}
+          onSubmit={this.handleCreateUrl}
         />
         {this.renderFileViewer()}
       </div>
