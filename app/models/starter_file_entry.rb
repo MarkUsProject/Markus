@@ -36,6 +36,32 @@ class StarterFileEntry < ApplicationRecord
     end
   end
 
+  def add_files_to_repo(repo, txn)
+    relative_root = Pathname.new(starter_file_group.path)
+    should_rename = starter_file_group.should_rename
+    rename = starter_file_group.entry_rename
+    assignment_path = starter_file_group.assignment.short_identifier
+
+    rev = repo.get_latest_revision
+    files_and_dirs.sort.each do |abs_path|
+      repo_entry_path = abs_path.relative_path_from(relative_root)
+      repo_entry_path = File.join(rename, *repo_entry_path.each_filename.to_a[1..-1]) if should_rename
+      repo_entry_path = File.join(assignment_path, repo_entry_path)
+
+      entry_exists = rev.path_exists? repo_entry_path
+      if abs_path.directory? && !entry_exists
+        txn.add_path(repo_entry_path)
+      else
+        content = File.read(abs_path.to_s, mode: 'rb')
+        if entry_exists
+          txn.replace(repo_entry_path, content, 'application/octet-stream', rev.revision_identifier)
+        else
+          txn.add(repo_entry_path, content, 'application/octet-stream')
+        end
+      end
+    end
+  end
+
   private
 
   def entry_exists
