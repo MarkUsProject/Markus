@@ -76,7 +76,10 @@ class SubmissionFileManager extends React.Component {
       data.append("grouping_id", this.props.grouping_id);
     }
     $.post({
-      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.update_files_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: data,
       processData: false, // tell jQuery not to process the data
       contentType: false, // tell jQuery not to set contentType

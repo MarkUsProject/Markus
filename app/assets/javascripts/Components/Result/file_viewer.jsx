@@ -197,20 +197,10 @@ export class FileViewer extends React.Component {
         />
       );
     } else if (this.state.type === "url") {
-      const file_pattern = /^\[InternetShortcut]\nURL=/;
-      //return (
-      //  <URLViewer
-      //    url={this.state.url}
-      //    content={this.state.content}
-      //    focusLine={this.props.focusLine}
-      //    {...commonProps}
-      //  />
-      //);
       return (
-        <TextViewer
-          type={this.state.type}
+        <URLViewer
+          url={this.state.url}
           content={this.state.content}
-          focusLine={this.props.focusLine}
           {...commonProps}
         />
       );

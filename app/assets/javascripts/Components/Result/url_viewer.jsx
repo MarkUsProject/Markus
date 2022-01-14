@@ -10,14 +10,6 @@ export class URLViewer extends React.Component {
     };
   }
 
-  componentDidMount() {
-    //this.set_display()
-  }
-
-  componentDidUpdate() {
-    //this.set_display()
-  }
-
   set_display = () => {
     const file_pattern = /^\[InternetShortcut]\nURL=/;
     const internet_shortcut = this.props.content.replace(file_pattern, "");
@@ -83,15 +75,9 @@ export class URLViewer extends React.Component {
       );
     } else {
       return (
-        <TextViewer
-          type={"text"}
-          content={this.props.content}
-          focusLine={this.props.focusLine}
-          submission_file_id={this.props.submission_file_id}
-          annotations={this.props.annotations}
-          released_to_students={this.props.released_to_students}
-          resultView={this.props.resultView}
-        />
+        <pre>
+          {this.props.content}
+        </pre>
       );
     }
   }
