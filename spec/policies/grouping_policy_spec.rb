@@ -286,4 +286,29 @@ describe GroupingPolicy do
       end
     end
   end
+
+  describe_rule :access_repo? do
+    let(:assignment) { create :assignment, is_hidden: true }
+    context 'role is a student' do
+      let(:role) { create :student }
+      let(:grouping) { create :grouping, assignment: assignment }
+      context 'when the assignment is not timed' do
+        succeed 'and version control submission is enabled' do
+          let(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
+        end
+        failed 'and version control submission is disabled' do
+          let(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+        end
+      end
+      context 'when the assignment is timed and version control submission is enabled' do
+        let(:assignment) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+        succeed 'and the grouping has started' do
+          let(:grouping) { create :grouping, assignment: assignment, start_time: 1.minute.ago }
+        end
+        failed 'and the grouping has not yet started' do
+          let(:grouping) { create :grouping, assignment: assignment, start_time: nil }
+        end
+      end
+    end
+  end
 end
