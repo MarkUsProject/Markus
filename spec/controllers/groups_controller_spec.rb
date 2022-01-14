@@ -687,6 +687,7 @@ describe GroupsController do
       end
     end
   end
+
   describe '#download_starter_file' do
     subject { get_as role, :download_starter_file, params: { course_id: course.id, assignment_id: assignment.id } }
     context 'an instructor' do
@@ -763,6 +764,109 @@ describe GroupsController do
             assignment.update!(due_date: 1.minute.ago)
           end
           include_examples 'download starter files properly'
+        end
+        context 'the grouping has not started yet' do
+          before do
+            starter_file_group
+            grouping
+          end
+          it 'should respond with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+        end
+      end
+    end
+  end
+
+  describe '#populate_repo_with_starter_files' do
+    subject do
+      get_as role, :populate_repo_with_starter_files,
+             params: { course_id: course.id, assignment_id: assignment.id }
+    end
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      let(:role) { create :ta }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a student' do
+      let(:role) { create :student }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
+
+      shared_examples 'populate starter files properly' do
+        it 'populates the grouping repository with the correct content' do
+          subject
+          grouping.access_repo do |repo|
+            rev = repo.get_latest_revision
+            expect(rev.path_exists?(File.join(assignment.short_identifier, 'q1', 'q1.txt'))).to be true
+            expect(rev.path_exists?(File.join(assignment.short_identifier, 'q2.txt'))).to be true
+          end
+        end
+      end
+      context 'when the grouping was created after any starter file groups' do
+        before do
+          starter_file_group
+          grouping
+        end
+        include_examples 'populate starter files properly'
+      end
+
+      context 'when the grouping was created before any starter file groups' do
+        before do
+          grouping
+          starter_file_group
+        end
+        include_examples 'populate starter files properly'
+      end
+
+      context 'when the assignment is hidden' do
+        let(:assignment) { create :assignment, is_hidden: true }
+        it 'should respond with 403' do
+          grouping
+          starter_file_group
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context 'when the assignment does not allow version control submissions' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+        it 'should respond with 403' do
+          grouping
+          starter_file_group
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context 'when the assignment is timed' do
+        let(:assignment) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+        context 'the grouping has started' do
+          before do
+            starter_file_group
+            grouping.update!(start_time: 1.minute.ago)
+          end
+          include_examples 'populate starter files properly'
+        end
+        context 'when the deadline has already passed' do
+          before do
+            starter_file_group
+            grouping
+            grouping.update!(start_time: 1.minute.ago)
+            assignment.update!(due_date: 1.minute.ago)
+          end
+          include_examples 'populate starter files properly'
         end
         context 'the grouping has not started yet' do
           before do
