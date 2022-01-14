@@ -72,8 +72,35 @@ export function pathToNode(node) {
 }
 
 function addMouseOverToNode(node, content) {
-  node.addEventListener("mouseover", () => {
-    // TODO: show content (rendered with MathJax) when hovering
+  const content_span = node.ownerDocument.createElement("span");
+  console.log(document.documentElement.style.getPropertyValue("--radius"));
+  Object.assign(content_span.style, {
+    display: "none",
+    // copy of the css properties for .annotation_text_display elements
+    background: document.documentElement.style.getPropertyValue("--background_main"),
+    border: `1px solid ${document.documentElement.style.getPropertyValue("--sharp_line")}`,
+    borderRadius: document.documentElement.style.getPropertyValue("--radius"),
+    boxShadow: `4px 4px 2px ${document.documentElement.style.getPropertyValue("--primary_two")}`,
+    maxWidth: "400px",
+    padding: "0.25em 1em",
+    position: "absolute",
+    width: "auto",
+    wordWrap: "break-word",
+    zIndex: "100000",
+  });
+  content_span.innerText = content;
+  content_span.className = "markus-annotation-content";
+  node.ownerDocument.body.appendChild(content_span);
+  // TODO: apply MathJax typesetting to the content_span node
+  //       MathJax.Hub.Queue(["Typeset", MathJax.Hub, content_span]); // <- this works but mathjax css isn't applied
+  //                                                                  //    because iframe has its own css context
+  node.addEventListener("mouseenter", e => {
+    content_span.style.left = `${e.pageX}px`;
+    content_span.style.top = `${e.pageY}px`;
+    content_span.style.display = "";
+  });
+  node.addEventListener("mouseleave", () => {
+    content_span.style.display = "none";
   });
 }
 
