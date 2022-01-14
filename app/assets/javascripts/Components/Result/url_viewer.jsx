@@ -1,5 +1,4 @@
 import React from "react";
-import {TextViewer} from "./text_viewer";
 
 export class URLViewer extends React.Component {
   constructor(props) {
@@ -10,7 +9,7 @@ export class URLViewer extends React.Component {
     };
   }
 
-  set_display = () => {
+  componentDidMount() {
     const file_pattern = /^\[InternetShortcut]\nURL=/;
     const internet_shortcut = this.props.content.replace(file_pattern, "");
     const youtube_id_is_set = this.configure_youtube_preview(internet_shortcut);
@@ -70,7 +69,11 @@ export class URLViewer extends React.Component {
     if (this.state.show_iframe_preview) {
       return (
         <div className="url-container" key={"url_container"}>
-          <iframe className="url-display" src={this.state.url} allowFullScreen />
+          <iframe className="url-display" src={this.state.url} allowFullScreen>
+            <pre>
+              {this.props.content}
+            </pre>
+          </iframe>
         </div>
       );
     } else {
