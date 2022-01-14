@@ -33,7 +33,7 @@ export class URLViewer extends React.Component {
           });
       }
     }
-  };
+  }
 
   configure_google_drive_preview = url => {
     const regex = /\/d\/(.+)\//;
@@ -70,18 +70,12 @@ export class URLViewer extends React.Component {
       return (
         <div className="url-container" key={"url_container"}>
           <iframe className="url-display" src={this.state.url} allowFullScreen>
-            <pre>
-              {this.props.content}
-            </pre>
+            <pre>{this.props.content}</pre>
           </iframe>
         </div>
       );
     } else {
-      return (
-        <pre>
-          {this.props.content}
-        </pre>
-      );
+      return <pre>{this.props.content}</pre>;
     }
   }
 }
