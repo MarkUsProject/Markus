@@ -393,8 +393,7 @@ class SubmissionsController < ApplicationController
       flash_file_manager_messages
     end
   rescue StandardError => e
-    raise e
-    # flash_message(:error, e.message)
+    flash_message(:error, e.message)
     head :bad_request
   end
 
