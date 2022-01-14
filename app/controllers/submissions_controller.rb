@@ -720,9 +720,7 @@ class SubmissionsController < ApplicationController
       current_ids = html.xpath('//*[@id]').map { |elem| elem[:id] }.to_set
       html.xpath('//*[not(@id)]').map do |elem|
         unique_id = elem.path
-        while current_ids.include? unique_id
-          unique_id += '-next'
-        end
+        unique_id += '-next' while current_ids.include? unique_id
         elem.set_attribute(:id, unique_id)
       end
       File.write(cache_file, html.to_html)
