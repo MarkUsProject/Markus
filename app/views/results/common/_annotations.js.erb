@@ -314,7 +314,15 @@
   function get_notebook_annotation_range() {
     const notebook_iframe = document.getElementById("notebook");
     const target = notebook_iframe.contentWindow || notebook_iframe.contentDocument;
-    return target.getSelection().getRangeAt(0);
+    const selection = target.getSelection()
+    if (selection.rangeCount >= 1) {
+      const range = selection.getRangeAt(0);
+      if (range.startOffset !== range.endOffset || range.startContainer !== range.endContainer) {
+        return range;
+      }
+    }
+    alert(I18n.t('results.annotation.select_some_text'));
+    return {};
   }
 
   // Retrieve PDF annotation data with model ids.

@@ -58,7 +58,7 @@ export function pathToNode(node) {
   if (node.id) {
     return `//*[@id="${node.id}"]`;
   } else if (node.parentNode) {
-    if (node.nodeType === 3) {
+    if (node.nodeType === Node.TEXT_NODE) {
       return `${pathToNode(node.parentNode)}/text()`;
     } else {
       const index = [...node.parentNode.childNodes]
@@ -72,14 +72,13 @@ export function pathToNode(node) {
 }
 
 function addMouseOverToNode(node, content) {
-  const content_span = node.ownerDocument.createElement("span");
-  console.log(document.documentElement.style.getPropertyValue("--radius"));
-  Object.assign(content_span.style, {
+  const content_container = node.ownerDocument.createElement("div");
+  Object.assign(content_container.style, {
     display: "none",
     // copy of the css properties for .annotation_text_display elements
     background: document.documentElement.style.getPropertyValue("--background_main"),
     border: `1px solid ${document.documentElement.style.getPropertyValue("--sharp_line")}`,
-    borderRadius: document.documentElement.style.getPropertyValue("--radius"),
+    borderRadius: getComputedStyle(document.documentElement).getPropertyValue("--radius"),
     boxShadow: `4px 4px 2px ${document.documentElement.style.getPropertyValue("--primary_two")}`,
     maxWidth: "400px",
     padding: "0.25em 1em",
@@ -88,19 +87,19 @@ function addMouseOverToNode(node, content) {
     wordWrap: "break-word",
     zIndex: "100000",
   });
-  content_span.innerText = content;
-  content_span.className = "markus-annotation-content";
-  node.ownerDocument.body.appendChild(content_span);
-  // TODO: apply MathJax typesetting to the content_span node
-  //       MathJax.Hub.Queue(["Typeset", MathJax.Hub, content_span]); // <- this works but mathjax css isn't applied
-  //                                                                  //    because iframe has its own css context
+  content_container.innerHTML = safe_marked(content);
+  content_container.className = "markus-annotation-content";
+  node.ownerDocument.body.appendChild(content_container);
+  // TODO: apply MathJax typesetting to the content_container node
+  //       MathJax.Hub.Queue(["Typeset", MathJax.Hub, content_container]); // <- this works but mathjax css isn't applied
+  //                                                                       //    because iframe has its own css context
   node.addEventListener("mouseenter", e => {
-    content_span.style.left = `${e.pageX}px`;
-    content_span.style.top = `${e.pageY}px`;
-    content_span.style.display = "";
+    content_container.style.left = `${e.pageX}px`;
+    content_container.style.top = `${e.pageY}px`;
+    content_container.style.display = "";
   });
   node.addEventListener("mouseleave", () => {
-    content_span.style.display = "none";
+    content_container.style.display = "none";
   });
 }
 
@@ -109,7 +108,7 @@ export function markupTextInRange(range, colour, content) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
     let new_node;
-    if (old_node.nodeType === 3) {
+    if (old_node.nodeType === Node.TEXT_NODE) {
       new_node = document.createElement("span");
       new_node.style.backgroundColor = colour;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
@@ -133,7 +132,7 @@ export function markupTextInRange(range, colour, content) {
       getLeafNodes(node).forEach(old_node => {
         const parent = old_node.parentNode;
         let new_node;
-        if (old_node.nodeType === 3) {
+        if (old_node.nodeType === Node.TEXT_NODE) {
           new_node = document.createElement("span");
           new_node.style.backgroundColor = colour;
           if (old_node === range.startContainer) {
