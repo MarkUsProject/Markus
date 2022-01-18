@@ -58,12 +58,12 @@ export function pathToNode(node) {
   if (node.id) {
     return `//*[@id="${node.id}"]`;
   } else if (node.parentNode) {
+    const index = [...node.parentNode.childNodes]
+      .filter(n => n.tagName === node.tagName)
+      .indexOf(node);
     if (node.nodeType === Node.TEXT_NODE) {
-      return `${pathToNode(node.parentNode)}/text()`;
+      return `${pathToNode(node.parentNode)}/text()[${index + 1}]`;
     } else {
-      const index = [...node.parentNode.childNodes]
-        .filter(n => n.tagName === node.tagName)
-        .indexOf(node);
       return `${pathToNode(node.parentNode)}/${node.tagName}[${index + 1}]`;
     }
   } else {
@@ -94,8 +94,14 @@ function addMouseOverToNode(node, content) {
   //       MathJax.Hub.Queue(["Typeset", MathJax.Hub, content_container]); // <- this works but mathjax css isn't applied
   //                                                                       //    because iframe has its own css context
   node.addEventListener("mouseenter", e => {
+    let offset_height = 0;
+    for (let elem of node.ownerDocument.getElementsByClassName("markus-annotation-content")) {
+      if (getComputedStyle(elem).display !== "none") {
+        offset_height += elem.offsetHeight;
+      }
+    }
     content_container.style.left = `${e.pageX}px`;
-    content_container.style.top = `${e.pageY}px`;
+    content_container.style.top = `${e.pageY + offset_height}px`;
     content_container.style.display = "";
   });
   node.addEventListener("mouseleave", () => {
@@ -108,8 +114,11 @@ export function markupTextInRange(range, colour, content) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
     let new_node;
-    if (old_node.nodeType === Node.TEXT_NODE) {
+    if (parent.className === "markus-annotation") {
+      new_node = old_node;
+    } else if (old_node.nodeType === Node.TEXT_NODE) {
       new_node = document.createElement("span");
+      new_node.className = "markus-annotation";
       new_node.style.backgroundColor = colour;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
       const marked = document.createTextNode(
@@ -122,6 +131,7 @@ export function markupTextInRange(range, colour, content) {
       parent.insertBefore(unmarked2, new_node.nextSibling);
     } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
       new_node = document.createElement("div");
+      new_node.className = "markus-annotation";
       new_node.style.border = `5px solid ${colour}`;
       new_node.appendChild(old_node.cloneNode(true));
       parent.replaceChild(new_node, old_node);
@@ -132,8 +142,11 @@ export function markupTextInRange(range, colour, content) {
       getLeafNodes(node).forEach(old_node => {
         const parent = old_node.parentNode;
         let new_node;
-        if (old_node.nodeType === Node.TEXT_NODE) {
+        if (parent.className === "markus-annotation") {
+          new_node = old_node;
+        } else if (old_node.nodeType === Node.TEXT_NODE) {
           new_node = document.createElement("span");
+          new_node.className = "markus-annotation";
           new_node.style.backgroundColor = colour;
           if (old_node === range.startContainer) {
             const unmarked = document.createTextNode(
@@ -157,6 +170,7 @@ export function markupTextInRange(range, colour, content) {
           }
         } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
           new_node = document.createElement("div");
+          new_node.className = "markus-annotation";
           new_node.style.border = `5px solid ${colour}`;
           new_node.appendChild(old_node.cloneNode(true));
           parent.replaceChild(new_node, old_node);
