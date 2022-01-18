@@ -14,7 +14,6 @@
           assignment_id: <%= @assignment.id %>,
           grouping_id: <%= @grouping.id %>,
           readOnly: <%= !@assignment.allow_web_submits %>,
-          enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
           starterFileChanged: <%= @grouping.starter_file_changed %>
         });
     });

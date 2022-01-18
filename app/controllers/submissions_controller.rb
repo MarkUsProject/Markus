@@ -317,10 +317,6 @@ class SubmissionsController < ApplicationController
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
 
-    unless delete_folders.empty? && new_folders.empty?
-      authorize! to: :manage_subdirectories?
-    end
-
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else

@@ -23,6 +23,7 @@ class SubmissionFileManager extends React.Component {
     readOnly: false,
     revision_identifier: undefined,
     starterFileChanged: false,
+    enableSubdirs: true,
   };
 
   componentDidMount() {

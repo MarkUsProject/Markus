@@ -15,7 +15,6 @@
           late_penalty: <%= !@grouping.assignment.submission_rule.is_a? NoLateSubmissionRule %>,
           grouping_id: <%= @grouping.id %>,
           collected_revision_id: '<%= @collected_revision&.revision_identifier %>',
-          enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
           collection_date: '<%= l(@grouping.collection_date) %>',
           due_date: '<%= l(@grouping.due_date) %>',
           is_timed: <%= @grouping.assignment.is_timed %>,
