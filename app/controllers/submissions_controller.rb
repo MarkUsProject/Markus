@@ -345,19 +345,16 @@ class SubmissionsController < ApplicationController
 
         if new_url.present?
           url_filename = params[:url_text]
-          if url_filename.present?
-            validate_url(new_url)
-            file_content = "[InternetShortcut]\nURL=#{new_url}"
-            url_file = Tempfile.new([url_filename, '.url'])
-            url_file.write(file_content)
-            url_file.rewind
-            success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_user,
-                                         repo, path, txn, true, required_files)
-            should_commit &&= success
-            messages.concat msgs
-          else
-            raise 'No url name given'
-          end
+          raise 'No url name given' unless url_filename.present?
+          raise 'Invalid URL' unless is_valid_url?(new_url)
+          file_content = "[InternetShortcut]\nURL=#{new_url}"
+          url_file = Tempfile.new([url_filename, '.url'])
+          url_file.write(file_content)
+          url_file.rewind
+          success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_user,
+                                       repo, path, txn, true, required_files)
+          should_commit &&= success
+          messages.concat msgs
         end
 
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
@@ -431,6 +428,10 @@ class SubmissionsController < ApplicationController
         else
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+          
+          if file_type == 'url'
+            file_contents = extract_url(file_contents)
+          end
 
           if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
@@ -821,8 +822,11 @@ class SubmissionsController < ApplicationController
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
   end
 
-  # Checks to ensure the given +url+ is valid. Returns nil if +url+ is valid. Throws an error otherwise.
-  def validate_url(_url)
-    nil
+  # Returns a boolean on whether the given +url+ is valid.
+  def is_valid_url?(url)
+    uri = URI.parse(url)
+    !uri.host.is_empty?
+  rescue InvalidURIError
+    false
   end
 end
