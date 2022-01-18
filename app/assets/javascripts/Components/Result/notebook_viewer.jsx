@@ -23,14 +23,20 @@ export class NotebookViewer extends React.Component {
   renderAnnotations = event => {
     const doc = event.target.contentDocument;
     const colour = document.documentElement.style.getPropertyValue("--light_alert");
-    this.props.annotations.forEach(annotation => {
-      const start_node = doc.evaluate(annotation.start_node, doc).iterateNext();
-      const end_node = doc.evaluate(annotation.end_node, doc).iterateNext();
-      const newRange = doc.createRange();
-      newRange.setStart(start_node, annotation.start_offset);
-      newRange.setEnd(end_node, annotation.end_offset);
-      markupTextInRange(newRange, colour, annotation.content);
-    });
+    // annotations need to be sorted in the order that they were created so that multiple
+    // annotations on the same node get rendered in the order they were created. If they are
+    // not, then the ranges may contain nodes/offsets that don't take the other highlighted
+    // regions into account. We assume that newer annotations will have a larger id than older ones.
+    this.props.annotations
+      .sort((a, b) => (a.id > b.id ? 1 : -1))
+      .forEach(annotation => {
+        const start_node = doc.evaluate(annotation.start_node, doc).iterateNext();
+        const end_node = doc.evaluate(annotation.end_node, doc).iterateNext();
+        const newRange = doc.createRange();
+        newRange.setStart(start_node, annotation.start_offset);
+        newRange.setEnd(end_node, annotation.end_offset);
+        markupTextInRange(newRange, colour, annotation.content);
+      });
   };
 
   render() {
