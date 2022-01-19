@@ -157,6 +157,9 @@ describe TasController do
       it 'should not create a Ta' do
         expect(Ta.count).to eq(0)
       end
+      it 'should display an error message' do
+        expect(flash[:error]).not_to be_empty
+      end
     end
   end
 end
