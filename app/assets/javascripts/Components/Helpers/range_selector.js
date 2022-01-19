@@ -58,12 +58,15 @@ export function pathToNode(node) {
   if (node.id) {
     return `//*[@id="${node.id}"]`;
   } else if (node.parentNode) {
-    const index = [...node.parentNode.childNodes]
-      .filter(n => n.tagName === node.tagName)
-      .indexOf(node);
     if (node.nodeType === Node.TEXT_NODE) {
+      const index = [...node.parentNode.childNodes]
+        .filter(n => n.nodeType === Node.TEXT_NODE)
+        .indexOf(node);
       return `${pathToNode(node.parentNode)}/text()[${index + 1}]`;
     } else {
+      const index = [...node.parentNode.childNodes]
+        .filter(n => n.tagName === node.tagName)
+        .indexOf(node);
       return `${pathToNode(node.parentNode)}/${node.tagName}[${index + 1}]`;
     }
   } else {
@@ -114,9 +117,7 @@ export function markupTextInRange(range, colour, content) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
     let new_node;
-    if (parent.className === "markus-annotation") {
-      new_node = old_node;
-    } else if (old_node.nodeType === Node.TEXT_NODE) {
+    if (old_node.nodeType === Node.TEXT_NODE) {
       new_node = document.createElement("span");
       new_node.className = "markus-annotation";
       new_node.style.backgroundColor = colour;
@@ -142,9 +143,7 @@ export function markupTextInRange(range, colour, content) {
       getLeafNodes(node).forEach(old_node => {
         const parent = old_node.parentNode;
         let new_node;
-        if (parent.className === "markus-annotation") {
-          new_node = old_node;
-        } else if (old_node.nodeType === Node.TEXT_NODE) {
+        if (old_node.nodeType === Node.TEXT_NODE) {
           new_node = document.createElement("span");
           new_node.className = "markus-annotation";
           new_node.style.backgroundColor = colour;
