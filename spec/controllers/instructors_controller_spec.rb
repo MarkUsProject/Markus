@@ -49,6 +49,10 @@ describe InstructorsController do
           instructor
           expect { subject }.not_to(change { Instructor.count })
         end
+        it 'should display an error message' do
+          subject
+          expect(flash[:error]).not_to be_empty
+        end
       end
     end
     context '#update' do
@@ -75,6 +79,10 @@ describe InstructorsController do
           old_user = role.end_user
           subject
           expect(role.reload.end_user).to eq(old_user)
+        end
+        it 'should display an error message' do
+          subject
+          expect(flash[:error]).not_to be_empty
         end
       end
     end
