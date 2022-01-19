@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_16_152132) do
+ActiveRecord::Schema.define(version: 2022_01_05_204341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,10 @@ ActiveRecord::Schema.define(version: 2021_12_16_152132) do
     t.string "creator_type"
     t.integer "creator_id"
     t.integer "result_id"
+    t.string "start_node"
+    t.string "end_node"
+    t.integer "start_offset"
+    t.integer "end_offset"
     t.index ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id"
     t.index ["submission_file_id"], name: "index_annotations_on_submission_file_id"
   end
