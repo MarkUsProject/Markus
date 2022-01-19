@@ -5,6 +5,7 @@ import {LeftPane} from "./left_pane";
 import {RightPane} from "./right_pane";
 import {SubmissionSelector} from "./submission_selector";
 import CreateModifyAnnotationPanel from "../Modals/create_modify_annotation_panel_modal";
+import {pathToNode} from "../Helpers/range_selector";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -244,6 +245,14 @@ class Result extends React.Component {
       box = get_image_annotation_data();
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       box = get_pdf_annotation_data();
+    } else if (annotation_type === ANNOTATION_TYPES.NOTEBOOK) {
+      const range = get_notebook_annotation_range();
+      box = {
+        start_node: pathToNode(range.startContainer),
+        start_offset: range.startOffset,
+        end_node: pathToNode(range.endContainer),
+        end_offset: range.endOffset,
+      };
     } else {
       box = get_text_annotation_data();
     }
@@ -297,7 +306,10 @@ class Result extends React.Component {
 
     data = this.extend_with_selection_data(data);
     if (data) {
-      $.post(Routes.add_existing_annotation_course_annotations_path(this.props.course_id), data);
+      $.post(
+        Routes.add_existing_annotation_course_annotations_path(this.props.course_id),
+        data
+      ).then(this.refreshAnnotations);
     }
   };
 

@@ -19,7 +19,7 @@ class Annotation < ApplicationRecord
                             greater_than: 0
 
   validates_format_of :type,
-                      with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
+                      with: /\AImageAnnotation|TextAnnotation|PdfAnnotation|HtmlAnnotation\z/
 
   before_create :check_if_released
   before_destroy :check_if_released
