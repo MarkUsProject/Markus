@@ -20,6 +20,7 @@ describe Annotation do
     it { is_expected.to allow_value('ImageAnnotation').for(:type) }
     it { is_expected.to allow_value('TextAnnotation').for(:type) }
     it { is_expected.to allow_value('PdfAnnotation').for(:type) }
+    it { is_expected.to allow_value('HtmlAnnotation').for(:type) }
     it { is_expected.to_not allow_value('OtherAnnotation').for(:type) }
   end
 

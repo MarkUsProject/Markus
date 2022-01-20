@@ -26,5 +26,12 @@ FactoryBot.define do
       column_start { 1 }
       column_end { 2 }
     end
+
+    factory :html_annotation, class: HtmlAnnotation do
+      start_node { 'node1' }
+      end_node { 'node2' }
+      start_offset { 0 }
+      end_offset { 0 }
+    end
   end
 end
