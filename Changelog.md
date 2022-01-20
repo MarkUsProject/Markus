@@ -1,7 +1,6 @@
 # Changelog
 
-## [unreleased]
-- Remove unmaintained locales (#5727)
+## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
 
 ## [v2.0.4]
