@@ -39,7 +39,7 @@ export class URLViewer extends React.Component {
       url: "",
       show_iframe_preview: false,
     });
-  }
+  };
 
   configureGoogleDrivePreview = url => {
     const regex = /\/d\/(.+)\//;
