@@ -1150,6 +1150,7 @@ describe SubmissionsController do
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
+    let(:file7) { fixture_file_upload('youtube.url') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1207,6 +1208,24 @@ describe SubmissionsController do
           expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
           expect(actual).to eq(expected)
         end
+      end
+    end
+    describe 'When the file is a url file' do
+      let(:files) { [file7] }
+      it 'should return the file type' do
+        submission_file = submission.submission_files.find_by(filename: file7.original_filename)
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq 'url'
+      end
+      it 'should download a url instead of the file content' do
+        submission_file = submission.submission_files.find_by(filename: file7.original_filename)
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id }
+        expected = ActiveSupport::JSON.encode('https://www.youtube.com/watch?v=dtGs7Fy8ISo')
+        expect(JSON.parse(response.body)['content']).to eq(expected)
       end
     end
     describe 'when the file is an image' do
