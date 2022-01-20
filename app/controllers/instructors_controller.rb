@@ -43,4 +43,9 @@ class InstructorsController < ApplicationController
   def end_user_params
     params.require(:role).require(:end_user).permit(:user_name)
   end
+
+  def flash_interpolation_options
+    { resource_name: @role.end_user&.user_name.blank? ? @role.model_name.human : @role.user_name,
+      errors: @role.errors.full_messages.join('; ') }
+  end
 end

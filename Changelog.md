@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.0.5]
+- Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
+
 ## [v2.0.4]
 - Fix bug where "Create Note" button was displaying when a course had no noteables (#5745)
 - Redesign login page for multiple authentication options (#5752)

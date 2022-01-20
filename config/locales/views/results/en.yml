@@ -6,6 +6,7 @@ en:
       common: Common Annotations
       include_in_download: Include Annotations
       include_in_download_warning: 'Warning: Annotations on PDFs are not currently downloaded.'
+      no_overlap: Annotations cannot overlap.
       placeholder: Markdown and basic LaTeX syntax are supported.
       remark_flag: remark
       select_an_area: You must select an area on the image to annotate.

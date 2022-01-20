@@ -16,6 +16,7 @@
   --primary_one: #245185;
   --primary_two: #cee3ea;
   --primary_three: #89b1dd;
+  --radius: 5px;
   --severe_alert: #ffd452;
   --severe_error: #a20000;
   --severe_success: #246700;
@@ -62,7 +63,7 @@ $darker-orange: var(--darker-orange);
 
 $fonts: 'Open Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
 $mono-fonts: 'Consolas', 'Courier New', Courier, mono, serif;
-$radius: 5px;
+$radius: var(--radius);
 $time-quick: 0.25s;
 $time-medium: 0.35s;
 $dimen-vertical: 2em;
