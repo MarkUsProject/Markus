@@ -10,32 +10,38 @@ export class URLViewer extends React.Component {
   }
 
   componentDidMount() {
-    const file_pattern = /^\[InternetShortcut]\nURL=/;
-    const internet_shortcut = this.props.content.replace(file_pattern, "");
-    const youtube_id_is_set = this.configure_youtube_preview(internet_shortcut);
-    if (!youtube_id_is_set) {
-      const url = new URL(internet_shortcut);
-      switch (url.hostname) {
-        case "docs.google.com":
-        case "drive.google.com":
-          this.configure_google_drive_preview(internet_shortcut);
-          break;
-        case "play.library.utoronto.ca":
-          this.setState({
-            url: internet_shortcut,
-            show_iframe_preview: false,
-          });
-          break;
-        default:
-          this.setState({
-            url: "",
-            show_iframe_preview: false,
-          });
+    try {
+      const url = new URL(this.props.content);
+      const youtube_id_is_set = this.configureYoutubePreview(url.toString());
+      if (!youtube_id_is_set) {
+        switch (url.hostname) {
+          case "docs.google.com":
+          case "drive.google.com":
+            this.configureGoogleDrivePreview(url.toString());
+            break;
+          case "play.library.utoronto.ca":
+            this.setState({
+              url: url.toString(),
+              show_iframe_preview: false,
+            });
+            break;
+          default:
+            this.setDefaultState();
+        }
       }
+    } catch (e) {
+      this.setDefaultState();
     }
   }
 
-  configure_google_drive_preview = url => {
+  setDefaultState = () => {
+    this.setState({
+      url: "",
+      show_iframe_preview: false,
+    });
+  }
+
+  configureGoogleDrivePreview = url => {
     const regex = /\/d\/(.+)\//;
     const match = url.match(regex);
     if (match.length === 2) {
@@ -44,14 +50,11 @@ export class URLViewer extends React.Component {
         show_iframe_preview: true,
       });
     } else {
-      this.setState({
-        url: "",
-        show_iframe_preview: false,
-      });
+      this.setDefaultState();
     }
   };
 
-  configure_youtube_preview = url => {
+  configureYoutubePreview = url => {
     // Taken from https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);

@@ -428,7 +428,7 @@ class SubmissionsController < ApplicationController
         else
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-          
+
           if file_type == 'url'
             file_contents = extract_url(file_contents)
           end
@@ -475,6 +475,7 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
+        file_contents = extract_url(file_contents) if preview && FileHelper.get_file_type(params[:file_name]) == 'url'
         file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)
       rescue ArgumentError
         # Handle UTF8 encoding error
@@ -822,11 +823,18 @@ class SubmissionsController < ApplicationController
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
   end
 
+  def extract_url(file_content)
+    file_pattern = /^\[InternetShortcut]\nURL=(?<url>\S+)/
+    url = file_pattern.match(file_content)
+    url = url.nil? ? '' : url[:url].to_s
+    !url.empty? && is_valid_url?(url) ? url : I18n.t('submissions.cannot_display')
+  end
+
   # Returns a boolean on whether the given +url+ is valid.
   def is_valid_url?(url)
     uri = URI.parse(url)
-    !uri.host.is_empty?
-  rescue InvalidURIError
+    !uri.host.empty?
+  rescue URI::InvalidURIError
     false
   end
 end
