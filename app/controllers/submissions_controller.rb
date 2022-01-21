@@ -824,7 +824,7 @@ class SubmissionsController < ApplicationController
   end
 
   # Helper that extracts the URL from a url file to send to a user.
-  # If no URL is found, returns a string saying the file cannot be displayed. 
+  # If no URL is found, returns a string saying the file cannot be displayed.
   def extract_url(file_content)
     file_pattern = /^\[InternetShortcut\]\nURL=(?<url>\S+)/
     url = file_pattern.match(file_content)

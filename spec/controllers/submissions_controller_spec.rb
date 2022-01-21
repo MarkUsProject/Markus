@@ -126,7 +126,7 @@ describe SubmissionsController do
         file = fixture_file_upload('youtube.url')
         expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
         post_as @student, :update_files,
-                params: { course_id: course.id, assignment_id: @assignment.id, 
+                params: { course_id: course.id, assignment_id: @assignment.id,
                           new_url: URI.extract(File.read(file)).first, url_text: 'youtube' }
         expect(response).to have_http_status :ok
 
@@ -146,16 +146,16 @@ describe SubmissionsController do
           expect(files['youtube.url']).to_not be_nil
         end
       end
-      
+
       it 'should reject url with no name' do
         file = fixture_file_upload('youtube.url')
         expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           new_url: URI.extract(File.read(file)).first }
-        
+
         expect(response).to have_http_status :bad_request
-        
+
         # Check that the files were not added
         @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
