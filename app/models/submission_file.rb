@@ -30,10 +30,6 @@ class SubmissionFile < ApplicationRecord
     File.extname(filename).casecmp('.rmd')&.zero?
   end
 
-  def is_url?
-    File.extname(filename).casecmp('.url')&.zero?
-  end
-
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
     file_contents.size == 0 ||
