@@ -127,7 +127,7 @@ describe SubmissionsController do
         expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id, 
-                          new_url: URI.extract(File.read(file)), url_text: 'youtube' }
+                          new_url: URI.extract(File.read(file)).first, url_text: 'youtube' }
         expect(response).to have_http_status :ok
 
         # update_files action assert assign to various instance variables.
@@ -152,7 +152,7 @@ describe SubmissionsController do
         expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id,
-                          new_url: URI.extract(File.read(file)) }
+                          new_url: URI.extract(File.read(file)).first }
         
         expect(response).to have_http_status :bad_request
         
@@ -1123,7 +1123,7 @@ describe SubmissionsController do
                                                   file_name: 'youtube.url',
                                                   preview: true,
                                                   grouping_id: grouping.id }
-          expect(response.body).to eq(File.read(file4))
+          expect(response.body).to eq(URI.extract(File.read(file4)).first)
         end
         it 'should not display an invalid url file' do
           get_as instructor, :download, params: { course_id: course.id,
