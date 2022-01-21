@@ -824,7 +824,7 @@ class SubmissionsController < ApplicationController
   end
 
   # Helper that extracts the URL from a url file to send to a user.
-  # If no URL is found, returns a string saying the file cannot be displayed. 
+  # If no URL is found, returns a string saying the file cannot be displayed.
   def extract_url(file_content)
     file_pattern = /^\[InternetShortcut\]\nURL=(?<url>\S+)/
     url = file_pattern.match(file_content)
@@ -833,9 +833,10 @@ class SubmissionsController < ApplicationController
   end
 
   # Returns a boolean on whether the given +url+ is valid.
+  # Taken from https://stackoverflow.com/questions/7167895/rails-whats-a-good-way-to-validate-links-urls
   def is_valid_url?(url)
     uri = URI.parse(url)
-    !uri.host.empty?
+    uri.is_a?(URI::HTTP) && !uri.host.blank?
   rescue URI::InvalidURIError
     false
   end
