@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Remove unmaintained locales (#5727)
+- Fix bug for "Delete Group" button generating an invalid path (#5768)
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
