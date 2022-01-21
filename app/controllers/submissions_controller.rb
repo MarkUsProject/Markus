@@ -345,8 +345,8 @@ class SubmissionsController < ApplicationController
 
         if new_url.present?
           url_filename = params[:url_text]
-          raise 'No url name given' unless url_filename.present?
-          raise 'Invalid URL' unless is_valid_url?(new_url)
+          raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
+          raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
           file_content = "[InternetShortcut]\nURL=#{new_url}"
           url_file = Tempfile.new([url_filename, '.url'])
           url_file.write(file_content)
@@ -823,8 +823,10 @@ class SubmissionsController < ApplicationController
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
   end
 
+  # Helper that extracts the URL from a url file to send to a user.
+  # If no URL is found, returns a string saying the file cannot be displayed. 
   def extract_url(file_content)
-    file_pattern = /^\[InternetShortcut]\nURL=(?<url>\S+)/
+    file_pattern = /^\[InternetShortcut\]\nURL=(?<url>\S+)/
     url = file_pattern.match(file_content)
     url = url.nil? ? '' : url[:url].to_s
     !url.empty? && is_valid_url?(url) ? url : I18n.t('submissions.cannot_display')
