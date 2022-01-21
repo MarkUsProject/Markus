@@ -351,7 +351,7 @@ class SubmissionsController < ApplicationController
           url_file = Tempfile.new([url_filename, '.url'])
           url_file.write(file_content)
           url_file.rewind
-          success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_role, 
+          success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_role,
                                        repo, path, txn, true, required_files)
           should_commit &&= success
           messages.concat msgs
