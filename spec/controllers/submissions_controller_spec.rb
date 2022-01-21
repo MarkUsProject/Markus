@@ -121,6 +121,66 @@ describe SubmissionsController do
       end
     end
 
+    context 'submitting a url' do
+      it 'should be able to add url files' do
+        file = fixture_file_upload('youtube.url')
+        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id, 
+                          new_url: URI.extract(File.read(file)), url_text: 'youtube' }
+        expect(response).to have_http_status :ok
+
+        # update_files action assert assign to various instance variables.
+        # These are crucial for the file_manager view to work properly.
+        expect(assigns(:assignment)).to_not be_nil
+        expect(assigns(:grouping)).to_not be_nil
+        expect(assigns(:path)).to_not be_nil
+        expect(assigns(:revision)).to_not be_nil
+        expect(assigns(:files)).to_not be_nil
+        expect(assigns(:missing_assignment_files)).to_not be_nil
+
+        # Check to see if the file was added
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          expect(files['youtube.url']).to_not be_nil
+        end
+      end
+      
+      it 'should reject url with no name' do
+        file = fixture_file_upload('youtube.url')
+        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          new_url: URI.extract(File.read(file)) }
+        
+        expect(response).to have_http_status :bad_request
+        
+        # Check that the files were not added
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          expect(files['youtube.url']).to be_nil
+        end
+      end
+
+      it 'should reject invalid url' do
+        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          new_url: 'Not a url', url_text: 'youtube' }
+
+        expect(response).to have_http_status :bad_request
+
+        # Check that the files were not added
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          expect(files['youtube.url']).to be_nil
+        end
+      end
+    end
+
     context 'when the grouping is invalid' do
       it 'should not be able to add files' do
         @assignment.update!(group_min: 2, group_max: 3)
