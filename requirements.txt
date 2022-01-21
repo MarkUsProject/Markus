@@ -1,5 +1,5 @@
 # scanner
-opencv-python==4.5.2.54
+opencv-python==4.5.5.62
 torch==1.9.0
 torchvision==0.10.0
 Pillow==9.0.0
