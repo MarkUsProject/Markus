@@ -348,7 +348,7 @@ class SubmissionsController < ApplicationController
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
           raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
           file_content = "[InternetShortcut]\nURL=#{new_url}"
-          url_file = Tempfile.new([url_filename, '.url'])
+          url_file = Tempfile.new
           url_file.write(file_content)
           url_file.rewind
           success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_role,
@@ -638,7 +638,7 @@ class SubmissionsController < ApplicationController
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
       end
 
-      send_file zip_path, filename: "#{zip_name}.zip"
+      send_file zip_path, filename: zip_name + '.zip'
     end
   end
 

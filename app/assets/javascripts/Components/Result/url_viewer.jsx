@@ -11,7 +11,7 @@ export class URLViewer extends React.Component {
 
   componentDidMount() {
     try {
-      const url = new URL(this.props.content);
+      const url = new URL(this.props.externalUrl);
       const youtube_id_is_set = this.configureYoutubePreview(url.toString());
       if (!youtube_id_is_set) {
         switch (url.hostname) {
@@ -65,14 +65,14 @@ export class URLViewer extends React.Component {
   render() {
     if (this.state.show_iframe_preview) {
       return (
-        <div className="url-container" key={"url_container"}>
+        <div className="url-container">
           <iframe className="url-display" src={this.state.url} allowFullScreen>
-            <pre>{this.props.content}</pre>
+            <pre>{this.props.externalUrl}</pre>
           </iframe>
         </div>
       );
     } else {
-      return <pre>{this.props.content}</pre>;
+      return <pre>{this.props.externalUrl}</pre>;
     }
   }
 }
