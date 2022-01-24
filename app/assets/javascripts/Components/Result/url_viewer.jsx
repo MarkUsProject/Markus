@@ -19,12 +19,6 @@ export class URLViewer extends React.Component {
           case "drive.google.com":
             this.configureGoogleDrivePreview(url.toString());
             break;
-          case "play.library.utoronto.ca":
-            this.setState({
-              url: url.toString(),
-              show_iframe_preview: false,
-            });
-            break;
           default:
             this.setDefaultState();
         }
