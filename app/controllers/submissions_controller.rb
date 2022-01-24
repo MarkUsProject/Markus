@@ -351,8 +351,11 @@ class SubmissionsController < ApplicationController
           url_file = Tempfile.new
           url_file.write(file_content)
           url_file.rewind
-          success, msgs = add_tempfile(url_file, "#{url_filename}.url", 'text/url', current_role,
-                                       repo, path, txn, true, required_files)
+          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.url",
+                                                                tempfile: url_file,
+                                                                type: 'text/url')
+          success, msgs = add_file(new_url_file, current_role, repo,
+                                   path: path, txn: txn, check_size: true, required_files: required_files)
           should_commit &&= success
           messages.concat msgs
         end

@@ -19,18 +19,6 @@ module RepositoryHelper
   # in that array, a message will be returned indicating that non-required files were uploaded.
   def add_file(f, role, repo, path: '/', txn: nil, check_size: true, required_files: nil)
     messages = []
-    filename = f.original_filename
-    if filename.nil?
-      messages << [:invalid_filename, f.original_filename]
-      return false, messages
-    end
-    add_tempfile(f, filename, f.content_type, role, repo, path, txn, check_size, required_files)
-  end
-
-  # Does what is described in the add_file method, but generalizes +f+ to be a Tempfile object.
-  # To do so, a +filename+ and MIME +content_type+ must also be provided.
-  def add_tempfile(f, filename, content_type, role, repo, path, txn, check_size, required_files)
-    messages = []
 
     if txn.nil?
       txn = repo.get_transaction(role.user_name)
@@ -44,11 +32,16 @@ module RepositoryHelper
     new_files = []
     if check_size
       if f.size > role.course.max_file_size_settings
-        messages << [:too_large, filename]
+        messages << [:too_large, f.original_filename]
         return false, messages
       elsif f.size == 0
-        messages << [:too_small, filename]
+        messages << [:too_small, f.original_filename]
       end
+    end
+    filename = f.original_filename
+    if filename.nil?
+      messages << [:invalid_filename, f.original_filename]
+      return false, messages
     end
     subdir_path, filename = File.split(filename)
     filename = FileHelper.sanitize_file_name(filename)
@@ -59,9 +52,9 @@ module RepositoryHelper
     f.rewind
     # Branch on whether the file is new or a replacement
     if revision.path_exists?(file_path)
-      txn.replace(file_path, f.read, content_type, revision.revision_identifier)
+      txn.replace(file_path, f.read, f.content_type, revision.revision_identifier)
     else
-      txn.add(file_path, f.read, content_type)
+      txn.add(file_path, f.read, f.content_type)
     end
     # check if only required files are allowed for a submission
     # required_files = assignment.assignment_files.pluck(:filename)
