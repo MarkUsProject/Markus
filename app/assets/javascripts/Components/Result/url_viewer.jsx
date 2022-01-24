@@ -36,7 +36,7 @@ export class URLViewer extends React.Component {
     } catch (e) {
       this.setDefaultState();
     }
-  }
+  };
 
   setDefaultState = () => {
     this.setState({
