@@ -11,10 +11,6 @@ class RepoBrowser extends React.Component {
     };
   }
 
-  static defaultProps = {
-    enableSubdirs: true,
-  };
-
   componentDidMount() {
     this.fetchRevisions();
   }

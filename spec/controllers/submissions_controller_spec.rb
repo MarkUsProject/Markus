@@ -184,6 +184,59 @@ describe SubmissionsController do
           expect(files['TestShapes.java']).to be_nil
         end
       end
+
+      context 'when creating a folder with required files' do
+        before :each do
+          @assignment.update(
+            only_required_files: true,
+            assignment_files_attributes: [{ filename: 'test_zip/zip_subdir/TestShapes.java' }]
+          )
+        end
+        it 'should upload a folder named test_zip' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip'] }
+          expect(response).to have_http_status :ok
+        end
+        it 'should upload a subdirectory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip/zip_subdir'] }
+          expect(response).to have_http_status :ok
+        end
+        it 'should not upload a non required directory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['bad_folder'] }
+          expect(response).to have_http_status :bad_request
+        end
+        it 'should not upload a non required subdirectory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['bad_folder/bad_subdirectory'] }
+          expect(response).to have_http_status :bad_request
+        end
+      end
+
+      context 'when folders are required and uploading a zip file' do
+        let(:unzip) { 'true' }
+        before :each do
+          @assignment.update(
+            only_required_files: true,
+            assignment_files_attributes: [{ filename: 'test_zip/zip_subdir/TestShapes.java' },
+                                          { filename: 'test_zip/Shapes.java' }]
+          )
+        end
+
+        it 'should be able to create required folders' do
+          zip_file = fixture_file_upload('test_zip.zip', 'application/zip')
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_files: [zip_file], unzip: unzip }
+
+          expect(response).to have_http_status :ok
+        end
+      end
     end
 
     context 'uploading a zip file' do

@@ -118,7 +118,7 @@ module RepositoryHelper
     end
   end
 
-  def add_folder(folder_path, user, repo, path: '/', txn: nil)
+  def add_folder(folder_path, user, repo, path: '/', txn: nil, required_files: nil)
     messages = []
 
     if txn.nil?
@@ -132,6 +132,14 @@ module RepositoryHelper
 
     folder_path = current_path.join(folder_path)
     folder_path = folder_path.to_s
+
+    # check if only required files are allowed for a submission
+    # allowed folders = paths in required files
+    if required_files.present? && required_files.none? { |file| file.starts_with?(folder_path) }
+      messages << [:extra_files, new_folder_path]
+      return false, messages
+    end
+
     txn.add_path(folder_path)
 
     if commit_txn

@@ -317,6 +317,10 @@ class SubmissionsController < ApplicationController
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
 
+    unless delete_folders.empty? && new_folders.empty?
+      authorize! to: :manage_subdirectories?
+    end
+
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
@@ -333,10 +337,9 @@ class SubmissionsController < ApplicationController
         else
           required_files = nil
         end
-
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
           if f.is_a?(String) # is a directory
-            success, msgs = add_folder(f, current_role, repo, path: path, txn: txn)
+            success, msgs = add_folder(f, current_role, repo, path: path, txn: txn, required_files: required_files)
           else
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
