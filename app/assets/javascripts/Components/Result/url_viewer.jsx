@@ -10,6 +10,16 @@ export class URLViewer extends React.Component {
   }
 
   componentDidMount() {
+    this.configDisplay();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.externalUrl !== this.props.externalUrl) {
+      this.configDisplay();
+    }
+  }
+
+  configDisplay = () => {
     try {
       const url = new URL(this.props.externalUrl);
       const youtube_id_is_set = this.configureYoutubePreview(url.toString());
