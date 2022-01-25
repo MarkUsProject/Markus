@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.14.1]
+- Add wiki documentation into this repository (#5778)
+
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
