@@ -1,8 +1,5 @@
 describe SubmissionsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  after(:each) do
-    destroy_repos
-  end
   let(:course) { Course.first || create(:course) }
   shared_examples 'An authorized instructor and grader accessing #set_result_marking_state' do
     context '#set_result_marking_state' do
