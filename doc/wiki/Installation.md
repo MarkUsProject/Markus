@@ -219,7 +219,7 @@ RAILS_RELATIVE_URL_ROOT=/csc108 BACKGROUND=true bundle exec rails resque:schedul
 
 See the [autotester README](https://github.com/MarkUsProject/markus-autotesting) for installation instruction.
 
-Once the autotester is set up, connect MarkUs to the autotester by updating MarkUs' [configuration](./Configuration#settings) setting to point to the url that the autotester API is running at. For example, if the autotester API runs at `http://autotest.example.com`.
+Once the autotester is set up, connect MarkUs to the autotester by updating MarkUs' [configuration](Configuration.md#settings) setting to point to the url that the autotester API is running at. For example, if the autotester API runs at `http://autotest.example.com`.
 
 ```yaml
 autotest:
@@ -236,7 +236,7 @@ It is very important that the RAILS_RELATIVE_URL_ROOT is set when running this r
 
 ## setting up MarkUs as a git ssh server
 
-_as of version 1.12.0_ [Previous Settings](./Deprecated-wiki-pages#setting-up-MarkUs-as-a-git-ssh-server)
+_as of version 1.12.0_ [Previous Settings](Deprecated-wiki-pages.md#setting-up-MarkUs-as-a-git-ssh-server)
 
 To enable key pair uploads and to allow the server running MarkUs to handle git requests over ssh:
 

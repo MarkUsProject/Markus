@@ -3,7 +3,7 @@
 If you want to get started on working on MarkUs quickly and painlessly, this is the way to do it.
 
 1. Install [VirtualBox](https://www.virtualbox.org/) and [Vagrant](http://www.vagrantup.com/)
-2. Clone the Markus repo from GitHub by following the instructions in [Setting up Git and MarkUs](./Developer-Guide--Setting-up-Git).  (This is a document you will want to read very carefully and may come back to.)
+2. Clone the Markus repo from GitHub by following the instructions in [Setting up Git and MarkUs](Developer-Guide--Setting-up-Git.md).  (This is a document you will want to read very carefully and may come back to.)
 3. `cd` to the repo (make sure you’re in the right directory - it should contain the Vagrantfile)
 4. `vagrant up`
 

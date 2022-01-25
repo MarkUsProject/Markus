@@ -17,13 +17,13 @@ The instructor can also specify how these uploaded files should be distributed t
 
 Starter files can be uploaded and configured from the "Starter Files" tab for a given assignment:
 
-![Starter Files Tab](./images/starter-files-tab.png)
+![Starter Files Tab](images/starter-files-tab.png)
 
 ## Uploading Files
 
-[Files can be uploaded](./General-Usage#using-the-file-manager) in the "Starter Files Groups" section of this page:
+[Files can be uploaded](General-Usage.md#using-the-file-manager) in the "Starter Files Groups" section of this page:
 
-![Starter Files Group](./images/starter-files-groups.png)
+![Starter Files Group](images/starter-files-groups.png)
 
 New groups can be created by clicking the green + button and removed by clicking the red :X: button.
 
@@ -35,7 +35,7 @@ You may choose to upload your starter files to a single group or multiple groups
 
 Once starter files have been uploaded you may choose how they will be distributed to each group using the "Starter File Assignment Rules" section:
 
-![Starter Files Rules](./images/starter-files-rules.png)
+![Starter Files Rules](images/starter-files-rules.png)
 
 - Assign the default starter file group to all students
     - select one starter files group as the default, these files will be given to all newly created groups
@@ -57,10 +57,10 @@ For timed assessments, starter files will not be visible until the student has s
 
 If a group has already been created for this assignment and you modify the starter files on this page you will see a warning at the top of the page:
 
-![Starter Files Warning](./images/starter-files-warning.png)
+![Starter Files Warning](images/starter-files-warning.png)
 
-Students may choose to download the new version of their starter code (with any additional changes applied) when they view [the assignment on MarkUs](./Student-Guide
-).
+Students may choose to download the new version of their starter code (with any additional changes applied) when they view [the assignment on MarkUs](Student-Guide
+.md).
 
 If you make changes to the starter files themselves (ie. adding/removing/modifying files) only those students who have been assigned starter files that have changed will see this warning. On the other hand, if you make a change to how starter files are distributed (ie. make a change to the "Starter File Assignment Rules" form), all students will be notified of the change.
 

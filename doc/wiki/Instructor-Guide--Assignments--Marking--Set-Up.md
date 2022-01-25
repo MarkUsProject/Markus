@@ -7,20 +7,20 @@
  - [Marking State](#marking-state)
  - [Grading View](#grading-view)
 
-> :spiral_notepad: **NOTE:** Before you will be able to perform any numerical marking (i.e. assigning groups a numerical grade) you must set up a [marking scheme](./Instructor-Guide--Assignments--Marking--Marking-Schemes) for your assignment.
+> :spiral_notepad: **NOTE:** Before you will be able to perform any numerical marking (i.e. assigning groups a numerical grade) you must set up a [marking scheme](Instructor-Guide--Assignments--Marking--Marking-Schemes.md) for your assignment.
 
 ## Setting up a Grader Account
 If anyone other than the course instructor (admin) wants to be able to grade a student (or group's) work, they must have a "Grader" account. This means if a course has 4 TAs and everyone wants to be able to grade work, you must set up 4 separate "Grader" accounts - one for each TA. The course instructor does not require a separate account for grading as all marking can also be done from the admin account.
 
-For information on setting up a "Grader" account please see "[Grader Accounts](./Instructor-Guide--Users#grader-accounts)".
+For information on setting up a "Grader" account please see "[Grader Accounts](Instructor-Guide--Users.md#grader-accounts)".
 
 ## Submissions Table
 The first step in marking an assignment is to collect the assignment. To do this, navigate to the "Assignments" tab of MarkUs, click on the assignment you wish to mark and then on the "Submissions" tab:
-![Submissions Tab](./images/submissions-tab.png)
+![Submissions Tab](images/submissions-tab.png)
 
-Here you will see a table of all the groups that have been formed (see [How Students Form Groups](./Student-Guide) and [Managing Group Repositories](./Instructor-Guide--Groups)):
+Here you will see a table of all the groups that have been formed (see [How Students Form Groups](Student-Guide.md) and [Managing Group Repositories](Instructor-Guide--Groups.md)):
 
-| ![Submissions Table Part 1](./images/submissions-table.png) |
+| ![Submissions Table Part 1](images/submissions-table.png) |
 |--------------:|
 | *First three columns shown* |
 
@@ -34,7 +34,7 @@ If students are not allowed to work in groups, then under the "Group" column you
 
 ## Collecting an Assignment
 Before you may being grading an assignment, you must first collect the submitted files from each group. To do this, make sure you are on the "Submissions" page of the assignment you wish to grade and select the checkbox(es) of the groups from which you wish to collect. You may also select the box at the top of the column to select all groups. Once satisfied, click on the "Collect Submissions" button to begin collection.
-![Collecting Assignments](./images/submissions-table-collect.png)
+![Collecting Assignments](images/submissions-table-collect.png)
 
 > :spiral_notepad: **NOTE:** MarkUs only allows you to collect submissions AFTER the entire grace credit period has passed.
 
@@ -58,4 +58,4 @@ There are six different marking states for a submission:
  6. **Remark Requested** - This group has requested a remark request.
 
 ## Grading View
-Once you have collected an assignment, you may begin grading. Please see the [Grading View](./Instructor-Guide--Assignments--Marking--Grading-View) page for instructions.
+Once you have collected an assignment, you may begin grading. Please see the [Grading View](Instructor-Guide--Assignments--Marking--Grading-View.md) page for instructions.

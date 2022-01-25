@@ -22,7 +22,7 @@ The table on the right side of the page contains the names and memberships of al
 
 ### Create All Groups
 
-This option is available if the ["Students can work in groups"](./Instructor-Guide--Assignments--Setting-Up#group-properties) checkbox is not selected. Clicking the "Create All Groups" button will create a group for all students that are not already in a group for this assignment. Each group created in this way will contain only one member.
+This option is available if the ["Students can work in groups"](Instructor-Guide--Assignments--Setting-Up.md#group-properties) checkbox is not selected. Clicking the "Create All Groups" button will create a group for all students that are not already in a group for this assignment. Each group created in this way will contain only one member.
 
 ### Use Another Assignment's Groups
 
@@ -58,10 +58,10 @@ Clicking the pencil icon beside the group's name in the "Group" column on the ri
 
 Clicking the + icon in the "Due Date Extension" column on the right hand table will open up a modal which will allow you to give this group an extension beyond the due date for this assignment.
 
-![Extension Modal](./images/groups-extension-modal.png)
+![Extension Modal](images/groups-extension-modal.png)
 
 Extensions can be specified in any combination of weeks, days, and hours. Additionally, you may choose to apply late penalties on top of this extension (or not) by clicking the "Apply late submission policy when collecting this group's submissions" checkbox. Notes may also be added which are only visible to admins.
 
 To edit an existing extension for a group, click the link in the "Due Date Extension" column that replaces the + icon once an extension has been added.
 
-> :spiral_notepad: **Note:** Duration extensions can also be specified here for [Timed Assessments](./Instructor-Guide--Timed-Assessments). Duration extensions are specified in hours and minutes.
+> :spiral_notepad: **Note:** Duration extensions can also be specified here for [Timed Assessments](Instructor-Guide--Timed-Assessments.md). Duration extensions are specified in hours and minutes.

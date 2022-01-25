@@ -13,18 +13,18 @@
 ## How to Form Groups
 
 After navigating to the appropriate assignment, click the `Create Group` button to create your group:
-![Student Create Group](./images/student-create-group-step1.png)
+![Student Create Group](images/student-create-group-step1.png)
 
 You may then choose to invite other group members using the "Invite Student(s)" button:
-![Students Invite Students](./images/student-create-group-step2.png)
+![Students Invite Students](images/student-create-group-step2.png)
 
-![Students invite students 2](./images/student-create-group-step3-4.png)
+![Students invite students 2](images/student-create-group-step3-4.png)
 
 If a student is not eligible to be a part of your group, you will receive a warning:
-![Could not invite](./images/student-create-group-warning.png)
+![Could not invite](images/student-create-group-warning.png)
 
 Once you have invited someone, they will appear under the "Group invitations" list but will have a pending status until they accept the invitations. Invitations can be accepted by clicking the "Join Group" button or declined by clicking the "Decline Invitation" button.
-![Join Group](./images/student-create-group-step5.png)
+![Join Group](images/student-create-group-step5.png)
 
 Once a group meets the minimum member requirements for the assignment, you will be allowed to submit files for the assignment.
 
@@ -37,11 +37,11 @@ If starter files have been provided for an assignment, they will be available wh
 
 You can download the starter files by clicking the "Download" file in the "Starter Files" section of the Assignment page:
 
-![Starter Files](./images/student-starter-files.png)
+![Starter Files](images/student-starter-files.png)
 
 If your instructor has changed the starter files _since the last time you downloaded it_, you may see a warning at the top of the page:
 
-![Starter File Warning](./images/student-starter-file-warning.png)
+![Starter File Warning](images/student-starter-file-warning.png)
 
 If you see this warning message you may want to download the new copy of the starter files.
 
@@ -51,15 +51,15 @@ To submit work for an assessment, first select the assignment from the table on 
 
 ### Submit on the website
 
-Navigate to the Submissions page by clicking the "Submissions" tab. From this page, you should be able to upload and download files using the [file manager](./General-usage#using-the-file-manager).
+Navigate to the Submissions page by clicking the "Submissions" tab. From this page, you should be able to upload and download files using the [file manager](General-Usage.md#using-the-file-manager).
 
 You can also view a preview of the files you have already submitted by selecting the file on the file manager table.
 
-![File Manager](./images/student-file-manager.png)
+![File Manager](images/student-file-manager.png)
 
 If you are missing some required files, a list of missing required files will be included as a warning at the top of the page.
 
-![Missing Required Warning](./images/student-missing-required-warning.png)
+![Missing Required Warning](images/student-missing-required-warning.png)
 
 ### Submit through version control (git)
 
@@ -119,13 +119,13 @@ Once you can start the timed assessment a "Start" button will become visible. Cl
 
 In the example below, a student will have exactly 3 and a half hours to complete and submit the assessment once they have clicked the "Start" button.
 
-![Timed Assessment Before](./images/student-timed-assessment-during-before-start.png)
+![Timed Assessment Before](images/student-timed-assessment-during-before-start.png)
 
 Once you have started the assessment, the "Submissions" tab will become visible and you will be able to [submit your work](#submitting-work-for-an-assessment) as normal.
 
 You will also be able to see how much time you have left to submit:
 
-![Timed Assessment Started](./images/student-timed-assessment-during-started.png)
+![Timed Assessment Started](images/student-timed-assessment-during-started.png)
 
 ## Email Settings
 
@@ -139,5 +139,5 @@ To upload a public key, navigate to the "Key Pair" tab. Click on the "New Key Pa
 
 For instructions on how to generate a public/private key pair see:
 
-- [for Windows](./SSH_Keypair_Instructions_Windows)
-- [for Linux and OSX](./SSH_Keypair_Instructions_Linux-OSX)
+- [for Windows](SSH_Keypair_Instructions_Windows.md)
+- [for Linux and OSX](SSH_Keypair_Instructions_Linux-OSX.md)

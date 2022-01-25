@@ -70,34 +70,34 @@ The tests will be run with the following file structure in place:
 
 ## Initial Setup
 MarkUs's automated testing feature allows student submissions to be tested against code uploaded by the instructor. To set-up automated testing for an assignment, navigate to the "Automated Testing" tab of MarkUs (Assignments -> Settings -> Automated Testing):
-![Automated Testing Navigation](./images/automated-testing-tab.png)
+![Automated Testing Navigation](images/automated-testing-tab.png)
 
 In order for the auto-testing feature to be enabled for the assignment, you must first check the "Enable tests for this assignment" checkbox at the top of the page:
-![Enable tests for this assignment](./images/automated-testing-enable-check.png)
+![Enable tests for this assignment](images/automated-testing-enable-check.png)
 
 > :spiral_notepad: **NOTE:** If the "Enable tests for this assignment" check-box does not show up or is unclickable, contact your system administrator and they may enable the feature for you.
 
 ## Test Files
 In the Test Files section, upload all the test scripts for the assignment (unittest files, pytest files, junit files, etc.). You may also upload any other helper files required to run the tests (fixtures, schema definitions, etc.).
 
-See the [Using the File Manager](./General-Usage#using-the-file-manager) section for instructions on uploading and downloading files.
+See the [Using the File Manager](General-Usage#using-the-file-manager.md) section for instructions on uploading and downloading files.
 
 
 ## Testers
 
 Specify which tester language to use by clicking on the drop down menu located to the right of the "*Tester Type*" text and selecting one of the testing languages supported by the MarkUs autotester:
 
-![Tester Type Drop Down](./images/automated-testing-tester-select.png)
+![Tester Type Drop Down](images/automated-testing-tester-select.png)
 
 If the assignment requires **multiple languages** and you wish to run tests in all of them, you will need a new tester for each new language. To add a new tester click the green + icon at the bottom of the Testers section. You may delete an existing tester using the red x at the top right of the Tester section.
 
 ### Test Groups
 
-Tests are organized into groups which in turn can be associated with [Criteria](./Instructor-Guide--Assignments--Marking--Marking-Schemes). Each test group can be associated with exactly one criteria and the results from the test will [automatically fill in the results](#criterion-auto-complete) when the tests finish.
+Tests are organized into groups which in turn can be associated with [Criteria](Instructor-Guide--Assignments--Marking--Marking-Schemes.md). Each test group can be associated with exactly one criteria and the results from the test will [automatically fill in the results](#criterion-auto-complete) when the tests finish.
 
 
 Click on the green plus button under the "*Test Groups*" section of your specific tester type to create a new group:
-![Test Group Add](./images/automated-testing-test-group-add.png)
+![Test Group Add](images/automated-testing-test-group-add.png)
 
 Each test group contains several configuration options that may vary depending on the type of tester you are using. The following sections explain each of these options some of which are [common to all testers](#shared-fields) and other which are [specific to the type of tester](#tester-types) being used.
 
@@ -112,7 +112,7 @@ This section lists all the fields that are common to all testers:
 
     This determines whether the "Output" column will be displayed to students on the [test results table](#test-results-table). This column will always be visible to admins and graders.
 
- - **Criterion:** Select a [criterion](./Instructor-Guide--Assignments--Marking--Marking-Schemes) here that has been created and to link it to this test group. This is optional.
+ - **Criterion:** Select a [criterion](Instructor-Guide--Assignments--Marking--Marking-Schemes.md) here that has been created and to link it to this test group. This is optional.
 
  - **Test Files:** Select one or more test files to run in this test group. Multiple files can be selected by holding down the "Ctrl" button and clicking several files.
  > :spiral_notepad: **NOTE:** ALL the tests specified in a file will be run. If you wish to have tests in a separate group, you must put them in a separate file. <br/>
@@ -126,7 +126,7 @@ This section lists all the fields that are common to all testers:
 
  - **Feedback File:** The name of an output file to write feedback to. Avoid naming this the same thing as a test file or a submitted file in order to prevent the tester from overwriting an existing file. If a feedback file is specified you will be given two more options:
       - "Add feedback file to repo:" This file will be uploaded to the student's repository at the end of the tests.
-      - "Upload feedback file for grading:" Uploads the feedback file to the student's submission for that assignment. The student, admin and grader will be able to view and download the file from the [grading view](./Instructor-Guide--Assignments--Marking--Grading-View).
+      - "Upload feedback file for grading:" Uploads the feedback file to the student's submission for that assignment. The student, admin and grader will be able to view and download the file from the [grading view](Instructor-Guide--Assignments--Marking--Grading-View.md).
 
 
 ### Tester Types
@@ -148,14 +148,14 @@ This section lists all the fields that are common to all testers:
 
 #### Racket
 In Racket, each test file must be added separately with the appropriate test suite name specified underneath:
-![Racket Test](./images/automated-testing-racket-file-select.png)
+![Racket Test](images/automated-testing-racket-file-select.png)
 
 #### PyTa
  - **Python version**: When you select a PyTA tester, you will be asked to specify a Python version. MarkUs currently supports Python 3.6+.
 
  - **Package requirements:** In this section you must specify the appropriate PIP package (see the same section for the [Python](#python) tester.)
 
- - **Path:** Specify the filename of the file submitted byt the student you wish to check with PyTA. Because of this it is advised that you create [required file names](./Instructor-Guide--Assignments--Setting-Up#required-files) for this assignment. Add another file by clicking the green + under this section.
+ - **Path:** Specify the filename of the file submitted byt the student you wish to check with PyTA. Because of this it is advised that you create [required file names](Instructor-Guide--Assignments--Setting-Up.md#required-files) for this assignment. Add another file by clicking the green + under this section.
 
  - **Maximum mark:** This section will determine the mark associated with the PyTA test. Whatever number you enter here will be the mark a student receives for a perfect test. Every error detected by PyTA will reduce the student's mark by 1 down to a minumum of 0.
 
@@ -217,7 +217,7 @@ No special fields are required for this tester type. The custom tester works by 
 
 ## Student-Run Tests
 Students may also run test themselves using the autotester. To enable this, select the "Allow students to run tests" checkbox:
-![Allow students to run tests](./images/automated-testing-student-run.png)
+![Allow students to run tests](images/automated-testing-student-run.png)
 
 To avoid overloading the testing system during periods of high demand, student access to the testing system is controlled using **test tokens**.
 
@@ -236,20 +236,20 @@ You may customize this feature using the following settings:
 
 ## Submissions Table Run
 Once the automated testing feature has been enabled, a new clickable box (Run Tests) will appear on the Submissions page.
-![Run tests Box](./images/submission-table-run-test-button.png)
+![Run tests Box](images/submission-table-run-test-button.png)
 
 **After the submissions have been collected**, select one or more rows from this table and click the "Run Tests" button. Doing so will commence the testing process for the selected submissions. You can check the status of the tests by visiting the "[Test Runs Status](#test-runs-status)" tab of MarkUs.
 
 ## Test Results Tab
 To view the results of a test, you must first navigate to the "Test Results" tab of the specific assignment you wish to view. From the Submissions tab, click on the name of the group who's assignment you wish to inspect:
-![aaaautotest name](./images/submission-table-navigate-to-results.png)
+![aaaautotest name](images/submission-table-navigate-to-results.png)
 
 This will bring you to the grading view, where you must now click on the newly added "Test Results" tab:
-![Test Results Tab](./images/grade-view-test-tab.png)
+![Test Results Tab](images/grade-view-test-tab.png)
 
 #### Test Results Table
 When you first arrive at the test results table you will see a list of all the tests that have been run for the submission:
-![Test Results Table](./images/grade-view-test-results-table.png)
+![Test Results Table](images/grade-view-test-results-table.png)
 
  - The **first column** is a small black triangle that allows you to expand the specific test for more information.
  - The **second column** gives the date and time of when the specific test was run.
@@ -257,7 +257,7 @@ When you first arrive at the test results table you will see a list of all the t
  - The **fourth column** gives the [status](#test-runs-status-table) of the test.
 
 Clicking the black triangle will expand the results of the given test run showing the results of all tests, grouped by [Test Group](#test-groups).
-![Test Results SubTable](./images/grade-view-test-results-table-expanded.png)
+![Test Results SubTable](images/grade-view-test-results-table-expanded.png)
 
  - **Test Name** - The name of the test group will be in the white box (in the above example the grouping name is "Group 1"). Underneath this will be a list of all the tests that were run in the group. The Test Name format depends on the type of test run but typically contains a unique identifier for each test file. In the example above, the identifier includes the file name, test class, and test method as well as the content of the docstring for that test method.
  - **Output** - Any output from running the test. In this example, it contains the failure message. - see "[Testers](#testers)" for more information.
@@ -270,25 +270,25 @@ Clicking the black triangle will expand the results of the given test run showin
  - **Out of** The maximum possible mark for each test
 
 ## Criterion Auto-Complete
-If a criterion for a test grouping is specified in the "[Testers](#testers)" section, the result will appear in the "[Marks](./Instructor-Guide--Assignments--Marking--Grading-View#marks)" tab of the grading view.
+If a criterion for a test grouping is specified in the "[Testers](#testers)" section, the result will appear in the "[Marks](Instructor-Guide--Assignments--Marking--Grading-View.md#marks)" tab of the grading view.
 
 For example, in the following image the submission has passed 1 out of 3 of the "Group 2" tests:
-![Test Results Marks](./images/grade-view-test-result-out-of-example.png)
+![Test Results Marks](images/grade-view-test-result-out-of-example.png)
 
 Since the "Group 2" testing group was associated with a criterion with a mark out of 6, MarkUs converts the 1/3 tests passed to a mark out of 6 and prints the result in the "Marks" section:
-![Group 2 tests result](./images/grade-view-test-criteria-association.png)
+![Group 2 tests result](images/grade-view-test-criteria-association.png)
 MarkUs will convert all results with a precision of 2 decimal places (ex. 2/9 will be represented as 1.33/6 if the criterion requires a mark out of 6).
 
 # Test Runs Status
 
 The "Test Runs Status" page gives the instructor an overview of all the tests that have been run or are currently running for an assignment. To get to the "Test Runs Status" page, click on the "Assignments" tab of MarkUs, then on your specific assignment and then finally on the "Test Runs Status" tab:
-![Navigate to Test Runs Status](./images/test-runs-status-tab.png)
+![Navigate to Test Runs Status](images/test-runs-status-tab.png)
 
 > :spiral_notepad: **NOTE:** In order for the "Test Runs Status" tab to be visible, the "Enable tests for this assignment" check box must have been checked off in the "[Automated Testing](#initial-setup)" section of MarkUs for the specific assignment.
 
 ## Test Runs Status Table
 The Test Runs Status Table will give you all the information you need about the tests being run for this assignment:
-![Test Runs Status Table](./images/test-runs-status-table.png)
+![Test Runs Status Table](images/test-runs-status-table.png)
 
  - **Started:** This column will tell you the date and time when the test was initially started.
  - **Group name:** This column will tell you the name of the group whose test was run. If a batch of tests was run, it will tell you how many groups in the batch. When the batch is expanded it will show the individual group names.

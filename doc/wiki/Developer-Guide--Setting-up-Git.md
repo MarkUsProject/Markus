@@ -10,7 +10,7 @@ All of the commands on this page should be run in the WSL 2 terminal (e.g., Ubun
 
 ## Overview
 
-![Workflow](./images/markus-git-workflow.png)
+![Workflow](images/markus-git-workflow.png)
 
 Note that the following few paragraphs might be a bit confusing. Hang in there, there are always people around you can ask.
 

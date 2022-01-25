@@ -6,5 +6,5 @@ To upload a public key, navigate to the "Key Pair" tab. Click on the "New Key Pa
 
 For instructions on how to generate a public/private key pair see:
 
-- [for Windows](./SSH_Keypair_Instructions_Windows)
-- [for Linux and OSX](./SSH_Keypair_Instructions_Linux-OSX)
+- [for Windows](SSH_Keypair_Instructions_Windows.md)
+- [for Linux and OSX](SSH_Keypair_Instructions_Linux-OSX.md)

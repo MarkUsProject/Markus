@@ -16,7 +16,7 @@ If you want to get started on working on MarkUs quickly and painlessly, this is 
     1.  To start the WSL terminal, open the start menu and type in "ubuntu". Click on the "Ubuntu 20.04" application. (We recommend pinning this to your taskbar to make it easier to find in the future.)
     2.  Type in the command `pwd`, which shows what folder you're currently in. You should see `/home/<your user name>` printed. If it isn't, switch to your home directory using the command `cd ~`.
 
-4.  Clone the Markus repository from GitHub by following the instructions in [Setting up Git and MarkUs](./Developer-Guide--Setting-up-Git). (This is a document you will want to read very carefully and may come back to.)
+4.  Clone the Markus repository from GitHub by following the instructions in [Setting up Git and MarkUs](Developer-Guide--Setting-up-Git.md). (This is a document you will want to read very carefully and may come back to.)
 
 5.  Change into the repository that you just cloned: `cd Markus`.
 

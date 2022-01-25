@@ -15,13 +15,13 @@ For example, a timed assessment may specify a 24 hour period when an assignment 
 
 A new timed assessment can be created from the Assignment tab by clicking the "Create Timed Assessment" button.
 
-![Create option](./images/assignment-tab.png)
+![Create option](images/assignment-tab.png)
 
-Most of the options when creating a timed assessment is the same as making a regular assignment and those details are covered [here](./Instructor-Guide--Assignments--Setting-Up).
+Most of the options when creating a timed assessment is the same as making a regular assignment and those details are covered [here](Instructor-Guide--Assignments--Setting-Up.md).
 
 The "Properties" section contains three relevant sections that differ from a regular assessment:
 
-![Properties](./images/timed-assessment-properties.png)
+![Properties](images/timed-assessment-properties.png)
 
 - students may start this assessment after
 	- the earliest a student may start this assessment
@@ -34,10 +34,10 @@ The "Properties" section contains three relevant sections that differ from a reg
 
 ## How Extensions and Penalty Periods Interact
 
-If a [late submission policy](./Instructor-Guide--Assignments--Late-Submission-Policies) has been set, the policy will be applied after the duration has expired.
+If a [late submission policy](Instructor-Guide--Assignments--Late-Submission-Policies.md) has been set, the policy will be applied after the duration has expired.
 
 For example, if a timed assessment has a duration of 2 hours and a policy that deducts 10% for the first hour past the due date. A student who submits after 2.5 hours will receive a 10% penalty.
 
-If a group has been given an [extension](./Instructor-Guide--Groups#give-a-group-an-extension) for this timed assessment, the extension will also apply after the duration.
+If a group has been given an [extension](Instructor-Guide--Groups.md#give-a-group-an-extension) for this timed assessment, the extension will also apply after the duration.
 
 For example, a group with an extension of 1 hour for a timed assessment with a duration of 2 hours will have 3 hours to complete the assessment without penalty.
