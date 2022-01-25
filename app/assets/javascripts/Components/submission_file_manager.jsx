@@ -68,19 +68,20 @@ class SubmissionFileManager extends React.Component {
 
   handleCreateUrl = (url, url_text) => {
     this.setState({showURLModal: false});
+    const data_to_upload = {
+      new_url: url,
+      url_text: url_text,
+      path: "/",
+    }
+    if (this.props.grouping_id) {
+      data_to_upload.grouping_id = this.props.grouping_id
+    }
     $.post({
       url: Routes.update_files_course_assignment_submissions_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      data: {
-        new_url: url,
-        url_text: url_text,
-        path: "/",
-        grouping_id: this.props.grouping_id,
-      },
-      processData: false, // tell jQuery not to process the data
-      contentType: false, // tell jQuery not to set contentType
+      data: data_to_upload
     })
       .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
       .then(this.endAction);

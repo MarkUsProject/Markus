@@ -288,6 +288,8 @@ class SubmissionsController < ApplicationController
 
   # update_files action handles transactional submission of files.
   def update_files
+    puts("=======================================")
+    puts(params)
     assignment_id = params[:assignment_id]
     unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
@@ -347,11 +349,10 @@ class SubmissionsController < ApplicationController
           url_filename = params[:url_text]
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
           raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
-          file_content = "[InternetShortcut]\nURL=#{new_url}"
           url_file = Tempfile.new
-          url_file.write(file_content)
+          url_file.write(new_url)
           url_file.rewind
-          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.url",
+          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.mkurl",
                                                                 tempfile: url_file,
                                                                 type: 'text/url')
           success, msgs = add_file(new_url_file, current_role, repo,
@@ -432,7 +433,7 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file_type == 'url'
+          if file_type == 'markusurl'
             file_contents = extract_url(file_contents)
           end
 
@@ -478,7 +479,7 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        file_contents = extract_url(file_contents) if preview && FileHelper.get_file_type(params[:file_name]) == 'url'
+        file_contents = extract_url(file_contents) if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl'
         file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)
       rescue ArgumentError
         # Handle UTF8 encoding error
@@ -829,8 +830,8 @@ class SubmissionsController < ApplicationController
   # Helper that extracts the URL from a url file to send to a user.
   # If no URL is found, returns a string saying the file cannot be displayed.
   def extract_url(file_content)
-    file_pattern = /^\[InternetShortcut\]\nURL=(?<url>\S+)/
-    url = file_pattern.match(file_content)
+    file_pattern = /^(?<url>\S+)$/
+    url = file_pattern.match(file_content.strip)
     url = url.nil? ? '' : url[:url].to_s
     !url.empty? && is_valid_url?(url) ? url : I18n.t('submissions.cannot_display')
   end
