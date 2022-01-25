@@ -122,61 +122,63 @@ describe SubmissionsController do
     end
 
     context 'submitting a url' do
-      it 'should be able to add url files' do
-        file = fixture_file_upload('youtube.url')
-        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
-        post_as @student, :update_files,
-                params: { course_id: course.id, assignment_id: @assignment.id,
-                          new_url: URI.extract(File.read(file)).first, url_text: 'youtube' }
-        expect(response).to have_http_status :ok
-
-        # update_files action assert assign to various instance variables.
-        # These are crucial for the file_manager view to work properly.
-        expect(assigns(:assignment)).to_not be_nil
-        expect(assigns(:grouping)).to_not be_nil
-        expect(assigns(:path)).to_not be_nil
-        expect(assigns(:revision)).to_not be_nil
-        expect(assigns(:files)).to_not be_nil
-        expect(assigns(:missing_assignment_files)).to_not be_nil
-
-        # Check to see if the file was added
-        @grouping.group.access_repo do |repo|
-          revision = repo.get_latest_revision
-          files = revision.files_at_path(@assignment.repository_folder)
-          expect(files['youtube.url']).to_not be_nil
+      describe 'should add url files' do
+        it 'returns ok response' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          expect(response).to have_http_status :ok
+        end
+        
+        it 'added a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.url']).to_not be_nil
+          end
         end
       end
 
-      it 'should reject url with no name' do
-        file = fixture_file_upload('youtube.url')
-        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
-        post_as @student, :update_files,
-                params: { course_id: course.id, assignment_id: @assignment.id,
-                          new_url: URI.extract(File.read(file)).first }
+      describe 'should reject url with no name' do
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo' }
+          expect(response).to have_http_status :bad_request
+        end
 
-        expect(response).to have_http_status :bad_request
-
-        # Check that the files were not added
-        @grouping.group.access_repo do |repo|
-          revision = repo.get_latest_revision
-          files = revision.files_at_path(@assignment.repository_folder)
-          expect(files['youtube.url']).to be_nil
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.url']).to be_nil
+          end
         end
       end
 
-      it 'should reject invalid url' do
-        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
-        post_as @student, :update_files,
-                params: { course_id: course.id, assignment_id: @assignment.id,
-                          new_url: 'Not a url', url_text: 'youtube' }
+      describe 'should reject url with no name' do
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'Not a url', url_text: 'youtube' }
+          expect(response).to have_http_status :bad_request
+        end
 
-        expect(response).to have_http_status :bad_request
-
-        # Check that the files were not added
-        @grouping.group.access_repo do |repo|
-          revision = repo.get_latest_revision
-          files = revision.files_at_path(@assignment.repository_folder)
-          expect(files['youtube.url']).to be_nil
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'Not a url', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.url']).to be_nil
+          end
         end
       end
     end
