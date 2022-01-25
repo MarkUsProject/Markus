@@ -11,7 +11,7 @@
                              nonce: true %>
 
   <p>
-    <%= t('upload_help_html', section_id: 'students') %>
+    <%= t('upload_help_html', markus_version: @markus_version, section_id: 'students') %>
   </p>
   <%= form_tag upload_tas_path, { multipart: true } do %>
     <div>
