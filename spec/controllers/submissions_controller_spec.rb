@@ -227,6 +227,17 @@ describe SubmissionsController do
                             new_folders: ['test_zip/zip_subdir'] }
           expect(tree['test_zip/zip_subdir']).not_to be_nil
         end
+        context 'when testing with a git repo', :keep_memory_repos do
+          before(:each) { allow(Settings.repository).to receive(:type).and_return('git') }
+          after(:each) { FileUtils.rm_r(Dir.glob(File.join(Settings.repository.storage, '*'))) }
+          it 'displays a failure message when attempting to create a subdirectory with no parent' do
+            post_as @student, :update_files,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              new_folders: ['test_zip/zip_subdir'] }
+
+            expect(flash[:error]).to_not be_empty
+          end
+        end
         it 'does not upload a non required directory and returns a failure' do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
