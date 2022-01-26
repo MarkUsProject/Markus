@@ -343,7 +343,7 @@ class SubmissionsController < ApplicationController
           required_files = nil
         end
 
-        if new_url.present?
+        unless new_url.blank?
           url_filename = params[:url_text]
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
           raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
