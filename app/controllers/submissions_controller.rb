@@ -337,8 +337,10 @@ class SubmissionsController < ApplicationController
         else
           required_files = nil
         end
+
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
           if f.is_a?(String) # is a directory
+            authorize! to: :manage_subdirectories? # ensure user is authorized for directories in zip files
             success, msgs = add_folder(f, current_role, repo, path: path, txn: txn, required_files: required_files)
           else
             success, msgs = add_file(f, current_role, repo,

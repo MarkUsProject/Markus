@@ -239,7 +239,7 @@ describe SubmissionsController do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             new_folders: ['bad_folder'] }
-          expect(response).to have_http_status :bad_request
+          expect(response).to have_http_status :unprocessable_entity
         end
         it 'does not commit the non required directory' do
           post_as @student, :update_files,
@@ -251,7 +251,7 @@ describe SubmissionsController do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             new_folders: ['bad_folder/bad_subdirectory'] }
-          expect(response).to have_http_status :bad_request
+          expect(response).to have_http_status :unprocessable_entity
         end
         it 'does not commit a non required subdirectory' do
           post_as @student, :update_files,
