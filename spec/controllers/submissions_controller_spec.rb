@@ -129,7 +129,7 @@ describe SubmissionsController do
                             new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
           expect(response).to have_http_status :ok
         end
-        
+
         it 'added a new file' do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
