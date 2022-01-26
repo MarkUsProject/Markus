@@ -71,7 +71,7 @@ class SubmissionFileManager extends React.Component {
     const data_to_upload = {
       new_url: url,
       url_text: url_text,
-      path: "/",
+      path: "/" + (this.state.uploadTarget || ""),
     };
     if (this.props.grouping_id) {
       data_to_upload.grouping_id = this.props.grouping_id;

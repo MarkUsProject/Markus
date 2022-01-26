@@ -137,7 +137,7 @@ describe SubmissionsController do
           @grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
             files = revision.files_at_path(@assignment.repository_folder)
-            expect(files['youtube.mkurl']).to_not be_nil
+            expect(files['youtube.markusurl']).to_not be_nil
           end
         end
       end
@@ -157,12 +157,12 @@ describe SubmissionsController do
           @grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
             files = revision.files_at_path(@assignment.repository_folder)
-            expect(files['youtube.mkurl']).to be_nil
+            expect(files['youtube.markusurl']).to be_nil
           end
         end
       end
 
-      describe 'should reject url with no name' do
+      describe 'should reject invalid url' do
         it 'returns a bad request' do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
@@ -177,7 +177,7 @@ describe SubmissionsController do
           @grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
             files = revision.files_at_path(@assignment.repository_folder)
-            expect(files['youtube.mkurl']).to be_nil
+            expect(files['youtube.markusurl']).to be_nil
           end
         end
       end
@@ -1055,8 +1055,8 @@ describe SubmissionsController do
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:file3) { fixture_file_upload('example.ipynb') }
-    let(:file4) { fixture_file_upload('youtube.mkurl') }
-    let(:file5) { fixture_file_upload('wrong_url.mkurl') }
+    let(:file4) { fixture_file_upload('youtube.markusurl') }
+    let(:file5) { fixture_file_upload('wrong_url.markusurl') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
@@ -1122,7 +1122,7 @@ describe SubmissionsController do
         it 'should display the url' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'youtube.mkurl',
+                                                  file_name: 'youtube.markusurl',
                                                   preview: true,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(URI.extract(File.read(file4)).first)
@@ -1130,7 +1130,7 @@ describe SubmissionsController do
         it 'should not display an invalid url file' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.mkurl',
+                                                  file_name: 'wrong_url.markusurl',
                                                   preview: true,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(I18n.t('submissions.cannot_display'))
@@ -1244,8 +1244,8 @@ describe SubmissionsController do
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
-    let(:file7) { fixture_file_upload('youtube.mkurl') }
-    let(:file8) { fixture_file_upload('wrong_url.mkurl') }
+    let(:file7) { fixture_file_upload('youtube.markusurl') }
+    let(:file8) { fixture_file_upload('wrong_url.markusurl') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)

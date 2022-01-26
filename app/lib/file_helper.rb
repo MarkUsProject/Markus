@@ -33,7 +33,7 @@ module FileHelper
                   '.ipynb' => 'jupyter-notebook',
                   '.r' => 'r',
                   '.rmd' => 'rmarkdown',
-                  '.mkurl' => 'markusurl' }.freeze
+                  '.markusurl' => 'markusurl' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
                         '.js' => %w[/* */],

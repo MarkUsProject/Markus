@@ -3,7 +3,7 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
-  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com docs.google.com].freeze
+  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com https://docs.google.com].freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
@@ -350,7 +350,7 @@ class SubmissionsController < ApplicationController
           url_file = Tempfile.new
           url_file.write(new_url)
           url_file.rewind
-          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.mkurl",
+          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.markusurl",
                                                                 tempfile: url_file,
                                                                 type: 'text/url')
           success, msgs = add_file(new_url_file, current_role, repo,
@@ -830,10 +830,8 @@ class SubmissionsController < ApplicationController
   # Helper that extracts the URL from a url file to send to a user.
   # If no URL is found, returns a string saying the file cannot be displayed.
   def extract_url(file_content)
-    file_pattern = /^(?<url>\S+)$/
-    url = file_pattern.match(file_content.strip)
-    url = url.nil? ? '' : url[:url].to_s
-    !url.empty? && is_valid_url?(url) ? url : I18n.t('submissions.cannot_display')
+    url = file_content.strip
+    is_valid_url?(url) ? url : I18n.t('submissions.cannot_display')
   end
 
   # Returns a boolean on whether the given +url+ is valid.
