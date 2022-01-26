@@ -33,6 +33,9 @@
 ## [v2.0.0]
 - Support multiple courses in a single MarkUs instance (#5685)
 
+## [v1.14.1]
+- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5782)
+
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
