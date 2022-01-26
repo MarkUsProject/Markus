@@ -197,7 +197,7 @@ describe Assignment do
 
           it 'shows the criteria visible to tas only' do
             expect(@assignment.ta_criteria.ids).to match_array(@ta_criteria.map(&:id) +
-                                                               @ta_and_peer_criteria.map(&:id))
+                                                                 @ta_and_peer_criteria.map(&:id))
           end
 
           context 'a submission and a result are created' do
@@ -2228,9 +2228,6 @@ describe Assignment do
   end
 
   describe '#get_num_valid' do
-    # create assignment with min group member num = 2
-    # create 3 groupings, 2 with non reject membership >= 2, one is 1, one is instructor approval
-    # expect valid num to be 3
     before :each do
       @assignment = create(:assignment, assignment_properties_attributes: { group_min: 2, group_max: 3 })
       @groupings = Array.new(4) { create(:grouping, assignment: @assignment) }
@@ -2252,7 +2249,7 @@ describe Assignment do
       before :each do
         create(:accepted_student_membership, grouping: @groupings.first)
         create(:inviter_student_membership, grouping: @groupings.first)
-        @groupings.second.update_attributrube(:instructor_approved, true)
+        @groupings.second.update_attribute(:instructor_approved, true)
       end
       it 'should return # of valid groups that meet size requirement or instructor approved' do
         expect(@assignment.get_num_valid).to eq(2)
