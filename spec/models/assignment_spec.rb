@@ -2239,9 +2239,9 @@ describe Assignment do
     context 'When two groups meet min size requirement' do
       before :each do
         create(:accepted_student_membership, grouping: @groupings.first)
-        create(:non_rejected_student_membership, grouping: @groupings.first)
-        create(:non_rejected_student_membership, grouping: @groupings.second)
-        create(:non_rejected_student_membership, grouping: @groupings.second)
+        create(:inviter_student_membership, grouping: @groupings.first)
+        create(:student_membership, grouping: @groupings.second)
+        create(:student_membership, grouping: @groupings.second)
       end
       it 'should return # of valid groups that meet size requirement' do
         expect(@assignment.get_num_valid).to eq(2)
@@ -2251,8 +2251,8 @@ describe Assignment do
     context 'When one group meets min size requirement and another is instructor approved' do
       before :each do
         create(:accepted_student_membership, grouping: @groupings.first)
-        create(:non_rejected_student_membership, grouping: @groupings.first)
-        @groupings.second.update_attribute(:instructor_approved, true)
+        create(:inviter_student_membership, grouping: @groupings.first)
+        @groupings.second.update_attributrube(:instructor_approved, true)
       end
       it 'should return # of valid groups that meet size requirement or instructor approved' do
         expect(@assignment.get_num_valid).to eq(2)
