@@ -1,7 +1,7 @@
 # Changelog
 
 ## [v1.14.1]
-- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5778)
+- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5782)
 
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
