@@ -477,7 +477,9 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        file_contents = extract_url(file_contents) if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl'
+        if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl'
+          file_contents = extract_url(file_contents)
+        end
         file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)
       rescue ArgumentError
         # Handle UTF8 encoding error
