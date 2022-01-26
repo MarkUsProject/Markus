@@ -5,7 +5,6 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
-      show_iframe_preview: false,
     };
   }
 
@@ -22,12 +21,12 @@ export class URLViewer extends React.Component {
   configDisplay = () => {
     try {
       const url = new URL(this.props.externalUrl);
-      const youtube_id_is_set = this.configureYoutubePreview(url.toString());
-      if (!youtube_id_is_set) {
+      const youtube_view_is_set = this.configureOEmbedPreview(url.toString(), "https://www.youtube.com/oembed");
+      if (!youtube_view_is_set) {
         switch (url.hostname) {
           case "docs.google.com":
           case "drive.google.com":
-            this.configureGoogleDrivePreview(url.toString());
+            this.configureGoogleDrivePreview(url);
             break;
           default:
             this.setDefaultState();
@@ -41,39 +40,37 @@ export class URLViewer extends React.Component {
   setDefaultState = () => {
     this.setState({
       url: "",
-      show_iframe_preview: false,
     });
   };
 
   configureGoogleDrivePreview = url => {
-    const regex = /\/d\/(.+)\//;
-    const match = url.match(regex);
-    if (match.length === 2) {
-      this.setState({
-        url: `https://drive.google.com/file/d/${match[1]}/preview`,
-        show_iframe_preview: true,
-      });
+    const path = url.pathname.split("/")
+    if (path[1] === "forms") {
+      url.pathname = url.pathname.replace(/(\/[^\/]+)$/, '/viewform');
     } else {
-      this.setDefaultState();
+      url.pathname = url.pathname.replace(/(\/[^\/]+)$/, '/preview');
     }
-  };
+    this.setState({
+      url: url.toString(),
+    });
+  }
 
-  configureYoutubePreview = url => {
-    // Taken from https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    if (match && match[7].length === 11) {
-      this.setState({
-        url: `https://www.youtube.com/embed/${match[7]}`,
-        show_iframe_preview: true,
-      });
-      return true;
-    }
+  configureOEmbedPreview = (url, oembedUrl) => {
+    $.get(oembedUrl, {format:"json", url: url})
+      .then(res => {
+        const match = res.html.match(/src="(\S+)"/);
+        if (match.length === 2) {
+          this.setState({
+            url: match[1],
+          });
+          return true;
+        }
+      })
     return false;
-  };
+  }
 
   render() {
-    if (this.state.show_iframe_preview) {
+    if (this.state.url !== "") {
       return (
         <div className="url-container">
           <iframe className="url-display" src={this.state.url} allowFullScreen>

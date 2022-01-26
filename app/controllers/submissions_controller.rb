@@ -3,7 +3,7 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
-  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com].freeze
+  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com docs.google.com].freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
@@ -288,8 +288,6 @@ class SubmissionsController < ApplicationController
 
   # update_files action handles transactional submission of files.
   def update_files
-    puts("=======================================")
-    puts(params)
     assignment_id = params[:assignment_id]
     unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
