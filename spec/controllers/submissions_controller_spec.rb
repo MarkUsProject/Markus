@@ -137,7 +137,7 @@ describe SubmissionsController do
           @grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
             files = revision.files_at_path(@assignment.repository_folder)
-            expect(files['youtube.url']).to_not be_nil
+            expect(files['youtube.mkurl']).to_not be_nil
           end
         end
       end
@@ -157,7 +157,7 @@ describe SubmissionsController do
           @grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
             files = revision.files_at_path(@assignment.repository_folder)
-            expect(files['youtube.url']).to be_nil
+            expect(files['youtube.mkurl']).to be_nil
           end
         end
       end
@@ -177,7 +177,7 @@ describe SubmissionsController do
           @grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
             files = revision.files_at_path(@assignment.repository_folder)
-            expect(files['youtube.url']).to be_nil
+            expect(files['youtube.mkurl']).to be_nil
           end
         end
       end
@@ -1055,8 +1055,8 @@ describe SubmissionsController do
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:file3) { fixture_file_upload('example.ipynb') }
-    let(:file4) { fixture_file_upload('youtube.url') }
-    let(:file5) { fixture_file_upload('wrong_url.url') }
+    let(:file4) { fixture_file_upload('youtube.mkurl') }
+    let(:file5) { fixture_file_upload('wrong_url.mkurl') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
@@ -1122,7 +1122,7 @@ describe SubmissionsController do
         it 'should display the url' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'youtube.url',
+                                                  file_name: 'youtube.mkurl',
                                                   preview: true,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(URI.extract(File.read(file4)).first)
@@ -1130,7 +1130,7 @@ describe SubmissionsController do
         it 'should not display an invalid url file' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.url',
+                                                  file_name: 'wrong_url.mkurl',
                                                   preview: true,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(I18n.t('submissions.cannot_display'))
@@ -1177,7 +1177,7 @@ describe SubmissionsController do
         it 'should download the entire file' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.url',
+                                                  file_name: 'wrong_url.mkurl',
                                                   preview: false,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file5))
@@ -1244,8 +1244,8 @@ describe SubmissionsController do
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
-    let(:file7) { fixture_file_upload('youtube.url') }
-    let(:file8) { fixture_file_upload('wrong_url.url') }
+    let(:file7) { fixture_file_upload('youtube.mkurl') }
+    let(:file8) { fixture_file_upload('wrong_url.mkurl') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1313,7 +1313,7 @@ describe SubmissionsController do
           get_as instructor, :get_file, params: { course_id: course.id,
                                                   id: submission.id,
                                                   submission_file_id: submission_file.id }
-          expect(JSON.parse(response.body)['type']).to eq 'url'
+          expect(JSON.parse(response.body)['type']).to eq 'markusurl'
         end
         it 'should download a url instead of the file content' do
           submission_file = submission.submission_files.find_by(filename: file7.original_filename)
