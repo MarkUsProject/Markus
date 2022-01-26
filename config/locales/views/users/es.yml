@@ -32,7 +32,7 @@ es:
   users:
     account_settings: UPDATE ME
     api_key:
-      help_html: La clave API es usada como autenticación para la interface REST. Mira la <a href="https://github.com/MarkUsProject/Wiki/blob/v%{markus_version}/RESTful-API.md"> Wiki de MarkUs</a> para más información acerca del uso de la REST API.
+      help_html: La clave API es usada como autenticación para la interface REST. Mira la <a href="https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/RESTful-API.md"> Wiki de MarkUs</a> para más información acerca del uso de la REST API.
       reset: Reiniciar mi clave API
       unavailable: No disponible
     upload:
