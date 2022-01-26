@@ -72,16 +72,16 @@ class SubmissionFileManager extends React.Component {
       new_url: url,
       url_text: url_text,
       path: "/",
-    }
+    };
     if (this.props.grouping_id) {
-      data_to_upload.grouping_id = this.props.grouping_id
+      data_to_upload.grouping_id = this.props.grouping_id;
     }
     $.post({
       url: Routes.update_files_course_assignment_submissions_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      data: data_to_upload
+      data: data_to_upload,
     })
       .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
       .then(this.endAction);
