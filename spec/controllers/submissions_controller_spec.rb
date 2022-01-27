@@ -1177,7 +1177,7 @@ describe SubmissionsController do
         it 'should download the entire file' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.mkurl',
+                                                  file_name: 'wrong_url.markusurl',
                                                   preview: false,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file5))

@@ -829,9 +829,9 @@ class SubmissionsController < ApplicationController
 
   # Helper that extracts the URL from a url file to send to a user.
   # If no URL is found, returns a string saying the file cannot be displayed.
-  def extract_url(file_content)
-    url = file_content.strip
-    is_valid_url?(url) ? url : I18n.t('submissions.cannot_display')
+  def extract_url(file_content) 
+    tokens = file_content.strip.split(/\s/)
+    tokens.length == 1 && is_valid_url?(tokens[0]) ? tokens[0] : I18n.t('submissions.cannot_display')
   end
 
   # Returns a boolean on whether the given +url+ is valid.
