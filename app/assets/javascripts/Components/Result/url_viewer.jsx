@@ -71,17 +71,30 @@ export class URLViewer extends React.Component {
     return false;
   };
 
+  renderLinkDisplay = () => {
+    return (
+      <div className="link-bar">
+        <a className="link-display" href={this.props.externalUrl} target="_blank">{this.props.externalUrl}</a>
+      </div>
+    )
+  }
+
   render() {
     if (this.state.url !== "") {
       return (
         <div className="url-container">
-          <iframe className="url-display" src={this.state.url} allowFullScreen>
-            <pre>{this.props.externalUrl}</pre>
-          </iframe>
+          {this.renderLinkDisplay()}
+          <div className="display-area">
+            <iframe className="url-display" src={this.state.url} allowFullScreen>
+              <pre>{this.props.externalUrl}</pre>
+            </iframe>
+          </div>
         </div>
       );
     } else {
-      return <pre>{this.props.externalUrl}</pre>;
+      return (
+        <div className="url-container">{this.renderLinkDisplay()}</div>
+      )
     }
   }
 }

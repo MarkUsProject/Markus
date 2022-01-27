@@ -8,3 +8,21 @@
   height: 100%;
   width: 100%;
 }
+
+.display-area {
+  display: flex;
+  height: auto;
+}
+
+.link-bar {
+  background-color: $background-support;
+  border: thin solid $sub-menu;
+  padding: 5px;
+  width: inherit;
+}
+
+.link-display {
+  width: inherit;
+  word-wrap: break-word;
+}
+
