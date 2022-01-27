@@ -2244,7 +2244,6 @@ describe Assignment do
         expect(@assignment.get_num_valid).to eq(2)
       end
     end
-
     context 'When one group meets min size requirement and another is instructor approved' do
       before :each do
         create(:accepted_student_membership, grouping: @groupings.first)
