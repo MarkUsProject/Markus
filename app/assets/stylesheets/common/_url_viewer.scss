@@ -1,6 +1,8 @@
 .url-container {
   height: 595px;
   width: inherit;
+  display: flex;
+  flex-flow: column wrap;
 }
 
 .url-display {
@@ -10,13 +12,12 @@
 }
 
 .display-area {
-  display: flex;
-  height: auto;
+  flex-grow: 2;
 }
 
 .link-bar {
-  background-color: $background-support;
-  border: thin solid $sub-menu;
+  border: thin solid $primary-three;
+  box-sizing: border-box;
   padding: 5px;
   width: inherit;
 }
