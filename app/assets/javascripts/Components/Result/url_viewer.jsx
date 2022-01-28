@@ -74,11 +74,11 @@ export class URLViewer extends React.Component {
     if (this.state.url !== "") {
       return (
         <iframe className="url-display" src={this.state.url} allowFullScreen>
-          There was an error trying to preview this link
+          {I18n.t("submissions.url_display_error")}
         </iframe>
       )
     } else {
-      return "Preview display for this URL is not supported";
+      return I18n.t("submissions.unsupported_url", { host: "sample.com"} );
     }
   }
 
