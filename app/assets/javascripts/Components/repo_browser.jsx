@@ -111,7 +111,7 @@ class RepoBrowser extends React.Component {
           onChange={this.fetchRevisions}
           fetchOnMount={false}
           enableSubdirs={this.props.enableSubdirs}
-          enableURLSubmit={this.props.enableURLSubmit}
+          enableUrlSubmit={this.props.enableUrlSubmit}
           readOnly={this.isReadOnly()}
         />
         <ManualCollectionForm
