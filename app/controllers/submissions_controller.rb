@@ -343,7 +343,7 @@ class SubmissionsController < ApplicationController
           required_files = nil
         end
 
-        unless new_url.blank?
+        unless new_url.blank? || !@assignment.url_submit
           url_filename = params[:url_text]
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
           raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
@@ -431,7 +431,7 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file_type == 'markusurl'
+          if file_type == 'markusurl' && assignment.url_submit
             file_contents = extract_url(file_contents)
           end
 
@@ -477,7 +477,7 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl'
+        if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl' && @assignment.url_submit
           file_contents = extract_url(file_contents)
         end
         file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)

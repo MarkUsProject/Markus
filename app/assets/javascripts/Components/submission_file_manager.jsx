@@ -228,6 +228,7 @@ class SubmissionFileManager extends React.Component {
             selectedFile={this.state.viewFile}
             selectedFileType={this.state.viewFileType}
             selectedFileURL={this.state.viewFileURL}
+            enableUrlSubmit={this.props.enableUrlSubmit}
             mime_type={lookup(this.state.viewFile)}
           />
         </div>
