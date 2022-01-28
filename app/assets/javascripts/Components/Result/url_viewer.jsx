@@ -5,7 +5,7 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
-      embeddedURL: ""
+      embeddedURL: "",
     };
   }
 
@@ -40,7 +40,7 @@ export class URLViewer extends React.Component {
     } catch (e) {
       this.setState({
         url: "",
-        embeddedURL: ""
+        embeddedURL: "",
       });
     }
   };
@@ -76,27 +76,31 @@ export class URLViewer extends React.Component {
         <iframe className="url-display" src={this.state.embeddedURL} allowFullScreen>
           <div className="url-message-display">{I18n.t("submissions.url_display_error")}</div>
         </iframe>
-      )
+      );
     } else if (this.state.url !== "") {
       const url_host = new URL(this.props.externalUrl).hostname;
-      return <div className="url-message-display">{I18n.t("submissions.unsupported_url", { host: url_host} )}</div>
+      return (
+        <div className="url-message-display">
+          {I18n.t("submissions.unsupported_url", {host: url_host})}
+        </div>
+      );
     }
-  }
+  };
 
   render() {
     if (this.state.url !== "") {
       return (
         <div className="url-container">
           <div className="link-bar">
-            <a className="link-display" href={this.state.url} target="_blank">{this.state.url}</a>
+            <a className="link-display" href={this.state.url} target="_blank">
+              {this.state.url}
+            </a>
           </div>
-          <div className="display-area">
-            {this.renderPreviewDisplay()}
-          </div>
+          <div className="display-area">{this.renderPreviewDisplay()}</div>
         </div>
-      )
+      );
     } else {
-      return <div className="url-message-display">{this.props.externalUrl}</div>
+      return <div className="url-message-display">{this.props.externalUrl}</div>;
     }
   }
 }

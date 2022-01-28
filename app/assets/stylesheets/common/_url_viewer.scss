@@ -1,8 +1,8 @@
 .url-container {
-  height: 595px;
-  width: inherit;
   display: flex;
   flex-flow: column wrap;
+  height: 595px;
+  width: inherit;
 }
 
 .url-display {
@@ -32,4 +32,3 @@
   font: 14px/20px $mono-fonts;
   padding: 10px;
 }
-
