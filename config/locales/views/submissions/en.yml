@@ -34,11 +34,13 @@ en:
         tas: 'Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven''t been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks.'
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
+    invalid_url: "%{item} is not a valid HTTP/HTTPS URL"
     marking_incomplete_warning: |-
       Note: This will only download the submissions that have been collected.
 
       Are you sure you want to proceed?
     no_files_available: No files available
+    no_url_name: The URL %{url} has not been given a name
     past_collection_time: Any changes you make to your submitted files will be recorded, but not graded.
     release_marks: Release Marks
     repo_browser:

@@ -66,8 +66,25 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
-  handleCreateUrl = (url, alias) => {
-    return null;
+  handleCreateUrl = (url, url_text) => {
+    this.setState({showURLModal: false});
+    const data_to_upload = {
+      new_url: url,
+      url_text: url_text,
+      path: "/" + (this.state.uploadTarget || ""),
+    };
+    if (this.props.grouping_id) {
+      data_to_upload.grouping_id = this.props.grouping_id;
+    }
+    $.post({
+      url: Routes.update_files_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: data_to_upload,
+    })
+      .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
   };
 
   handleCreateFiles = (files, unzip) => {
@@ -76,7 +93,7 @@ class SubmissionFileManager extends React.Component {
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
       const prefix = this.state.uploadTarget || "";
-      this.setState({showModal: false, uploadTarget: undefined});
+      this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
       Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
       data.append("path", "/" + prefix); // Server expects path with leading slash (TODO: fix that)

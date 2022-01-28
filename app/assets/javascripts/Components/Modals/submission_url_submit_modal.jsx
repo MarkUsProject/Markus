@@ -16,7 +16,7 @@ class SubmitUrlUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newUrl, this.state.newUrlAlias);
+    this.props.onSubmit(this.state.newUrl, this.state.newUrlText);
   };
 
   handleUrlChange = event => {

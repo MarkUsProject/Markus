@@ -3,7 +3,7 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
-  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com https://play.library.utoronto.ca].freeze
+  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com https://docs.google.com].freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
@@ -319,11 +319,14 @@ class SubmissionsController < ApplicationController
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
 
+    # The new url that will be added
+    new_url = params[:new_url] || ''
+
     unless delete_folders.empty? && new_folders.empty?
       authorize! to: :manage_subdirectories?
     end
 
-    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty? && new_url.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
       messages = []
@@ -338,6 +341,22 @@ class SubmissionsController < ApplicationController
                                     .map { |name| File.join(@grouping.assignment.repository_folder, name) }
         else
           required_files = nil
+        end
+
+        unless new_url.blank?
+          url_filename = params[:url_text]
+          raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
+          raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
+          url_file = Tempfile.new
+          url_file.write(new_url)
+          url_file.rewind
+          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.markusurl",
+                                                                tempfile: url_file,
+                                                                type: 'text/url')
+          success, msgs = add_file(new_url_file, current_role, repo,
+                                   path: path, txn: txn, check_size: true, required_files: required_files)
+          should_commit &&= success
+          messages.concat msgs
         end
 
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
@@ -412,6 +431,10 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
+          if file_type == 'markusurl'
+            file_contents = extract_url(file_contents)
+          end
+
           if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
             file_contents = I18n.t('submissions.cannot_display')
@@ -454,6 +477,9 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
+        if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl'
+          file_contents = extract_url(file_contents)
+        end
         file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)
       rescue ArgumentError
         # Handle UTF8 encoding error
@@ -799,5 +825,21 @@ class SubmissionsController < ApplicationController
   # the grouping is in the same course as the current course
   def parent_params
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
+  end
+
+  # Helper that extracts the URL from a url file to send to a user.
+  # If no URL is found, returns a string saying the file cannot be displayed.
+  def extract_url(file_content)
+    tokens = file_content.strip.split(/\s/)
+    tokens.length == 1 && is_valid_url?(tokens[0]) ? tokens[0] : I18n.t('submissions.cannot_display')
+  end
+
+  # Returns a boolean on whether the given +url+ is valid.
+  # Taken from https://stackoverflow.com/questions/7167895/rails-whats-a-good-way-to-validate-links-urls
+  def is_valid_url?(url)
+    uri = URI.parse(url)
+    uri.is_a?(URI::HTTP) && !uri.host.blank?
+  rescue URI::InvalidURIError
+    false
   end
 end
