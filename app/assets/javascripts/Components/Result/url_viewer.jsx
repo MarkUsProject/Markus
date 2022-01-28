@@ -5,11 +5,7 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
-<<<<<<< HEAD
       embeddedURL: "",
-=======
-      isInvalidUrl: false
->>>>>>> changed views for unviewable links
     };
   }
 
@@ -17,8 +13,8 @@ export class URLViewer extends React.Component {
     this.configDisplay();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.externalUrl !== this.props.externalUrl) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
       this.configDisplay();
     }
   }
@@ -37,7 +33,6 @@ export class URLViewer extends React.Component {
             this.configureGoogleDrivePreview(url);
             break;
           default:
-<<<<<<< HEAD
             this.setState({embeddedURL: ""});
         }
       }
@@ -46,17 +41,7 @@ export class URLViewer extends React.Component {
       this.setState({
         url: "",
         embeddedURL: "",
-=======
-            this.setState({url: ""});
-        }
-      }
-      this.setState({isInvalidUrl: false});
-    } catch (e) {
-      this.setState({
-        url: "",
-        isInvalidUrl: true
->>>>>>> changed views for unviewable links
-      });
+      })
     }
   };
 
@@ -91,21 +76,15 @@ export class URLViewer extends React.Component {
         <iframe className="url-display" src={this.state.embeddedURL} allowFullScreen>
           <div className="url-message-display">{I18n.t("submissions.url_display_error")}</div>
         </iframe>
-      );
+      )
     } else if (this.state.url !== "") {
       const url_host = new URL(this.props.externalUrl).hostname;
-      return (
-        <div className="url-message-display">
-          {I18n.t("submissions.unsupported_url", {host: url_host})}
-        </div>
-      );
+      return <div className="url-message-display">{I18n.t("submissions.unsupported_url", { host: url_host} )}</div>
     }
   };
 
   render() {
-    if (this.state.isInvalidUrl) {
-      return <pre>{this.props.externalUrl}</pre>
-    } else {
+    if (this.state.url !== "") {
       return (
         <div className="url-container">
           <div className="link-bar">
