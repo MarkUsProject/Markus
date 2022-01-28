@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_16_152132) do
+ActiveRecord::Schema.define(version: 2022_01_28_182721) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,6 +135,7 @@ ActiveRecord::Schema.define(version: 2021_12_16_152132) do
     t.bigint "default_starter_file_group_id"
     t.integer "autotest_settings_id"
     t.boolean "starter_files_after_due", default: true, null: false
+    t.boolean "url_submit", default: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
