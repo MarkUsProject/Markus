@@ -5,7 +5,7 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
-      isInvalidUrl: false
+      embeddedURL: ""
     };
   }
 
@@ -13,8 +13,8 @@ export class URLViewer extends React.Component {
     this.configDisplay();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.externalUrl !== this.props.externalUrl) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
       this.configDisplay();
     }
   }
@@ -33,14 +33,14 @@ export class URLViewer extends React.Component {
             this.configureGoogleDrivePreview(url);
             break;
           default:
-            this.setState({url: ""});
+            this.setState({embeddedURL: ""});
         }
       }
-      this.setState({isInvalidUrl: false});
+      this.setState({url: this.props.externalUrl});
     } catch (e) {
       this.setState({
         url: "",
-        isInvalidUrl: true
+        embeddedURL: ""
       });
     }
   };
@@ -53,7 +53,7 @@ export class URLViewer extends React.Component {
       url.pathname = url.pathname.replace(/(\/[^\/]+)$/, "/preview");
     }
     this.setState({
-      url: url.toString(),
+      embeddedURL: url.toString(),
     });
   };
 
@@ -62,7 +62,7 @@ export class URLViewer extends React.Component {
       const match = res.html.match(/src="(\S+)"/);
       if (match.length === 2) {
         this.setState({
-          url: match[1],
+          embeddedURL: match[1],
         });
         return true;
       }
@@ -71,31 +71,32 @@ export class URLViewer extends React.Component {
   };
 
   renderPreviewDisplay = () => {
-    if (this.state.url !== "") {
+    if (this.state.embeddedURL !== "") {
       return (
-        <iframe className="url-display" src={this.state.url} allowFullScreen>
-          {I18n.t("submissions.url_display_error")}
+        <iframe className="url-display" src={this.state.embeddedURL} allowFullScreen>
+          <div className="url-message-display">{I18n.t("submissions.url_display_error")}</div>
         </iframe>
       )
-    } else {
-      return I18n.t("submissions.unsupported_url", { host: "sample.com"} );
+    } else if (this.state.url !== "") {
+      const url_host = new URL(this.props.externalUrl).hostname;
+      return <div className="url-message-display">{I18n.t("submissions.unsupported_url", { host: url_host} )}</div>
     }
   }
 
   render() {
-    if (this.state.isInvalidUrl) {
-      return <pre>{this.props.externalUrl}</pre>
-    } else {
+    if (this.state.url !== "") {
       return (
         <div className="url-container">
           <div className="link-bar">
-            <a className="link-display" href={this.props.externalUrl} target="_blank">{this.props.externalUrl}</a>
+            <a className="link-display" href={this.state.url} target="_blank">{this.state.url}</a>
           </div>
           <div className="display-area">
             {this.renderPreviewDisplay()}
           </div>
         </div>
       )
+    } else {
+      return <div className="url-message-display">{this.props.externalUrl}</div>
     }
   }
 }
