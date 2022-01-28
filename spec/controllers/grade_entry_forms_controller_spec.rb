@@ -566,4 +566,41 @@ describe GradeEntryFormsController do
       include_examples 'switch assignment tests'
     end
   end
+
+  describe '#populate_grade_table' do
+    before(:each) do
+      get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
+    end
+    context 'an instructor' do
+      it 'returns a 200 response' do
+        expect(response.status).to eq 200
+      end
+      it 'returns data' do
+        expect(response.parsed_body['data'].length).to be > 0
+      end
+    end
+    context 'a TA' do
+      let(:role) { create :ta }
+      it 'returns a 200 response' do
+        expect(response.status).to eq 200
+      end
+      context 'who has not been assigned a student' do
+        it 'returns data' do
+          expect(response.parsed_body['data'].length).to eq 0
+        end
+      end
+      context 'who has been assigned a student' do
+        let(:student) do
+          grade_entry_form_with_data.grade_entry_students.joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+        end
+        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+        context 'who has not been assigned a student' do
+          it 'returns data' do
+            get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
+            expect(response.parsed_body['data'].length).to be > 0
+          end
+        end
+      end
+    end
+  end
 end
