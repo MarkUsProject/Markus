@@ -5,6 +5,7 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
+      isInvalidUrl: false
     };
   }
 
@@ -32,18 +33,16 @@ export class URLViewer extends React.Component {
             this.configureGoogleDrivePreview(url);
             break;
           default:
-            this.setDefaultState();
+            this.setState({url: ""});
         }
       }
+      this.setState({isInvalidUrl: false});
     } catch (e) {
-      this.setDefaultState();
+      this.setState({
+        url: "",
+        isInvalidUrl: true
+      });
     }
-  };
-
-  setDefaultState = () => {
-    this.setState({
-      url: "",
-    });
   };
 
   configureGoogleDrivePreview = url => {
@@ -71,29 +70,31 @@ export class URLViewer extends React.Component {
     return false;
   };
 
-  renderLinkDisplay = () => {
-    return (
-      <div className="link-bar">
-        <a className="link-display" href={this.props.externalUrl} target="_blank">{this.props.externalUrl}</a>
-      </div>
-    )
+  renderPreviewDisplay = () => {
+    if (this.state.url !== "") {
+      return (
+        <iframe className="url-display" src={this.state.url} allowFullScreen>
+          There was an error trying to preview this link
+        </iframe>
+      )
+    } else {
+      return "Preview display for this URL is not supported";
+    }
   }
 
   render() {
-    if (this.state.url !== "") {
-      return (
-        <div className="url-container">
-          {this.renderLinkDisplay()}
-          <div className="display-area">
-            <iframe className="url-display" src={this.state.url} allowFullScreen>
-              <pre>{this.props.externalUrl}</pre>
-            </iframe>
-          </div>
-        </div>
-      );
+    if (this.state.isInvalidUrl) {
+      return <pre>{this.props.externalUrl}</pre>
     } else {
       return (
-        <div className="url-container">{this.renderLinkDisplay()}</div>
+        <div className="url-container">
+          <div className="link-bar">
+            <a className="link-display" href={this.props.externalUrl} target="_blank">{this.props.externalUrl}</a>
+          </div>
+          <div className="display-area">
+            {this.renderPreviewDisplay()}
+          </div>
+        </div>
       )
     }
   }
