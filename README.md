@@ -12,14 +12,14 @@ MarkUs is a Ruby on Rails and React web application for the submission and gradi
 - Graders can easily annotate students' code
 - Instructors can form groups or students can form groups on their own
 - Web-based course administration
-- [RESTful API](https://github.com/MarkUsProject/Markus/wiki/RESTful-API)
-- See the [Wiki pages](https://github.com/MarkUsProject/Markus/wiki) for more features
+- [RESTful API](doc/wiki/RESTful-API.md)
+- See the [Wiki pages](doc/wiki/Home.md) for more features and usage information
 
 ## 2. Installation
 
-To install MarkUs for production, see the [Installation Guide](https://github.com/MarkUsProject/Markus/wiki/Installation) for details and step by step instructions.
+To install MarkUs for production, see the [Installation Guide](doc/wiki/Installation.md) for details and step by step instructions.
 
-To install MarkUs for development, see either of the [docker installation](https://github.com/MarkUsProject/Markus/wiki/Developer-Guide--Set-Up-With-Docker) or [vagrant installation](https://github.com/MarkUsProject/Markus/wiki/Developer-Guide--Set-Up-With-Vagrant) guides.
+To install MarkUs for development, see either of the [docker installation](doc/wiki/Developer-Guide--Set-Up-With-Docker.md) or [vagrant installation](doc/wiki/Developer-Guide--Set-Up-With-Vagrant.md) guides.
 
 ## 3. Who is Using MarkUs?
 
