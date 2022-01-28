@@ -5,7 +5,11 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
+<<<<<<< HEAD
       embeddedURL: "",
+=======
+      isInvalidUrl: false
+>>>>>>> changed views for unviewable links
     };
   }
 
@@ -33,6 +37,7 @@ export class URLViewer extends React.Component {
             this.configureGoogleDrivePreview(url);
             break;
           default:
+<<<<<<< HEAD
             this.setState({embeddedURL: ""});
         }
       }
@@ -41,6 +46,16 @@ export class URLViewer extends React.Component {
       this.setState({
         url: "",
         embeddedURL: "",
+=======
+            this.setState({url: ""});
+        }
+      }
+      this.setState({isInvalidUrl: false});
+    } catch (e) {
+      this.setState({
+        url: "",
+        isInvalidUrl: true
+>>>>>>> changed views for unviewable links
       });
     }
   };
@@ -88,7 +103,9 @@ export class URLViewer extends React.Component {
   };
 
   render() {
-    if (this.state.url !== "") {
+    if (this.state.isInvalidUrl) {
+      return <pre>{this.props.externalUrl}</pre>
+    } else {
       return (
         <div className="url-container">
           <div className="link-bar">
