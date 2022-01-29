@@ -3,6 +3,7 @@
 ## [unreleased]
 - Remove unmaintained locales (#5727)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
+- When role switched, 403 errors are displayed as flash messages after redirecting back to the previous page (#5785)
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
