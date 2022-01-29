@@ -135,8 +135,38 @@ describe GroupsController do
     end
 
     describe '#rename_group'
-    describe '#valid_grouping'
-    describe '#invalid_grouping'
+
+    describe '#valid_grouping' do
+      let(:grouping) { create :grouping_with_inviter }
+      it 'should validate a previously invalid grouping' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping.id],
+                                                       global_actions: 'valid' }
+
+        expect(grouping.reload.instructor_approved).to be true
+      end
+    end
+
+    describe '#invalid_grouping' do
+      let(:grouping) { create :grouping_with_inviter, instructor_approved: true }
+      let(:grouping2) { create :grouping_with_inviter, instructor_approved: false }
+      it 'should invalidate a grouping' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping.id],
+                                                       global_actions: 'invalid' }
+        expect(grouping.reload.instructor_approved).to be false
+      end
+      it 'should keep a invalid grouping invalid' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping.id],
+                                                       global_actions: 'invalid' }
+        expect(grouping2.reload.instructor_approved).to be false
+      end
+    end
+
     describe '#populate'
     describe '#populate_students'
 
