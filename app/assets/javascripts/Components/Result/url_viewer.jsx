@@ -5,6 +5,7 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       url: "",
+      embeddedURL: "",
     };
   }
 
@@ -32,18 +33,16 @@ export class URLViewer extends React.Component {
             this.configureGoogleDrivePreview(url);
             break;
           default:
-            this.setDefaultState();
+            this.setState({embeddedURL: ""});
         }
       }
+      this.setState({url: this.props.externalUrl});
     } catch (e) {
-      this.setDefaultState();
+      this.setState({
+        url: "",
+        embeddedURL: "",
+      });
     }
-  };
-
-  setDefaultState = () => {
-    this.setState({
-      url: "",
-    });
   };
 
   configureGoogleDrivePreview = url => {
@@ -54,7 +53,7 @@ export class URLViewer extends React.Component {
       url.pathname = url.pathname.replace(/(\/[^\/]+)$/, "/preview");
     }
     this.setState({
-      url: url.toString(),
+      embeddedURL: url.toString(),
     });
   };
 
@@ -63,7 +62,7 @@ export class URLViewer extends React.Component {
       const match = res.html.match(/src="(\S+)"/);
       if (match.length === 2) {
         this.setState({
-          url: match[1],
+          embeddedURL: match[1],
         });
         return true;
       }
@@ -71,17 +70,37 @@ export class URLViewer extends React.Component {
     return false;
   };
 
+  renderPreviewDisplay = () => {
+    if (this.state.embeddedURL !== "") {
+      return (
+        <iframe className="url-display" src={this.state.embeddedURL} allowFullScreen>
+          <div className="url-message-display">{I18n.t("submissions.url_display_error")}</div>
+        </iframe>
+      );
+    } else if (this.state.url !== "") {
+      const url_host = new URL(this.props.externalUrl).hostname;
+      return (
+        <div className="url-message-display">
+          {I18n.t("submissions.unsupported_url", {host: url_host})}
+        </div>
+      );
+    }
+  };
+
   render() {
     if (this.state.url !== "") {
       return (
         <div className="url-container">
-          <iframe className="url-display" src={this.state.url} allowFullScreen>
-            <pre>{this.props.externalUrl}</pre>
-          </iframe>
+          <div className="link-bar">
+            <a className="link-display" href={this.state.url} target="_blank">
+              {this.state.url}
+            </a>
+          </div>
+          <div className="display-area">{this.renderPreviewDisplay()}</div>
         </div>
       );
     } else {
-      return <pre>{this.props.externalUrl}</pre>;
+      return <div className="url-message-display">{this.props.externalUrl}</div>;
     }
   }
 }
