@@ -53,7 +53,8 @@ module SubmissionsHelper
     result
   end
 
-  def get_file_info(file_name, file, course_id, assignment_id, revision_identifier, path, grouping_id)
+  def get_file_info(file_name, file, course_id, assignment_id, revision_identifier, 
+                    path, grouping_id, url_enabled: false)
     return if Repository.get_class.internal_file_names.include? file_name
     f = {}
     f[:id] = file.object_id
@@ -80,7 +81,8 @@ module SubmissionsHelper
     f[:last_modified_revision] = revision_identifier
     f[:revision_by] = file.user_id
     f[:submitted_date] = I18n.l(file.submitted_date)
-    f[:type] = FileHelper.get_file_type(file_name)
+    file_type = FileHelper.get_file_type(file_name)
+    f[:type] = file_type == 'markusurl' && !url_enabled ? 'unknown' : file_type 
     f
   end
 end
