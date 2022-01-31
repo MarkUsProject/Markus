@@ -580,7 +580,7 @@ describe GradeEntryFormsController do
         expect(response.parsed_body['data'].length).to be > 0
       end
       it 'returns all student data' do
-        expect(response.parsed_body['data'].length).to eq Student.count
+        expect(response.parsed_body['data'].length).to eq course.students.count
       end
       it 'returns correct fields' do
         data_fields << grade_entry_form_with_data.grade_entry_items.first.id.to_s
