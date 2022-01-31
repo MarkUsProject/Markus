@@ -41,7 +41,7 @@ export class URLViewer extends React.Component {
       this.setState({
         url: "",
         embeddedURL: "",
-      })
+      });
     }
   };
 
