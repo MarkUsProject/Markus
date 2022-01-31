@@ -204,7 +204,7 @@ class GradeEntryFormsController < ApplicationController
   # Download the grades for this grade entry form as a CSV file
   def download
     grade_entry_form = record
-    send_data grade_entry_form.export_as_csv,
+    send_data grade_entry_form.export_as_csv(@current_role),
               disposition: 'attachment',
               type: 'text/csv',
               filename: "#{grade_entry_form.short_identifier}_grades_report.csv"

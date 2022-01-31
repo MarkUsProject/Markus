@@ -91,11 +91,18 @@ class GradeEntryForm < Assessment
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
 
-  def export_as_csv
-    students = Student.left_outer_joins(:grade_entry_students, :end_user)
-                      .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
-                      .order(:user_name)
-                      .pluck(:user_name, 'grade_entry_students.total_grade')
+  def export_as_csv(role)
+    if role.instructor?
+      students = Student.left_outer_joins(:grade_entry_students, :end_user)
+                        .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
+                        .order(:user_name)
+                        .pluck(:user_name, 'grade_entry_students.total_grade')
+    elsif role.ta?
+      students = role.grade_entry_students
+                     .where(grade_entry_form: self)
+                     .joins(role: :end_user)
+                     .pluck(:user_name, 'grade_entry_students.total_grade')
+    end
     headers = []
     # The first row in the CSV file will contain the column names
     titles = [''] + self.grade_entry_items.pluck(:name)
@@ -107,11 +114,20 @@ class GradeEntryForm < Assessment
     totals << self.max_mark if self.show_total
     headers << totals
 
-    grade_data = self.grades
-                     .joins(:grade_entry_item, grade_entry_student: [role: :end_user])
-                     .pluck('users.user_name', 'grade_entry_items.position', :grade)
-                     .group_by { |x| x[0] }
-    num_items = self.grade_entry_items.count
+    if role.instructor?
+      grade_data = self.grades
+                       .joins(:grade_entry_item, grade_entry_student: [role: :end_user])
+                       .pluck('users.user_name', 'grade_entry_items.position', :grade)
+                       .group_by { |x| x[0] }
+      num_items = self.grade_entry_items.count
+    elsif role.ta?
+      grade_data = role.grade_entry_students
+                       .where(grade_entry_form: self)
+                       .joins(:grades)
+                       .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
+                       .group_by { |x| x[0] }
+      num_items = grade_data.length
+    end
     MarkusCsv.generate(students, headers) do |user_name, total_grade|
       row = [user_name]
       if grade_data.key? user_name
