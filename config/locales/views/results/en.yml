@@ -5,7 +5,7 @@ en:
       across_all_submission_files: Click on the filename to jump to the annotation.
       common: Common Annotations
       include_in_download: Include Annotations
-      include_in_download_warning: 'Warning: Annotations on PDFs and URLs are not currently downloaded.'
+      include_in_download_warning: 'Warning: Annotations on PDFs are not currently downloaded.'
       placeholder: Markdown and basic LaTeX syntax are supported.
       remark_flag: remark
       select_an_area: You must select an area on the image to annotate.

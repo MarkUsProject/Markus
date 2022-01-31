@@ -13,8 +13,8 @@ export class URLViewer extends React.Component {
     this.configDisplay();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps !== this.props) {
+  componentDidUpdate(prevProps) {
+    if (prevProps.externalUrl !== this.props.externalUrl) {
       this.configDisplay();
     }
   }
