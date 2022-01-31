@@ -8,10 +8,10 @@ services:
       target: prod
       args:
         UBUNTU_VERSION: bionic
-        RUBY_VERSION: '2.5'
-        PG_MAJOR: '10'
+        RUBY_VERSION: '2.7'
+        PG_MAJOR: '12'
         NODE_MAJOR: '12'
-        YARN_VERSION: '1.13.0'
+        YARN_VERSION: '1.22.5'
         BUNDLER_VERSION: '1.17.3'
         PYTHON_VERSION: '3.9'
         USER: 'markus'

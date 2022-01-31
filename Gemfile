@@ -51,7 +51,6 @@ gem 'zxing_cpp', require: 'zxing'
 # Ruby miscellany
 gem 'json'
 gem 'mini_mime'
-gem 'net-ssh'
 gem 'redcarpet'
 gem 'rubyzip', require: 'zip'
 gem 'rugged'
