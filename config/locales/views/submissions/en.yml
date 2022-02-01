@@ -89,3 +89,4 @@ en:
     unrelease_marks: Unrelease Marks
     unsupported_url: Previews from %{host} are not supported and cannot be displayed
     url_display_error: There was an error trying to display a preview for this URL
+    urls_disabled: Unable to create URL. URL submissions are disabled for this assignment.
