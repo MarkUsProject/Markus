@@ -121,15 +121,23 @@ export class SubmissionFilePanel extends React.Component {
     this.modalDownload.open();
   };
 
+  getFileType = (filename) => {
+    if (typeof filename === 'string' && filename.lastIndexOf('.') !== -1) {
+      return filename.substring(filename.lastIndexOf('.'), filename.length);
+    }
+  }
+
   render() {
-    let submission_file_id, visibleAnnotations, submission_file_mime_type;
+    let submission_file_id, visibleAnnotations, submission_file_mime_type, submission_filetype;
     if (this.state.selectedFile === null) {
       submission_file_id = null;
       submission_file_mime_type = null;
       visibleAnnotations = [];
+      submission_filetype = null;
     } else {
       submission_file_id = this.state.selectedFile[1];
       submission_file_mime_type = lookup(this.state.selectedFile[0]);
+      submission_filetype = this.getFileType(this.state.selectedFile[0]);
       visibleAnnotations = this.props.annotations.filter(
         a => a.submission_file_id === submission_file_id
       );
@@ -145,7 +153,8 @@ export class SubmissionFilePanel extends React.Component {
         {this.props.canDownload && (
           <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
         )}
-        {this.props.show_annotation_manager && (
+        {this.props.show_annotation_manager &&
+          (submission_filetype !== ".markusurl" || this.props.enableUrlAnnotations) && (
           <AnnotationManager
             categories={this.props.annotation_categories}
             newAnnotation={this.props.newAnnotation}

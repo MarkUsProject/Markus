@@ -15,6 +15,7 @@
           submission_id: <%= @result.submission_id %>,
           grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
+          enableUrlAnnotations: <%= !@result.submission.grouping.assignment.url_submit %>,
           role: '<%= @current_role.class.name %>',
         }
       );
