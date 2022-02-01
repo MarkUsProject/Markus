@@ -124,7 +124,7 @@ describe SubmissionsController do
     context 'submitting a url' do
       describe 'should add url files' do
         before :each do
-          @assignment.update(url_submit: true)
+          @assignment.update!(url_submit: true)
         end
         it 'returns ok response' do
           post_as @student, :update_files,
@@ -147,7 +147,7 @@ describe SubmissionsController do
 
       describe 'should reject url with no name' do
         before :each do
-          @assignment.update(url_submit: true)
+          @assignment.update!(url_submit: true)
         end
         it 'returns a bad request' do
           post_as @student, :update_files,
@@ -170,7 +170,7 @@ describe SubmissionsController do
 
       describe 'should reject invalid url' do
         before :each do
-          @assignment.update(url_submit: true)
+          @assignment.update!(url_submit: true)
         end
         it 'returns a bad request' do
           post_as @student, :update_files,
@@ -1149,7 +1149,7 @@ describe SubmissionsController do
       end
       describe 'When the file is a url file' do
         it 'should display the url' do
-          assignment.update(url_submit: true)
+          assignment.update!(url_submit: true)
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
                                                   file_name: 'youtube.markusurl',
@@ -1158,7 +1158,7 @@ describe SubmissionsController do
           expect(response.body).to eq(URI.extract(File.read(file4)).first)
         end
         it 'should not display an invalid url file' do
-          assignment.update(url_submit: true)
+          assignment.update!(url_submit: true)
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
                                                   file_name: 'wrong_url.markusurl',
@@ -1348,7 +1348,7 @@ describe SubmissionsController do
       context 'with a valid url file format' do
         let(:files) { [file7] }
         before :each do
-          assignment.update(url_submit: true)
+          assignment.update!(url_submit: true)
         end
         it 'should return the file type' do
           submission_file = submission.submission_files.find_by(filename: file7.original_filename)
@@ -1369,7 +1369,7 @@ describe SubmissionsController do
       context 'with an invalid url file format' do
         let(:files) { [file8] }
         before :each do
-          assignment.update(url_submit: true)
+          assignment.update!(url_submit: true)
         end
         it 'should download a warning instead of the file content' do
           submission_file = submission.submission_files.find_by(filename: file8.original_filename)

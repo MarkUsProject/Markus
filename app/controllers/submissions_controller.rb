@@ -432,10 +432,8 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file_type == 'markusurl' && assignment.url_submit
-            file_contents = extract_url(file_contents)
-          elsif file_type == 'markusurl' && !assignment.url_submit
-            file_type = 'unknown'
+          if file_type == 'markusurl'
+            assignment.url_submit ? file_contents = extract_url(file_contents) : file_type = 'unknown'
           end
 
           if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
@@ -803,7 +801,7 @@ class SubmissionsController < ApplicationController
     return [] unless revision.path_exists?(full_path)
 
     anonymize = current_role.ta? && grouping.assignment.anonymize_groups
-    url_allowed = grouping.assignment.url_submit
+    url_submit = grouping.assignment.url_submit
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
@@ -813,7 +811,7 @@ class SubmissionsController < ApplicationController
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
         data = get_file_info(basename, file_obj, grouping.course.id, grouping.assignment.id,
-                             revision.revision_identifier, dirname, grouping.id, url_enabled: url_allowed)
+                             revision.revision_identifier, dirname, grouping.id, url_submit: url_submit)
         next if data.nil?
         data[:key] = file_name
         data[:modified] = file_obj.last_modified_date.to_i
