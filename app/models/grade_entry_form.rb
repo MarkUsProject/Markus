@@ -99,8 +99,8 @@ class GradeEntryForm < Assessment
                         .pluck(:user_name, 'grade_entry_students.total_grade')
     elsif role.ta?
       students = role.grade_entry_students
-                     .where(grade_entry_form: self)
                      .joins(role: :end_user)
+                     .where(grade_entry_form: self, 'role.hidden': false, 'grade_entry_students.assessment_id': self.id)
                      .pluck(:user_name, 'grade_entry_students.total_grade')
     end
     headers = []
@@ -122,11 +122,13 @@ class GradeEntryForm < Assessment
       num_items = self.grade_entry_items.count
     elsif role.ta?
       grade_data = role.grade_entry_students
-                       .where(grade_entry_form: self)
+                       .joins(role: :end_user)
                        .joins(:grades)
-                       .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
+                       .joins(:grade_entry_items)
+                       .where(grade_entry_form: self)
+                       .pluck('users.user_name', 'grade_entry_items.position', 'grades.grade')
                        .group_by { |x| x[0] }
-      num_items = grade_data.length
+      num_items = self.grade_entry_items.count
     end
     MarkusCsv.generate(students, headers) do |user_name, total_grade|
       row = [user_name]

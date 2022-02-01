@@ -278,6 +278,48 @@ describe GradeEntryFormsController do
       ) { @controller.head :ok }
       get_as role, :download, params: { course_id: course.id, id: gef }
     end
+    context 'when the user is a TA' do
+      let(:role) { create :ta }
+      let(:gef) { create :grade_entry_form_with_data }
+      it 'returns no users when the ta is not assigned a user' do
+        csv_array = [
+          ['', gef.grade_entry_items[0].name],
+          [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s]
+        ]
+        csv_data = MarkusCsv.generate(csv_array) do |data|
+          data
+        end
+        expect(@controller).to receive(:send_data).with(
+          csv_data,
+          filename: "#{gef.short_identifier}_grades_report.csv",
+          **csv_options
+        ) { @controller.head :ok }
+        get_as role, :download, params: { course_id: course.id, id: gef }
+      end
+      context 'when the ta has been assigned to a student' do
+        let(:student) do
+          gef.grade_entry_students.joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+        end
+        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+        it 'returns data for only the assigned student' do
+          student.grades.first.update(grade: 50.0)
+          csv_array = [
+            ['', gef.grade_entry_items[0].name],
+            [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s],
+            [student.role.user_name, '50.0']
+          ]
+          csv_data = MarkusCsv.generate(csv_array) do |data|
+            data
+          end
+          expect(@controller).to receive(:send_data).with(
+            csv_data,
+            filename: "#{gef.short_identifier}_grades_report.csv",
+            **csv_options
+          ) { @controller.head :ok }
+          get_as role, :download, params: { course_id: course.id, id: gef }
+        end
+      end
+    end
   end
 
   shared_examples '#update_grade_entry_students' do
