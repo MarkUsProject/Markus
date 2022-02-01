@@ -76,10 +76,14 @@ export class URLViewer extends React.Component {
         <iframe className="url-display" src={this.state.embeddedURL} allowFullScreen>
           <div className="url-message-display">{I18n.t("submissions.url_display_error")}</div>
         </iframe>
-      )
+      );
     } else if (this.state.url !== "") {
       const url_host = new URL(this.props.externalUrl).hostname;
-      return <div className="url-message-display">{I18n.t("submissions.unsupported_url", { host: url_host} )}</div>
+      return (
+        <div className="url-message-display">
+          {I18n.t("submissions.unsupported_url", {host: url_host})}
+        </div>
+      );
     }
   };
 
