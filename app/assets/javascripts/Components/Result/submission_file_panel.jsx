@@ -121,10 +121,10 @@ export class SubmissionFilePanel extends React.Component {
     this.modalDownload.open();
   };
 
-  getFileType = (filename) => {
+  getFileType = filename => {
     // modified from https://stackoverflow.com/questions/190852/how-can-i-get-file-extensions-with-javascript?rq=1
-    if (typeof filename === 'string' && filename.lastIndexOf('.') !== -1) {
-      return filename.substring(filename.lastIndexOf('.'), filename.length);
+    if (typeof filename === "string" && filename.lastIndexOf(".") !== -1) {
+      return filename.substring(filename.lastIndexOf("."), filename.length);
     }
   };
 
