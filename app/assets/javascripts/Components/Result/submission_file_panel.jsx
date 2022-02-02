@@ -126,7 +126,7 @@ export class SubmissionFilePanel extends React.Component {
     if (typeof filename === 'string' && filename.lastIndexOf('.') !== -1) {
       return filename.substring(filename.lastIndexOf('.'), filename.length);
     }
-  }
+  };
 
   render() {
     let submission_file_id, visibleAnnotations, submission_file_mime_type, submission_filetype;
@@ -156,13 +156,13 @@ export class SubmissionFilePanel extends React.Component {
         )}
         {this.props.show_annotation_manager &&
           (submission_filetype !== ".markusurl" || this.props.enableUrlAnnotations) && (
-          <AnnotationManager
-            categories={this.props.annotation_categories}
-            newAnnotation={this.props.newAnnotation}
-            addExistingAnnotation={this.props.addExistingAnnotation}
-            course_id={this.props.course_id}
-          />
-        )}
+            <AnnotationManager
+              categories={this.props.annotation_categories}
+              newAnnotation={this.props.newAnnotation}
+              addExistingAnnotation={this.props.addExistingAnnotation}
+              course_id={this.props.course_id}
+            />
+          )}
       </div>,
       <div key="codeviewer" id="codeviewer">
         <FileViewer
