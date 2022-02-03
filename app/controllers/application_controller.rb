@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
       k, v = token.split('=')
       version_info[k.downcase] = v
     end
-    @markus_version = "#{version_info['version']}.#{version_info['patch_level']}"
+    @markus_version = version_info['version']
   end
 
   # Set locale according to URL parameter. If unknown parameter is

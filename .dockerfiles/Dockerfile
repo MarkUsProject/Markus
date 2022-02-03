@@ -24,13 +24,10 @@ RUN apt-get update -qq && \
     imagemagick \
     libmagickwand-dev \
     cmake \
-    libssh2-1-dev \
-    openssh-client \
     libaprutil1-dev \
     libssl-dev \
     swig \
     graphviz \
-    rsync \
     git \
     python3-venv \
     python3-dev \
@@ -81,7 +78,6 @@ ARG RUBY_VERSION
 
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
-             /ssh_pub_key \
              /app/data/dev/repos \
              /app/tmp \
              /app/node_modules \
@@ -89,16 +85,12 @@ RUN mkdir -p /bundle \
              /app/public/packs-test \
              /app/log \
              /app/venv && \
-             chown -R $USER /bundle /ssh_pub_key /app
+             chown -R $USER /bundle /app
 
 USER $USER
 
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
-
-# Create key for ssh-ing to the autotester
-RUN ssh-keygen -q -N "" -f /home/$USER/.ssh/id_rsa && \
-    cp /home/$USER/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
 FROM base AS prod
 
