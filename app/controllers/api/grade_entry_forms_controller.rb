@@ -6,7 +6,7 @@ module Api
     # Requires: id
     def show
       grade_entry_form = record
-      send_data grade_entry_form.export_as_csv(@current_role),
+      send_data grade_entry_form.export_as_csv(current_role),
                 type: 'text/csv',
                 filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
                 disposition: 'inline'

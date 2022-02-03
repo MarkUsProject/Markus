@@ -101,6 +101,7 @@ class GradeEntryForm < Assessment
       students = role.grade_entry_students
                      .joins(role: :end_user)
                      .where(grade_entry_form: self, 'role.hidden': false, 'grade_entry_students.assessment_id': self.id)
+                     .order(:user_name)
                      .pluck(:user_name, 'grade_entry_students.total_grade')
     end
     headers = []

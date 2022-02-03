@@ -286,9 +286,7 @@ describe GradeEntryFormsController do
           ['', gef.grade_entry_items[0].name],
           [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s]
         ]
-        csv_data = MarkusCsv.generate(csv_array) do |data|
-          data
-        end
+        csv_data = MarkusCsv.generate(csv_array, &:itself)
         expect(@controller).to receive(:send_data).with(
           csv_data,
           filename: "#{gef.short_identifier}_grades_report.csv",
@@ -308,9 +306,7 @@ describe GradeEntryFormsController do
             [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s],
             [student.role.user_name, '50.0']
           ]
-          csv_data = MarkusCsv.generate(csv_array) do |data|
-            data
-          end
+          csv_data = MarkusCsv.generate(csv_array, &:itself)
           expect(@controller).to receive(:send_data).with(
             csv_data,
             filename: "#{gef.short_identifier}_grades_report.csv",
