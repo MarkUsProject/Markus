@@ -362,7 +362,8 @@ class SubmissionsController < ApplicationController
 
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
           if f.is_a?(String) # is a directory
-            success, msgs = add_folder(f, current_role, repo, path: path, txn: txn)
+            authorize! to: :manage_subdirectories? # ensure user is authorized for directories in zip files
+            success, msgs = add_folder(f, current_role, repo, path: path, txn: txn, required_files: required_files)
           else
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
@@ -743,6 +744,16 @@ class SubmissionsController < ApplicationController
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
+
+      # add unique ids to all elements in the DOM
+      html = Nokogiri::HTML.parse(File.read(cache_file))
+      current_ids = html.xpath('//*[@id]').map { |elem| elem[:id] }.to_set
+      html.xpath('//*[not(@id)]').map do |elem|
+        unique_id = elem.path
+        unique_id += '-next' while current_ids.include? unique_id
+        elem.set_attribute(:id, unique_id)
+      end
+      File.write(cache_file, html.to_html)
     end
     File.read(cache_file)
   end

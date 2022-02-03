@@ -111,7 +111,7 @@ en:
         manage_submissions?: You do not have permission to manage submissions.
         run_tests?: You do not have permission to run tests.
       submission:
-        before_release?: The results for this submission have not been released.
+        before_release?: The results for this submission have been released.
         file_manager?: You do not have permission to view the file manager.
         manage?: You do not have permission to manage submissions.
         manage_files?: You do not have permission to manage files for this group.

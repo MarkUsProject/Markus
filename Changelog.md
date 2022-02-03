@@ -2,6 +2,13 @@
 
 ## [unreleased]
 - Remove unmaintained locales (#5727)
+- Fix bug for "Delete Group" button generating an invalid path (#5768)
+- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
+
+## [v2.0.5]
+- Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
+
+## [v2.0.4]
 - Fix bug where "Create Note" button was displaying when a course had no noteables (#5745)
 - Redesign login page for multiple authentication options (#5752)
 - Do not timeout users who are logged in using remote authentication (#5738)
@@ -9,7 +16,7 @@
 - Display error message for users logging in using remote authentication if they do not exist in MarkUs database (#5738)
 - Fix bug where git hooks were not finding the correct file containing the maximum file size for a given course (#5744)
 - Allow setting optional role attributes through the api (#5748)
-- Allow students to populate their repositories with starter files (#5753)
+- Allow students to populate their repositories with starter files (#5754)
 
 ## [v2.0.3]
 - Fix bug where repository access files were not taking multiple courses into account (#5734)
@@ -26,6 +33,9 @@
 
 ## [v2.0.0]
 - Support multiple courses in a single MarkUs instance (#5685)
+
+## [v1.14.1]
+- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5782)
 
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
