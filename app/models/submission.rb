@@ -253,6 +253,12 @@ class Submission < ApplicationRecord
     files_added
   end
 
+  def self.get_submission_by_group_id_and_assignment_id(group_id, assignment_id)
+    group = Group.find(group_id)
+    grouping = group.grouping_for_assignment(assignment_id)
+    grouping.current_submission_used
+  end
+
   def make_remark_result
     remark = results.create(
       marking_state: Result::MARKING_STATES[:incomplete],
