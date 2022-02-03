@@ -13,6 +13,7 @@ export class SubmissionFilePanel extends React.Component {
       selectedFile: null,
       focusLine: null,
       annotationFocus: undefined,
+      selectedFileType: null,
     };
     this.submissionFileViewer = React.createRef();
   }
@@ -33,6 +34,12 @@ export class SubmissionFilePanel extends React.Component {
       this.refreshSelectedFile();
     }
   }
+
+  handleFileTypeUpdate = newType => {
+    this.setState({
+      selectedFileType: newType,
+    });
+  };
 
   refreshSelectedFile = () => {
     if (localStorage.getItem("assignment_id") !== String(this.props.assignment_id)) {
@@ -145,7 +152,7 @@ export class SubmissionFilePanel extends React.Component {
         {this.props.canDownload && (
           <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
         )}
-        {this.props.show_annotation_manager && (
+        {this.props.show_annotation_manager && this.state.selectedFileType !== "markusurl" && (
           <AnnotationManager
             categories={this.props.annotation_categories}
             newAnnotation={this.props.newAnnotation}
@@ -157,6 +164,7 @@ export class SubmissionFilePanel extends React.Component {
       <div key="codeviewer" id="codeviewer">
         <FileViewer
           ref={this.submissionFileViewer}
+          handleFileTypeUpdate={this.handleFileTypeUpdate}
           assignment_id={this.props.assignment_id}
           submission_id={this.props.submission_id}
           mime_type={submission_file_mime_type}
