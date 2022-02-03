@@ -137,36 +137,36 @@ describe GroupsController do
     describe '#rename_group'
 
     describe '#valid_grouping' do
-      let(:grouping) { create :grouping_with_inviter, instructor_approved: false }
+      let(:unapproved_grouping) { create :grouping_with_inviter, instructor_approved: false }
+      let(:approved_grouping) { create :grouping_with_inviter, instructor_approved: true }
       it 'validates a previously invalid grouping' do
-        post_as instructor, :valid_grouping, params: { course_id: grouping.course.id,
-                                                       assignment_id: grouping.assignment.id,
-                                                       grouping_id: grouping.id }
-        expect(grouping.reload.instructor_approved).to be true
+        post_as instructor, :valid_grouping, params: { course_id: unapproved_grouping.course.id,
+                                                       assignment_id: unapproved_grouping.assignment.id,
+                                                       grouping_id: unapproved_grouping.id }
+        expect(unapproved_grouping.reload.instructor_approved).to be true
       end
       it 'keeps a valid grouping valid' do
-        grouping2 = create(:grouping_with_inviter, instructor_approved: true)
-        post_as instructor, :valid_grouping, params: { course_id: grouping2.course.id,
-                                                       assignment_id: grouping2.assignment.id,
-                                                       grouping_id: grouping2.id }
-        expect(grouping2.reload.instructor_approved).to be true
+        post_as instructor, :valid_grouping, params: { course_id: approved_grouping.course.id,
+                                                       assignment_id: approved_grouping.assignment.id,
+                                                       grouping_id: approved_grouping.id }
+        expect(approved_grouping.reload.instructor_approved).to be true
       end
     end
 
     describe '#invalid_grouping' do
-      let(:grouping) { create :grouping_with_inviter, instructor_approved: true }
-      it 'invalidates a grouping' do
-        post_as instructor, :invalid_grouping, params: { course_id: grouping.course.id,
-                                                         assignment_id: grouping.assignment.id,
-                                                         grouping_id: grouping.id }
-        expect(grouping.reload.instructor_approved).to be false
+      let(:approved_grouping) { create :grouping_with_inviter, instructor_approved: true }
+      let(:unapproved_grouping) { create :grouping_with_inviter, instructor_approved: false }
+      it 'invalidates a previously valid grouping' do
+        post_as instructor, :invalid_grouping, params: { course_id: approved_grouping.course.id,
+                                                         assignment_id: approved_grouping.assignment.id,
+                                                         grouping_id: approved_grouping.id }
+        expect(approved_grouping.reload.instructor_approved).to be false
       end
       it 'keeps a invalid grouping invalid' do
-        grouping2 = create(:grouping_with_inviter, instructor_approved: false)
-        post_as instructor, :invalid_grouping, params: { course_id: grouping2.course.id,
-                                                         assignment_id: grouping2.assignment.id,
-                                                         grouping_id: grouping2.id }
-        expect(grouping2.reload.instructor_approved).to be false
+        post_as instructor, :invalid_grouping, params: { course_id: unapproved_grouping.course.id,
+                                                         assignment_id: unapproved_grouping.assignment.id,
+                                                         grouping_id: unapproved_grouping.id }
+        expect(unapproved_grouping.reload.instructor_approved).to be false
       end
     end
 
