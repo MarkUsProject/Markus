@@ -713,7 +713,6 @@ class Result extends React.Component {
               removeAnnotation={this.removeAnnotation}
               destroyAnnotation={this.destroyAnnotation}
               course_id={this.props.course_id}
-              enableUrlAnnotations={this.props.enableUrlAnnotations}
             />
           </div>
           <div id="drag" />
