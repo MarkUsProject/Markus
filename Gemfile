@@ -18,11 +18,11 @@ gem 'pluck_to_hash'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
+gem 'jsbundling-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
 gem 'uglifier'
-gem 'webpacker'
 
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'

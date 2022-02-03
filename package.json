@@ -1,9 +1,7 @@
 {
   "dependencies": {
-    "@babel/core": "^7.16.12",
-    "@babel/preset-react": "^7.16.7",
+    "@babel/runtime": "^7.16.7",
     "@rails/ujs": "^6.1.4",
-    "@rails/webpacker": "5.4",
     "@rjsf/core": "^3.2.1",
     "chart.js": "^3.7.0",
     "dompurify": "^2.3.5",
@@ -24,13 +22,28 @@
     "react-keyed-file-browser": "^1.14.0",
     "react-modal": "^3.14.4",
     "react-table": "^6.11.5",
-    "react-tabs": "^3.2.3",
-    "webpack": "^4.44.1"
+    "react-tabs": "^3.2.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^5.2.7",
+    "file-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^1.6.2",
+    "sass": "^1.49.7",
+    "sass-loader": "^10.1.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^4.9.2",
     "webpack-dev-server": "3.11.2"
   },
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --watch"
+  }
 }
