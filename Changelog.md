@@ -4,6 +4,7 @@
 - Remove unmaintained locales (#5727)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
+- Added the ability to submit URLs
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
