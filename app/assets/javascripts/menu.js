@@ -32,7 +32,6 @@ function initMenu() {
     }
   };
 }
-
-window.onload = () => {
+window.addEventListener("onload", () => {
   initMenu();
-};
+});
