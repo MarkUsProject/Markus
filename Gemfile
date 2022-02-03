@@ -51,7 +51,6 @@ gem 'zxing_cpp', require: 'zxing'
 # Ruby miscellany
 gem 'json'
 gem 'mini_mime'
-gem 'net-ssh'
 gem 'redcarpet'
 gem 'rubyzip', require: 'zip'
 gem 'rugged'
@@ -117,7 +116,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 5.0.2'
+  gem 'rspec-rails', '~> 5.1.0'
 end
 
 # Gems needed (wanted) for development, test and production_test

@@ -7,9 +7,4 @@
 
 Thanks for using MarkUs!
 
-Installation instructions have moved to the MarkUs wiki.
-
-For production installation instructions: https://github.com/MarkUsProject/Markus/wiki/Installation
-For development installation instruction:
-  - with Docker: https://github.com/MarkUsProject/Markus/wiki/Developer-Guide--Set-Up-With-Docker
-  - with Vagrant: https://github.com/MarkUsProject/Markus/wiki/Developer-Guide--Set-Up-With-Vagrant
+Installation instructions have moved to the MarkUs wiki: https://github.com/MarkUsProject/Wiki

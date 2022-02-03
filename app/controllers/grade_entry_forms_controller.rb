@@ -148,7 +148,7 @@ class GradeEntryFormsController < ApplicationController
                              .pluck_to_hash(*student_pluck_attrs)
       grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)
-                           .joins(role: :end_user)
+                           .joins(:grades)
                            .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
                            .group_by { |x| x[0] }
     end
