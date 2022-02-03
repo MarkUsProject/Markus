@@ -79,9 +79,9 @@ class Result < ApplicationRecord
   #
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
-  def get_total_extra_marks(max_mark: nil, user_visibility: :ta_visible)
-    Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
-  end
+  # def get_total_extra_marks(max_mark: nil, user_visibility: :ta_visible)
+  #  Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
+  # end
 
   # The sum of the bonuses deductions and late penalties for multiple results.
   # This returns a hash mapping the result ids from the +result_ids+ argument to
@@ -137,16 +137,16 @@ class Result < ApplicationRecord
   end
 
   # un-releases the result
-  def unrelease_results
-    self.released_to_students = false
-    self.save
-  end
+  # def unrelease_results
+  #  self.released_to_students = false
+  #  self.save
+  # end
 
-  def mark_as_partial
-    return if self.released_to_students
-    self.marking_state = Result::MARKING_STATES[:incomplete]
-    self.save
-  end
+  # def mark_as_partial
+  #  return if self.released_to_students
+  #  self.marking_state = Result::MARKING_STATES[:incomplete]
+  #  self.save
+  # end
 
   def is_a_review?
     !peer_review_id.nil?
