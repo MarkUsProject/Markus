@@ -2,11 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const mode = process.env.NODE_ENV || "development";
-
 module.exports = {
-  mode: mode,
-  devtool: "inline-source-map",
   entry: {
     application_webpack: "./app/javascript/application_webpack.js",
     "pdf.worker": "./app/javascript/pdf.worker.js",
@@ -20,25 +16,16 @@ module.exports = {
         use: ["babel-loader"],
       },
       {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
-      },
-      {
-        test: /\.s[ac]ss$/i,
+        test: /\.(sass|scss|css)$/i,
         use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
       {
         test: /\.(png|jpe?g|gif|eot|woff2|woff|ttf|svg|ico)$/i,
-        use: "file-loader",
+        type: "asset/resource",
       },
     ],
   },
-  optimization: {
-    moduleIds: "hashed",
-  },
   output: {
-    filename: "[name].js",
-    sourceMapFilename: "[name].js.map",
     path: path.resolve(__dirname, "app/assets/builds"),
   },
   plugins: [
