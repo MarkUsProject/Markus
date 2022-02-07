@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# wait until gems are installed (crucially, wait for webpacker to be installed)
+# wait until gems are installed (crucially, wait for jsbundling-rails to be installed)
 until bundle check &> /dev/null; do
   echo "waiting for gems to be installed"
   sleep 5
