@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Fix bug for menu icon not working on mobile devices / smaller screens (#5607)
 - Remove unmaintained locales (#5727)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
