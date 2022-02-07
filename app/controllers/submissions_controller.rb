@@ -351,6 +351,7 @@ class SubmissionsController < ApplicationController
           url_file = Tempfile.new
           url_file.write(new_url)
           url_file.rewind
+          url_filename = FileHelper.sanitize_file_name(url_filename)
           new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.markusurl",
                                                                 tempfile: url_file,
                                                                 type: 'text/url')
@@ -433,9 +434,7 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file_type == 'markusurl'
-            assignment.url_submit ? file_contents = extract_url(file_contents) : file_type = 'unknown'
-          end
+          file_type = 'unknown' unless file_type != 'markusurl' || assignment.url_submit
 
           if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
@@ -479,9 +478,6 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        if preview && FileHelper.get_file_type(params[:file_name]) == 'markusurl' && @assignment.url_submit
-          file_contents = extract_url(file_contents)
-        end
         file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)
       rescue ArgumentError
         # Handle UTF8 encoding error
@@ -838,13 +834,6 @@ class SubmissionsController < ApplicationController
   # the grouping is in the same course as the current course
   def parent_params
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
-  end
-
-  # Helper that extracts the URL from a url file to send to a user.
-  # If no URL is found, returns a string saying the file cannot be displayed.
-  def extract_url(file_content)
-    tokens = file_content.strip.split(/\s/)
-    tokens.length == 1 && is_valid_url?(tokens[0]) ? tokens[0] : I18n.t('submissions.cannot_display')
   end
 
   # Returns a boolean on whether the given +url+ is valid.

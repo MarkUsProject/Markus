@@ -61,7 +61,9 @@ class SubmitUrlUploadModal extends React.Component {
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <div className={"modal-container"}>
-              <label className={"modal-inline-label"}>{I18n.t("submissions.student.url")}</label>
+              <div className={"modal-inline-label"}>
+                <label className={"required"}>{I18n.t("submissions.student.url")}</label>
+              </div>
               <input
                 type={"url"}
                 name={"new_url"}
@@ -71,15 +73,16 @@ class SubmitUrlUploadModal extends React.Component {
               />
             </div>
             <div className={"modal-container"}>
-              <label className={"modal-inline-label"}>
-                {I18n.t("submissions.student.url_text")}
-              </label>
+              <div className={"modal-inline-label"}>
+                <label className={"required"}>{I18n.t("submissions.student.url_text")}</label>
+              </div>
               <input
                 type={"text"}
                 name={"new_url_text"}
                 value={this.state.newUrlText}
                 onChange={this.handleUrlAliasChange}
                 required={true}
+                className={"required"}
               />
             </div>
           </div>
