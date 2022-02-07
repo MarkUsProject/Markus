@@ -18,7 +18,7 @@
   <% end %>
 <% end %>
 <%= javascript_tag nonce: true do %>
-  window.addEventListener("onload", function () {
+  window.addEventListener("DOMContentLoaded", function () {
     Array.from(document.getElementsByClassName('hide-flash')).forEach(function (elem) {
       elem.addEventListener("click", function(e) {
         e.target.parentElement.style.display = 'none';
