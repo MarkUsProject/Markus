@@ -1,6 +1,41 @@
 describe CoursesController do
   let(:instructor) { create :instructor }
   let(:course) { instructor.course }
+  describe '#switch_role' do
+    # before do
+    #   allow(controller).to receive(:render)
+    # end
+    let(:student_in_course) { create :student }
+    let(:second_instructor) { create :instructor }
+    it 'fails when switching role as the current instructor' do
+      post_as instructor, :switch_role,
+              params: { 'effective_user_login' => instructor.user_id, 'commit' => 'Log in', 'id' => course.id }
+      expect(response.status).to eq(404)
+    end
+    it 'succeeds when switching role as a student in the course' do
+      post_as instructor, :switch_role,
+              params: { 'effective_user_login' => student_in_course.user_id, 'commit' => 'Log in', 'id' => course.id }
+      expect(response.status).to eq(200)
+    end
+    it 'fails when switching role as another instructor in the course' do
+      post_as instructor, :switch_role,
+              params: { 'effective_user_login' => second_instructor.user_id, 'commit' => 'Log in', 'id' => course.id }
+      expect(response.status).to eq(404)
+    end
+  end
+  describe '#clear_role_switch_session' do
+    let!(:subject) { get_as instructor, :clear_role_switch_session, params: { 'id' => course.id } }
+    it 'redirects to show' do
+      expect(controller).to redirect_to action: :show, id: course.id
+    end
+    it "sets this session's username to nil" do
+      expect(session[:user_name]).to be(nil)
+    end
+    it "sets this session's role_switch_course_id to nil" do
+      expect(session[:role_switch_course_id]).to be(nil)
+    end
+  end
+
   context 'accessing course pages' do
     it 'responds with success on index' do
       get_as instructor, :index
