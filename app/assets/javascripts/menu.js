@@ -32,7 +32,8 @@ function initMenu() {
     }
   };
 }
-
-window.onload = () => {
+// using addEventListener as opposed to direct assignment so that event listeners added elsewhere
+// don't get overridden
+window.addEventListener("DOMContentLoaded", () => {
   initMenu();
-};
+});
