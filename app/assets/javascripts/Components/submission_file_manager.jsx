@@ -200,8 +200,8 @@ class SubmissionFileManager extends React.Component {
     this.setState({showUploadModal: true, uploadTarget: uploadTarget});
   };
 
-  openSubmitURLModal = () => {
-    this.setState({showURLModal: true});
+  openSubmitURLModal = uploadTarget => {
+    this.setState({showURLModal: true, uploadTarget: uploadTarget});
   };
 
   updateViewFile = item => {

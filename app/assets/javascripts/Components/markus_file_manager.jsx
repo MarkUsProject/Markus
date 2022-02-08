@@ -21,9 +21,9 @@ class RawFileManager extends RawFileBrowser {
     this.handleActionBarAddFolderClick(event);
   };
 
-  onActionBarSubmitURLClick = event => {
+  handleActionBarSubmitURLClick = (event, selectedItem) => {
     event.preventDefault();
-    this.props.onActionBarSubmitURLClick();
+    this.props.onActionBarSubmitURLClick(this.folderTarget(selectedItem));
   };
 
   folderTarget = selectedItem => {
@@ -137,7 +137,11 @@ class RawFileManager extends RawFileBrowser {
         if (this.props.enableUrlSubmit) {
           actions.unshift(
             <li key="action-add-link">
-              <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
+              <a
+                onClick={event => this.handleActionBarSubmitURLClick(event, selectedItem)}
+                href="#"
+                role="button"
+              >
                 <i className="fa fa-submit-link-o" aria-hidden="true" />
                 &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
               </a>
@@ -177,7 +181,11 @@ class RawFileManager extends RawFileBrowser {
       if (this.props.enableUrlSubmit) {
         actions.unshift(
           <li key="action-add-link">
-            <a onClick={this.onActionBarSubmitURLClick} href="#" role="button">
+            <a
+              onClick={event => this.handleActionBarSubmitURLClick(event, selectedItem)}
+              href="#"
+              role="button"
+            >
               <i className="fa fa-submit-link-o" aria-hidden="true" />
               &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
             </a>
