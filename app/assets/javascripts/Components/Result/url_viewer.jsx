@@ -86,13 +86,13 @@ export class URLViewer extends React.Component {
     if (this.state.embeddedURL !== "") {
       return (
         <iframe className="url-display" src={this.state.embeddedURL} allowFullScreen>
-          {errorMessage(I18n.t("submissions.url_display_error"))}
+          {errorMessage(I18n.t("submissions.url_preview_error"))}
         </iframe>
       );
     } else if (this.state.isInvalidUrl) {
-      return errorMessage(I18n.t("submissions.invalid_url", {item: "This"}));
+      return errorMessage(I18n.t("submissions.invalid_url", {item: I18n.t("this")}));
     } else {
-      return errorMessage(I18n.t("submissions.url_display_error"));
+      return errorMessage(I18n.t("submissions.url_preview_error"));
     }
   };
 
