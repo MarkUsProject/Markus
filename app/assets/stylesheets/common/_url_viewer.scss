@@ -15,14 +15,10 @@
   flex-grow: 2;
 }
 
-.link-bar {
+.link-display {
   border: thin solid $primary-three;
   box-sizing: border-box;
   padding: 5px;
-  width: inherit;
-}
-
-.link-display {
   width: inherit;
   word-wrap: break-word;
 }
