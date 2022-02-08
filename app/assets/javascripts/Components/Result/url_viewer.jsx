@@ -55,6 +55,12 @@ export class URLViewer extends React.Component {
     }
   };
 
+  /*
+   * Converts a URL object google drive/docs link into a link that allows for embedding of the associated content.
+   * This link is assumed to be of the form:
+   *     (docs or drive).google.com/<content_type>/.../<view_mode>
+   * This then sets the embeddedURL state to that newly converted link
+   */
   configureGoogleDrivePreview = url => {
     const path = url.pathname.split("/");
     if (path[1] === "forms") {
@@ -68,7 +74,17 @@ export class URLViewer extends React.Component {
     });
   };
 
+  /*
+   * Asynchronous function that fetches the embedded representation of a video URL using the oembed format.
+   * This function then uses the returned html to get the source of the embedded content and sets the
+   * embeddedURL state to that new source.
+   *
+   * @params url: The URL of the video to be embedded
+   * @params oembedUrl: The URL endpoint to use to get the embedded representation of the video URL from
+   */
   configureOEmbedPreview = (url, oembedUrl) => {
+    // Request is of the form <oembedUrl>?format=json&url=<url>
+    // For more information about the format of this request see https://oembed.com/
     $.get(oembedUrl, {format: "json", url: url}).then(res => {
       const match = res.html.match(/src="(\S+)"/);
       if (match.length === 2) {
