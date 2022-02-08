@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Remove group name displayed attribute from assignment properties table (#5834)
 - Fix bug for menu icon not working on mobile devices / smaller screens (#5818)
 - Remove unmaintained locales (#5727)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
