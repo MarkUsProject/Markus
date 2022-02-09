@@ -24,30 +24,18 @@
 <%= render partial: 'create_new_template',
            layout: 'layouts/modal_dialog'  %>
 
-<% @exam_templates.each do |exam_template| %>
-  <fieldset>
-    <legend><span><%= exam_template.name %></span></legend>
-    <%= render partial: 'form',
-               locals: { exam_template: exam_template } %>
-    <hr>
-    <div class="student-info">
-      <h3><%= t('exam_templates.parsing.title') %></h3>
-      <p>
-        <%= render partial: 'student_info',
-                   locals: { exam_template: exam_template } %>
-      </p>
+<div class='wrapper'>
+  <p id='new_criterion_error' class='warning no-display'></p>
+</div>
+
+<div class='pane-wrapper'>
+  <div id='exam_template_pane' class="exam_template_pane-wrapper">
+    <%= render partial: 'exam_templates_pane' %>
+  </div>
+
+  <div class='pane'>
+    <div id='editing_pane_menu'>
+      <%= render partial: 'manager_help' %>
     </div>
-    <hr>
-    <div class="generate-section">
-      <h3><%= t('exam_templates.generate.title') %></h3>
-      <%= render partial: 'generate_form',
-                 locals: { exam_template: exam_template } %>
-    </div>
-    <hr>
-    <div class="split-section">
-      <h3><%= t('exam_templates.split.title') %></h3>
-      <%= render partial: 'split_form',
-                 locals: { exam_template: exam_template } %>
-    </div>
-  </fieldset>
-<% end %>
+  </div>
+</div>
