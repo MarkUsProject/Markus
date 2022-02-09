@@ -1346,8 +1346,8 @@ describe AssignmentsController do
           subject
           tags = read_file_from_zip(response.body, 'tags.yml')
           tags = tags.map(&:symbolize_keys)
-          expect(tags).to eq([{ name: tag1.name, description: tag1.description },
-                              { name: tag2.name, description: tag2.description }])
+          expect(tags).to match_array([{ name: tag1.name, description: tag1.description },
+                                       { name: tag2.name, description: tag2.description }])
         end
 
         it 'should contain a peer review tags file' do
@@ -1553,7 +1553,7 @@ describe AssignmentsController do
                                                  .map(&:symbolize_keys)
         expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' },
                                     { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
-        expect(uploaded_annotation_text).to eq(expected_annotation_text)
+        expect(uploaded_annotation_text).to match_array(expected_annotation_text)
       end
 
       it 'properly uploads all the automated test files for an assignment' do
@@ -1687,7 +1687,7 @@ describe AssignmentsController do
         expected_tags = [{ name: tag1.name, description: tag1.description },
                          { name: tag2.name, description: tag2.description },
                          { name: tag3.name, description: tag3.description }]
-        expect(uploaded_tags).to eq(expected_tags)
+        expect(uploaded_tags).to match_array(expected_tags)
       end
 
       it 'copies over annotations' do
@@ -1735,7 +1735,7 @@ describe AssignmentsController do
             files_and_dirs: starter_group2_files
           }
         ]
-        expect(uploaded_starter_files).to eq(expected_starter_files)
+        expect(uploaded_starter_files).to match_array(expected_starter_files)
       end
     end
 
@@ -1802,7 +1802,7 @@ describe AssignmentsController do
                                       .map(&:symbolize_keys)
         expected = [{ filename: assignment_file1.filename },
                     { filename: assignment_file2.filename }]
-        expect(received).to eq(expected)
+        expect(received).to match_array(expected)
       end
 
       it 'copies over automated tests' do

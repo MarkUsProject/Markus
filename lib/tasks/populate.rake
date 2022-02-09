@@ -101,7 +101,6 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
       description: 'Shell Scripting',
       message: "Learn how to use functions, parameter passing and proper return codes.\n
 Note: You have been assigned to a group by the instructor.",
-      group_name_displayed: true,
       repository_folder: 'A3',
       due_date: 3.week.from_now,
       invalid_override: true

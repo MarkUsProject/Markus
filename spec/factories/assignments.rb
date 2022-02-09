@@ -73,7 +73,7 @@ FactoryBot.define do
         a.test_groups.each do |test_group|
           test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
           test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
-          create(:test_result_with_ordered_name, test_group_result: test_group_result)
+          create(:test_result, test_group_result: test_group_result)
         end
       end
     end

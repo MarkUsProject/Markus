@@ -87,6 +87,10 @@ class User < ApplicationRecord
     self.instance_of?(AdminUser)
   end
 
+  def end_user?
+    self.instance_of?(EndUser)
+  end
+
   def set_display_name
     strip_name
     self.display_name ||= "#{self.first_name} #{self.last_name}"

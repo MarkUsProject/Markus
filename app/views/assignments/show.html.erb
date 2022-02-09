@@ -125,14 +125,9 @@
           </p>
         <% end %>
       <% else %>
-        <%# Since the student has a group already, we display information about the group only %>
-        <%# Check if groupname should be displayed %>
+        <% # Since the student has a group already, we display information about the group only %>
         <h3>
-          <% if @assignment.group_name_displayed %>
-            <%= @grouping.group.group_name %>
-          <% else %>
-            <%= t('groups.student_interface.your_group') %>
-          <% end %>
+          <%= t('groups.student_interface.your_group') %>
         </h3>
         <% # Display group properties are read only warning
            # when the due date and grace period (if any) have passed.

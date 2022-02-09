@@ -843,7 +843,6 @@ class AssignmentsController < ApplicationController
         :enable_student_tests,
         :has_peer_review,
         :assign_graders_to_criteria,
-        :group_name_displayed,
         :invalid_override,
         :section_groups_only,
         :only_required_files,
