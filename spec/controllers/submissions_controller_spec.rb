@@ -140,6 +140,18 @@ describe SubmissionsController do
             expect(files['youtube.markusurl']).to_not be_nil
           end
         end
+
+        it 'with the correct content' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            file_content = repo.download_as_string(files['youtube.markusurl'])
+            expect(file_content).to eq('https://www.youtube.com/watch?v=dtGs7Fy8ISo')
+          end
+        end
       end
 
       describe 'should reject url with no name' do
@@ -1200,14 +1212,12 @@ describe SubmissionsController do
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:file3) { fixture_file_upload('example.ipynb') }
-    let(:file4) { fixture_file_upload('youtube.markusurl') }
-    let(:file5) { fixture_file_upload('wrong_url.markusurl') }
+    let(:file4) { fixture_file_upload('sample.markusurl') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
       submit_file(assignment, grouping, file3.original_filename, file3.read)
       submit_file(assignment, grouping, file4.original_filename, file4.read)
-      submit_file(assignment, grouping, file5.original_filename, file5.read)
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
@@ -1264,31 +1274,14 @@ describe SubmissionsController do
         end
       end
       describe 'When the file is a url file' do
-        it 'should display the url' do
+        it 'should read the entire file' do
           assignment.update!(url_submit: true)
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'youtube.markusurl',
+                                                  file_name: 'sample.markusurl',
                                                   preview: true,
                                                   grouping_id: grouping.id }
-          expect(response.body).to eq(URI.extract(File.read(file4)).first)
-        end
-        it 'should not display an invalid url file' do
-          assignment.update!(url_submit: true)
-          get_as instructor, :download, params: { course_id: course.id,
-                                                  assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.markusurl',
-                                                  preview: true,
-                                                  grouping_id: grouping.id }
-          expect(response.body).to eq(I18n.t('submissions.cannot_display'))
-        end
-        it 'should read file when url uploading is disabled' do
-          get_as instructor, :download, params: { course_id: course.id,
-                                                  assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.markusurl',
-                                                  preview: true,
-                                                  grouping_id: grouping.id }
-          expect(response.body).to eq(File.read(file5))
+          expect(response.body).not_to eq(URI.extract(File.read(file4)).first)
         end
       end
     end
@@ -1329,13 +1322,13 @@ describe SubmissionsController do
         end
       end
       describe 'When the file is a url file' do
-        it 'should download the entire file' do
+        it 'should download the file as is' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'wrong_url.markusurl',
+                                                  file_name: 'sample.markusurl',
                                                   preview: false,
                                                   grouping_id: grouping.id }
-          expect(response.body).to eq(File.read(file5))
+          expect(response.body).to eq(File.read(file4))
         end
       end
     end
@@ -1399,8 +1392,7 @@ describe SubmissionsController do
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
-    let(:file7) { fixture_file_upload('youtube.markusurl') }
-    let(:file8) { fixture_file_upload('wrong_url.markusurl') }
+    let(:file7) { fixture_file_upload('sample.markusurl') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1470,47 +1462,20 @@ describe SubmissionsController do
           submission_file = submission.submission_files.find_by(filename: file7.original_filename)
           get_as instructor, :get_file, params: { course_id: course.id,
                                                   id: submission.id,
-                                                  submission_file_id: submission_file.id }
-          expect(JSON.parse(response.body)['type']).to eq 'markusurl'
-        end
-        it 'should download a url instead of the file content' do
-          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id }
-          expected = ActiveSupport::JSON.encode('https://www.youtube.com/watch?v=dtGs7Fy8ISo')
-          expect(JSON.parse(response.body)['content']).to eq(expected)
-        end
-      end
-      context 'with an invalid url file format' do
-        let(:files) { [file8] }
-        before :each do
-          assignment.update!(url_submit: true)
-        end
-        it 'should download a warning instead of the file content' do
-          submission_file = submission.submission_files.find_by(filename: file8.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id }
-          expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
-          expect(JSON.parse(response.body)['content']).to eq(expected)
+                                                  submission_file_id: submission_file.id,
+                                                  format: :json }
+          expect(response.parsed_body['type']).to eq 'markusurl'
         end
       end
       context 'with urls disabled' do
-        let(:files) { [file7, file8] }
+        let(:files) { [file7] }
         it 'should return an unknown type' do
           submission_file = submission.submission_files.find_by(filename: file7.original_filename)
           get_as instructor, :get_file, params: { course_id: course.id,
                                                   id: submission.id,
-                                                  submission_file_id: submission_file.id }
-          expect(JSON.parse(response.body)['type']).to eq 'unknown'
-        end
-        it 'should download the file content' do
-          submission_file = submission.submission_files.find_by(filename: file8.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id }
-          expect(JSON.parse(response.body)['content']).to eq(ActiveSupport::JSON.encode(File.read(file8)))
+                                                  submission_file_id: submission_file.id,
+                                                  format: :json }
+          expect(response.parsed_body['type']).to eq 'unknown'
         end
       end
     end
