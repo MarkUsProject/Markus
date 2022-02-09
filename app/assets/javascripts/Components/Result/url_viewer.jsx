@@ -5,7 +5,6 @@ export class URLViewer extends React.Component {
     super(props);
     this.state = {
       embeddedURL: "",
-      isInvalidUrl: false,
     };
   }
 
@@ -20,9 +19,8 @@ export class URLViewer extends React.Component {
   }
 
   configDisplay = () => {
-    const url = this.parseURL(this.props.externalUrl);
+    const url = this.isValidURL(this.props.externalUrl);
     if (!url) {
-      this.setState({isInvalidUrl: true});
       return;
     }
     switch (url.hostname) {
@@ -42,9 +40,9 @@ export class URLViewer extends React.Component {
 
   /*
    * Takes the content from a markusurl and checks to see if it is valid HTTP(S) url.
-   * Returns a url object if it is valid and nothing otherwise.
+   * Returns a url object if it is valid and false otherwise.
    */
-  parseURL = urlStr => {
+  isValidURL = urlStr => {
     try {
       const url = new URL(urlStr);
       if ((url.protocol === "http:" || url.protocol === "https:") && url.hostname !== "") {
@@ -53,6 +51,7 @@ export class URLViewer extends React.Component {
     } catch (e) {
       //Invalid URL
     }
+    return false;
   };
 
   /*
@@ -105,7 +104,7 @@ export class URLViewer extends React.Component {
           {errorMessage(I18n.t("submissions.url_preview_error"))}
         </iframe>
       );
-    } else if (this.state.isInvalidUrl) {
+    } else if (!this.isValidURL(this.props.externalUrl)) {
       return errorMessage(I18n.t("submissions.invalid_url", {item: I18n.t("this")}));
     } else {
       return errorMessage(I18n.t("submissions.url_preview_error"));
@@ -117,7 +116,7 @@ export class URLViewer extends React.Component {
       <div className="url-container">
         <div className="link-display">
           {/* Make Invalid URLs unclickable */}
-          {this.state.isInvalidUrl ? (
+          {!this.isValidURL(this.props.externalUrl) ? (
             this.props.externalUrl
           ) : (
             <a href={this.props.externalUrl} target="_blank">
