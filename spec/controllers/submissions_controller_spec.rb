@@ -118,6 +118,109 @@ describe SubmissionsController do
       end
     end
 
+    context 'submitting a url' do
+      describe 'should add url files' do
+        before :each do
+          @assignment.update!(url_submit: true)
+        end
+        it 'returns ok response' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          expect(response).to have_http_status :ok
+        end
+
+        it 'added a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to_not be_nil
+          end
+        end
+
+        it 'with the correct content' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            file_content = repo.download_as_string(files['youtube.markusurl'])
+            expect(file_content).to eq('https://www.youtube.com/watch?v=dtGs7Fy8ISo')
+          end
+        end
+      end
+
+      describe 'should reject url with no name' do
+        before :each do
+          @assignment.update!(url_submit: true)
+        end
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo' }
+          expect(response).to have_http_status :bad_request
+        end
+
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to be_nil
+          end
+        end
+      end
+
+      describe 'should reject invalid url' do
+        before :each do
+          @assignment.update!(url_submit: true)
+        end
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'Not a url', url_text: 'youtube' }
+          expect(response).to have_http_status :bad_request
+        end
+
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'Not a url', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to be_nil
+          end
+        end
+      end
+
+      describe 'should reject url when option is disabled' do
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          expect(response).to have_http_status :bad_request
+        end
+
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to be_nil
+          end
+        end
+      end
+    end
+
     context 'when the grouping is invalid' do
       it 'should not be able to add files' do
         @assignment.update!(group_min: 2, group_max: 3)
@@ -1109,10 +1212,12 @@ describe SubmissionsController do
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:file3) { fixture_file_upload('example.ipynb') }
+    let(:file4) { fixture_file_upload('sample.markusurl') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
       submit_file(assignment, grouping, file3.original_filename, file3.read)
+      submit_file(assignment, grouping, file4.original_filename, file4.read)
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
@@ -1168,6 +1273,17 @@ describe SubmissionsController do
           expect(response.body).to eq(I18n.t('submissions.cannot_display'))
         end
       end
+      describe 'When the file is a url file' do
+        it 'should read the entire file' do
+          assignment.update!(url_submit: true)
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: 'sample.markusurl',
+                                                  preview: true,
+                                                  grouping_id: grouping.id }
+          expect(response.body).not_to eq(URI.extract(File.read(file4)).first)
+        end
+      end
     end
     context 'When the file is being downloaded' do
       describe 'when the file is not a binary file' do
@@ -1203,6 +1319,16 @@ describe SubmissionsController do
             content = repo.download_as_string(file)
             expect(response.body).to eq(content)
           end
+        end
+      end
+      describe 'When the file is a url file' do
+        it 'should download the file as is' do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: 'sample.markusurl',
+                                                  preview: false,
+                                                  grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file4))
         end
       end
     end
@@ -1266,6 +1392,7 @@ describe SubmissionsController do
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
+    let(:file7) { fixture_file_upload('sample.markusurl') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1322,6 +1449,33 @@ describe SubmissionsController do
           actual = JSON.parse(JSON.parse(response.body)['content'])
           expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
           expect(actual).to eq(expected)
+        end
+      end
+    end
+    describe 'When the file is a url file' do
+      context 'with a valid url file format' do
+        let(:files) { [file7] }
+        before :each do
+          assignment.update!(url_submit: true)
+        end
+        it 'should return the file type' do
+          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
+          get_as instructor, :get_file, params: { course_id: course.id,
+                                                  id: submission.id,
+                                                  submission_file_id: submission_file.id,
+                                                  format: :json }
+          expect(response.parsed_body['type']).to eq 'markusurl'
+        end
+      end
+      context 'with urls disabled' do
+        let(:files) { [file7] }
+        it 'should return an unknown type' do
+          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
+          get_as instructor, :get_file, params: { course_id: course.id,
+                                                  id: submission.id,
+                                                  submission_file_id: submission_file.id,
+                                                  format: :json }
+          expect(response.parsed_body['type']).to eq 'unknown'
         end
       end
     end
