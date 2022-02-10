@@ -31,6 +31,7 @@ class CoursesController < ApplicationController
 
   # Sets current_user to nil, which clears a role switch session (see role_switch)
   def clear_role_switch_session
+    puts "Instructor '#{session[:real_user_name]}' logged out from '#{session[:user_name]}'."
     MarkusLogger.instance.log("Instructor '#{session[:real_user_name]}' logged out from '#{session[:user_name]}'.")
     session[:user_name] = nil
     session[:role_switch_course_id] = nil
@@ -41,31 +42,42 @@ class CoursesController < ApplicationController
   # the perspective of another (non-instructor) user.
   def switch_role
     if params[:effective_user_login].blank?
+      session[:error] = I18n.t('main.username_not_blank')
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.username_not_blank') }
+             locals: { error: session[:error] }
       return
     end
 
     found_user = User.find_by_user_name(params[:effective_user_login])
     found_role = Role.find_by(end_user: found_user, course: current_course)
 
-    if found_role.nil? || found_role.instructor?
+    if found_role.nil?
+      session[:error] = I18n.t('main.login_failed')
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: Settings.validate_user_not_allowed_message || I18n.t('main.login_failed') }
+             locals: { error: session[:error] }
       return
     end
-
-    # Check if an instructor trying to login as the current user or themselves
     if found_user.user_name == session[:user_name] || found_user.user_name == session[:real_user_name]
       # error
+      session[:error] = I18n.t('main.cannot_role_switch_to_self')
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
              # TODO: put better error message
-             locals: { error: I18n.t('main.login_failed') }
+             locals: { error: session[:error] }
       return
     end
+    if found_role.instructor?
+      session[:error] = I18n.t('main.cannot_role_switch_to_instructor')
+      render partial: 'role_switch_handler',
+             formats: [:js], handlers: [:erb],
+             locals: { error: session[:error] }
+      return
+    end
+
+    # TODO: this block won't be reached, because current instructor's role is also instructor
+    # Check if an instructor trying to login as the current user or themselves
 
     log_role_switch found_user
     self.current_user = found_user
@@ -73,11 +85,12 @@ class CoursesController < ApplicationController
 
     session[:redirect_uri] = nil
     refresh_timeout
+    session[:error] = nil
     # All good, redirect to the main page of the viewer, discard
     # role switch modal
     render partial: 'role_switch_handler',
            formats: [:js], handlers: [:erb],
-           locals: { error: nil }
+           locals: { error: session[:error] }
   end
 
   def role_switch
