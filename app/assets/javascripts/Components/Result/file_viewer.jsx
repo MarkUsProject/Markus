@@ -6,6 +6,7 @@ import {TextViewer} from "./text_viewer";
 import {PDFViewer} from "./pdf_viewer";
 import {NotebookViewer} from "./notebook_viewer";
 import {BinaryViewer} from "./binary_viewer";
+import {URLViewer} from "./url_viewer";
 
 export class FileViewer extends React.Component {
   // this.props.result_id is used as a flag for the component to
@@ -39,7 +40,7 @@ export class FileViewer extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       !this.props.result_id &&
       (prevProps.selectedFile !== this.props.selectedFile ||
@@ -47,6 +48,13 @@ export class FileViewer extends React.Component {
         prevProps.selectedFileURL !== this.props.selectedFileURL)
     ) {
       this.set_submission_file("");
+    }
+    // Update file type for use in the submission file panel
+    if (
+      typeof this.props.handleFileTypeUpdate === "function" &&
+      prevState.type !== this.state.type
+    ) {
+      this.props.handleFileTypeUpdate(this.state.type);
     }
   }
 
@@ -195,6 +203,8 @@ export class FileViewer extends React.Component {
           {...commonProps}
         />
       );
+    } else if (this.state.type === "markusurl") {
+      return <URLViewer externalUrl={this.state.content} {...commonProps} />;
     } else if (this.state.type !== "") {
       return (
         <TextViewer

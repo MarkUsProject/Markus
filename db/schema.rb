@@ -138,6 +138,7 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.bigint "default_starter_file_group_id"
     t.integer "autotest_settings_id"
     t.boolean "starter_files_after_due", default: true, null: false
+    t.boolean "url_submit", default: false, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end

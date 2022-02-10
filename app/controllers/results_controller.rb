@@ -16,6 +16,7 @@ class ResultsController < ApplicationController
     # required because MathJax dynamically changes
     # style. # TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
+    p.frame_src(*SubmissionsController::PERMITTED_IFRAME_SRC)
   end
 
   def show
