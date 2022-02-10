@@ -1,0 +1,17 @@
+<div class='listings sortable'>
+  <header>
+    <span><%= ExamTemplate.model_name.human %></span>
+  </header>
+
+  <ul id='exam_template_pane_list'>
+    <% @exam_templates.each do |exam_template| %>
+      <li id='exam_template_<%= exam_template.id %>'>
+        <span>
+          <%= link_to truncate(exam_template.name, length: 30),
+                      [@current_course, exam_template],
+                      remote: true %>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+</div>
