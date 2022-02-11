@@ -23,7 +23,11 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      redirect_to controller: 'courses', action: 'index'
+      if allowed_to?(:role_is_switched?)
+        redirect_to course_assignments_path(session[:role_switch_course_id])
+      else
+        redirect_to controller: 'courses', action: 'index'
+      end
       return
     end
     unless Settings.remote_auth_login_url || Settings.validate_file
