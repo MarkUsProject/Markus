@@ -16,6 +16,7 @@
           grouping_id: <%= @grouping.id %>,
           collected_revision_id: '<%= @collected_revision&.revision_identifier %>',
           enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
+          enableUrlSubmit: <%= @grouping.assignment.url_submit %>,
           collection_date: '<%= l(@grouping.collection_date) %>',
           due_date: '<%= l(@grouping.due_date) %>',
           is_timed: <%= @grouping.assignment.is_timed %>,

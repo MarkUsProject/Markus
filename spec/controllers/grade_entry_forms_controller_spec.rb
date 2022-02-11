@@ -278,6 +278,44 @@ describe GradeEntryFormsController do
       ) { @controller.head :ok }
       get_as role, :download, params: { course_id: course.id, id: gef }
     end
+    context 'when the user is a TA' do
+      let(:role) { create :ta }
+      let(:gef) { create :grade_entry_form_with_data }
+      it 'returns no users when the ta is not assigned a user' do
+        csv_array = [
+          ['', gef.grade_entry_items[0].name],
+          [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s]
+        ]
+        csv_data = MarkusCsv.generate(csv_array, &:itself)
+        expect(@controller).to receive(:send_data).with(
+          csv_data,
+          filename: "#{gef.short_identifier}_grades_report.csv",
+          **csv_options
+        ) { @controller.head :ok }
+        get_as role, :download, params: { course_id: course.id, id: gef }
+      end
+      context 'when the ta has been assigned to a student' do
+        let(:student) do
+          gef.grade_entry_students.joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+        end
+        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+        it 'returns data for only the assigned student' do
+          student.grades.first.update(grade: 50.0)
+          csv_array = [
+            ['', gef.grade_entry_items[0].name],
+            [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s],
+            [student.role.user_name, '50.0']
+          ]
+          csv_data = MarkusCsv.generate(csv_array, &:itself)
+          expect(@controller).to receive(:send_data).with(
+            csv_data,
+            filename: "#{gef.short_identifier}_grades_report.csv",
+            **csv_options
+          ) { @controller.head :ok }
+          get_as role, :download, params: { course_id: course.id, id: gef }
+        end
+      end
+    end
   end
 
   shared_examples '#update_grade_entry_students' do
@@ -564,6 +602,60 @@ describe GradeEntryFormsController do
       let(:non_grade_entry_form_url) { nil }
       let(:fallback_url) { ->(params) { student_interface_course_grade_entry_form_url(params) } }
       include_examples 'switch assignment tests'
+    end
+  end
+
+  describe '#populate_grades_table' do
+    before(:each) do
+      get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
+    end
+    context 'an instructor' do
+      let(:data_fields) { %w[_id released_to_student user_name first_name last_name hidden section_id] }
+      it 'returns a 200 response' do
+        expect(response.status).to eq 200
+      end
+      it 'returns data' do
+        expect(response.parsed_body['data'].length).to be > 0
+      end
+      it 'returns all student data' do
+        expect(response.parsed_body['data'].length).to eq course.students.count
+      end
+      it 'returns correct fields' do
+        data_fields << grade_entry_form_with_data.grade_entry_items.first.id.to_s
+        expect(response.parsed_body['data'][0].keys).to match_array(data_fields)
+      end
+    end
+    context 'a TA' do
+      let(:role) { create :ta }
+      it 'returns a 200 response' do
+        expect(response.status).to eq 200
+      end
+      context 'who has not been assigned a student' do
+        it 'returns data' do
+          expect(response.parsed_body['data'].length).to eq 0
+        end
+      end
+      context 'who has been assigned a student' do
+        let(:student) do
+          grade_entry_form_with_data.grade_entry_students.joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+        end
+        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+        it 'returns data' do
+          get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
+          expect(response.parsed_body['data'].length).to be > 0
+        end
+        it 'returns the number of students assigned to the ta' do
+          get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
+          expect(response.parsed_body['data'].length).to eq role.grade_entry_students.count
+        end
+        it 'returns the correct set of students' do
+          get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
+          students = role.grade_entry_students
+                         .where(grade_entry_form: grade_entry_form_with_data)
+                         .joins(role: :end_user).pluck('users.user_name')
+          expect(response.parsed_body['data'].map { |stu| stu['user_name'] }).to match_array(students)
+        end
+      end
     end
   end
 end

@@ -86,25 +86,11 @@ class Submission < ApplicationRecord
     end
   end
 
-  def remark_result_id
-    remark_result.try(:id)
-  end
-
   # Returns the latest result.
   def get_latest_result
     if !submitted_remark.nil?
       remark_result
     else
-      get_original_result
-    end
-  end
-
-  # Returns the latest completed result.
-  def get_latest_completed_result
-    if remark_submitted? &&
-       remark_result.marking_state == Result::MARKING_STATES[:complete]
-      remark_result
-    elsif get_original_result.marking_state == Result::MARKING_STATES[:complete]
       get_original_result
     end
   end
@@ -273,13 +259,6 @@ class Submission < ApplicationRecord
     grouping.current_submission_used
   end
 
-  def self.get_submission_by_grouping_id_and_assignment_id(grouping_id,
-                                                           assignment_id)
-    assignment = Assignment.find(assignment_id)
-    grouping = assignment.groupings.find(grouping_id)
-    grouping.current_submission_used
-  end
-
   def make_remark_result
     remark = results.create(
       marking_state: Result::MARKING_STATES[:incomplete],
@@ -305,16 +284,6 @@ class Submission < ApplicationRecord
     end
 
     remark.save
-  end
-
-  # Create a test run for this submission, using the submission revision.
-  def create_test_run!(user_id, test_batch_id)
-    self.test_runs.create!(
-      user_id: user_id,
-      grouping_id: self.grouping_id,
-      revision_identifier: self.revision_identifier,
-      test_batch_id: test_batch_id
-    )
   end
 
   private

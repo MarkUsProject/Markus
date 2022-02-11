@@ -148,7 +148,7 @@ class GradeEntryFormsController < ApplicationController
                              .pluck_to_hash(*student_pluck_attrs)
       grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)
-                           .joins(role: :end_user)
+                           .joins(:grades)
                            .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
                            .group_by { |x| x[0] }
     end
@@ -204,7 +204,7 @@ class GradeEntryFormsController < ApplicationController
   # Download the grades for this grade entry form as a CSV file
   def download
     grade_entry_form = record
-    send_data grade_entry_form.export_as_csv,
+    send_data grade_entry_form.export_as_csv(current_role),
               disposition: 'attachment',
               type: 'text/csv',
               filename: "#{grade_entry_form.short_identifier}_grades_report.csv"

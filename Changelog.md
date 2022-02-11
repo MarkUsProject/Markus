@@ -1,9 +1,14 @@
 # Changelog
 
 ## [unreleased]
+- Remove group name displayed attribute from assignment properties table (#5834)
+- Fix bug for menu icon not working on mobile devices / smaller screens (#5818)
 - Remove unmaintained locales (#5727)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
 - When role switched, 403 errors are displayed as flash messages after redirecting back to the previous page (#5785)
+- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
+- Added the ability to submit URLs (#5822)
+- Allow TAs to download grades for students they've been assigned to grade (#5793)
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
@@ -33,6 +38,9 @@
 
 ## [v2.0.0]
 - Support multiple courses in a single MarkUs instance (#5685)
+
+## [v1.14.1]
+- Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5782)
 
 ## [v1.14.0]
 - Add the ability to hide assignments from individual sections (#5445)
