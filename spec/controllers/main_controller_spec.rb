@@ -156,4 +156,30 @@ describe MainController do
       include_examples 'ta tests'
     end
   end
+  context 'when role switched' do
+    let(:course1) { create :course }
+    let(:course2) { create :course }
+    let(:instructor) { create :instructor, course_id: course1.id }
+    let(:instructor2) { create :instructor, course_id: course2.id }
+    let(:student) { create :student, course_id: course1.id }
+    before :each do
+      @controller = CoursesController.new
+      post_as instructor, :switch_role, params: { id: course1.id, effective_user_login: student.user_name }
+    end
+    it 'redirects the login route to the course homepage' do
+      @controller = MainController.new
+      get :login
+      expect(response).to redirect_to course_assignments_path(session[:role_switch_course_id])
+    end
+    it 'flashes a forbidden error message on attempt to access another course' do
+      @controller = CoursesController.new
+      get :show, params: { id: course2.id }
+      expect(flash[:error]).not_to be_empty
+    end
+    it 'redirects to the original course on attempt to access another course' do
+      @controller = CoursesController.new
+      get :show, params: { id: course2.id }
+      expect(response).to redirect_to course_assignments_path(session[:role_switch_course_id])
+    end
+  end
 end
