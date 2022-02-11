@@ -17,9 +17,9 @@ en:
     password_not_blank: Your password must not be blank.
     role_switch:
       clear_role_switch_session: Cancel role switch
+      forbidden_warning: You do not have permission to view that page while switching roles.
       log_in_as: Log in as
       switch_role: Switch Role
-      forbidden_warning: You do not have permission to view that page while switching roles.
     session_expired: Your session has expired. Please log in.
     sign_in_not_supported: No sign in method has been enabled. Please report this error to your system administrator.
     timeout_imminent: Your session is about to expire, and you will be logged out shortly. Press the Continue button or refresh the current page in the next few seconds to remain logged in.
