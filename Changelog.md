@@ -9,6 +9,7 @@
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
 - Added the ability to submit URLs (#5822)
 - Allow TAs to download grades for students they've been assigned to grade (#5793)
+- Fix bugs when submitting and cancelling remark requests (#5838)
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
