@@ -39,6 +39,10 @@ class ExamTemplatesController < ApplicationController
     redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
+  def edit
+    @exam_template = record
+  end
+
   def download
     exam_template = record
     filename = exam_template.filename

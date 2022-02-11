@@ -6,8 +6,6 @@
   <%= exam_template.errors.full_messages.empty? ? '' : exam_template.errors.full_messages.empty? %>
 
   <div class='float-right'>
-    <%= link_to t('exam_templates.download'), download_course_exam_template_path(@current_course, exam_template),
-                class: 'button' %>
     <%= link_to t('exam_templates.delete.general'),
                 [@current_course, exam_template],
                 method: :delete,

@@ -5,13 +5,8 @@
 
   <ul id='exam_template_pane_list'>
     <% @exam_templates.each do |exam_template| %>
-      <li id='exam_template_<%= exam_template.id %>'>
-        <span>
-          <%= link_to truncate(exam_template.name, length: 30),
-                      [@current_course, exam_template],
-                      remote: true %>
-        </span>
-      </li>
+      <%= render partial: 'exam_template',
+                 locals: { exam_template: exam_template } %>
     <% end %>
   </ul>
 </div>

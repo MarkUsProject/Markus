@@ -1,0 +1,25 @@
+<fieldset id="current-exam-template">
+  <legend><span><%= exam_template.name %></span></legend>
+  <%= render partial: 'form',
+             locals: { exam_template: exam_template } %>
+  <hr>
+  <div class="student-info">
+    <h3><%= t('exam_templates.parsing.title') %></h3>
+    <p>
+      <%= render partial: 'student_info',
+                 locals: { exam_template: exam_template } %>
+    </p>
+  </div>
+  <hr>
+  <div class="generate-section">
+    <h3><%= t('exam_templates.generate.title') %></h3>
+    <%= render partial: 'generate_form',
+               locals: { exam_template: exam_template } %>
+  </div>
+  <hr>
+  <div class="split-section">
+    <h3><%= t('exam_templates.split.title') %></h3>
+    <%= render partial: 'split_form',
+               locals: { exam_template: exam_template } %>
+  </div>
+</fieldset>
