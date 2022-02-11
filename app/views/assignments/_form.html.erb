@@ -201,6 +201,10 @@
           <%= ap_f.label :vcs_submit,
                          Assignment.human_attribute_name(:vcs_submit) %>
           <%= ap_f.check_box :vcs_submit %>
+
+          <%= ap_f.label :url_submit,
+                         Assignment.human_attribute_name(:url_submit) %>
+          <%= ap_f.check_box :url_submit %>
         <% end %>
 
         <%= ap_f.label :display_median_to_students,

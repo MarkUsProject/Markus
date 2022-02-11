@@ -2,6 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
+import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
 import {lookup} from "mime-types";
 
@@ -10,7 +11,8 @@ class SubmissionFileManager extends React.Component {
     super(props);
     this.state = {
       files: [],
-      showModal: false,
+      showUploadModal: false,
+      showURLModal: false,
       uploadTarget: undefined,
       viewFile: null,
       viewFileType: null,
@@ -64,13 +66,34 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
+  handleCreateUrl = (url, url_text) => {
+    this.setState({showURLModal: false});
+    const data_to_upload = {
+      new_url: url,
+      url_text: url_text,
+      path: "/" + (this.state.uploadTarget || ""),
+    };
+    if (this.props.grouping_id) {
+      data_to_upload.grouping_id = this.props.grouping_id;
+    }
+    $.post({
+      url: Routes.update_files_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: data_to_upload,
+    })
+      .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
   handleCreateFiles = (files, unzip) => {
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
       const prefix = this.state.uploadTarget || "";
-      this.setState({showModal: false, uploadTarget: undefined});
+      this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
       Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
       data.append("path", "/" + prefix); // Server expects path with leading slash (TODO: fix that)
@@ -174,7 +197,11 @@ class SubmissionFileManager extends React.Component {
   };
 
   openUploadModal = uploadTarget => {
-    this.setState({showModal: true, uploadTarget: uploadTarget});
+    this.setState({showUploadModal: true, uploadTarget: uploadTarget});
+  };
+
+  openSubmitURLModal = uploadTarget => {
+    this.setState({showURLModal: true, uploadTarget: uploadTarget});
   };
 
   updateViewFile = item => {
@@ -243,11 +270,18 @@ class SubmissionFileManager extends React.Component {
             deleteFolder: !this.props.enableSubdirs,
           }}
           onSelectFile={this.updateViewFile}
+          enableUrlSubmit={this.props.enableUrlSubmit}
+          onActionBarSubmitURLClick={this.props.readOnly ? undefined : this.openSubmitURLModal}
         />
         <SubmissionFileUploadModal
-          isOpen={this.state.showModal}
-          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          isOpen={this.state.showUploadModal}
+          onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+        />
+        <SubmitUrlUploadModal
+          isOpen={this.state.showURLModal}
+          onRequestClose={() => this.setState({showURLModal: false})}
+          onSubmit={this.handleCreateUrl}
         />
         {this.renderFileViewer()}
       </div>

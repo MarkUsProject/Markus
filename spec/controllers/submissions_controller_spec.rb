@@ -1,8 +1,5 @@
 describe SubmissionsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  after(:each) do
-    destroy_repos
-  end
   let(:course) { Course.first || create(:course) }
   shared_examples 'An authorized instructor and grader accessing #set_result_marking_state' do
     context '#set_result_marking_state' do
@@ -121,6 +118,109 @@ describe SubmissionsController do
       end
     end
 
+    context 'submitting a url' do
+      describe 'should add url files' do
+        before :each do
+          @assignment.update!(url_submit: true)
+        end
+        it 'returns ok response' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          expect(response).to have_http_status :ok
+        end
+
+        it 'added a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to_not be_nil
+          end
+        end
+
+        it 'with the correct content' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            file_content = repo.download_as_string(files['youtube.markusurl'])
+            expect(file_content).to eq('https://www.youtube.com/watch?v=dtGs7Fy8ISo')
+          end
+        end
+      end
+
+      describe 'should reject url with no name' do
+        before :each do
+          @assignment.update!(url_submit: true)
+        end
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo' }
+          expect(response).to have_http_status :bad_request
+        end
+
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to be_nil
+          end
+        end
+      end
+
+      describe 'should reject invalid url' do
+        before :each do
+          @assignment.update!(url_submit: true)
+        end
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'Not a url', url_text: 'youtube' }
+          expect(response).to have_http_status :bad_request
+        end
+
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'Not a url', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to be_nil
+          end
+        end
+      end
+
+      describe 'should reject url when option is disabled' do
+        it 'returns a bad request' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          expect(response).to have_http_status :bad_request
+        end
+
+        it 'does not add a new file' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_url: 'https://www.youtube.com/watch?v=dtGs7Fy8ISo', url_text: 'youtube' }
+          @grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            files = revision.files_at_path(@assignment.repository_folder)
+            expect(files['youtube.markusurl']).to be_nil
+          end
+        end
+      end
+    end
+
     context 'when the grouping is invalid' do
       it 'should not be able to add files' do
         @assignment.update!(group_min: 2, group_max: 3)
@@ -182,6 +282,125 @@ describe SubmissionsController do
           files = revision.files_at_path(@assignment.repository_folder)
           expect(files['Shapes.java']).to be_nil
           expect(files['TestShapes.java']).to be_nil
+        end
+      end
+
+      context 'when creating a folder with required files' do
+        let(:tree) do
+          @grouping.group.access_repo do |repo|
+            repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
+          end
+        end
+        before :each do
+          @assignment.update!(
+            only_required_files: true,
+            assignment_files_attributes: [{ filename: 'test_zip/zip_subdir/TestShapes.java' }]
+          )
+        end
+        it 'uploads a directory and returns a success' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip'] }
+          expect(response).to have_http_status :ok
+        end
+        it 'commits a single directory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip'] }
+          expect(tree['test_zip']).not_to be_nil
+        end
+        it 'uploads a subdirectory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip'] }
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip/zip_subdir'] }
+          expect(response).to have_http_status :ok
+        end
+        it 'commits a subdirectory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip'] }
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['test_zip/zip_subdir'] }
+          expect(tree['test_zip/zip_subdir']).not_to be_nil
+        end
+        context 'when testing with a git repo', :keep_memory_repos do
+          before(:each) { allow(Settings.repository).to receive(:type).and_return('git') }
+          after(:each) { FileUtils.rm_r(Dir.glob(File.join(Settings.repository.storage, '*'))) }
+          it 'displays a failure message when attempting to create a subdirectory with no parent' do
+            post_as @student, :update_files,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              new_folders: ['test_zip/zip_subdir'] }
+
+            expect(flash[:error]).to_not be_empty
+          end
+        end
+        it 'does not upload a non required directory and returns a failure' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['bad_folder'] }
+          expect(response).to have_http_status :unprocessable_entity
+        end
+        it 'does not commit the non required directory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['bad_folder'] }
+          expect(tree['bad_folder']).to be_nil
+        end
+        it 'does not upload a non required subdirectory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['bad_folder/bad_subdirectory'] }
+          expect(response).to have_http_status :unprocessable_entity
+        end
+        it 'does not commit a non required subdirectory' do
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_folders: ['bad_folder/bad_subdirectory'] }
+          expect(tree['bad_folder/bad_subdirectory']).to be_nil
+        end
+      end
+
+      context 'when folders are required and uploading a zip file' do
+        let(:unzip) { 'true' }
+        before :each do
+          @assignment.update!(
+            only_required_files: true,
+            assignment_files_attributes: [{ filename: 'test_zip/zip_subdir/TestShapes.java' },
+                                          { filename: 'test_zip/Shapes.java' }]
+          )
+        end
+
+        it 'should be able to create required folders' do
+          zip_file = fixture_file_upload('test_zip.zip', 'application/zip')
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_files: [zip_file], unzip: unzip }
+
+          expect(response).to have_http_status :ok
+        end
+        it 'uploads the outer directory' do
+          zip_file = fixture_file_upload('test_zip.zip', 'application/zip')
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_files: [zip_file], unzip: unzip }
+          tree = @grouping.group.access_repo do |repo|
+            repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
+          end
+          expect(tree['test_zip']).not_to be_nil
+        end
+        it 'uploads the inner directory' do
+          zip_file = fixture_file_upload('test_zip.zip', 'application/zip')
+          post_as @student, :update_files,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            new_files: [zip_file], unzip: unzip }
+          tree = @grouping.group.access_repo do |repo|
+            repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
+          end
+          expect(tree['test_zip/zip_subdir']).not_to be_nil
         end
       end
     end
@@ -993,10 +1212,12 @@ describe SubmissionsController do
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:file3) { fixture_file_upload('example.ipynb') }
+    let(:file4) { fixture_file_upload('sample.markusurl') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
       submit_file(assignment, grouping, file3.original_filename, file3.read)
+      submit_file(assignment, grouping, file4.original_filename, file4.read)
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
@@ -1052,6 +1273,17 @@ describe SubmissionsController do
           expect(response.body).to eq(I18n.t('submissions.cannot_display'))
         end
       end
+      describe 'When the file is a url file' do
+        it 'should read the entire file' do
+          assignment.update!(url_submit: true)
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: 'sample.markusurl',
+                                                  preview: true,
+                                                  grouping_id: grouping.id }
+          expect(response.body).not_to eq(URI.extract(File.read(file4)).first)
+        end
+      end
     end
     context 'When the file is being downloaded' do
       describe 'when the file is not a binary file' do
@@ -1087,6 +1319,16 @@ describe SubmissionsController do
             content = repo.download_as_string(file)
             expect(response.body).to eq(content)
           end
+        end
+      end
+      describe 'When the file is a url file' do
+        it 'should download the file as is' do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: 'sample.markusurl',
+                                                  preview: false,
+                                                  grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file4))
         end
       end
     end
@@ -1150,6 +1392,7 @@ describe SubmissionsController do
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
+    let(:file7) { fixture_file_upload('sample.markusurl') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1206,6 +1449,33 @@ describe SubmissionsController do
           actual = JSON.parse(JSON.parse(response.body)['content'])
           expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
           expect(actual).to eq(expected)
+        end
+      end
+    end
+    describe 'When the file is a url file' do
+      context 'with a valid url file format' do
+        let(:files) { [file7] }
+        before :each do
+          assignment.update!(url_submit: true)
+        end
+        it 'should return the file type' do
+          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
+          get_as instructor, :get_file, params: { course_id: course.id,
+                                                  id: submission.id,
+                                                  submission_file_id: submission_file.id,
+                                                  format: :json }
+          expect(response.parsed_body['type']).to eq 'markusurl'
+        end
+      end
+      context 'with urls disabled' do
+        let(:files) { [file7] }
+        it 'should return an unknown type' do
+          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
+          get_as instructor, :get_file, params: { course_id: course.id,
+                                                  id: submission.id,
+                                                  submission_file_id: submission_file.id,
+                                                  format: :json }
+          expect(response.parsed_body['type']).to eq 'unknown'
         end
       end
     end

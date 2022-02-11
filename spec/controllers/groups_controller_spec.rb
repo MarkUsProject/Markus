@@ -135,8 +135,41 @@ describe GroupsController do
     end
 
     describe '#rename_group'
-    describe '#valid_grouping'
-    describe '#invalid_grouping'
+
+    describe '#valid_grouping' do
+      let(:unapproved_grouping) { create :grouping_with_inviter, instructor_approved: false }
+      let(:approved_grouping) { create :grouping_with_inviter, instructor_approved: true }
+      it 'validates a previously invalid grouping' do
+        post_as instructor, :valid_grouping, params: { course_id: unapproved_grouping.course.id,
+                                                       assignment_id: unapproved_grouping.assignment.id,
+                                                       grouping_id: unapproved_grouping.id }
+        expect(unapproved_grouping.reload.instructor_approved).to be true
+      end
+      it 'keeps a valid grouping valid' do
+        post_as instructor, :valid_grouping, params: { course_id: approved_grouping.course.id,
+                                                       assignment_id: approved_grouping.assignment.id,
+                                                       grouping_id: approved_grouping.id }
+        expect(approved_grouping.reload.instructor_approved).to be true
+      end
+    end
+
+    describe '#invalid_grouping' do
+      let(:approved_grouping) { create :grouping_with_inviter, instructor_approved: true }
+      let(:unapproved_grouping) { create :grouping_with_inviter, instructor_approved: false }
+      it 'invalidates a previously valid grouping' do
+        post_as instructor, :invalid_grouping, params: { course_id: approved_grouping.course.id,
+                                                         assignment_id: approved_grouping.assignment.id,
+                                                         grouping_id: approved_grouping.id }
+        expect(approved_grouping.reload.instructor_approved).to be false
+      end
+      it 'keeps a invalid grouping invalid' do
+        post_as instructor, :invalid_grouping, params: { course_id: unapproved_grouping.course.id,
+                                                         assignment_id: unapproved_grouping.assignment.id,
+                                                         grouping_id: unapproved_grouping.id }
+        expect(unapproved_grouping.reload.instructor_approved).to be false
+      end
+    end
+
     describe '#populate'
     describe '#populate_students'
 

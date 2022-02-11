@@ -19,7 +19,7 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def manage_subdirectories?
-    role.instructor? || role.ta?
+    user.end_user?
   end
 
   def view_files?
