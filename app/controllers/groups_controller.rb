@@ -296,7 +296,7 @@ class GroupsController < ApplicationController
     end
 
     respond_to do |format|
-      format.js { render 'shared/_poll_job.js.erb' }
+      format.js { render 'shared/_poll_job' }
     end
   end
 

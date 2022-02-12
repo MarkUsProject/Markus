@@ -960,7 +960,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job')
           end
 
           it 'should succeed if it is after the section due date' do
@@ -976,7 +976,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job')
           end
         end
 
@@ -1000,7 +1000,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job')
           end
 
           it 'should succeed if it is after the global due date' do
@@ -1016,7 +1016,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
-            expect(response).to render_template(partial: 'shared/_poll_job.js.erb')
+            expect(response).to render_template(partial: 'shared/_poll_job')
           end
         end
       end
