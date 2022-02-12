@@ -150,7 +150,7 @@ class SubmissionsController < ApplicationController
     session[:job_id] = @current_job.job_id
 
     respond_to do |format|
-      format.js { render 'shared/_poll_job.js.erb' }
+      format.js { render 'shared/_poll_job' }
     end
   end
 
@@ -196,7 +196,7 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    render 'shared/_poll_job.js.erb'
+    render 'shared/_poll_job'
   end
 
   def run_tests
@@ -584,7 +584,7 @@ class SubmissionsController < ApplicationController
     @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id)
     session[:job_id] = @current_job.job_id
 
-    render 'shared/_poll_job.js.erb'
+    render 'shared/_poll_job'
   end
 
   # download a zip file previously prepared by calling the

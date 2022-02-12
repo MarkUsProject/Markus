@@ -92,7 +92,7 @@ class ExamTemplatesController < ApplicationController
     session[:job_id] = current_job.job_id
 
     respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job.js.erb' }
+      format.js { render 'exam_templates/_poll_generate_job' }
     end
   end
 
