@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Change name used in assignment grade distribution to grader's display name attribute (#5844)
 - Remove group name displayed attribute from assignment properties table (#5834)
 - Fix bug for menu icon not working on mobile devices / smaller screens (#5818)
 - Remove unmaintained locales (#5727)
