@@ -373,7 +373,7 @@ class AssignmentsController < ApplicationController
       num_marked_label = t('submissions.how_many_marked',
                            num_marked: assignment.get_num_marked(ta.id),
                            num_assigned: assignment.get_num_assigned(ta.id))
-      { label: "#{ta.first_name} #{ta.last_name} (#{num_marked_label})",
+      { label: "#{ta.display_name} (#{num_marked_label})",
         data: ta.grade_distribution_array(assignment, intervals) }
     end
     render json: {
