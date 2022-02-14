@@ -35,6 +35,8 @@ class Criterion < ApplicationRecord
   validate :results_unreleased?
   validate :visible?
 
+  attr_accessor :skip_marks_validation
+
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
 
