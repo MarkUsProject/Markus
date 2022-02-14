@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
       k,v = token.split('=')
       version_info[k.downcase] = v
     end
-    @markus_version = "#{version_info['version']}.#{version_info['patch_level']}"
+    @markus_version = version_info['version']
   end
 
   # Set locale according to URL parameter. If unknown parameter is
@@ -127,7 +127,10 @@ class ApplicationController < ActionController::Base
 
   # Render 403 if the current user is switching roles and they try to view a route for a different course
   def check_course_switch
-    user_not_authorized if session[:role_switch_course_id] && current_course&.id != session[:role_switch_course_id]
+    if session[:role_switch_course_id] && current_course&.id != session[:role_switch_course_id]
+      flash_message(:error, I18n.t('main.role_switch.forbidden_warning'))
+      redirect_back(fallback_location: course_assignments_path(session[:role_switch_course_id]))
+    end
   end
 
   def implicit_authorization_target

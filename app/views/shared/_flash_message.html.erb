@@ -18,11 +18,13 @@
   <% end %>
 <% end %>
 <%= javascript_tag nonce: true do %>
-  window.onload = function () {
+  // using addEventListener as opposed to direct assignment so that event listeners added elsewhere
+  // don't get overridden
+  window.addEventListener("DOMContentLoaded", function () {
     Array.from(document.getElementsByClassName('hide-flash')).forEach(function (elem) {
       elem.addEventListener("click", function(e) {
         e.target.parentElement.style.display = 'none';
       })
     })
-  }
+  })
 <% end %>

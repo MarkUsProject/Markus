@@ -205,7 +205,7 @@
             @grouping.accepted_students.size == 1 &&
             @grouping.extension.nil? %>
             <%= button_to t('helpers.submit.delete', model: Group.model_name.human),
-                          course_assignment_group_path(@current_course.id, @assignment.id),
+                          course_assignment_group_path(@current_course.id, @assignment.id, @grouping.id),
                           method: :delete,
                           data: { confirm: t('groups.student_interface.confirm_delete_group') }
             %>
