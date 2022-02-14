@@ -106,7 +106,7 @@ class StarterFileGroup < ApplicationRecord
   end
 
   def update_timestamp
-    assignment.assignment_properties.update(starter_file_updated_at: Time.current)
+    assignment.assignment_properties.update(starter_file_updated_at: Time.current) if saved_changes?
   end
 
   def set_name

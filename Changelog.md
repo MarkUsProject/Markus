@@ -10,6 +10,7 @@
 - When role switched, 403 errors are displayed as flash messages after redirecting back to the previous page (#5785)
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
 - Fix bugs when submitting and cancelling remark requests (#5838)
+- Do not trigger starter file changed timestamp when only starter_files_after_due assignment setting is changed (#5845)
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
