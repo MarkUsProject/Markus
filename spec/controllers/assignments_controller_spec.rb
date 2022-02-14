@@ -896,7 +896,8 @@ describe AssignmentsController do
   end
   describe '#update_starter_file' do
     subject { post_as role, :update_starter_file, params: params }
-    let(:assignment) { create :assignment }
+    let!(:assignment) { create :assignment }
+    let!(:grouping) { create :grouping, assignment: assignment }
     let(:starter_file_group1) do
       create :starter_file_group, assignment: assignment, name: 'name', entry_rename: 'name', use_rename: false
     end
@@ -923,6 +924,19 @@ describe AssignmentsController do
         expect { subject }.to(
           change { assignment.reload.default_starter_file_group_id }.from(nil).to(starter_file_group2.id)
         )
+      end
+      it 'should update starter_file_updated_at' do
+        expect { subject }.to(
+          change { assignment.assignment_properties.reload.starter_file_updated_at }
+        )
+      end
+      context 'when a grouping for the assignment exists' do
+        it 'should update the grouping starter_file_changed attribute' do
+          grouping
+          expect { subject }.to(
+            change { grouping.reload.starter_file_changed }.from(false).to(true)
+          )
+        end
       end
       context 'when a section exists' do
         it 'should update section starter file mappings' do
@@ -962,17 +976,47 @@ describe AssignmentsController do
           end
         end
       end
+      context 'when only updating assignment starter_files_after_due attribute' do
+        let!(:params) do
+          { id: assignment.id,
+            course_id: role.course.id,
+            assignment: { starter_files_after_due: false },
+            sections: [],
+            starter_file_groups: [{ id: starter_file_group1.id,
+                                    name: starter_file_group1.name,
+                                    entry_rename: starter_file_group1.entry_rename,
+                                    use_rename: starter_file_group1.use_rename }] }
+        end
+        it 'should update starter_files_after_due' do
+          expect { subject }.to(
+            change { assignment.assignment_properties.reload.starter_files_after_due }.from(true).to(false)
+          )
+        end
+        it 'should not update starter_file_updated_at' do
+          expect { subject }.to_not(
+            change { assignment.assignment_properties.reload.starter_file_updated_at }
+          )
+        end
+        context 'when a grouping for the assignment exists' do
+          it 'should not update the grouping starter_file_changed attribute' do
+            grouping
+            expect { subject }.to_not(
+              change { grouping.reload.starter_file_changed }
+            )
+          end
+        end
+      end
     end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
       let(:role) { create :student }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end

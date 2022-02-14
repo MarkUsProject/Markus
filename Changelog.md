@@ -10,6 +10,7 @@
 - Added the ability to submit URLs (#5822)
 - Allow TAs to download grades for students they've been assigned to grade (#5793)
 - Fix bugs when submitting and cancelling remark requests (#5838)
+- Do not trigger starter file changed timestamp when only starter_files_after_due assignment setting is changed (#5845)
 
 ## [v2.0.5]
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
