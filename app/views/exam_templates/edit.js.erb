@@ -2,11 +2,10 @@ document.getElementById('editing_pane_menu').innerHTML =
   "<%= escape_javascript(render partial: "exam_template_edit",
                                 locals: { exam_template: @exam_template }) %>";
 
-$(() => {
-  $('#generateExamModal').click((e) => {
-    console.log("clicked");
-    const modal = new ModalMarkus("#generate_exam_dialog");
-    modal.open();
-    e.preventDefault();
-  })
-})
+$("#generate_exam_dialog").each((_, dialog) => {
+  let open_link = dialog.getAttribute("data-open-link") || undefined;
+  new ModalMarkus("#" + dialog.id, open_link);
+  $("#" + dialog.id + "-close").click(function () {
+    dialog.close();
+  });
+});
