@@ -1,3 +1,5 @@
+<%= render partial: 'generate_modal',
+           layout: 'layouts/modal_dialog'  %>
 <fieldset id="current-exam-template">
   <legend><span><%= exam_template.name %></span></legend>
   <%= render partial: 'form',
@@ -9,12 +11,6 @@
       <%= render partial: 'student_info',
                  locals: { exam_template: exam_template } %>
     </p>
-  </div>
-  <hr>
-  <div class="generate-section">
-    <h3><%= t('exam_templates.generate.title') %></h3>
-    <%= render partial: 'generate_form',
-               locals: { exam_template: exam_template } %>
   </div>
   <hr>
   <div class="split-section">

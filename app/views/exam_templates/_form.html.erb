@@ -4,8 +4,10 @@
                      class: exam_template.id.to_s} do |f| %>
   <%# TODO: show this through flash messages properly. %>
   <%= exam_template.errors.full_messages.empty? ? '' : exam_template.errors.full_messages.empty? %>
-
   <div class='float-right'>
+    <%= link_to t('exam_templates.generate.title'),
+                '#',
+                {id: 'generateExamModal', class: 'button'}%>
     <%= link_to t('exam_templates.delete.general'),
                 [@current_course, exam_template],
                 method: :delete,
