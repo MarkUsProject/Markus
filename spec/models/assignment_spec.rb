@@ -197,7 +197,7 @@ describe Assignment do
 
           it 'shows the criteria visible to tas only' do
             expect(@assignment.ta_criteria.ids).to match_array(@ta_criteria.map(&:id) +
-                                                                 @ta_and_peer_criteria.map(&:id))
+                                                               @ta_and_peer_criteria.map(&:id))
           end
 
           context 'a submission and a result are created' do
