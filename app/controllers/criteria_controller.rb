@@ -114,10 +114,20 @@ class CriteriaController < ApplicationController
   # Handles the drag/drop criteria sorting.
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
+    invalid_criteria = false
 
     ApplicationRecord.transaction do
-      params[:criterion].each_with_index do |id, index|
-        Criterion.update(id, position: index + 1) unless id.blank?
+      Criterion.transaction do
+        params[:criterion].each_with_index do |id, index|
+          Criterion.update(id, position: index + 1) unless id.blank?
+          # check if any criteria invalid
+          if Criterion.find(id).assessment_id != @assignment.assessment_id
+            invalid_criteria = true
+          end
+        end
+        raise ActiveRecord::Rollback if invalid_criteria
+        # display an error message? in which view file?
+        # flash.alert = "There exists invalid criteria which doesn't belong to this assignment, positions not updated!"
       end
     end
     head :ok
