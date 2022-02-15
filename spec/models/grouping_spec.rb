@@ -1422,6 +1422,56 @@ describe Grouping do
         end
       end
     end
+
+    context 'when a grouping is created' do
+      let(:grouping_without_inviter) { build :grouping, assignment: assignment }
+      let(:inviter) { create :inviter_student_membership, grouping: grouping_without_inviter }
+
+      it 'is called' do
+        expect(grouping_without_inviter).to receive(:reset_starter_file_entries)
+
+        grouping_without_inviter.save!
+      end
+
+      context 'when the grouping gets an inviter' do
+        before do
+          assignment.assignment_properties.update!(starter_file_type: starter_file_type)
+          grouping_without_inviter.save!
+        end
+
+        context 'when starter files are always assigned from the same single group' do
+          let(:starter_file_type) { 'simple' }
+          it 'is not called' do
+            expect(grouping_without_inviter).to_not receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+
+        context 'when starter files are assigned by section' do
+          let(:starter_file_type) { 'sections' }
+          it 'is called' do
+            expect(grouping_without_inviter).to receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+
+        context 'when starter files are assigned a random file from each group' do
+          let(:starter_file_type) { 'shuffle' }
+          it 'is not called' do
+            expect(grouping_without_inviter).to_not receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+
+        context 'when starter files are assigned from a random group' do
+          let(:starter_file_type) { 'group' }
+          it 'is not called' do
+            expect(grouping_without_inviter).to_not receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+      end
+    end
   end
   describe '#reset_starter_file_entries' do
     let(:assignment) { create :assignment }
