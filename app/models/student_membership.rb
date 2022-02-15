@@ -26,6 +26,7 @@ class StudentMembership < Membership
 
   after_save :update_repo_permissions_after_save
   after_create :update_repo_permissions_after_create
+  after_create :reset_starter_files_after_create
   after_destroy :update_repo_permissions_after_destroy
 
   def must_be_valid_student
@@ -80,5 +81,10 @@ class StudentMembership < Membership
 
     errors.add(:base, :memberships_not_unique)
     throw(:abort)
+  end
+
+  def reset_starter_files_after_create
+    return unless self.inviter? && grouping.assignment.assignment_properties&.starter_file_type == 'sections'
+    grouping.reset_starter_file_entries
   end
 end
