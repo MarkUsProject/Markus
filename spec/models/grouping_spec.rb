@@ -1350,6 +1350,23 @@ describe Grouping do
         entries = ssfg.starter_file_group.starter_file_entries
         expect(grouping.select_starter_file_entries).to contain_exactly(*entries)
       end
+
+      context 'when the grouping\'s inviter does not belong to a section' do
+        it 'should return the entries from the default starter file group' do
+          entries = assignment.default_starter_file_group.starter_file_entries
+          student2 = create :student
+          grouping_without_section = create :grouping_with_inviter, inviter: student2, assignment: assignment
+          expect(grouping_without_section.select_starter_file_entries).to contain_exactly(*entries)
+        end
+      end
+
+      context 'when the grouping does not have an inviter' do
+        it 'should return the entries from the default starter file group' do
+          entries = assignment.default_starter_file_group.starter_file_entries
+          grouping_without_inviter = create :grouping, assignment: assignment
+          expect(grouping_without_inviter.select_starter_file_entries).to contain_exactly(*entries)
+        end
+      end
     end
     context 'when starter_file_type is shuffle' do
       let(:starter_file_type) { 'shuffle' }
