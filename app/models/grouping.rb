@@ -445,8 +445,8 @@ class Grouping < ApplicationRecord
     when 'simple'
       assignment.default_starter_file_group&.starter_file_entries || []
     when 'sections'
-      return inviter.section&.starter_file_group_for(assignment)&.starter_file_entries || [] unless inviter.nil?
-      assignment.default_starter_file_group&.starter_file_entries || []
+      section = inviter&.section&.starter_file_group_for(assignment) || assignment.default_starter_file_group
+      section&.starter_file_entries || []
     when 'shuffle'
       assignment.starter_file_groups.includes(:starter_file_entries).map do |g|
         # If this grouping has previous starter files, try to choose an entry with the same path as before

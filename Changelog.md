@@ -4,6 +4,9 @@
 - Remove unmaintained locales (#5727)
 - Added the ability to submit URLs (#5822)
 
+## [v2.0.7]
+- Fix bugs in starter files when assigning by section (#5846)
+
 ## [v2.0.6]
 - Fix bug for menu icon not working on mobile devices / smaller screens (#5818)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
