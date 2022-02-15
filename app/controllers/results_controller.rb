@@ -16,6 +16,7 @@ class ResultsController < ApplicationController
     # required because MathJax dynamically changes
     # style. # TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
+    p.frame_src(*SubmissionsController::PERMITTED_IFRAME_SRC)
   end
 
   def show
@@ -651,7 +652,7 @@ class ResultsController < ApplicationController
 
   def update_remark_request
     @submission = Submission.find(params[:submission_id])
-    @assignment = submission.grouping.assignment
+    @assignment = @submission.grouping.assignment
     if @assignment.past_remark_due_date?
       head :bad_request
     else
@@ -684,7 +685,8 @@ class ResultsController < ApplicationController
 
     redirect_to controller: 'results',
                 action: 'view_marks',
-                id: params[:id]
+                course_id: current_course.id,
+                id: submission.get_original_result.id
   end
 
   def delete_grace_period_deduction
