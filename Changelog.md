@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Remove group name displayed attribute from assignment properties table (#5834)
 - Remove unmaintained locales (#5727)
 - Added the ability to submit URLs (#5822)
 
