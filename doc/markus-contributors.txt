@@ -80,6 +80,7 @@ Hanson Wu
 Haohan David Jiang
 Heyu Wang
 Horatiu Halmaghi
+Huiyu Sun
 Ian Smith
 Ibrahim Shahin
 Ignas Panero Armoska
@@ -175,6 +176,7 @@ Tanveer Gill
 Tara Clark
 Tiago Chedraoui Silva
 Tianhai Hu
+Tianji Zhang
 Thomas Hayes
 Tudor Brindus
 Tyler Han
