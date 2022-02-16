@@ -13,6 +13,7 @@
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
 - When role switched, 403 errors are displayed as flash messages after redirecting back to the previous page (#5785)
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
+- Allow TAs to download grades for students they've been assigned to grade (#5793)
 - Fix bugs when submitting and cancelling remark requests (#5838)
 - Do not trigger starter file changed timestamp when only starter_files_after_due assignment setting is changed (#5845)
 
