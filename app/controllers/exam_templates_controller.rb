@@ -162,7 +162,7 @@ class ExamTemplatesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
 
     respond_to do |format|
-      format.html
+      format.js
       format.json do
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
                                     .where(assessments: { id: @assignment.id })

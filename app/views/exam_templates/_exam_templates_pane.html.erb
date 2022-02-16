@@ -1,3 +1,10 @@
+<div class="listings separate-listing-heading">
+  <span>
+    <%= link_to t('exam_templates.split.title'),
+                view_logs_course_assignment_exam_templates_path(@current_course, @assignment),
+                remote: true %>
+  </span>
+</div>
 <div class='listings sortable'>
   <header>
     <span><%= ExamTemplate.model_name.human %></span>
