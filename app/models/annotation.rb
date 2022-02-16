@@ -52,7 +52,7 @@ class Annotation < ApplicationRecord
     }
 
     if include_creator
-      data[:creator] = "#{creator.first_name} #{creator.last_name}"
+      data[:creator] = creator.display_name.to_s
     end
 
     data
