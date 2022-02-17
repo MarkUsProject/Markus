@@ -117,7 +117,6 @@ class Result < ApplicationRecord
     return if self.released_to_students
     self.marking_state = Result::MARKING_STATES[:incomplete]
     self.save
-
   end
 
   def is_a_review?
