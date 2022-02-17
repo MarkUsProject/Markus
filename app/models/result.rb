@@ -121,21 +121,6 @@ class Result < ApplicationRecord
     extra_marks_hash
   end
 
-  # The sum of the bonuses and deductions, other than late penalty
-  def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # Percentage deduction for late penalty
-  def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # Point deduction for late penalty
-  def get_total_extra_percentage_as_points(user_visibility = :ta_visible)
-    (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(2)
-  end
-
   # un-releases the result
   def unrelease_results
     self.released_to_students = false
