@@ -76,18 +76,22 @@ class CriteriaController < ApplicationController
       return
     end
     if @criterion.is_a? RubricCriterion
-      s1 = Set[]
-      should_set = true
-      # check if there's a dup in marks
-      params[:rubric_criterion][:levels_attributes].each do |_key, val|
-        if s1.include? val[:mark]
-          should_set = false
-          break
+      if params[:rubric_criterion][:levels_attributes]
+        s1 = Set[]
+        should_set = true
+        # check if there's a dup in marks
+        params[:rubric_criterion][:levels_attributes].each do |_key, val|
+          if s1.include? val[:mark]
+            should_set = false
+            break
+          end
+          s1.add(val[:mark])
         end
-        s1.add(val[:mark])
-      end
-      if should_set
-        params[:rubric_criterion].merge(skip_marks_validation: true)
+        if should_set
+          params[:rubric_criterion][:levels_attributes].each do |_key, val|
+            val[:skip_marks_validation] = true
+          end
+        end
       end
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
@@ -194,7 +198,8 @@ class CriteriaController < ApplicationController
                                              :peer_visible,
                                              :max_mark,
                                              :bonus,
-                                             levels_attributes: [:id, :name, :mark, :description, :_destroy],
+                                             levels_attributes: [:id, :name, :mark, :description, :_destroy,
+                                                                 :skip_marks_validation],
                                              assignment_files: [])
   end
 

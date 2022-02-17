@@ -3,14 +3,14 @@ class Level < ApplicationRecord
   belongs_to :criterion
 
   has_one :course, through: :criterion
+  attr_accessor :skip_marks_validation
 
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :criterion_id
 
   validates :description, exclusion: { in: [nil] }
-
-  validates :mark, presence: true
-  validates_uniqueness_of :mark, scope: :criterion_id, unless: :skip_marks
+  validates_presence_of :mark
+  validates_uniqueness_of :mark, scope: :criterion_id, unless: :skip_marks_validation
   # validates_uniqueness_of :mark, scope: :criterion_id
   validates_numericality_of :mark, greater_than_or_equal_to: 0
 
@@ -18,10 +18,6 @@ class Level < ApplicationRecord
 
   before_destroy :destroy_associated_marks
   before_update :update_associated_marks
-
-  def skip_marks
-    self.criterion.skip_marks_validation
-  end
 
   def only_update_if_results_unreleased
     return if self.criterion.nil? # When the level is first being created
