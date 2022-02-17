@@ -43,7 +43,8 @@ class CoursesController < ApplicationController
     if params[:effective_user_login].blank?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.username_not_blank') }
+             locals: { error: I18n.t('main.username_not_blank') },
+             status: :not_found
       return
     end
 
@@ -53,19 +54,22 @@ class CoursesController < ApplicationController
     if found_role.nil?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.login_failed') }
+             locals: { error: I18n.t('main.login_failed') },
+             status: :not_found
       return
     end
     if found_user.user_name == session[:user_name] || found_user.user_name == session[:real_user_name]
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.cannot_role_switch_to_self') }
+             locals: { error: I18n.t('main.cannot_role_switch_to_self') },
+             status: :unprocessable_entity
       return
     end
     if found_role.instructor?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.cannot_role_switch_to_instructor') }
+             locals: { error: I18n.t('main.cannot_role_switch_to_instructor') },
+             status: :unprocessable_entity
       return
     end
 
