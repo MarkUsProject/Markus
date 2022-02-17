@@ -1,6 +1,8 @@
 ---
 en:
   main:
+    cannot_role_switch_to_instructor: You cannot role switch to another instructor account.
+    cannot_role_switch_to_self: You cannot role switch to your own account.
     create_marking_scheme: Create a Marking Scheme to display course summary graph.
     external_authentication_default_name: remote authentication
     external_authentication_not_supported: External authentication not supported on your platform!
@@ -24,5 +26,3 @@ en:
     timeout_imminent: Your session is about to expire, and you will be logged out shortly. Press the Continue button or refresh the current page in the next few seconds to remain logged in.
     username_and_password_not_blank: Your username and password must not be blank.
     username_not_blank: Your username must not be blank.
-    cannot_role_switch_to_self: You cannot role switch to your own account.
-    cannot_role_switch_to_instructor: "You cannot role switch to another instructor account."
