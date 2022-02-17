@@ -54,10 +54,11 @@ class CoursesController < ApplicationController
     if found_role.nil?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.login_failed') },
+             locals: { error: Settings.validate_user_not_allowed_message || I18n.t('main.login_failed') },
              status: :not_found
       return
     end
+    # check if the current instructor is trying to role switch as themselves
     if found_user.user_name == session[:user_name] || found_user.user_name == session[:real_user_name]
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
@@ -65,6 +66,7 @@ class CoursesController < ApplicationController
              status: :unprocessable_entity
       return
     end
+    # otherwise, check if the current instructor is trying to role switch as other instructors
     if found_role.instructor?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
@@ -72,8 +74,6 @@ class CoursesController < ApplicationController
              status: :unprocessable_entity
       return
     end
-
-    # Check if an instructor trying to login as the current user or themselves
 
     log_role_switch found_user
     self.current_user = found_user
