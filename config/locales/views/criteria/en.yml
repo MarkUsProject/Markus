@@ -10,6 +10,7 @@ en:
     errors:
       invalid_format: 'The following criteria had invalid format:'
       released_marks: Cannot update criteria for an assignment with released marks.
+      different_assignment: 'There exists criteria under different assignment:'
     flexible: Flexible
     help_editing_criteria_message: " Select a criterion on the left to edit it. Changes for the different criteria can be made as follows:"
     help_editing_flexible_criteria_message: " Criteria names, descriptions, maximum values and visibility can be modified."
