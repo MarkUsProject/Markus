@@ -30,19 +30,16 @@ describe CoursesController do
 
         it 'fails the switch to an instructor' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: instructor2.user_name }
-          # expect(response).to have_http_status(:forbidden)
           expect(response).to have_http_status(:not_found)
         end
 
         it 'fails the switch to a student' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: student2.user_name }
-          # expect(response).to have_http_status(:forbidden)
           expect(response).to have_http_status(:not_found)
         end
 
         it 'fails the switch to a ta' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: ta2.user_name }
-          # expect(response).to have_http_status(:forbidden)
           expect(response).to have_http_status(:not_found)
         end
       end
