@@ -896,7 +896,8 @@ describe AssignmentsController do
   end
   describe '#update_starter_file' do
     subject { post_as role, :update_starter_file, params: params }
-    let(:assignment) { create :assignment }
+    let!(:assignment) { create :assignment }
+    let!(:grouping) { create :grouping, assignment: assignment }
     let(:starter_file_group1) do
       create :starter_file_group, assignment: assignment, name: 'name', entry_rename: 'name', use_rename: false
     end
@@ -923,6 +924,19 @@ describe AssignmentsController do
         expect { subject }.to(
           change { assignment.reload.default_starter_file_group_id }.from(nil).to(starter_file_group2.id)
         )
+      end
+      it 'should update starter_file_updated_at' do
+        expect { subject }.to(
+          change { assignment.assignment_properties.reload.starter_file_updated_at }
+        )
+      end
+      context 'when a grouping for the assignment exists' do
+        it 'should update the grouping starter_file_changed attribute' do
+          grouping
+          expect { subject }.to(
+            change { grouping.reload.starter_file_changed }.from(false).to(true)
+          )
+        end
       end
       context 'when a section exists' do
         it 'should update section starter file mappings' do
@@ -962,17 +976,47 @@ describe AssignmentsController do
           end
         end
       end
+      context 'when only updating assignment starter_files_after_due attribute' do
+        let!(:params) do
+          { id: assignment.id,
+            course_id: role.course.id,
+            assignment: { starter_files_after_due: false },
+            sections: [],
+            starter_file_groups: [{ id: starter_file_group1.id,
+                                    name: starter_file_group1.name,
+                                    entry_rename: starter_file_group1.entry_rename,
+                                    use_rename: starter_file_group1.use_rename }] }
+        end
+        it 'should update starter_files_after_due' do
+          expect { subject }.to(
+            change { assignment.assignment_properties.reload.starter_files_after_due }.from(true).to(false)
+          )
+        end
+        it 'should not update starter_file_updated_at' do
+          expect { subject }.to_not(
+            change { assignment.assignment_properties.reload.starter_file_updated_at }
+          )
+        end
+        context 'when a grouping for the assignment exists' do
+          it 'should not update the grouping starter_file_changed attribute' do
+            grouping
+            expect { subject }.to_not(
+              change { grouping.reload.starter_file_changed }
+            )
+          end
+        end
+      end
     end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
       let(:role) { create :student }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end
@@ -1346,8 +1390,8 @@ describe AssignmentsController do
           subject
           tags = read_file_from_zip(response.body, 'tags.yml')
           tags = tags.map(&:symbolize_keys)
-          expect(tags).to eq([{ name: tag1.name, description: tag1.description },
-                              { name: tag2.name, description: tag2.description }])
+          expect(tags).to match_array([{ name: tag1.name, description: tag1.description },
+                                       { name: tag2.name, description: tag2.description }])
         end
 
         it 'should contain a peer review tags file' do
@@ -1553,7 +1597,7 @@ describe AssignmentsController do
                                                  .map(&:symbolize_keys)
         expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' },
                                     { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
-        expect(uploaded_annotation_text).to eq(expected_annotation_text)
+        expect(uploaded_annotation_text).to match_array(expected_annotation_text)
       end
 
       it 'properly uploads all the automated test files for an assignment' do
@@ -1687,7 +1731,7 @@ describe AssignmentsController do
         expected_tags = [{ name: tag1.name, description: tag1.description },
                          { name: tag2.name, description: tag2.description },
                          { name: tag3.name, description: tag3.description }]
-        expect(uploaded_tags).to eq(expected_tags)
+        expect(uploaded_tags).to match_array(expected_tags)
       end
 
       it 'copies over annotations' do
@@ -1735,7 +1779,7 @@ describe AssignmentsController do
             files_and_dirs: starter_group2_files
           }
         ]
-        expect(uploaded_starter_files).to eq(expected_starter_files)
+        expect(uploaded_starter_files).to match_array(expected_starter_files)
       end
     end
 
@@ -1802,7 +1846,7 @@ describe AssignmentsController do
                                       .map(&:symbolize_keys)
         expected = [{ filename: assignment_file1.filename },
                     { filename: assignment_file2.filename }]
-        expect(received).to eq(expected)
+        expect(received).to match_array(expected)
       end
 
       it 'copies over automated tests' do

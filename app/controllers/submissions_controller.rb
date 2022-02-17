@@ -3,12 +3,14 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  PERMITTED_IFRAME_SRC = %w[https://www.youtube.com https://drive.google.com https://docs.google.com].freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
+    p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
   content_security_policy_report_only only: :notebook_content
@@ -317,11 +319,14 @@ class SubmissionsController < ApplicationController
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
 
+    # The new url that will be added
+    new_url = params[:new_url] || ''
+
     unless delete_folders.empty? && new_folders.empty?
       authorize! to: :manage_subdirectories?
     end
 
-    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty? && new_url.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
       messages = []
@@ -336,6 +341,24 @@ class SubmissionsController < ApplicationController
                                     .map { |name| File.join(@grouping.assignment.repository_folder, name) }
         else
           required_files = nil
+        end
+
+        unless new_url.blank?
+          url_filename = params[:url_text]
+          raise I18n.t('submissions.urls_disabled') unless @assignment.url_submit
+          raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
+          raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
+          url_file = Tempfile.new
+          url_file.write(new_url)
+          url_file.rewind
+          url_filename = FileHelper.sanitize_file_name(url_filename)
+          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.markusurl",
+                                                                tempfile: url_file,
+                                                                type: 'text/url')
+          success, msgs = add_file(new_url_file, current_role, repo,
+                                   path: path, txn: txn, check_size: true, required_files: required_files)
+          should_commit &&= success
+          messages.concat msgs
         end
 
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
@@ -410,6 +433,8 @@ class SubmissionsController < ApplicationController
         else
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+
+          file_type = 'unknown' unless file_type != 'markusurl' || assignment.url_submit
 
           if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
@@ -783,6 +808,7 @@ class SubmissionsController < ApplicationController
     return [] unless revision.path_exists?(full_path)
 
     anonymize = current_role.ta? && grouping.assignment.anonymize_groups
+    url_submit = grouping.assignment.url_submit
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
@@ -792,7 +818,7 @@ class SubmissionsController < ApplicationController
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
         data = get_file_info(basename, file_obj, grouping.course.id, grouping.assignment.id,
-                             revision.revision_identifier, dirname, grouping.id)
+                             revision.revision_identifier, dirname, grouping.id, url_submit: url_submit)
         next if data.nil?
         data[:key] = file_name
         data[:modified] = file_obj.last_modified_date.to_i
@@ -808,5 +834,14 @@ class SubmissionsController < ApplicationController
   # the grouping is in the same course as the current course
   def parent_params
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
+  end
+
+  # Returns a boolean on whether the given +url+ is valid.
+  # Taken from https://stackoverflow.com/questions/7167895/rails-whats-a-good-way-to-validate-links-urls
+  def is_valid_url?(url)
+    uri = URI.parse(url)
+    uri.is_a?(URI::HTTP) && !uri.host.blank?
+  rescue URI::InvalidURIError
+    false
   end
 end
