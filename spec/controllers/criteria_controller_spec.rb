@@ -1069,7 +1069,7 @@ describe CriteriaController do
         expect(c1.position).to eql(1)
         c2 = RubricCriterion.find(rubric_criterion2.id)
         expect(c2.position).to eql(2)
-        c3 = RubricCriterion.find(rubric_criterion2.id)
+        c3 = RubricCriterion.find(rubric_criterion3.id)
         expect(c3.position).to eql(3)
       end
 
