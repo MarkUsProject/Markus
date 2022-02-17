@@ -131,12 +131,17 @@ Rails.application.routes.draw do
       member do
         get 'collect_and_begin_grading'
         get 'get_file'
+
+        post 'download'
+        get 'download_zip'
+        delete 'cancel_remark_request'
+        patch 'update_remark_request', on: :collection
       end
 
       resources :results, only: [:edit] do
-        collection do
-          patch 'update_remark_request'
-        end
+        # collection do
+        #   patch 'update_remark_request'
+        # end
       end
     end
 
@@ -145,9 +150,9 @@ Rails.application.routes.draw do
         get 'get_annotations'
         get 'add_extra_marks'
         get 'download'
-        post 'download'
-        get 'download_zip'
-        delete 'cancel_remark_request'
+        # post 'download'
+        # get 'download_zip'
+        # delete 'cancel_remark_request'
         post 'add_extra_mark'
         delete 'delete_grace_period_deduction'
         get 'next_grouping'

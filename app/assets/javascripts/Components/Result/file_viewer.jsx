@@ -67,7 +67,7 @@ export class FileViewer extends React.Component {
     if (!!this.props.selectedFileURL) {
       url = this.props.selectedFileURL;
     } else {
-      url = Routes.download_course_result_path(this.props.course_id, this.props.result_id, {
+      url = Routes.download_course_submission_path(this.props.course_id, this.props.result_id, {
         select_file_id: submission_file_id,
         show_in_browser: true,
         from_codeviewer: true,
