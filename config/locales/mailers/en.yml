@@ -5,7 +5,7 @@ en:
       button_text: See Invitation
       disclaimer: This is an automated email. Please do not reply.
       explicit_link: 'If the above button doesn''t work, copy-and-paste this link into your web browser: %{link}'
-      greeting: Hello %{display_name},
+      greeting: Hello %{first_name} %{last_name},
       settings_link: Unsubscribe from future emails.
       subject: MarkUs Notification (%{course}) You have been invited to a group!
       text_body: "%{display_name} has invited you to join a group for %{assignment}. If you wish to accept this invitation, you need to do so <i>before</i> the assignment due date."
