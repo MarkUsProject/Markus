@@ -9,9 +9,9 @@ class Level < ApplicationRecord
   validates_uniqueness_of :name, scope: :criterion_id
 
   validates :description, exclusion: { in: [nil] }
-  validates_presence_of :mark
+
+  validates :mark, presence: true
   validates_uniqueness_of :mark, scope: :criterion_id, unless: :skip_marks_validation
-  # validates_uniqueness_of :mark, scope: :criterion_id
   validates_numericality_of :mark, greater_than_or_equal_to: 0
 
   validate :only_update_if_results_unreleased
