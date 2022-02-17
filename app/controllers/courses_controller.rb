@@ -58,15 +58,17 @@ class CoursesController < ApplicationController
              status: :not_found
       return
     end
-    # check if the current instructor is trying to role switch as themselves
-    if found_user.user_name == session[:user_name] || found_user.user_name == session[:real_user_name]
+
+    # Check if the current instructor is trying to role switch as themselves
+    if found_user.user_name == session[:real_user_name]
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
              locals: { error: I18n.t('main.cannot_role_switch_to_self') },
              status: :unprocessable_entity
       return
     end
-    # otherwise, check if the current instructor is trying to role switch as other instructors
+
+    # Otherwise, check if the current instructor is trying to role switch as other instructors
     if found_role.instructor?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
