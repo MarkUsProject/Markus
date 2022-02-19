@@ -160,6 +160,7 @@ class ExamTemplatesController < ApplicationController
 
   def view_logs
     @assignment = Assignment.find(params[:assignment_id])
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
 
     respond_to do |format|
       format.js
