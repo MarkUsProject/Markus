@@ -21,7 +21,7 @@ en:
       button_text: View Results
       disclaimer: This is an automated email. Please do not reply.
       explicit_link: 'If the above button doesn''t work, copy-and-paste this link into your web browser: %{link}'
-      greeting: Hello %{first_name} %{last_name},
+      greeting: Hello %{display_name},
       settings_link: Unsubscribe from future emails.
       subject: MarkUs Notification (%{course}) Your marks for %{form} have been released!
       text_body: Your marks for %{form} have now been released on MarkUs and can be viewed.
