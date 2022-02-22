@@ -1,12 +1,12 @@
-<%= form_for [@current_course, @exam_templates.first],
-             url: split_course_exam_template_path(@current_course, @exam_templates.first.id),
-             html: { multipart: true },
-             authenticity_token: true do |f| %>
+<%= form_tag split_course_assignment_exam_templates_path(@current_course),
+             method: :patch,
+             authenticity_token: true,
+             multipart: true do %>
   <div class="inline-labels">
-    <%= f.label :id, "Base Split on" %>
-    <%= f.select :id, options_from_collection_for_select(@exam_templates, 'id', 'name') %>
-    <%= f.label :pdf_to_split, t('exam_templates.split.instruction') %>
-    <%= f.file_field :pdf_to_split %>
+    <%= label :exam_template_id, "Base Split on" %>
+    <%= select_tag :exam_template_id, options_from_collection_for_select(@exam_templates, 'id', 'name') %>
+    <%= label :pdf_to_split, t('exam_templates.split.instruction') %>
+    <%= file_field_tag :pdf_to_split, required: true %>
   </div>
-  <p><%= f.submit t('exam_templates.split.split') %></p>
+  <p><%= submit_tag t('exam_templates.split.split'), id: 'split_exam' %></p>
 <% end %>

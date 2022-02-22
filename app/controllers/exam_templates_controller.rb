@@ -133,19 +133,17 @@ class ExamTemplatesController < ApplicationController
   end
 
   def split
-    exam_template = record
-    split_exam = params[:exam_template]&.fetch(:pdf_to_split) { nil }
+    exam_template = ExamTemplate.find(params[:exam_template_id])
+    split_exam = params[:pdf_to_split]
     if split_exam.nil?
       flash_message(:error, t('exam_templates.split.missing'))
-      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
     elsif split_exam.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.split.invalid'))
-      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
     else
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
       session[:job_id] = current_job.job_id
-      redirect_to view_logs_course_assignment_exam_templates_path(current_course, exam_template.assignment)
     end
+    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
   end
 
   def destroy
