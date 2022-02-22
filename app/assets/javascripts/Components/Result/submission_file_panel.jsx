@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import {AnnotationManager} from "./annotation_manager";
 import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
-import {lookup} from "mime-types";
+import {getType} from "mime/lite";
 
 export class SubmissionFilePanel extends React.Component {
   constructor(props) {
@@ -136,7 +136,7 @@ export class SubmissionFilePanel extends React.Component {
       visibleAnnotations = [];
     } else {
       submission_file_id = this.state.selectedFile[1];
-      submission_file_mime_type = lookup(this.state.selectedFile[0]);
+      submission_file_mime_type = getType(this.state.selectedFile[0]);
       visibleAnnotations = this.props.annotations.filter(
         a => a.submission_file_id === submission_file_id
       );
