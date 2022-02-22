@@ -1,3 +1,5 @@
+require 'net/http'
+
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
     criterion_names, criterion_identifiers = assignment.ta_criteria.map do |c|
