@@ -4,12 +4,11 @@
   </div>
   <hr class="divider">
   <p class="to_text dark-scheme">
-    <%= t('.greeting', first_name: @invited.first_name, last_name: @invited.last_name) %>
+    <%= t('.greeting', display_name: @invited.display_name) %>
   </p>
   <p class="body_text dark-scheme">
     <%= t('.text_body',
-          first_name: @inviter.first_name,
-          last_name: @inviter.last_name,
+          display_name: @inviter.display_name,
           assignment: @grouping.assignment.short_identifier) %>
   </p>
   <div class="button_enclosure">
