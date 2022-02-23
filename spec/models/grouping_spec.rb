@@ -1350,6 +1350,23 @@ describe Grouping do
         entries = ssfg.starter_file_group.starter_file_entries
         expect(grouping.select_starter_file_entries).to contain_exactly(*entries)
       end
+
+      context 'when the grouping\'s inviter does not belong to a section' do
+        it 'should return the entries from the default starter file group' do
+          entries = assignment.default_starter_file_group.starter_file_entries
+          student2 = create :student
+          grouping_without_section = create :grouping_with_inviter, inviter: student2, assignment: assignment
+          expect(grouping_without_section.select_starter_file_entries).to contain_exactly(*entries)
+        end
+      end
+
+      context 'when the grouping does not have an inviter' do
+        it 'should return the entries from the default starter file group' do
+          entries = assignment.default_starter_file_group.starter_file_entries
+          grouping_without_inviter = create :grouping, assignment: assignment
+          expect(grouping_without_inviter.select_starter_file_entries).to contain_exactly(*entries)
+        end
+      end
     end
     context 'when starter_file_type is shuffle' do
       let(:starter_file_type) { 'shuffle' }
@@ -1419,6 +1436,56 @@ describe Grouping do
         let(:starter_file_group) { starter_file_groups.second }
         it 'should not remove the starter file entry from the grouping' do
           expect(grouping.reload.starter_file_entries.pluck(:path)).to include('q2.txt')
+        end
+      end
+    end
+
+    context 'when a grouping is created' do
+      let(:grouping_without_inviter) { build :grouping, assignment: assignment }
+      let(:inviter) { create :inviter_student_membership, grouping: grouping_without_inviter }
+
+      it 'is called' do
+        expect(grouping_without_inviter).to receive(:reset_starter_file_entries)
+
+        grouping_without_inviter.save!
+      end
+
+      context 'when the grouping gets an inviter' do
+        before do
+          assignment.assignment_properties.update!(starter_file_type: starter_file_type)
+          grouping_without_inviter.save!
+        end
+
+        context 'when starter files are always assigned from the same single group' do
+          let(:starter_file_type) { 'simple' }
+          it 'is not called' do
+            expect(grouping_without_inviter).to_not receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+
+        context 'when starter files are assigned by section' do
+          let(:starter_file_type) { 'sections' }
+          it 'is called' do
+            expect(grouping_without_inviter).to receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+
+        context 'when starter files are assigned a random file from each group' do
+          let(:starter_file_type) { 'shuffle' }
+          it 'is not called' do
+            expect(grouping_without_inviter).to_not receive(:reset_starter_file_entries)
+            inviter
+          end
+        end
+
+        context 'when starter files are assigned from a random group' do
+          let(:starter_file_type) { 'group' }
+          it 'is not called' do
+            expect(grouping_without_inviter).to_not receive(:reset_starter_file_entries)
+            inviter
+          end
         end
       end
     end

@@ -373,7 +373,7 @@ class AssignmentsController < ApplicationController
       num_marked_label = t('submissions.how_many_marked',
                            num_marked: assignment.get_num_marked(ta.id),
                            num_assigned: assignment.get_num_assigned(ta.id))
-      { label: "#{ta.first_name} #{ta.last_name} (#{num_marked_label})",
+      { label: "#{ta.display_name} (#{num_marked_label})",
         data: ta.grade_distribution_array(assignment, intervals) }
     end
     render json: {
@@ -433,17 +433,19 @@ class AssignmentsController < ApplicationController
     success = true
     ApplicationRecord.transaction do
       assignment.assignment_properties.update!(starter_file_assignment_params)
-      all_changed = assignment.assignment_properties.saved_changes?
-      params[:sections].each do |section_params|
+      all_changed =
+        assignment.assignment_properties.saved_change_to_starter_file_type? ||
+        assignment.assignment_properties.saved_change_to_default_starter_file_group_id?
+      params[:sections]&.each do |section_params|
         Section.find_by(id: section_params[:section_id])
                &.update_starter_file_group(assignment.id, section_params[:group_id])
       end
       starter_file_group_params.each do |group_params|
         starter_file_group = assignment.starter_file_groups.find_by(id: group_params[:id])
         starter_file_group.update!(group_params)
-        all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
+        all_changed ||= starter_file_group.saved_changes?
       end
-      assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
+      assignment.assignment_properties.update!(starter_file_updated_at: Time.current) if all_changed
     rescue ActiveRecord::RecordInvalid, StandardError => e
       flash_message(:error, e.message)
       success = false

@@ -446,8 +446,8 @@ class Grouping < ApplicationRecord
     when 'simple'
       assignment.default_starter_file_group&.starter_file_entries || []
     when 'sections'
-      return inviter.section&.starter_file_group_for(assignment)&.starter_file_entries || [] unless inviter.nil?
-      assignment.default_starter_file_group&.starter_file_entries || []
+      section = inviter&.section&.starter_file_group_for(assignment) || assignment.default_starter_file_group
+      section&.starter_file_entries || []
     when 'shuffle'
       assignment.starter_file_groups.includes(:starter_file_entries).map do |g|
         # If this grouping has previous starter files, try to choose an entry with the same path as before
@@ -549,48 +549,6 @@ class Grouping < ApplicationRecord
               .where(sub: { id: nil })
               .order(:id)
               .first
-  end
-
-  # Helper for populate_submissions_table.
-  # Returns a formatted time string for the last commit time for this grouping.
-  def last_commit_date
-    if !current_submission_used&.revision_timestamp.nil?
-      I18n.l(current_submission_used.revision_timestamp)
-    else
-      '-'
-    end
-  end
-
-  # Helper for populate_submission_table
-  # Returns boolean value based on if the submission has files or not
-  def has_files_in_submission?
-    !has_submission? ||
-    !current_submission_used.submission_files.empty?
-  end
-
-  # Helper for populate_submissions_table.
-  # Returns the final grade for this grouping.
-  def final_grade(result)
-    if !result.nil?
-      result.total_mark
-    else
-      '-'
-    end
-  end
-
-  # Helper for populate_submissions_table.
-  # Returns the total bonus/deductions for this grouping including late penalty.
-  def total_extra_points(result)
-    if !result.nil?
-      total_extra = result.get_total_extra_points + result.get_total_extra_percentage_as_points
-      if result.get_total_extra_percentage_as_points == 0
-        total_extra
-      else
-        "#{total_extra} (#{SubmissionRule.model_name.human.capitalize} : #{result.get_total_extra_percentage}%)"
-      end
-    else
-      '-'
-    end
   end
 
   def review_for(reviewee_group)

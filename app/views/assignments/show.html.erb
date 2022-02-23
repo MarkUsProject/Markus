@@ -61,8 +61,7 @@
           <% @current_role.pending_groupings_for(@assignment.id).each do |grouping|%>
             <div>
               <p><%= t('groups.members.invited_by',
-                       inviter_last_name: grouping.inviter.last_name,
-                       inviter_first_name: grouping.inviter.first_name) %>
+                       inviter_display_name: grouping.inviter.display_name) %>
               </p>
               <ul>
                 <% grouping.student_memberships.includes(role: :end_user).each do |member|%>

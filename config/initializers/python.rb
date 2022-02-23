@@ -1,4 +1,5 @@
 # Initialize python dependencies
+require 'open3'
 
 Rails.configuration.to_prepare do
   pip_exe = File.join(Settings.python.bin, 'pip')

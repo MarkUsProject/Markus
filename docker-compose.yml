@@ -67,8 +67,6 @@ services:
       - bundle:/bundle
       - tmp:/app/tmp
       - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - packs_test:/app/public/packs-test
       - log:/app/log
       - python:/app/venv
       - .:/app:cached
@@ -109,19 +107,14 @@ services:
   webpacker:
     <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
-    command: ./bin/webpack-dev-server
-    ports:
-      - '3035:3035'
+    command: yarn build-dev
     volumes:
       - bundle:/bundle
       - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - packs_test:/app/public/packs-test
       - .:/app:cached
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - RAILS_ENV=${RAILS_ENV:-development}
-      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
       - PGDATABASE=markus_development
       - PGDATABASETEST=markus_test
 
@@ -132,8 +125,6 @@ volumes:
   redis:
   bundle:
   node_modules:
-  packs:
-  packs_test:
   tmp:
   log:
   python:

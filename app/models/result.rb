@@ -69,20 +69,6 @@ class Result < ApplicationRecord
     result_ids.map { |r_id| [r_id, marks[r_id] || 0] }.to_h
   end
 
-  # The sum of the bonuses deductions and late penalties
-  #
-  # If the +max_mark+ value is nil, its value will be determined dynamically
-  # based on the max_mark value of the associated assignment.
-  # However, passing the +max_mark+ value explicitly is more efficient if we are
-  # repeatedly calling this method where the max_mark doesn't change, such as when
-  # all the results are associated with the same assignment.
-  #
-  # +user_visibility+ is passed to the Assignment.max_mark method to determine the
-  # max_mark value only if the +max_mark+ argument is nil.
-  def get_total_extra_marks(max_mark: nil, user_visibility: :ta_visible)
-    Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
-  end
-
   # The sum of the bonuses deductions and late penalties for multiple results.
   # This returns a hash mapping the result ids from the +result_ids+ argument to
   # the sum of all extra marks calculated for that result.
@@ -119,21 +105,6 @@ class Result < ApplicationRecord
       end
     end
     extra_marks_hash
-  end
-
-  # The sum of the bonuses and deductions, other than late penalty
-  def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # Percentage deduction for late penalty
-  def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # Point deduction for late penalty
-  def get_total_extra_percentage_as_points(user_visibility = :ta_visible)
-    (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(2)
   end
 
   # un-releases the result
