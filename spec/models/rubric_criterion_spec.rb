@@ -4,6 +4,7 @@ describe RubricCriterion do
   context 'A rubric criterion model passes criterion tests' do
     it_behaves_like 'a criterion'
   end
+
   context 'A good rubric criterion model' do
     before(:each) do
       @rubric = create(:rubric_criterion)
@@ -15,6 +16,55 @@ describe RubricCriterion do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:levels) }
     it { is_expected.to have_one(:course) }
+
+    context 'Helper method #update_levels' do
+      it 'sets :skip_marks_validation and :skip_names_validation to true if the levels have unique names and marks' do
+        params = { levels_attributes: {
+          '0' => { _destroy: '0', name: 'Very Poor', mark: '0.0', description: 'test 1', id: '91' },
+          '1' => { _destroy: '0', name: 'Weak', mark: '0.5', description: 'test 2', id: '92' }
+        } }
+        expect(@rubric.update_levels(params)).to eq({ levels_attributes: {
+          '0' => { _destroy: '0', description: 'test 1', id: '91', mark: '0.0', name: 'Very Poor',
+                   skip_marks_validation: true, skip_names_validation: true },
+          '1' => { _destroy: '0', description: 'test 2', id: '92', mark: '0.5', name: 'Weak',
+                   skip_marks_validation: true, skip_names_validation: true }
+        } })
+      end
+
+      it 'does not set :skip_marks_validation to true if the mark for any level is not unique' do
+        params = { levels_attributes: {
+          '0' => { _destroy: '0', name: 'Very Poor', mark: '0.0', description: 'test 1', id: '91' },
+          '1' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 2', id: '92' }
+        } }
+        expect(@rubric.update_levels(params)).to eq({ levels_attributes: {
+          '0' => { _destroy: '0', description: 'test 1', id: '91', mark: '0.0', name: 'Very Poor',
+                   skip_names_validation: true },
+          '1' => { _destroy: '0', description: 'test 2', id: '92', mark: '0.0', name: 'Weak',
+                   skip_names_validation: true }
+        } })
+      end
+
+      it 'does not set :skip_names_validation to true if the name for any level is not unique' do
+        params = { levels_attributes: {
+          '0' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 1', id: '91' },
+          '1' => { _destroy: '0', name: 'Weak', mark: '0.5', description: 'test 2', id: '92' }
+        } }
+        expect(@rubric.update_levels(params)).to eq({ levels_attributes: {
+          '0' => { _destroy: '0', description: 'test 1', id: '91', mark: '0.0', name: 'Weak',
+                   skip_marks_validation: true },
+          '1' => { _destroy: '0', description: 'test 2', id: '92', mark: '0.5', name: 'Weak',
+                   skip_marks_validation: true }
+        } })
+      end
+
+      it 'leaves the parameter unchanged if neither all names nor all marks for the levels are unique' do
+        params = { levels_attributes: {
+          '0' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 1', id: '91' },
+          '1' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 2', id: '92' }
+        } }
+        expect(@rubric.update_levels(params)).to eq(params)
+      end
+    end
 
     it 'rounds weights that have more than 1 significant digits' do
       expect(RubricCriterion.count).to be > 0

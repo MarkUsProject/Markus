@@ -3,10 +3,10 @@ class Level < ApplicationRecord
   belongs_to :criterion
 
   has_one :course, through: :criterion
-  attr_accessor :skip_marks_validation
+  attr_accessor :skip_marks_validation, :skip_names_validation
 
   validates :name, presence: true
-  validates_uniqueness_of :name, scope: :criterion_id
+  validates_uniqueness_of :name, scope: :criterion_id, unless: :skip_names_validation
 
   validates :description, exclusion: { in: [nil] }
 

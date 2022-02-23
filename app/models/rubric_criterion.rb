@@ -10,6 +10,45 @@ class RubricCriterion < Criterion
     :rubric
   end
 
+  # Checks whether the passed in param's level_attributes have unique name and marks.
+  # Skips the respective uniqueness validation if true.
+  def update_levels(rubric_criterion_params)
+    if rubric_criterion_params[:levels_attributes]
+      # check if there's a dup in marks
+      s1 = Set[]
+      should_skip_marks = true
+      rubric_criterion_params[:levels_attributes].each do |_key, val|
+        if s1.include? val[:mark]
+          should_skip_marks = false
+          break
+        end
+        s1.add(val[:mark])
+      end
+      if should_skip_marks
+        rubric_criterion_params[:levels_attributes].each do |_key, val|
+          val[:skip_marks_validation] = true
+        end
+      end
+
+      # check if there's a dup in names
+      s2 = Set[]
+      should_skip_names = true
+      rubric_criterion_params[:levels_attributes].each do |_key, val|
+        if s2.include? val[:name]
+          should_skip_names = false
+          break
+        end
+        s2.add(val[:name])
+      end
+      if should_skip_names
+        rubric_criterion_params[:levels_attributes].each do |_key, val|
+          val[:skip_names_validation] = true
+        end
+      end
+    end
+    rubric_criterion_params
+  end
+
   def level_with_mark_closest_to(mark)
     self.levels.min_by { |m| (m.mark - mark).abs }
   end
