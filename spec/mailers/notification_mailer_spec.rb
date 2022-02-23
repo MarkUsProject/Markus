@@ -96,7 +96,7 @@ RSpec.describe NotificationMailer, type: :mailer do
 
     it 'renders the inviter name in the body of the email.' do
       display_name = inviter.display_name
-      expect(mail.body.to_s).to include(h(display_name.to_s))
+      expect(mail.body.to_s).to include(h(display_name))
     end
 
     include_examples 'an email'

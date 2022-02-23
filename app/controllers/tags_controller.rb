@@ -18,7 +18,7 @@ class TagsController < ApplicationController
             id: tag.id,
             name: tag.name,
             description: tag.description,
-            creator: tag.role.display_name.to_s,
+            creator: tag.role.display_name,
             use: tag.groupings.size
           }
         end

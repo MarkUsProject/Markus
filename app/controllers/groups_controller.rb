@@ -136,7 +136,7 @@ class GroupsController < ApplicationController
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|
-      u.user.display_name.to_s
+      u.user.display_name
     end
     num_valid = @assignment.get_num_valid
     num_total = @assignment.groupings.size
@@ -216,7 +216,7 @@ class GroupsController < ApplicationController
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
     names = next_grouping.non_rejected_student_memberships.map do |u|
-      u.user.display_name.to_s
+      u.user.display_name
     end
     num_valid = @assignment.get_num_valid
     num_total = @assignment.groupings.size
