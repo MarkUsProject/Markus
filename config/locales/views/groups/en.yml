@@ -53,7 +53,7 @@ en:
       invitations: Group invitations
       invite: Invite student(s)
       invite_instructions: Enter one or more student user names, separated by commas.
-      invited_by: You have been invited to a group by %{inviter_first_name} %{inviter_last_name}.
+      invited_by: You have been invited to a group by %{inviter_display_name}.
       join: Join Group
       member_disinvited: Member disinvited.
       statuses:

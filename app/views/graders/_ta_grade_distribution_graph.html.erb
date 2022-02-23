@@ -14,7 +14,7 @@
       datasets: [
         <% tas.each_with_index do |ta, index| %>
           {
-            label: "<%= ta.first_name + ' ' + ta.last_name + ' ' + t('submissions.how_many_marked',
+            label: "<%= ta.display_name + ' ' + t('submissions.how_many_marked',
               num_marked: assignment.get_num_marked(ta.id),
               num_assigned: assignment.get_num_assigned(ta.id)) %>",
             backgroundColor: colours[<%= index %>],
