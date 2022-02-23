@@ -1,21 +1,5 @@
 <%= content_for :modal_id, 'create_new_template' %>
 <%= content_for :modal_title, t('exam_templates.create.add_new') %>
 <%= content_for :modal_content do %>
-  <%= form_for :create_template,
-               url: course_assignment_exam_templates_path(@current_course, @assignment),
-               html: { multipart: true, size: 1 } do |f| %>
-    <div class="inline-labels">
-      <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
-      <%= f.text_field :name %>
-      <%= f.label :file_io, t('exam_templates.create.upload'), class: "required" %>
-      <%= f.file_field :file_io %>
-    </div>
-    <section class='dialog-actions'>
-      <%= f.submit t(:save),
-                   name: 'submit',
-                   data: { disable_with: t('working') },
-                   class: 'button' %>
-      <input type='reset' value='<%= t(:cancel) %>'/>
-    </section>
-  <% end %>
+  <div id="create_new_template_content"></div>
 <% end %>

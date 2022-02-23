@@ -1,5 +1,6 @@
 $(document).ready(function () {
   window.modal_create_new = new ModalMarkus("#create_new_template");
+  makeNewExamTemplateModal(document.getElementById("create_new_template_content"), {});
   $(".add-template-division").click(e => {
     add_template_division(e.target);
     e.preventDefault();
