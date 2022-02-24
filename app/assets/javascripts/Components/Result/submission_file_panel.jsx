@@ -72,7 +72,7 @@ export class SubmissionFilePanel extends React.Component {
         <DownloadSubmissionModal
           fileData={this.props.fileData}
           initialFile={selectedFile}
-          downloadURL={Routes.download_course_result_url(
+          downloadURL={Routes.download_file_course_submission_url(
             this.props.course_id,
             this.props.result_id
           )}

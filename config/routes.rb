@@ -132,8 +132,8 @@ Rails.application.routes.draw do
         get 'collect_and_begin_grading'
         get 'get_file'
 
-        post 'download'
-        get 'download_zip'
+        post 'download_file'
+        # get 'download_zip'
         delete 'cancel_remark_request'
         patch 'update_remark_request', on: :collection
       end
