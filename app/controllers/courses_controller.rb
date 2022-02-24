@@ -43,27 +43,37 @@ class CoursesController < ApplicationController
     if params[:effective_user_login].blank?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.username_not_blank') }
+             locals: { error: I18n.t('main.username_not_blank') },
+             status: :not_found
       return
     end
 
     found_user = User.find_by_user_name(params[:effective_user_login])
     found_role = Role.find_by(end_user: found_user, course: current_course)
 
-    if found_role.nil? || found_role.instructor?
+    if found_role.nil?
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: Settings.validate_user_not_allowed_message || I18n.t('main.login_failed') }
+             locals: { error: Settings.validate_user_not_allowed_message || I18n.t('main.login_failed') },
+             status: :not_found
       return
     end
 
-    # Check if an instructor trying to login as the current user or themselves
-    if found_user.user_name == session[:user_name] || found_user.user_name == session[:real_user_name]
-      # error
+    # Check if the current instructor is trying to role switch as themselves
+    if found_user.user_name == session[:real_user_name]
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             # TODO: put better error message
-             locals: { error: I18n.t('main.login_failed') }
+             locals: { error: I18n.t('main.cannot_role_switch_to_self') },
+             status: :unprocessable_entity
+      return
+    end
+
+    # Otherwise, check if the current instructor is trying to role switch as other instructors
+    if found_role.instructor?
+      render partial: 'role_switch_handler',
+             formats: [:js], handlers: [:erb],
+             locals: { error: I18n.t('main.cannot_role_switch_to_instructor') },
+             status: :unprocessable_entity
       return
     end
 

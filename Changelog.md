@@ -1,9 +1,11 @@
 # Changelog
 
 ## [unreleased]
-- Remove group name displayed attribute from assignment properties table (#5834)
 - Remove unmaintained locales (#5727)
 - Added the ability to submit URLs (#5822)
+- Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
+- Remove group name displayed attribute from assignment properties table (#5834)
+- Replace uses of first name and last name attributes with display name (#5844)
 
 ## [v2.0.7]
 - Fix bugs in starter files when assigning by section (#5846)

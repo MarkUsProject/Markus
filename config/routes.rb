@@ -278,7 +278,6 @@ Rails.application.routes.draw do
 
       resources :submissions, only: [:index] do
         collection do
-          get 'populate_submissions_table'
           get 'file_manager'
           get 'browse'
           get 'populate_file_manager'
