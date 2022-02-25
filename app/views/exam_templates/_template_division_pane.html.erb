@@ -1,5 +1,5 @@
 <div class="table-with-add">
-  <% disabled = exam_template.exam_been_uploaded? %>
+  <% disabled = exam_template.nil? ? false : exam_template.exam_been_uploaded? %>
   <table>
     <thead>
       <tr>
@@ -10,8 +10,10 @@
       </tr>
     </thead>
     <tbody>
-    <%= render partial: 'exam_templates/template_division',
-               locals: { f: f, disabled: disabled } %>
+    <% unless exam_template.nil? %>
+      <%= render partial: 'exam_templates/template_division',
+                 locals: { f: f, disabled: disabled } %>
+    <% end %>
     </tbody>
   </table>
   <% unless disabled %>

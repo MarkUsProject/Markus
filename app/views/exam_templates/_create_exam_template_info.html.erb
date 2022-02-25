@@ -1,0 +1,12 @@
+<div id="create-template-info-modal-content">
+  <div class="inline-labels">
+    <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
+    <%= f.text_field :name %>
+    <%= f.label :file_io, t('exam_templates.create.upload'), class: "required" %>
+    <%= f.file_field :file_io %>
+  </div>
+  <section class='dialog-actions'>
+    <button id="create-template-info-next">Next</button>
+    <input type='reset' value='<%= t(:cancel) %>'/>
+  </section>
+</div>

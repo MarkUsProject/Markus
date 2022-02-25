@@ -1,0 +1,12 @@
+<div id="create-template-parsing-modal-content">
+  <%= f.label :automatic_parsing, t('exam_templates.parsing.general') %>
+  <%= f.check_box :automatic_parsing, value: false %>
+  <section class='dialog-actions'>
+    <button id="create-template-parsing-previous">Previous</button>
+    <%= f.submit t(:save),
+                 name: 'submit',
+                 data: { disable_with: t('working') },
+                 class: 'button' %>
+    <input type='reset' value='<%= t(:cancel) %>'/>
+  </section>
+</div>

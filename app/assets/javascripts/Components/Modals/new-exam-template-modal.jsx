@@ -22,8 +22,27 @@ class NewExamTemplateModal extends React.Component {
     );
   };
 
+  renderTemplateDividerForm = () => {
+    return (
+      <div className={"modal-container-vertical table-with-add"}>
+        <table>
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <a className={"add-template-division"}>{I18n.t("exam_templates.create.add_division")}</a>
+      </div>
+    );
+  };
+
   render() {
-    return this.renderBasicForm();
+    return "";
   }
 }
 

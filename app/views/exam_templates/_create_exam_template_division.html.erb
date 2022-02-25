@@ -1,0 +1,9 @@
+<div id="create-template-division-modal-content">
+  <%= render partial: 'template_division_pane',
+             locals: { f: f, exam_template: nil }%>
+  <section class='dialog-actions'>
+    <button id="create-template-division-previous">Previous</button>
+    <button id="create-template-division-next">Next</button>
+    <input type='reset' value='<%= t(:cancel) %>'/>
+  </section>
+</div>
