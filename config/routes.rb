@@ -135,7 +135,11 @@ Rails.application.routes.draw do
         post 'download_file'
         # get 'download_zip'
         delete 'cancel_remark_request'
-        patch 'update_remark_request', on: :collection
+        # patch 'update_remark_request', on: :collection
+      end
+
+      collection do
+        patch 'update_remark_request'
       end
 
       resources :results, only: [:edit] do
