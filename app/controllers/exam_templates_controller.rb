@@ -65,10 +65,7 @@ class ExamTemplatesController < ApplicationController
       if new_uploaded_io.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.update.failure'))
       else
-        old_template_filename = old_exam_template.filename
         old_exam_template.replace_with_file(new_uploaded_io.read,
-                                            assignment_id: assignment.id,
-                                            old_filename: old_template_filename,
                                             new_filename: new_template_filename)
         old_exam_template.update(exam_template_params)
         respond_with(old_exam_template,
