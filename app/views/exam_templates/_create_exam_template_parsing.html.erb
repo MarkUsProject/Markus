@@ -1,8 +1,8 @@
-<div id="create-template-parsing-modal-content">
+<div id="create-template-parsing-modal-content" hidden>
   <%= f.label :automatic_parsing, t('exam_templates.parsing.general') %>
   <%= f.check_box :automatic_parsing, value: false %>
   <section class='dialog-actions'>
-    <button id="create-template-parsing-previous">Previous</button>
+    <input id="create-template-parsing-previous" class='create-template-view-change' type='button' value='Previous'/>
     <%= f.submit t(:save),
                  name: 'submit',
                  data: { disable_with: t('working') },

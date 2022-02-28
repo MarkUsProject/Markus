@@ -5,7 +5,11 @@
   <%= form_for :create_template,
                url: course_assignment_exam_templates_path(@current_course, @assignment),
                html: { multipart: true, size: 1 } do |f| %>
+    <%= render partial: 'create_exam_template_info',
+               locals: {f: f} %>
     <%= render partial: 'create_exam_template_division',
+               locals: {f: f} %>
+    <%= render partial: 'create_exam_template_parsing',
                locals: {f: f} %>
   <% end %>
 <% end %>
