@@ -13,10 +13,12 @@ Bundler.require(*Rails.groups)
 module Markus
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 6.0
+    config.load_defaults 7.0
 
     # Sensitive parameters which will be filtered from the log file
-    config.filter_parameters += [:password]
+    config.filter_parameters += [
+      :passw, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn
+    ]
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
