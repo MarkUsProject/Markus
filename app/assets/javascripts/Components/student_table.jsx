@@ -245,7 +245,7 @@ class StudentsActionBox extends React.Component {
     }
 
     return (
-      <form onSubmit={this.props.onSubmit}>
+      <form onSubmit={this.props.onSubmit} data-testid={"student_action_box"}>
         <select value={this.state.action} onChange={this.actionChanged}>
           <option value="give_grace_credits">
             {I18n.t("students.instructor_actions.give_grace_credits")}
@@ -257,7 +257,7 @@ class StudentsActionBox extends React.Component {
           <option value="unhide">{I18n.t("students.instructor_actions.mark_active")}</option>
         </select>
         {optionalInputBox}
-        <input type="submit" disabled={this.props.disabled} value={I18n.t("apply")}></input>
+        <input type="submit" disabled={this.props.disabled} value={I18n.t("apply")} />
         <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
       </form>
     );
@@ -265,7 +265,7 @@ class StudentsActionBox extends React.Component {
 }
 
 let StudentTable = withSelection(RawStudentTable);
-
-export function makeStudentTable(elem, props) {
+function makeStudentTable(elem, props) {
   render(<StudentTable {...props} />, elem);
 }
+export {RawStudentTable, StudentsActionBox, makeStudentTable};
