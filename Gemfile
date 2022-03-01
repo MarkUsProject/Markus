@@ -39,7 +39,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 6.0.0'
+gem 'rails-i18n', '~> 7.0.3'
 
 # Exam template requirements
 gem 'combine_pdf'
