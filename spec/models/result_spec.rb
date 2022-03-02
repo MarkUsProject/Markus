@@ -26,7 +26,7 @@ describe Result do
     include_context 'get subtotals context'
     it 'should update all total_marks' do
       ids = Result.ids
-      changes = ids.map { |id| [id, Result.find(id).total_mark - 1] }.to_h
+      changes = ids.index_with { |id| Result.find(id).total_mark - 1 }
       allow(Result).to receive(:get_total_marks).and_return(changes)
       expect { Result.update_total_marks(ids) }.to(
         change { Result.pluck(:total_mark) }.to(contain_exactly(*changes.values))
@@ -73,9 +73,9 @@ describe Result do
     context 'there are no extra marks' do
       it 'should return a hash containing the subtotal for each result' do
         ids = Result.pluck(:id)
-        expected = ids.map do |id|
-          [id, Result.find(id).marks.pluck(:mark).sum]
-        end.to_h
+        expected = ids.index_with do |id|
+          Result.find(id).marks.pluck(:mark).sum
+        end
         expect(Result.public_send(method_name, ids)).to eq expected
       end
     end
@@ -84,18 +84,18 @@ describe Result do
       context 'user_visibility is set to ta_visible' do
         it 'should only return subtotals that are ta_visible' do
           ids = Result.pluck(:id)
-          expected = ids.map do |id|
-            [id, Result.find(id).marks.joins(:criterion).where('criteria.ta_visible': true).pluck(:mark).sum]
-          end.to_h
+          expected = ids.index_with do |id|
+            Result.find(id).marks.joins(:criterion).where('criteria.ta_visible': true).pluck(:mark).sum
+          end
           expect(Result.public_send(method_name, ids, user_visibility: :ta_visible)).to eq expected
         end
       end
       context 'user_visibility is set to peer_visible' do
         it 'should only return subtotals that are peer_visible' do
           ids = Result.pluck(:id)
-          expected = ids.map do |id|
-            [id, Result.find(id).marks.joins(:criterion).where('criteria.peer_visible': true).pluck(:mark).sum]
-          end.to_h
+          expected = ids.index_with do |id|
+            Result.find(id).marks.joins(:criterion).where('criteria.peer_visible': true).pluck(:mark).sum
+          end
           expect(Result.public_send(method_name, ids, user_visibility: :peer_visible)).to eq expected
         end
       end
@@ -138,7 +138,7 @@ describe Result do
       it 'should return a hash containing the subtotal plus the extra mark for each result' do
         ids = Result.pluck(:id)
         create(:extra_mark_points, result: Result.find(ids.first), extra_mark: 2)
-        expected = ids.map { |id| [id, Result.find(id).marks.pluck(:mark).sum] }.to_h
+        expected = ids.index_with { |id| Result.find(id).marks.pluck(:mark).sum }
         expected[ids.first] += 2
         expect(Result.get_total_marks(ids)).to eq(expected)
       end
@@ -161,7 +161,7 @@ describe Result do
       it 'should return a hash containing the subtotal for each result' do
         ids = Result.pluck(:id)
         create(:extra_mark, result: Result.find(ids.first))
-        expect(Result.get_subtotals(ids)).to eq(ids.map { |id| [id, Result.find(id).marks.pluck(:mark).sum] }.to_h)
+        expect(Result.get_subtotals(ids)).to eq(ids.index_with { |id| Result.find(id).marks.pluck(:mark).sum })
       end
     end
   end

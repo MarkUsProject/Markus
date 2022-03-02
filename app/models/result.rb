@@ -66,7 +66,7 @@ class Result < ApplicationRecord
                 .where("criteria.#{user_visibility}": true)
                 .group(:result_id)
                 .sum(:mark)
-    result_ids.map { |r_id| [r_id, marks[r_id] || 0] }.to_h
+    result_ids.index_with { |r_id| marks[r_id] || 0 }
   end
 
   # The sum of the bonuses deductions and late penalties for multiple results.
