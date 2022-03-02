@@ -36,7 +36,7 @@ describe SubmissionsJob do
       end
     end
     context 'when a submission exists before the given collection date' do
-      let(:collection_dates) { groupings.map { |g| [g.id, Time.current - 1.hour] }.to_h }
+      let(:collection_dates) { groupings.map { |g| [g.id, 1.hour.ago] }.to_h }
       let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.current] }.to_h } }
       it 'collects the latest revision' do
         groupings.each do |g|
@@ -47,7 +47,7 @@ describe SubmissionsJob do
       end
     end
     context 'when a submission does not exist before the given collection date' do
-      let(:collection_dates) { groupings.map { |g| [g.id, Time.current + 1.hour] }.to_h }
+      let(:collection_dates) { groupings.map { |g| [g.id, 1.hour.from_now] }.to_h }
       let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.current] }.to_h } }
       it 'collects a nil revision' do
         groupings.each do |g|

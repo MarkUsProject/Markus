@@ -112,7 +112,7 @@ describe Assignment do
         course_id: course.id,
         short_identifier: 't',
         description: 't',
-        due_date: Time.current + 1.hour,
+        due_date: 1.hour.from_now,
         assignment_files_attributes: [
           { filename: 't.py' }
         ]
@@ -1788,7 +1788,7 @@ describe Assignment do
       end
 
       it 'should report the marking state as not collected if it is after the due date but not collected' do
-        assignment.update(due_date: Time.current - 1.day)
+        assignment.update(due_date: 1.day.ago)
         expect(data.map { |h| h[:marking_state] }).to contain_exactly('not_collected',
                                                                       'not_collected',
                                                                       'not_collected')
