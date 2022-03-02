@@ -551,48 +551,6 @@ class Grouping < ApplicationRecord
               .first
   end
 
-  # Helper for populate_submissions_table.
-  # Returns a formatted time string for the last commit time for this grouping.
-  def last_commit_date
-    if !current_submission_used&.revision_timestamp.nil?
-      I18n.l(current_submission_used.revision_timestamp)
-    else
-      '-'
-    end
-  end
-
-  # Helper for populate_submission_table
-  # Returns boolean value based on if the submission has files or not
-  def has_files_in_submission?
-    !has_submission? ||
-    !current_submission_used.submission_files.empty?
-  end
-
-  # Helper for populate_submissions_table.
-  # Returns the final grade for this grouping.
-  def final_grade(result)
-    if !result.nil?
-      result.total_mark
-    else
-      '-'
-    end
-  end
-
-  # Helper for populate_submissions_table.
-  # Returns the total bonus/deductions for this grouping including late penalty.
-  def total_extra_points(result)
-    if !result.nil?
-      total_extra = result.get_total_extra_points + result.get_total_extra_percentage_as_points
-      if result.get_total_extra_percentage_as_points == 0
-        total_extra
-      else
-        "#{total_extra} (#{SubmissionRule.model_name.human.capitalize} : #{result.get_total_extra_percentage}%)"
-      end
-    else
-      '-'
-    end
-  end
-
   def review_for(reviewee_group)
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end

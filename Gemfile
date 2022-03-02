@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.1.4.4'
+gem 'rails', '~> 6.1.4.6'
 gem 'sprockets'
 
 # Models and database interactions
@@ -18,11 +18,11 @@ gem 'pluck_to_hash'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
+gem 'jsbundling-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
 gem 'uglifier'
-gem 'webpacker'
 
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'

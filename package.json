@@ -1,22 +1,19 @@
 {
   "dependencies": {
-    "@babel/core": "^7.16.12",
-    "@babel/preset-react": "^7.16.7",
+    "@babel/runtime": "^7.17.2",
     "@rails/ujs": "^6.1.4",
-    "@rails/webpacker": "5.4",
     "@rjsf/core": "^3.2.1",
-    "chart.js": "^3.7.0",
-    "dompurify": "^2.3.5",
+    "chart.js": "^3.7.1",
+    "dompurify": "^2.3.6",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.8.0",
     "jcrop": "^0.0.1",
     "jquery": "^3.6.0",
     "marked": "^4.0.12",
-    "mime-types": "^2.1.34",
+    "mime": "^3.0.0",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "pdfjs-dist": "2.6.347",
-    "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.8.1",
     "react": "^16.14.0",
     "react-chartjs-2": "^4.0.1",
@@ -24,13 +21,27 @@
     "react-keyed-file-browser": "^1.14.0",
     "react-modal": "^3.14.4",
     "react-table": "^6.11.5",
-    "react-tabs": "^3.2.3",
-    "webpack": "^4.44.1"
+    "react-tabs": "^3.2.3"
   },
   "devDependencies": {
-    "webpack-dev-server": "3.11.2"
+    "@babel/core": "^7.17.5",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.6.0",
+    "mini-css-extract-plugin": "^2.5.3",
+    "sass": "^1.49.9",
+    "sass-loader": "^12.6.0",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge": "^5.8.0"
   },
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "scripts": {
+    "build": "webpack --progress --config webpack.production.js",
+    "build-dev": "webpack --progress --config webpack.development.js"
+  }
 }

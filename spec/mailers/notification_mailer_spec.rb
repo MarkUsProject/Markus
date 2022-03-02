@@ -12,9 +12,8 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the recipient greeting in the body of the email.' do
-      first_name = recipient.first_name
-      last_name = recipient.last_name
-      expect(mail.body.to_s).to include(h("Hello #{first_name} #{last_name},"))
+      display_name = recipient.display_name
+      expect(mail.body.to_s).to include(h("Hello #{display_name},"))
     end
 
     it 'renders the recipient email' do
@@ -96,9 +95,8 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the inviter name in the body of the email.' do
-      first_name = inviter.first_name
-      last_name = inviter.last_name
-      expect(mail.body.to_s).to include(h("#{first_name} #{last_name}"))
+      display_name = inviter.display_name
+      expect(mail.body.to_s).to include(h(display_name))
     end
 
     include_examples 'an email'
