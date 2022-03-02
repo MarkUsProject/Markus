@@ -740,7 +740,7 @@ class AssignmentsController < ApplicationController
       files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)
                        .select do |_, obj|
                          obj.is_a?(Repository::RevisionFile) &&
-                           !Repository.get_class.internal_file_names.include?(obj.name)
+                           Repository.get_class.internal_file_names.exclude?(obj.name)
                        end
       @num_submitted_files = files.length
       missing_assignment_files = grouping.missing_assignment_files(@revision)

@@ -527,7 +527,7 @@ class Assignment < Assessment
 
     selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
     criteria_columns = selected_criteria.map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
+      unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark unless crit.bonus?
@@ -1104,7 +1104,7 @@ class Assignment < Assessment
 
     visible_criteria = current_role.instructor? ? self.criteria : self.ta_criteria
     criteria = visible_criteria.reject do |crit|
-      !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
+      !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
     end
 
     result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
