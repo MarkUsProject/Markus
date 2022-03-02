@@ -348,7 +348,7 @@ class Grouping < ApplicationRecord
   # Grace Credit Query
   def available_grace_credits
     total = []
-    accepted_students.includes(:grace_period_deductions).each do |student|
+    accepted_students.includes(:grace_period_deductions).find_each do |student|
       total.push(student.remaining_grace_credits)
     end
     total.min
@@ -411,7 +411,7 @@ class Grouping < ApplicationRecord
 
   def delete_grouping
     Repository.get_class.update_permissions_after(only_on_request: true) do
-      student_memberships.includes(:role).each(&:destroy)
+      student_memberships.includes(:role).find_each(&:destroy)
     end
     self.destroy
   end

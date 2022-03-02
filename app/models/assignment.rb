@@ -469,7 +469,7 @@ class Assignment < Assessment
   # Get a list of group_name, repo-url pairs
   def get_repo_list(ssh: false)
     CSV.generate do |csv|
-      self.groupings.includes(:group).each do |grouping|
+      self.groupings.includes(:group).find_each do |grouping|
         group = grouping.group
         data = [group.group_name, group.repository_external_access_url]
         data << group.repository_ssh_access_url if ssh
@@ -994,7 +994,7 @@ class Assignment < Assessment
       groups[[group_id, group_name, count]] << ta unless ta.nil?
     end
     group_sections = {}
-    self.groupings.includes(:section).each do |g|
+    self.groupings.includes(:section).find_each do |g|
       group_sections[g.id] = g.section&.id
     end
     groups = groups.map do |k, v|
