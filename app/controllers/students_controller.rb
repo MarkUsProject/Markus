@@ -52,7 +52,7 @@ class StudentsController < ApplicationController
   def bulk_modify
     student_ids = params[:student_ids].map(&:to_i)&.intersection(current_course.students.ids)
     begin
-      if student_ids.nil? || student_ids.empty?
+      if student_ids.blank?
         raise I18n.t('students.no_students_selected')
       end
       case params[:bulk_action]

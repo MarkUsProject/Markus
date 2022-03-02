@@ -347,7 +347,7 @@ class SubmissionsController < ApplicationController
           url_filename = params[:url_text]
           raise I18n.t('submissions.urls_disabled') unless @assignment.url_submit
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
-          raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
+          raise I18n.t('submissions.no_url_name', url: new_url) if url_filename.blank?
           url_file = Tempfile.new
           url_file.write(new_url)
           url_file.rewind

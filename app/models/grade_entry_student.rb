@@ -129,7 +129,7 @@ class GradeEntryStudent < ApplicationRecord
                                      .first
 
       if overwrite
-        if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
+        if grade_for_grade_entry_item.blank?
 
           old_grade&.destroy
         else
