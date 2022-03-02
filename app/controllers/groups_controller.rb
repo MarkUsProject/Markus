@@ -270,7 +270,7 @@ class GroupsController < ApplicationController
         next if row.blank?
         raise CsvInvalidLineError if row[0].blank?
 
-        group_rows << row.reject(&:blank?)
+        group_rows << row.compact_blank
       end
       if result[:invalid_lines].empty?
         @current_job = CreateGroupsJob.perform_later assignment, group_rows
