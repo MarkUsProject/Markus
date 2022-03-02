@@ -720,7 +720,9 @@ describe CriteriaController do
         before(:each) do
           post_as instructor,
                   :edit,
-                  params: { course_id: course.id, id: rubric_criterion.id },
+                  params: {
+                    course_id: course.id, id: rubric_criterion.id
+                  },
                   format: :js
         end
 
@@ -737,19 +739,60 @@ describe CriteriaController do
         end
       end
 
-      it 'should be able to update_positions' do
-        post_as instructor,
-                :update_positions,
-                params: { course_id: course.id, criterion: [rubric_criterion2.id, rubric_criterion.id],
-                          assignment_id: assignment.id },
-                format: :js
-        is_expected.to render_template
-        is_expected.to respond_with(:success)
+      describe '#update_positions' do
+        context 'when all criteria id can be found under assignment' do
+          it 'should be able to update_positions' do
+            post_as instructor,
+                    :update_positions,
+                    params: { course_id: course.id, criterion: [rubric_criterion2.id, rubric_criterion.id],
+                              assignment_id: assignment.id },
+                    format: :js
+            is_expected.to render_template
+            is_expected.to respond_with(:success)
 
-        c1 = RubricCriterion.find(rubric_criterion.id)
-        expect(c1.position).to eql(2)
-        c2 = RubricCriterion.find(rubric_criterion2.id)
-        expect(c2.position).to eql(1)
+            c1 = RubricCriterion.find(rubric_criterion.id)
+            expect(c1.position).to eql(2)
+            c2 = RubricCriterion.find(rubric_criterion2.id)
+            expect(c2.position).to eql(1)
+          end
+        end
+
+        context 'when there exists criteria not under current assignment' do
+          let(:assignment2) { create :assignment }
+          let(:rubric_criterion) do
+            create(:rubric_criterion, assignment: assignment, position: 1)
+          end
+          let(:rubric_criterion2) do
+            create(:rubric_criterion, assignment: assignment, position: 2)
+          end
+          let(:rubric_criterion3) do
+            create(:rubric_criterion, assignment: assignment2, position: 3)
+          end
+          before do
+            post_as instructor,
+                    :update_positions,
+                    params: { course_id: course.id,
+                              criterion: [rubric_criterion3.id,
+                                          rubric_criterion2.id,
+                                          rubric_criterion.id],
+                              assignment_id: assignment.id },
+                    format: :js
+          end
+
+          it 'does not update position' do
+            c1 = RubricCriterion.find(rubric_criterion.id)
+            expect(c1.position).to eql(1)
+            c2 = RubricCriterion.find(rubric_criterion2.id)
+            expect(c2.position).to eql(2)
+            c3 = RubricCriterion.find(rubric_criterion3.id)
+            expect(c3.position).to eql(3)
+          end
+
+          it 'displays an error message' do
+            expect(flash[:error].map { |f| extract_text f })
+              .to eq([I18n.t('criteria.errors.criteria_not_found')].map { |f| extract_text f })
+          end
+        end
       end
     end
 
@@ -1032,26 +1075,17 @@ describe CriteriaController do
     end
   end
 
-  context '#update_position' do
+  describe '#update_positions' do
     context 'when there exists criteria not under current assignment' do
       let(:assignment2) { create :assignment }
       let(:rubric_criterion) do
-        create(:rubric_criterion,
-               assignment: assignment,
-               position: 1,
-               name: 'Rubric Criterion')
+        create(:rubric_criterion, assignment: assignment, position: 1)
       end
       let(:rubric_criterion2) do
-        create(:rubric_criterion,
-               assignment: assignment,
-               position: 2,
-               name: 'Rubric Criterion 2')
+        create(:rubric_criterion, assignment: assignment, position: 2)
       end
       let(:rubric_criterion3) do
-        create(:rubric_criterion,
-               assignment: assignment2,
-               position: 3,
-               name: 'Rubric Criterion 3')
+        create(:rubric_criterion, assignment: assignment2, position: 3)
       end
       before do
         post_as instructor,
@@ -1075,7 +1109,7 @@ describe CriteriaController do
 
       it 'displays an error message' do
         expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.errors.different_assignment')].map { |f| extract_text f })
+          .to eq([I18n.t('criteria.errors.criteria_not_found')].map { |f| extract_text f })
       end
     end
   end
