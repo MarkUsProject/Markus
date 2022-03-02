@@ -2,6 +2,7 @@ require 'fileutils'
 
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
+  before_save :undo_mark_for_destruction
   after_update :rename_exam_template_directory
   belongs_to :assignment, foreign_key: :assessment_id
   has_one :course, through: :assignment
@@ -17,8 +18,6 @@ class ExamTemplate < ApplicationRecord
                                 allow_destroy: true,
                                 update_only: true,
                                 reject_if: :exam_been_uploaded?
-
-  before_save :undo_mark_for_destruction
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes = {})

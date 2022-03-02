@@ -4,12 +4,13 @@ class AnnotationText < ApplicationRecord
 
   has_one :course, through: :creator
 
+  before_update :check_if_released
   after_update :update_mark_deductions,
                unless: ->(t) {
                          t.annotation_category.nil? ||
                          t.annotation_category.changes_to_save.key?('flexible_criterion_id')
                        }
-  before_update :check_if_released
+
   before_destroy :check_if_released
 
   # An AnnotationText has many Annotations that are destroyed when an

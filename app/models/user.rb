@@ -6,6 +6,7 @@ require 'base64' # required for {set,reset}_api_token
 # => :user_name, :last_name, :first_name
 # If there are added columns, add the default values to default_values
 class User < ApplicationRecord
+  after_initialize :set_display_name, :set_time_zone
   before_validation :strip_name
   before_validation :nillify_empty_email_and_id_number
 
@@ -24,7 +25,6 @@ class User < ApplicationRecord
             format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                       message: 'user_name must be alphanumeric, hyphen, or underscore' },
             unless: ->(u) { u.autotest_user? || u.admin_user? }
-  after_initialize :set_display_name, :set_time_zone
 
   validates_inclusion_of :locale, in: I18n.available_locales.map(&:to_s)
 

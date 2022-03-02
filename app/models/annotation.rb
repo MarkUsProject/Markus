@@ -22,9 +22,9 @@ class Annotation < ApplicationRecord
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation|HtmlAnnotation\z/
 
   before_create :check_if_released
-  before_destroy :check_if_released
-
   after_create :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
+
+  before_destroy :check_if_released
   after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
 
   def modify_mark_with_deduction

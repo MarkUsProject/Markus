@@ -3,8 +3,8 @@ require 'fileutils' # FileUtils used here
 # Handle for getting student submissions.  Actual instance depend
 # on whether an assignment is a group or individual assignment.
 class Submission < ApplicationRecord
-  after_create :create_result
   before_validation :bump_old_submissions, on: :create
+  after_create :create_result
 
   validates_inclusion_of :submission_version_used, in: [true, false]
   validates_numericality_of :submission_version, only_integer: true

@@ -16,8 +16,8 @@ class Level < ApplicationRecord
 
   validate :only_update_if_results_unreleased
 
-  before_destroy :destroy_associated_marks
   before_update :update_associated_marks
+  before_destroy :destroy_associated_marks
 
   def only_update_if_results_unreleased
     return if self.criterion.nil? # When the level is first being created

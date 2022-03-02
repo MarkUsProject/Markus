@@ -13,6 +13,7 @@ class Result < ApplicationRecord
 
   has_one :course, through: :submission
 
+  before_save :check_for_nil_marks
   after_create :create_marks
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, in: MARKING_STATES.values
@@ -22,7 +23,6 @@ class Result < ApplicationRecord
   validates_inclusion_of :released_to_students, in: [true, false]
 
   before_update :check_for_released
-  before_save :check_for_nil_marks
 
   # Update the total mark attribute
   def update_total_mark

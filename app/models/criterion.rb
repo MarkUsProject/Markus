@@ -2,6 +2,7 @@
 # criterion.
 class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
+  before_validation :update_assigned_groups_count
   after_update :update_results_with_change
   after_destroy :update_results
 
@@ -12,7 +13,6 @@ class Criterion < ApplicationRecord
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
-  before_validation :update_assigned_groups_count
 
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations

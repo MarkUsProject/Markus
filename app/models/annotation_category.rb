@@ -1,4 +1,11 @@
 class AnnotationCategory < ApplicationRecord
+  before_update :check_if_marks_released, if: ->(c) {
+    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
+  }
+  around_update :update_annotation_text_deductions, if: ->(c) {
+    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
+  }
+
   # The before_destroy callback must be before the annotation_text association declaration,
   # as it is currently the only way to ensure the annotation_texts do not get destroyed before the callback.
   before_destroy :delete_allowed?
@@ -17,14 +24,6 @@ class AnnotationCategory < ApplicationRecord
   # because the flexible_criterion_id must be associated to the same assignment.
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
-
-  before_update :check_if_marks_released, if: ->(c) {
-    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
-  }
-
-  around_update :update_annotation_text_deductions, if: ->(c) {
-    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
-  }
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts

@@ -74,13 +74,13 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  after_create :create_autotest_dirs
-
   before_save :reset_collection_time
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
     @prev_assignment_file_ids = assignment_files.ids
   end
+
+  after_create :create_autotest_dirs
   after_save_commit :update_repo_permissions
   after_save_commit :update_repo_required_files
 
