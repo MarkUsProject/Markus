@@ -2,7 +2,7 @@
 module Api
   # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
-  class MainApiController < ActionController::Base
+  class MainApiController < ActionController::Base # rubocop:disable Rails/ApplicationController
     include SessionHandler
     include ActionPolicy::Controller
 
