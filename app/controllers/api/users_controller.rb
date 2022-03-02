@@ -28,7 +28,7 @@ module Api
       end
 
       # Check if that user_name is taken
-      user = User.find_by_user_name(params[:user_name])
+      user = User.find_by(user_name: params[:user_name])
       unless user.nil?
         render 'shared/http_status', locals: { code: '409', message:
           'User already exists' }, status: 409
@@ -61,7 +61,7 @@ module Api
     # Requires: id
     # Optional: filter, fields
     def show
-      user = visible_users.find_by_id(params[:id])
+      user = visible_users.find_by(id: params[:id])
       if user.nil?
         # No user with that id
         render 'shared/http_status', locals: { code: '404', message:
@@ -77,7 +77,7 @@ module Api
     # Requires: id
     # Optional: first_name, last_name, user_name
     def update
-      user = visible_users.find_by_id(params[:id])
+      user = visible_users.find_by(id: params[:id])
       if user.nil?
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: 404
         return
@@ -104,7 +104,7 @@ module Api
         return
       end
 
-      user = User.find_by_user_name(params[:user_name])
+      user = User.find_by(user_name: params[:user_name])
       if user.nil?
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: 404
         return

@@ -699,7 +699,7 @@ describe Assignment do
             expect @members[index].role.has_accepted_grouping_for?(@target.id)
           end
           @group.groupings.reload
-          expect(@group.groupings.find_by_assessment_id(@target.id)).not_to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).not_to be_nil
         end
 
         it 'ignore a blocked student during cloning' do
@@ -715,7 +715,7 @@ describe Assignment do
           # and let's make sure that the other memberships were cloned
           expect(@members[1].role.has_accepted_grouping_for?(@target.id)).to be_truthy
           expect(@members[2].role.has_accepted_grouping_for?(@target.id)).to be_truthy
-          expect(@group.groupings.find_by_assessment_id(@target.id)).not_to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).not_to be_nil
         end
 
         it 'ignore two blocked students during cloning' do
@@ -732,7 +732,7 @@ describe Assignment do
           # and let's make sure that the other membership was cloned
           expect @members[2].role.has_accepted_grouping_for?(@target.id)
           # and that the proper grouping was created
-          expect(@group.groupings.find_by_assessment_id(@target.id)).not_to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).not_to be_nil
         end
 
         it 'ignore grouping if all students hidden' do
@@ -751,7 +751,7 @@ describe Assignment do
             expect(@members[index].role.has_accepted_grouping_for?(@target.id)).to be_falsey
           end
           # and let's make sure that the grouping wasn't cloned
-          expect(@group.groupings.find_by_assessment_id(@target.id)).to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).to be_nil
         end
       end
 

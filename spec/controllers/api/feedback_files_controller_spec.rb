@@ -133,7 +133,7 @@ describe Api::FeedbackFilesController do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                   filename: filename, mime_type: 'text/plain', file_content: 'abcd',
                                   course_id: course.id }
-          expect(FeedbackFile.find_by_filename(filename)).not_to be_nil
+          expect(FeedbackFile.find_by(filename: filename)).not_to be_nil
         end
       end
       context 'when trying to create a feedback_file with a name that already exists' do

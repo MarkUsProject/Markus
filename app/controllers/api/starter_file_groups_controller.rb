@@ -2,7 +2,7 @@ module Api
   # Api controller for starter file groups
   class StarterFileGroupsController < MainApiController
     def create
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
       other_params = params.permit(:entry_rename, :use_rename, :name).to_h.symbolize_keys
       starter_file_group = StarterFileGroup.new(assessment_id: assignment.id, **other_params)
       if starter_file_group.save
@@ -41,7 +41,7 @@ module Api
     end
 
     def index
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
       respond_to do |format|
         format.xml { render xml: assignment.starter_file_groups.to_xml(skip_types: 'true') }
         format.json { render json: assignment.starter_file_groups.to_json }

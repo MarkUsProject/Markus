@@ -23,7 +23,7 @@ class InstructorsController < ApplicationController
   end
 
   def create
-    end_user = EndUser.find_by_user_name(end_user_params[:user_name])
+    end_user = EndUser.find_by(user_name: end_user_params[:user_name])
     @role = current_course.instructors.create(end_user: end_user)
     respond_with @role, location: course_instructors_path(current_course)
   end
@@ -34,7 +34,7 @@ class InstructorsController < ApplicationController
 
   def update
     @role = record
-    @role.update(end_user: EndUser.find_by_user_name(end_user_params[:user_name]))
+    @role.update(end_user: EndUser.find_by(user_name: end_user_params[:user_name]))
     respond_with @role, location: course_instructors_path(current_course)
   end
 

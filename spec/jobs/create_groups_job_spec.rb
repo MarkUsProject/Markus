@@ -29,13 +29,13 @@ describe CreateGroupsJob do
     if groups_diff.positive?
       it 'should create a new repo' do
         CreateGroupsJob.perform_now(assignment, @data)
-        Group.find_by_group_name(group_name).access_repo do |repo|
+        Group.find_by(group_name: group_name).access_repo do |repo|
           expect(repo).to be_an_instance_of(MemoryRepository)
         end
       end
       it 'should create new groups associated to the same course as the assignment' do
         CreateGroupsJob.perform_now(assignment, @data)
-        expect(Group.find_by_group_name(group_name).course_id).to eq assignment.course_id
+        expect(Group.find_by(group_name: group_name).course_id).to eq assignment.course_id
       end
     end
   end

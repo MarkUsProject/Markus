@@ -32,7 +32,7 @@ module Api
     # Requires: id
     # Optional: filter, fields
     def show
-      role = Role.find_by_id(params[:id])
+      role = Role.find_by(id: params[:id])
       if role.nil?
         # No user with that id
         render 'shared/http_status', locals: { code: '404', message: 'No user exists with that id' }, status: 404
@@ -52,7 +52,7 @@ module Api
     # Requires: id
     # Optional: first_name, last_name, user_name, section_name, grace_credits
     def update
-      role = Role.find_by_id(params[:id])
+      role = Role.find_by(id: params[:id])
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: 404
       else
@@ -131,7 +131,7 @@ module Api
       end
 
       # Check if that user_name is taken
-      end_user = EndUser.find_by_user_name(params[:user_name])
+      end_user = EndUser.find_by(user_name: params[:user_name])
       Role.find_by(end_user: end_user, course: @current_course)
     end
 

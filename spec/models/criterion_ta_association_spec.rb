@@ -27,7 +27,7 @@ describe CriterionTaAssociation do
     it 'should create new criterion ta associations' do
       file = file_fixture('criteria_ta_association/simple.csv')
       CriterionTaAssociation.from_csv(cta.assignment, file, true)
-      expect(CriterionTaAssociation.find_by_ta_id_and_criterion_id(grader.id, criterion.id)).not_to be_nil
+      expect(CriterionTaAssociation.find_by(ta_id: grader.id, criterion_id: criterion.id)).not_to be_nil
     end
     it 'should not create a ta that does not exist' do
       file = file_fixture('criteria_ta_association/bad_ta.csv')

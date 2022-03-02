@@ -166,7 +166,7 @@ describe ResultsController do
           repo.commit(txn)
           @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
         end
-        file = SubmissionFile.find_by_submission_id(@submission.id)
+        file = SubmissionFile.find_by(submission_id: @submission.id)
         @annotation = TextAnnotation.create line_start: 1,
                                             line_end: 2,
                                             column_start: 1,

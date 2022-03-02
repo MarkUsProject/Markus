@@ -11,8 +11,8 @@ module Api
     #               latest revision will be sent instead
     #  - file_name: Name of the file, if absent all files will be downloaded
     def index
-      assignment = Assignment.find_by_id(params[:assignment_id])
-      group = Group.find_by_id(params[:group_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
+      group = Group.find_by(id: params[:group_id])
       grouping = group&.grouping_for_assignment(assignment.id)
       if group.nil? || grouping.nil?
         # No group exists with that id

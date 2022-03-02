@@ -212,7 +212,7 @@ describe Student do
 
           expect(@student.join(grouping))
 
-          membership = StudentMembership.find_by_grouping_id_and_role_id(grouping.id, @student.id)
+          membership = StudentMembership.find_by(grouping_id: grouping.id, role_id: @student.id)
           expect(StudentMembership::STATUSES[:accepted]).to eq(membership.membership_status)
 
           other_membership = Membership.find(membership2.id)

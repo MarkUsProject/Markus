@@ -56,7 +56,7 @@ namespace :markus do
   task(usability_test_setup: [:environment, :'db:seed']) do
     puts 'Creating a setup for usability testing'
     # modify settings for A1 (solo assignment)
-    a1 = Assignment.find_by_short_identifier('A1')
+    a1 = Assignment.find_by(short_identifier: 'A1')
     req_file1 = AssignmentFile.new
     req_file1.filename = 'conditionals.py'
     req_file1.assessment_id = a1.id
@@ -72,7 +72,7 @@ namespace :markus do
     req_file2.save!
 
     # modify settings for A2
-    a2 = Assignment.find_by_short_identifier('A2')
+    a2 = Assignment.find_by(short_identifier: 'A2')
     a2.due_date = 2.week.from_now # due date is 2 weeks from now
     a2.message += "\nNote: You are working in groups for this assignment. Please form groups on your own."
     # students can form groups

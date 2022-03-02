@@ -212,9 +212,9 @@ describe CoursesController do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good_yml }
 
       expect(response.status).to eq(302)
-      test1 = Assignment.find_by_short_identifier(@test_asn1)
+      test1 = Assignment.find_by(short_identifier: @test_asn1)
       expect(test1).to_not be_nil
-      test2 = Assignment.find_by_short_identifier(@test_asn2)
+      test2 = Assignment.find_by(short_identifier: @test_asn2)
       expect(test2).to_not be_nil
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(course_assignments_path(course))
@@ -225,7 +225,7 @@ describe CoursesController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      test = Assignment.find_by_short_identifier(@test_asn2)
+      test = Assignment.find_by(short_identifier: @test_asn2)
       expect(test).to be_nil
       expect(response).to redirect_to(course_assignments_path(course))
     end

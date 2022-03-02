@@ -119,8 +119,8 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def update_annotation_text_deductions
-    prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
-    new_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].second)
+    prev_criterion = FlexibleCriterion.find_by(id: changes_to_save['flexible_criterion_id'].first)
+    new_criterion = FlexibleCriterion.find_by(id: changes_to_save['flexible_criterion_id'].second)
     if new_criterion.nil?
       self.annotation_texts.each { |text| text.update!(deduction: nil) }
     elsif prev_criterion.nil?

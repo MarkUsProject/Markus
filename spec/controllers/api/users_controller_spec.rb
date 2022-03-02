@@ -157,7 +157,7 @@ describe Api::UsersController do
             expect(response.status).to eq(201)
           end
           it 'should create a new user' do
-            expect(User.find_by_user_name(new_user.user_name)).not_to be_nil
+            expect(User.find_by(user_name: new_user.user_name)).not_to be_nil
           end
         end
         context 'when creating a new admin user' do
@@ -166,7 +166,7 @@ describe Api::UsersController do
             expect(response.status).to eq(201)
           end
           it 'should create a new user' do
-            expect(User.find_by_user_name(new_user.user_name)).not_to be_nil
+            expect(User.find_by(user_name: new_user.user_name)).not_to be_nil
           end
         end
         context 'when trying to create a user who already exists' do

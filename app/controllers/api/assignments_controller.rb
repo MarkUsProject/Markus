@@ -59,7 +59,7 @@ module Api
       end
 
       # check if there is an existing assignment
-      assignment = Assignment.find_by_short_identifier(params[:short_identifier])
+      assignment = Assignment.find_by(short_identifier: params[:short_identifier])
       unless assignment.nil?
         render 'shared/http_status', locals: { code: '409', message:
           'Assignment already exists' }, status: 409
@@ -118,8 +118,8 @@ module Api
 
       unless params[:short_identifier].blank?
         # Make sure another assignment isn't using the new short_identifier
-        other_assignment = Assignment.find_by_short_identifier(
-          params[:short_identifier]
+        other_assignment = Assignment.find_by(
+          short_identifier: params[:short_identifier]
         )
         if !other_assignment.nil? && other_assignment != assignment
           render 'shared/http_status', locals: { code: '409', message:

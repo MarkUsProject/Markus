@@ -7,9 +7,9 @@ namespace :db do
     Assignment.joins(:assignment_properties).where(assignment_properties: { allow_remarks: true }).each do |assignment|
       # Create remark request for first two groups in each assignment
       Grouping.where(assessment_id: assignment.id).first(2).each do |grouping|
-        submission = Submission.find_by_grouping_id(grouping.id)
+        submission = Submission.find_by(grouping_id: grouping.id)
 
-        original_result = Result.find_by_submission_id(submission.id)
+        original_result = Result.find_by(submission_id: submission.id)
         original_result.released_to_students = false
         original_result.save
 

@@ -682,7 +682,7 @@ class GroupsController < ApplicationController
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         groupings.each do |grouping|
-          membership = grouping.student_memberships.find_by_role_id(member.id)
+          membership = grouping.student_memberships.find_by(role_id: member.id)
           remove_member(membership, grouping)
         end
       end

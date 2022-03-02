@@ -284,7 +284,7 @@ module Api
     private
 
     def assignment
-      @assignment ||= Assignment.find_by_id(params[:assignment_id])
+      @assignment ||= Assignment.find_by(id: params[:assignment_id])
     end
 
     def grouping

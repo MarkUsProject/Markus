@@ -65,7 +65,7 @@ module Api
       )
 
       # Render error if there's an existing feedback file with that filename
-      feedback_file = submission.feedback_files.find_by_filename(params[:filename])
+      feedback_file = submission.feedback_files.find_by(filename: params[:filename])
       unless feedback_file.nil?
         render 'shared/http_status', locals: { code: '409', message:
           'A Feedback File with that filename already exists' }, status: 409
@@ -122,7 +122,7 @@ module Api
 
       # Render error if the filename is used by another
       # Feedback File for that submission
-      existing_file = feedback_file.submission.feedback_files.find_by_filename(params[:filename])
+      existing_file = feedback_file.submission.feedback_files.find_by(filename: params[:filename])
       if !existing_file.nil? && existing_file.id != params[:id].to_i
         render 'shared/http_status', locals: { code: '409', message:
           'A Feedback File with that filename already exists' }, status: 409
