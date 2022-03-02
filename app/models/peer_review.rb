@@ -107,8 +107,8 @@ class PeerReview < ApplicationRecord
   end
 
   def self.from_csv(assignment, data)
-    reviewer_map = assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }.to_h
-    reviewee_map = assignment.parent_assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }.to_h
+    reviewer_map = assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
+    reviewee_map = assignment.parent_assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
     MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.size < 2
       reviewee = reviewee_map[row.first]
