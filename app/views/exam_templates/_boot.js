@@ -6,29 +6,23 @@ $(document).ready(function () {
   });
   const create_info = $("#create-template-info-modal-content");
   const create_division = $("#create-template-division-modal-content");
-  const create_parsing = $("#create-template-parsing-modal-content");
+  $("#create_new_template").on("closeModal", () => {
+    create_info.show();
+    create_division.hide();
+    create_division.find("tbody").empty();
+  });
   $(".create-template-view-change").each((_, button) => {
     switch (button.id) {
       case "create-template-info-next":
-      case "create-template-parsing-previous":
         button.onclick = () => {
           create_info.hide();
           create_division.show();
-          create_parsing.hide();
-        };
-        break;
-      case "create-template-division-next":
-        button.onclick = () => {
-          create_info.hide();
-          create_division.hide();
-          create_parsing.show();
         };
         break;
       default:
         button.onclick = () => {
           create_info.show();
           create_division.hide();
-          create_parsing.hide();
         };
     }
   });

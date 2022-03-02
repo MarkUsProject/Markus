@@ -31,6 +31,7 @@ class ExamTemplatesController < ApplicationController
                                                     filename: filename,
                                                     name: name)
       if exam_template&.valid?
+        exam_template.update(exam_template_params)
         flash_message(:success, t('exam_templates.create.success'))
       else
         flash_message(:error, t('exam_templates.create.failure'))

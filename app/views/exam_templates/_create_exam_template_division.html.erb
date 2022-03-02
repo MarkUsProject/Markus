@@ -3,7 +3,10 @@
              locals: { f: f, exam_template: nil }%>
   <section class='dialog-actions'>
     <input id="create-template-division-previous" class='create-template-view-change' type='button' value='Previous'/>
-    <input id="create-template-division-next" class='create-template-view-change' type='button' value='Next'/>
+    <%= f.submit t(:save),
+                 name: 'submit',
+                 data: { disable_with: t('working') },
+                 class: 'button' %>
     <input type='reset' value='<%= t(:cancel) %>'/>
   </section>
 </div>
