@@ -9,15 +9,15 @@ window.I18n = I18n;
 
 import {RawStudentTable, StudentsActionBox} from "../student_table";
 import React from "react";
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 //unit test
-describe("For the student_table component", () => {
+describe("For the StudentsActionBox component's rendering", () => {
   beforeEach(() => {
     render(<StudentsActionBox />);
   });
-  describe("The parent component", () => {
+  describe("the parent component", () => {
     it("renders", () => {
       const action_box = screen.getByTestId("student_action_box");
       expect(action_box).toBeInTheDocument();
@@ -42,6 +42,28 @@ describe("For the student_table component", () => {
       ].forEach(text => {
         expect(screen.getByRole("option", {name: text})).toBeInTheDocument();
       });
+    });
+  });
+});
+
+describe("For the StudentsActionBox component's states", () => {
+  beforeEach(() => {
+    render(<StudentsActionBox />);
+  });
+
+  describe("when the state action is give_grace_credits", () => {
+    beforeEach(() => {
+      fireEvent.change(screen.getByTestId("student_action_box_select"), {
+        target: {value: "give_grace_credits"},
+      });
+    });
+
+    it("has the give_grace_credits selected", () => {
+      let options = screen.getAllByTestId("student_action_box_select");
+      expect(options[0]).toBeTruthy();
+      expect(options[1]).toBeFalsy();
+      expect(options[2]).toBeFalsy();
+      expect(options[3]).toBeFalsy();
     });
   });
 });

@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
@@ -57,7 +58,6 @@ class RawStudentTable extends React.Component {
 
   render() {
     const {data, loading} = this.state;
-
     return (
       <div>
         <StudentsActionBox
@@ -246,7 +246,11 @@ class StudentsActionBox extends React.Component {
 
     return (
       <form onSubmit={this.props.onSubmit} data-testid={"student_action_box"}>
-        <select value={this.state.action} onChange={this.actionChanged}>
+        <select
+          value={this.state.action}
+          onChange={this.actionChanged}
+          data-testid={"student_action_box_select"}
+        >
           <option value="give_grace_credits">
             {I18n.t("students.instructor_actions.give_grace_credits")}
           </option>
@@ -263,6 +267,12 @@ class StudentsActionBox extends React.Component {
     );
   };
 }
+StudentsActionBox.propTypes = {
+  onSubmit: PropTypes.func,
+  disabled: PropTypes.bool,
+  authenticity_token: PropTypes.string,
+  sections: PropTypes.object,
+};
 
 let StudentTable = withSelection(RawStudentTable);
 function makeStudentTable(elem, props) {
