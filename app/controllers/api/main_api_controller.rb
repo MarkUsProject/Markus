@@ -21,7 +21,7 @@ module Api
     def page_not_found(message = HttpStatusHelper::ERROR_CODE['message']['404'])
       render 'shared/http_status',
              locals: { code: '404', message: message },
-             status: 404,
+             status: :not_found,
              formats: request.format.symbol
     end
 
@@ -69,7 +69,7 @@ module Api
       filter_params = params[:filter] ? params[:filter].permit(self.class::DEFAULT_FIELDS) : {}
       if !params[:filter].nil? && !params[:filter].empty? && filter_params.empty?
         render 'shared/http_status', locals: { code: '422', message:
-          'Invalid or malformed parameter values' }, status: 422
+          'Invalid or malformed parameter values' }, status: :unprocessable_entity
         false
       else
         collection.order('id').where(filter_params)
@@ -87,7 +87,7 @@ module Api
     def user_not_authorized
       render 'shared/http_status',
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-             status: 403,
+             status: :forbidden,
              formats: request.format.symbol
     end
 

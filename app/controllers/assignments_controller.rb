@@ -42,7 +42,7 @@ class AssignmentsController < ApplicationController
                code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
-             status: 404,
+             status: :not_found,
              layout: false
       return
     end
@@ -89,7 +89,7 @@ class AssignmentsController < ApplicationController
                code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
-             status: 404,
+             status: :not_found,
              layout: false
       return
     end
@@ -392,7 +392,7 @@ class AssignmentsController < ApplicationController
     if @assignment.nil?
       render 'shared/http_status',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404
+             status: :not_found
     else
       render layout: 'assignment_content'
     end
@@ -491,11 +491,11 @@ class AssignmentsController < ApplicationController
   def set_boolean_graders_options
     assignment = record
     attributes = graders_options_params
-    return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
+    return head :bad_request if attributes.empty? || attributes[:assignment_properties_attributes].empty?
 
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
-      head 422
+      head :unprocessable_entity
       return
     end
     head :ok
@@ -514,7 +514,7 @@ class AssignmentsController < ApplicationController
         flash_message(:error, e.message)
       end
     end
-    return head 400 if grouping.nil?
+    return head :bad_request if grouping.nil?
     authorize! grouping
     unless grouping.update(start_time: Time.current)
       flash_message(:error, grouping.errors.full_messages.join(' '))

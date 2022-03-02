@@ -13,7 +13,7 @@ class JobMessagesController < ApplicationController
     elsif status.read.empty?
       flash_message(:error, t('poll_job.failed'))
       session[:job_id] = nil
-      render json: { code: '404', message: t('poll_job.not_enqueued') }, status: 404
+      render json: { code: '404', message: t('poll_job.not_enqueued') }, status: :not_found
       return
     end
     flash_job_messages(status)

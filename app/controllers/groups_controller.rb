@@ -535,7 +535,7 @@ class GroupsController < ApplicationController
       head :ok
     rescue StandardError => e
       flash_now(:error, e.message)
-      head 400
+      head :bad_request
     end
   end
 

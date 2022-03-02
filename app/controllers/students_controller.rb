@@ -69,7 +69,7 @@ class StudentsController < ApplicationController
       head :ok
     rescue RuntimeError => e
       flash_now(:error, e.message)
-      head 500
+      head :internal_server_error
     end
   end
 

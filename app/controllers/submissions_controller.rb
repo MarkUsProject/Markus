@@ -92,7 +92,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
-      head 400
+      head :bad_request
       return
     end
 
@@ -157,7 +157,7 @@ class SubmissionsController < ApplicationController
   def collect_submissions
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -202,7 +202,7 @@ class SubmissionsController < ApplicationController
   def run_tests
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
@@ -211,7 +211,7 @@ class SubmissionsController < ApplicationController
     group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
-        head 400
+        head :bad_request
         return
       end
       g.group_id
@@ -648,7 +648,7 @@ class SubmissionsController < ApplicationController
   def update_submissions
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.find(params[:assignment_id])
@@ -709,7 +709,7 @@ class SubmissionsController < ApplicationController
   def set_result_marking_state
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))

@@ -23,7 +23,7 @@ module Api
       if has_missing_params?([:user_name, :type, :first_name, :last_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -31,7 +31,7 @@ module Api
       user = User.find_by(user_name: params[:user_name])
       unless user.nil?
         render 'shared/http_status', locals: { code: '409', message:
-          'User already exists' }, status: 409
+          'User already exists' }, status: :conflict
         return
       end
 
@@ -46,14 +46,14 @@ module Api
         when 'adminuser'
           AdminUser.create!(params.permit(*DEFAULT_FIELDS))
         else
-          render 'shared/http_status', locals: { code: '422', message: 'Unknown user type' }, status: 422
+          render 'shared/http_status', locals: { code: '422', message: 'Unknown user type' }, status: :unprocessable_entity
           return
         end
       rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-        render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+        render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
       else
         render 'shared/http_status',
-               locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
+               locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       end
     end
 
@@ -65,7 +65,7 @@ module Api
       if user.nil?
         # No user with that id
         render 'shared/http_status', locals: { code: '404', message:
-          'No user exists with that id' }, status: 404
+          'No user exists with that id' }, status: :not_found
       else
         respond_to do |format|
           format.xml { render xml: user.to_xml(only: DEFAULT_FIELDS, root: :user, skip_types: true) }
@@ -79,18 +79,18 @@ module Api
     def update
       user = visible_users.find_by(id: params[:id])
       if user.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
         return
       end
       user.update!(user_params)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     else
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     # Update a user's attributes based on their user_name as opposed
@@ -100,24 +100,24 @@ module Api
       if has_missing_params?([:user_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status',
-               locals: { code: '422', message: HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+               locals: { code: '422', message: HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
       user = User.find_by(user_name: params[:user_name])
       if user.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
         return
       end
       user.update!(user_params)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     else
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     private

@@ -109,7 +109,7 @@ class GradersController < ApplicationController
         if found_empty_submission
           assign_all_graders(filtered_grouping_ids, grader_ids)
           flash_now(:info, I18n.t('graders.group_submission_no_files'))
-          head 200
+          head :ok
         else
           assign_all_graders(grouping_ids, grader_ids)
         end
