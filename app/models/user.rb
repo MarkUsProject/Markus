@@ -14,19 +14,19 @@ class User < ApplicationRecord
 
   # Group relationships
   has_many :key_pairs, dependent: :destroy
-  validates_format_of :type, with: /\AEndUser|AutotestUser|AdminUser\z/
+  validates :type, format: { with: /\AEndUser|AutotestUser|AdminUser\z/ }
 
-  validates_presence_of :user_name, :last_name, :first_name, :time_zone, :display_name
-  validates_uniqueness_of :user_name
-  validates_uniqueness_of :email, allow_nil: true
-  validates_uniqueness_of :id_number, allow_nil: true
-  validates_inclusion_of :time_zone, in: ActiveSupport::TimeZone.all.map(&:name)
+  validates :user_name, :last_name, :first_name, :time_zone, :display_name, presence: true
+  validates :user_name, uniqueness: true
+  validates :email, uniqueness: { allow_nil: true }
+  validates :id_number, uniqueness: { allow_nil: true }
+  validates :time_zone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
   validates :user_name,
             format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                       message: 'user_name must be alphanumeric, hyphen, or underscore' },
             unless: ->(u) { u.autotest_user? || u.admin_user? }
 
-  validates_inclusion_of :locale, in: I18n.available_locales.map(&:to_s)
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details

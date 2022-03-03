@@ -9,16 +9,16 @@ class GradeEntryItem < ApplicationRecord
 
   has_many :grade_entry_students, through: :grades
 
-  validates_presence_of :name
-  validates_uniqueness_of :name,
-                          scope: :assessment_id
+  validates :name, presence: true
+  validates :name,
+                          uniqueness: { scope: :assessment_id }
 
-  validates_presence_of :out_of
-  validates_numericality_of :out_of,
-                            greater_than_or_equal_to: 0
+  validates :out_of, presence: true
+  validates :out_of,
+                            numericality: { greater_than_or_equal_to: 0 }
 
-  validates_presence_of :position
-  validates_numericality_of :position, greater_than_or_equal_to: 0
+  validates :position, presence: true
+  validates :position, numericality: { greater_than_or_equal_to: 0 }
 
   BLANK_MARK = ''.freeze
 

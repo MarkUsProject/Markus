@@ -14,11 +14,11 @@ class StarterFileGroup < ApplicationRecord
   before_destroy :warn_affected_groupings, prepend: true
   after_save :update_timestamp
 
-  validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assessment_id
+  validates :name, presence: true
+  validates :name, uniqueness: { scope: :assessment_id }
 
-  validates_exclusion_of :entry_rename, in: %w[.. .]
-  validates_presence_of :entry_rename, if: -> { self.use_rename }
+  validates :entry_rename, exclusion: { in: %w[.. .] }
+  validates :entry_rename, presence: { if: -> { self.use_rename } }
 
   def path
     Pathname.new(assignment.starter_file_path) + id.to_s

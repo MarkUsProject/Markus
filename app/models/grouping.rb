@@ -74,7 +74,7 @@ class Grouping < ApplicationRecord
 
   scope :approved_groupings, -> { where instructor_approved: true }
 
-  validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
+  validates :criteria_coverage_count, numericality: { greater_than_or_equal_to: 0 }
 
   # user association/validation
   belongs_to :assignment, foreign_key: :assessment_id
@@ -87,10 +87,10 @@ class Grouping < ApplicationRecord
 
   has_one :course, through: :assignment
 
-  validates_inclusion_of :is_collected, in: [true, false]
+  validates :is_collected, inclusion: { in: [true, false] }
 
-  validates_presence_of :test_tokens
-  validates_numericality_of :test_tokens, greater_than_or_equal_to: 0, only_integer: true
+  validates :test_tokens, presence: true
+  validates :test_tokens, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   has_one :extension, dependent: :destroy
 

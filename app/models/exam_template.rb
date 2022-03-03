@@ -7,8 +7,8 @@ class ExamTemplate < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
-  validates_uniqueness_of :name,
-                          scope: :assignment
+  validates :name,
+                          uniqueness: { scope: :assignment }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 

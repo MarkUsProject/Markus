@@ -1,9 +1,9 @@
 class Period < ApplicationRecord
   belongs_to :submission_rule, polymorphic: true
 
-  validates_numericality_of :hours, greater_than: 0
-  validates_numericality_of :deduction, greater_than_or_equal_to: 0, if: :check_deduction
-  validates_numericality_of :interval, greater_than: 0, if: :check_interval
+  validates :hours, numericality: { greater_than: 0 }
+  validates :deduction, numericality: { greater_than_or_equal_to: 0, if: :check_deduction }
+  validates :interval, numericality: { greater_than: 0, if: :check_interval }
 
   before_create -> { self.submission_rule_type = submission_rule.type }
 

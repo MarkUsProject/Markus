@@ -2,11 +2,11 @@ class FeedbackFile < ApplicationRecord
   belongs_to :submission, optional: true
   belongs_to :test_group_result, optional: true
 
-  validates_presence_of :submission_id, if: -> { test_group_result_id.nil? }
+  validates :submission_id, presence: { if: -> { test_group_result_id.nil? } }
 
-  validates_presence_of :filename # we need a filename
-  validates_presence_of :mime_type # we need a mime type
-  validates_presence_of :file_content # we need some content
+  validates :filename, presence: true # we need a filename
+  validates :mime_type, presence: true # we need a mime type
+  validates :file_content, presence: true # we need some content
   validate :courses_should_match
 
   # === Description

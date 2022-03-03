@@ -10,7 +10,7 @@ class SubmissionRule < ApplicationRecord
   has_many :periods, dependent: :destroy, inverse_of: :submission_rule
   accepts_nested_attributes_for :periods, allow_destroy: true
   validates_associated :periods
-  validates_uniqueness_of :assignment
+  validates :assignment, uniqueness: true
 
   def self.descendants
     [NoLateSubmissionRule,

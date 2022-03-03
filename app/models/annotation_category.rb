@@ -12,8 +12,8 @@ class AnnotationCategory < ApplicationRecord
 
   has_many :annotation_texts, dependent: :destroy
 
-  validates_presence_of :annotation_category_name
-  validates_uniqueness_of :annotation_category_name, scope: :assessment_id
+  validates :annotation_category_name, presence: true
+  validates :annotation_category_name, uniqueness: { scope: :assessment_id }
 
   belongs_to :assignment, foreign_key: :assessment_id
 

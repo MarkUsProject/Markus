@@ -10,15 +10,15 @@ class Mark < ApplicationRecord
 
   belongs_to :result
 
-  validates_numericality_of :mark,
-                            allow_nil: true,
+  validates :mark,
+                            numericality: { allow_nil: true,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(m) { m.criterion.max_mark }
+                            less_than_or_equal_to: ->(m) { m.criterion.max_mark } }
 
   belongs_to :criterion
-  validates_uniqueness_of :criterion_id, scope: :result_id
+  validates :criterion_id, uniqueness: { scope: :result_id }
 
-  validates_inclusion_of :override, in: [true, false]
+  validates :override, inclusion: { in: [true, false] }
 
   has_one :course, through: :criterion
 

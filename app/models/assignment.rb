@@ -4,7 +4,7 @@ require 'csv'
 class Assignment < Assessment
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
-  validates_presence_of :due_date
+  validates :due_date, presence: true
 
   has_one :assignment_properties,
           dependent: :destroy,
@@ -13,7 +13,7 @@ class Assignment < Assessment
           autosave: true
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
-  validates_presence_of :assignment_properties
+  validates :assignment_properties, presence: true
   after_initialize :create_associations
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
@@ -90,7 +90,7 @@ class Assignment < Assessment
   has_one :submission_rule, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
-  validates_presence_of :submission_rule
+  validates :submission_rule, presence: true
   validate :courses_should_match
 
   BLANK_MARK = ''.freeze

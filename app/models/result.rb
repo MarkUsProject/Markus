@@ -15,12 +15,12 @@ class Result < ApplicationRecord
 
   before_save :check_for_nil_marks
   after_create :create_marks
-  validates_presence_of :marking_state
-  validates_inclusion_of :marking_state, in: MARKING_STATES.values
+  validates :marking_state, presence: true
+  validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
-  validates_numericality_of :total_mark, greater_than_or_equal_to: 0
+  validates :total_mark, numericality: { greater_than_or_equal_to: 0 }
 
-  validates_inclusion_of :released_to_students, in: [true, false]
+  validates :released_to_students, inclusion: { in: [true, false] }
 
   before_update :check_for_released
 

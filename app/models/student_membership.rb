@@ -20,9 +20,9 @@ class StudentMembership < Membership
   validate :must_be_valid_student
   validate :one_accepted_per_assignment
 
-  validates_presence_of :membership_status
-  validates_format_of :membership_status,
-                      with: /\Ainviter|pending|accepted|rejected\z/
+  validates :membership_status, presence: true
+  validates :membership_status,
+                      format: { with: /\Ainviter|pending|accepted|rejected\z/ }
 
   after_create :update_repo_permissions_after_create
   after_create :reset_starter_files_after_create

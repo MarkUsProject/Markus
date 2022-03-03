@@ -7,7 +7,7 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
 
-  validates_uniqueness_of :role_id, scope: :assessment_id
+  validates :role_id, uniqueness: { scope: :assessment_id }
 
   has_one :course, through: :grade_entry_form
 
@@ -18,7 +18,7 @@ class GradeEntryStudent < ApplicationRecord
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
 
-  validates_inclusion_of :released_to_student, in: [true, false]
+  validates :released_to_student, inclusion: { in: [true, false] }
 
   before_save :refresh_total_grade
 

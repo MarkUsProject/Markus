@@ -2,7 +2,7 @@ class RubricCriterion < Criterion
   before_validation :scale_marks_if_max_mark_changed
   before_save :round_max_mark
 
-  validates_presence_of :levels
+  validates :levels, presence: true
 
   DEFAULT_MAX_MARK = 4
 

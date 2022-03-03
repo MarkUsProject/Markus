@@ -7,8 +7,8 @@ class SectionStarterFileGroup < ApplicationRecord
 
   has_one :course, through: :section
 
-  validates_presence_of :section
-  validates_presence_of :starter_file_group
+  validates :section, presence: true
+  validates :starter_file_group, presence: true
   validate :only_one_per_assessment
   validate :courses_should_match
 

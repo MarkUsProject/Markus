@@ -20,12 +20,12 @@ class AnnotationText < ApplicationRecord
   belongs_to :annotation_category, optional: true
   validates_associated :annotation_category, on: :create
 
-  validates_numericality_of :deduction,
-                            if: :should_have_deduction?,
+  validates :deduction,
+                            numericality: { if: :should_have_deduction?,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark }
+                            less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark } }
 
-  validates_absence_of :deduction, unless: :should_have_deduction?
+  validates :deduction, absence: { unless: :should_have_deduction? }
 
   validate :courses_should_match
 
