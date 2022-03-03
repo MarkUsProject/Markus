@@ -1587,6 +1587,32 @@ describe SubmissionsController do
   end
 
   #-------------------------------------------- newly added
+  #
+  let(:course) { assignment.course }
+  let(:assignment) { create :assignment }
+  let(:student) { create :student, grace_credits: 2 }
+  let(:instructor) { create :instructor }
+  let(:ta) { create :ta }
+  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+  let(:submission) { create :version_used_submission, grouping: grouping }
+  let(:incomplete_result) { submission.current_result }
+  let(:complete_result) { create :complete_result, submission: submission }
+  let(:submission_file) { create :submission_file, submission: submission }
+  let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
+  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+  let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
+  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+  let(:from_codeviewer) { nil }
+
+  SAMPLE_FILE_CONTENT = 'sample file content'.freeze
+  SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
+  SAMPLE_COMMENT = 'sample comment'.freeze
+  SAMPLE_FILE_NAME = 'file.java'.freeze
+
+  after(:each) do
+    destroy_repos
+  end
+
   def self.test_assigns_not_nil(key)
     it "should assign #{key}" do
       expect(assigns(key)).not_to be_nil
