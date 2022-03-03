@@ -1586,6 +1586,26 @@ describe SubmissionsController do
     end
   end
 
+  #-------------------------------------------- newly added
+  def self.test_assigns_not_nil(key)
+    it "should assign #{key}" do
+      expect(assigns(key)).not_to be_nil
+    end
+  end
+
+  def self.test_no_flash
+    it 'should not display any flash messages' do
+      expect(flash).to be_empty
+    end
+  end
+
+  def self.test_unauthorized(route_name)
+    it "should not be authorized to access #{route_name}" do
+      method(ROUTES[route_name]).call(route_name, params: { course_id: course.id, id: incomplete_result.id })
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
   shared_examples 'download_file' do
     context 'and without any file errors' do
       before :each do
