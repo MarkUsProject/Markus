@@ -5,54 +5,58 @@
     <% end %>
   </div>
   <div id='user-info'>
-      <div class = "dropdown">
+    <ul>
+      <li id="user-info-dropdown">
+        <div class = "dropdown">
         <span id='instructor_logged_in_as'>
         <% if allowed_to?(:role_is_switched?) %>
           <strong><%= @real_user.display_name %></strong>
         <% end %>
         </span>
-        <span id='user-id'>
+          <span id='user-id'>
           <%= @current_user.display_name %>
         </span>
 
-        <ul>
-          <% unless allowed_to?(:role_is_switched?) %>
+          <ul>
+            <% unless allowed_to?(:role_is_switched?) %>
+              <li>
+                <%= link_to t('menu.settings'),
+                            settings_users_path %>
+              </li>
+            <% end %>
+            <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
+              <li>
+                <%= link_to t('main.role_switch.switch_role'),
+                            role_switch_course_path(@current_course.id),
+                            remote: true %>
+              </li>
+            <% end %>
+            <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
+              <li>
+                <%= link_to t('main.role_switch.clear_role_switch_session'),
+                            clear_role_switch_session_course_path(@current_course) %>
+              </li>
+            <% end %>
             <li>
-              <%= link_to t('menu.settings'),
-                          settings_users_path %>
-            </li>
-          <% end %>
-          <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
-            <li>
-              <%= link_to t('main.role_switch.switch_role'),
-                          role_switch_course_path(@current_course.id),
+              <%= link_to t(:about_markus),
+                          about_main_index_path,
                           remote: true %>
             </li>
-          <% end %>
-          <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
             <li>
-              <%= link_to t('main.role_switch.clear_role_switch_session'),
-                          clear_role_switch_session_course_path(@current_course) %>
-            </li>
-          <% end %>
-          <li>
-            <%= link_to t(:about_markus),
-                        about_main_index_path,
-                        remote: true %>
-          </li>
-          <li>
             <span class="issues">
               <a href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
             </span>
-          </li>
-          <li>
-            <%= link_to(t('main.log_out'),
-                        logout_main_index_path,
-                        id: 'logout_link',
-                        method: :post) %>
-          </li>
-        </ul>
-      </div>
+            </li>
+            <li>
+              <%= link_to(t('main.log_out'),
+                          logout_main_index_path,
+                          id: 'logout_link',
+                          method: :post) %>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
   </div>
 
   <div id='working' class="no-display">
