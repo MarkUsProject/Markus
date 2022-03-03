@@ -202,7 +202,7 @@ class AutomatedTestsController < ApplicationController
       else
         @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
         session[:job_id] = @current_job.job_id
-        render 'shared/_poll_job.js.erb'
+        render 'shared/_poll_job'
       end
     else
       head :unprocessable_entity

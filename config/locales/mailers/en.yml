@@ -5,15 +5,15 @@ en:
       button_text: See Invitation
       disclaimer: This is an automated email. Please do not reply.
       explicit_link: 'If the above button doesn''t work, copy-and-paste this link into your web browser: %{link}'
-      greeting: Hello %{first_name} %{last_name},
+      greeting: Hello %{display_name},
       settings_link: Unsubscribe from future emails.
       subject: MarkUs Notification (%{course}) You have been invited to a group!
-      text_body: "%{first_name} %{last_name} has invited you to join a group for %{assignment}. If you wish to accept this invitation, you need to do so <i>before</i> the assignment due date."
+      text_body: "%{display_name} has invited you to join a group for %{assignment}. If you wish to accept this invitation, you need to do so <i>before</i> the assignment due date."
     release_email:
       button_text: View Results
       disclaimer: This is an automated email. Please do not reply.
       explicit_link: 'If the above button doesn''t work, copy-and-paste this link into your web browser: %{link}'
-      greeting: Hello %{first_name} %{last_name},
+      greeting: Hello %{display_name},
       settings_link: Unsubscribe from future emails.
       subject: MarkUs Notification (%{course}) Your marks for %{assignment} have been released!
       text_body: Your marks for %{assignment} have now been released on MarkUs and can be viewed.
@@ -21,7 +21,7 @@ en:
       button_text: View Results
       disclaimer: This is an automated email. Please do not reply.
       explicit_link: 'If the above button doesn''t work, copy-and-paste this link into your web browser: %{link}'
-      greeting: Hello %{first_name} %{last_name},
+      greeting: Hello %{display_name},
       settings_link: Unsubscribe from future emails.
       subject: MarkUs Notification (%{course}) Your marks for %{form} have been released!
       text_body: Your marks for %{form} have now been released on MarkUs and can be viewed.

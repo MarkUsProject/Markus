@@ -4,7 +4,7 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 //
-// To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
+// To reference this file, add <%= javascript_include_tag 'application_webpack' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
 // jquery (should be the first to be loaded, as many other libs depend on it)
@@ -49,7 +49,7 @@ Chart.register(...registerables);
 window.Chart = Chart;
 import "javascripts/chart_config";
 
-window.Routes = require("routes");
+window.Routes = require("./routes");
 
 // assets with side-effects only
 import "javascripts/help-system";

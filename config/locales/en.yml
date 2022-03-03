@@ -2,9 +2,6 @@
 en:
   date_validator:
     invalid_date: is not a valid date
-  job_poller:
-    processing_message: 'Processing:'
-    processing_message_error: 'Processing Failed:'
   poll_job:
     autotest_run_job_enqueuing: Enqueuing tests
     autotest_specs_job: Setting up automated tests.
