@@ -1,5 +1,5 @@
 /**
- * Header, main menu, sub menu, sub_sub menu, and footer.
+ * Header, main menu, sub menu, and sub_sub menu.
  */
 @import 'constants';
 
@@ -47,19 +47,6 @@ nav {
   .sub_sub {
     padding: 0 $dimen-horizontal;
   }
-
-  footer {
-    display: none;
-    text-align: left;
-
-    @include breakpoint(mobile) {
-      display: block;
-    }
-
-    span {
-      margin-left: 0 !important;
-    }
-  }
 }
 
 #logo-img {
@@ -76,57 +63,6 @@ nav {
 
   #mobile_menu {
     background-image: asset-url('markus_logo_dark.svg');
-  }
-}
-
-/* Footer */
-
-footer {
-  background-color: $background-support;
-  border-top: 1px solid $primary-three;
-  color: $line;
-  font-size: 0.95em;
-  padding: 2em $dimen-horizontal;
-  text-align: center;
-
-  @include breakpoint(mobile) {
-    display: none;
-  }
-
-  a {
-    color: $line;
-
-    &:hover {
-      color: $primary-two;
-    }
-  }
-
-  .lang_chooser {
-    margin: 0 0 0 1em;
-
-    select {
-      border: 0;
-      color: $line;
-      font-family: $fonts;
-      margin: 0;
-    }
-  }
-
-  .issues {
-    margin: 0 1em;
-  }
-
-  .lang_chooser,
-  .issues {
-    border-left: 1px solid $primary-two;
-    padding-left: 1em;
-
-    @include breakpoint(mobile) {
-      border: 0;
-      display: block;
-      margin: 1em 1em 0;
-      padding: 0;
-    }
   }
 }
 
@@ -240,18 +176,6 @@ footer {
     transition: all $time-quick;
     width: 75%;
     z-index: 0;
-  }
-
-  footer {
-    background: $background-main;
-    border-bottom: 1px solid $primary-three;
-    border-top: 1px solid $primary-three;
-    display: none;
-    padding: 1em;
-
-    @include breakpoint(mobile) {
-      display: block;
-    }
   }
 }
 
@@ -375,6 +299,10 @@ footer {
       padding: 1em;
     }
   }
+  #user-info .dropdown ul li {
+    text-align: center;
+    //  text-align: right;
+  }
 
   #user-id {
     font-weight: 300;
@@ -427,7 +355,7 @@ li#dropdown {
       position: static;
       text-indent: 0;
       top: 0;
-      width: 100%;
+      width: 101%;
 
       a {
         color: $primary-one !important;
@@ -450,7 +378,6 @@ li#dropdown {
   ul {
     li {
       border-radius: 0;
-
       a {
         height: auto;
         line-height: inherit;
