@@ -1,3 +1,4 @@
+# rubocop:disable Rails/RakeEnvironment
 namespace :coverage do
   task :clean do
     rm_f 'test/coverage'

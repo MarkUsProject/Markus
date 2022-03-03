@@ -1,6 +1,6 @@
 namespace :markus do
   desc 'Print MarkUs version'
-  task :version do
+  task :version do # rubocop:disable Rails/RakeEnvironment
     VERSION_FILE = File.expand_path(File.join(__FILE__, '..', '..', '..', 'app', 'MARKUS_VERSION'))
     unless File.exist?(VERSION_FILE)
       warn 'Could not determine MarkUs version, please check your installation!'
