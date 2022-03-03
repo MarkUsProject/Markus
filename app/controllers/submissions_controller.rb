@@ -293,7 +293,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(assignment_id)
     raise t('student.submission.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
 
-    @path = params[:path].blank? ? '/' : params[:path]
+    @path = params[:path].presence || '/'
 
     if current_role.student?
       @grouping = current_role.accepted_grouping_for(assignment_id)

@@ -25,7 +25,7 @@ class ExamTemplate < ApplicationRecord
     assignment = Assignment.find(attributes[:assessment_id])
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
-    exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
+    exam_template_name = name_input.presence || File.basename(attributes[:filename].tr(' ', '_'), '.pdf')
     template_path = File.join(
       assignment.scanned_exams_path,
       exam_template_name

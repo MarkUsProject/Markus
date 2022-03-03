@@ -753,7 +753,7 @@ class AssignmentsController < ApplicationController
     # remove potentially invalid periods before updating
     unless assignment_params[:assignment_properties_attributes][:scanned_exam] == 'true'
       period_attrs = submission_rule_params['submission_rule_attributes']['periods_attributes']
-      periods = period_attrs.to_h.values.map { |h| h[:id].blank? ? nil : h[:id] }
+      periods = period_attrs.to_h.values.map { |h| h[:id].presence }
       assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     end
     assignment.assign_attributes(assignment_params)
@@ -919,7 +919,7 @@ class AssignmentsController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @assignment.short_identifier.blank? ? @assignment.model_name.human : @assignment.short_identifier,
+    { resource_name: @assignment.short_identifier.presence || @assignment.model_name.human,
       errors: @assignment.errors.full_messages.join('; ') }
   end
 
