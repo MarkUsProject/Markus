@@ -690,15 +690,15 @@ describe Grouping do
         before :each do
           # Dont use machinist in order to bypass validation
           @submission1 = @grouping.submissions.build(submission_version_used: false,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     revision_identifier: 1, revision_timestamp: 1.day.ago,
                                                      submission_version: 1)
           @submission1.save(validate: false)
           @submission2 = @grouping.submissions.build(submission_version_used: true,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     revision_identifier: 1, revision_timestamp: 1.day.ago,
                                                      submission_version: 2)
           @submission2.save(validate: false)
           @submission3 = @grouping.submissions.build(submission_version_used: true,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     revision_identifier: 1, revision_timestamp: 1.day.ago,
                                                      submission_version: 3)
           @submission3.save(validate: false)
           @grouping.reload

@@ -73,7 +73,7 @@ namespace :markus do
 
     # modify settings for A2
     a2 = Assignment.find_by(short_identifier: 'A2')
-    a2.due_date = 2.week.from_now # due date is 2 weeks from now
+    a2.due_date = 2.weeks.from_now # due date is 2 weeks from now
     a2.message += "\nNote: You are working in groups for this assignment. Please form groups on your own."
     # students can form groups
     a2.group_min = 3
@@ -102,7 +102,7 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
       message: "Learn how to use functions, parameter passing and proper return codes.\n
 Note: You have been assigned to a group by the instructor.",
       repository_folder: 'A3',
-      due_date: 3.week.from_now,
+      due_date: 3.weeks.from_now,
       invalid_override: true
     )
     req_file1 = AssignmentFile.new
