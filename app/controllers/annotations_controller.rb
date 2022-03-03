@@ -156,7 +156,7 @@ class AnnotationsController < ApplicationController
     @annotation = record
     @annotation_text = @annotation.annotation_text
     if !@annotation_text.deduction.nil? && (current_role.ta? || @annotation_text.annotations.joins(:result)
-                                             .where('results.released_to_students' => true).exists?)
+                                             .exists?('results.released_to_students' => true))
       flash_message(:error, t('annotations.prevent_update'))
       head :bad_request
       return

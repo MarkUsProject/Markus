@@ -111,8 +111,7 @@ class Submission < ApplicationRecord
       end
       # don't update mark if there is an error
       next if test_run.test_group_results
-                      .where(error_type: TestGroupResult::ERROR_TYPE.slice(:no_results, :test_error).values)
-                      .exists?
+                      .exists?(error_type: TestGroupResult::ERROR_TYPE.slice(:no_results, :test_error).values)
 
       all_marks_earned = 0.0
       all_marks_total = 0.0

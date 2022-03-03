@@ -72,7 +72,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where(assessment_id: @assignment.id, group_id: groupexist_id).exists?
+      if Grouping.exists?(assessment_id: @assignment.id, group_id: groupexist_id)
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
