@@ -76,7 +76,7 @@ class MissingKeysFinder
   # Returns true if key exists in the given locale
   def key_exists?(key, locale)
     I18n.locale = locale
-    I18n.translate(key, raise: true)
+    I18n.t(key, raise: true)
     true
   rescue I18n::MissingInterpolationArgument
     true
