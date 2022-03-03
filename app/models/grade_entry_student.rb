@@ -40,7 +40,7 @@ class GradeEntryStudent < ApplicationRecord
     values = yield(student_ids, form_ids) - existing_values
 
     data = values.map { |sid, aid| { role_id: sid, assessment_id: aid } }
-    insert_all data unless data.blank?
+    insert_all data if data.present?
   end
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each student
@@ -142,8 +142,7 @@ class GradeEntryStudent < ApplicationRecord
           end
         end
 
-      elsif old_grade.nil? &&
-           (grade_for_grade_entry_item && !grade_for_grade_entry_item.empty?)
+      elsif old_grade.nil? && grade_for_grade_entry_item.present?
         grade = grade_entry_student.grades
                                    .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
         grade.grade = grade_for_grade_entry_item

@@ -659,7 +659,7 @@ class GroupsController < ApplicationController
     errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
-    unless errors.blank?
+    if errors.present?
       raise errors.join(' ')
     end
 

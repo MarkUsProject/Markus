@@ -234,10 +234,10 @@ class SubmissionsController < ApplicationController
     rescue StandardError => e
       error = e.message
     end
-    unless success.blank?
+    if success.present?
       flash_message(:success, success)
     end
-    unless error.blank?
+    if error.present?
       flash_message(:error, error)
     end
     render json: { success: success, error: error }
@@ -343,7 +343,7 @@ class SubmissionsController < ApplicationController
           required_files = nil
         end
 
-        unless new_url.blank?
+        if new_url.present?
           url_filename = params[:url_text]
           raise I18n.t('submissions.urls_disabled') unless @assignment.url_submit
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
@@ -790,7 +790,7 @@ class SubmissionsController < ApplicationController
 
     if !@grouping.is_valid?
       flash_message(:error, t('groups.invalid_group_warning'))
-    elsif !@missing_assignment_files.blank?
+    elsif @missing_assignment_files.present?
       flash_message(:warning,
                     partial: 'submissions/missing_assignment_file_toggle_list',
                     locals: { missing_assignment_files: @missing_assignment_files })
@@ -840,7 +840,7 @@ class SubmissionsController < ApplicationController
   # Taken from https://stackoverflow.com/questions/7167895/rails-whats-a-good-way-to-validate-links-urls
   def is_valid_url?(url)
     uri = URI.parse(url)
-    uri.is_a?(URI::HTTP) && !uri.host.blank?
+    uri.is_a?(URI::HTTP) && uri.host.present?
   rescue URI::InvalidURIError
     false
   end

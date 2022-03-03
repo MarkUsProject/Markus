@@ -65,15 +65,15 @@ class TestRun < ApplicationRecord
     return if result['stderr'].blank? && result['malformed'].blank?
 
     extra = ''
-    extra += I18n.t('automated_tests.results.extra_stderr', extra: result['stderr']) unless result['stderr'].blank?
-    unless result['malformed'].blank?
+    extra += I18n.t('automated_tests.results.extra_stderr', extra: result['stderr']) if result['stderr'].present?
+    if result['malformed'].present?
       extra += I18n.t('automated_tests.results.extra_malformed', extra: result['malformed'])
     end
     extra
   end
 
   def error_type(result)
-    return unless result['tests'].blank?
+    return if result['tests'].present?
     return TestGroupResult::ERROR_TYPE[:timeout] if result['timeout']
 
     TestGroupResult::ERROR_TYPE[:no_results]

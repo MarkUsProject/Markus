@@ -116,7 +116,7 @@ module Api
       # Create a hash to hold fields/values to be updated for the assignment
       attributes = {}
 
-      unless params[:short_identifier].blank?
+      if params[:short_identifier].present?
         # Make sure another assignment isn't using the new short_identifier
         other_assignment = Assignment.find_by(
           short_identifier: params[:short_identifier]

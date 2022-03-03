@@ -173,7 +173,7 @@ class AssignmentsController < ApplicationController
     unless @assignment.scanned_exam
       if @assignment.past_collection_date?
         flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
-      elsif !past_date.blank?
+      elsif past_date.present?
         flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
       end
     end

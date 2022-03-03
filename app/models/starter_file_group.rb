@@ -71,7 +71,7 @@ class StarterFileGroup < ApplicationRecord
   end
 
   def should_rename
-    use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
+    use_rename && entry_rename.present? && assignment.starter_file_type == 'shuffle'
   end
 
   private

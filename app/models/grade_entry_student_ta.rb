@@ -60,7 +60,7 @@ class GradeEntryStudentTa < ApplicationRecord
         new_mappings << { grade_entry_student_id: grade_entry_student_id, ta_id: ta_id }
       end
     end
-    unless new_mappings.blank?
+    if new_mappings.present?
       GradeEntryStudentTa.insert_all new_mappings, unique_by: %i[grade_entry_student_id ta_id]
     end
     result

@@ -67,7 +67,7 @@ module Api
     # Renders an error message and returns false if the filters are malformed
     def get_collection(collection)
       filter_params = params[:filter] ? params[:filter].permit(self.class::DEFAULT_FIELDS) : {}
-      if !params[:filter].nil? && !params[:filter].empty? && filter_params.empty?
+      if params[:filter].present? && filter_params.empty?
         render 'shared/http_status', locals: { code: '422', message:
           'Invalid or malformed parameter values' }, status: :unprocessable_entity
         false
