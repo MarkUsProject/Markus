@@ -1689,7 +1689,7 @@ describe SubmissionsController do
   end
 
   shared_examples 'shared ta and instructor tests' do
-    include_examples 'download files'
+    include_examples 'download_file'
     context 'accessing download_zip' do
       before :each do
         grouping.group.access_repo do |repo|
@@ -1787,10 +1787,10 @@ describe SubmissionsController do
     describe '#download_file' do
       shared_examples 'without permission' do
         before :each do
-          get :download, params: { course_id: course.id,
-                                   id: incomplete_result.id,
-                                   from_codeviewer: from_codeviewer,
-                                   select_file_id: submission_file.id }
+          get :download_file, params: { course_id: course.id,
+                                        id: incomplete_result.id,
+                                        from_codeviewer: from_codeviewer,
+                                        select_file_id: submission_file.id }
         end
         it { expect(response).to have_http_status(:forbidden) }
       end
@@ -1816,7 +1816,7 @@ describe SubmissionsController do
           let(:student) { incomplete_result.grouping.accepted_students.first }
           context 'and the selected file is associated with the current submission' do
             let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
-            include_examples 'download files'
+            include_examples 'download_file'
           end
           context 'and the selected file is associated with a different submission' do
             let(:submission_file) { create(:submission_file) }
