@@ -117,12 +117,12 @@ class CriteriaController < ApplicationController
 
     Criterion.transaction do
       params[:criterion].each_with_index do |id, index|
-        criterion = @assignment.criteria.find(id)
-        criterion.update(:position, index + 1) unless id.blank?
-      rescue StandardError
-        flash_message(:error, t('criteria.errors.criteria_not_found'))
-        raise ActiveRecord::Rollback
+        @criterion = @assignment.criteria.find(id)
+        @criterion.update(:position, index + 1) unless id.blank?
       end
+    rescue StandardError
+      flash_message(:error, t('criteria.errors.criteria_not_found'))
+      raise ActiveRecord::Rollback
     end
     head :ok
   end
