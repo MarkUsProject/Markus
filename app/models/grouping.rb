@@ -11,7 +11,7 @@ class Grouping < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :student_memberships, -> { order('id') }
   has_many :non_rejected_student_memberships,
-           -> { where ['memberships.membership_status != ?', StudentMembership::STATUSES[:rejected]] },
+           -> { where.not(memberships: { membership_status: StudentMembership::STATUSES[:rejected] }) },
            class_name: 'StudentMembership'
 
   has_many :accepted_student_memberships,
