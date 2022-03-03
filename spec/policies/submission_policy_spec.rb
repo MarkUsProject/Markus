@@ -29,4 +29,21 @@ describe SubmissionPolicy do
       let(:role) { create(:student) }
     end
   end
+
+  describe_rule :run_tests? do
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    context 'role is a ta' do
+      succeed 'that can run tests' do
+        let(:role) { create :ta, run_tests: true }
+      end
+      failed 'that cannot run tests' do
+        let(:role) { create :ta, run_tests: false }
+      end
+    end
+    failed 'role is a student' do
+      let(:role) { create(:student) }
+    end
+  end
 end
