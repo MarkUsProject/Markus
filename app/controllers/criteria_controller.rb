@@ -115,12 +115,10 @@ class CriteriaController < ApplicationController
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
 
-    Criterion.transaction(requires_new: true) do
+    Criterion.transaction do
       params[:criterion].each_with_index do |id, index|
-        begin
-          @assignment.criteria.find(id)
-          Criterion.update(id, position: index + 1) unless id.blank?
-        end
+        criterion = @assignment.criteria.find(id)
+        criterion.update(:position, index + 1) unless id.blank?
       rescue StandardError
         flash_message(:error, t('criteria.errors.criteria_not_found'))
         raise ActiveRecord::Rollback

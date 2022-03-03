@@ -720,9 +720,7 @@ describe CriteriaController do
         before(:each) do
           post_as instructor,
                   :edit,
-                  params: {
-                    course_id: course.id, id: rubric_criterion.id
-                  },
+                  params: { course_id: course.id, id: rubric_criterion.id },
                   format: :js
         end
 
@@ -1072,45 +1070,6 @@ describe CriteriaController do
   context '#upload' do
     include_examples 'a controller supporting upload', formats: [:yml] do
       let(:params) { { course_id: course.id, assignment_id: assignment.id } }
-    end
-  end
-
-  describe '#update_positions' do
-    context 'when there exists criteria not under current assignment' do
-      let(:assignment2) { create :assignment }
-      let(:rubric_criterion) do
-        create(:rubric_criterion, assignment: assignment, position: 1)
-      end
-      let(:rubric_criterion2) do
-        create(:rubric_criterion, assignment: assignment, position: 2)
-      end
-      let(:rubric_criterion3) do
-        create(:rubric_criterion, assignment: assignment2, position: 3)
-      end
-      before do
-        post_as instructor,
-                :update_positions,
-                params: { course_id: course.id,
-                          criterion: [rubric_criterion3.id,
-                                      rubric_criterion2.id,
-                                      rubric_criterion.id],
-                          assignment_id: assignment.id },
-                format: :js
-      end
-
-      it 'does not update position' do
-        c1 = RubricCriterion.find(rubric_criterion.id)
-        expect(c1.position).to eql(1)
-        c2 = RubricCriterion.find(rubric_criterion2.id)
-        expect(c2.position).to eql(2)
-        c3 = RubricCriterion.find(rubric_criterion3.id)
-        expect(c3.position).to eql(3)
-      end
-
-      it 'displays an error message' do
-        expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.errors.criteria_not_found')].map { |f| extract_text f })
-      end
     end
   end
 end
