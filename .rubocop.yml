@@ -148,6 +148,9 @@ Rails/InverseOf:
 Rails/OrderById:
   Enabled: false
 
+Rails/PluckId:
+  Enabled: true
+
 Rails/RequireDependency:
   Enabled: true
 

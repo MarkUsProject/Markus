@@ -2,7 +2,6 @@ describe KeyPair do
   context 'validations' do
     it { is_expected.to belong_to :user }
     it { is_expected.to validate_presence_of :public_key }
-    it { is_expected.to validate_presence_of :user }
     it 'should not validate a multiline key' do
       expect(build(:key_pair, public_key: "ssh-rsa\nabcd").validate).to be false
     end

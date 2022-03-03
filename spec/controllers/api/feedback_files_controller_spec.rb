@@ -66,7 +66,7 @@ describe Api::FeedbackFilesController do
             course_id: course.id
           }
           ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
-          expect(ids).to contain_exactly(*feedback_files.ids)
+          expect(ids).to contain_exactly(*feedback_files.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end
       context 'expecting an json response' do
@@ -88,7 +88,9 @@ describe Api::FeedbackFilesController do
             assignment_id: grouping.assignment.id,
             course_id: course.id
           }
-          expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*feedback_files.ids)
+          expect(
+            JSON.parse(response.body).map { |h| h['id'] }
+          ).to contain_exactly(*feedback_files.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end
     end
