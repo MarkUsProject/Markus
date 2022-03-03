@@ -143,7 +143,8 @@ module Api
         filter_params = { **role_filter, **end_user_filter }
         if filter_params.empty?
           render 'shared/http_status',
-                 locals: { code: '422', message: 'Invalid or malformed parameter values' }, status: :unprocessable_entity
+                 locals: { code: '422', message: 'Invalid or malformed parameter values' },
+                 status: :unprocessable_entity
           return false
         else
           return collection.where(filter_params)

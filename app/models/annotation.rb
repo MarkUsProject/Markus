@@ -15,11 +15,11 @@ class Annotation < ApplicationRecord
   validates_associated :result, on: :create
 
   validates :annotation_number,
-                            numericality: { only_integer: true,
+            numericality: { only_integer: true,
                             greater_than: 0 }
 
   validates :type,
-                      format: { with: /\AImageAnnotation|TextAnnotation|PdfAnnotation|HtmlAnnotation\z/ }
+            format: { with: /\AImageAnnotation|TextAnnotation|PdfAnnotation|HtmlAnnotation\z/ }
 
   before_create :check_if_released
   after_create :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }

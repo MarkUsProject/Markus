@@ -21,7 +21,7 @@ class AnnotationText < ApplicationRecord
   validates_associated :annotation_category, on: :create
 
   validates :deduction,
-                            numericality: { if: :should_have_deduction?,
+            numericality: { if: :should_have_deduction?,
                             greater_than_or_equal_to: 0,
                             less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark } }
 

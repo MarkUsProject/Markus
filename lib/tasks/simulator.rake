@@ -7,7 +7,7 @@ class Time
     year = (rand * years_back).ceil + (Time.current.year - years_back)
     month = (rand * 12).ceil
     day = (rand * 31).ceil
-    series = [date = Time.local(year, month, day)]
+    series = [date = Time.zone.local(year, month, day)]
     if params[:series]
       params[:series].each do |some_time_after|
         series << series.last + (rand * some_time_after).ceil

@@ -186,7 +186,7 @@ class Submission < ApplicationRecord
   def remove_file(filename)
     # get all submissions for this filename
     files = submission_files.where(filename: filename)
-    return unless files.present?
+    return if files.blank?
     files.each(&:destroy)  # destroy all records first
 
     adir = submit_dir

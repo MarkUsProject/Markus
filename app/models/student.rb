@@ -45,7 +45,7 @@ class Student < Role
   validates :receives_results_emails, inclusion: { in: [true, false] }
 
   validates :grace_credits,
-                            numericality: { only_integer: true,
+            numericality: { only_integer: true,
                             greater_than_or_equal_to: 0 }
 
   after_create :create_all_grade_entry_students

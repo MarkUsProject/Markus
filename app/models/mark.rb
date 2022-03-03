@@ -11,7 +11,7 @@ class Mark < ApplicationRecord
   belongs_to :result
 
   validates :mark,
-                            numericality: { allow_nil: true,
+            numericality: { allow_nil: true,
                             greater_than_or_equal_to: 0,
                             less_than_or_equal_to: ->(m) { m.criterion.max_mark } }
 

@@ -46,7 +46,8 @@ module Api
         when 'adminuser'
           AdminUser.create!(params.permit(*DEFAULT_FIELDS))
         else
-          render 'shared/http_status', locals: { code: '422', message: 'Unknown user type' }, status: :unprocessable_entity
+          render 'shared/http_status', locals: { code: '422', message: 'Unknown user type' },
+                                       status: :unprocessable_entity
           return
         end
       rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
@@ -100,7 +101,8 @@ module Api
       if has_missing_params?([:user_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status',
-               locals: { code: '422', message: HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+               locals: { code: '422', message: HttpStatusHelper::ERROR_CODE['message']['422'] },
+               status: :unprocessable_entity
         return
       end
 

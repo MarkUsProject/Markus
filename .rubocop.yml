@@ -1,3 +1,6 @@
+require:
+  - rubocop-rails
+
 AllCops:
   Exclude:
     - 'db/migrate/.*'
@@ -128,6 +131,30 @@ Naming/MethodParameterName:
   MinNameLength: 1
 
 Naming/PredicateName:
+  Enabled: false
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/HelperInstanceVariable:
+  Enabled: false
+
+Rails/InverseOf:
+  Enabled: false
+
+Rails/OrderById:
+  Enabled: false
+
+Rails/RequireDependency:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/UniqueValidationWithoutIndex:
   Enabled: false
 
 Security/IoMethods:

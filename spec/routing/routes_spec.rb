@@ -5,7 +5,7 @@ describe 'routing', type: :routing do
     next if spec.match BAD_MATCH
     r.verb.split('|').each do |verb|
       it "#{verb}: #{r.path.spec}" do
-        parts = r.required_parts.index_with { |part| '1' }
+        parts = r.required_parts.index_with { |_part| '1' }
         path = r.path.build_formatter.evaluate(parts)
         expect(verb.downcase => path).to route_to(**r.defaults, **parts)
       end

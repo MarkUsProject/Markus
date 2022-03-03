@@ -34,7 +34,7 @@ module Api
     def authenticate
       api_key = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
       return user_not_authorized if api_key.nil?
-      @real_user = User.find_by_api_key(parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
+      @real_user = User.find_by(api_key: parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
       user_not_authorized if @real_user.nil?
     end
 

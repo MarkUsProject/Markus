@@ -22,7 +22,7 @@ class StudentMembership < Membership
 
   validates :membership_status, presence: true
   validates :membership_status,
-                      format: { with: /\Ainviter|pending|accepted|rejected\z/ }
+            format: { with: /\Ainviter|pending|accepted|rejected\z/ }
 
   after_create :update_repo_permissions_after_create
   after_create :reset_starter_files_after_create

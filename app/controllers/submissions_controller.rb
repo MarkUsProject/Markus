@@ -743,7 +743,7 @@ class SubmissionsController < ApplicationController
 
       # add unique ids to all elements in the DOM
       html = Nokogiri::HTML.parse(File.read(cache_file))
-      current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
+      current_ids = html.xpath('//*[@id]').pluck(:id).to_set
       html.xpath('//*[not(@id)]').map do |elem|
         unique_id = elem.path
         unique_id += '-next' while current_ids.include? unique_id

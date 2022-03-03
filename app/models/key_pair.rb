@@ -4,7 +4,6 @@ class KeyPair < ApplicationRecord
   after_create :update_authorized_keys
   after_destroy :update_authorized_keys
   validates :public_key, presence: true
-  validates :user, presence: true
   before_validation(on: :create) { self.public_key&.strip! }
   validate :public_key_format, if: -> { self.public_key }
 

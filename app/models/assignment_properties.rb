@@ -1,7 +1,6 @@
 # Internal model used to link assignment attributes with the assignment STI model
 class AssignmentProperties < ApplicationRecord
   belongs_to :assignment, inverse_of: :assignment_properties, dependent: :destroy, foreign_key: :assessment_id
-  validates :assignment, presence: true
 
   has_one :course, through: :assignment
 

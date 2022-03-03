@@ -1770,28 +1770,28 @@ describe Assignment do
       it 'should report the marking state as incomplete if collected' do
         submission
         expect(data.pluck(:marking_state)).to contain_exactly(Result::MARKING_STATES[:incomplete],
-                                                                      'before_due_date',
-                                                                      'before_due_date')
+                                                              'before_due_date',
+                                                              'before_due_date')
       end
 
       it 'should report the marking state as complete if collected and complete' do
         submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
         expect(data.pluck(:marking_state)).to contain_exactly(Result::MARKING_STATES[:complete],
-                                                                      'before_due_date',
-                                                                      'before_due_date')
+                                                              'before_due_date',
+                                                              'before_due_date')
       end
 
       it 'should report the marking state as before the due date if it is before the due date' do
         expect(data.pluck(:marking_state)).to contain_exactly('before_due_date',
-                                                                      'before_due_date',
-                                                                      'before_due_date')
+                                                              'before_due_date',
+                                                              'before_due_date')
       end
 
       it 'should report the marking state as not collected if it is after the due date but not collected' do
         assignment.update(due_date: 1.day.ago)
         expect(data.pluck(:marking_state)).to contain_exactly('not_collected',
-                                                                      'not_collected',
-                                                                      'not_collected')
+                                                              'not_collected',
+                                                              'not_collected')
       end
 
       it 'should include a submission time if a non-empty submission exists' do

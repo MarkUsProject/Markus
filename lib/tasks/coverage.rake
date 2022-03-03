@@ -30,3 +30,4 @@ end
 task :coverage do
   Rake::Task['coverage:all'].invoke
 end
+# rubocop:enable Rails/RakeEnvironment
