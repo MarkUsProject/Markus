@@ -117,7 +117,9 @@ class RubricCriterion < Criterion
     end
 
     # Delete all the existing levels that were not updated
-    criterion.levels.destroy(criterion.levels.where.not(id: levels_attributes.pluck(:id)))
+    criterion.levels.destroy(
+      criterion.levels.where.not(id: levels_attributes.pluck(:id)) # rubocop:disable Rails/PluckId
+    )
 
     max_mark = levels_attributes.pluck(:mark).max
 

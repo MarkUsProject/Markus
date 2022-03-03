@@ -30,8 +30,8 @@ class GradeEntryStudent < ApplicationRecord
   # pair that represents the grade entry students.
   def self.merge_non_existing(student_ids, form_ids)
     # Only use IDs that identify existing model instances.
-    student_ids = Student.where(id: Array(student_ids)).pluck(:id)
-    form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
+    student_ids = Student.where(id: Array(student_ids)).ids
+    form_ids = GradeEntryForm.where(id: Array(form_ids)).ids
 
     existing_values = GradeEntryStudent.where(role_id: student_ids, assessment_id: form_ids)
                                        .pluck(:role_id, :assessment_id)
@@ -88,7 +88,7 @@ class GradeEntryStudent < ApplicationRecord
     end
 
     # Create non-existing grade entry student TA associations.
-    ges_ids = form.grade_entry_students.where(role_id: student_ids).pluck(:id)
+    ges_ids = form.grade_entry_students.where(role_id: student_ids).ids
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
   end
 

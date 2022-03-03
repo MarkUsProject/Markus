@@ -176,7 +176,7 @@ class Assignment < Assessment
   # Return collection date for all groupings as a hash mapping grouping_id to collection date.
   def all_grouping_collection_dates
     submission_rule_hours = submission_rule.periods.pluck('periods.hours').sum.hours
-    no_penalty = Set.new(groupings.joins(:extension).where('extensions.apply_penalty': false).pluck(:id))
+    no_penalty = Set.new(groupings.joins(:extension).where('extensions.apply_penalty': false).ids)
     collection_dates = Hash.new { |h, k| h[k] = due_date + submission_rule_hours }
     all_grouping_due_dates.each do |grouping_id, grouping_due_date|
       if no_penalty.include? grouping_id

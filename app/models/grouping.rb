@@ -131,8 +131,8 @@ class Grouping < ApplicationRecord
   def self.assign_tas(grouping_ids, ta_ids, assignment)
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
     # Only use IDs that identify existing model instances.
-    ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
+    ta_ids = Ta.where(id: ta_ids).ids
+    grouping_ids = Grouping.where(id: grouping_ids).ids
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
                       .where(grouping_id: grouping_ids, role_id: ta_ids)
@@ -174,7 +174,7 @@ class Grouping < ApplicationRecord
   # by +grouping_ids+.
   def self.update_criteria_coverage_counts(assignment, grouping_ids = nil)
     if grouping_ids.nil?
-      grouping_ids = assignment.groupings.pluck(:id)
+      grouping_ids = assignment.groupings.ids
     end
     return if grouping_ids.empty?
 

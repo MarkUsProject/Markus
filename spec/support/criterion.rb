@@ -123,7 +123,7 @@ shared_examples 'a criterion' do
         criteria.each(&:reload)
 
         criterion_ta_ids = criteria
-                           .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
+                           .map { |criterion| criterion.criterion_ta_associations.ids }
                            .reduce(:+)
 
         Criterion.unassign_tas(criterion_ta_ids, assignment)

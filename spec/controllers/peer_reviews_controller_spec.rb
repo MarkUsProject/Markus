@@ -5,8 +5,8 @@ describe PeerReviewsController do
   before :each do
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
     @pr_id = @assignment_with_pr.pr_assignment.id
-    @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.pluck(:id)
-    @selected_reviewee_group_ids = @assignment_with_pr.groupings.pluck(:id)
+    @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.ids
+    @selected_reviewee_group_ids = @assignment_with_pr.groupings.ids
   end
   context '#peer_review_mapping & #upload' do
     let(:instructor) { create :instructor }

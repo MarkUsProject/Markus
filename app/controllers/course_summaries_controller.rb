@@ -74,8 +74,8 @@ class CourseSummariesController < ApplicationController
   end
 
   def download_csv_grades_report
-    assessments = current_course.assessments.order(id: :asc).pluck(:id)
-    marking_schemes = current_course.marking_schemes.pluck(:id)
+    assessments = current_course.assessments.order(id: :asc).ids
+    marking_schemes = current_course.marking_schemes.ids
     grades_data = get_table_json_data(current_role)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|

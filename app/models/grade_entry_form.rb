@@ -174,7 +174,7 @@ class GradeEntryForm < Assessment
         else
           self.update_grade_entry_items(names, totals, overwrite)
         end
-        updated_columns = self.grade_entry_items.reload.pluck(:id)
+        updated_columns = self.grade_entry_items.reload.ids
         next
       end
 

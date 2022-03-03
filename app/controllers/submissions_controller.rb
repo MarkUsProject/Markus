@@ -167,7 +167,7 @@ class SubmissionsController < ApplicationController
     some_released = Grouping.joins(current_submission_used: :results)
                             .where('results.released_to_students': true)
                             .where(id: groupings)
-                            .pluck(:id).to_set
+                            .ids.to_set
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
@@ -743,7 +743,7 @@ class SubmissionsController < ApplicationController
 
       # add unique ids to all elements in the DOM
       html = Nokogiri::HTML.parse(File.read(cache_file))
-      current_ids = html.xpath('//*[@id]').pluck(:id).to_set
+      current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
       html.xpath('//*[not(@id)]').map do |elem|
         unique_id = elem.path
         unique_id += '-next' while current_ids.include? unique_id

@@ -307,7 +307,7 @@ class AssignmentsController < ApplicationController
   end
 
   def stop_batch_tests
-    test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
+    test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).ids
     assignment_id = params[:id]
     @current_job = AutotestCancelJob.perform_later(assignment_id, test_runs)
     session[:job_id] = @current_job.job_id

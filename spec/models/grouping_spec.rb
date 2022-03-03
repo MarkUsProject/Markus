@@ -206,7 +206,7 @@ describe Grouping do
       it 'can bulk unassign TAs' do
         Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
         ta_membership_ids = groupings
-                            .map { |grouping| grouping.memberships.pluck(:id) }
+                            .map { |grouping| grouping.memberships.ids }
                             .reduce(:+)
         Grouping.unassign_tas(ta_membership_ids, grouping_ids, assignment)
 
