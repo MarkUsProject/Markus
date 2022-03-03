@@ -739,6 +739,12 @@ describe CriteriaController do
 
       describe '#update_positions' do
         context 'when all criteria id can be found under assignment' do
+          let(:rubric_criterion) do
+            create(:rubric_criterion, assignment: assignment, position: 1)
+          end
+          let(:rubric_criterion2) do
+            create(:rubric_criterion, assignment: assignment, position: 2)
+          end
           it 'should be able to update_positions' do
             post_as instructor,
                     :update_positions,
