@@ -1586,163 +1586,6 @@ describe SubmissionsController do
     end
   end
 
-  context 'A student' do
-    before(:each) { sign_in student }
-
-    describe '#download_file' do
-      shared_examples 'without permission' do
-        before :each do
-          get :download, params: { course_id: course.id,
-                                   id: incomplete_result.id,
-                                   from_codeviewer: from_codeviewer,
-                                   select_file_id: submission_file.id }
-        end
-        it { expect(response).to have_http_status(:forbidden) }
-      end
-
-      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
-      let(:incomplete_result) { assignment.groupings.first.current_result }
-      let(:submission) { incomplete_result.submission }
-      context 'role is a reviewer for the current result' do
-        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
-        let(:student) { reviewer_grouping.accepted_students.first }
-        before { create :peer_review, reviewer: reviewer_grouping, result: incomplete_result }
-        context 'from_codeviewer is true' do
-          let(:from_codeviewer) { true }
-          include_examples 'download_file'
-        end
-        context 'from_codeviewer is nil' do
-          include_examples 'without permission'
-        end
-      end
-
-      context 'role is not a reviewer for the current result' do
-        context 'role is an accepted member of the results grouping' do
-          let(:student) { incomplete_result.grouping.accepted_students.first }
-          context 'and the selected file is associated with the current submission' do
-            let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
-            include_examples 'download files'
-          end
-          context 'and the selected file is associated with a different submission' do
-            let(:submission_file) { create(:submission_file) }
-            include_examples 'without permission'
-          end
-        end
-        context 'role is not an accepted member of the results grouping' do
-          let(:student) { create(:student) }
-          include_examples 'without permission'
-        end
-      end
-    end
-
-    describe '#cancel_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-      let(:student) { grouping.inviter }
-      let(:submission) do
-        s = create :submission, grouping: grouping, remark_request: 'original message',
-                                remark_request_timestamp: Time.current
-        s.make_remark_result
-        s.results.reload
-        s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
-        s.get_original_result.update!(released_to_students: false)
-
-        s
-      end
-
-      let(:subject) do
-        delete_as student,
-                  :cancel_remark_request,
-                  params: { course_id: assignment.course_id,
-                            id: submission.remark_result.id,
-                            submission_id: submission.id }
-      end
-
-      before { subject }
-
-      it 'destroys the remark result' do
-        submission.non_pr_results.reload
-        expect(submission.remark_result).to be_nil
-      end
-
-      it 'releases the original result' do
-        expect(submission.get_original_result.reload.released_to_students).to be true
-      end
-
-      it 'redirects to the original result view' do
-        expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
-                                                                      id: submission.get_original_result.id)
-      end
-    end
-
-    describe '#update_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-      let(:student) { grouping.inviter }
-      let(:submission) do
-        s = create :submission, grouping: grouping
-        s.get_original_result.update!(released_to_students: true)
-        s
-      end
-
-      context 'when saving a remark request message' do
-        let(:subject) do
-          patch_as student,
-                   :update_remark_request,
-                   params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
-                             submission: { remark_request: 'Message' },
-                             save: true }
-        end
-
-        before { subject }
-
-        it 'updates the submission remark request message' do
-          expect(submission.reload.remark_request).to eq 'Message'
-        end
-
-        it 'does not submit the remark request' do
-          expect(submission.reload.remark_result).to be_nil
-        end
-      end
-
-      context 'when submitting a remark request' do
-        let(:subject) do
-          patch_as student,
-                   :update_remark_request,
-                   params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
-                             submission: { remark_request: 'Message' },
-                             submit: true }
-        end
-
-        before { subject }
-
-        it 'updates the submission remark request message' do
-          expect(submission.reload.remark_request).to eq 'Message'
-        end
-
-        it 'submits the remark request' do
-          expect(submission.reload.remark_result).to_not be_nil
-        end
-
-        it 'unreleases the original result' do
-          expect(submission.get_original_result.reload.released_to_students).to be false
-        end
-      end
-    end
-  end
-
-  context 'An instructor' do
-    before(:each) { sign_in instructor }
-    include_examples 'shared ta and instructor tests'
-  end
-
-  context 'A TA' do
-    before(:each) { sign_in ta }
-    include_examples 'shared ta and instructor tests'
-  end
-
   shared_examples 'download_file' do
     context 'and without any file errors' do
       before :each do
@@ -1916,5 +1759,162 @@ describe SubmissionsController do
         end
       end
     end
+  end
+
+  context 'A student' do
+    before(:each) { sign_in student }
+
+    describe '#download_file' do
+      shared_examples 'without permission' do
+        before :each do
+          get :download, params: { course_id: course.id,
+                                   id: incomplete_result.id,
+                                   from_codeviewer: from_codeviewer,
+                                   select_file_id: submission_file.id }
+        end
+        it { expect(response).to have_http_status(:forbidden) }
+      end
+
+      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
+      let(:incomplete_result) { assignment.groupings.first.current_result }
+      let(:submission) { incomplete_result.submission }
+      context 'role is a reviewer for the current result' do
+        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
+        let(:student) { reviewer_grouping.accepted_students.first }
+        before { create :peer_review, reviewer: reviewer_grouping, result: incomplete_result }
+        context 'from_codeviewer is true' do
+          let(:from_codeviewer) { true }
+          include_examples 'download_file'
+        end
+        context 'from_codeviewer is nil' do
+          include_examples 'without permission'
+        end
+      end
+
+      context 'role is not a reviewer for the current result' do
+        context 'role is an accepted member of the results grouping' do
+          let(:student) { incomplete_result.grouping.accepted_students.first }
+          context 'and the selected file is associated with the current submission' do
+            let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
+            include_examples 'download files'
+          end
+          context 'and the selected file is associated with a different submission' do
+            let(:submission_file) { create(:submission_file) }
+            include_examples 'without permission'
+          end
+        end
+        context 'role is not an accepted member of the results grouping' do
+          let(:student) { create(:student) }
+          include_examples 'without permission'
+        end
+      end
+    end
+
+    describe '#cancel_remark_request' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:student) { grouping.inviter }
+      let(:submission) do
+        s = create :submission, grouping: grouping, remark_request: 'original message',
+                                remark_request_timestamp: Time.current
+        s.make_remark_result
+        s.results.reload
+        s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
+        s.get_original_result.update!(released_to_students: false)
+
+        s
+      end
+
+      let(:subject) do
+        delete_as student,
+                  :cancel_remark_request,
+                  params: { course_id: assignment.course_id,
+                            id: submission.remark_result.id,
+                            submission_id: submission.id }
+      end
+
+      before { subject }
+
+      it 'destroys the remark result' do
+        submission.non_pr_results.reload
+        expect(submission.remark_result).to be_nil
+      end
+
+      it 'releases the original result' do
+        expect(submission.get_original_result.reload.released_to_students).to be true
+      end
+
+      it 'redirects to the original result view' do
+        expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
+                                                                      id: submission.get_original_result.id)
+      end
+    end
+
+    describe '#update_remark_request' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:student) { grouping.inviter }
+      let(:submission) do
+        s = create :submission, grouping: grouping
+        s.get_original_result.update!(released_to_students: true)
+        s
+      end
+
+      context 'when saving a remark request message' do
+        let(:subject) do
+          patch_as student,
+                   :update_remark_request,
+                   params: { course_id: assignment.course_id,
+                             submission_id: submission.id,
+                             submission: { remark_request: 'Message' },
+                             save: true }
+        end
+
+        before { subject }
+
+        it 'updates the submission remark request message' do
+          expect(submission.reload.remark_request).to eq 'Message'
+        end
+
+        it 'does not submit the remark request' do
+          expect(submission.reload.remark_result).to be_nil
+        end
+      end
+
+      context 'when submitting a remark request' do
+        let(:subject) do
+          patch_as student,
+                   :update_remark_request,
+                   params: { course_id: assignment.course_id,
+                             submission_id: submission.id,
+                             submission: { remark_request: 'Message' },
+                             submit: true }
+        end
+
+        before { subject }
+
+        it 'updates the submission remark request message' do
+          expect(submission.reload.remark_request).to eq 'Message'
+        end
+
+        it 'submits the remark request' do
+          expect(submission.reload.remark_result).to_not be_nil
+        end
+
+        it 'unreleases the original result' do
+          expect(submission.get_original_result.reload.released_to_students).to be false
+        end
+      end
+    end
+  end
+
+  context 'An instructor' do
+    before(:each) { sign_in instructor }
+    include_examples 'shared ta and instructor tests'
+  end
+
+  context 'A TA' do
+    before(:each) { sign_in ta }
+    include_examples 'shared ta and instructor tests'
   end
 end
