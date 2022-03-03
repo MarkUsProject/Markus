@@ -175,7 +175,7 @@ class GroupsController < ApplicationController
                                  "#{params[:term]}%",
                                  Membership.select(:user_id)
                                            .joins(:grouping)
-                                           .where('groupings.assessment_id = ?', params[:assignment_id]))
+                                           .where(groupings: { assessment_id: params[:assignment_id] }))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
                                          'users.first_name', 'users.last_name')
     names = names.map do |h|
