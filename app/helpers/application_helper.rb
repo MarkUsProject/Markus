@@ -40,7 +40,7 @@ module ApplicationHelper
     extensions = { autolink: true }
     renderer = Redcarpet::Render::HTML.new(options)
     markdown = Redcarpet::Markdown.new(renderer, extensions)
-    return markdown.render(text).html_safe unless text.nil?
+    return sanitize markdown.render(text) unless text.nil?
   end
 
   def yield_content!(content_key)
