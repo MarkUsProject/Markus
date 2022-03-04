@@ -28,7 +28,8 @@
               <li>
                 <%= link_to t('main.role_switch.switch_role'),
                             role_switch_course_path(@current_course.id),
-                            remote: true %>
+                            remote: true,
+                            class: 'switch-role'%>
               </li>
             <% end %>
             <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
