@@ -118,7 +118,7 @@ class CriteriaController < ApplicationController
     Criterion.transaction do
       params[:criterion].each_with_index do |id, index|
         found_criterion = @assignment.criteria.find(id)
-        found_criterion.update(position: index + 1) unless id.blank?
+        found_criterion.update(position: index + 1)
       end
     rescue StandardError
       flash_message(:error, t('criteria.errors.criteria_not_found'))
