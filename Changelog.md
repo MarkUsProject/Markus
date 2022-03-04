@@ -6,6 +6,9 @@
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
 - Replace uses of first name and last name attributes with display name (#5844)
+
+
+## [v2.0.8]
 - Fix bug where "run tests" grader permission was not working for submission table (#5860)
 - Fix bug for replacing exam template files (#5863)
 
