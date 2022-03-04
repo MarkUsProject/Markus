@@ -1,6 +1,9 @@
 <div id="create-template-division-modal-content" hidden>
-  <%= render partial: 'template_division_pane',
-             locals: { f: f, exam_template: nil }%>
+  <p><%= t('exam_templates.create.create_template_help_html') %></p>
+  <div class="create-template-division-modal-area">
+    <%= render partial: 'template_division_pane',
+               locals: { f: f, exam_template: nil }%>
+  </div>
   <section class='dialog-actions'>
     <input id="create-template-division-previous" class='create-template-view-change' type='button' value='Previous'/>
     <%= f.submit t(:save),
