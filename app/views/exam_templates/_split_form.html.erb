@@ -3,8 +3,10 @@
              authenticity_token: true,
              multipart: true do %>
   <div class="inline-labels">
-    <%= label :exam_template_id, "Base Split on" %>
-    <%= select_tag :exam_template_id, options_from_collection_for_select(@exam_templates, 'id', 'name') %>
+    <%= label :exam_template_id, t('exam_templates.split.base_split') %>
+    <%= select_tag :exam_template_id,
+                   options_from_collection_for_select(@exam_templates, 'id', 'name'),
+                   required: true %>
     <%= label :pdf_to_split, t('exam_templates.split.instruction') %>
     <%= file_field_tag :pdf_to_split, required: true %>
   </div>

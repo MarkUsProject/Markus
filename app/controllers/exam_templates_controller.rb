@@ -143,7 +143,11 @@ class ExamTemplatesController < ApplicationController
   end
 
   def split
-    exam_template = ExamTemplate.find(params[:exam_template_id])
+    exam_template = ExamTemplate.find_by(id: params[:exam_template_id])
+    if exam_template.nil?
+      flash_message(:error, t('exam_templates.split.search_failure'))
+      return
+    end
     split_exam = params[:pdf_to_split]
     if split_exam.nil?
       flash_message(:error, t('exam_templates.split.missing'))
