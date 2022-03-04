@@ -6,6 +6,8 @@
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
 - Replace uses of first name and last name attributes with display name (#5844)
+- Fix bug where "run tests" grader permission was not working for submission table (#5860)
+- Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
 
 ## [v2.0.7]
 - Fix bugs in starter files when assigning by section (#5846)
