@@ -2,25 +2,4 @@ document.getElementById('editing_pane_menu').innerHTML =
   "<%= escape_javascript(render partial: "exam_template_edit",
                                 locals: { exam_template: @exam_template }) %>";
 
-$("#generate_exam_dialog").each((_, dialog) => {
-  let open_link = dialog.getAttribute("data-open-link") || undefined;
-  new ModalMarkus("#" + dialog.id, open_link);
-  $("#" + dialog.id + "-close").click(function () {
-    dialog.close();
-  });
-});
-
-$('#show-generate-advanced-options').click(e => {
-  const content = $('.generate-advanced-option')
-  if (content.is(':hidden')) {
-    content.show();
-  } else {
-    content.hide();
-  }
-  e.preventDefault();
-});
-
-$(".add-template-division").click(e => {
-  add_template_division(e.target);
-  e.preventDefault();
-});
+<%= render partial: 'event_listeners' %>

@@ -1,4 +1,18 @@
-$(".add-template-division").click(e => {
-  add_template_division(e.target);
+$('#show-generate-advanced-options').click(e => {
+  const content = $('.generate-advanced-option')
+  if (content.is(':hidden')) {
+    content.show();
+  } else {
+    content.hide();
+  }
   e.preventDefault();
+});
+
+// Reload dialog event listeners
+$(".dialog").each((_, dialog) => {
+  let open_link = dialog.getAttribute("data-open-link") || undefined;
+  new ModalMarkus("#" + dialog.id, open_link);
+  $("#" + dialog.id + "-close").click(function () {
+    dialog.close();
+  });
 });
