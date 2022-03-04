@@ -129,11 +129,40 @@ describe AutomatedTestsController do
     end
     context 'GET download_files' do
       subject { get_as role, :download_files, params: params }
-      let(:content) { response.body }
-      it_behaves_like 'zip file download'
+      before :each do
+        create_automated_test(assignment)
+      end
+      after :each do
+        # Clear uploaded autotest files to prepare for next test
+        FileUtils.rm_rf(assignment.autotest_files_dir)
+        FileUtils.rm_f(assignment.autotest_settings_file)
+      end
       it 'should be successful' do
         subject
         expect(response.status).to eq(200)
+      end
+      it 'should receive the appropriate files' do
+        subject
+        received_content = []
+        Zip::InputStream.open(StringIO.new(response.body)) do |io|
+          while (entry = io.get_next_entry)
+            received_content << {
+              name: entry.name,
+              file_content: entry.get_input_stream.read
+            }
+          end
+        end
+        expected_content = [{
+          name: File.join('Helpers', 'test_helpers.py'),
+          file_content: "def initialize_tests()\n\treturn True"
+        }, {
+          name: 'tests.py',
+          file_content: "def sample_test()\n\tassert True == True"
+        }, {
+          name: File.join('Helpers', ''),
+          file_content: ''
+        }]
+        expect(received_content).to match_array(expected_content)
       end
     end
     context 'POST upload_files' do
