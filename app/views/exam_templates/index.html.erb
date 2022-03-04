@@ -33,7 +33,12 @@
 
   <div class='pane'>
     <div id='editing_pane_menu'>
-      <%= render partial: 'manager_help' %>
+      <% if @exam_template.nil? %>
+        <%= render partial: 'manager_help' %>
+      <% else %>
+        <%= render partial: "exam_template_edit",
+                   locals: { exam_template: @exam_template } %>
+      <% end %>
     </div>
   </div>
 </div>

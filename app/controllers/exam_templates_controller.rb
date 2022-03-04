@@ -33,15 +33,24 @@ class ExamTemplatesController < ApplicationController
       if exam_template&.valid?
         exam_template.update(exam_template_params)
         flash_message(:success, t('exam_templates.create.success'))
+        redirect_to edit_course_exam_template_path(current_course, exam_template)
       else
         flash_message(:error, t('exam_templates.create.failure'))
+        redirect_to course_assignment_exam_templates_path(current_course, assignment)
       end
     end
-    redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
   def edit
     @exam_template = record
+    @assignment = @exam_template.assignment
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
+    respond_to do |format|
+      format.html do
+        render 'exam_templates/index'
+      end
+      format.js
+    end
   end
 
   def download
@@ -78,7 +87,7 @@ class ExamTemplatesController < ApplicationController
         return
       end
     end
-    redirect_to course_assignment_exam_templates_path(current_course, assignment)
+    redirect_to edit_course_exam_template_path(current_course, old_exam_template)
   end
 
   def generate
@@ -144,7 +153,7 @@ class ExamTemplatesController < ApplicationController
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
       session[:job_id] = current_job.job_id
     end
-    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+    redirect_to edit_course_exam_template_path(current_course, exam_template)
   end
 
   def destroy
