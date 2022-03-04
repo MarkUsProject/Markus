@@ -17,3 +17,10 @@
     <% end %>
   </ul>
 </div>
+<div class="listings separate-listing">
+  <li>
+    <%= link_to t('exam_templates.split.title'),
+                view_logs_course_assignment_exam_templates_path(@current_course, @assignment),
+                remote: true %>
+  </li>
+</div>
