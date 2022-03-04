@@ -60,12 +60,8 @@ class ExamTemplate < ApplicationRecord
   end
 
   # Replace an ExamTemplate with the correct file
-  def replace_with_file(blob, attributes={})
-    return unless attributes.key? :assessment_id
-
-    File.open(File.join(base_bath, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
-      f.write blob
-    end
+  def replace_with_file(blob, attributes = {})
+    File.binwrite(File.join(base_path, attributes[:new_filename].tr(' ', '_')), blob)
 
     pdf = CombinePDF.parse blob
     self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])

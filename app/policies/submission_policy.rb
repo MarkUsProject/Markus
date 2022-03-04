@@ -26,6 +26,10 @@ class SubmissionPolicy < ApplicationPolicy
     true
   end
 
+  def run_tests?
+    check?(:run_tests?, role)
+  end
+
   def before_release?
     !record.current_result.released_to_students
   end
