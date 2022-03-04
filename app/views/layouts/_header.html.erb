@@ -21,7 +21,8 @@
             <% unless allowed_to?(:role_is_switched?) %>
               <li>
                 <%= link_to t('menu.settings'),
-                            settings_users_path %>
+                            settings_users_path,
+                            class: 'settings'%>
               </li>
             <% end %>
             <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
@@ -51,6 +52,7 @@
               <%= link_to(t('main.log_out'),
                           logout_main_index_path,
                           id: 'logout_link',
+                          class: 'logout',
                           method: :post) %>
             </li>
           </ul>

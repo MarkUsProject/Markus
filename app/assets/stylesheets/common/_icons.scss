@@ -116,6 +116,12 @@
   font-weight: bolder;
 }
 
+.settings::before {
+  content: asset-url('icons/settings.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
 .switch-role::before {
   content: asset-url('icons/group_go.png');
   padding-right: 5px;
@@ -130,6 +136,12 @@
 
 .github::before {
   content: asset-url('icons/github.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.logout::before {
+  content: asset-url('icons/logout.png');
   padding-right: 5px;
   vertical-align: text-top;
 }
