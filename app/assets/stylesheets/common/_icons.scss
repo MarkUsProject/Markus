@@ -122,6 +122,18 @@
   vertical-align: text-top;
 }
 
+.about-markus::before {
+  content: asset-url('icons/information.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.github::before {
+  content: asset-url('icons/github.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
 // Icons for react-json-schema-forms
 .btn-danger::after {
   content: asset-url('icons/cross.png');

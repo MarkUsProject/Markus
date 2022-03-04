@@ -41,10 +41,11 @@
             <li>
               <%= link_to t(:about_markus),
                           about_main_index_path,
-                          remote: true %>
+                          remote: true,
+                          class: 'about-markus'%>
             </li>
             <li>
-              <a href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
+              <a class = 'github' href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
             </li>
             <li>
               <%= link_to(t('main.log_out'),
