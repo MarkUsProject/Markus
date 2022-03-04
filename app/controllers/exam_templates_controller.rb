@@ -31,14 +31,15 @@ class ExamTemplatesController < ApplicationController
                                                     filename: filename,
                                                     name: name)
       if exam_template&.valid?
-        exam_template.update(exam_template_params)
+        exam_template.update(exam_template_params) unless params[:exam_template].nil?
         flash_message(:success, t('exam_templates.create.success'))
         redirect_to edit_course_exam_template_path(current_course, exam_template)
+        return
       else
         flash_message(:error, t('exam_templates.create.failure'))
-        redirect_to course_assignment_exam_templates_path(current_course, assignment)
       end
     end
+    redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
   def edit
