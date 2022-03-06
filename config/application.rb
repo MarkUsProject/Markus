@@ -39,6 +39,9 @@ module Markus
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
 
+    # Ensure form_with calls generate remote forms by
+    config.action_view.form_with_generates_remote_forms = true
+
     # Settings below are configurable
 
     config.time_zone = Settings.rails.time_zone
