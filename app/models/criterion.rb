@@ -1,7 +1,7 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
 class Criterion < ApplicationRecord
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criteria
   before_validation :update_assigned_groups_count
   after_update :update_results_with_change
   after_destroy :update_results

@@ -5,7 +5,7 @@ class CriterionTaAssociation < ApplicationRecord
   belongs_to :criterion
   validates_associated :criterion
 
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criterion_ta_associations
 
   before_validation :add_assignment_reference, on: :create
 

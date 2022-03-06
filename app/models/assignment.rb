@@ -28,11 +28,13 @@ class Assignment < Assessment
   has_many :ta_criteria,
            -> { where(ta_visible: true).order(:position) },
            class_name: 'Criterion',
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :peer_criteria,
            -> { where(peer_visible: true).order(:position) },
            class_name: 'Criterion',
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
@@ -41,16 +43,18 @@ class Assignment < Assessment
   has_many :annotation_categories,
            -> { order(:position) },
            class_name: 'AnnotationCategory',
-           dependent: :destroy, foreign_key: :assessment_id
+           dependent: :destroy,
+           inverse_of: :assignment,
+           foreign_key: :assessment_id
 
-  has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id
+  has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id, inverse_of: :assignment
 
   has_many :assignment_files, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
   # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
-  has_many :groupings, foreign_key: :assessment_id
+  has_many :groupings, foreign_key: :assessment_id, inverse_of: :assignment
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment,

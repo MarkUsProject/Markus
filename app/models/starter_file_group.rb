@@ -1,6 +1,6 @@
 # Class describing a group of starter files
 class StarterFileGroup < ApplicationRecord
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :starter_file_groups
   has_many :section_starter_file_groups, dependent: :destroy
   has_many :sections, through: :section_starter_file_groups
   has_many :starter_file_entries, dependent: :destroy

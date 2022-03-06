@@ -12,20 +12,24 @@ class Submission < ApplicationRecord
   belongs_to :grouping
 
   has_many :results, -> { order :created_at },
-           dependent: :destroy
+           dependent: :destroy,
+           inverse_of: :submission
 
   has_many :non_pr_results, -> { where(peer_review_id: nil).order(:created_at) },
-           class_name: 'Result'
+           class_name: 'Result',
+           inverse_of: :submission
 
   has_one :current_result, -> { where(peer_review_id: nil).order(created_at: :desc) },
-          class_name: 'Result'
+          class_name: 'Result',
+          inverse_of: :submission
 
   has_one :submitted_remark, -> { where.not remark_request_submitted_at: nil },
-          class_name: 'Result'
+          class_name: 'Result',
+          inverse_of: :submission
 
   has_many :submission_files, dependent: :destroy
   has_many :annotations, through: :submission_files
-  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :nullify
+  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :nullify, inverse_of: :submission
   has_many :test_group_results, through: :test_runs
   has_many :feedback_files, dependent: :destroy
 

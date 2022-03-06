@@ -4,7 +4,7 @@ class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   before_save :undo_mark_for_destruction
   after_update :rename_exam_template_directory
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :exam_templates
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
   validates :name,

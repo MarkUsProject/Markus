@@ -840,6 +840,7 @@ describe Assignment do
               r.marking_state = Result::MARKING_STATES[:complete]
               r.save
             end
+            @assignment.groupings.reload
           end
 
           it 'be able to get_repo_checkout_commands' do
@@ -875,6 +876,7 @@ describe Assignment do
               g.save
             end
             create(:version_used_submission, grouping: @assignment.groupings.first)
+            @assignment.groupings.reload
           end
 
           it 'be able to get_repo_checkout_commands' do

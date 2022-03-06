@@ -2,7 +2,7 @@ require 'set'
 
 class PeerReview < ApplicationRecord
   belongs_to :result, dependent: :destroy
-  belongs_to :reviewer, class_name: 'Grouping'
+  belongs_to :reviewer, class_name: 'Grouping', inverse_of: :peer_reviews_to_others
   has_one :reviewee, class_name: 'Grouping', through: :result, source: :grouping
   validates_associated :reviewer
   validates_associated :result

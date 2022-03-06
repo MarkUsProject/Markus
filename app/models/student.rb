@@ -2,14 +2,15 @@
 class Student < Role
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
-  has_many :grade_entry_students, foreign_key: :role_id
+  has_many :grade_entry_students, foreign_key: :role_id, inverse_of: :role
   has_many :accepted_memberships,
            -> {
              where membership_status: [StudentMembership::STATUSES[:accepted],
                                        StudentMembership::STATUSES[:inviter]]
            },
            class_name: 'Membership',
-           foreign_key: :role_id
+           foreign_key: :role_id,
+           inverse_of: :role
   has_many :accepted_groupings,
            -> {
              where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted],
@@ -31,7 +32,7 @@ class Student < Role
            through: :memberships,
            source: :grouping
 
-  has_many :student_memberships, foreign_key: 'role_id'
+  has_many :student_memberships, foreign_key: 'role_id', inverse_of: :role
 
   has_many :grace_period_deductions, through: :memberships
 

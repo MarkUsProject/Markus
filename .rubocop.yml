@@ -142,9 +142,6 @@ Rails/HasManyOrHasOneDependent:
 Rails/HelperInstanceVariable:
   Enabled: false
 
-Rails/InverseOf:
-  Enabled: false
-
 Rails/OrderById:
   Enabled: false
 

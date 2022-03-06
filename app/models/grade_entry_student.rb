@@ -4,7 +4,7 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :role
   validates_associated :role, on: :create
 
-  belongs_to :grade_entry_form, foreign_key: :assessment_id
+  belongs_to :grade_entry_form, foreign_key: :assessment_id, inverse_of: :grade_entry_students
   validates_associated :grade_entry_form, on: :create
 
   validates :role_id, uniqueness: { scope: :assessment_id }

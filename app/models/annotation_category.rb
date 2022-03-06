@@ -15,7 +15,7 @@ class AnnotationCategory < ApplicationRecord
   validates :annotation_category_name, presence: true
   validates :annotation_category_name, uniqueness: { scope: :assessment_id }
 
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :annotation_categories
 
   has_one :course, through: :assignment
 

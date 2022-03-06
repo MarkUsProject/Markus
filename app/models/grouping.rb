@@ -9,21 +9,24 @@ class Grouping < ApplicationRecord
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
-  has_many :student_memberships, -> { order('id') }
+  has_many :student_memberships, -> { order('id') }, inverse_of: :grouping
   has_many :non_rejected_student_memberships,
            -> { where.not(memberships: { membership_status: StudentMembership::STATUSES[:rejected] }) },
-           class_name: 'StudentMembership'
+           class_name: 'StudentMembership',
+           inverse_of: :grouping
 
   has_many :accepted_student_memberships,
            -> {
              where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted],
                                                        StudentMembership::STATUSES[:inviter]]
            },
-           class_name: 'StudentMembership'
+           class_name: 'StudentMembership',
+           inverse_of: :grouping
 
   has_many :pending_student_memberships,
            -> { where 'memberships.membership_status': StudentMembership::STATUSES[:pending] },
-           class_name: 'StudentMembership'
+           class_name: 'StudentMembership',
+           inverse_of: :grouping
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
@@ -40,7 +43,8 @@ class Grouping < ApplicationRecord
   has_many :submissions
   has_one :current_submission_used,
           -> { where submission_version_used: true },
-          class_name: 'Submission'
+          class_name: 'Submission',
+          inverse_of: :grouping
   has_one :current_result, through: :current_submission_used
   has_one :submitted_remark, through: :current_submission_used
 
@@ -50,17 +54,19 @@ class Grouping < ApplicationRecord
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
 
-  has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy
+  has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy, inverse_of: :grouping
   has_many :test_runs_all_data,
            -> {
              left_outer_joins(role: :end_user,
                               test_group_results: [:test_group, :test_results]).order(created_at: :desc)
            },
-           class_name: 'TestRun'
+           class_name: 'TestRun',
+           inverse_of: :grouping
 
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
-          class_name: 'StudentMembership'
+          class_name: 'StudentMembership',
+          inverse_of: :grouping
 
   has_one :inviter, source: :role, through: :inviter_membership, class_name: 'Student'
   has_one :section, through: :inviter
@@ -70,14 +76,14 @@ class Grouping < ApplicationRecord
   # 'peer_reviews_to_others' is all the peer reviews this grouping gave to others
   has_many :results, through: :current_submission_used
   has_many :peer_reviews, through: :results
-  has_many :peer_reviews_to_others, class_name: 'PeerReview', foreign_key: 'reviewer_id'
+  has_many :peer_reviews_to_others, class_name: 'PeerReview', foreign_key: 'reviewer_id', inverse_of: :reviewer
 
   scope :approved_groupings, -> { where instructor_approved: true }
 
   validates :criteria_coverage_count, numericality: { greater_than_or_equal_to: 0 }
 
   # user association/validation
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :groupings
   validates_associated :assignment, on: :create
 
   belongs_to :group
