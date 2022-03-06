@@ -13,10 +13,12 @@ Bundler.require(*Rails.groups)
 module Markus
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 6.0
+    config.load_defaults 7.0
 
     # Sensitive parameters which will be filtered from the log file
-    config.filter_parameters += [:password]
+    config.filter_parameters += [
+      :passw, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn
+    ]
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
@@ -36,6 +38,9 @@ module Markus
     config.assets.quiet = true
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
+
+    # Ensure form_with calls generate remote forms by
+    config.action_view.form_with_generates_remote_forms = true
 
     # Settings below are configurable
 

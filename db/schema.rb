@@ -10,16 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_06_065135) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_02_06_065135) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotation_categories", id: :serial, force: :cascade do |t|
     t.text "annotation_category_name"
     t.integer "position"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "assessment_id", null: false
     t.bigint "flexible_criterion_id"
     t.index ["assessment_id"], name: "index_annotation_categories_on_assessment_id"
@@ -29,8 +28,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "annotation_texts", id: :serial, force: :cascade do |t|
     t.text "content"
     t.integer "annotation_category_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "creator_id"
     t.integer "last_editor_id"
     t.float "deduction"
@@ -64,10 +63,10 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   end
 
   create_table "assessment_section_properties", id: :serial, force: :cascade do |t|
-    t.datetime "due_date"
+    t.datetime "due_date", precision: nil
     t.integer "section_id"
     t.bigint "assessment_id"
-    t.datetime "start_time"
+    t.datetime "start_time", precision: nil
     t.boolean "is_hidden"
   end
 
@@ -76,13 +75,13 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.string "type", null: false
     t.string "description", null: false
     t.text "message", default: "", null: false
-    t.datetime "due_date"
+    t.datetime "due_date", precision: nil
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
     t.integer "outstanding_remark_request_count"
     t.integer "parent_assessment_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "course_id", null: false
     t.index ["course_id"], name: "index_assessments_on_course_id"
     t.index ["short_identifier", "course_id"], name: "index_assessments_on_short_identifier_and_course_id", unique: true
@@ -91,8 +90,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
 
   create_table "assignment_files", id: :serial, force: :cascade do |t|
     t.string "filename", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "assessment_id"
     t.index ["assessment_id", "filename"], name: "index_assignment_files_on_assessment_id_and_filename", unique: true
     t.index ["assessment_id"], name: "index_assignment_files_on_assessment_id"
@@ -114,12 +113,12 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.boolean "assign_graders_to_criteria", default: false, null: false
     t.integer "tokens_per_period", default: 0, null: false
     t.boolean "allow_remarks", default: false, null: false
-    t.datetime "remark_due_date"
+    t.datetime "remark_due_date", precision: nil
     t.text "remark_message"
     t.boolean "unlimited_tokens", default: false, null: false
     t.boolean "only_required_files", default: false, null: false
     t.boolean "vcs_submit", default: false, null: false
-    t.datetime "token_start_date"
+    t.datetime "token_start_date", precision: nil
     t.float "token_period"
     t.boolean "has_peer_review", default: false, null: false
     t.boolean "enable_student_tests", default: false, null: false
@@ -128,13 +127,13 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.boolean "display_median_to_students", default: false, null: false
     t.boolean "anonymize_groups", default: false, null: false
     t.boolean "hide_unassigned_criteria", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.interval "duration"
-    t.datetime "start_time"
+    t.datetime "start_time", precision: nil
     t.boolean "is_timed", default: false, null: false
     t.string "starter_file_type", default: "simple", null: false
-    t.datetime "starter_file_updated_at"
+    t.datetime "starter_file_updated_at", precision: nil
     t.bigint "default_starter_file_group_id"
     t.integer "autotest_settings_id"
     t.boolean "starter_files_after_due", default: true, null: false
@@ -153,8 +152,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.string "name", null: false
     t.boolean "is_hidden", default: true, null: false
     t.string "display_name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "autotest_setting_id"
     t.index ["autotest_setting_id"], name: "index_courses_on_autotest_setting_id"
   end
@@ -168,8 +167,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "assigned_groups_count", default: 0, null: false
     t.boolean "ta_visible", default: true, null: false
     t.boolean "peer_visible", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "assessment_id", null: false
     t.boolean "bonus", default: false, null: false
     t.index ["assessment_id"], name: "index_criteria_on_assessment_id"
@@ -178,15 +177,15 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "criteria_assignment_files_joins", id: :serial, force: :cascade do |t|
     t.integer "criterion_id", null: false
     t.integer "assignment_file_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "criterion_ta_associations", id: :serial, force: :cascade do |t|
     t.integer "ta_id"
     t.integer "criterion_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "assessment_id"
     t.index ["criterion_id"], name: "index_criterion_ta_associations_on_criterion_id"
     t.index ["ta_id"], name: "index_criterion_ta_associations_on_ta_id"
@@ -195,8 +194,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "exam_templates", id: :serial, force: :cascade do |t|
     t.string "filename", null: false
     t.integer "num_pages", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "name", null: false
     t.string "cover_fields", default: "", null: false
     t.boolean "automatic_parsing", default: false, null: false
@@ -213,8 +212,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.boolean "apply_penalty", default: false, null: false
     t.bigint "grouping_id", null: false
     t.string "note"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["grouping_id"], name: "index_extensions_on_grouping_id", unique: true
   end
 
@@ -222,8 +221,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "result_id"
     t.string "description"
     t.float "extra_mark"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "unit"
     t.index ["result_id"], name: "index_extra_marks_on_result_id"
   end
@@ -233,8 +232,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.binary "file_content", null: false
     t.string "mime_type", null: false
     t.integer "submission_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "test_group_result_id"
     t.index ["submission_id"], name: "index_feedback_files_on_submission_id"
     t.index ["test_group_result_id"], name: "index_feedback_files_on_test_group_result_id"
@@ -243,15 +242,15 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "grace_period_deductions", id: :serial, force: :cascade do |t|
     t.integer "membership_id"
     t.integer "deduction"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["membership_id"], name: "index_grace_period_deductions_on_membership_id"
   end
 
   create_table "grade_entry_items", id: :serial, force: :cascade do |t|
     t.string "name", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.float "out_of"
     t.integer "position"
     t.boolean "bonus", default: false, null: false
@@ -261,8 +260,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
 
   create_table "grade_entry_students", id: :serial, force: :cascade do |t|
     t.boolean "released_to_student", default: false, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.float "total_grade"
     t.bigint "assessment_id"
     t.bigint "role_id", null: false
@@ -287,8 +286,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "grade_entry_item_id"
     t.integer "grade_entry_student_id"
     t.float "grade"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["grade_entry_item_id", "grade_entry_student_id"], name: "index_grades_on_grade_entry_item_id_and_grade_entry_student_id", unique: true
   end
 
@@ -301,14 +300,14 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
 
   create_table "groupings", id: :serial, force: :cascade do |t|
     t.integer "group_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "instructor_approved", default: false, null: false
     t.boolean "is_collected", default: false, null: false
     t.integer "criteria_coverage_count", default: 0
     t.integer "test_tokens", default: 0, null: false
     t.bigint "assessment_id", null: false
-    t.datetime "start_time"
+    t.datetime "start_time", precision: nil
     t.boolean "starter_file_changed", default: false, null: false
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end
@@ -331,16 +330,16 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.string "job_id"
     t.string "status"
     t.string "message"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["job_id"], name: "index_job_messengers_on_job_id"
   end
 
   create_table "key_pairs", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.string "public_key"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "levels", force: :cascade do |t|
@@ -348,15 +347,15 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.string "name", null: false
     t.string "description", null: false
     t.float "mark", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["criterion_id"], name: "index_levels_on_criterion_id"
   end
 
   create_table "marking_schemes", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "course_id", null: false
     t.index ["course_id", "name"], name: "index_marking_schemes_on_course_id_and_name", unique: true
     t.index ["course_id"], name: "index_marking_schemes_on_course_id"
@@ -365,8 +364,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "marking_weights", id: :serial, force: :cascade do |t|
     t.integer "marking_scheme_id"
     t.decimal "weight"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "assessment_id", null: false
     t.index ["assessment_id"], name: "index_marking_weights_on_assessment_id"
   end
@@ -375,8 +374,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "result_id"
     t.integer "criterion_id"
     t.float "mark"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "override", default: false, null: false
     t.index ["criterion_id"], name: "index_marks_on_criterion_id"
     t.index ["result_id"], name: "index_marks_on_result_id"
@@ -384,8 +383,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
 
   create_table "memberships", id: :serial, force: :cascade do |t|
     t.string "membership_status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "grouping_id", null: false
     t.string "type"
     t.bigint "role_id", null: false
@@ -395,8 +394,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "notes", id: :serial, force: :cascade do |t|
     t.text "notes_message", null: false
     t.integer "creator_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "noteable_type", null: false
     t.integer "noteable_id", null: false
     t.index ["creator_id"], name: "index_notes_on_creator_id"
@@ -405,8 +404,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "peer_reviews", id: :serial, force: :cascade do |t|
     t.integer "result_id", null: false
     t.integer "reviewer_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["result_id", "reviewer_id"], name: "index_peer_reviews_on_result_id_and_reviewer_id", unique: true
     t.index ["result_id"], name: "index_peer_reviews_on_result_id"
     t.index ["reviewer_id"], name: "index_peer_reviews_on_reviewer_id"
@@ -415,8 +414,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "periods", id: :serial, force: :cascade do |t|
     t.integer "submission_rule_id"
     t.float "deduction"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.float "hours"
     t.float "interval"
     t.string "submission_rule_type"
@@ -427,11 +426,11 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "submission_id"
     t.string "marking_state"
     t.text "overall_comment"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "released_to_students", default: false, null: false
     t.float "total_mark", default: 0.0
-    t.datetime "remark_request_submitted_at"
+    t.datetime "remark_request_submitted_at", precision: nil
     t.integer "peer_review_id"
     t.index ["peer_review_id"], name: "index_results_on_peer_review_id"
   end
@@ -445,8 +444,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "grace_credits", default: 0, null: false
     t.boolean "receives_results_emails", default: false, null: false
     t.boolean "receives_invite_emails", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_roles_on_course_id"
     t.index ["section_id"], name: "index_roles_on_section_id"
     t.index ["user_id", "course_id"], name: "index_roles_on_user_id_and_course_id", unique: true
@@ -462,8 +461,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
 
   create_table "sections", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "course_id", null: false
     t.index ["course_id"], name: "index_sections_on_course_id"
     t.index ["name", "course_id"], name: "index_sections_on_name_and_course_id", unique: true
@@ -472,8 +471,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "sessions", id: :serial, force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["session_id"], name: "index_sessions_on_session_id"
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
@@ -485,14 +484,14 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.string "status"
     t.integer "split_pdf_log_id"
     t.integer "group_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["group_id"], name: "index_split_pages_on_group_id"
     t.index ["split_pdf_log_id"], name: "index_split_pages_on_split_pdf_log_id"
   end
 
   create_table "split_pdf_logs", id: :serial, force: :cascade do |t|
-    t.datetime "uploaded_when"
+    t.datetime "uploaded_when", precision: nil
     t.string "error_description"
     t.string "filename"
     t.integer "num_groups_in_complete"
@@ -500,8 +499,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "num_pages_qr_scan_error"
     t.integer "original_num_pages"
     t.boolean "qr_code_found", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "exam_template_id"
     t.bigint "role_id", null: false
     t.index ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id"
@@ -534,21 +533,21 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
 
   create_table "submission_rules", id: :serial, force: :cascade do |t|
     t.string "type", default: "NoLateSubmissionRule"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "assessment_id", null: false
     t.index ["assessment_id"], name: "index_submission_rules_on_assessment_id"
   end
 
   create_table "submissions", id: :serial, force: :cascade do |t|
     t.integer "grouping_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.integer "submission_version"
     t.boolean "submission_version_used", default: false, null: false
     t.text "revision_identifier"
-    t.datetime "revision_timestamp"
+    t.datetime "revision_timestamp", precision: nil
     t.text "remark_request"
-    t.datetime "remark_request_timestamp"
+    t.datetime "remark_request_timestamp", precision: nil
     t.boolean "is_empty", default: true, null: false
     t.index ["grouping_id"], name: "index_submissions_on_grouping_id"
   end
@@ -567,15 +566,15 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.integer "start", null: false
     t.integer "end", null: false
     t.string "label", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "assignment_file_id"
     t.index ["exam_template_id"], name: "index_template_divisions_on_exam_template_id"
   end
 
   create_table "test_batches", id: :serial, force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "course_id", null: false
     t.index ["course_id"], name: "index_test_batches_on_course_id"
   end
@@ -583,8 +582,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "test_group_results", id: :serial, force: :cascade do |t|
     t.integer "test_group_id"
     t.float "marks_earned", default: 0.0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "time", null: false
     t.float "marks_total", default: 0.0, null: false
     t.integer "test_run_id", null: false
@@ -597,8 +596,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.text "name", null: false
     t.integer "display_output", default: 0, null: false
     t.bigint "criterion_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "assessment_id", null: false
     t.index ["assessment_id"], name: "index_test_groups_on_assessment_id"
     t.index ["criterion_id"], name: "index_test_groups_on_criterion_id"
@@ -609,8 +608,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.text "status", null: false
     t.float "marks_earned", default: 0.0, null: false
     t.text "output", default: "", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.float "marks_total", default: 0.0, null: false
     t.bigint "time"
     t.bigint "test_group_result_id", null: false
@@ -620,8 +619,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
   create_table "test_runs", id: :serial, force: :cascade do |t|
     t.integer "test_batch_id"
     t.integer "grouping_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "submission_id"
     t.text "revision_identifier"
     t.text "problems"
@@ -639,8 +638,8 @@ ActiveRecord::Schema.define(version: 2022_02_06_065135) do
     t.string "last_name"
     t.string "first_name"
     t.string "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "api_key"
     t.string "email"
     t.string "id_number"
