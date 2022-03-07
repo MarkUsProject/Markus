@@ -1,4 +1,4 @@
-<% content_for :title, ExamTemplate.model_name.human.pluralize %>
+<% content_for :title, "#{ExamTemplate.model_name.human.pluralize}: #{@assignment.short_identifier}" %>
 
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>

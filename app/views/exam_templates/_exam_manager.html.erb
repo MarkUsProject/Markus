@@ -1,9 +1,9 @@
 <h2><%= t('exam_templates.split.title') %></h2>
 <%= render partial: 'split_form' %>
-<fieldset id="split-pdf-log-section">
+<fieldset>
   <legend>
     <span>
-      <%= "#{SplitPdfLog.model_name.human.pluralize} - #{@assignment.short_identifier}" %>
+      <%= SplitPdfLog.model_name.human.pluralize %>
     </span>
   </legend>
   <div id="exam_scan_log_table"></div>
