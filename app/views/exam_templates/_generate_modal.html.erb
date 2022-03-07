@@ -13,16 +13,11 @@
                          value: 1,
                          size: 4,
                          min: 1 %>
-      <a id='show-generate-advanced-options'><%= t('exam_templates.generate.advanced') %></a><div></div>
-      <%= f.label :start_index, t('exam_templates.generate.index_label'),
-                  class: 'generate-advanced-option',
-                  hidden: true %>
+      <%= f.label :start_index, t('exam_templates.generate.index_label') %>
       <%= f.number_field :start_index,
                          value: 1,
                          size: 4,
-                         min: 1,
-                         class: 'generate-advanced-option',
-                         hidden: true %>
+                         min: 1 %>
     </div>
     <section class='dialog-actions'>
       <%= f.submit t('exam_templates.generate.generate') %>
