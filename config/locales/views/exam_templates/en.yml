@@ -18,7 +18,6 @@ en:
     create:
       add_division: Add Template Division
       add_new: Add Exam Template
-      create_template_help_html: A template division specifies a mapping of test page number to question.<br>You can choose to configure this later.
       failure: Exam Template not successfully created
       success: Exam Template successfully created
       upload: Upload Template
@@ -29,7 +28,6 @@ en:
       success: Exam Template successfully deleted
     download: Download Exam Template
     generate:
-      advanced: Advanced Options
       copies_label: Number of Copies
       generate: Generate
       generate_job_started: Generating exam pdfs for exam %{exam_name} has begun.

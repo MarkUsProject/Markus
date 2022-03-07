@@ -16,7 +16,16 @@ describe ExamTemplatesController do
       before { post_as user, :create, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
-
+    describe '#edit' do
+      it 'should respond with 200 with html format' do
+        get_as user, :edit, format: 'html', params: { course_id: course.id, id: exam_template.id }
+        expect(response.status).to eq 200
+      end
+      it 'should respond with 200 with js format' do
+        get_as user, :edit, format: 'js', params: { course_id: course.id, id: exam_template.id }
+        expect(response.status).to eq 200
+      end
+    end
     describe '#update' do
       before { put_as user, :update, params: params }
 
@@ -108,6 +117,16 @@ describe ExamTemplatesController do
         end
         before { post_as user, :create, params: params }
         it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      describe '#edit' do
+        it 'should respond with 403 with html format' do
+          get_as user, :edit, format: 'html', params: { course_id: course.id, id: exam_template.id }
+          expect(response.status).to eq 403
+        end
+        it 'should respond with 403 with js format' do
+          get_as user, :edit, format: 'js', params: { course_id: course.id, id: exam_template.id }
+          expect(response.status).to eq 403
+        end
       end
       describe '#update' do
         let(:params) do
