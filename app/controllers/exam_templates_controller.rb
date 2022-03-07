@@ -157,7 +157,9 @@ class ExamTemplatesController < ApplicationController
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
       session[:job_id] = current_job.job_id
     end
-    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+    respond_to do |format|
+      format.js { render 'exam_templates/_poll_generate_job' }
+    end
   end
 
   def destroy

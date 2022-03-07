@@ -6,3 +6,8 @@ $(".dialog").each((_, dialog) => {
     dialog.close();
   });
 });
+
+$(".add-template-division").click(e => {
+  add_template_division(e.target);
+  e.preventDefault();
+});
