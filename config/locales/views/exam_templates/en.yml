@@ -43,7 +43,7 @@ en:
       title: Automatic Parsing Selection
     split:
       failure: Exam Template is not successfully split
-      instruction: Exam Papers to upload (.pdf)
+      instruction: Papers to upload (.pdf)
       invalid: Invalid file type
       missing: Missing File
       search_failure: Exam Template to base split not found
