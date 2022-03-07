@@ -3,12 +3,12 @@
              authenticity_token: true,
              multipart: true do %>
   <div class="inline-labels">
-    <%= label :exam_template_id, t('exam_templates.split.base_split') %>
+    <%= label :exam_template_id, ExamTemplate.model_name.human %>
     <%= select_tag :exam_template_id,
                    options_from_collection_for_select(@exam_templates, 'id', 'name'),
                    required: true %>
     <%= label :pdf_to_split, t('exam_templates.split.instruction') %>
-    <%= file_field_tag :pdf_to_split, required: true %>
+    <%= file_field_tag :pdf_to_split, required: true, accept: 'application/pdf' %>
   </div>
   <p><%= submit_tag t('exam_templates.split.split'), id: 'split_exam' %></p>
 <% end %>

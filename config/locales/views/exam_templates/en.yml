@@ -42,9 +42,8 @@ en:
       save: Save
       title: Automatic Parsing Selection
     split:
-      base_split: Base Split on
       failure: Exam Template is not successfully split
-      instruction: Upload PDF Exam
+      instruction: Exam Papers to upload (.pdf)
       invalid: Invalid file type
       missing: Missing File
       search_failure: Exam Template to base split not found
