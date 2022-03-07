@@ -31,7 +31,6 @@ class ExamTemplatesController < ApplicationController
                                                     filename: filename,
                                                     name: name)
       if exam_template&.valid?
-        exam_template.update(exam_template_params) unless params[:exam_template].nil?
         flash_message(:success, t('exam_templates.create.success'))
         redirect_to edit_course_exam_template_path(current_course, exam_template)
         return
