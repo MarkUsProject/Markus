@@ -82,7 +82,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = @annotation_category.assignment
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
-      render 'show', assignment_id: @assignment.id, id: @annotation_category.id
+      @annotation_texts = annotation_text_data(record)
     else
       respond_with @annotation_category, render: { body: nil, status: :bad_request }
     end
