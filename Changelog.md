@@ -7,6 +7,11 @@
 - Remove group name displayed attribute from assignment properties table (#5834)
 - Replace uses of first name and last name attributes with display name (#5844)
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
+- Upgrade to Rails 7 (#5885)
+
+## [v2.0.8]
+- Fix bug where "run tests" grader permission was not working for submission table (#5860)
+- Fix bug for replacing exam template files (#5863)
 
 ## [v2.0.7]
 - Fix bugs in starter files when assigning by section (#5846)
