@@ -20,12 +20,6 @@ class RubricCriterion < Criterion
     levels_attributes.each do |_key, val|
       if s1.include?(val[:mark]) || s2.include?(val[:name])
         should_skip = false
-        if s1.include? val[:mark]
-          self.errors.add(:mark, 'already taken')
-        end
-        if s2.include? val[:name]
-          self.errors.add(:name, 'already taken')
-        end
         break
       end
       s1.add(val[:mark])
@@ -35,19 +29,9 @@ class RubricCriterion < Criterion
     if should_skip
       levels_attributes.each do |_key, val|
         val[:skip_uniqueness_validation] = true
-        # It's possible that a new level was added hence no id yet
-        if self.levels.find_by_id(val[:id])
-          self.levels.find_by_id(val[:id]).update(val.except(:_destroy))
-        else
-          # If it's a new level, create a new object with the params
-          self.levels.create(val.except(:_destroy))
-        end
       end
-
-      true
-    else
-      false
     end
+    self.update(levels_attributes: levels_attributes)
   end
 
   def level_with_mark_closest_to(mark)
