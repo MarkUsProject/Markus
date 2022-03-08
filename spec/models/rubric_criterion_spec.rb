@@ -5,6 +5,120 @@ describe RubricCriterion do
     it_behaves_like 'a criterion'
   end
 
+  describe '#update_levels' do
+    # At creation, rubric already has 5 levels
+    let(:rubric) { create :rubric_criterion }
+
+    context 'when the properties with uniqueness validations are changed in a way
+that two properties A and B have switched values' do
+      context 'when the names are changed and the marks are not changed' do
+        it 'updates the associated levels if all the levels after update will have unique names' do
+          level0_mark, level0_name, level0_id = rubric.levels[0].mark, rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { mark: level0_mark, name: level1_name, id: level0_id },
+            '1' => { mark: level1_mark, name: level0_name, id: level1_id }
+          }
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by_id(level0_id).name).to eq(level1_name)
+          expect(rubric.levels.find_by_id(level1_id).name).to eq(level0_name)
+        end
+      end
+
+      context 'when the marks are changed and the names are not changed' do
+        it 'updates the associated levels if all the levels after update will have unique marks' do
+          level0_mark, level0_name, level0_id = rubric.levels[0].mark, rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { mark: level1_mark, name: level0_name, id: level0_id },
+            '1' => { mark: level0_mark, name: level1_name, id: level1_id }
+          }
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by_id(level0_id).mark).to eq(level1_mark)
+          expect(rubric.levels.find_by_id(level1_id).mark).to eq(level0_mark)
+        end
+      end
+
+      context 'when both the marks and the names are changed' do
+        it 'updates the associated levels if all the levels after update will have unique marks' do
+          level0_mark, level0_name, level0_id = rubric.levels[0].mark, rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { mark: level1_mark, name: level1_name, id: level0_id },
+            '1' => { mark: level0_mark, name: level0_name, id: level1_id }
+          }
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by_id(level0_id).mark).to eq(level1_mark)
+          expect(rubric.levels.find_by_id(level1_id).mark).to eq(level0_mark)
+          expect(rubric.levels.find_by_id(level0_id).name).to eq(level1_name)
+          expect(rubric.levels.find_by_id(level1_id).name).to eq(level0_name)
+        end
+      end
+    end
+
+    context 'when the properties with uniqueness validations are changed in a way that the validation is be violated' do
+      context 'when the names are changed and the marks are not changed' do
+        it 'does not update associated levels' do
+          level0_mark, level0_id = rubric.levels[0].mark, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { name: level1_name, mark: level0_mark, id: level0_id },
+            '1' => { name: level1_name, mark: level1_mark, id: level1_id }
+          }
+          level0_before = rubric.levels.find_by_id(level0_id)
+          level1_before = rubric.levels.find_by_id(level1_id)
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by_id(level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by_id(level1_id)).to eq(level1_before)
+        end
+      end
+
+      context 'when the marks are changed and the names are not changed' do
+        it 'does not update associated levels' do
+          level0_name, level0_id = rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { name: level0_name, mark: level1_mark, id: level0_id },
+            '1' => { name: level1_name, mark: level1_mark, id: level1_id }
+          }
+          level0_before = rubric.levels.find_by_id(level0_id)
+          level1_before = rubric.levels.find_by_id(level1_id)
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by_id(level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by_id(level1_id)).to eq(level1_before)
+        end
+      end
+
+      context 'when both the marks and the names are changed' do
+        it 'does not update associated levels' do
+          level0_id = rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { name: level1_name, mark: level1_mark, id: level0_id },
+            '1' => { name: level1_name, mark: level1_mark, id: level1_id }
+          }
+          level0_before = rubric.levels.find_by_id(level0_id)
+          level1_before = rubric.levels.find_by_id(level1_id)
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by_id(level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by_id(level1_id)).to eq(level1_before)
+        end
+      end
+    end
+  end
+
   context 'A good rubric criterion model' do
     before(:each) do
       @rubric = create(:rubric_criterion)
@@ -16,55 +130,6 @@ describe RubricCriterion do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:levels) }
     it { is_expected.to have_one(:course) }
-
-    context 'Helper method #update_levels' do
-      it 'sets :skip_marks_validation and :skip_names_validation to true if the levels have unique names and marks' do
-        params = { levels_attributes: {
-          '0' => { _destroy: '0', name: 'Very Poor', mark: '0.0', description: 'test 1', id: '91' },
-          '1' => { _destroy: '0', name: 'Weak', mark: '0.5', description: 'test 2', id: '92' }
-        } }
-        expect(@rubric.update_levels(params)).to eq({ levels_attributes: {
-          '0' => { _destroy: '0', description: 'test 1', id: '91', mark: '0.0', name: 'Very Poor',
-                   skip_marks_validation: true, skip_names_validation: true },
-          '1' => { _destroy: '0', description: 'test 2', id: '92', mark: '0.5', name: 'Weak',
-                   skip_marks_validation: true, skip_names_validation: true }
-        } })
-      end
-
-      it 'does not set :skip_marks_validation to true if the mark for any level is not unique' do
-        params = { levels_attributes: {
-          '0' => { _destroy: '0', name: 'Very Poor', mark: '0.0', description: 'test 1', id: '91' },
-          '1' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 2', id: '92' }
-        } }
-        expect(@rubric.update_levels(params)).to eq({ levels_attributes: {
-          '0' => { _destroy: '0', description: 'test 1', id: '91', mark: '0.0', name: 'Very Poor',
-                   skip_names_validation: true },
-          '1' => { _destroy: '0', description: 'test 2', id: '92', mark: '0.0', name: 'Weak',
-                   skip_names_validation: true }
-        } })
-      end
-
-      it 'does not set :skip_names_validation to true if the name for any level is not unique' do
-        params = { levels_attributes: {
-          '0' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 1', id: '91' },
-          '1' => { _destroy: '0', name: 'Weak', mark: '0.5', description: 'test 2', id: '92' }
-        } }
-        expect(@rubric.update_levels(params)).to eq({ levels_attributes: {
-          '0' => { _destroy: '0', description: 'test 1', id: '91', mark: '0.0', name: 'Weak',
-                   skip_marks_validation: true },
-          '1' => { _destroy: '0', description: 'test 2', id: '92', mark: '0.5', name: 'Weak',
-                   skip_marks_validation: true }
-        } })
-      end
-
-      it 'leaves the parameter unchanged if neither all names nor all marks for the levels are unique' do
-        params = { levels_attributes: {
-          '0' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 1', id: '91' },
-          '1' => { _destroy: '0', name: 'Weak', mark: '0.0', description: 'test 2', id: '92' }
-        } }
-        expect(@rubric.update_levels(params)).to eq(params)
-      end
-    end
 
     it 'rounds weights that have more than 1 significant digits' do
       expect(RubricCriterion.count).to be > 0

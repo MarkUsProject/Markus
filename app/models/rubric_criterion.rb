@@ -11,42 +11,43 @@ class RubricCriterion < Criterion
   end
 
   # Checks whether the passed in param's level_attributes have unique name and marks.
-  # Skips the respective uniqueness validation if true.
-  def update_levels(rubric_criterion_params)
-    if rubric_criterion_params[:levels_attributes]
-      # check if there's a dup in marks
-      s1 = Set[]
-      should_skip_marks = true
-      rubric_criterion_params[:levels_attributes].each do |_key, val|
+  # Skips the uniqueness validation if true.
+  def update_levels(levels_attributes)
+    s1, s2 = Set[], Set[]
+    should_skip = true
+
+    # Check if there's a dup in marks or names
+    levels_attributes.each do |_key, val|
+      if s1.include?(val[:mark]) || s2.include?(val[:name])
+        should_skip = false
         if s1.include? val[:mark]
-          should_skip_marks = false
-          break
+          self.errors.add(:mark, 'already taken')
         end
-        s1.add(val[:mark])
+        if s2.include? val[:name]
+          self.errors.add(:name, 'already taken')
+        end
+        break
       end
-      if should_skip_marks
-        rubric_criterion_params[:levels_attributes].each do |_key, val|
-          val[:skip_marks_validation] = true
+      s1.add(val[:mark])
+      s2.add(val[:name])
+    end
+
+    if should_skip
+      levels_attributes.each do |_key, val|
+        val[:skip_uniqueness_validation] = true
+        # It's possible that a new level was added hence no id yet
+        if self.levels.find_by_id(val[:id])
+          self.levels.find_by_id(val[:id]).update(val.except(:_destroy))
+        else
+          # If it's a new level, create a new object with the params
+          self.levels.create(val.except(:_destroy))
         end
       end
 
-      # check if there's a dup in names
-      s2 = Set[]
-      should_skip_names = true
-      rubric_criterion_params[:levels_attributes].each do |_key, val|
-        if s2.include? val[:name]
-          should_skip_names = false
-          break
-        end
-        s2.add(val[:name])
-      end
-      if should_skip_names
-        rubric_criterion_params[:levels_attributes].each do |_key, val|
-          val[:skip_names_validation] = true
-        end
-      end
+      true
+    else
+      false
     end
-    rubric_criterion_params
   end
 
   def level_with_mark_closest_to(mark)
