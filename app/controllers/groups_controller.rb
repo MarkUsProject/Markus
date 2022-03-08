@@ -173,7 +173,7 @@ class GroupsController < ApplicationController
                                  "#{params[:term].downcase}%",
                                  "#{params[:term].downcase}%",
                                  "#{params[:term]}%",
-                                 Membership.select(:user_id)
+                                 Membership.select(:role_id)
                                            .joins(:grouping)
                                            .where('groupings.assessment_id = ?', params[:assignment_id]))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
@@ -198,13 +198,13 @@ class GroupsController < ApplicationController
       end
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
       if student.nil? || ("#{student.first_name} #{student.last_name}") != params[:names]
-        student = current_course.students.where(
+        student = current_course.students.joins(:end_user).where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
           params[:names].downcase, params[:names].downcase
         ).first
       end
       StudentMembership
-        .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+        .find_or_create_by(role: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
     end
     next_grouping
   end
