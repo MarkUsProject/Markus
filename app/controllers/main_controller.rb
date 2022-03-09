@@ -50,8 +50,8 @@ class MainController < ApplicationController
 
     session[:auth_type] = 'local'
 
-    found_user = User.find_by(user_name: params[:user_login])
-    if found_user.nil? || !(found_user.admin_user? || found_user.end_user?)
+    found_user = User.find_by_user_name(params[:user_login])
+    if found_user.nil?
       flash_now(:error, Settings.validate_user_not_allowed_message || I18n.t('main.login_failed'))
       render :login, locals: { user_login: params[:user_login] }
       return
