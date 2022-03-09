@@ -110,7 +110,6 @@ describe TasController do
           },
           end_user: { user_name: end_user.user_name }
         },
-
         course_id: course.id
       }
     end
