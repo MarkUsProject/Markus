@@ -37,6 +37,11 @@ nav {
     flex-direction: row;
     padding: 0 $dimen-horizontal-nav;
 
+    @include breakpoint(mobile) {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
     li,
     li a {
       border-radius: 0;
