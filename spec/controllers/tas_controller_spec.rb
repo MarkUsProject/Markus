@@ -107,9 +107,9 @@ describe TasController do
             manage_assessments: false,
             manage_submissions: true,
             run_tests: true
-          }
+          },
+          end_user: { user_name: end_user.user_name }
         },
-        user_name: end_user.user_name,
         course_id: course.id
       }
     end
@@ -136,7 +136,8 @@ describe TasController do
         context 'when no permissions are selected' do
           let(:params) do
             # Rails strips empty params so a dummy value has to be given
-            { user_name: end_user.user_name, course_id: course.id, role: { grader_permission_attributes: { a: 1 } } }
+            { course_id: course.id,
+              role: { end_user: { user_name: end_user.user_name }, grader_permission_attributes: { a: 1 } } }
           end
           it 'default value for all permissions should be false' do
             ta = course.tas.where(end_user: end_user).first

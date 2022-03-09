@@ -20,7 +20,7 @@ class TasController < ApplicationController
   end
 
   def create
-    end_user = EndUser.find_by_user_name(params[:user_name])
+    end_user = EndUser.find_by_user_name(end_user_params[:user_name])
     @role = current_course.tas.create(end_user: end_user, **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
