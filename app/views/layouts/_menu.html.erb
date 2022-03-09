@@ -83,5 +83,12 @@
       </li>
     <% end %>
   <% end %>
+  <% if @current_user.admin_user? %>
+    <li <% if controller.controller_name == 'markus_settings'%>
+          class='active'
+        <% end %>>
+      <a>MarkUs Settings</a>
+    </li>
+  <% end %>
 </ul>
 </div>
