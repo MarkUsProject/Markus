@@ -279,6 +279,13 @@ StudentsActionBox.propTypes = {
   sections: PropTypes.object,
 };
 
+RawStudentTable.propTypes = {
+  course_id: PropTypes.number,
+  selection: PropTypes.array,
+  authenticity_token: PropTypes.string,
+  getCheckboxProps: PropTypes.func,
+};
+
 let StudentTable = withSelection(RawStudentTable);
 function makeStudentTable(elem, props) {
   render(<StudentTable {...props} />, elem);
