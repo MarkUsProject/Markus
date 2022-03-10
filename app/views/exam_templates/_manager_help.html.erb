@@ -1,22 +1,7 @@
 <div id='exam_template_help'>
   <h2><%= t(:help) %></h2>
-  <p><%= t('exam_templates.help.additional_help_html', markus_version: @markus_version) %></p>
-  <h3><%= t('exam_templates.help.edit_exam_template') %></h3>
-  <p><%= t('exam_templates.help.edit_exam_template_message') %></p>
-  <ul>
-    <li>
-      <h4><%= ExamTemplate.human_attribute_name('template_divisions') %></h4>
-      <p><%= t('exam_templates.help.template_divisions_message') %></p>
-    </li>
-    <li>
-      <h4><%= t('exam_templates.parsing.title') %></h4>
-      <p><%= t('exam_templates.help.automatic_parsing_help_html', markus_version: @markus_version) %></p>
-    </li>
-  </ul>
-  <h3><%= t('exam_templates.help.upload_papers') %></h3>
-  <p><%= t('exam_templates.help.upload_papers_message') %></p>
-  <h3><%= t('exam_templates.help.finalize_submissions') %></h3>
-  <p><%= t('exam_templates.help.finalize_submissions_message') %></p>
-  <h3><%= t('exam_templates.help.match_test_papers') %></h3>
-  <p><%= t('exam_templates.help.match_test_papers_message') %></p>
+  <%= t('exam_templates.help_manual_html',
+        markus_version: @markus_version,
+        template_division_title: ExamTemplate.human_attribute_name('template_divisions'),
+        automatic_parsing_title: t('exam_templates.parsing.title')) %>
 </div>
