@@ -143,7 +143,7 @@ class ExamTemplatesController < ApplicationController
   end
 
   def split
-    exam_template = ExamTemplate.find_by(id: params[:exam_template_id])
+    exam_template = @current_course.exam_templates.find_by(id: params[:exam_template_id])
     if exam_template.nil?
       flash_message(:error, t('exam_templates.split.search_failure'))
       return
