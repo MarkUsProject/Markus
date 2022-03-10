@@ -7,8 +7,8 @@
     <%= f.select :exam_template_id,
                  options_from_collection_for_select(@exam_templates, 'id', 'name'),
                  required: true %>
-    <%= f.label :pdf_to_split, t('exam_templates.split.instruction') %>
+    <%= f.label :pdf_to_split, t('exam_templates.upload_scans.instruction') %>
     <%= f.file_field :pdf_to_split, required: true, accept: 'application/pdf' %>
   </div>
-  <p><%= f.submit t('exam_templates.split.split'), id: 'split_exam' %></p>
+  <p><%= f.submit t('upload'), id: 'split_exam' %></p>
 <% end %>

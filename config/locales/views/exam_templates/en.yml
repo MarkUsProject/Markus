@@ -51,22 +51,20 @@ en:
       general: Automatically match students to uploaded scanned exams
       save: Save
       title: Automatic Student Matching
-    split:
-      failure: Exam Template is not successfully split
-      instruction: Papers to upload (.pdf)
-      invalid: Invalid file type
-      missing: Missing File
-      search_failure: Exam Template to base split not found
-      split: Split
-      success: Exam Template is successfully split
-      title: Split Exam
     split_pdf_log:
       scan_error: Some files have not been scanned properly.
-      view_logs: View Logs
     update:
       failure: Exam Template has not been successfully updated
       instruction: Replace template file
       success: Exam Template has been successfully updated
+    upload_scans:
+      failure: Scans failed to upload
+      instruction: Papers to upload (.pdf)
+      invalid: Invalid file type
+      missing: Missing File
+      search_failure: Exam Template to format upload not found
+      success: Scans successfully uploaded
+      title: Upload Scans
   flash:
     exam_templates:
       assign_errors:
