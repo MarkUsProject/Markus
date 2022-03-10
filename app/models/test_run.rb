@@ -85,8 +85,8 @@ class TestRun < ApplicationRecord
     test_group.test_group_results.create(
       test_run_id: self.id,
       extra_info: error.nil? ? extra_info_string(result) : error.message,
-      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.sum || 0 : 0,
-      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.sum || 0 : 0,
+      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.compact&.sum || 0 : 0,
+      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.compact&.sum || 0 : 0,
       time: result['time'] || 0,
       error_type: error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
     )

@@ -65,7 +65,7 @@ class MainController < ApplicationController
 
   def login_remote_auth
     session[:auth_type] = 'remote'
-    redirect_to Settings.remote_auth_login_url
+    redirect_to Settings.remote_auth_login_url, allow_other_host: true
   end
 
   # Clear the sesssion for current user and redirect to login page
