@@ -37,11 +37,6 @@ nav {
     flex-direction: row;
     padding: 0 $dimen-horizontal-nav;
 
-    @include breakpoint(mobile) {
-      display: flex;
-      flex-direction: column-reverse;
-    }
-
     li,
     li a {
       border-radius: 0;
@@ -283,9 +278,10 @@ nav {
     border: 0;
     text-align: left !important;
   }
-
-  #course,
-  #user_info {
+  //
+  //#course,
+  //#user_info {
+  #course {
     @include breakpoint(mobile) {
       display: block;
       float: none !important;
@@ -299,11 +295,11 @@ nav {
     }
   }
 
-  #user-info {
-    @include breakpoint(mobile) {
-      padding: 1em;
-    }
-  }
+  //#user-info {
+  //  @include breakpoint(mobile) {
+  //    padding: 1em;
+  //  }
+  //}
   #user-info .dropdown ul li {
     text-align: left;
   }
@@ -311,9 +307,9 @@ nav {
   #user-id {
     font-weight: 300;
 
-    @include breakpoint(mobile) {
-      display: block;
-    }
+    //@include breakpoint(mobile) {
+    //  display: block;
+    //}
   }
 }
 
