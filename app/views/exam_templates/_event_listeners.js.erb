@@ -7,6 +7,11 @@ $(".dialog").each((_, dialog) => {
   });
 });
 
+// Close generate exam modal after submitting
+$('#generate_exam_modal_submit').click(() => {
+  $('#generate_exam_dialog').trigger('closeModal');
+});
+
 $(".add-template-division").click(e => {
   add_template_division(e.target);
   e.preventDefault();

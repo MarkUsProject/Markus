@@ -8,19 +8,22 @@
                namespace: @exam_template.id,
                remote: true do |f| %>
     <div class="inline-labels">
-      <%= f.label :num_copies, t('exam_templates.generate.copies_label') %>
+      <%= f.label :num_copies, t('exam_templates.generate.copies_label'), class: 'required' %>
       <%= f.number_field :num_copies,
                          value: 1,
                          size: 4,
-                         min: 1 %>
-      <%= f.label :start_index, t('exam_templates.generate.index_label') %>
+                         min: 1,
+                         required: true %>
+      <%= f.label :start_index, t('exam_templates.generate.index_label'), class: 'required' %>
       <%= f.number_field :start_index,
                          value: 1,
                          size: 4,
-                         min: 1 %>
+                         min: 1,
+                         required: true%>
     </div>
     <section class='dialog-actions'>
-      <%= f.submit t('exam_templates.generate.generate') %>
+      <%= f.submit t('exam_templates.generate.generate'),
+                   id: 'generate_exam_modal_submit' %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
