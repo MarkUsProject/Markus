@@ -48,9 +48,9 @@ en:
       upload_papers_message: Select "Split Exam" on the left. After selecting an Exam Template for MarkUs to use as a reference, you can then upload a pdf of the completed test papers. Any errors with the upload process will be displayed in the Split PDF Log.
     parsing:
       cover_page_for: Cover page for exam template %{id}
-      general: Automatically parse student information
+      general: Automatically match students to uploaded scanned exams
       save: Save
-      title: Automatic Parsing Selection
+      title: Automatic Student Matching
     split:
       failure: Exam Template is not successfully split
       instruction: Papers to upload (.pdf)
