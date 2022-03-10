@@ -55,7 +55,6 @@ class RawStudentTable extends React.Component {
       data: data,
     }).then(this.fetchData);
   };
-
   render() {
     const {data, loading} = this.state;
     return (
@@ -234,9 +233,15 @@ class StudentsActionBox extends React.Component {
           </option>
         ));
         optionalInputBox = (
-          <select name="section" value={this.state.section} onChange={this.inputChanged}>
-            <option value=""></option>
-            {section_options}
+          <select
+            name="section"
+            value={this.state.section}
+            onChange={this.inputChanged}
+            data-testid={"student_action_box_update_section"}
+          >
+            {section_options ? section_options : <option value="" />}
+            {/*<option value=""/>*/}
+            {/*{section_options}*/}
           </select>
         );
       } else {

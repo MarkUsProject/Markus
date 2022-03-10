@@ -1,13 +1,4 @@
-// https://github.com/facebook/jest/issues/8217
-// import $ from "jquery/src/jquery";
-import $ from "jquery";
-window.$ = window.jQuery = $;
-
-import * as I18n from "i18n-js";
-import "translations";
-window.I18n = I18n;
-
-import {RawStudentTable, StudentsActionBox} from "../student_table";
+import {StudentsActionBox} from "../student_table";
 import React from "react";
 import {render, screen, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom";
@@ -46,13 +37,10 @@ describe("For the StudentsActionBox component's rendering", () => {
   });
 });
 
-describe("For the StudentsActionBox component's states", () => {
-  beforeEach(() => {
-    render(<StudentsActionBox />);
-  });
-
+describe("For the StudentsActionBox component's props", () => {
   describe("when the state action is give_grace_credits", () => {
     beforeEach(() => {
+      render(<StudentsActionBox />);
       fireEvent.change(screen.getByTestId("student_action_box_select"), {
         target: {value: "give_grace_credits"},
       });
@@ -64,6 +52,36 @@ describe("For the StudentsActionBox component's states", () => {
       expect(options[1]).toBeFalsy();
       expect(options[2]).toBeFalsy();
       expect(options[3]).toBeFalsy();
+    });
+  });
+
+  describe("when the state action is update_section", () => {
+    describe("if the sections' prop's length > 0", () => {
+      beforeEach(() => {
+        render(<StudentsActionBox sections={{LEC0101: "LEC0101", LEC0102: "LEC0102"}} />);
+        fireEvent.change(screen.getByTestId("student_action_box_select"), {
+          target: {value: "update_section"},
+        });
+      });
+
+      it("renders a select field with all the sections as individual options", () => {
+        let options = screen.getByTestId("student_action_box_update_section");
+        expect(options[0].value).toEqual("LEC0101");
+        expect(options[1].value).toEqual("LEC0102");
+      });
+    });
+
+    describe("if the sections' prop's length == 0", () => {
+      beforeEach(() => {
+        render(<StudentsActionBox sections={{}} />);
+        fireEvent.change(screen.getByTestId("student_action_box_select"), {
+          target: {value: "update_section"},
+        });
+      });
+
+      it("renders a text that says there's no sections yet", () => {
+        expect(screen.getByText(I18n.t("sections.none"))).toBeInTheDocument();
+      });
     });
   });
 });
