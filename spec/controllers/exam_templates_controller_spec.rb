@@ -7,6 +7,7 @@ describe ExamTemplatesController do
       before { get_as user, :index, params: { course_id: course.id, assignment_id: exam_template.assignment.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
+
     describe '#create' do
       let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
       let(:params) do
@@ -16,6 +17,7 @@ describe ExamTemplatesController do
       before { post_as user, :create, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
+
     describe '#edit' do
       it 'should respond with 200 with html format' do
         get_as user, :edit, format: 'html', params: { course_id: course.id, id: exam_template.id }
@@ -26,6 +28,7 @@ describe ExamTemplatesController do
         expect(response.status).to eq 200
       end
     end
+
     describe '#update' do
       before { put_as user, :update, params: params }
 
@@ -86,6 +89,7 @@ describe ExamTemplatesController do
       before { delete_as user, :destroy, params: { id: exam_template.id, course_id: course.id } }
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
+
     describe '#view_logs' do
       before { get_as user, :view_logs, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
@@ -105,10 +109,12 @@ describe ExamTemplatesController do
     context 'When grader is not allowed to manage exam template' do
       # By default all the grader permissions are set to false
       let(:user) { create(:ta) }
+
       describe '#index' do
         before { get_as user, :index, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
+
       describe '#create' do
         let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
         let(:params) do
@@ -118,6 +124,7 @@ describe ExamTemplatesController do
         before { post_as user, :create, params: params }
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
+
       describe '#edit' do
         it 'should respond with 403 with html format' do
           get_as user, :edit, format: 'html', params: { course_id: course.id, id: exam_template.id }
@@ -128,6 +135,7 @@ describe ExamTemplatesController do
           expect(response.status).to eq 403
         end
       end
+
       describe '#update' do
         let(:params) do
           { exam_template: { name: 'template-1' },
@@ -136,12 +144,14 @@ describe ExamTemplatesController do
         before { put_as user, :update, params: params }
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
+
       describe '#destroy' do
         before do
           delete_as user, :destroy, params: { id: exam_template.id, course_id: course.id }
         end
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
+
       describe '#view_logs' do
         before { get_as user, :view_logs, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
         it('should respond with 403') { expect(response.status).to eq 403 }
