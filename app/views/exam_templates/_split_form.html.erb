@@ -1,7 +1,6 @@
 <%= form_with url: split_course_assignment_exam_templates_path(@current_course),
               method: :patch,
               authenticity_token: true,
-              remote: true,
               multipart: true do |f| %>
   <div class="inline-labels">
     <%= f.label :exam_template_id, ExamTemplate.model_name.human %>
