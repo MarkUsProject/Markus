@@ -6,17 +6,23 @@
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
 - Replace uses of first name and last name attributes with display name (#5844)
+- Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
+- Upgrade to Rails 7 (#5885)
+- Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
+
+## [v2.0.8]
 - Fix bug where "run tests" grader permission was not working for submission table (#5860)
+- Fix bug for replacing exam template files (#5863)
 
 ## [v2.0.7]
 - Fix bugs in starter files when assigning by section (#5846)
 
 ## [v2.0.6]
-- Fix bug for menu icon not working on mobile devices / smaller screens (#5818)
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
 - When role switched, 403 errors are displayed as flash messages after redirecting back to the previous page (#5785)
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
 - Allow TAs to download grades for students they've been assigned to grade (#5793)
+- Fix bug for menu icon not working on mobile devices / smaller screens (#5818)
 - Fix bugs when submitting and cancelling remark requests (#5838)
 - Do not trigger starter file changed timestamp when only starter_files_after_due assignment setting is changed (#5845)
 

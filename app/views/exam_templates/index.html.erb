@@ -2,7 +2,7 @@
 
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
-    <%= render partial: 'boot.js' %>
+    <%= render partial: 'boot', formats: [:js] %>
     $(function() {
       $('#add-exam-template').click(function(e) {
         modal_create_new.open();

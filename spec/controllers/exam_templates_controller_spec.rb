@@ -16,14 +16,63 @@ describe ExamTemplatesController do
       before { post_as user, :create, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
+
     describe '#update' do
-      let(:params) do
-        { exam_template: { name: 'test template' },
-          id: exam_template.id, course_id: course.id }
-      end
       before { put_as user, :update, params: params }
-      it('should respond with 302') { expect(response.status).to eq 302 }
+
+      context 'when updating the exam template name' do
+        let(:params) do
+          { exam_template: { name: 'test-template' },
+            id: exam_template.id, course_id: course.id }
+        end
+
+        it 'updates the exam template name' do
+          expect(exam_template.reload.name).to eq 'test-template'
+        end
+
+        it 'responds with 302' do
+          expect(response).to have_http_status 302
+        end
+      end
+
+      context 'when replacing the exam template file with a PDF file' do
+        let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+        let(:params) do
+          { exam_template: { new_template: file_io },
+            id: exam_template.id, course_id: course.id }
+        end
+
+        it 'updates the exam template file' do
+          expect(exam_template.reload.filename).to eq 'midterm1-v2-test.pdf'
+        end
+
+        it 'responds with 302' do
+          expect(response).to have_http_status 302
+        end
+      end
+
+      context 'when replacing the exam template file with a non-PDF file' do
+        let(:file_io) { fixture_file_upload('page_white_text.png') }
+        let(:params) do
+          { exam_template: { new_template: file_io },
+            id: exam_template.id, course_id: course.id }
+        end
+        let!(:original_filename) { exam_template.filename }
+
+        it 'does not update the exam template file' do
+          expect(exam_template.reload.filename).to eq original_filename
+        end
+
+        it 'displays a flash error message' do
+          expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t('exam_templates.update.failure')]
+        end
+
+        it 'responds with 302' do
+          expect(response).to have_http_status 302
+        end
+      end
     end
+
     describe '#destroy' do
       before { delete_as user, :destroy, params: { id: exam_template.id, course_id: course.id } }
       it('should respond with 302') { expect(response.status).to eq 302 }
