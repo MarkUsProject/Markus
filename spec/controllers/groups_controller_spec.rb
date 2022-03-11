@@ -504,10 +504,10 @@ describe GroupsController do
                                                     term: '789',
                                                     format: :json }
 
-          expect(response.parsed_body).to eq [{ 'id' => student2.id,
-                                                'id_number' => student2.id_number,
-                                                'user_name' => student2.user_name,
-                                                'value' => "#{student2.first_name} #{student2.last_name}" }]
+          expect(response.parsed_body).to match_array [{ 'id' => student2.id,
+                                                         'id_number' => student2.id_number,
+                                                         'user_name' => student2.user_name,
+                                                         'value' => "#{student2.first_name} #{student2.last_name}" }]
         end
       end
       describe 'when multiple students match' do
@@ -528,7 +528,7 @@ describe GroupsController do
                                                     term: 'zz',
                                                     format: :json }
 
-          expect(response.parsed_body).to eq expected
+          expect(response.parsed_body).to match_array expected
         end
       end
 
@@ -574,6 +574,15 @@ describe GroupsController do
                                                                   g_id: grouping1.id,
                                                                   format: :json }
           expect(flash[:error]).not_to be_empty
+        end
+        it 'returns a not_found status if the student cannot be found' do
+          post_as instructor, :assign_student_and_next, params: { course_id: course.id,
+                                                                  assignment_id: assignment.id,
+                                                                  assignment: assignment.id,
+                                                                  names: 'Student Whodoesntexist',
+                                                                  g_id: grouping1.id,
+                                                                  format: :json }
+          expect(response).to have_http_status(404)
         end
       end
     end
