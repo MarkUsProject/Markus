@@ -46,8 +46,9 @@ en:
           <p>
             A template division specifies a mapping of test page number to question (e.g., Question 1 appears on
             page 2, and Question 2 appears on pages 2-3). When processing scanned test papers, MarkUs will groups
-            pages by template divisions. Any pages that are not included in any template divisions will be grouped
-            into a special file called "EXTRA.pdf".
+            pages by template divisions. The first page is assumed to be a cover page and therefore cannot be included
+            into a template division. Any additional pages that are not included in any template divisions will be
+            grouped into a special file called "EXTRA.pdf".
           </p>
         </li>
         <li>
