@@ -90,6 +90,65 @@ describe ExamTemplatesController do
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
 
+    describe '#split' do
+      let(:pdf) { fixture_file_upload(File.join('scanned_exams', 'midterm1-v2-test.pdf'), 'application/pdf') }
+      let(:invalid_pdf) { fixture_file_upload('empty_file', 'text/yaml') }
+
+      context 'with valid parameters' do
+        before do
+          patch_as user, :split, params: { assignment_id: exam_template.assignment.id,
+                                           course_id: course.id,
+                                           exam_template_id: exam_template.id,
+                                           pdf_to_split: pdf }
+        end
+        it 'should respond with 200' do
+          expect(response.status).to eq 200
+        end
+      end
+
+      context 'with no exam template' do
+        before :each do
+          patch_as user, :split, params: { assignment_id: exam_template.assignment.id,
+                                           course_id: course.id }
+        end
+        it 'should respond with 400' do
+          expect(response.status).to eq 400
+        end
+        it 'should send error message' do
+          expect(flash[:error]).to_not be_empty
+        end
+      end
+
+      context 'with no uploaded pdf' do
+        before :each do
+          patch_as user, :split, params: { assignment_id: exam_template.assignment.id,
+                                           course_id: course.id,
+                                           exam_template_id: exam_template.id }
+        end
+        it 'should respond with 400' do
+          expect(response.status).to eq 400
+        end
+        it 'should send error message' do
+          expect(flash[:error]).to_not be_empty
+        end
+      end
+
+      context 'with incorrect file type' do
+        before :each do
+          patch_as user, :split, params: { assignment_id: exam_template.assignment.id,
+                                           course_id: course.id,
+                                           exam_template_id: exam_template.id,
+                                           pdf_to_split: invalid_pdf }
+        end
+        it 'should respond with 400' do
+          expect(response.status).to eq 400
+        end
+        it 'should send error message' do
+          expect(flash[:error]).to_not be_empty
+        end
+      end
+    end
+
     describe '#view_logs' do
       before { get_as user, :view_logs, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
