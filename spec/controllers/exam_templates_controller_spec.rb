@@ -104,6 +104,9 @@ describe ExamTemplatesController do
         it 'should respond with 200' do
           expect(response.status).to eq 200
         end
+        it 'should send no error message' do
+          expect(flash[:error]).to be_nil
+        end
       end
 
       context 'with no exam template' do
@@ -114,8 +117,9 @@ describe ExamTemplatesController do
         it 'should respond with 400' do
           expect(response.status).to eq 400
         end
-        it 'should send error message' do
-          expect(flash[:error]).to_not be_empty
+        it 'should send appropriate error message' do
+          expect(flash[:error].map { |f| extract_text f })
+            .to eq([I18n.t('exam_templates.upload_scans.search_failure')].map { |f| extract_text f })
         end
       end
 
@@ -128,8 +132,9 @@ describe ExamTemplatesController do
         it 'should respond with 400' do
           expect(response.status).to eq 400
         end
-        it 'should send error message' do
-          expect(flash[:error]).to_not be_empty
+        it 'should send appropriate error message' do
+          expect(flash[:error].map { |f| extract_text f })
+            .to eq([I18n.t('exam_templates.upload_scans.missing')].map { |f| extract_text f })
         end
       end
 
@@ -143,8 +148,9 @@ describe ExamTemplatesController do
         it 'should respond with 400' do
           expect(response.status).to eq 400
         end
-        it 'should send error message' do
-          expect(flash[:error]).to_not be_empty
+        it 'should send appropriate error message' do
+          expect(flash[:error].map { |f| extract_text f })
+            .to eq([I18n.t('exam_templates.upload_scans.invalid')].map { |f| extract_text f })
         end
       end
     end
