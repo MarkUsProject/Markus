@@ -54,6 +54,10 @@ nav {
   margin-right: $dimen-horizontal-nav;
   min-height: 38px;
   width: 90px;
+
+  @include breakpoint(mobile) {
+    display: none;
+  }
 }
 
 .color-dark {

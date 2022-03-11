@@ -7,9 +7,11 @@
 - Remove group name displayed attribute from assignment properties table (#5834)
 - Replace uses of first name and last name attributes with display name (#5844)
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
-- Upgrade to Rails 7 (#5885)
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
+- Upgrade to Rails 7 (#5885)
 - Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
+- Remove MarkUs logo from mobile view left navigation menu (#5899)
+- Allow adding annotations to remark requests (#5900)
 
 ## [v2.0.8]
 - Fix bug where "run tests" grader permission was not working for submission table (#5860)

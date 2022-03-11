@@ -232,7 +232,7 @@ class FlexibleCriterionInput extends React.Component {
   listDeductions = () => {
     let label = I18n.t("annotations.list_deductions");
     let deductiveAnnotations = this.props.annotations.filter(a => {
-      return !!a.deduction && a.criterion_id === this.props.id;
+      return !!a.deduction && a.criterion_id === this.props.id && !a.is_remark;
     });
 
     if (deductiveAnnotations.length === 0) {
