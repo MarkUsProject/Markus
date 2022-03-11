@@ -29,7 +29,7 @@ class Annotation < ApplicationRecord
 
   def modify_mark_with_deduction
     criterion = self.annotation_text.annotation_category.flexible_criterion
-    self.result.marks.find_or_create_by(criterion: criterion).update_deduction
+    self.result.marks.find_or_create_by(criterion: criterion).update_deduction unless self.is_remark
   end
 
   def get_data(include_creator: false)
@@ -63,6 +63,9 @@ class Annotation < ApplicationRecord
   # check if the submission file is associated with a remark result or a released result
   def check_if_released
     annotation_results = result.submission.results
+
+    return if is_remark && annotation_results.where.not(remark_request_submitted_at: nil)
+                                             .where('results.released_to_students': false)
 
     return if annotation_results.where('results.released_to_students': true).empty? &&
               annotation_results.where.not(remark_request_submitted_at: nil).empty?
