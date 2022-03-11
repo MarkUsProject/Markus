@@ -146,17 +146,17 @@ class ExamTemplatesController < ApplicationController
     exam_template = @current_course.exam_templates.find_by(id: params[:exam_template_id])
     if exam_template.nil?
       flash_message(:error, t('exam_templates.upload_scans.search_failure'))
-      head 400
+      head :bad_request
       return
     end
     split_exam = params[:pdf_to_split]
     if split_exam.nil?
       flash_message(:error, t('exam_templates.upload_scans.missing'))
-      head 400
+      head :bad_request
       return
     elsif split_exam.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.upload_scans.invalid'))
-      head 400
+      head :bad_request
       return
     else
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
