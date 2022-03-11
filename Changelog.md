@@ -8,6 +8,7 @@
 - Replace uses of first name and last name attributes with display name (#5844)
 - Upgrade to Rails 7 (#5885)
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
+- Fix bugs in assigning scanned exams and improve error message when assigning by name (#5895)
 - Remove MarkUs logo from mobile view left navigation menu (#5899)
 - Allow adding annotations to remark requests (#5900)
 
