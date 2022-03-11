@@ -10,8 +10,7 @@ class TemplateDivision < ApplicationRecord
   validates :start, numericality: { greater_than_or_equal_to: 2,
                                     less_than_or_equal_to: :end,
                                     only_integer: true }
-  validates :end, numericality: { greater_than_or_equal_to: 2,
-                                  only_integer: true }
+  validates :end, numericality: { only_integer: true }
   validate :end_should_be_less_than_or_equal_to_num_pages
   validates_uniqueness_of :label,
                           scope: :exam_template,

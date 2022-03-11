@@ -10,10 +10,8 @@
       </tr>
     </thead>
     <tbody>
-    <% unless exam_template.nil? %>
       <%= render partial: 'exam_templates/template_division',
                  locals: { f: f, disabled: disabled } %>
-    <% end %>
     </tbody>
   </table>
   <% unless disabled %>

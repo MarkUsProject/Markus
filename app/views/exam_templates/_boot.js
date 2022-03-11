@@ -19,10 +19,10 @@ function add_template_division(target) {
         <input type="text" required="required" name="${nested_form_path}[label]">
       </td>
       <td>
-        <input type="number" required="required" name="${nested_form_path}[start]">
+        <input type="number" min="2" required="required" name="${nested_form_path}[start]">
       </td>
       <td>
-        <input type="number" required="required" name="${nested_form_path}[end]">
+        <input type="number" min="2" required="required" name="${nested_form_path}[end]">
       </td>
       <td>
         <a href="#" class="delete-exam-template-row">
