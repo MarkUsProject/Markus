@@ -203,6 +203,9 @@ class GroupsController < ApplicationController
           params[:names].downcase, params[:names].downcase
         ).first
       end
+      if student.nil?
+        flash_message(:error, t('exam_templates.assign_scans.student_not_found', name: params[:names]))
+      end
       StudentMembership
         .find_or_create_by(role: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
     end

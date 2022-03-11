@@ -487,6 +487,8 @@ describe GroupsController do
 
       describe 'when users are already in groups' do
         let!(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student1 }
+        let(:assignment2) { create :assignment }
+        let(:grouping2) { create :grouping_with_inviter, assignment: assignment2, inviter: student2 }
         it 'does not match a student already in a grouping' do
           post_as instructor, :get_names, params: { course_id: course.id,
                                                     assignment_id: assignment.id,
@@ -495,7 +497,7 @@ describe GroupsController do
                                                     format: :json }
           expect(response.parsed_body).to be_empty
         end
-        it 'does match students not in the group' do
+        it 'does match students not in the group but in other assignment groups' do
           post_as instructor, :get_names, params: { course_id: course.id,
                                                     assignment_id: assignment.id,
                                                     assignment: assignment.id,
@@ -563,6 +565,15 @@ describe GroupsController do
                                                                   g_id: grouping1.id,
                                                                   format: :json }
           expect(grouping1.memberships.first.role).to eq student1
+        end
+        it 'flashes an error if the student cannot be found' do
+          post_as instructor, :assign_student_and_next, params: { course_id: course.id,
+                                                                  assignment_id: assignment.id,
+                                                                  assignment: assignment.id,
+                                                                  names: 'Student Whodoesntexist',
+                                                                  g_id: grouping1.id,
+                                                                  format: :json }
+          expect(flash[:error]).not_to be_empty
         end
       end
     end
