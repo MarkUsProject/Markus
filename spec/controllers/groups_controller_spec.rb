@@ -426,12 +426,17 @@ describe GroupsController do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
       let!(:student1) do
         create(:student,
-               end_user: create(:end_user,
-                                user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
+               end_user: create(:end_user, user_name: 'c9test1', first_name: 'first', last_name: 'last',
+                                           id_number: '12345'))
       end
       let!(:student2) do
         create(:student,
                end_user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
+      end
+      let!(:student3) do
+        create(:student,
+               end_user: create(:end_user, user_name: 'zz396', first_name: 'zzfirst', last_name: 'zzlast',
+                                           id_number: '781034'))
       end
       let(:expected) do
         [{ 'id' => student1.id,
@@ -478,6 +483,87 @@ describe GroupsController do
                                                   format: :json }
 
         expect(response.parsed_body).to eq expected
+      end
+
+      describe 'when users are already in groups' do
+        let!(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student1 }
+        it 'does not match a student already in a grouping' do
+          post_as instructor, :get_names, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    assignment: assignment.id,
+                                                    term: '123',
+                                                    format: :json }
+          expect(response.parsed_body).to be_empty
+        end
+        it 'does match students not in the group' do
+          post_as instructor, :get_names, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    assignment: assignment.id,
+                                                    term: '789',
+                                                    format: :json }
+
+          expect(response.parsed_body).to eq [{ 'id' => student2.id,
+                                                'id_number' => student2.id_number,
+                                                'user_name' => student2.user_name,
+                                                'value' => "#{student2.first_name} #{student2.last_name}" }]
+        end
+      end
+      describe 'when multiple students match' do
+        let(:expected) do
+          [{ 'id' => student2.id,
+             'id_number' => student2.id_number,
+             'user_name' => student2.user_name,
+             'value' => "#{student2.first_name} #{student2.last_name}" },
+           { 'id' => student3.id,
+             'id_number' => student3.id_number,
+             'user_name' => student3.user_name,
+             'value' => "#{student3.first_name} #{student3.last_name}" }]
+        end
+        it 'returns multiple matches' do
+          post_as instructor, :get_names, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    assignment: assignment.id,
+                                                    term: 'zz',
+                                                    format: :json }
+
+          expect(response.parsed_body).to eq expected
+        end
+      end
+
+      describe '#assign_student_and_next' do
+        let!(:assignment) { create(:assignment_for_scanned_exam) }
+        let!(:student1) do
+          create(:student,
+                 end_user: create(:end_user,
+                                  user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
+        end
+        let!(:student2) do
+          create(:student,
+                 end_user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
+        end
+        let!(:grouping1) { create :grouping, assignment: assignment }
+        let!(:grouping2) { create :grouping, assignment: assignment }
+        let!(:submission1) { create :version_used_submission, grouping: grouping1 }
+        let!(:submission2) { create :version_used_submission, grouping: grouping2 }
+        it 'assigns a student to the grouping and returns the next one' do
+          post_as instructor, :assign_student_and_next, params: { course_id: course.id,
+                                                                  assignment_id: assignment.id,
+                                                                  assignment: assignment.id,
+                                                                  names: "#{student1.first_name} #{student1.last_name}",
+                                                                  s_id: student1.id,
+                                                                  g_id: grouping1.id,
+                                                                  format: :json }
+          expect(grouping1.memberships.first.role).to eq student1
+        end
+        it 'assigns a student to the grouping and returns the next one based on names' do
+          post_as instructor, :assign_student_and_next, params: { course_id: course.id,
+                                                                  assignment_id: assignment.id,
+                                                                  assignment: assignment.id,
+                                                                  names: "#{student1.first_name} #{student1.last_name}",
+                                                                  g_id: grouping1.id,
+                                                                  format: :json }
+          expect(grouping1.memberships.first.role).to eq student1
+        end
       end
     end
   end
