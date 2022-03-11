@@ -36,7 +36,7 @@ en:
       title: Generate Exam Copies
     help_manual_html: |
       <p>
-        For more details on any of these steps and more, please visit the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md>MarkUs wiki</a>
+        For more details on any of these steps and more, please visit the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md>MarkUs wiki</a>.
       </p> <h3>Editing Exam Templates</h3> <p>
         Select an Exam Template on the left to edit it. In addition to changing the name and template file you may also
         make changes to the following:
@@ -56,7 +56,7 @@ en:
             If enabled, MarkUs will attempt to scan a portion of the test cover page and parse handwriting corresponding
             to either a student's user name or ID number. MarkUs will then attempt to match the test paper to a student
             in the course. This feature is not designed to replace the manual matching process. For more details please
-            consult the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md#automatic-parsing-of-student-information>wiki</a>
+            consult the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md#automatic-parsing-of-student-information>wiki</a>.
           </p>
         </li>
       </ul> <h3>Uploading Completed Test Papers</h3> <p>
