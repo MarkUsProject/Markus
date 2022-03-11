@@ -32,8 +32,8 @@ describe Annotation do
         grouping.current_submission_used.make_remark_result
         grouping.current_result
       end
-      it 'should prevent it being created' do
-        expect { create :text_annotation, result: result }.to raise_error(ActiveRecord::RecordNotSaved)
+      it 'should allow it to be created' do
+        expect { create :text_annotation, result: result, is_remark: true }.not_to raise_error
       end
     end
     context 'with a released result' do
@@ -58,8 +58,12 @@ describe Annotation do
         grouping.current_submission_used.make_remark_result
         annotation
       end
-      it 'should prevent it being destroyed' do
+      it 'should prevent a pre-existing annotation from being destroyed' do
         expect { annotation.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+      end
+      it 'should allow a remark annotation to destroyed' do
+        annotation.update!(is_remark: true)
+        expect { annotation.destroy! }.not_to raise_error
       end
     end
     context 'with a released result' do
@@ -113,6 +117,26 @@ describe Annotation do
              annotation_text: annotation_text,
              result: result)
       expect(new_flex.marks.first.mark).to eq 0.67
+    end
+
+    context 'with a remark request' do
+      let(:annotation) do
+        grouping = assignment.groupings.first
+        grouping.current_result.update!(released_to_students: true)
+        grouping.current_submission_used.make_remark_result
+        grouping.current_submission_used.update!(remark_request: 'remark request', remark_request_timestamp: Time.now)
+        grouping.current_submission_used.get_original_result.update!(released_to_students: false)
+        annotation = create(:text_annotation, annotation_text: annotation_text, result: grouping.current_result,
+                                              is_remark: true)
+        annotation
+      end
+      it 'does not update a mark after creation' do
+        expect(mark.mark).to eq 2.0
+      end
+      it 'does not update a mark after destruction' do
+        annotation.destroy!
+        expect(mark.mark).to eq 2.0
+      end
     end
   end
 end

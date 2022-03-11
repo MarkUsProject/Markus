@@ -1238,7 +1238,7 @@ class Assignment < Assessment
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     Zip::File.open(zip_path, create: true) do |zip_file|
-      add_test_files_to_zip(zip_file, zip_name)
+      self.add_test_files_to_zip(zip_file, '')
     end
     zip_path
   end
@@ -1262,10 +1262,10 @@ class Assignment < Assessment
 
   private
 
-  def add_test_files_to_zip(zip_file, zip_name)
+  def add_test_files_to_zip(zip_file, zip_base_dir)
     files_dir = Pathname.new self.autotest_files_dir
     self.autotest_files.map do |file|
-      path = File.join zip_name, file
+      path = zip_base_dir.empty? ? file : File.join(zip_base_dir, file)
       abs_path = files_dir.join(file)
       if abs_path.directory?
         zip_file.mkdir(path)
