@@ -74,6 +74,10 @@ Rails.application.routes.draw do
     match '*path', controller: 'main_api', action: 'page_not_found', via: :all
   end
 
+  namespace :admin do
+    resources :courses, only: [:index]
+  end
+
   resources :courses, only: [:show, :index] do
     member do
       get 'clear_role_switch_session'
