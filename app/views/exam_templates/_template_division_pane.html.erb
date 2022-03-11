@@ -3,15 +3,15 @@
   <table>
     <thead>
       <tr>
-        <th><%= TemplateDivision.human_attribute_name('label') %></th>
-        <th><%= TemplateDivision.human_attribute_name('start') %></th>
-        <th><%= TemplateDivision.human_attribute_name('end') %></th>
+        <th class='required'><%= TemplateDivision.human_attribute_name('label') %></th>
+        <th class='required'><%= TemplateDivision.human_attribute_name('start') %></th>
+        <th class='required'><%= TemplateDivision.human_attribute_name('end') %></th>
         <th><%= t(:delete) %></th>
       </tr>
     </thead>
     <tbody>
-    <%= render partial: 'exam_templates/template_division',
-               locals: { f: f, disabled: disabled } %>
+      <%= render partial: 'exam_templates/template_division',
+                 locals: { f: f, disabled: disabled } %>
     </tbody>
   </table>
   <% unless disabled %>

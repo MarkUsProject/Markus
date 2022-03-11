@@ -32,11 +32,25 @@ class ExamTemplatesController < ApplicationController
                                                     name: name)
       if exam_template&.valid?
         flash_message(:success, t('exam_templates.create.success'))
+        redirect_to edit_course_exam_template_path(current_course, exam_template)
+        return
       else
         flash_message(:error, t('exam_templates.create.failure'))
       end
     end
     redirect_to course_assignment_exam_templates_path(current_course, assignment)
+  end
+
+  def edit
+    @exam_template = record
+    @assignment = @exam_template.assignment
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
+    respond_to do |format|
+      format.html do
+        render 'exam_templates/index'
+      end
+      format.js
+    end
   end
 
   def download
@@ -73,7 +87,7 @@ class ExamTemplatesController < ApplicationController
         return
       end
     end
-    redirect_to course_assignment_exam_templates_path(current_course, assignment)
+    redirect_to edit_course_exam_template_path(current_course, old_exam_template)
   end
 
   def generate
@@ -125,22 +139,31 @@ class ExamTemplatesController < ApplicationController
       )
     end
     exam_template.save
-    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+    redirect_to edit_course_exam_template_path(current_course, exam_template)
   end
 
   def split
-    exam_template = record
-    split_exam = params[:exam_template]&.fetch(:pdf_to_split) { nil }
+    exam_template = @current_course.exam_templates.find_by(id: params[:exam_template_id])
+    if exam_template.nil?
+      flash_message(:error, t('exam_templates.upload_scans.search_failure'))
+      head 400
+      return
+    end
+    split_exam = params[:pdf_to_split]
     if split_exam.nil?
-      flash_message(:error, t('exam_templates.split.missing'))
-      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+      flash_message(:error, t('exam_templates.upload_scans.missing'))
+      head 400
+      return
     elsif split_exam.content_type != 'application/pdf'
-      flash_message(:error, t('exam_templates.split.invalid'))
-      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+      flash_message(:error, t('exam_templates.upload_scans.invalid'))
+      head 400
+      return
     else
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
       session[:job_id] = current_job.job_id
-      redirect_to view_logs_course_assignment_exam_templates_path(current_course, exam_template.assignment)
+    end
+    respond_to do |format|
+      format.js { render 'exam_templates/_poll_generate_job' }
     end
   end
 
@@ -156,9 +179,10 @@ class ExamTemplatesController < ApplicationController
 
   def view_logs
     @assignment = Assignment.find(params[:assignment_id])
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
 
     respond_to do |format|
-      format.html
+      format.js
       format.json do
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
                                     .where(assessments: { id: @assignment.id })

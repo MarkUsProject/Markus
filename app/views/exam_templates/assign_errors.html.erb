@@ -24,8 +24,8 @@
 <% end %>
 
 <% @heading_buttons = [
-    { link_text: t('exam_templates.back_to_log_page'),
-      link_path: view_logs_course_assignment_exam_templates_path(@current_course, @assignment) },
+    { link_text: t('exam_templates.back_to_exam_templates_page'),
+      link_path: course_assignment_exam_templates_path(@current_course, @assignment) },
 ] %>
 
 <div class='pane-wrapper mid-height'>
