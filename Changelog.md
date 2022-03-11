@@ -5,6 +5,7 @@
 - Added the ability to submit URLs (#5822)
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
+- Rework scanned exam page (#5839)
 - Replace uses of first name and last name attributes with display name (#5844)
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
 - Upgrade to Rails 7 (#5885)
