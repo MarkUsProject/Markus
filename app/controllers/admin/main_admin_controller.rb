@@ -3,10 +3,10 @@ module Admin
     skip_verify_authorized only: [:index]
 
     respond_to :html
-    layout 'assignment_content'
+    layout 'main'
 
     def index
-      render inline: '<h1>Title</h1>'
+      render :index
     end
   end
 end
