@@ -12,7 +12,7 @@ header#header {
   width: 100%;
 
   #course,
-  #user_info {
+  #user-info {
     display: table-cell;
 
     @include breakpoint(mobile) {
@@ -304,8 +304,17 @@ nav {
   //    padding: 1em;
   //  }
   //}
-  #user-info .dropdown ul li {
-    text-align: left;
+
+  #user-info .dropdown {
+    background: $background-support;
+
+    ul {
+      background: $background-support;
+
+      li {
+        text-align: left;
+      }
+    }
   }
 
   #user-id {
