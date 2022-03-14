@@ -60,7 +60,7 @@ class MainController < ApplicationController
     session[:redirect_uri] = nil
     refresh_timeout
     # redirect to last visited page or to main page
-    redirect_to(uri || { controller: 'courses', action: 'index' })
+    found_user.admin_user? ? redirect_to(admin_path) : redirect_to(uri || { controller: 'courses', action: 'index' })
   end
 
   def login_remote_auth
