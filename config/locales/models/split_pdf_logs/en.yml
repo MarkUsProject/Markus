@@ -12,4 +12,4 @@ en:
         user: User
     models:
       split_pdf_log:
-        one: Split PDF Log
+        one: Uploaded Scans Log

@@ -5,11 +5,16 @@
 - Added the ability to submit URLs (#5822)
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
+- Rework scanned exam page (#5839)
 - Replace uses of first name and last name attributes with display name (#5844)
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
 - Upgrade to Rails 7 (#5885)
 - Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
+
+## [v2.0.9]
+- Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
+- Fix bugs in assigning scanned exams and improve error message when assigning by name (#5895)
 - Remove MarkUs logo from mobile view left navigation menu (#5899)
 - Allow adding annotations to remark requests (#5900)
 
