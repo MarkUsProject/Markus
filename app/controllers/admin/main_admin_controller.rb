@@ -3,7 +3,7 @@ module Admin
     before_action { authorize! }
 
     respond_to :html
-    layout 'main'
+    layout 'assignment_content'
 
     def index
       render :index
