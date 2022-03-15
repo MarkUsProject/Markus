@@ -1003,11 +1003,12 @@ nav {
     display: none;
     left: -1px;
     margin: 0;
-    min-width: 101%;
     padding: 0;
     position: absolute;
     text-align: left;
-    top: 2.25em;
+    top: 2.2em;
+    width: 101%;
+    word-wrap: anywhere;
     z-index: 100000;
 
     li {
