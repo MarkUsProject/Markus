@@ -77,7 +77,6 @@ class BatchTestRunTable extends React.Component {
               Header: I18n.t("activerecord.attributes.test_batch.created_at"),
               accessor: "created_at",
               minWidth: 120,
-              sortMethod: dateSort,
               PivotValue: ({value}) => value,
             },
             {
@@ -152,6 +151,7 @@ class BatchTestRunTable extends React.Component {
               show: false,
             },
           ]}
+          pivotBy={["created_at"]}
           // Controlled props
           sorted={this.state.sorted}
           // Callbacks
@@ -160,11 +160,9 @@ class BatchTestRunTable extends React.Component {
           defaultSortMethod={(a, b) => {
             // sorting for created_at_user_name to ensure it's sorted by date
             if (this.state.sorted[0].id === "created_at") {
-              if (typeof a === "string" && typeof b === "string") {
-                let a_date = Date.parse(a);
-                let b_date = Date.parse(b);
-                return a_date > b_date ? 1 : -1;
-              }
+              const result = dateSort(a, b);
+              // Ensure an integer is returned for use in sorting
+              return Number.isInteger(result) ? result : result ? 1 : -1;
             } else {
               return a > b ? 1 : -1;
             }
