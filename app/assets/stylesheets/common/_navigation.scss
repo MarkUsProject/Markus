@@ -11,6 +11,10 @@ header#header {
   padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
+  @include breakpoint(mobile) {
+    border-bottom: 0;
+  }
+
   #course,
   #user-info {
     display: table-cell;
@@ -232,7 +236,6 @@ nav {
     border-bottom: 1px solid $primary-three;
     border-top: 1px solid $primary-three;
     display: block;
-    margin: 0 0 1em;
     padding: 0 !important;
     width: 100%;
   }
@@ -356,10 +359,7 @@ li#dropdown {
 
     ul {
       background: $background-main;
-      border-left: 0;
-      border-radius: 0;
-      border-right: 0;
-      border-top: 0;
+      border: 0;
       color: $primary-one;
       display: block;
       left: 0;
