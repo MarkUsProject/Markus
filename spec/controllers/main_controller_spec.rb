@@ -160,7 +160,7 @@ describe MainController do
   context 'An Admin User' do
     shared_examples 'admin tests' do
       it 'should redirect to the courses controller' do
-        expect(response).to redirect_to controller: 'courses', action: 'index'
+        expect(response).to redirect_to(admin_path)
       end
     end
     context 'after logging in without remote user auth' do
