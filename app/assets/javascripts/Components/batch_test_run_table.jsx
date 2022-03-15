@@ -152,7 +152,6 @@ class BatchTestRunTable extends React.Component {
               show: false,
             },
           ]}
-          pivotBy={["created_at"]}
           // Controlled props
           sorted={this.state.sorted}
           // Callbacks
