@@ -1,12 +1,18 @@
 module Admin
   class MainAdminController < ApplicationController
-    skip_verify_authorized only: [:index]
+    before_action { authorize! }
 
     respond_to :html
-    layout 'main'
+    layout 'assignment_content'
 
     def index
       render :index
+    end
+
+    protected
+
+    def implicit_authorization_target
+      OpenStruct.new policy_class: MainAdminPolicy
     end
   end
 end
