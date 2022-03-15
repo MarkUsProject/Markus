@@ -156,9 +156,8 @@ class BatchTestRunTable extends React.Component {
           sorted={this.state.sorted}
           // Callbacks
           onSortedChange={sorted => this.setState({sorted})}
-          // Custom Sort Method to sort by latest batch run
+          // Custom Sort Method to sort either by batch creation time or by group name
           defaultSortMethod={(a, b) => {
-            // sorting for created_at_user_name to ensure it's sorted by date
             if (this.state.sorted[0].id === "created_at") {
               const result = dateSort(a, b);
               // Ensure an integer is returned for use in sorting
