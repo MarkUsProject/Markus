@@ -9,6 +9,7 @@
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
 - Upgrade to Rails 7 (#5885)
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
+- Modified login to allow admin users to login via the UI (#5897)
 
 ## [v2.0.8]
 - Fix bug where "run tests" grader permission was not working for submission table (#5860)
