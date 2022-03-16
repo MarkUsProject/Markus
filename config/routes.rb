@@ -120,7 +120,6 @@ Rails.application.routes.draw do
         get 'error_pages'
         patch 'add_fields'
         patch 'generate'
-        patch 'split'
         post 'fix_error'
       end
     end
@@ -241,6 +240,7 @@ Rails.application.routes.draw do
       resources :exam_templates, only: [:index, :create] do
         collection do
           get 'view_logs'
+          patch 'split'
         end
       end
 
