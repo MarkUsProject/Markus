@@ -7,7 +7,7 @@
   <div id='user-info'>
     <ul>
       <li id="user-info-dropdown">
-        <div class = "dropdown">
+        <div class="dropdown">
         <span id='instructor_logged_in_as'>
         <% if allowed_to?(:role_is_switched?) %>
           <strong><%= @real_user.display_name %></strong>
@@ -22,7 +22,7 @@
               <li>
                 <%= link_to t('menu.settings'),
                             settings_users_path,
-                            class: 'settings'%>
+                            class: 'settings' %>
               </li>
             <% end %>
             <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
@@ -30,7 +30,7 @@
                 <%= link_to t('main.role_switch.switch_role'),
                             role_switch_course_path(@current_course.id),
                             remote: true,
-                            class: 'switch-role'%>
+                            class: 'switch-role' %>
               </li>
             <% end %>
             <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
@@ -43,10 +43,10 @@
               <%= link_to t(:about_markus),
                           about_main_index_path,
                           remote: true,
-                          class: 'about-markus'%>
+                          class: 'about-markus' %>
             </li>
             <li>
-              <a class = 'github' href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
+              <a class='github' href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
             </li>
             <li>
               <%= link_to(t('main.log_out'),
