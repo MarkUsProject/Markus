@@ -159,7 +159,7 @@ describe MainController do
   end
   context 'An Admin User' do
     shared_examples 'admin tests' do
-      it 'should redirect to the courses controller' do
+      it 'redirects to the main_admin controller' do
         expect(response).to redirect_to(admin_path)
       end
     end
