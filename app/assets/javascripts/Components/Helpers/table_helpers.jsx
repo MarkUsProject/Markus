@@ -54,7 +54,7 @@ export function dateSort(a, b) {
   } else {
     let a_date = new Date(a);
     let b_date = new Date(b);
-    return (a_date || 0) > (b_date || 0);
+    return (a_date || 0) - (b_date || 0);
   }
 }
 
