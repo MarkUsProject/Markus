@@ -21,10 +21,12 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      if allowed_to?(:role_is_switched?)
+      if @real_user.admin_user?
+        redirect_to(admin_path)
+      elsif allowed_to?(:role_is_switched?)
         redirect_to course_assignments_path(session[:role_switch_course_id])
       else
-        redirect_to controller: 'courses', action: 'index'
+        redirect_to(courses_path)
       end
       return
     end
