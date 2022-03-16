@@ -9,7 +9,7 @@
       <li id="user-info-dropdown">
         <div class="dropdown">
         <% if allowed_to?(:role_is_switched?) %>
-          <strong><%= @real_user.display_name %></strong>
+          <strong>(<%= @real_user.display_name %>)</strong>
         <% end %>
           <span id='user-id'>
            <%= @current_user.display_name %> ⯆
@@ -34,7 +34,8 @@
             <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
               <li>
                 <%= link_to t('main.role_switch.clear_role_switch_session'),
-                            clear_role_switch_session_course_path(@current_course) %>
+                            clear_role_switch_session_course_path(@current_course),
+                            class: 'switch-role' %>
               </li>
             <% end %>
             <li>
