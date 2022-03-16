@@ -5,7 +5,6 @@ import {dateSort} from "./Helpers/table_helpers";
 
 const makeDefaultState = () => ({
   data: [],
-  sorted: [{id: "created_at", desc: true}],
   statuses: {},
   loading: true,
 });
@@ -77,6 +76,7 @@ class BatchTestRunTable extends React.Component {
               Header: I18n.t("activerecord.attributes.test_batch.created_at"),
               accessor: "created_at",
               minWidth: 120,
+              sortMethod: dateSort,
               PivotValue: ({value}) => value,
             },
             {
@@ -152,20 +152,7 @@ class BatchTestRunTable extends React.Component {
             },
           ]}
           pivotBy={["created_at"]}
-          // Controlled props
-          sorted={this.state.sorted}
-          // Callbacks
-          onSortedChange={sorted => this.setState({sorted})}
-          // Custom Sort Method to sort either by batch creation time or by group name
-          defaultSortMethod={(a, b) => {
-            if (this.state.sorted[0].id === "created_at") {
-              const result = dateSort(a, b);
-              // Ensure an integer is returned for use in sorting
-              return Number.isInteger(result) ? result : result ? 1 : -1;
-            } else {
-              return a > b ? 1 : -1;
-            }
-          }}
+          defaultSorted={[{id: "created_at", desc: true}]}
           loading={this.state.loading}
         />
       </div>
