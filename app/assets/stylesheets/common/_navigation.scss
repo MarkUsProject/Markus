@@ -347,7 +347,10 @@ li#dropdown {
 
     ul {
       background: $background-main;
-      border: 0;
+      border-left: 0;
+      border-radius: 0;
+      border-right: 0;
+      border-top: 0;
       color: $primary-one;
       display: block;
       left: 0;
@@ -379,6 +382,7 @@ li#dropdown {
   ul {
     li {
       border-radius: 0;
+
       a {
         height: auto;
         line-height: inherit;
