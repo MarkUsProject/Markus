@@ -112,7 +112,7 @@ module SessionHandler
         head :forbidden # 403
       else
         session[:redirect_uri] = request.fullpath
-        redirect_to controller: 'main', action: 'login'
+        redirect_to root_path
       end
     end
   end
