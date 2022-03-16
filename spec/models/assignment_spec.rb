@@ -197,7 +197,7 @@ describe Assignment do
 
           it 'shows the criteria visible to tas only' do
             expect(@assignment.ta_criteria.ids).to match_array(@ta_criteria.map(&:id) +
-                                                               @ta_and_peer_criteria.map(&:id))
+                                                                 @ta_and_peer_criteria.map(&:id))
           end
 
           context 'a submission and a result are created' do
@@ -2223,6 +2223,42 @@ describe Assignment do
     context 'When user is TA' do
       it 'should return no of collected submissions for groupings assigned to them' do
         expect(assignment.get_num_collected(ta.id)).to eq(2)
+      end
+    end
+  end
+
+  describe '#get_num_valid' do
+    before :each do
+      @assignment = create(:assignment, assignment_properties_attributes: { group_min: 2, group_max: 3 })
+      @groupings = Array.new(4) { create(:grouping, assignment: @assignment) }
+    end
+
+    context 'When two groups meet min size requirement' do
+      before :each do
+        create(:accepted_student_membership, grouping: @groupings.first)
+        create(:inviter_student_membership, grouping: @groupings.first)
+        create(:student_membership, grouping: @groupings.second)
+        create(:student_membership, grouping: @groupings.second)
+      end
+      it 'should return # of valid groups that meet size requirement' do
+        expect(@assignment.get_num_valid).to eq(2)
+      end
+    end
+
+    context 'When one group meets min size requirement and another is instructor approved' do
+      before :each do
+        create(:accepted_student_membership, grouping: @groupings.first)
+        create(:inviter_student_membership, grouping: @groupings.first)
+        @groupings.second.update_attribute(:instructor_approved, true)
+      end
+      it 'should return # of valid groups that meet size requirement or instructor approved' do
+        expect(@assignment.get_num_valid).to eq(2)
+      end
+    end
+
+    context 'When no group is valid' do
+      it 'should return # of valid groups' do
+        expect(@assignment.get_num_valid).to eq(0)
       end
     end
   end
