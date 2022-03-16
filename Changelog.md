@@ -9,6 +9,7 @@
 - Replace uses of first name and last name attributes with display name (#5844)
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
 - Upgrade to Rails 7 (#5885)
+- Fix bug when sorting batch test runs where sorting by date was not working (#5906)
 
 ## [v2.0.9]
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
