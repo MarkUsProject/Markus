@@ -984,7 +984,7 @@ nav {
   border: 1px solid $primary-one;
   cursor: pointer;
   display: inline-block;
-  min-width: 200px;
+  min-width: $dropdown-horizontal;
   padding: 0.5em;
   position: relative;
 
@@ -1007,7 +1007,7 @@ nav {
     position: absolute;
     text-align: left;
     top: 2.2em;
-    width: 101%;
+    width: $dropdown-horizontal;
     word-wrap: anywhere;
     z-index: 100000;
 
