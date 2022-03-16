@@ -28,7 +28,7 @@ describe Admin::MainAdminController do
     end
   end
   context 'a non-existent route' do
-    it 'should reroute to page_not_found' do
+    it 'reroutes to page_not_found' do
       expect(get: '/admin/badroute').to route_to(controller: 'main', action: 'page_not_found', path: 'admin/badroute')
     end
   end
