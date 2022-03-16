@@ -5,7 +5,6 @@ import {dateSort} from "./Helpers/table_helpers";
 
 const makeDefaultState = () => ({
   data: [],
-  sorted: [{id: "created_at", desc: true}],
   statuses: {},
   loading: true,
 });
@@ -153,23 +152,7 @@ class BatchTestRunTable extends React.Component {
             },
           ]}
           pivotBy={["created_at"]}
-          // Controlled props
-          sorted={this.state.sorted}
-          // Callbacks
-          onSortedChange={sorted => this.setState({sorted})}
-          // Custom Sort Method to sort by latest batch run
-          defaultSortMethod={(a, b) => {
-            // sorting for created_at_user_name to ensure it's sorted by date
-            if (this.state.sorted[0].id === "created_at") {
-              if (typeof a === "string" && typeof b === "string") {
-                let a_date = Date.parse(a);
-                let b_date = Date.parse(b);
-                return a_date > b_date ? 1 : -1;
-              }
-            } else {
-              return a > b ? 1 : -1;
-            }
-          }}
+          defaultSorted={[{id: "created_at", desc: true}]}
           loading={this.state.loading}
         />
       </div>
