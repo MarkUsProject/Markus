@@ -6,44 +6,26 @@ class AdminCourseList extends React.Component {
   constructor() {
     super();
     this.state = {
-      courses: [
-        {
-          id: 1,
-          name: "CSC108H1",
-          display_name: "Introduction to Computer Programming",
-          is_hidden: false,
-        },
-        {
-          id: 2,
-          name: "CSC148H1",
-          display_name: "Introduction to Computer Science",
-          is_hidden: true,
-        },
-        {
-          id: 3,
-          name: "CSC165H1",
-          display_name: "Mathematical Expression and Reasoning for Computer Science",
-          is_hidden: true,
-        },
-        {id: 4, name: "CSC207H1", display_name: "Software Design", is_hidden: true},
-        {
-          id: 5,
-          name: "CSC209H1",
-          display_name: "Software Tools and Systems Programming",
-          is_hidden: true,
-        },
-        {
-          id: 6,
-          name: "CSC236H1",
-          display_name: "Introduction to the Theory of Computation",
-          is_hidden: true,
-        },
-        {id: 7, name: "CSC258H1", display_name: "Computer Organization", is_hidden: true},
-        {id: 8, name: "CSC263H1", display_name: "Data Structures and Analysis", is_hidden: true},
-      ],
-      loading: false,
+      courses: [],
+      loading: true,
     };
   }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
+    $.ajax({
+      url: Routes.api_courses_path(),
+      dataType: "json",
+      headers: {
+        Authorization: "MarkUsAuth MDFlN2RiZWUzOTc3MjBkZTgxMzJhYjU1MzBjOGY3ZDc=",
+      },
+    }).then(data => {
+      this.setState({courses: data, loading: false});
+    });
+  };
 
   columns = [
     {
