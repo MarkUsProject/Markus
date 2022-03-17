@@ -49,7 +49,7 @@ module Api
       if self.grouping.nil?
         # The group doesn't have a grouping associated with that assignment
         render 'shared/http_status', locals: { code: '422', message:
-          'The group is not involved with that assignment' }, status: 422
+          'The group is not involved with that assignment' }, status: :unprocessable_entity
         return
       end
 
@@ -65,7 +65,7 @@ module Api
       end
 
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     # Update the group's marks for the given assignment.
@@ -76,13 +76,13 @@ module Api
       # We shouldn't be able to update marks if marking is already complete.
       if result.marking_state == Result::MARKING_STATES[:complete]
         render 'shared/http_status', locals: { code: '404', message:
-          'Marking for that submission is already completed' }, status: 404
+          'Marking for that submission is already completed' }, status: :not_found
         return
       end
       matched_criteria = assignment.criteria.where(name: params.keys)
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
-          'No criteria were found that match that request.' }, status: 404
+          'No criteria were found that match that request.' }, status: :not_found
         return
       end
 
@@ -92,7 +92,7 @@ module Api
         unless mark_to_change.save
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
-            mark_to_change.errors.full_messages.first }, status: 500
+            mark_to_change.errors.full_messages.first }, status: :internal_server_error
           return
         end
       end
@@ -100,7 +100,7 @@ module Api
       result.update_total_mark
       result.save
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     def create_extra_marks
@@ -113,12 +113,12 @@ module Api
       rescue ActiveRecord::RecordInvalid => e
         # Some error occurred
         render 'shared/http_status', locals: { code: '500', message:
-            e.message }, status: 500
+            e.message }, status: :internal_server_error
         return
       end
       result.update_total_mark
       render 'shared/http_status', locals: { code: '200', message:
-          'Extra mark created successfully' }, status: 200
+          'Extra mark created successfully' }, status: :ok
     end
 
     def remove_extra_marks
@@ -129,7 +129,7 @@ module Api
                                      extra_mark: params[:extra_marks])
       if extra_mark.nil?
         render 'shared/http_status', locals: { code: '404', message:
-            'No such Extra Mark exist for that result' }, status: 404
+            'No such Extra Mark exist for that result' }, status: :not_found
         return
       end
       begin
@@ -137,13 +137,13 @@ module Api
       rescue ActiveRecord::RecordNotDestroyed => e
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-            e.message }, status: 500
+            e.message }, status: :internal_server_error
         return
       end
       result.update_total_mark
       # Successfully deleted the Extra Mark; render success
       render 'shared/http_status', locals: { code: '200', message:
-          'Extra mark removed successfully' }, status: 200
+          'Extra mark removed successfully' }, status: :ok
     end
 
     def annotations
@@ -245,7 +245,7 @@ module Api
       end
       TextAnnotation.insert_all! annotations
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     # Return key:value pairs of group_name:group_id
@@ -266,7 +266,7 @@ module Api
       if has_missing_params?([:marking_state])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
       result = self.grouping&.current_submission_used&.get_latest_result
@@ -274,17 +274,17 @@ module Api
       result.marking_state = params[:marking_state]
       if result.save
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         render 'shared/http_status', locals: { code: '500', message:
-            result.errors.full_messages.first }, status: 500
+            result.errors.full_messages.first }, status: :internal_server_error
       end
     end
 
     private
 
     def assignment
-      @assignment ||= Assignment.find_by_id(params[:assignment_id])
+      @assignment ||= Assignment.find_by(id: params[:assignment_id])
     end
 
     def grouping

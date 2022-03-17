@@ -42,6 +42,8 @@ repos:
             db/schema.rb|
             lib/repo/test/.*
           )$
+        additional_dependencies:
+          - rubocop-rails:2.13.2
 
 exclude: vendor
 

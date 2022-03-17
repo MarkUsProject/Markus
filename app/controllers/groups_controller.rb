@@ -72,7 +72,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where(assessment_id: @assignment.id, group_id: groupexist_id).exists?
+      if Grouping.exists?(assessment_id: @assignment.id, group_id: groupexist_id)
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -175,7 +175,7 @@ class GroupsController < ApplicationController
                                  "#{params[:term]}%",
                                  Membership.select(:role_id)
                                            .joins(:grouping)
-                                           .where('groupings.assessment_id = ?', params[:assignment_id]))
+                                           .where(groupings: { assessment_id: params[:assignment_id] }))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
                                          'users.first_name', 'users.last_name')
     names = names.map do |h|
@@ -275,7 +275,7 @@ class GroupsController < ApplicationController
         next if row.blank?
         raise CsvInvalidLineError if row[0].blank?
 
-        group_rows << row.reject(&:blank?)
+        group_rows << row.compact_blank
       end
       if result[:invalid_lines].empty?
         @current_job = CreateGroupsJob.perform_later assignment, group_rows
@@ -540,7 +540,7 @@ class GroupsController < ApplicationController
       head :ok
     rescue StandardError => e
       flash_now(:error, e.message)
-      head 400
+      head :bad_request
     end
   end
 
@@ -664,7 +664,7 @@ class GroupsController < ApplicationController
     errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
-    unless errors.blank?
+    if errors.present?
       raise errors.join(' ')
     end
 
@@ -687,7 +687,7 @@ class GroupsController < ApplicationController
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         groupings.each do |grouping|
-          membership = grouping.student_memberships.find_by_role_id(member.id)
+          membership = grouping.student_memberships.find_by(role_id: member.id)
           remove_member(membership, grouping)
         end
       end

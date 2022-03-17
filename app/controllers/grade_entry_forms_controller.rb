@@ -71,7 +71,7 @@ class GradeEntryFormsController < ApplicationController
                code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
-             status: 404,
+             status: :not_found,
              layout: false
       return
     end

@@ -1,7 +1,8 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
 class Criterion < ApplicationRecord
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criteria
+  before_validation :update_assigned_groups_count
   after_update :update_results_with_change
   after_destroy :update_results
 
@@ -10,21 +11,20 @@ class Criterion < ApplicationRecord
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
 
-  validates_presence_of :assigned_groups_count
-  validates_numericality_of :assigned_groups_count
-  before_validation :update_assigned_groups_count
+  validates :assigned_groups_count, presence: true
+  validates :assigned_groups_count, numericality: true
 
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
   has_many :test_groups
 
-  validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assessment_id
+  validates :name, presence: true
+  validates :name, uniqueness: { scope: :assessment_id }
 
-  validates_inclusion_of :bonus, in: [true, false]
+  validates :bonus, inclusion: { in: [true, false] }
 
-  validates_presence_of :max_mark
-  validates_numericality_of :max_mark, greater_than: 0
+  validates :max_mark, presence: true
+  validates :max_mark, numericality: { greater_than: 0 }
 
   has_many :criteria_assignment_files_joins,
            dependent: :destroy
@@ -80,7 +80,7 @@ class Criterion < ApplicationRecord
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
-    ta_ids = Ta.where(id: ta_ids).pluck(:id)
+    ta_ids = Ta.where(id: ta_ids).ids
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation

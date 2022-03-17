@@ -77,7 +77,7 @@ class PeerReviewsController < ApplicationController
       render 'shared/http_status',
              formats: [:html],
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404,
+             status: :not_found,
              layout: false
     end
   end
@@ -97,11 +97,11 @@ class PeerReviewsController < ApplicationController
     if %w[assign random_assign].include?(action_string)
       if selected_reviewer_group_ids.empty?
         flash_now(:error, t('peer_reviews.errors.select_a_reviewer'))
-        head 400
+        head :bad_request
         return
       elsif selected_reviewee_group_ids.empty?
         flash_now(:error, t('peer_reviews.errors.select_a_reviewee'))
-        head 400
+        head :bad_request
         return
       end
     end
@@ -113,7 +113,7 @@ class PeerReviewsController < ApplicationController
                                   selected_reviewer_group_ids, selected_reviewee_group_ids)
       rescue UnableToRandomlyAssignGroupException
         flash_now(:error, t('peer_reviews.errors.random_assign_failure'))
-        head 400
+        head :bad_request
         return
       end
     when 'assign'
@@ -125,17 +125,17 @@ class PeerReviewsController < ApplicationController
         PeerReview.assign(reviewer_groups, reviewee_groups)
       rescue ActiveRecord::RecordInvalid => e
         flash_now(:error, e.message)
-        head 400
+        head :bad_request
         return
       rescue SubmissionsNotCollectedException
         flash_now(:error, t('peer_reviews.errors.collect_submissions_first'))
-        head 400
+        head :bad_request
         return
       end
     when 'unassign'
       PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
     else
-      head 400
+      head :bad_request
       return
     end
 

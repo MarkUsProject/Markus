@@ -48,7 +48,7 @@ class CoursesController < ApplicationController
       return
     end
 
-    found_user = User.find_by_user_name(params[:effective_user_login])
+    found_user = User.find_by(user_name: params[:effective_user_login])
     found_role = Role.find_by(end_user: found_user, course: current_course)
 
     if found_role.nil?

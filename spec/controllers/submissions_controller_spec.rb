@@ -802,7 +802,7 @@ describe SubmissionsController do
         end
 
         it 'should collect all groupings when override is true' do
-          @assignment.update!(due_date: Time.current - 1.week)
+          @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
             array_including(@grouping, uncollected_grouping),
@@ -815,7 +815,7 @@ describe SubmissionsController do
         end
 
         it 'should collect the uncollected grouping only when override is false' do
-          @assignment.update!(due_date: Time.current - 1.week)
+          @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
             [uncollected_grouping],
@@ -947,7 +947,7 @@ describe SubmissionsController do
           end
 
           it 'should get an error if it is before the section due date' do
-            @assessment_section_properties.update!(due_date: Time.current + 1.week)
+            @assessment_section_properties.update!(due_date: 1.week.from_now)
             allow(Assignment).to receive_message_chain(
               :includes, :find
             ) { @assignment }
@@ -964,7 +964,7 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the section due date' do
-            @assessment_section_properties.update!(due_date: Time.current - 1.week)
+            @assessment_section_properties.update!(due_date: 1.week.ago)
             allow(Assignment).to receive_message_chain(
               :includes, :find
             ) { @assignment }
@@ -987,7 +987,7 @@ describe SubmissionsController do
           end
 
           it 'should get an error if it is before the global due date' do
-            @assignment.update!(due_date: Time.current + 1.week)
+            @assignment.update!(due_date: 1.week.from_now)
             allow(Assignment).to receive_message_chain(
               :includes, :find
             ) { @assignment }
@@ -1004,7 +1004,7 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the global due date' do
-            @assignment.update!(due_date: Time.current - 1.week)
+            @assignment.update!(due_date: 1.week.ago)
             allow(Assignment).to receive_message_chain(
               :includes, :find
             ) { @assignment }

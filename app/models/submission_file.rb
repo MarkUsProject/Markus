@@ -6,11 +6,11 @@ class SubmissionFile < ApplicationRecord
 
   has_one :course, through: :submission
 
-  validates_presence_of :filename
+  validates :filename, presence: true
 
-  validates_presence_of :path
+  validates :path, presence: true
 
-  validates_inclusion_of :is_converted, in: [true, false]
+  validates :is_converted, inclusion: { in: [true, false] }
 
   def is_supported_image?
     # Here you can add more image types to support

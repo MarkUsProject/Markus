@@ -15,8 +15,8 @@ class Role < ApplicationRecord
   has_many :assessments, through: :course
   has_many :tags
 
-  validates_format_of :type, with: /\AStudent|Instructor|Ta\z/
-  validates_uniqueness_of :user_id, scope: :course_id
+  validates :type, format: { with: /\AStudent|Instructor|Ta\z/ }
+  validates :user_id, uniqueness: { scope: :course_id }
 
   # Helper methods -----------------------------------------------------
 

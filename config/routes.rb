@@ -463,9 +463,9 @@ Rails.application.routes.draw do
     end
   end
 
-  match 'main', controller: 'courses', action: 'index', via: :post
-  match 'main/about', controller: 'main', action: 'about', via: :post
-  match 'main/logout', controller: 'main', action: 'logout', via: :post
+  post 'main', controller: 'courses', action: 'index'
+  post 'main/about', controller: 'main', action: 'about'
+  post 'main/logout', controller: 'main', action: 'logout'
 
   match '*path', controller: 'main', action: 'page_not_found', via: :all
 end

@@ -14,14 +14,14 @@ class Course < ApplicationRecord
   has_many :exam_templates, through: :assignments
   belongs_to :autotest_setting, optional: true
 
-  validates_presence_of :name
-  validates_uniqueness_of :name
+  validates :name, presence: true
+  validates :name, uniqueness: true
   validates :name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                              message: 'name must only contain alphanumeric, hyphen, or '\
                                       'underscore' }
 
   # Note rails provides built-in sanitization via active record.
-  validates_presence_of :display_name
+  validates :display_name, presence: true
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)

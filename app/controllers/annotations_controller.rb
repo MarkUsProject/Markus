@@ -63,7 +63,7 @@ class AnnotationsController < ApplicationController
 
     d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
 
-    if !params[:annotation_text_id].blank? && !params[:category_id].blank?
+    if params[:annotation_text_id].present? && params[:category_id].present?
       text = AnnotationText.find(params[:annotation_text_id])
       unless text.annotation_category_id == params[:category_id].to_i
         text.update!(
@@ -134,9 +134,9 @@ class AnnotationsController < ApplicationController
     unless @annotation.annotation_text.deduction.nil? || !current_role.ta?
       assignment = result.grouping.assignment
       if assignment.assign_graders_to_criteria &&
-          !current_role.criterion_ta_associations
-                       .pluck(:criterion_id)
-                       .include?(@annotation.annotation_text.annotation_category.flexible_criterion_id)
+          current_role.criterion_ta_associations
+                      .pluck(:criterion_id)
+                      .exclude?(@annotation.annotation_text.annotation_category.flexible_criterion_id)
         flash_message(:error, t('annotations.prevent_ta_delete'))
         head :bad_request
         return
@@ -156,7 +156,7 @@ class AnnotationsController < ApplicationController
     @annotation = record
     @annotation_text = @annotation.annotation_text
     if !@annotation_text.deduction.nil? && (current_role.ta? || @annotation_text.annotations.joins(:result)
-                                             .where('results.released_to_students' => true).exists?)
+                                             .exists?('results.released_to_students' => true))
       flash_message(:error, t('annotations.prevent_update'))
       head :bad_request
       return

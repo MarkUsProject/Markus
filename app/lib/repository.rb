@@ -236,7 +236,7 @@ module Repository
                           .order(due_date: :desc)
       records.where(assignment_properties: { is_timed: false })
              .or(records.where.not(groupings: { start_time: nil }))
-             .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+             .or(records.where(groupings: { start_time: nil }, due_date: Time.utc(0)..Time.current))
     end
 
     # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility

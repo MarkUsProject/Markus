@@ -1,6 +1,6 @@
 namespace :markus do
   desc 'Print MarkUs version'
-  task :version do
+  task :version do # rubocop:disable Rails/RakeEnvironment
     VERSION_FILE = File.expand_path(File.join(__FILE__, '..', '..', '..', 'app', 'MARKUS_VERSION'))
     unless File.exist?(VERSION_FILE)
       warn 'Could not determine MarkUs version, please check your installation!'
@@ -56,7 +56,7 @@ namespace :markus do
   task(usability_test_setup: [:environment, :'db:seed']) do
     puts 'Creating a setup for usability testing'
     # modify settings for A1 (solo assignment)
-    a1 = Assignment.find_by_short_identifier('A1')
+    a1 = Assignment.find_by(short_identifier: 'A1')
     req_file1 = AssignmentFile.new
     req_file1.filename = 'conditionals.py'
     req_file1.assessment_id = a1.id
@@ -72,8 +72,8 @@ namespace :markus do
     req_file2.save!
 
     # modify settings for A2
-    a2 = Assignment.find_by_short_identifier('A2')
-    a2.due_date = 2.week.from_now # due date is 2 weeks from now
+    a2 = Assignment.find_by(short_identifier: 'A2')
+    a2.due_date = 2.weeks.from_now # due date is 2 weeks from now
     a2.message += "\nNote: You are working in groups for this assignment. Please form groups on your own."
     # students can form groups
     a2.group_min = 3
@@ -102,7 +102,7 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
       message: "Learn how to use functions, parameter passing and proper return codes.\n
 Note: You have been assigned to a group by the instructor.",
       repository_folder: 'A3',
-      due_date: 3.week.from_now,
+      due_date: 3.weeks.from_now,
       invalid_override: true
     )
     req_file1 = AssignmentFile.new

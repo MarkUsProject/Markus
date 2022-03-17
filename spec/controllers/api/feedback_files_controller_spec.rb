@@ -66,7 +66,7 @@ describe Api::FeedbackFilesController do
             course_id: course.id
           }
           ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
-          expect(ids).to contain_exactly(*feedback_files.pluck(:id))
+          expect(ids).to contain_exactly(*feedback_files.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end
       context 'expecting an json response' do
@@ -88,7 +88,9 @@ describe Api::FeedbackFilesController do
             assignment_id: grouping.assignment.id,
             course_id: course.id
           }
-          expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*feedback_files.pluck(:id))
+          expect(
+            JSON.parse(response.body).map { |h| h['id'] }
+          ).to contain_exactly(*feedback_files.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end
     end
@@ -133,7 +135,7 @@ describe Api::FeedbackFilesController do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                   filename: filename, mime_type: 'text/plain', file_content: 'abcd',
                                   course_id: course.id }
-          expect(FeedbackFile.find_by_filename(filename)).not_to be_nil
+          expect(FeedbackFile.find_by(filename: filename)).not_to be_nil
         end
       end
       context 'when trying to create a feedback_file with a name that already exists' do

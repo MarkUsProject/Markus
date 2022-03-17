@@ -46,8 +46,7 @@ describe MarksGradersController do
       @student_user_names.each do |name|
         expect(
           GradeEntryStudentTa.joins(grade_entry_student: [role: :end_user])
-                             .where('users.user_name': name)
-                             .exists?
+                             .exists?('users.user_name': name)
         ).to be true
       end
       expect(ges.tas.count).to eq 1
@@ -78,8 +77,7 @@ describe MarksGradersController do
       @student_user_names.each do |name|
         expect(
           GradeEntryStudentTa.joins(grade_entry_student: [role: :end_user])
-            .where(grade_entry_student: { users: { user_name: name } })
-            .exists?
+            .exists?(grade_entry_student: { users: { user_name: name } })
         ).to be true
       end
       expect(ges.tas.count).to eq 0

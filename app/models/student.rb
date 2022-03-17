@@ -2,14 +2,15 @@
 class Student < Role
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
-  has_many :grade_entry_students, foreign_key: :role_id
+  has_many :grade_entry_students, foreign_key: :role_id, inverse_of: :role
   has_many :accepted_memberships,
            -> {
              where membership_status: [StudentMembership::STATUSES[:accepted],
                                        StudentMembership::STATUSES[:inviter]]
            },
            class_name: 'Membership',
-           foreign_key: :role_id
+           foreign_key: :role_id,
+           inverse_of: :role
   has_many :accepted_groupings,
            -> {
              where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted],
@@ -31,22 +32,22 @@ class Student < Role
            through: :memberships,
            source: :grouping
 
-  has_many :student_memberships, foreign_key: 'role_id'
+  has_many :student_memberships, foreign_key: 'role_id', inverse_of: :role
 
   has_many :grace_period_deductions, through: :memberships
 
   belongs_to :section, optional: true
   accepts_nested_attributes_for :section
 
-  validates_presence_of :section, unless: -> { section_id.nil? }
+  validates :section, presence: { unless: -> { section_id.nil? } }
 
-  validates_inclusion_of :receives_invite_emails, in: [true, false]
+  validates :receives_invite_emails, inclusion: { in: [true, false] }
 
-  validates_inclusion_of :receives_results_emails, in: [true, false]
+  validates :receives_results_emails, inclusion: { in: [true, false] }
 
-  validates_numericality_of :grace_credits,
-                            only_integer: true,
-                            greater_than_or_equal_to: 0
+  validates :grace_credits,
+            numericality: { only_integer: true,
+                            greater_than_or_equal_to: 0 }
 
   after_create :create_all_grade_entry_students
 

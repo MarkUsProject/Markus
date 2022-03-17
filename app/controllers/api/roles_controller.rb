@@ -32,10 +32,10 @@ module Api
     # Requires: id
     # Optional: filter, fields
     def show
-      role = Role.find_by_id(params[:id])
+      role = Role.find_by(id: params[:id])
       if role.nil?
         # No user with that id
-        render 'shared/http_status', locals: { code: '404', message: 'No user exists with that id' }, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'No user exists with that id' }, status: :not_found
       else
         respond_to do |format|
           format.xml do
@@ -52,9 +52,9 @@ module Api
     # Requires: id
     # Optional: first_name, last_name, user_name, section_name, grace_credits
     def update
-      role = Role.find_by_id(params[:id])
+      role = Role.find_by(id: params[:id])
       if role.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
       else
         update_role(role)
       end
@@ -66,7 +66,7 @@ module Api
     def update_by_username
       role = find_role_by_username
       if role.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: :not_found
         return
       end
       update_role(role) unless role.nil?
@@ -82,7 +82,7 @@ module Api
       else
         role.update!(hidden: false)
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       end
     end
 
@@ -97,13 +97,13 @@ module Api
         role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
-            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
+            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       end
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     end
 
     def update_role(role)
@@ -114,24 +114,24 @@ module Api
         role.save!
       end
       render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     end
 
     def find_role_by_username
       if has_missing_params?([:user_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
       # Check if that user_name is taken
-      end_user = EndUser.find_by_user_name(params[:user_name])
+      end_user = EndUser.find_by(user_name: params[:user_name])
       Role.find_by(end_user: end_user, course: @current_course)
     end
 
@@ -143,7 +143,8 @@ module Api
         filter_params = { **role_filter, **end_user_filter }
         if filter_params.empty?
           render 'shared/http_status',
-                 locals: { code: '422', message: 'Invalid or malformed parameter values' }, status: 422
+                 locals: { code: '422', message: 'Invalid or malformed parameter values' },
+                 status: :unprocessable_entity
           return false
         else
           return collection.where(filter_params)

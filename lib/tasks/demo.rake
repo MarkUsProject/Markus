@@ -51,7 +51,7 @@ namespace :markus do
   end
 
   def request_remark(submission)
-    original_result = Result.find_by_submission_id(submission.id)
+    original_result = Result.find_by(submission_id: submission.id)
     original_result.released_to_students = false
     original_result.save
 
@@ -263,9 +263,9 @@ namespace :markus do
       token_period: 1
     )
 
-    create_group(a, [students[0]].map { |s| Student.find_by_user_name(s) })
-    create_group(a, students[1...3].map { |s| Student.find_by_user_name(s) })
-    create_group(a, students[3..-1].map { |s| Student.find_by_user_name(s) })
+    create_group(a, [students[0]].map { |s| Student.find_by(user_name: s) })
+    create_group(a, students[1...3].map { |s| Student.find_by(user_name: s) })
+    create_group(a, students[3..-1].map { |s| Student.find_by(user_name: s) })
     create_criteria(a)
 
     puts '5: Nothing collected'

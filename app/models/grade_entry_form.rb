@@ -174,7 +174,7 @@ class GradeEntryForm < Assessment
         else
           self.update_grade_entry_items(names, totals, overwrite)
         end
-        updated_columns = self.grade_entry_items.reload.pluck(:id)
+        updated_columns = self.grade_entry_items.reload.ids
         next
       end
 
@@ -199,7 +199,7 @@ class GradeEntryForm < Assessment
     unless updated_grades.empty?
       Grade.upsert_all(updated_grades, unique_by: [:grade_entry_item_id, :grade_entry_student_id])
     end
-    GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
+    GradeEntryStudent.refresh_total_grades(updated_grades.pluck(:grade_entry_student_id))
     result
   end
 

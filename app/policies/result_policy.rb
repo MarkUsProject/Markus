@@ -47,7 +47,7 @@ class ResultPolicy < ApplicationPolicy
     role.instructor? || role.ta? || (
       from_codeviewer && role.is_reviewer_for?(record.submission.grouping.assignment.pr_assignment, record)
     ) || (
-      record.submission.grouping.accepted_students.pluck(:id).include?(role.id) && (
+      record.submission.grouping.accepted_students.ids.include?(role.id) && (
         select_file.nil? || select_file.submission == record.submission
       )
     )

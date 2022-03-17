@@ -22,8 +22,8 @@ that two properties A and B have switched values' do
           }
           rubric.update_levels(params)
 
-          expect(rubric.levels.find_by_id(level0_id).name).to eq(level1_name)
-          expect(rubric.levels.find_by_id(level1_id).name).to eq(level0_name)
+          expect(rubric.levels.find_by(id: level0_id).name).to eq(level1_name)
+          expect(rubric.levels.find_by(id: level1_id).name).to eq(level0_name)
         end
       end
 
@@ -38,8 +38,8 @@ that two properties A and B have switched values' do
           }
           rubric.update_levels(params)
 
-          expect(rubric.levels.find_by_id(level0_id).mark).to eq(level1_mark)
-          expect(rubric.levels.find_by_id(level1_id).mark).to eq(level0_mark)
+          expect(rubric.levels.find_by(id: level0_id).mark).to eq(level1_mark)
+          expect(rubric.levels.find_by(id: level1_id).mark).to eq(level0_mark)
         end
       end
 
@@ -54,10 +54,10 @@ that two properties A and B have switched values' do
           }
           rubric.update_levels(params)
 
-          expect(rubric.levels.find_by_id(level0_id).mark).to eq(level1_mark)
-          expect(rubric.levels.find_by_id(level1_id).mark).to eq(level0_mark)
-          expect(rubric.levels.find_by_id(level0_id).name).to eq(level1_name)
-          expect(rubric.levels.find_by_id(level1_id).name).to eq(level0_name)
+          expect(rubric.levels.find_by(id: level0_id).mark).to eq(level1_mark)
+          expect(rubric.levels.find_by(id: level1_id).mark).to eq(level0_mark)
+          expect(rubric.levels.find_by(id: level0_id).name).to eq(level1_name)
+          expect(rubric.levels.find_by(id: level1_id).name).to eq(level0_name)
         end
       end
     end
@@ -72,12 +72,12 @@ that two properties A and B have switched values' do
             '0' => { name: level1_name, mark: level0_mark, id: level0_id },
             '1' => { name: level1_name, mark: level1_mark, id: level1_id }
           }
-          level0_before = rubric.levels.find_by_id(level0_id)
-          level1_before = rubric.levels.find_by_id(level1_id)
+          level0_before = rubric.levels.find_by(id: level0_id)
+          level1_before = rubric.levels.find_by(id: level1_id)
           rubric.update_levels(params)
 
-          expect(rubric.levels.find_by_id(level0_id)).to eq(level0_before)
-          expect(rubric.levels.find_by_id(level1_id)).to eq(level1_before)
+          expect(rubric.levels.find_by(id: level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by(id: level1_id)).to eq(level1_before)
         end
       end
 
@@ -90,12 +90,12 @@ that two properties A and B have switched values' do
             '0' => { name: level0_name, mark: level1_mark, id: level0_id },
             '1' => { name: level1_name, mark: level1_mark, id: level1_id }
           }
-          level0_before = rubric.levels.find_by_id(level0_id)
-          level1_before = rubric.levels.find_by_id(level1_id)
+          level0_before = rubric.levels.find_by(id: level0_id)
+          level1_before = rubric.levels.find_by(id: level1_id)
           rubric.update_levels(params)
 
-          expect(rubric.levels.find_by_id(level0_id)).to eq(level0_before)
-          expect(rubric.levels.find_by_id(level1_id)).to eq(level1_before)
+          expect(rubric.levels.find_by(id: level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by(id: level1_id)).to eq(level1_before)
         end
       end
 
@@ -108,12 +108,12 @@ that two properties A and B have switched values' do
             '0' => { name: level1_name, mark: level1_mark, id: level0_id },
             '1' => { name: level1_name, mark: level1_mark, id: level1_id }
           }
-          level0_before = rubric.levels.find_by_id(level0_id)
-          level1_before = rubric.levels.find_by_id(level1_id)
+          level0_before = rubric.levels.find_by(id: level0_id)
+          level1_before = rubric.levels.find_by(id: level1_id)
           rubric.update_levels(params)
 
-          expect(rubric.levels.find_by_id(level0_id)).to eq(level0_before)
-          expect(rubric.levels.find_by_id(level1_id)).to eq(level1_before)
+          expect(rubric.levels.find_by(id: level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by(id: level1_id)).to eq(level1_before)
         end
       end
     end

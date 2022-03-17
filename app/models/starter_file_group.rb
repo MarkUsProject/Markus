@@ -1,6 +1,6 @@
 # Class describing a group of starter files
 class StarterFileGroup < ApplicationRecord
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :starter_file_groups
   has_many :section_starter_file_groups, dependent: :destroy
   has_many :sections, through: :section_starter_file_groups
   has_many :starter_file_entries, dependent: :destroy
@@ -14,11 +14,11 @@ class StarterFileGroup < ApplicationRecord
   before_destroy :warn_affected_groupings, prepend: true
   after_save :update_timestamp
 
-  validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assessment_id
+  validates :name, presence: true
+  validates :name, uniqueness: { scope: :assessment_id }
 
-  validates_exclusion_of :entry_rename, in: %w[.. .]
-  validates_presence_of :entry_rename, if: -> { self.use_rename }
+  validates :entry_rename, exclusion: { in: %w[.. .] }
+  validates :entry_rename, presence: { if: -> { self.use_rename } }
 
   def path
     Pathname.new(assignment.starter_file_path) + id.to_s
@@ -71,7 +71,7 @@ class StarterFileGroup < ApplicationRecord
   end
 
   def should_rename
-    use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
+    use_rename && entry_rename.present? && assignment.starter_file_type == 'shuffle'
   end
 
   private

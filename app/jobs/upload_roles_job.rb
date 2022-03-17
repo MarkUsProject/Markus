@@ -11,7 +11,7 @@ class UploadRolesJob < ApplicationJob
       MarkusCsv.parse(data, encoding: encoding, skip_blanks: true, row_sep: :auto) do |row|
         user_name = row[user_name_index]&.strip
         next if user_name.blank?
-        end_user = EndUser.find_by_user_name(user_name)
+        end_user = EndUser.find_by(user_name: user_name)
         raise I18n.t('users.not_found', user_names: user_name) if end_user.nil?
         role = role_class.find_or_initialize_by(end_user: end_user, course: course)
         role.section_id = find_section_id(row)

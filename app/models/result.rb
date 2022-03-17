@@ -13,16 +13,16 @@ class Result < ApplicationRecord
 
   has_one :course, through: :submission
 
+  before_save :check_for_nil_marks
   after_create :create_marks
-  validates_presence_of :marking_state
-  validates_inclusion_of :marking_state, in: MARKING_STATES.values
+  validates :marking_state, presence: true
+  validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
-  validates_numericality_of :total_mark, greater_than_or_equal_to: 0
+  validates :total_mark, numericality: { greater_than_or_equal_to: 0 }
 
-  validates_inclusion_of :released_to_students, in: [true, false]
+  validates :released_to_students, inclusion: { in: [true, false] }
 
   before_update :check_for_released
-  before_save :check_for_nil_marks
 
   # Update the total mark attribute
   def update_total_mark
@@ -66,7 +66,7 @@ class Result < ApplicationRecord
                 .where("criteria.#{user_visibility}": true)
                 .group(:result_id)
                 .sum(:mark)
-    result_ids.map { |r_id| [r_id, marks[r_id] || 0] }.to_h
+    result_ids.index_with { |r_id| marks[r_id] || 0 }
   end
 
   # The sum of the bonuses deductions and late penalties for multiple results.

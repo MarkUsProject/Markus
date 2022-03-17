@@ -1,8 +1,8 @@
 class RubricCriterion < Criterion
+  before_validation :scale_marks_if_max_mark_changed
   before_save :round_max_mark
 
-  before_validation :scale_marks_if_max_mark_changed
-  validates_presence_of :levels
+  validates :levels, presence: true
 
   DEFAULT_MAX_MARK = 4
 
@@ -117,7 +117,9 @@ class RubricCriterion < Criterion
     end
 
     # Delete all the existing levels that were not updated
-    criterion.levels.destroy(criterion.levels.where.not(id: levels_attributes.pluck(:id)))
+    criterion.levels.destroy(
+      criterion.levels.where.not(id: levels_attributes.pluck(:id)) # rubocop:disable Rails/PluckId
+    )
 
     max_mark = levels_attributes.pluck(:mark).max
 

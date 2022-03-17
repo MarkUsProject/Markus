@@ -52,7 +52,7 @@ class StudentsController < ApplicationController
   def bulk_modify
     student_ids = params[:student_ids].map(&:to_i)&.intersection(current_course.students.ids)
     begin
-      if student_ids.nil? || student_ids.empty?
+      if student_ids.blank?
         raise I18n.t('students.no_students_selected')
       end
       case params[:bulk_action]
@@ -69,7 +69,7 @@ class StudentsController < ApplicationController
       head :ok
     rescue RuntimeError => e
       flash_now(:error, e.message)
-      head 500
+      head :internal_server_error
     end
   end
 
@@ -79,7 +79,7 @@ class StudentsController < ApplicationController
   end
 
   def create
-    end_user = EndUser.find_by_user_name(params[:role][:end_user][:user_name])
+    end_user = EndUser.find_by(user_name: params[:role][:end_user][:user_name])
     @role = current_course.students.create(end_user: end_user, **role_params)
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(current_course)

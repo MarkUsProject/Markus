@@ -4,7 +4,7 @@ require 'csv'
 class Assignment < Assessment
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
-  validates_presence_of :due_date
+  validates :due_date, presence: true
 
   has_one :assignment_properties,
           dependent: :destroy,
@@ -13,7 +13,7 @@ class Assignment < Assessment
           autosave: true
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
-  validates_presence_of :assignment_properties
+  validates :assignment_properties, presence: true
   after_initialize :create_associations
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
@@ -28,11 +28,13 @@ class Assignment < Assessment
   has_many :ta_criteria,
            -> { where(ta_visible: true).order(:position) },
            class_name: 'Criterion',
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :peer_criteria,
            -> { where(peer_visible: true).order(:position) },
            class_name: 'Criterion',
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
@@ -41,16 +43,18 @@ class Assignment < Assessment
   has_many :annotation_categories,
            -> { order(:position) },
            class_name: 'AnnotationCategory',
-           dependent: :destroy, foreign_key: :assessment_id
+           dependent: :destroy,
+           inverse_of: :assignment,
+           foreign_key: :assessment_id
 
-  has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id
+  has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id, inverse_of: :assignment
 
   has_many :assignment_files, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
   # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
-  has_many :groupings, foreign_key: :assessment_id
+  has_many :groupings, foreign_key: :assessment_id, inverse_of: :assignment
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment,
@@ -74,13 +78,13 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  after_create :create_autotest_dirs
-
   before_save :reset_collection_time
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
     @prev_assignment_file_ids = assignment_files.ids
   end
+
+  after_create :create_autotest_dirs
   after_save_commit :update_repo_permissions
   after_save_commit :update_repo_required_files
 
@@ -90,7 +94,7 @@ class Assignment < Assessment
   has_one :submission_rule, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
-  validates_presence_of :submission_rule
+  validates :submission_rule, presence: true
   validate :courses_should_match
 
   BLANK_MARK = ''.freeze
@@ -176,7 +180,7 @@ class Assignment < Assessment
   # Return collection date for all groupings as a hash mapping grouping_id to collection date.
   def all_grouping_collection_dates
     submission_rule_hours = submission_rule.periods.pluck('periods.hours').sum.hours
-    no_penalty = Set.new(groupings.joins(:extension).where('extensions.apply_penalty': false).pluck(:id))
+    no_penalty = Set.new(groupings.joins(:extension).where('extensions.apply_penalty': false).ids)
     collection_dates = Hash.new { |h, k| h[k] = due_date + submission_rule_hours }
     all_grouping_due_dates.each do |grouping_id, grouping_due_date|
       if no_penalty.include? grouping_id
@@ -469,7 +473,7 @@ class Assignment < Assessment
   # Get a list of group_name, repo-url pairs
   def get_repo_list(ssh: false)
     CSV.generate do |csv|
-      self.groupings.includes(:group).each do |grouping|
+      self.groupings.includes(:group).find_each do |grouping|
         group = grouping.group
         data = [group.group_name, group.repository_external_access_url]
         data << group.repository_ssh_access_url if ssh
@@ -527,7 +531,7 @@ class Assignment < Assessment
 
     selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
     criteria_columns = selected_criteria.map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
+      unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark unless crit.bonus?
@@ -994,7 +998,7 @@ class Assignment < Assessment
       groups[[group_id, group_name, count]] << ta unless ta.nil?
     end
     group_sections = {}
-    self.groupings.includes(:section).each do |g|
+    self.groupings.includes(:section).find_each do |g|
       group_sections[g.id] = g.section&.id
     end
     groups = groups.map do |k, v|
@@ -1104,7 +1108,7 @@ class Assignment < Assessment
 
     visible_criteria = current_role.instructor? ? self.criteria : self.ta_criteria
     criteria = visible_criteria.reject do |crit|
-      !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
+      !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
     end
 
     result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten

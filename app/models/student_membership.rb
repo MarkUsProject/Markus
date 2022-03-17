@@ -20,14 +20,14 @@ class StudentMembership < Membership
   validate :must_be_valid_student
   validate :one_accepted_per_assignment
 
-  validates_presence_of :membership_status
-  validates_format_of :membership_status,
-                      with: /\Ainviter|pending|accepted|rejected\z/
+  validates :membership_status, presence: true
+  validates :membership_status,
+            format: { with: /\Ainviter|pending|accepted|rejected\z/ }
 
-  after_save :update_repo_permissions_after_save
   after_create :update_repo_permissions_after_create
   after_create :reset_starter_files_after_create
   after_destroy :update_repo_permissions_after_destroy
+  after_save :update_repo_permissions_after_save
 
   def must_be_valid_student
     if role && !role.is_a?(Student)

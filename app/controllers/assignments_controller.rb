@@ -42,7 +42,7 @@ class AssignmentsController < ApplicationController
                code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
-             status: 404,
+             status: :not_found,
              layout: false
       return
     end
@@ -89,7 +89,7 @@ class AssignmentsController < ApplicationController
                code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
-             status: 404,
+             status: :not_found,
              layout: false
       return
     end
@@ -173,7 +173,7 @@ class AssignmentsController < ApplicationController
     unless @assignment.scanned_exam
       if @assignment.past_collection_date?
         flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
-      elsif !past_date.blank?
+      elsif past_date.present?
         flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
       end
     end
@@ -307,7 +307,7 @@ class AssignmentsController < ApplicationController
   end
 
   def stop_batch_tests
-    test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
+    test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).ids
     assignment_id = params[:id]
     @current_job = AutotestCancelJob.perform_later(assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
@@ -392,7 +392,7 @@ class AssignmentsController < ApplicationController
     if @assignment.nil?
       render 'shared/http_status',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404
+             status: :not_found
     else
       render layout: 'assignment_content'
     end
@@ -491,11 +491,11 @@ class AssignmentsController < ApplicationController
   def set_boolean_graders_options
     assignment = record
     attributes = graders_options_params
-    return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
+    return head :bad_request if attributes.empty? || attributes[:assignment_properties_attributes].empty?
 
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
-      head 422
+      head :unprocessable_entity
       return
     end
     head :ok
@@ -514,7 +514,7 @@ class AssignmentsController < ApplicationController
         flash_message(:error, e.message)
       end
     end
-    return head 400 if grouping.nil?
+    return head :bad_request if grouping.nil?
     authorize! grouping
     unless grouping.update(start_time: Time.current)
       flash_message(:error, grouping.errors.full_messages.join(' '))
@@ -740,7 +740,7 @@ class AssignmentsController < ApplicationController
       files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)
                        .select do |_, obj|
                          obj.is_a?(Repository::RevisionFile) &&
-                           !Repository.get_class.internal_file_names.include?(obj.name)
+                           Repository.get_class.internal_file_names.exclude?(obj.name)
                        end
       @num_submitted_files = files.length
       missing_assignment_files = grouping.missing_assignment_files(@revision)
@@ -753,7 +753,7 @@ class AssignmentsController < ApplicationController
     # remove potentially invalid periods before updating
     unless assignment_params[:assignment_properties_attributes][:scanned_exam] == 'true'
       period_attrs = submission_rule_params['submission_rule_attributes']['periods_attributes']
-      periods = period_attrs.to_h.values.map { |h| h[:id].blank? ? nil : h[:id] }
+      periods = period_attrs.to_h.values.map { |h| h[:id].presence }
       assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     end
     assignment.assign_attributes(assignment_params)
@@ -919,7 +919,7 @@ class AssignmentsController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @assignment.short_identifier.blank? ? @assignment.model_name.human : @assignment.short_identifier,
+    { resource_name: @assignment.short_identifier.presence || @assignment.model_name.human,
       errors: @assignment.errors.full_messages.join('; ') }
   end
 

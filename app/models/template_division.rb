@@ -12,9 +12,9 @@ class TemplateDivision < ApplicationRecord
                                     only_integer: true }
   validates :end, numericality: { only_integer: true }
   validate :end_should_be_less_than_or_equal_to_num_pages
-  validates_uniqueness_of :label,
-                          scope: :exam_template,
-                          allow_blank: false
+  validates :label,
+            uniqueness: { scope: :exam_template,
+                          allow_blank: false }
 
   after_save :set_defaults_for_assignment_file # when template division is created or updated
 

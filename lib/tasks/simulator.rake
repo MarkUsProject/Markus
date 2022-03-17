@@ -7,7 +7,7 @@ class Time
     year = (rand * years_back).ceil + (Time.current.year - years_back)
     month = (rand * 12).ceil
     day = (rand * 31).ceil
-    series = [date = Time.local(year, month, day)]
+    series = [date = Time.zone.local(year, month, day)]
     if params[:series]
       params[:series].each do |some_time_after|
         series << series.last + (rand * some_time_after).ceil
@@ -39,7 +39,7 @@ namespace :markus do
         # as assignment_short_identifier. To solve thsi problem, keep
         # increasing curr_assignment_num_for_name by one till we get a
         # assignment_short_identifier which does not exist in the database.
-        while Assignment.find_by_short_identifier(assignment_short_identifier)
+        while Assignment.find_by(short_identifier: assignment_short_identifier)
           curr_assignment_num_for_name += 1
           assignment_short_identifier = "A#{curr_assignment_num_for_name}"
         end
@@ -236,12 +236,12 @@ namespace :markus do
       end
 
       # Create s standard instructor; if it does not already exist.
-      unless Instructor.find_by_user_name('a')
+      unless Instructor.find_by(user_name: 'a')
         Instructor.create(user_name: 'a', first_name: 'instructor', last_name: 'instructor')
       end
 
       # Create Reid; if it does not already exist.
-      unless Instructor.find_by_user_name('reid')
+      unless Instructor.find_by(user_name: 'reid')
         Instructor.create(user_name: 'reid', first_name: 'Karen', last_name: 'Reid')
       end
     end

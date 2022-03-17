@@ -7,24 +7,24 @@ class Annotation < ApplicationRecord
   has_one :course, through: :submission_file
 
   validate :courses_should_match
-  validates_presence_of :annotation_number
-  validates_inclusion_of :is_remark, in: [true, false]
+  validates :annotation_number, presence: true
+  validates :is_remark, inclusion: { in: [true, false] }
 
   validates_associated :submission_file, on: :create
   validates_associated :annotation_text, on: :create
   validates_associated :result, on: :create
 
-  validates_numericality_of :annotation_number,
-                            only_integer: true,
-                            greater_than: 0
+  validates :annotation_number,
+            numericality: { only_integer: true,
+                            greater_than: 0 }
 
-  validates_format_of :type,
-                      with: /\AImageAnnotation|TextAnnotation|PdfAnnotation|HtmlAnnotation\z/
+  validates :type,
+            format: { with: /\AImageAnnotation|TextAnnotation|PdfAnnotation|HtmlAnnotation\z/ }
 
   before_create :check_if_released
-  before_destroy :check_if_released
-
   after_create :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
+
+  before_destroy :check_if_released
   after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
 
   def modify_mark_with_deduction

@@ -7,9 +7,7 @@ class GroupingStarterFileEntry < ApplicationRecord
   has_one :course, through: :grouping
 
   validate :assignments_should_match
-  validates_presence_of :grouping
-  validates_presence_of :starter_file_entry
-  validates_uniqueness_of :starter_file_entry_id, scope: :grouping_id
+  validates :starter_file_entry_id, uniqueness: { scope: :grouping_id }
 
   private
 
