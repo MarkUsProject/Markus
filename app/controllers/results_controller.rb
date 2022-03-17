@@ -374,81 +374,81 @@ class ResultsController < ApplicationController
     end
   end
 
-  def download
-    # TODO: move this to the submissions controller
-    if params[:download_zip_button]
-      download_zip
-      return
-    end
+  # def download
+  #   # TODO: move this to the submissions controller
+  #   if params[:download_zip_button]
+  #     download_zip
+  #     return
+  #   end
+  #
+  #   file = select_file
+  #   if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+  #     redirect_to notebook_content_course_assignment_submissions_url(current_course,
+  #                                                                    record.submission.grouping.assignment,
+  #                                                                    select_file_id: params[:select_file_id])
+  #     return
+  #   end
+  #
+  #   begin
+  #     if params[:include_annotations] == 'true' && !file.is_supported_image?
+  #       file_contents = file.retrieve_file(include_annotations: true)
+  #     else
+  #       file_contents = file.retrieve_file
+  #     end
+  #   rescue StandardError => e
+  #     flash_message(:error, e.message)
+  #     redirect_to edit_course_result_path(current_course, record)
+  #     return
+  #   end
+  #   filename = file.filename
+  #   # Display the file in the page if it is an image/pdf, and download button
+  #   # was not explicitly pressed
+  #   if file.is_supported_image? && !params[:show_in_browser].nil?
+  #     send_data file_contents, type: 'image', disposition: 'inline',
+  #                              filename: filename
+  #   else
+  #     send_data_download file_contents, filename: filename
+  #   end
+  # end
 
-    file = select_file
-    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
-      redirect_to notebook_content_course_assignment_submissions_url(current_course,
-                                                                     record.submission.grouping.assignment,
-                                                                     select_file_id: params[:select_file_id])
-      return
-    end
-
-    begin
-      if params[:include_annotations] == 'true' && !file.is_supported_image?
-        file_contents = file.retrieve_file(include_annotations: true)
-      else
-        file_contents = file.retrieve_file
-      end
-    rescue StandardError => e
-      flash_message(:error, e.message)
-      redirect_to edit_course_result_path(current_course, record)
-      return
-    end
-    filename = file.filename
-    # Display the file in the page if it is an image/pdf, and download button
-    # was not explicitly pressed
-    if file.is_supported_image? && !params[:show_in_browser].nil?
-      send_data file_contents, type: 'image', disposition: 'inline',
-                               filename: filename
-    else
-      send_data_download file_contents, filename: filename
-    end
-  end
-
-  def download_zip
-    # TODO: move this to the submissions controller
-    submission = record.submission
-    if submission.revision_identifier.nil?
-      render plain: t('submissions.no_files_available')
-      return
-    end
-
-    grouping = submission.grouping
-    assignment = grouping.assignment
-    revision_identifier = submission.revision_identifier
-    repo_folder = assignment.repository_folder
-    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
-
-    zip_path = if params[:include_annotations] == 'true'
-                 "tmp/#{assignment.short_identifier}_" \
-                   "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
-               else
-                 "tmp/#{assignment.short_identifier}_" \
-                   "#{grouping.group.group_name}_r#{revision_identifier}.zip"
-               end
-
-    files = submission.submission_files
-    Zip::File.open(zip_path, create: true) do |zip_file|
-      grouping.access_repo do |repo|
-        revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
-          submission_file = files.find_by(filename: file.name, path: file.path)
-          submission_file&.retrieve_file(
-            include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
-          )
-        end
-      end
-    end
-    # Send the Zip file
-    send_file zip_path, disposition: 'inline',
-                        filename: zip_name + '.zip'
-  end
+  # def download_zip
+  #   # TODO: move this to the submissions controller
+  #   submission = record.submission
+  #   if submission.revision_identifier.nil?
+  #     render plain: t('submissions.no_files_available')
+  #     return
+  #   end
+  #
+  #   grouping = submission.grouping
+  #   assignment = grouping.assignment
+  #   revision_identifier = submission.revision_identifier
+  #   repo_folder = assignment.repository_folder
+  #   zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
+  #
+  #   zip_path = if params[:include_annotations] == 'true'
+  #                "tmp/#{assignment.short_identifier}_" \
+  #                  "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
+  #              else
+  #                "tmp/#{assignment.short_identifier}_" \
+  #                  "#{grouping.group.group_name}_r#{revision_identifier}.zip"
+  #              end
+  #
+  #   files = submission.submission_files
+  #   Zip::File.open(zip_path, create: true) do |zip_file|
+  #     grouping.access_repo do |repo|
+  #       revision = repo.get_revision(revision_identifier)
+  #       repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+  #         submission_file = files.find_by(filename: file.name, path: file.path)
+  #         submission_file&.retrieve_file(
+  #           include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
+  #         )
+  #       end
+  #     end
+  #   end
+  #   # Send the Zip file
+  #   send_file zip_path, disposition: 'inline',
+  #                       filename: zip_name + '.zip'
+  # end
 
   def get_annotations
     result = record
@@ -650,44 +650,31 @@ class ResultsController < ApplicationController
     head :ok
   end
 
-  def update_remark_request
-    @submission = Submission.find(params[:submission_id])
-    @assignment = @submission.grouping.assignment
-    if @assignment.past_remark_due_date?
-      head :bad_request
-    else
-      @submission.update(
-        remark_request: params[:submission][:remark_request],
-        remark_request_timestamp: Time.current
-      )
-      if params[:save]
-        head :ok
-      elsif params[:submit]
-        unless @submission.remark_result
-          @submission.make_remark_result
-          @submission.non_pr_results.reload
-        end
-        @submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
-        @submission.get_original_result.update(released_to_students: false)
-        render js: 'location.reload();'
-      else
-        head :bad_request
-      end
-    end
-  end
-
-  # Allows student to cancel a remark request.
-  def cancel_remark_request
-    submission = Submission.find(params[:submission_id])
-
-    submission.remark_result.destroy
-    submission.get_original_result.update(released_to_students: true)
-
-    redirect_to controller: 'results',
-                action: 'view_marks',
-                course_id: current_course.id,
-                id: submission.get_original_result.id
-  end
+  # def update_remark_request
+  #   @submission = Submission.find(params[:submission_id])
+  #   @assignment = @submission.grouping.assignment
+  #   if @assignment.past_remark_due_date?
+  #     head :bad_request
+  #   else
+  #     @submission.update(
+  #       remark_request: params[:submission][:remark_request],
+  #       remark_request_timestamp: Time.current
+  #     )
+  #     if params[:save]
+  #       head :ok
+  #     elsif params[:submit]
+  #       unless @submission.remark_result
+  #         @submission.make_remark_result
+  #         @submission.non_pr_results.reload
+  #       end
+  #       @submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+  #       @submission.get_original_result.update(released_to_students: false)
+  #       render js: 'location.reload();'
+  #     else
+  #       head :bad_request
+  #     end
+  #   end
+  # end
 
   def delete_grace_period_deduction
     result = record

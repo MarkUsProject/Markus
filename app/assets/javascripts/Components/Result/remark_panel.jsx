@@ -22,7 +22,7 @@ export class RemarkPanel extends React.Component {
     let data = {submission: {remark_request: value}};
     data[name] = "true";
     return $.ajax({
-      url: Routes.update_remark_request_course_submission_results_path(
+      url: Routes.update_remark_request_course_submissions_path(
         this.props.course_id, // TODO: pass this prop to this component
         this.props.submission_id
       ),
