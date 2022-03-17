@@ -10,6 +10,9 @@
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
 - Upgrade to Rails 7 (#5885)
 - Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
+- Modified login to allow admin users to login via the UI (#5897)
+- Fix bug when sorting batch test runs where sorting by date was not working (#5906)
+- Ensure tabs in result view do not reload when switching between them (#5910)
 
 ## [v2.0.9]
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
