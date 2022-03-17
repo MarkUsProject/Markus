@@ -12,6 +12,7 @@
 - Modified login to allow admin users to login via the UI (#5897)
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
 - Fix bug where admins viewing the admin page were not redirected properly when timed out (#5909)
+- Ensure tabs in result view do not reload when switching between them (#5910)
 
 ## [v2.0.9]
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
