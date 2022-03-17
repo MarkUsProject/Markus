@@ -26,10 +26,6 @@ header#header {
 
   #user-info {
     text-align: right;
-
-    @include breakpoint(mobile) {
-      text-align: left;
-    }
   }
 }
 
