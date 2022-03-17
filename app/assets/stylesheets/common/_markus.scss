@@ -1007,7 +1007,7 @@ nav {
     position: absolute;
     text-align: left;
     top: 1.95em;
-    width: $dropdown-horizontal;
+    width: calc(100% + 2px);
     word-wrap: anywhere;
     z-index: 100000;
 
