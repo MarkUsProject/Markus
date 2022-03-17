@@ -24,7 +24,6 @@
         <%= render partial: 'layouts/menu' %>
         <%= render partial: 'layouts/sub_menu' %>
         <%= render partial: 'layouts/sub_sub_menu' %>
-        <%= render partial: 'layouts/footer' %>
       </div>
     </nav>
 
@@ -35,9 +34,6 @@
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
   </div>
-
-  <%= render partial: 'layouts/footer' %>
-
 </div>
 </body>
 </html>
