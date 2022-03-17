@@ -727,6 +727,8 @@ class SubmissionsController < ApplicationController
 
   # Allows student to cancel a remark request.
   def cancel_remark_request
+    puts('hi, cancel remark')
+    puts(params)
     submission = Submission.find(params[:submission_id])
 
     submission.remark_result.destroy
@@ -739,6 +741,8 @@ class SubmissionsController < ApplicationController
   end
 
   def update_remark_request
+    puts('hi, update remark')
+    puts(params)
     @submission = Submission.find(params[:submission_id])
     @assignment = @submission.grouping.assignment
     if @assignment.past_remark_due_date?
@@ -764,7 +768,13 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def select_file
+    params[:select_file_id] && SubmissionFile.find_by(id: params[:select_file_id])
+  end
+
   def download_file
+    puts('hi, download file')
+    puts(params)
     # TODO: move this to the submissions controller
     if params[:download_zip_button]
       download_zip

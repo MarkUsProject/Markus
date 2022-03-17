@@ -1622,7 +1622,7 @@ describe SubmissionsController do
         get :download_file, params: { course_id: course.id,
                                       select_file_id: submission_file.id,
                                       from_codeviewer: from_codeviewer,
-                                      id: incomplete_result.id }
+                                      id: submission.id } # id: incomplete_result.id
       end
       it { expect(response).to have_http_status(:success) }
       test_no_flash
@@ -1639,7 +1639,7 @@ describe SubmissionsController do
         get :download_file, params: { course_id: course.id,
                                       select_file_id: submission_file.id,
                                       from_codeviewer: from_codeviewer,
-                                      id: incomplete_result.id }
+                                      id: submission.id } # id: incomplete_result.id
       end
       it { expect(response).to have_http_status(:redirect) }
       it 'should display a flash error' do
@@ -1652,7 +1652,7 @@ describe SubmissionsController do
         allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
         get :download_file, params: { course_id: course.id,
                                       select_file_id: submission_file.id,
-                                      id: incomplete_result.id,
+                                      id: submission.id,  # id: incomplete_result.id
                                       from_codeviewer: from_codeviewer,
                                       show_in_browser: true }
       end
@@ -1670,7 +1670,7 @@ describe SubmissionsController do
       subject do
         get :download_file, params: { course_id: course.id,
                                       select_file_id: submission_file.id,
-                                      id: incomplete_result.id,
+                                      id: submission.id,  # id: incomplete_result.id
                                       from_codeviewer: from_codeviewer,
                                       show_in_browser: true }
       end
@@ -1708,7 +1708,7 @@ describe SubmissionsController do
       shared_examples 'without permission' do
         before :each do
           get :download_file, params: { course_id: course.id,
-                                        id: incomplete_result.id,
+                                        id: submission.id, # id: incomplete_result.id
                                         from_codeviewer: from_codeviewer,
                                         select_file_id: submission_file.id }
         end
@@ -1788,7 +1788,7 @@ describe SubmissionsController do
           patch_as student,
                    :update_remark_request,
                    params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
+                             id: submission.id, # submission_id: submission.id,
                              submission: { remark_request: 'Message' },
                              submit: true }
         end
@@ -1804,7 +1804,7 @@ describe SubmissionsController do
         end
 
         it 'unreleases the original result' do
-          expect(submission.get_original_result.reload.released_to_students).to be false
+          expect(submission.get_original_result.reload.released_to_students).to be false # ?
         end
       end
     end
@@ -1828,7 +1828,7 @@ describe SubmissionsController do
         delete_as student,
                   :cancel_remark_request,
                   params: { course_id: assignment.course_id,
-                            id: submission.remark_result.id,
+                            id: submission.id, # id: submission.remark_result.id,
                             submission_id: submission.id }
       end
 

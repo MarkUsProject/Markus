@@ -127,7 +127,7 @@ describe ResultsController do
   # end
 
   shared_examples 'shared ta and instructor tests' do
-    include_examples 'download files'
+    # include_examples 'download files'
     context 'accessing next_grouping' do
       it 'should receive 200 when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
