@@ -21,10 +21,12 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      if allowed_to?(:role_is_switched?)
+      if @real_user.admin_user?
+        redirect_to(admin_path)
+      elsif allowed_to?(:role_is_switched?)
         redirect_to course_assignments_path(session[:role_switch_course_id])
       else
-        redirect_to controller: 'courses', action: 'index'
+        redirect_to(courses_path)
       end
       return
     end
@@ -48,8 +50,8 @@ class MainController < ApplicationController
 
     session[:auth_type] = 'local'
 
-    found_user = EndUser.find_by(user_name: params[:user_login])
-    if found_user.nil?
+    found_user = User.find_by(user_name: params[:user_login])
+    if found_user.nil? || !(found_user.admin_user? || found_user.end_user?)
       flash_now(:error, Settings.validate_user_not_allowed_message || I18n.t('main.login_failed'))
       render :login, locals: { user_login: params[:user_login] }
       return
@@ -60,7 +62,13 @@ class MainController < ApplicationController
     session[:redirect_uri] = nil
     refresh_timeout
     # redirect to last visited page or to main page
-    redirect_to(uri || { controller: 'courses', action: 'index' })
+    if uri.present?
+      redirect_to(uri)
+    elsif found_user.admin_user?
+      redirect_to(admin_path)
+    else
+      redirect_to(courses_path)
+    end
   end
 
   def login_remote_auth
