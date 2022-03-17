@@ -9,6 +9,7 @@
 - Replace uses of first name and last name attributes with display name (#5844)
 - Fix bug for rubric criteria level's mark update where one of the marks = an old mark (#5854)
 - Upgrade to Rails 7 (#5885)
+- Modified login to allow admin users to login via the UI (#5897)
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
 
 ## [v2.0.9]
