@@ -1,17 +1,19 @@
 <% content_for :title, t('site_manager') %>
 
-<% content_for :head do %>
-  <%= javascript_tag nonce: true do %>
-    document.addEventListener('DOMContentLoaded', () => {
-    makeAdminCourseList(document.getElementById('admin_courses_list'));
-    });
-  <% end %>
-<% end %>
-<!-- TODO: Update this page and replace this text -->
-<h2>
-  Admin views are currently under construction.
-  As you are an admin, visiting other MarkUs web pages at the moment routes may result in errors.
-  Please continue to use the MarkUs API while we get the Admin view up and running.
-</h2>
+<% @heading_buttons = [
+  { link_text: "View Site as Instructor",
+    link_path: '#',
+    html_options: { id: 'add-exam-template' } },
+] %>
 
-<div id='admin_courses_list'></div>
+<div class='pane-wrapper'>
+  <div id='markus_management_pane' class="markus-management-pane-wrapper">
+    <%= render partial: 'markus_info_pane' %>
+  </div>
+
+  <div class='pane'>
+    <div id='editing_pane_menu'>
+      <%= render partial: 'courses_list' %>
+    </div>
+  </div>
+</div>
