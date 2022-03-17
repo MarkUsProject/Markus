@@ -42,4 +42,14 @@ describe Period do
     it { is_expected.not_to validate_numericality_of(:interval) }
     include_examples 'has a course'
   end
+
+  context 'Multiple penalty decay periods' do
+    let(:rule) { create :penalty_period_submission_rule }
+    let!(:period) { create :period, id: 2, submission_rule: rule }
+    let!(:period2) { create :period, id: 3, deduction: 0.25, interval: 0.25, hours: 0.25, submission_rule: rule }
+    let!(:period3) { create :period, id: 1, deduction: 1, interval: 1, hours: 10, submission_rule: rule }
+    it 'returns the periods in order' do
+      expect(rule.reload.periods).to eq [period3, period, period2]
+    end
+  end
 end

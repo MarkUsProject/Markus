@@ -46,7 +46,7 @@
         <% acc = 0 %>
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% remaining_credits = @grouping.available_grace_credits %>
-          <% @assignment.submission_rule.periods.order(:id).each do |p| %>
+          <% @assignment.submission_rule.periods.each do |p| %>
             <% unless remaining_credits <= 0 %>
               <% acc += p.hours %>
               <% remaining_credits -= 1 %>
@@ -64,7 +64,7 @@
             <strong>
               <%= t('penalty_period_submission_rules.deadline_html') %>:
             </strong>
-            <% @assignment.submission_rule.periods.order(:id).each { |p| acc += p.hours } %>
+            <% @assignment.submission_rule.periods.each { |p| acc += p.hours } %>
             <% if @grouping.nil? %>
               <%= I18n.l(@assignment.section_due_date(@current_role.try(:section)) + acc.hours) %>
             <% else %>
@@ -84,8 +84,8 @@
             </li>
           <% end %>
         <% elsif @assignment.submission_rule.type == "PenaltyDecayPeriodSubmissionRule" %>
-          <% @assignment.submission_rule.periods.order(:id).each do |p| %>
-            <% if p == @assignment.submission_rule.periods.order(:id).first %>
+          <% @assignment.submission_rule.periods.each do |p| %>
+            <% if p == @assignment.submission_rule.periods.first %>
               <li><%= t('penalty_decay_period_submission_rules.details_message_first',
                         deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% else %>
@@ -95,7 +95,7 @@
           <% end %>
         <% elsif @assignment.submission_rule.type == "PenaltyPeriodSubmissionRule" %>
           <% deduction = hours = 0 %>
-          <% @assignment.submission_rule.periods.order(:id).each do |p| %>
+          <% @assignment.submission_rule.periods.each do |p| %>
             <% deduction += p.deduction %>
             <% hours += p.hours %>
             <li><%= t('penalty_period_submission_rules.details_message',
