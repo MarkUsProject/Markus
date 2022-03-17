@@ -1585,4 +1585,272 @@ describe SubmissionsController do
       end
     end
   end
+  #----------------
+  #
+  #
+  let(:course) { assignment.course }
+  let(:assignment) { create :assignment }
+  let(:student) { create :student, grace_credits: 2 }
+  let(:instructor) { create :instructor }
+  let(:ta) { create :ta }
+  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+  let(:submission) { create :version_used_submission, grouping: grouping }
+  let(:incomplete_result) { submission.current_result }
+  let(:complete_result) { create :complete_result, submission: submission }
+  let(:submission_file) { create :submission_file, submission: submission }
+  let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
+  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+  let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
+  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+  let(:from_codeviewer) { nil }
+
+  SAMPLE_FILE_CONTENT = 'sample file content'.freeze
+  SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
+  SAMPLE_COMMENT = 'sample comment'.freeze
+  SAMPLE_FILE_NAME = 'file.java'.freeze
+
+  shared_examples 'download files' do
+    context 'and without any file errors' do
+      before :each do
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+        get :download_file, params: { course_id: course.id,
+                                      select_file_id: submission_file.id,
+                                      from_codeviewer: from_codeviewer,
+                                      id: incomplete_result.id }
+      end
+      it { expect(response).to have_http_status(:success) }
+      test_no_flash
+      it 'should have the correct content type' do
+        expect(response.header['Content-Type']).to eq 'text/plain'
+      end
+      it 'should show the file content in the response body' do
+        expect(response.body).to eq SAMPLE_FILE_CONTENT
+      end
+    end
+    context 'and with a file error' do
+      before :each do
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_raise SAMPLE_ERROR_MESSAGE
+        get :download_file, params: { course_id: course.id,
+                                      select_file_id: submission_file.id,
+                                      from_codeviewer: from_codeviewer,
+                                      id: incomplete_result.id }
+      end
+      it { expect(response).to have_http_status(:redirect) }
+      it 'should display a flash error' do
+        expect(extract_text(flash[:error][0])).to eq SAMPLE_ERROR_MESSAGE
+      end
+    end
+    context 'and with a supported image file shown in browser' do
+      before :each do
+        allow_any_instance_of(SubmissionFile).to receive(:is_supported_image?).and_return true
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+        get :download_file, params: { course_id: course.id,
+                                      select_file_id: submission_file.id,
+                                      id: incomplete_result.id,
+                                      from_codeviewer: from_codeviewer,
+                                      show_in_browser: true }
+      end
+      it { expect(response).to have_http_status(:success) }
+      test_no_flash
+      it 'should have the correct content type' do
+        expect(response.header['Content-Type']).to eq 'image'
+      end
+      it 'should show the file content in the response body' do
+        expect(response.body).to eq SAMPLE_FILE_CONTENT
+      end
+    end
+    context 'show in browser is true' do
+      let(:submission_file) { create :submission_file, filename: filename, submission: submission }
+      subject do
+        get :download_file, params: { course_id: course.id,
+                                      select_file_id: submission_file.id,
+                                      id: incomplete_result.id,
+                                      from_codeviewer: from_codeviewer,
+                                      show_in_browser: true }
+      end
+      context 'file is a jupyter-notebook file' do
+        let(:filename) { 'example.ipynb' }
+        it 'should redirect to "notebook_content"' do
+          expect(subject).to(
+            redirect_to(notebook_content_course_assignment_submissions_path(course,
+                                                                            assignment,
+                                                                            select_file_id: submission_file.id))
+          )
+        end
+      end
+      context 'file is a rmarkdown file' do
+        let(:filename) { 'example.Rmd' }
+        it 'should redirect to "notebook_content"' do
+          expect(subject).to(
+            redirect_to(notebook_content_course_assignment_submissions_path(course,
+                                                                            assignment,
+                                                                            select_file_id: submission_file.id))
+          )
+        end
+      end
+    end
+  end
+
+  shared_examples 'shared ta and instructor tests' do
+    include_examples 'download files'
+  end
+
+  context 'A student' do
+    before(:each) { sign_in student }
+
+    context 'downloading files' do
+      shared_examples 'without permission' do
+        before :each do
+          get :download_file, params: { course_id: course.id,
+                                        id: incomplete_result.id,
+                                        from_codeviewer: from_codeviewer,
+                                        select_file_id: submission_file.id }
+        end
+        it { expect(response).to have_http_status(:forbidden) }
+      end
+
+      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
+      let(:incomplete_result) { assignment.groupings.first.current_result }
+      let(:submission) { incomplete_result.submission }
+      context 'role is a reviewer for the current result' do
+        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
+        let(:student) { reviewer_grouping.accepted_students.first }
+        before { create :peer_review, reviewer: reviewer_grouping, result: incomplete_result }
+        context 'from_codeviewer is true' do
+          let(:from_codeviewer) { true }
+          include_examples 'download files'
+        end
+        context 'from_codeviewer is nil' do
+          include_examples 'without permission'
+        end
+      end
+
+      context 'role is not a reviewer for the current result' do
+        context 'role is an accepted member of the results grouping' do
+          let(:student) { incomplete_result.grouping.accepted_students.first }
+          context 'and the selected file is associated with the current submission' do
+            let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
+            include_examples 'download files'
+          end
+          context 'and the selected file is associated with a different submission' do
+            let(:submission_file) { create(:submission_file) }
+            include_examples 'without permission'
+          end
+        end
+        context 'role is not an accepted member of the results grouping' do
+          let(:student) { create(:student) }
+          include_examples 'without permission'
+        end
+      end
+    end
+
+    include_examples 'download files'
+
+    describe '#update_remark_request' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:student) { grouping.inviter }
+      let(:submission) do
+        s = create :submission, grouping: grouping
+        s.get_original_result.update!(released_to_students: true)
+        s
+      end
+
+      context 'when saving a remark request message' do
+        let(:subject) do
+          patch_as student,
+                   :update_remark_request,
+                   params: { course_id: assignment.course_id,
+                             submission_id: submission.id,
+                             submission: { remark_request: 'Message' },
+                             save: true }
+        end
+
+        before { subject }
+
+        it 'updates the submission remark request message' do
+          expect(submission.reload.remark_request).to eq 'Message'
+        end
+
+        it 'does not submit the remark request' do
+          expect(submission.reload.remark_result).to be_nil
+        end
+      end
+
+      context 'when submitting a remark request' do
+        let(:subject) do
+          patch_as student,
+                   :update_remark_request,
+                   params: { course_id: assignment.course_id,
+                             submission_id: submission.id,
+                             submission: { remark_request: 'Message' },
+                             submit: true }
+        end
+
+        before { subject }
+
+        it 'updates the submission remark request message' do
+          expect(submission.reload.remark_request).to eq 'Message'
+        end
+
+        it 'submits the remark request' do
+          expect(submission.reload.remark_result).to_not be_nil
+        end
+
+        it 'unreleases the original result' do
+          expect(submission.get_original_result.reload.released_to_students).to be false
+        end
+      end
+    end
+
+    describe '#cancel_remark_request' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:student) { grouping.inviter }
+      let(:submission) do
+        s = create :submission, grouping: grouping, remark_request: 'original message',
+                                remark_request_timestamp: Time.current
+        s.make_remark_result
+        s.results.reload
+        s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
+        s.get_original_result.update!(released_to_students: false)
+
+        s
+      end
+
+      let(:subject) do
+        delete_as student,
+                  :cancel_remark_request,
+                  params: { course_id: assignment.course_id,
+                            id: submission.remark_result.id,
+                            submission_id: submission.id }
+      end
+
+      before { subject }
+
+      it 'destroys the remark result' do
+        submission.non_pr_results.reload
+        expect(submission.remark_result).to be_nil
+      end
+
+      it 'releases the original result' do
+        expect(submission.get_original_result.reload.released_to_students).to be true
+      end
+
+      it 'redirects to the original result view' do
+        expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
+                                                                      id: submission.get_original_result.id)
+      end
+    end
+  end
+
+  context 'An instructor' do
+    before(:each) { sign_in instructor }
+    include_examples 'shared ta and instructor tests'
+  end
+
+  context 'A TA' do
+    before(:each) { sign_in ta }
+    include_examples 'shared ta and instructor tests'
+  end
 end
