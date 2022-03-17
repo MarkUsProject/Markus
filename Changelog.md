@@ -11,10 +11,10 @@
 - Upgrade to Rails 7 (#5885)
 - Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
 - Modified login to allow admin users to login via the UI (#5897)
+- Fix bug where admins viewing the admin page were not redirected properly when timed out (#5909)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
-- Fix bug where admins viewing the admin page were not redirected properly when timed out (#5909)
 - Ensure tabs in result view do not reload when switching between them (#5910)
 - Fix bug where penalty periods were sometimes incorrectly ordered (#5908)
 
