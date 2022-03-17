@@ -117,7 +117,7 @@ export class LeftPane extends React.Component {
             />
           </div>
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender={!LeftPane.disableTestResultsPanel(this.props)}>
           <div id="testviewer">
             {/* student results page (with instructor tests released) does not need the button */}
             {!this.props.student_view && (
@@ -151,7 +151,7 @@ export class LeftPane extends React.Component {
             />
           </div>
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender={!LeftPane.disableFeedbackFilesPanel(this.props)}>
           <FeedbackFilePanel
             assignment_id={this.props.assignment_id}
             feedbackFiles={this.props.feedback_files}
@@ -160,7 +160,7 @@ export class LeftPane extends React.Component {
             loading={this.props.loading}
           />
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender={!LeftPane.disableRemarkPanel(this.props)}>
           <div id="remark_request_tab">
             <RemarkPanel
               result_id={this.props.result_id}
