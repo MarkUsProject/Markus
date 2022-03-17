@@ -4,6 +4,9 @@ class Period < ApplicationRecord
   validates_numericality_of :hours, greater_than: 0
   validates_numericality_of :deduction, greater_than_or_equal_to: 0, if: :check_deduction
   validates_numericality_of :interval, greater_than: 0, if: :check_interval
+  # Order by id to ensure consistent ordering of periods.
+  # TODO: change this to order by created_at or add explicit ordering in the database.
+  default_scope { order(id: :asc) }
 
   before_create -> { self.submission_rule_type = submission_rule.type }
 
