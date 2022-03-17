@@ -1609,6 +1609,12 @@ describe SubmissionsController do
   SAMPLE_COMMENT = 'sample comment'.freeze
   SAMPLE_FILE_NAME = 'file.java'.freeze
 
+  def self.test_no_flash
+    it 'should not display any flash messages' do
+      expect(flash).to be_empty
+    end
+  end
+
   shared_examples 'download files' do
     context 'and without any file errors' do
       before :each do
