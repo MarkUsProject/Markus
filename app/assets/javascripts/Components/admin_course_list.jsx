@@ -68,6 +68,7 @@ class AdminCourseList extends React.Component {
         );
       },
       sortable: false,
+      filterable: false,
     },
   ];
 
@@ -76,6 +77,7 @@ class AdminCourseList extends React.Component {
       <ReactTable
         data={this.state.courses}
         columns={this.columns}
+        filterable
         defaultSorted={[{id: "name"}]}
         loading={this.state.loading}
       />
