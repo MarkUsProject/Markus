@@ -8,6 +8,7 @@
 - Replace uses of first name and last name attributes with display name (#5844)
 - Upgrade to Rails 7 (#5885)
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
+- Ensure tabs in result view do not reload when switching between them (#5910)
 
 ## [v2.0.9]
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
