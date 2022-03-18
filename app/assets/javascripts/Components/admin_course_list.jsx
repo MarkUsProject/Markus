@@ -20,7 +20,7 @@ class AdminCourseList extends React.Component {
       url: Routes.api_courses_path(),
       dataType: "json",
       headers: {
-        Authorization: "MarkUsAuth MDFlN2RiZWUzOTc3MjBkZTgxMzJhYjU1MzBjOGY3ZDc=",
+        Authorization: `MarkUsAuth ${this.props.apiKey}`,
       },
     }).then(data => {
       this.setState({courses: data, loading: false});
