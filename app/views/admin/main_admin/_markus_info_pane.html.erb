@@ -5,7 +5,7 @@
 
   <ul id='markus_settings_pane_list'>
     <li>
-      <%= link_to 'Courses',
+      <%= link_to Course.model_name.human.pluralize,
                   admin_courses_path,
                   remote: true %>
     </li>

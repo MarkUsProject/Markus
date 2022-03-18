@@ -29,12 +29,12 @@ class AdminCourseList extends React.Component {
 
   columns = [
     {
-      Header: "Name",
+      Header: I18n.t("activerecord.attributes.course.name"),
       accessor: "name",
       minWidth: 70,
     },
     {
-      Header: "Display Name",
+      Header: I18n.t("activerecord.attributes.course.display_name"),
       accessor: "display_name",
       minWidth: 120,
     },
@@ -44,9 +44,13 @@ class AdminCourseList extends React.Component {
       minWidth: 70,
       Cell: ({value}) => {
         return (
-          <a href="#" onClick={() => {}}>
-            {I18n.t("edit")}
-          </a>
+          <span>
+            <a href="#">{I18n.t("edit")}</a>
+            &nbsp;|&nbsp;
+            <a href="#" onClick={() => this.delete(value)}>
+              {I18n.t("view")}
+            </a>
+          </span>
         );
       },
       sortable: false,
