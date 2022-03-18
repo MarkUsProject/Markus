@@ -84,5 +84,10 @@
       </li>
     <% end %>
   <% end %>
+  <% if @current_user.admin_user? %>
+    <li class='<%= "active" if controller.controller_name == 'main_admin' %>'>
+      <%= link_to t('administration'), admin_path %>
+    </li>
+  <% end %>
 </ul>
 </div>

@@ -1,11 +1,5 @@
 <% content_for :title, t('site_manager') %>
 
-<% @heading_buttons = [
-  { link_text: t('courses_home_page'),
-    link_path: '#',
-    html_options: { id: 'add-exam-template' } },
-] %>
-
 <div class='pane-wrapper'>
   <div id='markus_management_pane' class="markus-management-pane-wrapper">
     <%= render partial: 'markus_info_pane' %>

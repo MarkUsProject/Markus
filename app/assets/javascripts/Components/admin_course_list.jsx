@@ -47,9 +47,7 @@ class AdminCourseList extends React.Component {
           <span>
             <a href="#">{I18n.t("edit")}</a>
             &nbsp;|&nbsp;
-            <a href="#" onClick={() => this.delete(value)}>
-              {I18n.t("view")}
-            </a>
+            <a href={Routes.course_path(value)}>{I18n.t("view")}</a>
           </span>
         );
       },
