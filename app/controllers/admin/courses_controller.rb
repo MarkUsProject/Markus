@@ -12,5 +12,9 @@ module Admin
         format.json { render json: Course.order('id').to_json(only: DEFAULT_FIELDS) }
       end
     end
+
+    def edit
+      @course = record
+    end
   end
 end
