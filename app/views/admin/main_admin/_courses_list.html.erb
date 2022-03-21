@@ -1,8 +1,7 @@
-<% api_key = @current_user.api_key.nil? ? @current_user.reset_api_key : @current_user.api_key %>
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-    makeAdminCourseList(document.getElementById('admin_courses_list'), { apiKey: "<%= api_key %>"});
+    makeAdminCourseList(document.getElementById('admin_courses_list'));
     });
   <% end %>
 <% end %>

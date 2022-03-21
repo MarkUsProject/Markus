@@ -17,11 +17,8 @@ class AdminCourseList extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.api_courses_path(),
+      url: Routes.admin_courses_path(),
       dataType: "json",
-      headers: {
-        Authorization: `MarkUsAuth ${this.props.apiKey}`,
-      },
     }).then(data => {
       this.setState({courses: data, loading: false});
     });

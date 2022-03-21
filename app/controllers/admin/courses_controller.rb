@@ -1,5 +1,6 @@
 module Admin
   class CoursesController < ApplicationController
+    DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
     before_action { authorize! }
 
     respond_to :html
@@ -9,6 +10,7 @@ module Admin
       respond_to do |format|
         format.html { page_not_found }
         format.js
+        format.json { render json: Course.order('id').to_json(only: DEFAULT_FIELDS) }
       end
     end
   end
