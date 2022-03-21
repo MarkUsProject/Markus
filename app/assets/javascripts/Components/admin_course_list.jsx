@@ -39,12 +39,12 @@ class AdminCourseList extends React.Component {
       Header: I18n.t("actions"),
       accessor: "id",
       minWidth: 70,
-      Cell: ({value}) => {
+      Cell: ({course_id}) => {
         return (
           <span>
             <a href="#">{I18n.t("edit")}</a>
             &nbsp;|&nbsp;
-            <a href={Routes.course_path(value)}>{I18n.t("view")}</a>
+            <a href={Routes.course_path(course_id)}>{I18n.t("view")}</a>
           </span>
         );
       },
