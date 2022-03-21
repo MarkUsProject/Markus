@@ -16,5 +16,11 @@ module Admin
     def edit
       @course = record
     end
+
+    def update
+      @course = record
+      @course.update!(params.require(:course).permit(:name, :is_hidden, :display_name))
+      respond_with @course
+    end
   end
 end
