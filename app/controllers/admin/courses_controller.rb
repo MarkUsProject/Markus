@@ -8,7 +8,7 @@ module Admin
 
     def index
       respond_to do |format|
-        format.html { page_not_found }
+        format.html { render :index }
         format.js
         format.json { render json: Course.order('id').to_json(only: DEFAULT_FIELDS) }
       end
