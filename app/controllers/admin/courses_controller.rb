@@ -13,6 +13,10 @@ module Admin
       end
     end
 
+    def new
+      @course = Course.new
+    end
+
     def edit
       @course = record
     end
