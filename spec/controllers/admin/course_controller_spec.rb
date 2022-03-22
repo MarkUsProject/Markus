@@ -23,16 +23,10 @@ describe Admin::CoursesController do
     end
     context 'Admin' do
       let(:user) { create(:admin_user) }
-      context 'when sending javascript' do
-        it 'responds with 200' do
-          get_as user, :index, format: 'js'
-          expect(response).to have_http_status(200)
-        end
-      end
       context 'when sending html' do
-        it 'responds with 404' do
+        it 'responds with 200' do
           get_as user, :index, format: 'html'
-          expect(response).to have_http_status(404)
+          expect(response).to have_http_status(200)
         end
       end
       context 'when sending json' do
