@@ -5,7 +5,7 @@ en:
       course:
         display_name: Display Name
         name: Name
-        is_hidden: 'Course Visibility:'
+        is_hidden: Course Visibility
     models:
       course:
         one: Course
