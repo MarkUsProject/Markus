@@ -23,7 +23,7 @@
   </div>
   <p>
     <%= f.submit t(:save),
-                 id: 'save_course_changes',
                  data: { disable_with: t('working') } %>
+    <%= link_to t(:cancel), admin_courses_path, class: 'button' %>
   </p>
 <% end %>
