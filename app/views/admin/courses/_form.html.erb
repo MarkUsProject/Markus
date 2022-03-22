@@ -1,4 +1,5 @@
-<%= form_with model: [:admin, @course] do |f| %>
+<%= form_with model: [:admin, @course],
+              local: true do |f| %>
   <div class="inline-labels">
     <%= f.label :name,
                 Course.human_attribute_name(:name),

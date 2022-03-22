@@ -20,7 +20,7 @@ module Admin
     def update
       @course = record
       @course.update!(params.require(:course).permit(:name, :is_hidden, :display_name))
-      respond_with @course
+      respond_with @course, location: -> { edit_admin_course_path(@course) }
     end
   end
 end
