@@ -19,7 +19,14 @@ module Admin
 
     def update
       @course = record
-      @course.update!(params.require(:course).permit(:name, :is_hidden, :display_name))
+      begin
+        @course.transaction do
+          @course.update(params.require(:course).permit(:name, :is_hidden, :display_name))
+          @course.save!
+        end
+      rescue StandardError
+        # Do nothing
+      end
       respond_with @course, location: -> { edit_admin_course_path(@course) }
     end
   end
