@@ -62,4 +62,32 @@ describe Admin::CoursesController do
       end
     end
   end
+  describe '#edit' do
+    let!(:course) { create(:course) }
+    shared_examples 'user with unauthorized access' do
+      it 'responds with 403' do
+        get_as user, :edit, format: 'html', params: { id: course.id }
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'Instructor' do
+      let(:user) { create(:instructor) }
+      include_examples 'user with unauthorized access'
+    end
+    context 'TA' do
+      let(:user) { create(:ta) }
+      include_examples 'user with unauthorized access'
+    end
+    context 'Student' do
+      let(:user) { create(:student) }
+      include_examples 'user with unauthorized access'
+    end
+    context 'Admin' do
+      let(:user) { create(:admin_user) }
+      it 'responds with 200' do
+        get_as user, :edit, format: 'html', params: { id: course.id }
+        expect(response).to have_http_status(200)
+      end
+    end
+  end
 end
