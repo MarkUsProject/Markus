@@ -1,4 +1,6 @@
 describe AutomatedTestsController do
+  include AutomatedTestsHelper
+
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:assignment) { create :assignment }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
@@ -29,15 +31,12 @@ describe AutomatedTestsController do
     end
     context 'GET populate_autotest_manager' do
       subject { get_as role, :populate_autotest_manager, params: params }
-      let(:settings_content) { '{}' }
       before do
         file = fixture_file_upload('automated_tests/minimal_testers.json')
         assignment.course.autotest_setting.update!(schema: file.read)
-        File.write(assignment.autotest_settings_file, settings_content)
       end
       after do
         FileUtils.rm_f File.join(Settings.autotest.client_dir, 'testers.json')
-        FileUtils.rm_f assignment.autotest_settings_file
       end
       it 'should respond with success' do
         subject
@@ -51,18 +50,18 @@ describe AutomatedTestsController do
           expect(JSON.parse(response.body)['schema']).to eq(file_content)
         end
       end
-      context 'settings file does not exist' do
-        before { FileUtils.rm_rf assignment.autotest_settings_file }
+      context 'the assignment has no test settings' do
         it 'should return empty form data' do
           subject
           expect(JSON.parse(response.body)['formData']).to eq({})
         end
       end
-      context 'settings file does exist' do
-        let(:settings_content) { '{"a": 2}' }
+      context 'the assignment has test settings' do
+        let(:settings_content) { { 'a' => 2 } }
         it 'should return the settings content as form data' do
+          assignment.update!(autotest_settings: settings_content)
           subject
-          expect(JSON.parse(response.body)['formData']).to eq(JSON.parse(settings_content))
+          expect(JSON.parse(response.body)['formData']).to eq(settings_content)
         end
       end
       context 'assignment data' do
@@ -142,7 +141,6 @@ describe AutomatedTestsController do
         after :each do
           # Clear uploaded autotest files to prepare for next test
           FileUtils.rm_rf(assignment.autotest_files_dir)
-          FileUtils.rm_f(assignment.autotest_settings_file)
         end
         it 'should receive the appropriate files' do
           subject
@@ -222,28 +220,33 @@ describe AutomatedTestsController do
       end
     end
     context 'GET download_specs' do
-      context 'when the file exists' do
-        let(:content) { '{"a":1}' }
+      context 'when the assignment has test settings' do
+        let(:content) { { 'a' => 1 } }
         before :each do
-          File.write(assignment.autotest_settings_file, content)
-          get_as role, :download_specs, params: params
+          assignment.update!(autotest_settings: content)
         end
         it 'should download a file containing the content' do
-          expect(response.body).to eq content
+          get_as role, :download_specs, params: params
+          expect(JSON.parse(response.body)).to eq content
         end
         it 'should respond with a success' do
+          get_as role, :download_specs, params: params
           expect(response.status).to eq 200
         end
         context 'when there is a test_group_id specified' do
-          let(:content) { { testers: [{ test_data: [{ extra_info: { test_group_id: 10 } }] }] }.to_json }
+          let(:content) { { testers: [{ test_data: [10] }] } }
+          before do
+            create(:test_group, assignment: assignment, id: 10)
+          end
           it 'should remove the test_group_id' do
-            expect(JSON.parse(response.body)['testers'].first['test_data'].first['extra_info']).to eq({})
+            get_as role, :download_specs, params: params
+            test_group_settings = JSON.parse(response.body)['testers'].first['test_data'].first['extra_info']
+            expect(test_group_settings).to_not have_key('test_group_id')
           end
         end
       end
-      context 'when the file does not exist' do
+      context 'when the assignment does not have test settings' do
         before :each do
-          FileUtils.rm_f(assignment.autotest_settings_file)
           get_as role, :download_specs, params: params
         end
         it 'should download a file with an empty hash' do
@@ -256,11 +259,11 @@ describe AutomatedTestsController do
     end
     context 'POST upload_specs' do
       before :each do
-        File.write(assignment.autotest_settings_file, '')
         post_as role, :upload_specs, params: { course_id: assignment.course.id,
                                                assignment_id: assignment.id,
                                                specs_file: file }
         file&.rewind
+        assignment.reload
       end
       after :each do
         flash.now[:error] = nil
@@ -268,7 +271,7 @@ describe AutomatedTestsController do
       context 'a valid json file' do
         let(:file) { fixture_file_upload 'automated_tests/valid_json.json' }
         it 'should upload the file content' do
-          expect(File.read(assignment.autotest_settings_file)).to eq file.read.strip
+          expect(autotest_settings_for(assignment)).to eq JSON.parse(file.read)
         end
         it 'should return a success http status' do
           expect(response.status).to eq 200
@@ -276,8 +279,8 @@ describe AutomatedTestsController do
       end
       context 'an invalid json file' do
         let(:file) { fixture_file_upload 'automated_tests/invalid_json.json' }
-        it 'should not upload the file content' do
-          expect(File.read(assignment.autotest_settings_file)).to eq ''
+        it 'should not update the assignment test settings' do
+          expect(assignment.reload.autotest_settings).to be nil
         end
         it 'should flash an error message' do
           expect(flash.now[:error]).not_to be_empty
@@ -288,8 +291,8 @@ describe AutomatedTestsController do
       end
       context 'nothing uploaded' do
         let(:file) { nil }
-        it 'should not upload the file content' do
-          expect(File.read(assignment.autotest_settings_file)).to eq ''
+        it 'should not update the assignment test settings' do
+          expect(assignment.reload.autotest_settings).to be nil
         end
         it 'should not flash an error message' do
           expect(flash.now[:error]).to be_nil

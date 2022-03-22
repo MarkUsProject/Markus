@@ -8,7 +8,7 @@
           "category": ["instructor"],
           "timeout": 30,
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "Java Test Group 1"
           }
         },
@@ -17,7 +17,7 @@
           "category": ["instructor"],
           "timeout": 30,
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "Java Test Group 2"
           }
         }
