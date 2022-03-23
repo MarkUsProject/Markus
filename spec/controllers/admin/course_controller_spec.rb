@@ -49,10 +49,6 @@ describe Admin::CoursesController do
     describe '#index' do
       let!(:course1) { create(:course) }
       let!(:course2) { create(:course) }
-<<<<<<< HEAD
-=======
-      let!(:course3) { create(:course) }
->>>>>>> Refactored similar code with edit and in tests
 
       context 'when sending html' do
         it 'responds with 200' do
@@ -95,11 +91,7 @@ describe Admin::CoursesController do
       end
     end
 
-<<<<<<< HEAD
     describe '#update' do
-=======
-    describe '#create' do
->>>>>>> Refactored similar code with edit and in tests
       let(:params) do
         {
           id: course.id,
