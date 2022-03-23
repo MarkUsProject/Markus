@@ -12,5 +12,11 @@ module Admin
         format.json { render json: Course.order(:created_at).to_json(only: DEFAULT_FIELDS) }
       end
     end
+
+    protected
+
+    def implicit_authorization_target
+      OpenStruct.new policy_class: Admin::UserPolicy
+    end
   end
 end
