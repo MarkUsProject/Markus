@@ -17,6 +17,7 @@ en:
         locale: Language
         theme: Color Theme
         user_name: User Name
+        user_type: User Type
     models:
       instructor:
         one: Instructor
