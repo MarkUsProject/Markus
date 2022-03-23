@@ -1,7 +1,7 @@
-<% is_not_administrating_site = controller.class.name.to_s.split('::').first != 'Admin' %>
+<% is_not_admin_route = controller.class.module_parent.to_s != 'Admin' %>
 <header id='header'>
   <div id='course'>
-    <% if is_not_administrating_site && @current_course %>
+    <% if is_not_admin_route && @current_course %>
       <strong><%= @current_course.display_name %></strong>
     <% end %>
   </div>
@@ -24,7 +24,7 @@
                             class: 'settings' %>
               </li>
             <% end %>
-            <% if is_not_administrating_site && @current_course && allowed_to?(:role_switch?, @current_course) %>
+            <% if is_not_admin_route && @current_course && allowed_to?(:role_switch?, @current_course) %>
               <li>
                 <%= link_to t('main.role_switch.switch_role'),
                             role_switch_course_path(@current_course.id),
@@ -32,7 +32,7 @@
                             class: 'switch-role' %>
               </li>
             <% end %>
-            <% if is_not_administrating_site && @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
+            <% if is_not_admin_route && @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
               <li>
                 <%= link_to t('main.role_switch.clear_role_switch_session'),
                             clear_role_switch_session_course_path(@current_course),
