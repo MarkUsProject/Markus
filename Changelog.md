@@ -12,6 +12,7 @@
 - Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
 - Modified login to allow admin users to login via the UI (#5897)
 - Fix bug where admins viewing the admin page were not redirected properly when timed out (#5909)
+- Added a list of courses to manage for new markus administration view (#5907)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

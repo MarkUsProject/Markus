@@ -1,0 +1,10 @@
+---
+en:
+  activerecord:
+    attributes:
+      course:
+        display_name: Display Name
+        name: Name
+    models:
+      course:
+        one: Course

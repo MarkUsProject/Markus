@@ -1,0 +1,8 @@
+<ul class='sub'>
+  <li class='<%= "active" if controller.controller_name == 'main_admin' %>'>
+    <%= link_to t('menu.dashboard'), admin_path %>
+  </li>
+  <li class='<%= "active" if controller.controller_name == 'courses' %>'>
+    <%= link_to Course.model_name.human.pluralize, admin_courses_path %>
+  </li>
+</ul>

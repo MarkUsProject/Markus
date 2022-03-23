@@ -34,6 +34,10 @@ class ApplicationPolicy < ActionPolicy::Base
     role&.student?
   end
 
+  def view_admin_subtabs?
+    user&.admin_user?
+  end
+
   def view_sub_sub_tabs?
     role&.instructor? || role&.ta?
   end
