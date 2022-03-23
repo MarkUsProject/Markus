@@ -2,12 +2,13 @@ require 'fileutils'
 
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
+  before_save :undo_mark_for_destruction
   after_update :rename_exam_template_directory
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :exam_templates
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
-  validates_uniqueness_of :name,
-                          scope: :assignment
+  validates :name,
+            uniqueness: { scope: :assignment }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
@@ -18,15 +19,13 @@ class ExamTemplate < ApplicationRecord
                                 update_only: true,
                                 reject_if: :exam_been_uploaded?
 
-  before_save :undo_mark_for_destruction
-
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes = {})
     return unless attributes.key? :assessment_id
     assignment = Assignment.find(attributes[:assessment_id])
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
-    exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
+    exam_template_name = name_input.presence || File.basename(attributes[:filename].tr(' ', '_'), '.pdf')
     template_path = File.join(
       assignment.scanned_exams_path,
       exam_template_name
@@ -58,9 +57,7 @@ class ExamTemplate < ApplicationRecord
 
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes = {})
-    return unless attributes.key? :assessment_id
-
-    File.binwrite(File.join(base_bath, attributes[:new_filename].tr(' ', '_')), blob)
+    File.binwrite(File.join(base_path, attributes[:new_filename].tr(' ', '_')), blob)
 
     pdf = CombinePDF.parse blob
     self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])

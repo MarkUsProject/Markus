@@ -31,7 +31,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.25.0
+    rev: v1.25.1
     hooks:
       - id: rubocop
         args: ["--auto-correct"]
@@ -42,6 +42,8 @@ repos:
             db/schema.rb|
             lib/repo/test/.*
           )$
+        additional_dependencies:
+          - rubocop-rails:2.13.2
 
 exclude: vendor
 

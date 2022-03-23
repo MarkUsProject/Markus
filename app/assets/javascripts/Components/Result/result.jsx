@@ -132,12 +132,7 @@ class Result extends React.Component {
 
   /* Interaction with external components/libraries */
   updateContextMenu = () => {
-    if (
-      this.state.released_to_students ||
-      this.state.remark_submitted ||
-      this.props.role === "Student"
-    )
-      return;
+    if (this.state.released_to_students || this.props.role === "Student") return;
 
     window.annotation_context_menu.setup(
       Routes.course_annotations_path,

@@ -3,29 +3,33 @@ require 'fileutils' # FileUtils used here
 # Handle for getting student submissions.  Actual instance depend
 # on whether an assignment is a group or individual assignment.
 class Submission < ApplicationRecord
-  after_create :create_result
   before_validation :bump_old_submissions, on: :create
+  after_create :create_result
 
-  validates_inclusion_of :submission_version_used, in: [true, false]
-  validates_numericality_of :submission_version, only_integer: true
+  validates :submission_version_used, inclusion: { in: [true, false] }
+  validates :submission_version, numericality: { only_integer: true }
   validate :max_number_of_results
   belongs_to :grouping
 
   has_many :results, -> { order :created_at },
-           dependent: :destroy
+           dependent: :destroy,
+           inverse_of: :submission
 
   has_many :non_pr_results, -> { where(peer_review_id: nil).order(:created_at) },
-           class_name: 'Result'
+           class_name: 'Result',
+           inverse_of: :submission
 
   has_one :current_result, -> { where(peer_review_id: nil).order(created_at: :desc) },
-          class_name: 'Result'
+          class_name: 'Result',
+          inverse_of: :submission
 
   has_one :submitted_remark, -> { where.not remark_request_submitted_at: nil },
-          class_name: 'Result'
+          class_name: 'Result',
+          inverse_of: :submission
 
   has_many :submission_files, dependent: :destroy
   has_many :annotations, through: :submission_files
-  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :nullify
+  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :nullify, inverse_of: :submission
   has_many :test_group_results, through: :test_runs
   has_many :feedback_files, dependent: :destroy
 
@@ -111,8 +115,7 @@ class Submission < ApplicationRecord
       end
       # don't update mark if there is an error
       next if test_run.test_group_results
-                      .where(error_type: TestGroupResult::ERROR_TYPE.slice(:no_results, :test_error).values)
-                      .exists?
+                      .exists?(error_type: TestGroupResult::ERROR_TYPE.slice(:no_results, :test_error).values)
 
       all_marks_earned = 0.0
       all_marks_total = 0.0
@@ -187,7 +190,7 @@ class Submission < ApplicationRecord
   def remove_file(filename)
     # get all submissions for this filename
     files = submission_files.where(filename: filename)
-    return unless files && !files.empty?
+    return if files.blank?
     files.each(&:destroy)  # destroy all records first
 
     adir = submit_dir

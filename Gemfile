@@ -10,8 +10,9 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.1.4.6'
+gem 'rails', '~> 7.0.2'
 gem 'sprockets'
+gem 'sprockets-rails'
 
 # Models and database interactions
 gem 'pluck_to_hash'
@@ -39,7 +40,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 6.0.0'
+gem 'rails-i18n', '~> 7.0.0'
 
 # Exam template requirements
 gem 'combine_pdf'

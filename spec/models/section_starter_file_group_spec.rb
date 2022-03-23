@@ -2,8 +2,6 @@ describe SectionStarterFileGroup do
   subject { create :section_starter_file_group }
   it { is_expected.to belong_to(:section) }
   it { is_expected.to belong_to(:starter_file_group) }
-  it { is_expected.to validate_presence_of(:section) }
-  it { is_expected.to validate_presence_of(:starter_file_group) }
   it { is_expected.to have_one(:course) }
 
   include_examples 'course associations'

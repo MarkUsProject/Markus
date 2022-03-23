@@ -1,30 +1,29 @@
 class AnnotationCategory < ApplicationRecord
+  before_update :check_if_marks_released, if: ->(c) {
+    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
+  }
+  around_update :update_annotation_text_deductions, if: ->(c) {
+    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
+  }
+
   # The before_destroy callback must be before the annotation_text association declaration,
   # as it is currently the only way to ensure the annotation_texts do not get destroyed before the callback.
   before_destroy :delete_allowed?
 
   has_many :annotation_texts, dependent: :destroy
 
-  validates_presence_of :annotation_category_name
-  validates_uniqueness_of :annotation_category_name, scope: :assessment_id
+  validates :annotation_category_name, presence: true
+  validates :annotation_category_name, uniqueness: { scope: :assessment_id }
 
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :annotation_categories
 
   has_one :course, through: :assignment
 
-  belongs_to :flexible_criterion, required: false
+  belongs_to :flexible_criterion, optional: true
   # Note that there is no need to validate that courses match through courses_should_match
   # because the flexible_criterion_id must be associated to the same assignment.
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
-
-  before_update :check_if_marks_released, if: ->(c) {
-    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
-  }
-
-  around_update :update_annotation_text_deductions, if: ->(c) {
-    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
-  }
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
@@ -120,8 +119,8 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def update_annotation_text_deductions
-    prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
-    new_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].second)
+    prev_criterion = FlexibleCriterion.find_by(id: changes_to_save['flexible_criterion_id'].first)
+    new_criterion = FlexibleCriterion.find_by(id: changes_to_save['flexible_criterion_id'].second)
     if new_criterion.nil?
       self.annotation_texts.each { |text| text.update!(deduction: nil) }
     elsif prev_criterion.nil?

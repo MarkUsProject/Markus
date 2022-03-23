@@ -86,11 +86,7 @@ export class LeftPane extends React.Component {
             assignment_id={this.props.assignment_id}
             grouping_id={this.props.grouping_id}
             revision_identifier={this.props.revision_identifier}
-            show_annotation_manager={
-              !this.props.released_to_students &&
-              !this.props.remark_submitted &&
-              !this.props.is_reviewer
-            }
+            show_annotation_manager={!this.props.released_to_students && !this.props.is_reviewer}
             canDownload={this.props.is_reviewer === undefined ? undefined : !this.props.is_reviewer}
             fileData={this.props.submission_files}
             annotation_categories={this.props.annotation_categories}
@@ -121,7 +117,7 @@ export class LeftPane extends React.Component {
             />
           </div>
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender={!LeftPane.disableTestResultsPanel(this.props)}>
           <div id="testviewer">
             {/* student results page (with instructor tests released) does not need the button */}
             {!this.props.student_view && (
@@ -155,7 +151,7 @@ export class LeftPane extends React.Component {
             />
           </div>
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender={!LeftPane.disableFeedbackFilesPanel(this.props)}>
           <FeedbackFilePanel
             assignment_id={this.props.assignment_id}
             feedbackFiles={this.props.feedback_files}
@@ -164,7 +160,7 @@ export class LeftPane extends React.Component {
             loading={this.props.loading}
           />
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender={!LeftPane.disableRemarkPanel(this.props)}>
           <div id="remark_request_tab">
             <RemarkPanel
               result_id={this.props.result_id}

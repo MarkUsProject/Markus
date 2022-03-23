@@ -2,15 +2,15 @@ module Api
   # Api controller for starter file groups
   class StarterFileGroupsController < MainApiController
     def create
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
       other_params = params.permit(:entry_rename, :use_rename, :name).to_h.symbolize_keys
       starter_file_group = StarterFileGroup.new(assessment_id: assignment.id, **other_params)
       if starter_file_group.save
         render 'shared/http_status', locals: { code: '201', message:
-            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
+            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       else
         render 'shared/http_status', locals: { code: '500', message:
-            starter_file_group.errors.full_messages.first }, status: 500
+            starter_file_group.errors.full_messages.first }, status: :internal_server_error
       end
     end
 
@@ -22,10 +22,10 @@ module Api
           starter_file_group.assignment.groupings.update_all(starter_file_changed: true)
         end
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         render 'shared/http_status', locals: { code: '500', message:
-            starter_file_group.errors.full_messages.first }, status: 500
+            starter_file_group.errors.full_messages.first }, status: :internal_server_error
       end
     end
 
@@ -33,15 +33,15 @@ module Api
       starter_file_group = record
       if starter_file_group.destroy
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         render 'shared/http_status', locals: { code: '500', message:
-            starter_file_group.errors.full_messages.first }, status: 500
+            starter_file_group.errors.full_messages.first }, status: :internal_server_error
       end
     end
 
     def index
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
       respond_to do |format|
         format.xml { render xml: assignment.starter_file_groups.to_xml(skip_types: 'true') }
         format.json { render json: assignment.starter_file_groups.to_json }
@@ -61,7 +61,7 @@ module Api
       if has_missing_params?([:filename, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -75,10 +75,10 @@ module Api
       update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
-             status: 201
+             status: :created
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
-      render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
     end
 
     def create_folder
@@ -86,7 +86,7 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -95,10 +95,10 @@ module Api
       update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
-             status: 201
+             status: :created
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
-      render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
     end
 
     def remove_file
@@ -106,7 +106,7 @@ module Api
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
       file_path = File.join(starter_file_group.path, params[:filename])
@@ -114,10 +114,10 @@ module Api
       update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
-             status: 200
+             status: :ok
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
-      render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
     end
 
     def remove_folder
@@ -125,7 +125,7 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -134,10 +134,10 @@ module Api
       update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
-             status: 200
+             status: :ok
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
-      render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
     end
 
     def download_entries

@@ -17,13 +17,13 @@ module SessionHandler
     # retrieve from database on every request instead of
     # storing it as global variable when current_user=
     # is called to prevent user information becoming stale.
-    @current_user ||= (session[:user_name] && User.find_by_user_name(session[:user_name])) || real_user
+    @current_user ||= (session[:user_name] && User.find_by(user_name: session[:user_name])) || real_user
   end
 
   def real_user
     return @real_user if defined? @real_user
     real_user_name = remote_auth? ? remote_user_name : session[:real_user_name]
-    @real_user = User.find_by_user_name(real_user_name) if real_user_name
+    @real_user = User.find_by(user_name: real_user_name) if real_user_name
   end
 
   def current_role
@@ -112,7 +112,7 @@ module SessionHandler
         head :forbidden # 403
       else
         session[:redirect_uri] = request.fullpath
-        redirect_to controller: 'main', action: 'login'
+        redirect_to root_path
       end
     end
   end

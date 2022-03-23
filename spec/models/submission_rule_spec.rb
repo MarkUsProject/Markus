@@ -194,7 +194,7 @@ describe SubmissionRule do
     end
 
     it 'should sort in ascending order' do
-      expect(@submission_rule.periods.pluck(:id)).to(satisfy { |ids| ids == ids.sort })
+      expect(@submission_rule.periods.ids).to(satisfy { |ids| ids == ids.sort })
     end
   end
 
@@ -209,7 +209,7 @@ describe SubmissionRule do
     end
 
     it 'should sort in ascending order' do
-      expect(@submission_rule.periods.pluck(:id)).to(satisfy { |ids| ids == ids.sort })
+      expect(@submission_rule.periods.ids).to(satisfy { |ids| ids == ids.sort })
     end
   end
 

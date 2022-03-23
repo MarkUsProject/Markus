@@ -13,8 +13,8 @@ class Group < ApplicationRecord
   has_many :split_pages
 
   validates :group_name, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
-  validates_uniqueness_of :group_name, scope: :course_id
-  validates_length_of :group_name, maximum: 30
+  validates :group_name, uniqueness: { scope: :course_id }
+  validates :group_name, length: { maximum: 30 }
   validates :group_name, format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
                                    message: 'group_name must only contain alphanumeric, hyphen, a blank space, or '\
                                             'underscore' }

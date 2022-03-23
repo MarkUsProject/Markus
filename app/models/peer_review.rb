@@ -2,7 +2,7 @@ require 'set'
 
 class PeerReview < ApplicationRecord
   belongs_to :result, dependent: :destroy
-  belongs_to :reviewer, class_name: 'Grouping'
+  belongs_to :reviewer, class_name: 'Grouping', inverse_of: :peer_reviews_to_others
   has_one :reviewee, class_name: 'Grouping', through: :result, source: :grouping
   validates_associated :reviewer
   validates_associated :result
@@ -73,8 +73,8 @@ class PeerReview < ApplicationRecord
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, _|
-        reviewee_group = Grouping.find_by_id(reviewee_id)
-        reviewer_group = Grouping.find_by_id(reviewer_id)
+        reviewee_group = Grouping.find_by(id: reviewee_id)
+        reviewer_group = Grouping.find_by(id: reviewer_id)
         self.delete_peer_review_between(reviewer_group, reviewee_group)
       end
     end
@@ -107,8 +107,8 @@ class PeerReview < ApplicationRecord
   end
 
   def self.from_csv(assignment, data)
-    reviewer_map = assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }.to_h
-    reviewee_map = assignment.parent_assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }.to_h
+    reviewer_map = assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
+    reviewee_map = assignment.parent_assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
     MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.size < 2
       reviewee = reviewee_map[row.first]

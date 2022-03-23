@@ -74,6 +74,10 @@ Rails.application.routes.draw do
     match '*path', controller: 'main_api', action: 'page_not_found', via: :all
   end
 
+  namespace :admin do
+    get '/', controller: 'main_admin', action: 'index'
+  end
+
   resources :courses, only: [:show, :index] do
     member do
       get 'clear_role_switch_session'
@@ -116,7 +120,6 @@ Rails.application.routes.draw do
         get 'error_pages'
         patch 'add_fields'
         patch 'generate'
-        patch 'split'
         post 'fix_error'
       end
     end
@@ -237,6 +240,7 @@ Rails.application.routes.draw do
       resources :exam_templates, only: [:index, :create] do
         collection do
           get 'view_logs'
+          patch 'split'
         end
       end
 
@@ -459,9 +463,9 @@ Rails.application.routes.draw do
     end
   end
 
-  match 'main', controller: 'courses', action: 'index', via: :post
-  match 'main/about', controller: 'main', action: 'about', via: :post
-  match 'main/logout', controller: 'main', action: 'logout', via: :post
+  post 'main', controller: 'courses', action: 'index'
+  post 'main/about', controller: 'main', action: 'about'
+  post 'main/logout', controller: 'main', action: 'logout'
 
   match '*path', controller: 'main', action: 'page_not_found', via: :all
 end

@@ -100,7 +100,7 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
+    FileUtils.rm_rf(Dir[Rails.root.join('data/test/exam_templates/*')])
   end
 
   RSpec::Matchers.define :same_time_within_ms do |t1|

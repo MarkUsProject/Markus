@@ -2,12 +2,18 @@ namespace :db do
   task admin: :environment do
     user = AdminUser.find_or_create
     puts user.api_key
+    [%w[admin test admin]].each do |admin|
+      a = AdminUser.create!(user_name: admin[0],
+                            first_name: admin[1],
+                            last_name: admin[2])
+      a.reset_api_key
+    end
   end
 
   desc 'Create a single Instructor'
   task instructor: :environment do
     puts 'Populate database with Instructors'
-    [%w[a instructor instructor],
+    [%w[instructor test instructor],
      %w[reid Karen Reid]].each do |instructor|
       Instructor.create!(course: Course.first, end_user_attributes: { user_name: instructor[0],
                                                                       first_name: instructor[1],

@@ -41,7 +41,7 @@ class SubmissionsJob < ApplicationJob
 
       grouping.is_collected = true
       grouping.save
-      add_error_messages(grouping.errors.full_messages) unless grouping.errors.blank?
+      add_error_messages(grouping.errors.full_messages) if grouping.errors.present?
       progress.increment
     rescue StandardError => e
       add_error_messages([e.message])

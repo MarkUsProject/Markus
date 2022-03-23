@@ -3,22 +3,22 @@ class Mark < ApplicationRecord
   # Result has not been released to students
   before_save :ensure_not_released_to_students
 
-  after_save :update_result
   after_update :update_deduction, if: ->(m) {
     m.previous_changes.key?('override') && !m.override && m.criterion.type == 'FlexibleCriterion'
   }
+  after_save :update_result
 
   belongs_to :result
 
-  validates_numericality_of :mark,
-                            allow_nil: true,
+  validates :mark,
+            numericality: { allow_nil: true,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(m) { m.criterion.max_mark }
+                            less_than_or_equal_to: ->(m) { m.criterion.max_mark } }
 
   belongs_to :criterion
-  validates_uniqueness_of :criterion_id, scope: :result_id
+  validates :criterion_id, uniqueness: { scope: :result_id }
 
-  validates_inclusion_of :override, in: [true, false]
+  validates :override, inclusion: { in: [true, false] }
 
   has_one :course, through: :criterion
 

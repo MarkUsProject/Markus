@@ -92,7 +92,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
-      head 400
+      head :bad_request
       return
     end
 
@@ -157,7 +157,7 @@ class SubmissionsController < ApplicationController
   def collect_submissions
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -167,7 +167,7 @@ class SubmissionsController < ApplicationController
     some_released = Grouping.joins(current_submission_used: :results)
                             .where('results.released_to_students': true)
                             .where(id: groupings)
-                            .pluck(:id).to_set
+                            .ids.to_set
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
@@ -202,7 +202,7 @@ class SubmissionsController < ApplicationController
   def run_tests
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
@@ -211,7 +211,7 @@ class SubmissionsController < ApplicationController
     group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
-        head 400
+        head :bad_request
         return
       end
       g.group_id
@@ -234,10 +234,10 @@ class SubmissionsController < ApplicationController
     rescue StandardError => e
       error = e.message
     end
-    unless success.blank?
+    if success.present?
       flash_message(:success, success)
     end
-    unless error.blank?
+    if error.present?
       flash_message(:error, error)
     end
     render json: { success: success, error: error }
@@ -293,7 +293,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(assignment_id)
     raise t('student.submission.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
 
-    @path = params[:path].blank? ? '/' : params[:path]
+    @path = params[:path].presence || '/'
 
     if current_role.student?
       @grouping = current_role.accepted_grouping_for(assignment_id)
@@ -343,11 +343,11 @@ class SubmissionsController < ApplicationController
           required_files = nil
         end
 
-        unless new_url.blank?
+        if new_url.present?
           url_filename = params[:url_text]
           raise I18n.t('submissions.urls_disabled') unless @assignment.url_submit
           raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
-          raise I18n.t('submissions.no_url_name', url: new_url) unless url_filename.present?
+          raise I18n.t('submissions.no_url_name', url: new_url) if url_filename.blank?
           url_file = Tempfile.new
           url_file.write(new_url)
           url_file.rewind
@@ -648,7 +648,7 @@ class SubmissionsController < ApplicationController
   def update_submissions
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.find(params[:assignment_id])
@@ -709,7 +709,7 @@ class SubmissionsController < ApplicationController
   def set_result_marking_state
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
@@ -743,7 +743,7 @@ class SubmissionsController < ApplicationController
 
       # add unique ids to all elements in the DOM
       html = Nokogiri::HTML.parse(File.read(cache_file))
-      current_ids = html.xpath('//*[@id]').map { |elem| elem[:id] }.to_set
+      current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
       html.xpath('//*[not(@id)]').map do |elem|
         unique_id = elem.path
         unique_id += '-next' while current_ids.include? unique_id
@@ -790,7 +790,7 @@ class SubmissionsController < ApplicationController
 
     if !@grouping.is_valid?
       flash_message(:error, t('groups.invalid_group_warning'))
-    elsif !@missing_assignment_files.blank?
+    elsif @missing_assignment_files.present?
       flash_message(:warning,
                     partial: 'submissions/missing_assignment_file_toggle_list',
                     locals: { missing_assignment_files: @missing_assignment_files })
@@ -840,7 +840,7 @@ class SubmissionsController < ApplicationController
   # Taken from https://stackoverflow.com/questions/7167895/rails-whats-a-good-way-to-validate-links-urls
   def is_valid_url?(url)
     uri = URI.parse(url)
-    uri.is_a?(URI::HTTP) && !uri.host.blank?
+    uri.is_a?(URI::HTTP) && uri.host.present?
   rescue URI::InvalidURIError
     false
   end

@@ -7,14 +7,14 @@ class TemplateDivision < ApplicationRecord
   accepts_nested_attributes_for :assignment_file, allow_destroy: true
 
   validate :courses_should_match
-  validates :start, numericality: { greater_than_or_equal_to: 1,
+  validates :start, numericality: { greater_than_or_equal_to: 2,
                                     less_than_or_equal_to: :end,
                                     only_integer: true }
   validates :end, numericality: { only_integer: true }
   validate :end_should_be_less_than_or_equal_to_num_pages
-  validates_uniqueness_of :label,
-                          scope: :exam_template,
-                          allow_blank: false
+  validates :label,
+            uniqueness: { scope: :exam_template,
+                          allow_blank: false }
 
   after_save :set_defaults_for_assignment_file # when template division is created or updated
 

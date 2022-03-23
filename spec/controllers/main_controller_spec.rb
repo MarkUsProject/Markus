@@ -4,6 +4,7 @@ describe MainController do
   let(:ta) { create :ta }
   let(:instructor) { create :instructor }
   let(:instructor2) { create :instructor }
+  let(:admin_user) { create :admin_user }
   context 'A non-authenticated user' do
     it 'should not be able to login with a blank username' do
       post :login, params: { user_login: '', user_password: 'a' }
@@ -154,6 +155,27 @@ describe MainController do
         sign_in ta
       end
       include_examples 'ta tests'
+    end
+  end
+  context 'An Admin User' do
+    shared_examples 'admin tests' do
+      it 'redirects to the main_admin controller' do
+        expect(response).to redirect_to(admin_path)
+      end
+    end
+    context 'after logging in without remote user auth' do
+      before(:each) do
+        sign_in admin_user
+      end
+      include_examples 'admin tests'
+    end
+    context 'after logging in with remote user auth' do
+      before :each do
+        env_hash = { HTTP_X_FORWARDED_USER: admin_user.user_name }
+        request.headers.merge! env_hash
+        sign_in admin_user
+      end
+      include_examples 'admin tests'
     end
   end
   context 'when role switched' do

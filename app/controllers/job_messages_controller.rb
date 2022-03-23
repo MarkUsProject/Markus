@@ -4,7 +4,7 @@ class JobMessagesController < ApplicationController
   def get
     status = ActiveJob::Status.get(params[:job_id])
     if status.failed?
-      flash_message(:error, t('poll_job.failed')) unless status[:error_message].present?
+      flash_message(:error, t('poll_job.failed')) if status[:error_message].blank?
       session[:job_id] = nil
     elsif status.completed?
       status[:progress] = status[:total]
@@ -13,7 +13,7 @@ class JobMessagesController < ApplicationController
     elsif status.read.empty?
       flash_message(:error, t('poll_job.failed'))
       session[:job_id] = nil
-      render json: { code: '404', message: t('poll_job.not_enqueued') }, status: 404
+      render json: { code: '404', message: t('poll_job.not_enqueued') }, status: :not_found
       return
     end
     flash_job_messages(status)

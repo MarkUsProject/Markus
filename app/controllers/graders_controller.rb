@@ -79,7 +79,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     grader_ids = params[:graders]
     if grader_ids.blank?
-      grader_ids = current_course.tas.joins(:end_user).where('users.user_name': params[:grader_user_names]).pluck(:id)
+      grader_ids = current_course.tas.joins(:end_user).where('users.user_name': params[:grader_user_names]).ids
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request
@@ -109,7 +109,7 @@ class GradersController < ApplicationController
         if found_empty_submission
           assign_all_graders(filtered_grouping_ids, grader_ids)
           flash_now(:info, I18n.t('graders.group_submission_no_files'))
-          head 200
+          head :ok
         else
           assign_all_graders(grouping_ids, grader_ids)
         end
@@ -146,7 +146,7 @@ class GradersController < ApplicationController
         criterion_grader_ids = criterion_ids.flat_map do |id|
           @assignment.criterion_ta_associations
                      .where(criterion_id: id, ta_id: grader_ids)
-                     .pluck(:id)
+                     .ids
         end
         Criterion.unassign_tas(criterion_grader_ids, @assignment)
       when 'random_assign'
@@ -176,7 +176,7 @@ class GradersController < ApplicationController
   end
 
   def unassign_graders(grouping_ids, grader_ids)
-    grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, role_id: grader_ids).pluck(:id)
+    grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, role_id: grader_ids).ids
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 

@@ -102,7 +102,7 @@ class FlexibleCriterion < Criterion
     { self.name =>
       { 'type' => 'flexible',
         'max_mark' => self.max_mark.to_f,
-        'description' => self.description.blank? ? '' : self.description,
+        'description' => self.description.presence || '',
         'ta_visible' => self.ta_visible,
         'peer_visible' => self.peer_visible,
         'bonus' => self.bonus } }

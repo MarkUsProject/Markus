@@ -196,9 +196,9 @@ describe Api::GradeEntryFormsController do
           expect(response.status).to eq(201)
         end
         it 'should create an assignment' do
-          expect(GradeEntryForm.find_by_short_identifier(params[:short_identifier])).to be_nil
+          expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).to be_nil
           post :create, params: params
-          expect(GradeEntryForm.find_by_short_identifier(params[:short_identifier])).not_to be_nil
+          expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).not_to be_nil
         end
         context 'for a different course' do
           it 'should response with 403' do
@@ -213,9 +213,9 @@ describe Api::GradeEntryFormsController do
           expect(response.status).to eq(201)
         end
         it 'should create an assignment' do
-          expect(GradeEntryForm.find_by_short_identifier(params[:short_identifier])).to be_nil
+          expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).to be_nil
           post :create, params: params
-          expect(GradeEntryForm.find_by_short_identifier(params[:short_identifier])).not_to be_nil
+          expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).not_to be_nil
         end
       end
       context 'with missing params' do
@@ -226,7 +226,7 @@ describe Api::GradeEntryFormsController do
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(Assignment.find_by_description(params[:description])).to be_nil
+            expect(Assignment.find_by(description: params[:description])).to be_nil
           end
         end
         context 'missing description' do
@@ -236,7 +236,7 @@ describe Api::GradeEntryFormsController do
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(GradeEntryForm.find_by_short_identifier(params[:short_identifier])).to be_nil
+            expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).to be_nil
           end
         end
       end

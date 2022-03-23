@@ -116,10 +116,34 @@
   font-weight: bolder;
 }
 
+.settings::before {
+  content: asset-url('icons/settings.png');
+  padding-right: 5px;
+  vertical-align: sub;
+}
+
 .switch-role::before {
   content: asset-url('icons/group_go.png');
   padding-right: 5px;
-  vertical-align: text-top;
+  vertical-align: sub;
+}
+
+.about-markus::before {
+  content: asset-url('icons/information.png');
+  padding-right: 5px;
+  vertical-align: sub;
+}
+
+.github::before {
+  content: asset-url('icons/github.png');
+  padding-right: 5px;
+  vertical-align: sub;
+}
+
+.logout::before {
+  content: asset-url('icons/logout.png');
+  padding-right: 5px;
+  vertical-align: sub;
 }
 
 // Icons for react-json-schema-forms

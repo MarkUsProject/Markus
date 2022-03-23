@@ -51,7 +51,7 @@ describe ExtensionsController do
       end
     end
     describe '#create' do
-      let(:extension) { Extension.find_by_grouping_id(grouping.id) }
+      let(:extension) { Extension.find_by(grouping_id: grouping.id) }
       let(:params) do
         {
           grouping_id: grouping.id,

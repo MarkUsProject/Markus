@@ -47,7 +47,7 @@ class TaMembership < Membership
     if assignment.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
-        new_ta_memberships.map { |row| row[:grouping_id] }
+        new_ta_memberships.pluck(:grouping_id)
       )
     end
 

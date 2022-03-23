@@ -115,13 +115,13 @@ class MarksGradersController < ApplicationController
     student_ids = params[:students]
     grader_ids = params[:graders]
 
-    if params[:students].nil? || params[:students].empty?
+    if params[:students].blank?
       flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
 
-    if params[:graders].nil? || params[:graders].empty?
+    if params[:graders].blank?
       flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return
@@ -136,13 +136,13 @@ class MarksGradersController < ApplicationController
     student_ids = params[:students]
     grader_ids = params[:graders]
 
-    if params[:students].nil? || params[:students].empty?
+    if params[:students].blank?
       flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
 
-    if params[:graders].nil? || params[:graders].empty?
+    if params[:graders].blank?
       flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return
@@ -179,13 +179,13 @@ class MarksGradersController < ApplicationController
     student_ids = params[:students]
     grader_ids = params[:graders]
 
-    if params[:students].nil? || params[:students].empty?
+    if params[:students].blank?
       flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
 
-    if params[:graders].nil? || params[:graders].empty?
+    if params[:graders].blank?
       flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return

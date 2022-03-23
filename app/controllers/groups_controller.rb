@@ -72,7 +72,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where(assessment_id: @assignment.id, group_id: groupexist_id).exists?
+      if Grouping.exists?(assessment_id: @assignment.id, group_id: groupexist_id)
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -168,14 +168,14 @@ class GroupsController < ApplicationController
                           .where('(lower(first_name) like ? OR
                                    lower(last_name) like ? OR
                                    lower(user_name) like ? OR
-                                   id_number like ?) AND users.id NOT IN (?)',
+                                   id_number like ?) AND roles.id NOT IN (?)',
                                  "#{params[:term].downcase}%",
                                  "#{params[:term].downcase}%",
                                  "#{params[:term].downcase}%",
                                  "#{params[:term]}%",
-                                 Membership.select(:user_id)
+                                 Membership.select(:role_id)
                                            .joins(:grouping)
-                                           .where('groupings.assessment_id = ?', params[:assignment_id]))
+                                           .where(groupings: { assessment_id: params[:assignment_id] }))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
                                          'users.first_name', 'users.last_name')
     names = names.map do |h|
@@ -198,13 +198,18 @@ class GroupsController < ApplicationController
       end
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
       if student.nil? || ("#{student.first_name} #{student.last_name}") != params[:names]
-        student = current_course.students.where(
+        student = current_course.students.joins(:end_user).where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
           params[:names].downcase, params[:names].downcase
         ).first
       end
+      if student.nil?
+        flash_message(:error, t('exam_templates.assign_scans.student_not_found', name: params[:names]))
+        head :not_found
+        return
+      end
       StudentMembership
-        .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+        .find_or_create_by(role: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
     end
     next_grouping
   end
@@ -270,7 +275,7 @@ class GroupsController < ApplicationController
         next if row.blank?
         raise CsvInvalidLineError if row[0].blank?
 
-        group_rows << row.reject(&:blank?)
+        group_rows << row.compact_blank
       end
       if result[:invalid_lines].empty?
         @current_job = CreateGroupsJob.perform_later assignment, group_rows
@@ -535,7 +540,7 @@ class GroupsController < ApplicationController
       head :ok
     rescue StandardError => e
       flash_now(:error, e.message)
-      head 400
+      head :bad_request
     end
   end
 
@@ -659,7 +664,7 @@ class GroupsController < ApplicationController
     errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
-    unless errors.blank?
+    if errors.present?
       raise errors.join(' ')
     end
 
@@ -682,7 +687,7 @@ class GroupsController < ApplicationController
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         groupings.each do |grouping|
-          membership = grouping.student_memberships.find_by_role_id(member.id)
+          membership = grouping.student_memberships.find_by(role_id: member.id)
           remove_member(membership, grouping)
         end
       end

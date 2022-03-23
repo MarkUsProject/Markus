@@ -26,7 +26,7 @@ module Api
     rescue ActiveRecord::RecordNotFound => e
       # Could not find submission
       render 'shared/http_status', locals: { code: '404', message:
-        e }, status: 404
+        e }, status: :not_found
     end
 
     # Sends the contents of the specified Feedback File
@@ -42,7 +42,7 @@ module Api
     rescue ActiveRecord::RecordNotFound => e
       # Could not find submission or feedback file
       render 'shared/http_status', locals: { code: '404', message:
-        e }, status: 404
+        e }, status: :not_found
     end
 
     # Creates a new feedback file for a group's latest assignment submission
@@ -56,7 +56,7 @@ module Api
       if has_missing_params?([:filename, :mime_type, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -65,10 +65,10 @@ module Api
       )
 
       # Render error if there's an existing feedback file with that filename
-      feedback_file = submission.feedback_files.find_by_filename(params[:filename])
+      feedback_file = submission.feedback_files.find_by(filename: params[:filename])
       unless feedback_file.nil?
         render 'shared/http_status', locals: { code: '409', message:
-          'A Feedback File with that filename already exists' }, status: 409
+          'A Feedback File with that filename already exists' }, status: :conflict
         return
       end
 
@@ -84,11 +84,11 @@ module Api
                    .valid?
         # It worked, render success
         render 'shared/http_status', locals: { code: '201', message:
-          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
+          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       else
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
       end
     end
 
@@ -100,16 +100,16 @@ module Api
       if feedback_file.destroy
         # Successfully deleted the Feedback file; render success
         render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
       end
     rescue ActiveRecord::RecordNotFound => e
       # Could not find submission or feedback file
       render 'shared/http_status', locals: { code: '404', message:
-        e }, status: 404
+        e }, status: :not_found
     end
 
     # Updates a Feedback File instance
@@ -122,10 +122,10 @@ module Api
 
       # Render error if the filename is used by another
       # Feedback File for that submission
-      existing_file = feedback_file.submission.feedback_files.find_by_filename(params[:filename])
+      existing_file = feedback_file.submission.feedback_files.find_by(filename: params[:filename])
       if !existing_file.nil? && existing_file.id != params[:id].to_i
         render 'shared/http_status', locals: { code: '409', message:
-          'A Feedback File with that filename already exists' }, status: 409
+          'A Feedback File with that filename already exists' }, status: :conflict
         return
       end
 
@@ -141,16 +141,16 @@ module Api
       if feedback_file.save && feedback_file.update_file_content(content)
         # Everything went fine; report success
         render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
       end
     rescue ActiveRecord::RecordNotFound => e
       # Could not find submission or feedback file
       render 'shared/http_status', locals: { code: '404', message:
-        e }, status: 404
+        e }, status: :not_found
     end
   end
 end
