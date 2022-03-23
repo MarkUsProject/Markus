@@ -98,7 +98,7 @@ describe Admin::CoursesController do
       end
     end
 
-    describe '#create' do
+    describe '#update' do
       let(:params) do
         {
           id: course.id,
