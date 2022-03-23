@@ -1,6 +1,6 @@
 describe Admin::CoursesController do
   context 'A user with unauthorized access' do
-    let!(:course) { create(:course) }
+    let(:course) { create(:course) }
 
     shared_examples 'cannot access admin routes' do
       describe '#index' do
@@ -49,7 +49,6 @@ describe Admin::CoursesController do
     describe '#index' do
       let!(:course1) { create(:course) }
       let!(:course2) { create(:course) }
-      let!(:course3) { create(:course) }
 
       context 'when sending html' do
         it 'responds with 200' do
@@ -78,12 +77,6 @@ describe Admin::CoursesController do
               name: course2.name,
               display_name: course2.display_name,
               is_hidden: course2.is_hidden
-            },
-            {
-              id: course3.id,
-              name: course3.name,
-              display_name: course3.display_name,
-              is_hidden: course3.is_hidden
             }
           ]
           expect(received_data).to match_array(expected_data)

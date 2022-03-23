@@ -9,9 +9,5 @@ module Admin
     def manage?
       real_user.admin_user?
     end
-
-    def edit?
-      real_user.admin_user?
-    end
   end
 end
