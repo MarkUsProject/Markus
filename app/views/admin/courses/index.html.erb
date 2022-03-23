@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-    makeAdminCourseList(document.getElementById('admin_courses_list'));
+      makeAdminCourseList(document.getElementById('admin_courses_list'));
     });
   <% end %>
 <% end %>

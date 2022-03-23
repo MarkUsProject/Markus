@@ -9,7 +9,7 @@ module Admin
     def index
       respond_to do |format|
         format.html
-        format.json { render json: Course.order('id').to_json(only: DEFAULT_FIELDS) }
+        format.json { render json: Course.order(:created_at).to_json(only: DEFAULT_FIELDS) }
       end
     end
   end
