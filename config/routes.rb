@@ -75,6 +75,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    resources :users, only: [:index]
     resources :courses, only: [:index]
     get '/', controller: 'main_admin', action: 'index'
   end
