@@ -1,17 +1,14 @@
 import {StudentsActionBox} from "../student_table";
-import React from "react";
 import {render, screen, fireEvent} from "@testing-library/react";
-import "@testing-library/jest-dom";
 
-//unit test
-describe("For the StudentsActionBox component's rendering", () => {
+//Unit test
+describe("For the StudentsActionBox component's non-conditional rendering", () => {
   beforeEach(() => {
     render(<StudentsActionBox />);
   });
   describe("the parent component", () => {
     it("renders", () => {
-      const action_box = screen.getByTestId("student_action_box");
-      expect(action_box).toBeInTheDocument();
+      expect(screen.getByTestId("student_action_box")).toBeInTheDocument();
     });
 
     it("renders a child select element", () => {
@@ -37,7 +34,7 @@ describe("For the StudentsActionBox component's rendering", () => {
   });
 });
 
-describe("For the StudentsActionBox component's props", () => {
+describe("For the StudentsActionBox component's conditional rendering", () => {
   describe("when the state action is give_grace_credits", () => {
     beforeEach(() => {
       render(<StudentsActionBox />);

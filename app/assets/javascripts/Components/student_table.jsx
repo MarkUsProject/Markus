@@ -40,7 +40,7 @@ class RawStudentTable extends React.Component {
   /* Called when an action is run */
   onSubmit = event => {
     event.preventDefault();
-
+    console.log(this.props.selection);
     const data = {
       student_ids: this.props.selection,
       bulk_action: this.actionBox.state.action,
@@ -58,7 +58,7 @@ class RawStudentTable extends React.Component {
   render() {
     const {data, loading} = this.state;
     return (
-      <div>
+      <div data-testid={"raw_student_table"}>
         <StudentsActionBox
           ref={r => (this.actionBox = r)}
           sections={data.sections}
@@ -69,6 +69,7 @@ class RawStudentTable extends React.Component {
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
           data={data.students}
+          data-testid={"checkbox_table"}
           columns={[
             {
               Header: I18n.t("activerecord.attributes.user.user_name"),
@@ -281,13 +282,13 @@ StudentsActionBox.propTypes = {
 
 RawStudentTable.propTypes = {
   course_id: PropTypes.number,
-  selection: PropTypes.array,
+  selection: PropTypes.array.isRequired,
   authenticity_token: PropTypes.string,
-  getCheckboxProps: PropTypes.func,
+  getCheckboxProps: PropTypes.func.isRequired,
 };
 
 let StudentTable = withSelection(RawStudentTable);
 function makeStudentTable(elem, props) {
   render(<StudentTable {...props} />, elem);
 }
-export {RawStudentTable, StudentsActionBox, makeStudentTable};
+export {StudentTable, StudentsActionBox, makeStudentTable};
