@@ -1,5 +1,5 @@
 import {StudentsActionBox} from "../student_table";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, within, fireEvent} from "@testing-library/react";
 
 //Unit test
 describe("For the StudentsActionBox component's non-conditional rendering", () => {
@@ -18,17 +18,19 @@ describe("For the StudentsActionBox component's non-conditional rendering", () =
 
   describe("The select element", () => {
     it("renders 4 options", () => {
-      expect(screen.getAllByRole("option").length).toEqual(4);
+      expect(within(screen.getByRole("combobox")).getAllByRole("option").length).toEqual(4);
     });
 
-    it("has option elements equal to the specified displayed text", () => {
+    it("has option elements equal to the specified value and displayed text", () => {
       [
         I18n.t("students.instructor_actions.give_grace_credits"),
         I18n.t("students.instructor_actions.add_section"),
         I18n.t("students.instructor_actions.mark_inactive"),
         I18n.t("students.instructor_actions.mark_active"),
       ].forEach(text => {
-        expect(screen.getByRole("option", {name: text})).toBeInTheDocument();
+        expect(
+          within(screen.getByRole("combobox")).getByText(text, {value: text})
+        ).toBeInTheDocument();
       });
     });
   });
