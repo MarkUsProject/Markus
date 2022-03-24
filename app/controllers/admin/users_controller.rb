@@ -9,7 +9,7 @@ module Admin
     def index
       respond_to do |format|
         format.html
-        format.json { render json: User.order(:created_at).to_json(only: DEFAULT_FIELDS) }
+        format.json { render json: visible_users.order(:created_at).to_json(only: DEFAULT_FIELDS) }
       end
     end
 
@@ -17,6 +17,13 @@ module Admin
 
     def implicit_authorization_target
       OpenStruct.new policy_class: Admin::UserPolicy
+    end
+
+    private
+
+    # Do not make AutotestUser users visible
+    def visible_users
+      User.where.not(type: :AutotestUser)
     end
   end
 end
