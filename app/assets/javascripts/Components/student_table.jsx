@@ -40,7 +40,6 @@ class RawStudentTable extends React.Component {
   /* Called when an action is run */
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.props.selection);
     const data = {
       student_ids: this.props.selection,
       bulk_action: this.actionBox.state.action,
@@ -69,7 +68,6 @@ class RawStudentTable extends React.Component {
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
           data={data.students}
-          data-testid={"checkbox_table"}
           columns={[
             {
               Header: I18n.t("activerecord.attributes.user.user_name"),
