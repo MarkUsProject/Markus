@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
+import {selectFilter} from "./Helpers/table_helpers";
 
 class AdminUsersList extends React.Component {
   constructor() {
@@ -20,12 +21,11 @@ class AdminUsersList extends React.Component {
       url: Routes.admin_users_path(),
       dataType: "json",
     }).then(data => {
-      console.log(data);
       this.setState({users: data, loading: false});
     });
   };
 
-  columns = [
+  columns = userTypes => [
     {
       Header: I18n.t("activerecord.attributes.user.user_name"),
       accessor: "user_name",
@@ -48,15 +48,26 @@ class AdminUsersList extends React.Component {
       minWidth: 150,
     },
     {
-      Header: I18n.t("activerecord.attributes.user.user_type"),
-      accessor: "type",
-      minWidth: 90,
-    },
-    {
       Header: I18n.t("activerecord.attributes.user.id_number"),
       accessor: "id_number",
       minWidth: 90,
       className: "number",
+    },
+    {
+      Header: I18n.t("activerecord.attributes.user.user_type"),
+      accessor: "type",
+      minWidth: 90,
+      filterMethod: (filter, row) => {
+        if (filter.value === "all") {
+          return true;
+        } else {
+          return filter.value === row[filter.id];
+        }
+      },
+      Filter: selectFilter,
+      filterOptions: userTypes.map(type => {
+        return {text: type, value: type};
+      }),
     },
     {
       Header: I18n.t("actions"),
@@ -72,7 +83,7 @@ class AdminUsersList extends React.Component {
     return (
       <ReactTable
         data={this.state.users}
-        columns={this.columns}
+        columns={this.columns(["AdminUser", "EndUser"])}
         filterable
         defaultSorted={[{id: "user_name"}]}
         loading={this.state.loading}
