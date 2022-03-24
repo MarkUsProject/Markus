@@ -13,6 +13,16 @@ module Admin
       end
     end
 
+    def edit
+      @user = record
+    end
+
+    def update
+      @user = record
+      @course.update(user_params)
+      respond_with @user, location: -> { edit_admin_user_path(@user) }
+    end
+
     protected
 
     def implicit_authorization_target
@@ -24,6 +34,10 @@ module Admin
     # Do not make AutotestUser users visible
     def visible_users
       User.where.not(type: :AutotestUser)
+    end
+
+    def user_params
+      params.permit(:user_name, :email, :id_number, :first_name, :last_name)
     end
   end
 end
