@@ -1,3 +1,5 @@
+require 'resque/server'
+
 Rails.application.routes.draw do
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
@@ -77,6 +79,8 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :courses, only: [:index]
     get '/', controller: 'main_admin', action: 'index'
+
+    mount Resque::Server.new, at: '/resque', as: 'resque'
   end
 
   resources :courses, only: [:show, :index] do
