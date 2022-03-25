@@ -13,6 +13,8 @@
 - Modified login to allow admin users to login via the UI (#5897)
 - Fix bug where admins viewing the admin page were not redirected properly when timed out (#5909)
 - Added a list of courses to manage for new markus administration view (#5907)
+- Added a page in new markus administration view that allows admins to edit the attributes of a course (#5915)
+- Added a page in new markus administration view that allows admins to create a new course (#5917)
 - Added Resque monitoring views for admin users (#5919)
 
 ## [v2.0.10]
