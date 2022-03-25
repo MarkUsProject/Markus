@@ -30,7 +30,10 @@
     <%= f.label :type,
                 User.human_attribute_name(:type),
                 class: 'required' %>
-    <%= f.select :type, ["AdminUser", "EndUser"], {}, { disabled: !@user.new_record? } %>
+    <%= f.select :type,
+                 [[EndUser.model_name.human, 'EndUser'], [AdminUser.model_name.human, 'AdminUser']],
+                 {},
+                 { class: 'required', disabled: !@user.new_record? } %>
   </div>
   <p>
     <%= f.submit t(:save),
