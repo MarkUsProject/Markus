@@ -25,7 +25,7 @@ class AdminUsersList extends React.Component {
     });
   };
 
-  columns = userTypes => [
+  columns = [
     {
       Header: I18n.t("activerecord.attributes.user.user_name"),
       accessor: "user_name",
@@ -57,6 +57,13 @@ class AdminUsersList extends React.Component {
       Header: I18n.t("activerecord.attributes.user.user_type"),
       accessor: "type",
       minWidth: 90,
+      Cell: ({value}) => {
+        if (value === "AdminUser") {
+          return I18n.t("activerecord.models.admin_user.one");
+        } else {
+          return I18n.t("activerecord.models.end_user.one");
+        }
+      },
       filterMethod: (filter, row) => {
         if (filter.value === "all") {
           return true;
@@ -65,9 +72,16 @@ class AdminUsersList extends React.Component {
         }
       },
       Filter: selectFilter,
-      filterOptions: userTypes.map(type => {
-        return {text: type, value: type};
-      }),
+      filterOptions: [
+        {
+          text: I18n.t("activerecord.models.admin_user.one"),
+          value: "AdminUser",
+        },
+        {
+          text: I18n.t("activerecord.models.end_user.one"),
+          value: "EndUser",
+        },
+      ],
     },
     {
       Header: I18n.t("actions"),
@@ -83,7 +97,7 @@ class AdminUsersList extends React.Component {
     return (
       <ReactTable
         data={this.state.users}
-        columns={this.columns(["AdminUser", "EndUser"])}
+        columns={this.columns}
         filterable
         defaultSorted={[{id: "user_name"}]}
         loading={this.state.loading}

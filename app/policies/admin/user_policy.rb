@@ -1,5 +1,5 @@
 module Admin
-  # Policies for Admin::CoursesController
+  # Policies for Admin::UsersController
   class UserPolicy < ApplicationPolicy
     default_rule :manage?
 
