@@ -1,0 +1,4 @@
+---
+en:
+  resque:
+    dashboard: Resque dashboard
