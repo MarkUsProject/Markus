@@ -17,7 +17,12 @@ en:
         locale: Language
         theme: Color Theme
         user_name: User Name
+        user_type: User Type
     models:
+      admin_user:
+        one: Admin User
+      end_user:
+        one: End User
       instructor:
         one: Instructor
       student:

@@ -15,6 +15,7 @@
 - Added a list of courses to manage for new markus administration view (#5907)
 - Added a page in new markus administration view that allows admins to edit the attributes of a course (#5915)
 - Added a page in new markus administration view that allows admins to create a new course (#5917)
+- Added a list of users to manage for new markus administration view (#5918)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
