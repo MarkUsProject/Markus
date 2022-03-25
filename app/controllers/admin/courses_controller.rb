@@ -19,7 +19,7 @@ module Admin
 
     def create
       @course = Course.new
-      @course.update(params.require(:course).permit(:name, :is_hidden, :display_name))
+      @course.update(course_params)
       respond_with @course, location: -> { edit_admin_course_path(@course) }
     end
 
@@ -29,8 +29,19 @@ module Admin
 
     def update
       @course = record
-      @course.update(params.require(:course).permit(:name, :is_hidden, :display_name))
+      @course.update(course_params)
       respond_with @course, location: -> { edit_admin_course_path(@course) }
+    end
+
+    private
+
+    def course_params
+      params.require(:course).permit(:name, :is_hidden, :display_name)
+    end
+
+    def flash_interpolation_options
+      { resource_name: @course.name.presence || @course.model_name.human,
+        errors: @course.errors.full_messages.join('; ') }
     end
   end
 end
