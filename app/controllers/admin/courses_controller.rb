@@ -18,8 +18,7 @@ module Admin
     end
 
     def create
-      @course = Course.new
-      @course.update(course_params)
+      @course = Course.create(course_params)
       respond_with @course, location: -> { admin_courses_path }
     end
 
