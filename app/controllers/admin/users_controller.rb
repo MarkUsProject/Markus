@@ -14,12 +14,12 @@ module Admin
     end
 
     def edit
-      @user = record
+      @user = visible_users.find_by(id: params[:id])
     end
 
     def update
-      @user = record
-      @course.update(user_params)
+      @user = visible_users.find_by(id: params[:id])
+      @user.update(user_params)
       respond_with @user, location: -> { edit_admin_user_path(@user) }
     end
 
@@ -37,7 +37,7 @@ module Admin
     end
 
     def user_params
-      params.permit(:user_name, :email, :id_number, :first_name, :last_name)
+      params.require(:user).permit(:user_name, :email, :id_number, :first_name, :last_name)
     end
   end
 end
