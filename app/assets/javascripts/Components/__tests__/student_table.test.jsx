@@ -2,41 +2,9 @@ import {StudentTable} from "../student_table";
 import {render, screen, within} from "@testing-library/react";
 
 import {mount} from "enzyme";
+
 // Unit test
-describe("For the RawStudentTable component's rendering", () => {
-  beforeEach(() => {
-    render(<StudentTable selection={["c5anthei"]} course_id={1} />);
-  });
-
-  describe("the parent component", () => {
-    it("renders", () => {
-      expect(screen.getByTestId("raw_student_table")).toBeInTheDocument();
-    });
-
-    it("renders a child StudentsActionBox", () => {
-      expect(within(screen.getByTestId("raw_student_table")).getByTestId("student_action_box"))
-        .toBeInTheDocument;
-    });
-
-    it("renders a child CheckboxTable containing the specified headers", () => {
-      [
-        I18n.t("activerecord.attributes.user.user_name"),
-        I18n.t("activerecord.attributes.user.first_name"),
-        I18n.t("activerecord.attributes.user.last_name"),
-        I18n.t("activerecord.attributes.user.email"),
-        I18n.t("activerecord.attributes.user.id_number"),
-        I18n.t("activerecord.models.section", {count: 1}),
-        I18n.t("activerecord.attributes.user.grace_credits"),
-        I18n.t("students.active") + "?",
-        I18n.t("actions"),
-      ].forEach(text => {
-        expect(within(screen.getByTestId("raw_student_table")).getByText(text)).toBeInTheDocument;
-      });
-    });
-  });
-});
-
-describe("For the RawStudentTable component's states and props", () => {
+describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
     let wrapper, form;
     beforeAll(() => {
@@ -140,29 +108,143 @@ describe("For the RawStudentTable component's states and props", () => {
         expect(filter_method({value: "all"})).toEqual(true);
       });
 
-      it("returns true when the selected value is active and inactive is false", () => {
+      it("returns true when the selected value is active (i.e. not hidden) and hidden is false", () => {
         // sample row
-        const sample_row = {inactive: false};
-        expect(filter_method({id: "inactive", value: "active"}, sample_row)).toEqual(true);
+        const sample_row = {hidden: false};
+        expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(true);
       });
 
-      it("returns false when the selected value is active and inactive is true", () => {
+      it("returns false when the selected value is active and hidden is true", () => {
         // sample row
-        const sample_row = {inactive: true};
-        expect(filter_method({id: "inactive", value: "active"}, sample_row)).toEqual(false);
+        const sample_row = {hidden: true};
+        expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(false);
       });
 
-      it("returns true when the selected value is inactive and inactive is true", () => {
+      it("returns true when the selected value is inactive and hidden is true", () => {
         // sample row
-        const sample_row = {inactive: true};
-        expect(filter_method({id: "inactive", value: "inactive"}, sample_row)).toEqual(true);
+        const sample_row = {hidden: true};
+        expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(true);
       });
 
-      it("returns false when the selected value is inactive and inactive is false", () => {
+      it("returns false when the selected value is inactive and hidden is false", () => {
         // sample row
-        const sample_row = {inactive: false};
-        expect(filter_method({id: "inactive", value: "inactive"}, sample_row)).toEqual(false);
+        const sample_row = {hidden: false};
+        expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(false);
       });
+    });
+  });
+});
+
+describe("For the StudentTable component's rendering", () => {
+  beforeEach(() => {
+    render(<StudentTable selection={["c5anthei"]} course_id={1} />);
+  });
+
+  describe("the parent component", () => {
+    it("renders", () => {
+      expect(screen.getByTestId("raw_student_table")).toBeInTheDocument();
+    });
+
+    it("renders a child StudentsActionBox", () => {
+      expect(within(screen.getByTestId("raw_student_table")).getByTestId("student_action_box"))
+        .toBeInTheDocument;
+    });
+
+    it("renders a child CheckboxTable containing the specified headers", () => {
+      [
+        I18n.t("activerecord.attributes.user.user_name"),
+        I18n.t("activerecord.attributes.user.first_name"),
+        I18n.t("activerecord.attributes.user.last_name"),
+        I18n.t("activerecord.attributes.user.email"),
+        I18n.t("activerecord.attributes.user.id_number"),
+        I18n.t("activerecord.models.section", {count: 1}),
+        I18n.t("activerecord.attributes.user.grace_credits"),
+        I18n.t("students.active") + "?",
+        I18n.t("actions"),
+      ].forEach(text => {
+        expect(within(screen.getByTestId("raw_student_table")).getByText(text)).toBeInTheDocument;
+      });
+    });
+  });
+});
+
+describe("For the StudentTable component's display of students", () => {
+  const student_displayed = (wrapper, student) => {
+    return (
+      wrapper.html().includes(student.user_name) &&
+      wrapper.html().includes(student.first_name) &&
+      wrapper.html().includes(student.last_name) &&
+      wrapper.html().includes(student.email) &&
+      wrapper.html().includes(student.id_number) &&
+      wrapper.html().includes(wrapper.instance().wrapped.state.data.sections[student.section]) &&
+      wrapper.html().includes(`${student.remaining_grace_credits} / ${student.grace_credits}`) &&
+      wrapper.html().includes(!student.hidden ? "Active" : "Inactive")
+    );
+  };
+
+  const student_in_one_row = (wrapper, student) => {
+    // Find the row
+    const row = wrapper.find({children: student.first_name}).parent();
+    // Expect the row to contain these information
+    expect(row.children({children: student.last_name})).toBeTruthy();
+    expect(row.children({children: student.email})).toBeTruthy();
+    expect(row.children({children: student.id_number})).toBeTruthy();
+    expect(
+      row.children({children: wrapper.instance().wrapped.state.data.sections[student.section]})
+    ).toBeTruthy();
+    expect(
+      row.children({children: `${student.remaining_grace_credits} / ${student.grace_credits}`})
+    ).toBeTruthy();
+    expect(row.children({children: !student.hidden ? "Active" : "Inactive"})).toBeTruthy();
+  };
+
+  describe("when some students are fetched with non being inactive (i.e. hidden = false)", () => {
+    let wrapper, students_sample;
+    beforeAll(() => {
+      students_sample = [
+        {
+          _id: 9,
+          user_name: "c6scriab",
+          first_name: "Scriabin",
+          last_name: "Alexander",
+          email: "scriabin.alexander@example.com",
+          id_number: "0016430837",
+          hidden: false,
+          section: 1,
+          grace_credits: 5,
+          remaining_grace_credits: 4,
+        },
+        {
+          _id: 10,
+          user_name: "g8butter",
+          first_name: "Butterworth",
+          last_name: "George",
+          email: "butterworth.george@example.com",
+          id_number: "0024019685",
+          hidden: false,
+          section: 1,
+          grace_credits: 5,
+          remaining_grace_credits: 4,
+        },
+      ];
+      $.ajax = jest.fn(() =>
+        Promise.resolve({
+          students: students_sample,
+          sections: {1: "LEC0101"},
+          counts: {all: 2, active: 2, inactive: 0},
+        })
+      );
+      wrapper = mount(<StudentTable selection={[]} course_id={1} />);
+    });
+
+    it("both are displayed", () => {
+      students_sample.forEach(student => expect(student_displayed(wrapper, student)).toEqual(true));
+    });
+
+    it("each student is displayed as a row of the table", () => {
+      // find all rows, then verify each row contains a student
+      wrapper.update();
+      students_sample.forEach(student => student_in_one_row(wrapper, student));
     });
   });
 });
