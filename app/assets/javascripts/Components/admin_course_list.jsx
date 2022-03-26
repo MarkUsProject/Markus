@@ -42,7 +42,7 @@ class AdminCourseList extends React.Component {
       Cell: ({value}) => {
         return (
           <span>
-            <a href="#">{I18n.t("edit")}</a>
+            <a href={Routes.edit_admin_course_path(value)}>{I18n.t("edit")}</a>
             &nbsp;|&nbsp;
             <a href={Routes.course_path(value)}>{I18n.t("view")}</a>
           </span>

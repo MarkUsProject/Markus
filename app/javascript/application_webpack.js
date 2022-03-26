@@ -124,5 +124,7 @@ import {makeNotesTable} from "javascripts/Components/notes_table";
 window.makeNotesTable = makeNotesTable;
 import {makeAdminCourseList} from "javascripts/Components/admin_course_list";
 window.makeAdminCourseList = makeAdminCourseList;
+import {makeAdminUsersList} from "javascripts/Components/admin_users_list";
+window.makeAdminUsersList = makeAdminUsersList;
 import {makeCourseList} from "javascripts/Components/course_list";
 window.makeCourseList = makeCourseList;
