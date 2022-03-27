@@ -1,4 +1,6 @@
 describe Api::AssignmentsController do
+  include AutomatedTestsHelper
+
   let(:course) { create :course }
   let(:assignment) { create :assignment, course: course }
   context 'An unauthenticated request' do
@@ -343,22 +345,20 @@ describe Api::AssignmentsController do
     end
     context 'GET test_specs' do
       let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/json' }
-      context 'when a spec file exists' do
-        let(:content) { '{"a":1}' }
+      context 'when the assignment has test settings' do
+        let(:content) { { 'a' => 1 } }
         before :each do
-          FileUtils.mkdir_p assignment.autotest_path
-          File.write(assignment.autotest_settings_file, content)
+          assignment.update!(autotest_settings: content)
           set_env
           get :test_specs, params: { id: assignment.id, course_id: course.id }
         end
         it 'should get the content of the test spec file' do
-          expect(response.body).to eq content
+          expect(response.body).to eq content.to_json
         end
         it('should be successful') { expect(response.status).to eq 200 }
       end
-      context 'when a spec file does not exists' do
+      context 'when the assignment has no test settings' do
         before :each do
-          FileUtils.rm_f(assignment.autotest_settings_file)
           set_env
           get :test_specs, params: { id: assignment.id, course_id: course.id }
         end
@@ -380,29 +380,27 @@ describe Api::AssignmentsController do
       end
     end
     context 'POST update_test_specs' do
-      before :each do
-        FileUtils.mkdir_p assignment.autotest_path
-        File.write(assignment.autotest_settings_file, '')
-      end
       context 'when the content is nested parameters' do
-        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
+        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys.to_json }
         before :each do
           allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
+          assignment.reload
         end
-        it 'should write the content to the specs file' do
-          expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
+        it 'should update the assignment autotest settings' do
+          expect(autotest_settings_for(assignment)).to eq JSON.parse(content)
         end
         it('should be successful') { expect(response.status).to eq 204 }
       end
       context 'when the content is a json string' do
-        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
+        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys.to_json }
         before :each do
           allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: JSON.dump(content) }
+          assignment.reload
         end
-        it 'should write the content to the specs file' do
-          expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
+        it 'should update the assignment autotest settings' do
+          expect(autotest_settings_for(assignment)).to eq content
         end
         it('should be successful') { expect(response.status).to eq 204 }
       end
@@ -411,8 +409,8 @@ describe Api::AssignmentsController do
         before :each do
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
         end
-        it 'should write the content to the specs file' do
-          expect(File.read(assignment.autotest_settings_file)).to eq ''
+        it 'should not update the assignment autotest settings' do
+          expect(autotest_settings_for(assignment)).to eq({})
         end
         it('should not be successful') { expect(response.status).to eq 422 }
       end

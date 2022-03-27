@@ -10,4 +10,15 @@ class TestGroup < ApplicationRecord
   validates :name, presence: true
   validates :display_output, presence: true
   validate :courses_should_match
+
+  def to_json(*_args)
+    result = self.autotest_settings
+    result['extra_info'] = {
+      'name' => name,
+      'display_output' => display_output,
+      'test_group_id' => id,
+      'criterion' => criterion&.name
+    }
+    result
+  end
 end

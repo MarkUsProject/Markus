@@ -79,7 +79,6 @@ class AutotestSetup
 
     # copy test scripts and specs files into the destination directory
     FileUtils.cp @test_scripts, test_file_destination
-    FileUtils.cp @specs_file, @assignment.autotest_path
   end
 
   def create_marking_scheme
@@ -133,6 +132,9 @@ class AutotestSetup
     @assignment.reload
     Assignment.transaction do
       update_test_groups_from_specs(@assignment, @specs_data)
+
+      # Manually associate one of the test groups with the assignment's criterion
+      @assignment.test_groups.order(:name).first.update(criterion: @assignment.criteria.first)
     end
   end
 end

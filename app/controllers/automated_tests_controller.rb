@@ -103,8 +103,7 @@ class AutomatedTestsController < ApplicationController
     schema_data = JSON.parse(assignment.course.autotest_setting.schema)
     fill_in_schema_data!(schema_data, file_keys, assignment)
 
-    test_specs_path = assignment.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.read(test_specs_path)) : {}
+    test_specs = autotest_settings_for(assignment)
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
     assignment_data['token_start_date'] ||= Time.current
     assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')
@@ -172,18 +171,13 @@ class AutomatedTestsController < ApplicationController
 
   def download_specs
     assignment = Assignment.find(params[:assignment_id])
-    file_path = assignment.autotest_settings_file
-    if File.exist?(file_path)
-      specs = JSON.parse File.read(file_path)
-      specs['testers']&.each do |tester_info|
-        tester_info['test_data']&.each do |test_info|
-          test_info['extra_info']&.delete('test_group_id')
-        end
+    specs = autotest_settings_for(assignment)
+    specs['testers']&.each do |tester_info|
+      tester_info['test_data']&.each do |test_info|
+        test_info['extra_info']&.delete('test_group_id')
       end
-      send_data specs.to_json, filename: TestRun::SPECS_FILE
-    else
-      send_data '{}', filename: TestRun::SPECS_FILE
     end
+    send_data specs.to_json, filename: TestRun::SPECS_FILE
   end
 
   def upload_specs
