@@ -13,6 +13,25 @@ module Admin
       end
     end
 
+    def new
+      @user = User.new
+    end
+
+    def create
+      request_params = params.require(:user)
+      param_user_type = request_params[:type].camelize.downcase
+      request_params.delete(:type)
+      case param_user_type
+      when 'enduser'
+        @user = EndUser.create(request_params.permit(*DEFAULT_FIELDS))
+      when 'adminuser'
+        @user = AdminUser.create(request_params.permit(*DEFAULT_FIELDS))
+      else
+        @user = nil
+      end
+      respond_with @user, location: -> { admin_users_path }
+    end
+
     def edit
       @user = visible_users.find_by(id: params[:id])
     end
