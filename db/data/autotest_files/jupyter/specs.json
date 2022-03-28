@@ -17,7 +17,7 @@
             "instructor"
           ],
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "Python Test Group"
           }
         }
@@ -43,7 +43,7 @@
             "instructor"
           ],
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "Jupyter Test Group"
           }
         }

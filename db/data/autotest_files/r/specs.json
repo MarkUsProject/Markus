@@ -15,7 +15,7 @@
           ],
           "extra_info":
           {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "R Test Group",
             "display_output": "instructors"
           },

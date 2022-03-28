@@ -10,6 +10,21 @@ describe Admin::CoursesController do
         end
       end
 
+      describe '#new' do
+        it 'responds with 403' do
+          get_as user, :new
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      describe '#create' do
+        it 'responds with 403' do
+          post_as user, :create,
+                  params: { course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: true } }
+          expect(response).to have_http_status(403)
+        end
+      end
+
       describe '#edit' do
         it 'responds with 403' do
           get_as user, :edit, params: { id: course.id }
@@ -81,6 +96,40 @@ describe Admin::CoursesController do
           ]
           expect(received_data).to match_array(expected_data)
         end
+      end
+    end
+
+    describe '#new' do
+      it 'responds with 200' do
+        get_as admin, :new
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    describe '#create' do
+      it 'responds with 302' do
+        post_as admin, :create, params: { course: { name: 'CSC207', display_name: 'Software Design', is_hidden: true } }
+        expect(response).to have_http_status(302)
+      end
+      it 'creates the course' do
+        post_as admin, :create, params: { course: { name: 'CSC207', display_name: 'Software Design', is_hidden: true } }
+        created_course = Course.find_by(name: 'CSC207')
+        expected_course_data = {
+          name: 'CSC207',
+          display_name: 'Software Design',
+          is_hidden: true
+        }
+        created_course_data = {
+          name: created_course.name,
+          display_name: created_course.display_name,
+          is_hidden: created_course.is_hidden
+        }
+        expect(created_course_data).to eq(expected_course_data)
+      end
+      it 'does not update when parameters are invalid' do
+        post_as admin, :create, params: { course: { name: 'CSC207', display_name: nil, is_hidden: true } }
+        created_course = Course.find_by(name: 'CSC207')
+        expect(created_course).to be_nil
       end
     end
 

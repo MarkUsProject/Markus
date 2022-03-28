@@ -11,7 +11,7 @@ en:
     need_group_for_test: You must have a group to run tests.
     need_one_file: You must submit at least one file in order to run tests.
     need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.
-    no_criteria: Unable to find a criterion of type "%{type}" and name "%{name}".
+    no_criteria: Unable to find a criterion with name "%{name}".
     no_results: No test results to display
     results:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"

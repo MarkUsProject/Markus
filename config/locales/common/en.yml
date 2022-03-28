@@ -13,6 +13,7 @@ en:
   encoding: Encoding
   file: File
   filter_by: Filter by %{name}
+  forbidden: Forbidden
   help: Help
   markus: MarkUs
   not_applicable: N/A

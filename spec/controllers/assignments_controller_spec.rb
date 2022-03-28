@@ -1,4 +1,6 @@
 describe AssignmentsController do
+  include AutomatedTestsHelper
+
   # TODO: add 'role is from a different course' shared tests to each route test below
 
   let(:annotation_category) { FactoryBot.create(:annotation_category) }
@@ -1283,7 +1285,8 @@ describe AssignmentsController do
 
   describe '#download_config_files' do
     let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
-    let!(:criteria) { create :checkbox_criterion, assignment: assignment }
+    # criterion name matches automated-test-specs.json
+    let!(:criteria) { create :checkbox_criterion, assignment: assignment, name: 'Optimal' }
     let!(:annotation) { create :annotation_category, assignment: assignment }
     let!(:starter_files) { create :starter_file_group_with_entries, assignment: assignment }
     subject { get_as user, :download_config_files, params: { id: assignment.id, course_id: assignment.course.id } }
@@ -1295,7 +1298,6 @@ describe AssignmentsController do
     after :each do
       # Clear uploaded autotest files to prepare for next test
       FileUtils.rm_rf(assignment.autotest_files_dir)
-      FileUtils.rm_f(assignment.autotest_settings_file)
     end
 
     shared_examples 'download sample config files' do
@@ -1358,7 +1360,7 @@ describe AssignmentsController do
           expected_settings = {
             is_a_hash: true,
             tester_type: 'py',
-            assoc_criterion: "#{criteria.type}:#{criteria.name}"
+            assoc_criterion: criteria.name
           }
           expect(received_settings).to eq(expected_settings)
         end
@@ -1478,7 +1480,6 @@ describe AssignmentsController do
       # Clear uploaded autotest files to prepare for next test
       unless uploaded_assignment.nil?
         FileUtils.rm_rf(uploaded_assignment.autotest_files_dir)
-        FileUtils.rm_f(uploaded_assignment.autotest_settings_file)
       end
     end
 
@@ -1603,7 +1604,7 @@ describe AssignmentsController do
       it 'properly uploads all the automated test files for an assignment' do
         subject
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-        spec_data = JSON.parse File.read(uploaded_assignment.autotest_settings_file)
+        spec_data = autotest_settings_for(uploaded_assignment)
         received_automated_test_data = {
           num_test_groups: spec_data['testers'].length,
           num_test_data: spec_data['testers'][0]['test_data'].length,
@@ -1718,9 +1719,11 @@ describe AssignmentsController do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
         received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id',
-                                                         'autotest_settings_id', 'starter_file_updated_at')
+                                                         'remote_autotest_settings_id', 'autotest_settings',
+                                                         'starter_file_updated_at')
         expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id',
-                                                           'autotest_settings_id', 'starter_file_updated_at')
+                                                           'remote_autotest_settings_id', 'autotest_settings',
+                                                           'starter_file_updated_at')
         expect(received).to eq(expected)
       end
 
@@ -1821,7 +1824,6 @@ describe AssignmentsController do
       after :each do
         # Clear uploaded autotest files to prepare for next test
         FileUtils.rm_rf(assignment.autotest_files_dir)
-        FileUtils.rm_f(assignment.autotest_settings_file)
       end
 
       include_examples 'assignment content is copied over'
@@ -1851,21 +1853,21 @@ describe AssignmentsController do
 
       it 'copies over automated tests' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        uploaded_criteria = uploaded_assignment.criteria.find_by(name: criteria.name)
+        uploaded_criterion = uploaded_assignment.criteria.find_by(name: criteria.name)
         uploaded_test_groups = uploaded_assignment.test_groups
         received_automated_test_data = {
           uploaded_a_test_group: uploaded_test_groups.count == 1,
-          spec_file: JSON.parse(File.read(uploaded_assignment.autotest_settings_file)),
+          spec_file: autotest_settings_for(uploaded_assignment),
           autotest_files: uploaded_assignment.autotest_files.to_set
         }
-        sample_spec_file = create_sample_spec_file(uploaded_criteria)
+        sample_spec_file = create_sample_spec_file(uploaded_criterion)
         sample_spec_file['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = uploaded_test_groups.first.id
         expected_automated_test_data = {
           uploaded_a_test_group: true,
           spec_file: sample_spec_file,
           autotest_files: ['tests.py', 'Helpers', File.join('Helpers', 'test_helpers.py')].to_set
         }
-        expect(received_automated_test_data).to eq(expected_automated_test_data)
+        expect(received_automated_test_data).to match(expected_automated_test_data)
       end
     end
 
@@ -1903,9 +1905,7 @@ describe AssignmentsController do
       after :each do
         # Clear uploaded autotest files to prepare for next test
         FileUtils.rm_rf(parent_assignment.autotest_files_dir)
-        FileUtils.rm_f(parent_assignment.autotest_settings_file)
         FileUtils.rm_rf(assignment.autotest_files_dir)
-        FileUtils.rm_f(assignment.autotest_settings_file)
       end
 
       it 'has a peer review assignment copied' do

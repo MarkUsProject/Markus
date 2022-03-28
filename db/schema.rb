@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_02_06_065135) do
+ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -135,9 +135,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_02_06_065135) do
     t.string "starter_file_type", default: "simple", null: false
     t.datetime "starter_file_updated_at", precision: nil
     t.bigint "default_starter_file_group_id"
-    t.integer "autotest_settings_id"
+    t.integer "remote_autotest_settings_id"
     t.boolean "starter_files_after_due", default: true, null: false
     t.boolean "url_submit", default: false, null: false
+    t.json "autotest_settings"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
@@ -599,6 +600,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_02_06_065135) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "assessment_id", null: false
+    t.json "autotest_settings", default: {}, null: false
     t.index ["assessment_id"], name: "index_test_groups_on_assessment_id"
     t.index ["criterion_id"], name: "index_test_groups_on_criterion_id"
   end
