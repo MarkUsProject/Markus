@@ -1,4 +1,5 @@
-<%= form_with model: [:admin, @user.becomes(User)],
+<%= form_with model: [:admin, @user],
+              url: form_url,
               local: true do |f| %>
   <div class="inline-labels">
     <%= f.label :user_name,

@@ -19,7 +19,11 @@ module Admin
 
     def update
       @user = visible_users.find_by(id: params[:id])
-      @user.update(user_params)
+      if @user.admin_user?
+        @user.update(admin_user_params)
+      else
+        @user.update(end_user_params)
+      end
       respond_with @user, location: -> { edit_admin_user_path(@user) }
     end
 
@@ -36,8 +40,12 @@ module Admin
       User.where.not(type: :AutotestUser)
     end
 
-    def user_params
-      params.require(:user).permit(:user_name, :email, :id_number, :first_name, :last_name)
+    def end_user_params
+      params.require(:end_user).permit(:user_name, :email, :id_number, :first_name, :last_name)
+    end
+
+    def admin_user_params
+      params.require(:admin_user).permit(:user_name, :email, :id_number, :first_name, :last_name)
     end
 
     def flash_interpolation_options

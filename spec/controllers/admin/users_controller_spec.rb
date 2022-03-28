@@ -10,7 +10,7 @@ describe Admin::UsersController do
 
       describe '#edit' do
         it 'responds with 403' do
-          get_as user, :edit, params: { id: user.id }
+          get_as user, :edit, params: { id: user.end_user.id }
           expect(response).to have_http_status(403)
         end
       end
@@ -18,8 +18,8 @@ describe Admin::UsersController do
       describe '#update' do
         let(:params) do
           {
-            id: user.id,
-            user: {
+            id: user.end_user.id,
+            end_user: {
               user_name: 'Professor X',
               email: 'sample@sample.com',
               id_number: 100_678_901,
@@ -37,17 +37,17 @@ describe Admin::UsersController do
     end
 
     context 'Instructor' do
-      let(:user) { create(:instructor).end_user }
+      let(:user) { create(:instructor) }
       include_examples 'cannot access user admin routes'
     end
 
     context 'TA' do
-      let(:user) { create(:ta).end_user }
+      let(:user) { create(:ta) }
       include_examples 'cannot access user admin routes'
     end
 
     context 'Student' do
-      let(:user) { create(:student).end_user }
+      let(:user) { create(:student) }
       include_examples 'cannot access user admin routes'
     end
   end
@@ -109,7 +109,7 @@ describe Admin::UsersController do
       let(:params) do
         {
           id: user.id,
-          user: {
+          end_user: {
             user_name: 'Spiderman',
             email: 'sample@sample.com',
             id_number: 1_122_018,
@@ -122,7 +122,7 @@ describe Admin::UsersController do
       let(:invalid_params) do
         {
           id: user.id,
-          user: {
+          end_user: {
             user_name: nil,
             email: 'sample@sample.com',
             id_number: 100_678_901,
