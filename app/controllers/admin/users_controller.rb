@@ -39,5 +39,10 @@ module Admin
     def user_params
       params.require(:user).permit(:user_name, :email, :id_number, :first_name, :last_name)
     end
+
+    def flash_interpolation_options
+      { resource_name: @user.user_name.presence || @user.model_name.human,
+        errors: @user.errors.full_messages.join('; ') }
+    end
   end
 end
