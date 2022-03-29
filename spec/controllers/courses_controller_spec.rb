@@ -165,6 +165,50 @@ describe CoursesController do
       get_as instructor, :show, params: { id: course }
       expect(response.status).to eq(200)
     end
+    it 'responds with success on edit' do
+      get_as instructor, :edit, params: { id: course }
+      expect(response).to have_http_status(200)
+    end
+
+    context 'updating course visibility' do
+      it 'responds with success on update' do
+        put_as instructor, :update,
+               params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+        expect(response).to have_http_status(302)
+      end
+      it 'successfully updates when parameters are valid' do
+        put_as instructor, :update,
+               params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+        updated_course = Course.find(course.id)
+        expected_course_data = {
+          name: course.name,
+          display_name: course.display_name,
+          is_hidden: false
+        }
+        updated_course_data = {
+          name: updated_course.name,
+          display_name: updated_course.display_name,
+          is_hidden: updated_course.is_hidden
+        }
+        expect(updated_course_data).to eq(expected_course_data)
+      end
+      it 'fails to update when parameters are invalid' do
+        expected_course_data = {
+          name: course.name,
+          display_name: course.display_name,
+          is_hidden: course.is_hidden
+        }
+        put_as instructor, :update,
+               params: { id: course.id, course: { name: 'CS101', is_hidden: 0 } }
+        updated_course = Course.find(course.id)
+        updated_course_data = {
+          name: updated_course.name,
+          display_name: updated_course.display_name,
+          is_hidden: updated_course.is_hidden
+        }
+        expect(updated_course_data).to eq(expected_course_data)
+      end
+    end
   end
   context '#upload_assignments' do
     include_examples 'a controller supporting upload', route_name: :upload_assignments do
