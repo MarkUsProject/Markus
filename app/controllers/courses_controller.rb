@@ -24,7 +24,10 @@ class CoursesController < ApplicationController
 
   def edit; end
 
-  def update; end
+  def update
+    @current_course.update(params.require(:course).permit(:is_hidden))
+    respond_with @current_course, location: -> { course_path(@current_course) }
+  end
 
   def show
     @assignments = @current_course.assignments

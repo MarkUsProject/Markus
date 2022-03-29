@@ -1,5 +1,6 @@
 <% content_for :title, "#{t(:edit)} #{Course.model_name.human}: #{@current_course.name}" %>
 <%= form_with model: @current_course,
+              method: :patch,
               local: true do |f| %>
   <div class="inline-labels">
     <%= f.label :name,
