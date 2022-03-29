@@ -22,6 +22,10 @@ class CoursesController < ApplicationController
     end
   end
 
+  def edit; end
+
+  def update; end
+
   def show
     @assignments = @current_course.assignments
     @grade_entry_forms = @current_course.grade_entry_forms
