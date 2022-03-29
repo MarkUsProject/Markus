@@ -26,7 +26,7 @@ class CoursesController < ApplicationController
 
   def update
     @current_course.update(params.require(:course).permit(:is_hidden))
-    respond_with @current_course, location: -> { course_path(@current_course) }
+    respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
 
   def show
@@ -164,5 +164,10 @@ class CoursesController < ApplicationController
 
   def course_params
     params.require(:course).permit(:name, :is_hidden)
+  end
+
+  def flash_interpolation_options
+    { resource_name: @current_course.name.presence || @current_course.model_name.human,
+      errors: @current_course.errors.full_messages.join('; ') }
   end
 end

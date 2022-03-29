@@ -9,7 +9,7 @@
   <% if !is_admin_route && @current_course %>
 
     <% if @current_role.instructor? %>
-      <li class='<%= "active" if controller.controller_name == 'courses' %>'>
+      <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'show' %>'>
         <%= link_to t('menu.dashboard'), course_path(@current_course) %>
       </li>
 
@@ -82,6 +82,10 @@
             class='active'
           <% end %>>
         <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
+      </li>
+
+      <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'edit' %>'>
+        <%= link_to 'Course Settings', edit_course_path(@current_course) %>
       </li>
     <% end %>
   <% end %>
