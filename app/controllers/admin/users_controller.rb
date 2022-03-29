@@ -18,17 +18,8 @@ module Admin
     end
 
     def create
-      request_params = params.require(:user)
-      param_user_type = request_params[:type].camelize.downcase
-      request_params.delete(:type)
-      case param_user_type
-      when 'enduser'
-        @user = EndUser.create(request_params.permit(*DEFAULT_FIELDS))
-      when 'adminuser'
-        @user = AdminUser.create(request_params.permit(*DEFAULT_FIELDS))
-      else
-        @user = nil
-      end
+      user_params = params.require(:user)
+      @user = User.create(user_params.permit(*DEFAULT_FIELDS))
       respond_with @user, location: -> { admin_users_path }
     end
 
