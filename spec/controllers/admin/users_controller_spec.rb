@@ -8,6 +8,32 @@ describe Admin::UsersController do
         end
       end
 
+      describe '#new' do
+        it 'responds with 403' do
+          get_as user, :new
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      describe '#create' do
+        let(:params) do
+          {
+            user: {
+              user_name: 'Professor X',
+              email: 'sample@sample.com',
+              id_number: 100_678_901,
+              type: 'EndUser',
+              first_name: 'Charles',
+              last_name: 'Xavier'
+            }
+          }
+        end
+        it 'responds with 403' do
+          put_as user, :create, params: params
+          expect(response).to have_http_status(403)
+        end
+      end
+
       describe '#edit' do
         it 'responds with 403' do
           get_as user, :edit, params: { id: user.end_user.id }
@@ -95,6 +121,70 @@ describe Admin::UsersController do
           received_data = JSON.parse(response.body).map(&:symbolize_keys)
           expect(received_data).to match_array(expected_data)
         end
+      end
+    end
+
+    describe '#new' do
+      it 'responds with 200' do
+        get_as admin, :new
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    describe '#create' do
+      let(:params) do
+        {
+          user: {
+            user_name: 'Spiderman',
+            email: 'sample@sample.com',
+            id_number: 1_122_018,
+            type: 'EndUser',
+            first_name: 'Miles',
+            last_name: 'Morales'
+          }
+        }
+      end
+      let(:invalid_params) do
+        {
+          user: {
+            user_name: '.',
+            email: 'sample@sample.com',
+            id_number: 100_678_901,
+            type: 'Not a real type',
+            first_name: nil,
+            last_name: ''
+          }
+        }
+      end
+      it 'responds with 302' do
+        put_as admin, :create, params: params
+        expect(response).to have_http_status(302)
+      end
+      it 'creates the user when information is valid' do
+        put_as admin, :create, params: params
+        created_user = User.find_by(user_name: 'Spiderman')
+        expected_user_data = {
+          user_name: 'Spiderman',
+          email: 'sample@sample.com',
+          id_number: '1122018',
+          type: 'EndUser',
+          first_name: 'Miles',
+          last_name: 'Morales'
+        }
+        created_user_data = {
+          user_name: created_user.user_name,
+          email: created_user.email,
+          id_number: created_user.id_number,
+          type: created_user.type,
+          first_name: created_user.first_name,
+          last_name: created_user.last_name
+        }
+        expect(expected_user_data).to eq(created_user_data)
+      end
+      it 'does not create the user when information is invalid' do
+        put_as admin, :create, params: invalid_params
+        created_user = User.find_by(user_name: '.')
+        expect(created_user).to be_nil
       end
     end
 
