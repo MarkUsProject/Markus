@@ -41,7 +41,7 @@ class AdminCourseList extends React.Component {
       accessor: "is_hidden",
       minWidth: 70,
       Cell: ({value}) => {
-        return value ? "Hidden" : "Visible";
+        return value ? I18n.t("courses.hidden") : I18n.t("courses.visible");
       },
       filterMethod: (filter, row) => {
         if (filter.value === "all") {
@@ -53,11 +53,11 @@ class AdminCourseList extends React.Component {
       Filter: selectFilter,
       filterOptions: [
         {
-          text: "Hidden",
+          text: I18n.t("courses.hidden"),
           value: true,
         },
         {
-          text: "Visible",
+          text: I18n.t("courses.visible"),
           value: false,
         },
       ],
@@ -71,7 +71,7 @@ class AdminCourseList extends React.Component {
           <span>
             <a href={Routes.edit_admin_course_path(value)}>{I18n.t("edit")}</a>
             &nbsp;|&nbsp;
-            <a href={Routes.course_path(value)}>{I18n.t("view")}</a>
+            <a href={Routes.course_path(value)}>{I18n.t("courses.view")}</a>
           </span>
         );
       },
