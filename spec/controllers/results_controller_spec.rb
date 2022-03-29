@@ -883,6 +883,56 @@ describe ResultsController do
         end
       end
     end
+
+    context 'when a remark request exists' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:complete_result) do
+        result = assignment.groupings.first.current_result
+        result.update!(marking_state: Result::MARKING_STATES[:complete])
+        result
+      end
+      let(:remarked_result) do
+        complete_result.submission.make_remark_result
+        complete_result.submission.update(remark_request_timestamp: Time.current)
+        complete_result.submission.remark_result
+      end
+      let(:params) { { course_id: course.id, id: remarked_result.id, format: :json } }
+
+      it 'includes the original result\'s mark data for every assignment criterion' do
+        get :show, params: params, xhr: true
+
+        old_marks = response.parsed_body['old_marks']
+        expect(old_marks.keys).to match_array assignment.ta_criteria.ids.map(&:to_s)
+
+        expect(old_marks.transform_values { |v| v['mark'] })
+          .to eq(complete_result.marks.to_h { |m| [m.criterion_id.to_s, m.mark] })
+      end
+
+      context 'when no marks have been overridden' do
+        it 'includes the override values for each mark of the original result' do
+          get :show, params: params, xhr: true
+
+          old_marks = response.parsed_body['old_marks']
+          expect(old_marks.values.pluck('override')).to match_array([false])
+        end
+      end
+
+      context 'when a mark has been overridden' do
+        let(:complete_result) do
+          result = assignment.groupings.first.current_result
+          result.marks.first.update!(mark: 0, override: true)
+          result.update!(marking_state: Result::MARKING_STATES[:complete])
+          result
+        end
+
+        it 'includes the override values for each mark of the original result' do
+          get :show, params: params, xhr: true
+
+          old_marks = response.parsed_body['old_marks']
+          expect(old_marks.values.pluck('override')).to match_array([true])
+        end
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }

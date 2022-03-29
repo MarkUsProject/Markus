@@ -24,14 +24,20 @@ class Mark < ApplicationRecord
 
   validate :assignments_should_match
 
+  # Calculate the deduction for this mark. If the mark belongs to a remark result and no deductive
+  # annotations for this mark have been applied to the result, then the deductive annotations of
+  # the original result are used to calculate the mark.
   def calculate_deduction
     return 0 if self.override? || self.criterion.type != 'FlexibleCriterion'
 
-    self.result
-        .annotations
-        .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
-        .where('criteria.id': self.criterion_id)
-        .sum(:deduction)
+    result = self.result
+    if result.id == result.submission.remark_result&.id && self.deductive_annotations_absent?
+      result = result.submission.get_original_result
+    end
+    result.annotations
+          .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+          .where('criteria.id': self.criterion_id)
+          .sum(:deduction)
   end
 
   def deductive_annotations_absent?
