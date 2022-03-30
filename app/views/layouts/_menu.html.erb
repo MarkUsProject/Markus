@@ -85,7 +85,7 @@
       </li>
 
       <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'edit' %>'>
-        <%= link_to 'Course Settings', edit_course_path(@current_course) %>
+        <%= link_to t('courses.settings'), edit_course_path(@current_course) %>
       </li>
     <% end %>
   <% end %>
