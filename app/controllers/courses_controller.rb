@@ -22,7 +22,10 @@ class CoursesController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    # Dummy action used to load the edit page for a course
+    # Please keep
+  end
 
   def update
     @current_course.update(params.require(:course).permit(:is_hidden))
