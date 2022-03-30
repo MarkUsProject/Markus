@@ -199,7 +199,7 @@ describe CoursesController do
           is_hidden: course.is_hidden
         }
         put_as instructor, :update,
-               params: { id: course.id, course: { name: 'CS101', is_hidden: 0 } }
+               params: { id: course.id, course: { name: 'CS101', is_hidden: nil } }
         updated_course = Course.find(course.id)
         updated_course_data = {
           name: updated_course.name,
