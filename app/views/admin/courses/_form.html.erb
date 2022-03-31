@@ -17,9 +17,9 @@
                      readonly: !@current_user.admin_user? %>
     <%= f.label :is_hidden, Course.human_attribute_name(:is_hidden) %>
     <span>
-      <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
+      <%= f.label :is_hidden, I18n.t('courses.hidden'), value: 'true' %>
       <%= f.radio_button :is_hidden, true %>
-      <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible'),  value: 'false' %>
+      <%= f.label :is_hidden, I18n.t('courses.visible'),  value: 'false' %>
       <%= f.radio_button :is_hidden, false %>
     </span>
   </div>
