@@ -49,6 +49,7 @@
   "scripts": {
     "build": "webpack --progress --config webpack.production.js",
     "build-dev": "webpack --progress --config webpack.development.js",
-    "test": "jest --no-cache"
+    "test": "jest --no-cache",
+    "test-cov": "jest --no-cache --collect-coverage"
   }
 }
