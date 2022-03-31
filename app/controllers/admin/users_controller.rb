@@ -14,12 +14,12 @@ module Admin
     end
 
     def edit
-      @user = visible_users.find_by(id: params[:id])
+      @user = record
     end
 
     def update
-      @user = visible_users.find_by(id: params[:id])
-      user_params = @user.admin_user? ? params.require(:admin_user) : params.require(:end_user)
+      @user = record
+      user_params = params.require(@user.model_name.to_s.underscore)
       @user.update(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
       respond_with @user, location: -> { edit_admin_user_path(@user) }
     end
