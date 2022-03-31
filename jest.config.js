@@ -1,5 +1,5 @@
 /*
- * For a detailed explanation regarding each configuration property, visit:
+ * Jest configurations, referenced by Jest automatically
  * https://jestjs.io/docs/configuration
  */
 

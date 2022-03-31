@@ -1,9 +1,12 @@
+/*
+ * Tests for the StudentTable component
+ */
+
 import {StudentTable} from "../student_table";
 import {render, screen, within} from "@testing-library/react";
 
 import {mount} from "enzyme";
 
-// Unit test
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
     let wrapper, form;
@@ -219,6 +222,7 @@ describe("For the StudentTable's display of students", () => {
           remaining_grace_credits: 4,
         },
       ];
+      // Mocking the response returned by $.ajax, used in StudentTable fetchData
       $.ajax = jest.fn(() =>
         Promise.resolve({
           students: students_sample,
@@ -230,7 +234,6 @@ describe("For the StudentTable's display of students", () => {
     });
 
     it("each student is displayed as a row of the table", () => {
-      // Find all rows, then verify each row contains a student
       students_sample.forEach(student => student_in_one_row(wrapper, student));
     });
   });
@@ -238,6 +241,7 @@ describe("For the StudentTable's display of students", () => {
   describe("when no students are fetched", () => {
     beforeAll(() => {
       students_sample = [];
+      // Mocking the response returned by $.ajax, used in StudentTable fetchData
       $.ajax = jest.fn(() =>
         Promise.resolve({
           students: students_sample,

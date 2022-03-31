@@ -1,3 +1,8 @@
+/*
+ * Used for global imports before each test file is run (but after the Jest Environment is set up)
+ * https://jestjs.io/docs/configuration#setupfilesafterenv-array
+ */
+
 // React
 import React from "react";
 global.React = React;

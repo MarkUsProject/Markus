@@ -1,7 +1,10 @@
+/*
+ * Tests for the StudentsActionBox component
+ */
+
 import {StudentsActionBox} from "../student_table";
 import {render, screen, within, fireEvent} from "@testing-library/react";
 
-//Unit test
 describe("For the StudentsActionBox component's non-conditional rendering", () => {
   beforeEach(() => {
     render(<StudentsActionBox />);

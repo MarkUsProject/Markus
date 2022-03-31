@@ -40,6 +40,7 @@ class RawStudentTable extends React.Component {
   /* Called when an action is run */
   onSubmit = event => {
     event.preventDefault();
+
     const data = {
       student_ids: this.props.selection,
       bulk_action: this.actionBox.state.action,
@@ -54,8 +55,10 @@ class RawStudentTable extends React.Component {
       data: data,
     }).then(this.fetchData);
   };
+
   render() {
     const {data, loading} = this.state;
+
     return (
       <div data-testid={"raw_student_table"}>
         <StudentsActionBox
@@ -238,9 +241,7 @@ class StudentsActionBox extends React.Component {
             onChange={this.inputChanged}
             data-testid={"student_action_box_update_section"}
           >
-            {section_options ? section_options : <option value="" />}
-            {/*<option value=""/>*/}
-            {/*{section_options}*/}
+            {section_options}
           </select>
         );
       } else {

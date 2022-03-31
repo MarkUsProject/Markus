@@ -1,3 +1,8 @@
+/*
+ * Used to setup the Jest environment
+ * https://jestjs.io/docs/configuration#setupfiles-array
+ */
+
 // jquery
 import $ from "jquery";
 window.$ = window.jQuery = global.jQuery = global.$ = $;
