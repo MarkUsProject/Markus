@@ -48,17 +48,17 @@ describe("For the StudentTable component's states and props", () => {
       });
 
       it("returns true when the row's section index equals to the selected value", () => {
-        // sets data.sections
+        // Sets data.sections
         wrapper.instance().wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
-        // sample row
+        // Sample row
         const sample_row = {section: 1};
         expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(true);
       });
 
       it("returns false when the row's section index doesn't equal to the selected value", () => {
-        // sets data.sections
+        // Sets data.sections
         wrapper.instance().wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
-        // sample row
+        // Sample row
         const sample_row = {section: 2};
         expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(false);
       });
@@ -109,25 +109,25 @@ describe("For the StudentTable component's states and props", () => {
       });
 
       it("returns true when the selected value is active (i.e. not hidden) and hidden is false", () => {
-        // sample row
+        // Sample row
         const sample_row = {hidden: false};
         expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(true);
       });
 
       it("returns false when the selected value is active and hidden is true", () => {
-        // sample row
+        // Sample row
         const sample_row = {hidden: true};
         expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(false);
       });
 
       it("returns true when the selected value is inactive and hidden is true", () => {
-        // sample row
+        // Sample row
         const sample_row = {hidden: true};
         expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(true);
       });
 
       it("returns false when the selected value is inactive and hidden is false", () => {
-        // sample row
+        // Sample row
         const sample_row = {hidden: false};
         expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(false);
       });
@@ -168,38 +168,30 @@ describe("For the StudentTable component's rendering", () => {
   });
 });
 
-describe("For the StudentTable component's display of students", () => {
-  const student_displayed = (wrapper, student) => {
-    return (
-      wrapper.html().includes(student.user_name) &&
-      wrapper.html().includes(student.first_name) &&
-      wrapper.html().includes(student.last_name) &&
-      wrapper.html().includes(student.email) &&
-      wrapper.html().includes(student.id_number) &&
-      wrapper.html().includes(wrapper.instance().wrapped.state.data.sections[student.section]) &&
-      wrapper.html().includes(`${student.remaining_grace_credits} / ${student.grace_credits}`) &&
-      wrapper.html().includes(!student.hidden ? "Active" : "Inactive")
-    );
-  };
+describe("For the StudentTable's display of students", () => {
+  let wrapper, students_sample;
 
-  const student_in_one_row = (wrapper, student) => {
-    // Find the row
-    const row = wrapper.find({children: student.first_name}).parent();
-    // Expect the row to contain these information
-    expect(row.children({children: student.last_name})).toBeTruthy();
-    expect(row.children({children: student.email})).toBeTruthy();
-    expect(row.children({children: student.id_number})).toBeTruthy();
-    expect(
-      row.children({children: wrapper.instance().wrapped.state.data.sections[student.section]})
-    ).toBeTruthy();
-    expect(
-      row.children({children: `${student.remaining_grace_credits} / ${student.grace_credits}`})
-    ).toBeTruthy();
-    expect(row.children({children: !student.hidden ? "Active" : "Inactive"})).toBeTruthy();
-  };
+  describe("when some students are fetched", () => {
+    const student_in_one_row = (wrapper, student) => {
+      // Find the row
+      const row = wrapper.find({children: student.first_name}).parent();
+      // Expect the row to contain these information
+      expect(row.children({children: student.last_name})).toBeTruthy();
+      expect(row.children({children: student.email})).toBeTruthy();
+      expect(row.children({children: student.id_number})).toBeTruthy();
+      expect(
+        row.children({
+          children: student.section
+            ? wrapper.instance().wrapped.state.data.sections[student.section]
+            : "",
+        })
+      ).toBeTruthy();
+      expect(
+        row.children({children: `${student.remaining_grace_credits} / ${student.grace_credits}`})
+      ).toBeTruthy();
+      expect(row.children({children: !student.hidden ? "Active" : "Inactive"})).toBeTruthy();
+    };
 
-  describe("when some students are fetched with non being inactive (i.e. hidden = false)", () => {
-    let wrapper, students_sample;
     beforeAll(() => {
       students_sample = [
         {
@@ -222,7 +214,7 @@ describe("For the StudentTable component's display of students", () => {
           email: "butterworth.george@example.com",
           id_number: "0024019685",
           hidden: false,
-          section: 1,
+          section: null,
           grace_credits: 5,
           remaining_grace_credits: 4,
         },
@@ -237,14 +229,27 @@ describe("For the StudentTable component's display of students", () => {
       wrapper = mount(<StudentTable selection={[]} course_id={1} />);
     });
 
-    it("both are displayed", () => {
-      students_sample.forEach(student => expect(student_displayed(wrapper, student)).toEqual(true));
+    it("each student is displayed as a row of the table", () => {
+      // Find all rows, then verify each row contains a student
+      students_sample.forEach(student => student_in_one_row(wrapper, student));
+    });
+  });
+
+  describe("when no students are fetched", () => {
+    beforeAll(() => {
+      students_sample = [];
+      $.ajax = jest.fn(() =>
+        Promise.resolve({
+          students: students_sample,
+          sections: {},
+          counts: {all: 0, active: 0, inactive: 0},
+        })
+      );
+      wrapper = mount(<StudentTable selection={[]} course_id={1} />);
     });
 
-    it("each student is displayed as a row of the table", () => {
-      // find all rows, then verify each row contains a student
-      wrapper.update();
-      students_sample.forEach(student => student_in_one_row(wrapper, student));
+    it("No rows found is shown", () => {
+      expect(wrapper.find({children: "No rows found"})).toBeTruthy();
     });
   });
 });

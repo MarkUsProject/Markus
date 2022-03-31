@@ -1,7 +1,6 @@
 /* Wrapper around react-table's CheckboxTable component.
  */
 import React from "react";
-import {render} from "react-dom";
 
 import ReactTable from "react-table";
 import checkboxHOC from "react-table/lib/hoc/selectTable";
