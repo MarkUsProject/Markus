@@ -17,6 +17,7 @@
 - Added a page in new markus administration view that allows admins to create a new course (#5917)
 - Added a list of users to manage for new markus administration view (#5918)
 - Added Resque monitoring views for admin users (#5919)
+- Added a page in new markus administration view that allows admins to edit user information (#5921)
 - Added course visibility status to admin courses list (#5924)
 - Added ability for instructors to edit course visibility (#5925)
 
