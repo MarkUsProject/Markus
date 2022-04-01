@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@babel/runtime": "^7.17.2",
+    "@babel/runtime": "^7.17.8",
     "@rails/ujs": "^7.0.2",
     "@rjsf/core": "^4.0.1",
     "chart.js": "^3.7.1",
