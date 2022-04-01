@@ -1,4 +1,5 @@
-<%= form_with model: @course.nil? ? @current_course : [:admin, @course],
+<%= form_with model: @current_course,
+              url: form_url,
               local: true do |f| %>
   <div class="inline-labels">
     <%= f.label :name,
