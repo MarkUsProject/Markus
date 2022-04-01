@@ -13,6 +13,17 @@ module Admin
       end
     end
 
+    def edit
+      @user = record
+    end
+
+    def update
+      @user = record
+      user_params = params.require(@user.model_name.to_s.underscore)
+      @user.update(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
+      respond_with @user, location: -> { edit_admin_user_path(@user) }
+    end
+
     protected
 
     def implicit_authorization_target
@@ -24,6 +35,11 @@ module Admin
     # Do not make AutotestUser users visible
     def visible_users
       User.where.not(type: :AutotestUser)
+    end
+
+    def flash_interpolation_options
+      { resource_name: @user.user_name.presence || @user.model_name.human,
+        errors: @user.errors.full_messages.join('; ') }
     end
   end
 end

@@ -1,0 +1,2 @@
+<% content_for :title, "#{t(:edit)} #{User.model_name.human}: #{@user.user_name}" %>
+<%= render partial: 'form', locals: { form_url: admin_user_path(@user) } %>
