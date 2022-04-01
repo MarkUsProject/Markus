@@ -177,7 +177,7 @@ describe CoursesController do
                  params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
           expect(response).to have_http_status(302)
         end
-        it 'successfully updates when parameters are valid' do
+        it 'successfully toggles just the is_hidden attribute of a course' do
           put_as instructor, :update,
                  params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
           updated_course = Course.find(course.id)
@@ -193,7 +193,7 @@ describe CoursesController do
           }
           expect(updated_course_data).to eq(expected_course_data)
         end
-        it 'fails to update when parameters are invalid' do
+        it 'fails to update when the is_hidden attribute is invalid' do
           expected_course_data = {
             name: course.name,
             display_name: course.display_name,
