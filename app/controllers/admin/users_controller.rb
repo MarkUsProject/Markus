@@ -33,16 +33,13 @@ module Admin
     end
 
     def edit
-      @user = visible_users.find_by(id: params[:id])
+      @user = record
     end
 
     def update
-      @user = visible_users.find_by(id: params[:id])
-      if @user.admin_user?
-        @user.update(admin_user_params)
-      else
-        @user.update(end_user_params)
-      end
+      @user = record
+      user_params = params.require(@user.model_name.to_s.underscore)
+      @user.update(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
       respond_with @user, location: -> { edit_admin_user_path(@user) }
     end
 
@@ -57,14 +54,6 @@ module Admin
     # Do not make AutotestUser users visible
     def visible_users
       User.where.not(type: :AutotestUser)
-    end
-
-    def end_user_params
-      params.require(:end_user).permit(:user_name, :email, :id_number, :first_name, :last_name)
-    end
-
-    def admin_user_params
-      params.require(:admin_user).permit(:user_name, :email, :id_number, :first_name, :last_name)
     end
 
     def flash_interpolation_options

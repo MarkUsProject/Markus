@@ -19,6 +19,7 @@
 - Added Resque monitoring views for admin users (#5919)
 - Added a page in new markus administration view that allows admins to edit user information (#5921)
 - Added a page in new markus administration view that allows admins to create users (#5923)
+- Added course visibility status to admin courses list (#5924)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

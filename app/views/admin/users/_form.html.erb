@@ -32,7 +32,7 @@
                 User.human_attribute_name(:type),
                 class: 'required' %>
     <%= f.select :type,
-                 [[EndUser.model_name.human, 'EndUser'], [AdminUser.model_name.human, 'AdminUser']],
+                 [[EndUser.model_name.human, EndUser.name], [AdminUser.model_name.human, AdminUser.name]],
                  {},
                  { class: 'required', disabled: !@user.new_record? } %>
   </div>

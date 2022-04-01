@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
+import {selectFilter} from "./Helpers/table_helpers";
 
 class AdminCourseList extends React.Component {
   constructor() {
@@ -36,6 +37,32 @@ class AdminCourseList extends React.Component {
       minWidth: 120,
     },
     {
+      Header: I18n.t("activerecord.attributes.course.is_hidden"),
+      accessor: "is_hidden",
+      minWidth: 70,
+      Cell: ({value}) => {
+        return value ? I18n.t("courses.hidden") : I18n.t("courses.visible");
+      },
+      filterMethod: (filter, row) => {
+        if (filter.value === "all") {
+          return true;
+        } else {
+          return filter.value === row[filter.id].toString();
+        }
+      },
+      Filter: selectFilter,
+      filterOptions: [
+        {
+          text: I18n.t("courses.hidden"),
+          value: true,
+        },
+        {
+          text: I18n.t("courses.visible"),
+          value: false,
+        },
+      ],
+    },
+    {
       Header: I18n.t("actions"),
       accessor: "id",
       minWidth: 70,
@@ -44,7 +71,7 @@ class AdminCourseList extends React.Component {
           <span>
             <a href={Routes.edit_admin_course_path(value)}>{I18n.t("edit")}</a>
             &nbsp;|&nbsp;
-            <a href={Routes.course_path(value)}>{I18n.t("view")}</a>
+            <a href={Routes.course_path(value)}>{I18n.t("courses.view")}</a>
           </span>
         );
       },
