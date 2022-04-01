@@ -147,7 +147,7 @@ describe Admin::UsersController do
       let(:invalid_params) do
         {
           user: {
-            user_name: '.',
+            user_name: 'notValidUser',
             email: 'sample@sample.com',
             id_number: 100_678_901,
             type: 'Not a real type',
@@ -183,7 +183,7 @@ describe Admin::UsersController do
       end
       it 'does not create the user when information is invalid' do
         put_as admin, :create, params: invalid_params
-        created_user = User.find_by(user_name: '.')
+        created_user = User.find_by(user_name: 'notValidUser')
         expect(created_user).to be_nil
       end
     end
