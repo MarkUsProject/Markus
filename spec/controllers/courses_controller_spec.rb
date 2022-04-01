@@ -193,7 +193,7 @@ describe CoursesController do
           }
           expect(updated_course_data).to eq(expected_course_data)
         end
-        it 'fails to update when the is_hidden attribute is invalid' do
+        it 'fails to update the is_hidden attribute when it is invalid' do
           expected_course_data = {
             name: course.name,
             display_name: course.display_name,
@@ -218,7 +218,7 @@ describe CoursesController do
                    params: { id: course.id, course: { name: 'CS101', is_hidden: !course.is_hidden } }
             expect(response).to have_http_status(403)
           end
-          it 'fails to update when user unauthorized' do
+          it 'fails to update the course visibility when user unauthorized' do
             expected_course_data = {
               name: course.name,
               display_name: course.display_name,
