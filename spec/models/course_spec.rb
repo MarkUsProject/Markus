@@ -15,6 +15,9 @@ describe Course do
     it { is_expected.to have_many(:grade_entry_forms) }
     it { is_expected.to have_many(:sections) }
     it { is_expected.to have_many(:groups) }
+    it { is_expected.to allow_value(true).for(:is_hidden) }
+    it { is_expected.to allow_value(false).for(:is_hidden) }
+    it { is_expected.not_to allow_value(nil).for(:is_hidden) }
   end
 
   describe '#get_assignment_list' # TODO

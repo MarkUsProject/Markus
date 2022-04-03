@@ -22,6 +22,7 @@ class Course < ApplicationRecord
 
   # Note rails provides built-in sanitization via active record.
   validates :display_name, presence: true
+  validates :is_hidden, inclusion: { in: [true, false] }
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)

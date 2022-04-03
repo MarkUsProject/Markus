@@ -2,4 +2,5 @@
 en:
   courses:
     no_courses: No courses found.
+    settings: Course Settings
     view_courses: Courses
