@@ -2,6 +2,8 @@ module Api
   # Allows for adding, modifying and showing Markus assignments.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class AssignmentsController < MainApiController
+    include AutomatedTestsHelper
+
     # Define default fields to display for index and show methods
     DEFAULT_FIELDS = [:id, :description, :short_identifier, :message, :due_date,
                       :group_min, :group_max, :tokens_per_period, :allow_web_submits,
@@ -184,8 +186,7 @@ module Api
     # Get test specs file content
     def test_specs
       assignment = record
-      settings_file = assignment.autotest_settings_file
-      content = File.exist?(settings_file) ? JSON.parse(File.read(settings_file)) : {}
+      content = autotest_settings_for(assignment)
       respond_to do |format|
         format.any { render json: content }
       end
@@ -213,7 +214,7 @@ module Api
                          message: HttpStatusHelper::ERROR_CODE['message']['422'] },
                status: :unprocessable_entity
       else
-        File.write(assignment.autotest_settings_file, JSON.dump(content), mode: 'wb')
+        update_test_groups_from_specs(assignment, content)
         AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment)
       end
     rescue ActiveRecord::RecordNotFound => e

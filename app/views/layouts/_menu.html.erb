@@ -5,10 +5,11 @@
     <a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.home') %>'></a>
   <% end %>
 <ul>
-  <% if @current_course %>
+  <% is_admin_route = controller.class.module_parent.to_s == 'Admin' %>
+  <% if !is_admin_route && @current_course %>
 
     <% if @current_role.instructor? %>
-      <li class='<%= "active" if controller.controller_name == 'courses' %>'>
+      <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'show' %>'>
         <%= link_to t('menu.dashboard'), course_path(@current_course) %>
       </li>
 
@@ -82,7 +83,16 @@
           <% end %>>
         <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
       </li>
+
+      <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'edit' %>'>
+        <%= link_to t('courses.settings'), edit_course_path(@current_course) %>
+      </li>
     <% end %>
+  <% end %>
+  <% if @current_user.admin_user? %>
+    <li class='<%= "active" if is_admin_route %>'>
+      <%= link_to t('administration'), admin_path %>
+    </li>
   <% end %>
 </ul>
 </div>

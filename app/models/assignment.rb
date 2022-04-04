@@ -2,6 +2,8 @@ require 'csv'
 
 # Represents an assignment where students submit work to be graded
 class Assignment < Assessment
+  include AutomatedTestsHelper
+
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
   validates :due_date, presence: true
@@ -562,6 +564,7 @@ class Assignment < Assessment
       tag_info = tag_data.fetch(g.id, [])
                          .map { |a| a['tags.name'] }
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
+      criteria.transform_values! { |data| data[:mark] }
       extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
@@ -699,7 +702,7 @@ class Assignment < Assessment
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += self.ta_criteria.map { |crit| marks[crit.id] }
+            row += self.ta_criteria.map { |crit| marks[crit.id][:mark] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -959,10 +962,6 @@ class Assignment < Assessment
         Pathname.new(f).relative_path_from(files_dir).to_s
       end
     end.compact
-  end
-
-  def autotest_settings_file
-    File.join(autotest_path, TestRun::SPECS_FILE)
   end
 
   def scanned_exams_path
@@ -1231,12 +1230,11 @@ class Assignment < Assessment
   end
 
   # Writes all of this assignment's automated test files to the +zip_dir+ in +zip_file+. Also writes
-  # the tester settings specified in this assignment's properties and spec file to the json file at
+  # the tester settings specified in this assignment's properties to the json file at
   # +specs_file_path+ in the +zip_file+.
   def automated_test_config_to_zip(zip_file, zip_dir, specs_file_path)
     self.add_test_files_to_zip(zip_file, zip_dir)
-    test_specs_path = self.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.read(test_specs_path)) : {}
+    test_specs = autotest_settings_for(self)
     test_specs['testers']&.each do |tester_info|
       tester_info['test_data']&.each do |test_info|
         test_info['extra_info']&.delete('test_group_id')

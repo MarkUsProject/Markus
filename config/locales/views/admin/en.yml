@@ -1,3 +1,8 @@
 ---
 en:
+  administration: Administration
+  courses:
+    hidden: Hidden
+    view: View
+    visible: Visible
   markus_administration: MarkUs Administration

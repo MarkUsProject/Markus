@@ -93,13 +93,21 @@ module Helpers
                        token_period: 24,
                        non_regenerating_tokens: false,
                        unlimited_tokens: false)
-    criteria = assignment.criteria.empty? ? nil : assignment.criteria.first
-    File.write(assignment.autotest_settings_file,
-               create_sample_spec_file(criteria).to_json,
-               mode: 'wb')
+    criterion = assignment.criteria.empty? ? nil : assignment.criteria.first
+    specs = create_sample_spec_file(criterion)
+    new_test_group = assignment.test_groups.create!(
+      name: specs['testers'][0]['test_data'][0]['extra_info']['name']
+    )
+    specs['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = new_test_group.id
+    new_test_group.update!(
+      autotest_settings: specs['testers'][0]['test_data'][0],
+      criterion: criterion
+    )
+    specs['testers'][0]['test_data'] = [new_test_group.id]
+    assignment.update(autotest_settings: specs)
   end
 
-  def create_sample_spec_file(criteria = nil)
+  def create_sample_spec_file(criterion = nil)
     spec_data = {
       testers: [
         {
@@ -120,16 +128,16 @@ module Helpers
               tester: 'unittest',
               output_verbosity: 2,
               extra_info: {
-                name: 'Python Test Group 1'
+                name: 'Python Test Group 1',
+                display_output: 'instructors'
               }
             }
           ]
         }
       ]
     }
-    unless criteria.nil?
-      criterion = "#{criteria.type}:#{criteria.name}"
-      spec_data[:testers][0][:test_data][0][:extra_info][:criterion] = criterion
+    unless criterion.nil?
+      spec_data[:testers][0][:test_data][0][:extra_info][:criterion] = criterion.name
     end
     spec_data.deep_stringify_keys
   end

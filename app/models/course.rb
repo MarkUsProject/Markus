@@ -22,6 +22,7 @@ class Course < ApplicationRecord
 
   # Note rails provides built-in sanitization via active record.
   validates :display_name, presence: true
+  validates :is_hidden, inclusion: { in: [true, false] }
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
@@ -116,7 +117,7 @@ class Course < ApplicationRecord
     autotest_setting = AutotestSetting.find_or_create_by!(url: url)
     if autotest_setting.id != self.autotest_setting&.id
       self.update!(autotest_setting_id: autotest_setting.id)
-      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(autotest_settings_id: nil)
+      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
     end
   end
 end

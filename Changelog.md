@@ -12,6 +12,15 @@
 - Move footer and information in top right corner of navigation bar into a dropdown menu in the top right corner (#5886)
 - Modified login to allow admin users to login via the UI (#5897)
 - Fix bug where admins viewing the admin page were not redirected properly when timed out (#5909)
+- Added a list of courses to manage for new markus administration view (#5907)
+- Added a page in new markus administration view that allows admins to edit the attributes of a course (#5915)
+- Added a page in new markus administration view that allows admins to create a new course (#5917)
+- Added a list of users to manage for new markus administration view (#5918)
+- Added Resque monitoring views for admin users (#5919)
+- Added a page in new markus administration view that allows admins to edit user information (#5921)
+- Added course visibility status to admin courses list (#5924)
+- Added ability for instructors to edit course visibility (#5925)
+- Fix bugs when handling remark requests with deductive annotations (#5926)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
