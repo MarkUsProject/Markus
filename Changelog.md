@@ -20,6 +20,7 @@
 - Added a page in new markus administration view that allows admins to edit user information (#5921)
 - Added course visibility status to admin courses list (#5924)
 - Added ability for instructors to edit course visibility (#5925)
+- Fix bugs when handling remark requests with deductive annotations (#5926)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

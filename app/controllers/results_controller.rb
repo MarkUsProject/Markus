@@ -226,7 +226,7 @@ class ResultsController < ApplicationController
           data[:assignment_max_mark] = assignment.max_mark
         end
         data[:total] = marks_map.map { |h| h['mark'] }
-        data[:old_total] = old_marks.values.compact.sum
+        data[:old_total] = old_marks.values_at(:mark).compact.sum
 
         # Tags
         all_tags = assignment.tags.pluck_to_hash(:id, :name)

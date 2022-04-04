@@ -3,11 +3,16 @@ require 'faker'
 FactoryBot.define do
   factory :annotation do
     association :annotation_text
-    association :submission_file
     association :creator, factory: :instructor
     association :result, factory: :complete_result
     sequence(:annotation_number)
     is_remark { false }
+
+    after(:build) do |annotation|
+      if annotation.submission_file.nil?
+        annotation.submission_file = create(:submission_file, submission: annotation.result.submission)
+      end
+    end
 
     factory :image_annotation, class: ImageAnnotation do
       x1 { 1 }

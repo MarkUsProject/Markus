@@ -204,9 +204,9 @@ class CheckboxCriterionInput extends React.Component {
               {this.props.max_mark}
             </span>
           </div>
-          {this.props.oldMark !== undefined && (
+          {this.props.oldMark !== undefined && this.props.oldMark.mark !== undefined && (
             <div className="old-mark">{`(${I18n.t("results.remark.old_mark")}: ${
-              this.props.oldMark
+              this.props.oldMark.mark
             })`}</div>
           )}
           <div
@@ -305,6 +305,19 @@ class FlexibleCriterionInput extends React.Component {
     return "";
   };
 
+  renderOldMark = () => {
+    if (this.props.oldMark === undefined || this.props.oldMark.mark === undefined) {
+      return null;
+    }
+    let label = String(this.props.oldMark.mark);
+
+    if (this.props.oldMark.override) {
+      label = `(${I18n.t("results.overridden_deductions")}) ${label}`;
+    }
+
+    return <div className="old-mark">{`(${I18n.t("results.remark.old_mark")}: ${label})`}</div>;
+  };
+
   handleChange = event => {
     if (this.typing_timer) {
       clearTimeout(this.typing_timer);
@@ -382,11 +395,7 @@ class FlexibleCriterionInput extends React.Component {
             {this.props.max_mark}
           </span>
           {this.listDeductions()}
-          {this.props.oldMark !== undefined && (
-            <div className="old-mark">{`(${I18n.t("results.remark.old_mark")}: ${
-              this.props.oldMark
-            })`}</div>
-          )}
+          {this.renderOldMark()}
         </div>
       </li>
     );
@@ -417,8 +426,8 @@ class RubricCriterionInput extends React.Component {
     }
     if (
       this.props.oldMark !== undefined &&
-      this.props.oldMark !== null &&
-      levelMark === this.props.oldMark.toFixed(2)
+      this.props.oldMark.mark !== undefined &&
+      levelMark === this.props.oldMark.mark.toFixed(2)
     ) {
       oldMarkClass = "old-mark";
     }

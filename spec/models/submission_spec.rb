@@ -27,8 +27,9 @@ describe Submission do
   end
 
   context 'handle remark requests' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:submission) do
-      submission = create(:submission)
+      submission = assignment.groupings.first.current_submission_used
       submission.update(remark_request_timestamp: Time.current)
       submission
     end
@@ -38,6 +39,21 @@ describe Submission do
       submission.make_remark_result
       expect(submission.has_remark?).to be true
       expect(submission.remark_submitted?).to be true
+    end
+
+    it 'should create marks with the same values as the original result' do
+      submission.make_remark_result
+
+      expect(submission.remark_result.marks.pluck(:criterion_id, :mark))
+        .to match_array(submission.get_original_result.marks.pluck(:criterion_id, :mark))
+    end
+
+    it 'should create marks with the same override status as the original result' do
+      submission.current_result.marks.first.update(override: true)
+      submission.make_remark_result
+
+      expect(submission.remark_result.marks.pluck(:criterion_id, :override))
+        .to match_array(submission.get_original_result.marks.pluck(:criterion_id, :override))
     end
 
     it 'should create another extra mark if there was one originally' do
