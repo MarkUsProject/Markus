@@ -150,7 +150,7 @@ describe Admin::UsersController do
             user_name: 'notValidUser',
             email: 'sample@sample.com',
             id_number: 100_678_901,
-            type: 'Not a real type',
+            type: 'EndUser',
             first_name: nil,
             last_name: ''
           }
