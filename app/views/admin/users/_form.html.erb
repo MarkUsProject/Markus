@@ -1,0 +1,43 @@
+<%= form_with model: [:admin, @user],
+              url: form_url,
+              local: true do |f| %>
+  <div class="inline-labels">
+    <%= f.label :user_name,
+                User.human_attribute_name(:user_name),
+                class: 'required' %>
+    <%= f.text_field :user_name,
+                     size: 35,
+                     required: true %>
+    <%= f.label :first_name,
+                User.human_attribute_name(:first_name),
+                class: 'required' %>
+    <%= f.text_field :first_name,
+                     size: 35,
+                     required: true %>
+    <%= f.label :last_name,
+                User.human_attribute_name(:last_name),
+                class: 'required' %>
+    <%= f.text_field :last_name,
+                     size: 35,
+                     required: true %>
+    <%= f.label :id_number,
+                User.human_attribute_name(:id_number) %>
+    <%= f.text_field :id_number,
+                     size: 35 %>
+    <%= f.label :email,
+                User.human_attribute_name(:email) %>
+    <%= f.text_field :email,
+                     size: 35 %>
+    <%= f.label :type,
+                User.human_attribute_name(:type),
+                class: 'required' %>
+    <%= f.select :type,
+                 [[EndUser.model_name.human, EndUser.name], [AdminUser.model_name.human, AdminUser.name]],
+                 {},
+                 { class: 'required', disabled: !@user.new_record? } %>
+  </div>
+  <p>
+    <%= f.submit t(:save),
+                 data: { disable_with: t('working') } %>
+  </p>
+<% end %>
