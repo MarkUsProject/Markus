@@ -22,13 +22,10 @@ module Admin
       user_type = user_params[:type].camelize.downcase
       case user_type
       when 'enduser'
-        user_params[:type] = 'EndUser'
+        @user = EndUser.create(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
       when 'adminuser'
-        user_params[:type] = 'AdminUser'
-      else
-        user_params[:type] = nil
+        @user = AdminUser.create(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
       end
-      @user = User.create(user_params.permit(*DEFAULT_FIELDS))
       respond_with @user, location: -> { admin_users_path }
     end
 
