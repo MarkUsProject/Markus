@@ -14,22 +14,19 @@ module Admin
     end
 
     def new
-      @course = Course.new
+      @current_course = Course.new
     end
 
     def create
-      @course = Course.create(course_params)
-      respond_with @course, location: -> { admin_courses_path }
+      @current_course = Course.create(course_params)
+      respond_with @current_course, location: -> { admin_courses_path }
     end
 
-    def edit
-      @course = record
-    end
+    def edit; end
 
     def update
-      @course = record
-      @course.update(course_params)
-      respond_with @course, location: -> { edit_admin_course_path(@course) }
+      @current_course.update(course_params)
+      respond_with @current_course, location: -> { edit_admin_course_path(@current_course) }
     end
 
     private
@@ -39,8 +36,8 @@ module Admin
     end
 
     def flash_interpolation_options
-      { resource_name: @course.name.presence || @course.model_name.human,
-        errors: @course.errors.full_messages.join('; ') }
+      { resource_name: @current_course.name.presence || @current_course.model_name.human,
+        errors: @current_course.errors.full_messages.join('; ') }
     end
   end
 end

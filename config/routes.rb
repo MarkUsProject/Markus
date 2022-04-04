@@ -84,7 +84,7 @@ Rails.application.routes.draw do
     mount Resque::Server.new, at: '/resque', as: 'resque'
   end
 
-  resources :courses, only: [:show, :index] do
+  resources :courses, only: [:show, :index, :edit, :update] do
     member do
       get 'clear_role_switch_session'
       get 'role_switch'

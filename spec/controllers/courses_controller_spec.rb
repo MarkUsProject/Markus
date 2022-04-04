@@ -165,6 +165,88 @@ describe CoursesController do
       get_as instructor, :show, params: { id: course }
       expect(response.status).to eq(200)
     end
+    it 'responds with success on edit' do
+      get_as instructor, :edit, params: { id: course }
+      expect(response).to have_http_status(200)
+    end
+
+    context 'updating course visibility' do
+      context 'as an authorized instructor' do
+        it 'responds with success on update' do
+          put_as instructor, :update,
+                 params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+          expect(response).to have_http_status(302)
+        end
+        it 'successfully toggles just the is_hidden attribute of a course' do
+          put_as instructor, :update,
+                 params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+          updated_course = Course.find(course.id)
+          expected_course_data = {
+            name: course.name,
+            display_name: course.display_name,
+            is_hidden: false
+          }
+          updated_course_data = {
+            name: updated_course.name,
+            display_name: updated_course.display_name,
+            is_hidden: updated_course.is_hidden
+          }
+          expect(updated_course_data).to eq(expected_course_data)
+        end
+        it 'fails to update the is_hidden attribute when it is invalid' do
+          expected_course_data = {
+            name: course.name,
+            display_name: course.display_name,
+            is_hidden: course.is_hidden
+          }
+          put_as instructor, :update,
+                 params: { id: course.id, course: { name: 'CS101', is_hidden: nil } }
+          updated_course = Course.find(course.id)
+          updated_course_data = {
+            name: updated_course.name,
+            display_name: updated_course.display_name,
+            is_hidden: updated_course.is_hidden
+          }
+          expect(updated_course_data).to eq(expected_course_data)
+        end
+      end
+
+      context 'as an unauthorized user' do
+        shared_examples 'cannot update course' do
+          it 'responds with 403' do
+            put_as user, :update,
+                   params: { id: course.id, course: { name: 'CS101', is_hidden: !course.is_hidden } }
+            expect(response).to have_http_status(403)
+          end
+          it 'fails to update the course visibility when user unauthorized' do
+            expected_course_data = {
+              name: course.name,
+              display_name: course.display_name,
+              is_hidden: course.is_hidden
+            }
+            put_as user, :update,
+                   params: { id: course.id, course: { name: 'CS101', is_hidden: !course.is_hidden } }
+            updated_course = Course.find(course.id)
+            updated_course_data = {
+              name: updated_course.name,
+              display_name: updated_course.display_name,
+              is_hidden: updated_course.is_hidden
+            }
+            expect(updated_course_data).to eq(expected_course_data)
+          end
+        end
+
+        context 'TA' do
+          let(:user) { create(:ta, manage_assessments: true, run_tests: true, manage_submissions: true) }
+          include_examples 'cannot update course'
+        end
+
+        context 'Student' do
+          let(:user) { create :student }
+          include_examples 'cannot update course'
+        end
+      end
+    end
   end
   context '#upload_assignments' do
     include_examples 'a controller supporting upload', route_name: :upload_assignments do
