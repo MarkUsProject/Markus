@@ -564,6 +564,7 @@ class Assignment < Assessment
       tag_info = tag_data.fetch(g.id, [])
                          .map { |a| a['tags.name'] }
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
+      criteria.transform_values! { |data| data[:mark] }
       extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
@@ -701,7 +702,7 @@ class Assignment < Assessment
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += self.ta_criteria.map { |crit| marks[crit.id] }
+            row += self.ta_criteria.map { |crit| marks[crit.id][:mark] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
