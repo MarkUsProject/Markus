@@ -93,13 +93,13 @@ class GradeEntryForm < Assessment
 
   def export_as_csv(role)
     if role.instructor?
-      students = Student.left_outer_joins(:grade_entry_students, :end_user)
+      students = Student.left_outer_joins(:grade_entry_students, :user)
                         .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
                         .order(:user_name)
                         .pluck(:user_name, 'grade_entry_students.total_grade')
     elsif role.ta?
       students = role.grade_entry_students
-                     .joins(role: :end_user)
+                     .joins(role: :user)
                      .where(grade_entry_form: self, 'role.hidden': false, 'grade_entry_students.assessment_id': self.id)
                      .order(:user_name)
                      .pluck(:user_name, 'grade_entry_students.total_grade')
@@ -117,13 +117,13 @@ class GradeEntryForm < Assessment
 
     if role.instructor?
       grade_data = self.grades
-                       .joins(:grade_entry_item, grade_entry_student: [role: :end_user])
+                       .joins(:grade_entry_item, grade_entry_student: [role: :user])
                        .pluck('users.user_name', 'grade_entry_items.position', :grade)
                        .group_by { |x| x[0] }
       num_items = self.grade_entry_items.count
     elsif role.ta?
       grade_data = role.grade_entry_students
-                       .joins(role: :end_user)
+                       .joins(role: :user)
                        .joins(:grades)
                        .joins(:grade_entry_items)
                        .where(grade_entry_form: self)
@@ -150,7 +150,7 @@ class GradeEntryForm < Assessment
   end
 
   def from_csv(grades_data, overwrite)
-    grade_entry_students = self.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id).to_h
+    grade_entry_students = self.grade_entry_students.joins(role: :user).pluck('users.user_name', :id).to_h
     all_grades = Set.new(
       self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)
     )

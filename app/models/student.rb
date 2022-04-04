@@ -87,7 +87,7 @@ class Student < Role
   end
 
   def display_for_note
-    "#{end_user.user_name}: #{end_user.display_name}"
+    "#{user.user_name}: #{user.display_name}"
   end
 
   # invites a student

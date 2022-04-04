@@ -89,7 +89,7 @@ class User < ApplicationRecord
     self.instance_of?(AdminUser)
   end
 
-  def end_user?
+  def user?
     self.instance_of?(EndUser)
   end
 
