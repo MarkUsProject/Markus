@@ -1853,7 +1853,7 @@ describe Assignment do
         end
 
         it 'should include member information for groups with members' do
-          members = groupings.map { |g| g.accepted_students.joins(:end_user).pluck('users.user_name') }
+          members = groupings.map { |g| g.accepted_students.joins(:user).pluck('users.user_name') }
           expect(data.pluck(:members).compact).to contain_exactly(*members)
         end
       end
