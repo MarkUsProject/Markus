@@ -70,7 +70,7 @@ describe InstructorsController do
         let(:new_end_user) { create :end_user }
         it 'should change the user' do
           subject
-          expect(role.reload.end_user).to eq(new_end_user)
+          expect(role.reload.user).to eq(new_end_user)
         end
       end
       context 'when the user does not exist' do

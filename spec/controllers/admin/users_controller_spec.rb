@@ -10,7 +10,7 @@ describe Admin::UsersController do
 
       describe '#edit' do
         it 'responds with 403' do
-          get_as user, :edit, params: { id: user.end_user.id }
+          get_as user, :edit, params: { id: user.user.id }
           expect(response).to have_http_status(403)
         end
       end
@@ -18,7 +18,7 @@ describe Admin::UsersController do
       describe '#update' do
         let(:params) do
           {
-            id: user.end_user.id,
+            id: user.user.id,
             end_user: {
               user_name: 'Professor X',
               email: 'sample@sample.com',
