@@ -140,9 +140,7 @@ class Result < ApplicationRecord
   # Returns a hash of all marks for this result.
   # TODO: make it include extra marks as well.
   def mark_hash
-    marks.map do |mark|
-      [mark.criterion_id, mark.mark]
-    end.to_h
+    marks.pluck_to_hash(:criterion_id, :mark, :override).index_by { |x| x[:criterion_id] }
   end
 
   private

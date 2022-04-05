@@ -87,7 +87,7 @@ class AdminUsersList extends React.Component {
       Header: I18n.t("actions"),
       accessor: "id",
       minWidth: 70,
-      Cell: ({value}) => <a href="#">{I18n.t("edit")}</a>,
+      Cell: ({value}) => <a href={Routes.edit_admin_user_path(value)}>{I18n.t("edit")}</a>,
       sortable: false,
       filterable: false,
     },

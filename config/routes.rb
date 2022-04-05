@@ -77,14 +77,14 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resources :users, only: [:index]
+    resources :users, only: [:index, :edit, :update]
     resources :courses, only: [:index, :new, :create, :edit, :update]
     get '/', controller: 'main_admin', action: 'index'
 
     mount Resque::Server.new, at: '/resque', as: 'resque'
   end
 
-  resources :courses, only: [:show, :index] do
+  resources :courses, only: [:show, :index, :edit, :update] do
     member do
       get 'clear_role_switch_session'
       get 'role_switch'

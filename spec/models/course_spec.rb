@@ -15,6 +15,9 @@ describe Course do
     it { is_expected.to have_many(:grade_entry_forms) }
     it { is_expected.to have_many(:sections) }
     it { is_expected.to have_many(:groups) }
+    it { is_expected.to allow_value(true).for(:is_hidden) }
+    it { is_expected.to allow_value(false).for(:is_hidden) }
+    it { is_expected.not_to allow_value(nil).for(:is_hidden) }
   end
 
   describe '#get_assignment_list' # TODO
@@ -37,11 +40,12 @@ describe Course do
       end
       context 'when assignments exist for the course' do
         before do
-          create_list :assignment, 3, course: course, assignment_properties_attributes: { autotest_settings_id: 1 }
+          create_list :assignment, 3, course: course,
+                                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
         end
-        it 'should reset the autotest_settings_id for all assignments' do
+        it 'should reset the remote_autotest_settings_id for all assignments' do
           course.update_autotest_url(url)
-          expect(course.assignments.pluck(:autotest_settings_id).compact).to be_empty
+          expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
         end
       end
     end
@@ -56,11 +60,12 @@ describe Course do
       end
       context 'when assignments exist for the course' do
         before do
-          create_list :assignment, 3, course: course, assignment_properties_attributes: { autotest_settings_id: 1 }
+          create_list :assignment, 3, course: course,
+                                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
         end
-        it 'should not reset the autotest_settings_id for all assignments' do
+        it 'should not reset the remote_autotest_settings_id for all assignments' do
           course.update_autotest_url(url)
-          expect(course.assignments.pluck(:autotest_settings_id).to_set).to contain_exactly(1)
+          expect(course.assignments.pluck(:remote_autotest_settings_id).to_set).to contain_exactly(1)
         end
       end
       context 'when the autotest setting is changed' do
@@ -70,11 +75,12 @@ describe Course do
         end
         context 'when assignments exist for the course' do
           before do
-            create_list :assignment, 3, course: course, assignment_properties_attributes: { autotest_settings_id: 1 }
+            create_list :assignment, 3, course: course,
+                                        assignment_properties_attributes: { remote_autotest_settings_id: 1 }
           end
-          it 'should reset the autotest_settings_id for all assignments' do
+          it 'should reset the remote_autotest_settings_id for all assignments' do
             course.update_autotest_url('http://example.com/other')
-            expect(course.assignments.pluck(:autotest_settings_id).compact).to be_empty
+            expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
           end
         end
       end

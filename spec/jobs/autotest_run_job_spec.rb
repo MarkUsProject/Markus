@@ -28,7 +28,7 @@ describe AutotestRunJob do
       described_class.perform_now(host_with_port, user.id, assignment.id, groups.map(&:id), collected: collected)
     end
     context 'tests are set up for an assignment' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
       let(:dummy_return) { OpenStruct.new(body: { 'test_ids' => (1..n_groups).to_a }.to_json) }
       before do
         allow_any_instance_of(AutotestRunJob).to receive(:send_request!).and_return(dummy_return)

@@ -44,7 +44,7 @@ describe AutotestResultsJob do
     end
     subject { described_class.perform_now }
     context 'tests are set up for an assignment' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
       let(:dummy_return) { Net::HTTPSuccess.new(1.0, '200', 'OK') }
       let(:body) { '{}' }
       before { allow(dummy_return).to receive(:body) { body } }

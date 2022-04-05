@@ -281,9 +281,9 @@ class Submission < ApplicationRecord
     end
 
     remark_assignment.ta_criteria.each do |criterion|
-      remark_mark = Mark.where(criterion: criterion, result_id: remark.id)
-      original_mark = Mark.where(criterion: criterion, result_id: original_result.id)
-      remark_mark.first.update!(mark: original_mark.first.mark)
+      remark_mark = remark.marks.find_by(criterion: criterion)
+      original_mark = original_result.marks.find_by(criterion: criterion)
+      remark_mark.update!(mark: original_mark.mark, override: original_mark.override)
     end
 
     remark.save

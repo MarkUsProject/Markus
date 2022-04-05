@@ -13,6 +13,14 @@ class CoursePolicy < ApplicationPolicy
     true
   end
 
+  def edit?
+    role.instructor?
+  end
+
+  def update?
+    role.instructor?
+  end
+
   def role_switch?
     real_role.instructor? && !check?(:role_is_switched?)
   end
