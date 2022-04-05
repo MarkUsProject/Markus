@@ -241,12 +241,12 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_data(category, course: nil)
     shared_values = ['annotation_texts.id AS id',
-                     'end_users_roles.user_name AS last_editor',
+                     'users_roles.user_name AS last_editor',
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     course ||= category&.course
-    base_query = AnnotationText.joins(creator: :end_user)
-                               .left_outer_joins(last_editor: :end_user)
+    base_query = AnnotationText.joins(creator: :user)
+                               .left_outer_joins(last_editor: :user)
                                .where('annotation_texts.annotation_category_id': category)
                                .where('roles.course_id': course)
                                .order('users.user_name')
