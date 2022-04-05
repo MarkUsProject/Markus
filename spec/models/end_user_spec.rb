@@ -3,7 +3,7 @@ describe EndUser do
   context 'when role created' do
     let(:student) { create :student }
     it 'has roles' do
-      expect(build(:user, roles: [student])).to be_valid
+      expect(build(:end_user, roles: [student])).to be_valid
     end
   end
   describe '#visible_courses' do
