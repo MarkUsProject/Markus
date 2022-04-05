@@ -29,9 +29,7 @@ module Admin
         user_params[:type] = nil
       end
       @user = User.create(user_params.permit(*DEFAULT_FIELDS))
-      respond_with @user do |format|
-        format.html { redirect_to admin_users_path }
-      end
+      respond_with @user, location: -> { admin_users_path }
     end
 
     def edit
