@@ -22,13 +22,14 @@ module Admin
       user_type = user_params[:type].camelize.downcase
       case user_type
       when 'enduser'
-        @user = EndUser.create(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
+        user_params[:type] = 'EndUser'
       when 'adminuser'
-        @user = AdminUser.create(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
+        user_params[:type] = 'AdminUser'
+      else
+        user_params[:type] = nil
       end
-      respond_with @user do |format|
-        format.html { render :index }
-      end
+      @user = User.create(user_params.permit(:user_name, :type, :email, :id_number, :first_name, :last_name))
+      respond_with @user, location: -> { admin_users_path }
     end
 
     def edit

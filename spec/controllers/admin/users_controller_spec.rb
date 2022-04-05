@@ -150,7 +150,7 @@ describe Admin::UsersController do
             user_name: 'notValidUser',
             email: 'sample@sample.com',
             id_number: 100_678_901,
-            type: 'EndUser',
+            type: 'Not a valid type',
             first_name: nil,
             last_name: ''
           }
@@ -159,6 +159,11 @@ describe Admin::UsersController do
       it 'responds with 302' do
         put_as admin, :create, params: params
         expect(response).to have_http_status(302)
+      end
+      it 'does not create the user when information is invalid' do
+        put_as admin, :create, params: invalid_params
+        created_user = User.find_by(user_name: 'notValidUser')
+        expect(created_user).to be_nil
       end
       it 'creates the user when information is valid' do
         put_as admin, :create, params: params
@@ -180,11 +185,6 @@ describe Admin::UsersController do
           last_name: created_user.last_name
         }
         expect(expected_user_data).to eq(created_user_data)
-      end
-      it 'does not create the user when information is invalid' do
-        put_as admin, :create, params: invalid_params
-        created_user = User.find_by(user_name: 'notValidUser')
-        expect(created_user).to be_nil
       end
     end
 
