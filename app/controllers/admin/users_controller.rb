@@ -19,17 +19,9 @@ module Admin
 
     def create
       user_params = params.require(:user)
-      user_type = user_params[:type].camelize.downcase
-      case user_type
-      when 'enduser'
-        user_params[:type] = 'EndUser'
-      when 'adminuser'
-        user_params[:type] = 'AdminUser'
-      else
-        user_params[:type] = nil
-      end
-      @user = User.create(user_params.permit(*DEFAULT_FIELDS))
-      respond_with @user, location: -> { admin_users_path }
+      user_params[:type] = nil unless [EndUser.name, AdminUser.name].include? user_params[:type]
+      user = User.create(user_params.permit(*DEFAULT_FIELDS))
+      respond_with user, location: -> { admin_users_path }
     end
 
     def edit
