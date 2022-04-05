@@ -160,11 +160,6 @@ describe Admin::UsersController do
         put_as admin, :create, params: params
         expect(response).to have_http_status(302)
       end
-      it 'does not create the user when information is invalid' do
-        put_as admin, :create, params: invalid_params
-        created_user = User.find_by(user_name: 'notValidUser')
-        expect(created_user).to be_nil
-      end
       it 'creates the user when information is valid' do
         put_as admin, :create, params: params
         created_user = User.find_by(user_name: 'Spiderman')
@@ -185,6 +180,11 @@ describe Admin::UsersController do
           last_name: created_user.last_name
         }
         expect(expected_user_data).to eq(created_user_data)
+      end
+      it 'does not create the user when information is invalid' do
+        put_as admin, :create, params: invalid_params
+        created_user = User.find_by(user_name: 'notValidUser')
+        expect(created_user).to be_nil
       end
     end
 
