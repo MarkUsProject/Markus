@@ -20,8 +20,8 @@ module Admin
     def create
       user_params = params.require(:user)
       user_params[:type] = nil unless [EndUser.name, AdminUser.name].include? user_params[:type]
-      user = User.create(user_params.permit(*DEFAULT_FIELDS))
-      respond_with user, location: -> { admin_users_path }
+      @user = User.create(user_params.permit(*DEFAULT_FIELDS))
+      respond_with @user, location: -> { admin_users_path }
     end
 
     def edit

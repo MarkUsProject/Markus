@@ -144,15 +144,27 @@ describe Admin::UsersController do
           }
         }
       end
-      let(:invalid_params) do
+      let(:invalid_non_type_params) do
         {
           user: {
             user_name: 'notValidUser',
             email: 'sample@sample.com',
             id_number: 100_678_901,
-            type: 'Not a valid type',
+            type: 'AdminUser',
             first_name: nil,
             last_name: ''
+          }
+        }
+      end
+      let(:params_with_invalid_type) do
+        {
+          user: {
+            user_name: 'Spiderman',
+            email: 'sample@sample.com',
+            id_number: 1_122_018,
+            type: 'Not a real type',
+            first_name: 'Miles',
+            last_name: 'Morales'
           }
         }
       end
@@ -181,9 +193,14 @@ describe Admin::UsersController do
         }
         expect(expected_user_data).to eq(created_user_data)
       end
-      it 'does not create the user when information is invalid' do
-        post_as admin, :create, params: invalid_params
+      it 'does not create the user when non type related information is invalid' do
+        post_as admin, :create, params: invalid_non_type_params
         created_user = User.find_by(user_name: 'notValidUser')
+        expect(created_user).to be_nil
+      end
+      it 'does not create the user when type related information is invalid' do
+        post_as admin, :create, params: params_with_invalid_type
+        created_user = User.find_by(user_name: 'Spiderman')
         expect(created_user).to be_nil
       end
     end
