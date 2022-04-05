@@ -26,9 +26,9 @@ module Admin
       when 'adminuser'
         @user = AdminUser.create(user_params.permit(:user_name, :email, :id_number, :first_name, :last_name))
       end
-      respond_with @user,
-                   location: -> { admin_users_path },
-                   action: -> { new_admin_course_path }
+      respond_with @user do |format|
+        format.html { render :index }
+      end
     end
 
     def edit
