@@ -22,7 +22,7 @@ export class GradeEntryFormChart extends React.Component {
               display: true,
             },
           },
-          scales: chartScales,
+          scales: chartScales(),
         },
       },
     };
