@@ -75,7 +75,7 @@ class TasController < ApplicationController
   end
 
   def user_params
-    params.require(:role).require(:user).permit(:user_name)
+    params.require(:role).require(:end_user).permit(:user_name)
   end
 
   def flash_interpolation_options

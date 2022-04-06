@@ -108,7 +108,7 @@ describe TasController do
             manage_submissions: true,
             run_tests: true
           },
-          user: { user_name: end_user.user_name }
+          end_user: { user_name: end_user.user_name }
         },
         course_id: course.id
       }
@@ -137,7 +137,7 @@ describe TasController do
           let(:params) do
             # Rails strips empty params so a dummy value has to be given
             { course_id: course.id,
-              role: { user: { user_name: end_user.user_name }, grader_permission_attributes: { a: 1 } } }
+              role: { end_user: { user_name: end_user.user_name }, grader_permission_attributes: { a: 1 } } }
           end
           it 'default value for all permissions should be false' do
             ta = course.tas.where(user: end_user).first

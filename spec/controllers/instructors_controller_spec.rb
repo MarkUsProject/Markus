@@ -29,13 +29,13 @@ describe InstructorsController do
       it_behaves_like 'role is from a different course' do
         subject do
           post_as new_role, :create,
-                  params: { course_id: course.id, role: { user: { user_name: end_user.user_name } } }
+                  params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
       end
       it 'be able to create Instructor' do
         post_as instructor,
                 :create,
-                params: { course_id: course.id, role: { user: { user_name: end_user.user_name } } }
+                params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         expect(course.instructors.joins(:user).where('users.user_name': end_user.user_name)).to exist
         expect(response).to redirect_to action: 'index'
       end
@@ -43,7 +43,7 @@ describe InstructorsController do
         let(:end_user) { build :end_user }
         subject do
           post_as instructor, :create,
-                  params: { course_id: course.id, role: { user: { user_name: end_user.user_name } } }
+                  params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
         it 'should not create a Ta' do
           instructor
@@ -59,12 +59,12 @@ describe InstructorsController do
       it_behaves_like 'role is from a different course' do
         subject do
           post_as new_role, :update,
-                  params: { course_id: course.id, id: role, role: { user: { user_name: end_user.user_name } } }
+                  params: { course_id: course.id, id: role, role: { end_user: { user_name: end_user.user_name } } }
         end
       end
       subject do
         post_as instructor, :update,
-                params: { course_id: course.id, id: role, role: { user: { user_name: new_end_user.user_name } } }
+                params: { course_id: course.id, id: role, role: { end_user: { user_name: new_end_user.user_name } } }
       end
       context 'when the new user exists' do
         let(:new_end_user) { create :end_user }

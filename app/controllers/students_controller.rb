@@ -79,7 +79,7 @@ class StudentsController < ApplicationController
   end
 
   def create
-    user = User.find_by(user_name: params[:role][:user][:user_name])
+    user = User.find_by(user_name: params[:role][:end_user][:user_name])
     @role = current_course.students.create(user: user, **role_params)
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(current_course)
