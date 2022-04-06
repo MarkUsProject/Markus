@@ -262,7 +262,7 @@ module Repository
     def self.get_all_permissions
       visibility = self.visibility_hash
       permissions = Hash.new { |h, k| h[k] = [] }
-      instructors = Instructor.joins(:course, :end_user)
+      instructors = Instructor.joins(:course, :user)
                               .pluck('courses.name', 'users.user_name')
                               .group_by(&:first)
                               .transform_values { |val| val.map(&:second) }
@@ -279,7 +279,7 @@ module Repository
       end
       # NOTE: this will allow graders to access the files in the entire repository
       # even if they are the grader for only a single assignment
-      graders_info = TaMembership.joins(role: [:end_user, :course],
+      graders_info = TaMembership.joins(role: [:user, :course],
                                         grouping: [:group, { assignment: :assignment_properties }])
                                  .where('assignment_properties.anonymize_groups': false)
                                  .pluck(:repo_name, :user_name, 'courses.name')
