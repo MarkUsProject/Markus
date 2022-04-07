@@ -72,5 +72,11 @@ describe Ta do
     it 'should create associated permissions' do
       expect(GraderPermission.exists?(user.grader_permission.id)).to be true
     end
+    it 'does not allow admin users to be tas' do
+      expect(build(:ta, user: create(:admin_user))).not_to be_valid
+    end
+    it 'does not allow autotest users to be tas' do
+      expect(build(:ta, user: create(:autotest_user))).not_to be_valid
+    end
   end
 end
