@@ -20,7 +20,7 @@ class TasController < ApplicationController
   end
 
   def create
-    user = EndUser.find_by(user_name: user_params[:user_name])
+    user = EndUser.find_by(user_name: end_user_params[:user_name])
     @role = current_course.tas.create(user: user, **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
@@ -31,7 +31,7 @@ class TasController < ApplicationController
 
   def update
     @role = record
-    @role.update(user: EndUser.find_by(user_name: user_params[:user_name]), **permission_params)
+    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -74,7 +74,7 @@ class TasController < ApplicationController
     params.require(:role).permit(grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
   end
 
-  def user_params
+  def end_user_params
     params.require(:role).require(:end_user).permit(:user_name)
   end
 
