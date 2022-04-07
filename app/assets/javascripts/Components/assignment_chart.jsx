@@ -22,7 +22,7 @@ export class AssignmentChart extends React.Component {
           datasets: [],
         },
         options: {
-          scales: chartScales,
+          scales: chartScales(),
         },
       },
       ta_grade_distribution: {
@@ -36,7 +36,7 @@ export class AssignmentChart extends React.Component {
               display: true,
             },
           },
-          scales: chartScales,
+          scales: chartScales(),
         },
       },
     };
