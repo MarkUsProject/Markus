@@ -10,7 +10,9 @@ export class GradeEntryFormChart extends React.Component {
       distribution_data: {
         labels: [],
         datasets: [],
-        options: {scales: chartScales},
+        options: {
+          scales: chartScales(),
+        },
       },
       info_data: {},
       column_data: {
