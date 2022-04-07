@@ -69,4 +69,12 @@ class Role < ApplicationRecord
     return visible.where(id: assessment_id) if assessment_id
     visible
   end
+
+  private
+
+  # Helper for TA and Student subclasses that validate if the user associated with the role
+  # is an end user
+  def associated_user_is_an_end_user
+    errors.add(:base, 'non end users cannot be assigned to this role') unless self.user.end_user?
+  end
 end
