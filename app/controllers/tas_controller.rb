@@ -20,7 +20,7 @@ class TasController < ApplicationController
   end
 
   def create
-    user = User.find_by(user_name: user_params[:user_name])
+    user = EndUser.find_by(user_name: user_params[:user_name])
     @role = current_course.tas.create(user: user, **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
@@ -31,7 +31,7 @@ class TasController < ApplicationController
 
   def update
     @role = record
-    @role.update(user: User.find_by(user_name: user_params[:user_name]), **permission_params)
+    @role.update(user: EndUser.find_by(user_name: user_params[:user_name]), **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
 
