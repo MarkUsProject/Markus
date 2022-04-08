@@ -62,6 +62,7 @@ gem 'activerecord-session_store'
 gem 'config'
 gem 'cookies_eu'
 gem 'rails-html-sanitizer'
+gem 'rails_performance'
 gem 'responders'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have

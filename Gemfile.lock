@@ -305,6 +305,10 @@ GEM
     rails-i18n (7.0.3)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 8)
+    rails_performance (1.0.1)
+      rails
+      redis
+      redis-namespace
     railties (7.0.2.3)
       actionpack (= 7.0.2.3)
       activesupport (= 7.0.2.3)
@@ -494,6 +498,7 @@ DEPENDENCIES
   rails-erd
   rails-html-sanitizer
   rails-i18n (~> 7.0.0)
+  rails_performance
   rdoc
   redcarpet
   responders
