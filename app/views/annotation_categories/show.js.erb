@@ -3,5 +3,3 @@ $('#annotation_list_holder').replaceWith(
                                 locals: { annotation_texts: @annotation_texts,
                                           annotation_category: @annotation_category }).html_safe %>");
 reloadDOM();
-ajax_events.setUpCallbacks(document.getElementById('delete_annotation_category'));
-ajax_events.setUpCallbacks(document.getElementsByClassName('edit_annotation_category')[0]);
