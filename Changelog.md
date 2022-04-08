@@ -23,6 +23,7 @@
 - Added ability for instructors to edit course visibility (#5925)
 - Fix bugs when handling remark requests with deductive annotations (#5926)
 - Fix display of flash messages when creating criteria and annotations (#5949)
+- Display error messages on group csv upload when there are invalid group names (#5952)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
