@@ -1,4 +1,4 @@
-class AdminRole < Instructor
+class AdminRole < Role
   def instructor?
     true
   end
