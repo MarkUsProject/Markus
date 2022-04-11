@@ -21,15 +21,15 @@ class Role < ApplicationRecord
   # Helper methods -----------------------------------------------------
 
   def instructor?
-    instance_of?(Instructor) || instance_of?(AdminRole)
+    is_a?(Instructor)
   end
 
   def ta?
-    instance_of?(Ta)
+    is_a?(Ta)
   end
 
   def student?
-    instance_of?(Student)
+    is_a?(Student)
   end
 
   # Submission helper methods -------------------------------------------------
