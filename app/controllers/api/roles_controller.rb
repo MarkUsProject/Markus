@@ -89,6 +89,11 @@ module Api
     private
 
     def create_role
+      unless role_params[:type] != AdminRole.name || @real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to create admin roles' },
+               status: :forbidden
+      end
       ApplicationRecord.transaction do
         user = User.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, user: user, course: @current_course)
@@ -107,6 +112,11 @@ module Api
     end
 
     def update_role(role)
+      unless role.is_a?(AdminRole) && @real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update admin roles' },
+               status: :forbidden
+      end
       ApplicationRecord.transaction do
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
@@ -132,7 +142,8 @@ module Api
 
       # Check if that user_name is taken
       user = User.find_by(user_name: params[:user_name])
-      Role.find_by(user: user, course: @current_course)
+      role = Role.find_by(user: user, course: @current_course)
+      role if role.is_a?(AdminRole) && !@real_user.admin_user?
     end
 
     def filtered_roles
