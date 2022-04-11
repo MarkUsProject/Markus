@@ -1,4 +1,4 @@
-# Subclass of User that can be associated with Roles
+# Subclass of User meant for regular users
 class EndUser < User
   def visible_courses
     self.courses.where.not('roles.type': 'Student')
