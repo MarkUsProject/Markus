@@ -35,6 +35,8 @@ module Admin
       respond_with @user, location: -> { edit_admin_user_path(@user) }
     end
 
+    def upload; end
+
     protected
 
     def implicit_authorization_target
