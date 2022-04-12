@@ -1,5 +1,5 @@
 describe GraderPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   describe_rule :manage? do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }

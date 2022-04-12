@@ -1,5 +1,5 @@
 <%= form_for [@current_course, @role], as: :role do |f| %>
-  <%= f.fields_for(@role.end_user || EndUser.new) do |u_f| %>
+  <%= f.fields_for(@role.user || EndUser.new) do |u_f| %>
     <div class='inline-labels'>
       <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
       <%= u_f.text_field :user_name, required: true, pattern: '[a-zA-Z0-9\-_]+' %>

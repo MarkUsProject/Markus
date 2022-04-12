@@ -150,7 +150,7 @@ describe Api::RolesController do
     end
     shared_examples 'creating' do |method|
       let(:end_user) { create :end_user }
-      let(:student) { build :student, end_user: end_user, course: course }
+      let(:student) { build :student, user: end_user, course: course }
       let(:user_name) { student.user_name }
       let(:type) { student.type }
       let(:first_name) { student.first_name }
@@ -173,7 +173,7 @@ describe Api::RolesController do
           post method, params: { user_name: user_name, type: type, course_id: course.id, **other_params }
         end
         context 'when creating a new user' do
-          let(:created_student) { Student.joins(:end_user).where('users.user_name': student.user_name).first }
+          let(:created_student) { Student.joins(:user).where('users.user_name': student.user_name).first }
           it 'should be successful' do
             expect(response.status).to eq(201)
           end

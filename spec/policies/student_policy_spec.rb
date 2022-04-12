@@ -1,11 +1,11 @@
 describe StudentPolicy do
   let(:role) { create :student }
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
 
   describe_rule :run_tests? do
     failed 'with not additional context'
     context 'authorized with an assignment' do
-      let(:context) { { role: role, assignment: assignment, real_user: role.end_user } }
+      let(:context) { { role: role, assignment: assignment, real_user: role.user } }
       let(:assignment) { create :assignment, assignment_properties_attributes: assignment_attrs }
       failed 'without student tests enabled' do
         let(:assignment_attrs) { { token_start_date: 1.hour.ago, enable_student_tests: false } }
@@ -28,7 +28,7 @@ describe StudentPolicy do
       end
     end
     context 'authorized with a grouping' do
-      let(:context) { { role: role, grouping: grouping, real_user: role.end_user } }
+      let(:context) { { role: role, grouping: grouping, real_user: role.user } }
       succeed 'when the role is a member' do
         let(:grouping) { create :grouping_with_inviter, inviter: role, test_tokens: 1 }
         failed 'when there is a test in progress' do
@@ -47,7 +47,7 @@ describe StudentPolicy do
       end
     end
     context 'authorized with a submission' do
-      let(:context) { { role: role, submission: result.submission, real_user: role.end_user } }
+      let(:context) { { role: role, submission: result.submission, real_user: role.user } }
       failed 'with a released result' do
         let(:result) { create :released_result }
       end
