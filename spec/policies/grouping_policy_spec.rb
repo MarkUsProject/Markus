@@ -1,5 +1,5 @@
 describe GroupingPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   let(:record) { grouping }
   let(:grouping) { create :grouping }
   let(:role) { create :instructor }
@@ -89,7 +89,7 @@ describe GroupingPolicy do
 
   describe_rule :disinvite_member? do
     let(:role) { create :student }
-    let(:context) { { role: role, real_user: role.end_user, membership: membership } }
+    let(:context) { { role: role, real_user: role.user, membership: membership } }
     succeed 'role is inviter and the membership status is pending' do
       let(:grouping) { create :grouping_with_inviter, inviter: role }
       let(:membership) { create :student_membership, grouping: grouping }
@@ -105,7 +105,7 @@ describe GroupingPolicy do
 
   describe_rule :delete_rejected? do
     let(:role) { create :student }
-    let(:context) { { role: role, real_user: role.end_user, membership: membership } }
+    let(:context) { { role: role, real_user: role.user, membership: membership } }
     succeed 'role is inviter and the membership status is rejected' do
       let(:grouping) { create :grouping_with_inviter, inviter: role }
       let(:membership) { create :rejected_student_membership, grouping: grouping }

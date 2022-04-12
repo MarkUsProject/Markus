@@ -59,9 +59,9 @@ describe GradersController do
       end
 
       it 'and all graders and groups are valid' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'test_group'))
@@ -100,9 +100,9 @@ describe GradersController do
       end
 
       it 'and some graders are invalid' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c0curtis'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c0curtis'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'test_group'))
@@ -127,9 +127,9 @@ describe GradersController do
       end
 
       it 'and some groupings are invalid' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'Group of 7'))
@@ -153,9 +153,9 @@ describe GradersController do
       end
 
       it 'and the request removes existing mappings' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'test_group'))
@@ -197,9 +197,9 @@ describe GradersController do
         end
 
         it 'and all graders and criteria are valid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
@@ -219,9 +219,9 @@ describe GradersController do
         end
 
         it 'and some graders are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'reid'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'reid'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
@@ -239,9 +239,9 @@ describe GradersController do
         end
 
         it 'and some criteria are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
@@ -265,9 +265,9 @@ describe GradersController do
         end
 
         it 'and all graders and criteria are valid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
@@ -290,9 +290,9 @@ describe GradersController do
         end
 
         it 'and some graders are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'reid'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'reid'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
@@ -313,9 +313,9 @@ describe GradersController do
         end
 
         it 'and some criteria are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')

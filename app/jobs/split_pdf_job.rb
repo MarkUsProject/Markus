@@ -282,9 +282,9 @@ class SplitPdfJob < ApplicationJob
 
     case exam_template.cover_fields
     when 'id_number'
-      Student.joins(:end_user).find_by('end_user.id_number': parsed[1])
+      Student.joins(:user).find_by('user.id_number': parsed[1])
     when 'user_name'
-      Student.joins(:end_user).find_by(EndUser.arel_table[:user_name].matches(parsed[0]))
+      Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed[0]))
     end
   end
 
