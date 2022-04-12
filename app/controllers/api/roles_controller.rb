@@ -33,10 +33,13 @@ module Api
     # Optional: filter, fields
     def show
       role = Role.find_by(id: params[:id])
-      role = nil unless role.is_a?(AdminRole) && !@real_user.admin_user?
       if role.nil?
         # No user with that id
         render 'shared/http_status', locals: { code: '404', message: 'No user exists with that id' }, status: :not_found
+      elsif role.admin? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to view information about this user' },
+               status: :forbidden
       else
         respond_to do |format|
           format.xml do
@@ -56,6 +59,10 @@ module Api
       role = Role.find_by(id: params[:id])
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+      elsif role.admin? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update the role of this user' },
+               status: :forbidden
       else
         update_role(role)
       end
@@ -69,6 +76,11 @@ module Api
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: :not_found
         return
+      elsif role.admin? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update the role of this user' },
+               status: :forbidden
+        return
       end
       update_role(role) unless role.nil?
     end
@@ -80,6 +92,10 @@ module Api
       role = find_role_by_username
       if role.nil?
         create_role
+      elsif role.admin? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update the role of this user' },
+               status: :forbidden
       else
         role.update!(hidden: false)
         render 'shared/http_status', locals: { code: '200', message:
@@ -114,12 +130,6 @@ module Api
     end
 
     def update_role(role)
-      unless !role.is_a?(AdminRole) || @real_user.admin_user?
-        render 'shared/http_status',
-               locals: { code: '403', message: 'You are not allowed to update admin roles' },
-               status: :forbidden
-        return
-      end
       ApplicationRecord.transaction do
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
@@ -145,12 +155,12 @@ module Api
 
       # Check if that user_name is taken
       user = User.find_by(user_name: params[:user_name])
-      role = Role.find_by(user: user, course: @current_course)
-      role unless role.is_a?(AdminRole) && !@real_user.admin_user?
+      Role.find_by(user: user, course: @current_course)
     end
 
     def filtered_roles
       collection = Role.includes(:user).where(params.permit(:course_id)).order(:id)
+      collection = collection.where.not(type: AdminRole.name) unless @real_user.admin_user?
       if params[:filter]&.present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
         user_filter = params[:filter].permit(*USER_FIELDS).to_h.transform_keys { |k| "users.#{k}" }

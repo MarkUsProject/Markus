@@ -32,6 +32,10 @@ class Role < ApplicationRecord
     is_a?(Student)
   end
 
+  def admin?
+    is_a?(AdminRole)
+  end
+
   # Submission helper methods -------------------------------------------------
 
   def grouping_for(aid)
