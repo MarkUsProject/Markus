@@ -172,7 +172,7 @@ describe Api::RolesController do
         before :each do
           post method, params: { user_name: user_name, type: type, course_id: course.id, **other_params }
         end
-        context 'when creating a new user' do
+        context 'when creating a new student' do
           let(:created_student) { Student.joins(:user).where('users.user_name': student.user_name).first }
           it 'should be successful' do
             expect(response.status).to eq(201)
@@ -204,6 +204,15 @@ describe Api::RolesController do
           let(:type) { 'Dragon' }
           it 'should raise a 422 error' do
             expect(response.status).to eq(422)
+          end
+        end
+        context 'when creating a new course admin' do
+          let(:admin) { create :admin_user }
+          let(:admin_role) { build :admin_role, user: admin, course: course }
+          let(:user_name) { admin.user_name }
+          let(:type) { admin_role.type }
+          it 'is forbidden' do
+            expect(response.status).to eq(403)
           end
         end
       end
