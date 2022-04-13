@@ -304,7 +304,7 @@ class Assignment < Assessment
   def all_grouping_data
     student_data = self.course
                        .students
-                       .joins(:end_user)
+                       .joins(:user)
                        .pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
@@ -313,7 +313,7 @@ class Assignment < Assessment
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: [role: :end_user])
+                    .left_outer_joins(non_rejected_student_memberships: [role: :user])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.instructor_approved',
@@ -491,7 +491,7 @@ class Assignment < Assessment
 
     if user.instructor?
       groupings = self.groupings
-      graders = groupings.joins(tas: :end_user)
+      graders = groupings.joins(tas: :user)
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
@@ -512,7 +512,7 @@ class Assignment < Assessment
                              .left_outer_joins(inviter: :section)
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
-    members = groupings.joins(accepted_students: :end_user)
+    members = groupings.joins(accepted_students: :user)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
     tag_data = groupings
@@ -972,10 +972,10 @@ class Assignment < Assessment
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count
     grader_data = self.groupings
-                      .joins(tas: :end_user)
+                      .joins(tas: :user)
                       .group('user_name')
                       .count
-    graders = self.course.tas.joins(:end_user)
+    graders = self.course.tas.joins(:user)
                   .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
@@ -988,7 +988,7 @@ class Assignment < Assessment
     end
 
     group_data = self.groupings
-                     .left_outer_joins(:group, tas: :end_user)
+                     .left_outer_joins(:group, tas: :user)
                      .pluck('groupings.id', 'groups.group_name', 'users.user_name',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
@@ -1011,7 +1011,7 @@ class Assignment < Assessment
     end
 
     criterion_data =
-      self.criteria.left_outer_joins(tas: :end_user)
+      self.criteria.left_outer_joins(tas: :user)
           .pluck('criteria.name', 'criteria.position',
                  'criteria.assigned_groups_count', 'users.user_name')
     criteria = Hash.new { |h, k| h[k] = [] }
@@ -1088,7 +1088,7 @@ class Assignment < Assessment
       member_data = {}
       section_data = {}
     else
-      member_data = groupings.joins(accepted_students: :end_user)
+      member_data = groupings.joins(accepted_students: :user)
                              .pluck_to_hash('groupings.id', 'users.user_name')
                              .group_by { |h| h['groupings.id'] }
 

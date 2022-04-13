@@ -1,4 +1,4 @@
-# Subclass of User that can be associated with Roles
+# Subclass of User meant for regular users
 class EndUser < User
   has_many :roles, foreign_key: :user_id, inverse_of: :end_user
   has_many :courses, through: :roles

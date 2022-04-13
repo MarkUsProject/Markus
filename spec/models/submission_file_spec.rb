@@ -210,9 +210,10 @@ describe SubmissionFile do
       end
       context 'with valid annotations' do
         before(:each) do
-          @ta = Ta.new(end_user_attributes: { user_name: 'exist_user',
-                                              first_name: 'Nelle',
-                                              last_name: 'Varoquaux' })
+          @ta = Ta.new(user_attributes: { user_name: 'exist_user',
+                                          first_name: 'Nelle',
+                                          last_name: 'Varoquaux',
+                                          type: 'EndUser' })
           @annot1 = ImageAnnotation.new({ submission_file: @submission_file,
                                           x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
                                           annotation_text: AnnotationText.new({ id: 1 }),
@@ -246,9 +247,10 @@ describe SubmissionFile do
       end
       context 'with valid annotations' do
         before(:each) do
-          @ta = Ta.new(end_user_attributes: { user_name: 'exist_user',
-                                              first_name: 'Nelle',
-                                              last_name: 'Varoquaux' })
+          @ta = Ta.new(user_attributes: { user_name: 'exist_user',
+                                          first_name: 'Nelle',
+                                          last_name: 'Varoquaux',
+                                          type: 'EndUser' })
           @annot1 = ImageAnnotation.new({ submission_file: @submission_file,
                                           x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
                                           annotation_text: AnnotationText.new({ id: 1 }),

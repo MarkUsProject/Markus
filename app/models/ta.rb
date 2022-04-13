@@ -3,6 +3,7 @@ class Ta < Role
   has_one :grader_permission, dependent: :destroy, foreign_key: :role_id, inverse_of: :ta
   before_create :create_grader_permission
   validates :grader_permission, presence: { unless: -> { self.new_record? } }
+  validate :associated_user_is_an_end_user
   accepts_nested_attributes_for :grader_permission
   has_many :criterion_ta_associations, dependent: :delete_all
   has_many :criteria, through: :criterion_ta_associations

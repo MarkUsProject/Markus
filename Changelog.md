@@ -22,6 +22,7 @@
 - Added course visibility status to admin courses list (#5924)
 - Added ability for instructors to edit course visibility (#5925)
 - Fix bugs when handling remark requests with deductive annotations (#5926)
+- Modified model associations so that a role belongs to a user (#5948)
 - Fix display of flash messages when creating criteria and annotations (#5949)
 - Added a bulk upload of end users to admin users page (#5959)
 
