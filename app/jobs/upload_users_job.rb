@@ -1,4 +1,8 @@
 class UploadUsersJob < ApplicationJob
+  def self.on_complete_js(_status)
+    'window.location.reload.bind(window.location)'
+  end
+
   def perform(user_class, data, encoding)
     progress.total = data.lines.count
     user_indices = {
