@@ -36,7 +36,7 @@ module Api
       if role.nil?
         # No user with that id
         render 'shared/http_status', locals: { code: '404', message: 'No user exists with that id' }, status: :not_found
-      elsif role.admin? && !@real_user.admin_user?
+      elsif role.admin_role? && !@real_user.admin_user?
         render 'shared/http_status',
                locals: { code: '403', message: 'You are not allowed to view information about this user' },
                status: :forbidden
@@ -59,7 +59,7 @@ module Api
       role = Role.find_by(id: params[:id])
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
-      elsif role.admin? && !@real_user.admin_user?
+      elsif role.admin_role? && !@real_user.admin_user?
         render 'shared/http_status',
                locals: { code: '403', message: 'You are not allowed to update the role of this user' },
                status: :forbidden
@@ -76,7 +76,7 @@ module Api
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: :not_found
         return
-      elsif role.admin? && !@real_user.admin_user?
+      elsif role.admin_role? && !@real_user.admin_user?
         render 'shared/http_status',
                locals: { code: '403', message: 'You are not allowed to update the role of this user' },
                status: :forbidden
@@ -92,7 +92,7 @@ module Api
       role = find_role_by_username
       if role.nil?
         create_role
-      elsif role.admin? && !@real_user.admin_user?
+      elsif role.admin_role? && !@real_user.admin_user?
         render 'shared/http_status',
                locals: { code: '403', message: 'You are not allowed to update the role of this user' },
                status: :forbidden

@@ -32,7 +32,7 @@ class Role < ApplicationRecord
     is_a?(Student)
   end
 
-  def admin?
+  def admin_role?
     is_a?(AdminRole)
   end
 
