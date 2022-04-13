@@ -27,7 +27,7 @@ module SessionHandler
   end
 
   def current_role
-    if !current_user.nil? && current_user.admin_user?
+    if current_user&.admin_user?
       @current_role ||= AdminRole.find_or_create_by(user: current_user, course: current_course)
     else
       @current_role ||= Role.find_by(user: current_user, course: current_course)
@@ -35,7 +35,7 @@ module SessionHandler
   end
 
   def real_role
-    if !real_user.nil? && real_user.admin_user?
+    if real_user&.admin_user?
       @real_role ||= AdminRole.find_or_create_by(user: real_user, course: current_course)
     else
       @real_role ||= Role.find_by(user: real_user, course: current_course)
