@@ -1,3 +1,5 @@
 <% content_for :title, t('markus_administration') %>
 
 <%= link_to t('resque.dashboard'), admin_resque_path, target: :_blank, rel: 'noopener' %>
+<br>
+<%= link_to 'Performance', admin_performance_path, target: :_blank, rel: 'noopener' %>
