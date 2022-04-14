@@ -15,21 +15,25 @@ class Role < ApplicationRecord
   has_many :assessments, through: :course
   has_many :tags
 
-  validates :type, format: { with: /\AStudent|Instructor|Ta\z/ }
+  validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
   validates :user_id, uniqueness: { scope: :course_id }
 
   # Helper methods -----------------------------------------------------
 
   def instructor?
-    instance_of?(Instructor)
+    is_a?(Instructor)
   end
 
   def ta?
-    instance_of?(Ta)
+    is_a?(Ta)
   end
 
   def student?
-    instance_of?(Student)
+    is_a?(Student)
+  end
+
+  def admin_role?
+    is_a?(AdminRole)
   end
 
   # Submission helper methods -------------------------------------------------

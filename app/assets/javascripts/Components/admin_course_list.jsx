@@ -71,7 +71,7 @@ class AdminCourseList extends React.Component {
           <span>
             <a href={Routes.edit_admin_course_path(value)}>{I18n.t("edit")}</a>
             &nbsp;|&nbsp;
-            <a href={Routes.course_path(value)}>{I18n.t("courses.view")}</a>
+            <a href={Routes.course_path(value)}>{I18n.t("courses.go_to_course")}</a>
           </span>
         );
       },

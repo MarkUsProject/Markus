@@ -24,6 +24,7 @@
 - Fix bugs when handling remark requests with deductive annotations (#5926)
 - Modified model associations so that a role belongs to a user (#5948)
 - Fix display of flash messages when creating criteria and annotations (#5949)
+- Created a new admin role (#5956)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
