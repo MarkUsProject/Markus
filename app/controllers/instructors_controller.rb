@@ -12,6 +12,7 @@ class InstructorsController < ApplicationController
       format.json do
         data = current_course.instructors
                              .joins(:user)
+                             .where(type: Instructor.name)
                              .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
         render json: data
       end
