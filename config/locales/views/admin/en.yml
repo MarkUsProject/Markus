@@ -6,3 +6,5 @@ en:
     view: View
     visible: Visible
   markus_administration: MarkUs Administration
+  users:
+    admin_csv_upload_help_html: For more information about this feature and the<br>file format(s) supported, please visit <a href="https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Admin-Guide.md#bulk-uploading-of-end-users">this page</a>.
