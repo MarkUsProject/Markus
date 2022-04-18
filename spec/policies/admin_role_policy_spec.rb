@@ -1,5 +1,5 @@
-describe InstructorPolicy do
-  let(:role) { build(:instructor) }
+describe AdminRolePolicy do
+  let(:role) { build(:admin_role) }
   let(:context) { { role: role, real_user: role.user } }
 
   describe_rule :run_tests? do

@@ -9,7 +9,7 @@ namespace :db do
 
     # Create dummy student for autotest submissions.
     user = EndUser.find_or_create_by(user_name: 'aaaautotest', first_name: 'Test', last_name: 'Otto')
-    Course.first.students.find_or_create_by!(end_user: user)
+    Course.first.students.find_or_create_by!(user: user)
 
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|
@@ -104,7 +104,7 @@ class AutotestSetup
 
   def create_submission
     user = EndUser.find_by(user_name: 'aaaautotest')
-    student = Course.first.students.find_by(end_user: user)
+    student = Course.first.students.find_by(user: user)
     student.create_group_for_working_alone_student(@assignment.id)
     group = Group.find_by group_name: student.user_name
     grouping = Grouping.find_by(group_id: group, assessment_id: @assignment.id)

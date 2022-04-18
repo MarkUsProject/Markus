@@ -79,7 +79,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     grader_ids = params[:graders]
     if grader_ids.blank?
-      grader_ids = current_course.tas.joins(:end_user).where('users.user_name': params[:grader_user_names]).ids
+      grader_ids = current_course.tas.joins(:user).where('users.user_name': params[:grader_user_names]).ids
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request

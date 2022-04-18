@@ -1,5 +1,5 @@
 describe CourseSummaryPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   context 'role is an instructor' do
     let(:role) { create :instructor }
     describe_rule :manage? do

@@ -5,6 +5,7 @@ describe Role do
   it { is_expected.to allow_value('Student').for(:type) }
   it { is_expected.to allow_value('Instructor').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
+  it { is_expected.to allow_value('AdminRole').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }

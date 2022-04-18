@@ -1,5 +1,5 @@
 describe KeyPairPolicy, keep_memory_repos: true do
-  let(:context) { { real_user: user.end_user } }
+  let(:context) { { real_user: user.user } }
   let(:user) { create :instructor }
 
   describe_rule :manage? do
