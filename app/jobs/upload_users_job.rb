@@ -14,7 +14,8 @@ class UploadUsersJob < ApplicationJob
           row_index = EndUser::CSV_ORDER.index(field) || index
           user_data[field] = row[row_index]&.strip
         end
-        user = user_class.find_or_initialize_by(user_data)
+        user = user_class.find_or_initialize_by(user_name: user_data[:user_name])
+        user.assign_attributes(user_data)
         raise "#{user_data[:user_name]}: #{user.errors.full_messages.join('; ')}" unless user.save
         progress.increment
       end
