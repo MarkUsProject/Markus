@@ -38,8 +38,6 @@ module Admin
     def upload
       begin
         data = process_file_upload
-      rescue Psych::SyntaxError => e
-        flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
       rescue StandardError => e
         flash_message(:error, e.message)
       else
