@@ -31,6 +31,7 @@ class CreateGroupsJob < ApplicationJob
             group = Group.find_or_create_by(group_name: group_name, course: assignment.course) do |gr|
               gr.repo_name = group_name if assignment.group_max == 1 && group_name == inviter.user_name
             end
+            errors += group.errors.full_messages if group.errors.present?
             grouping = Grouping.find_or_create_by(group: group, assignment: assignment)
             errors += grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter],
                                       invoked_by_instructor: true)
