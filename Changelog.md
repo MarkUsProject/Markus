@@ -26,6 +26,7 @@
 - Fix display of flash messages when creating criteria and annotations (#5949)
 - Display error messages on group csv upload when there are invalid group names (#5952)
 - Created a new admin role (#5956)
+- Fix display of "Submit File" to "Upload File" for non submission views (#5960)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
