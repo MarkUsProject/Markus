@@ -1,6 +1,4 @@
 class UploadUsersJob < ApplicationJob
-  USER_FIELDS = [:user_name, :last_name, :first_name, :id_number, :email].freeze
-
   def self.on_complete_js(_status)
     'window.location.reload.bind(window.location)'
   end

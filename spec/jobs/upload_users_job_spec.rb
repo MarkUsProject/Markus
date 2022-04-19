@@ -13,34 +13,11 @@ describe UploadUsersJob do
         it 'all valid users are created' do
           expect { subject }.to change { user_type.count }.to 4
         end
-        it 'fails to create users with invalid information' do
-          subject
-          expect(EndUser.find_by(user_name: 'invalid')).to be_nil
-        end
         context 'when the csv order of username and id number is switched' do
           before { stub_const('EndUser::CSV_ORDER', [:id_number, :last_name, :first_name, :user_name, :email]) }
-          it 'only creates users with an id number' do
-            subject
-            expect(user_type.count).to eq 2
-          end
-          it 'changes the meaning of only username and id number row index' do
-            subject
-            user = EndUser.find_by(user_name: '1005602280')
-            received_data = {
-              user_name: user.user_name,
-              last_name: user.last_name,
-              first_name: user.first_name,
-              id_number: user.id_number,
-              email: user.email
-            }
-            expected_data = {
-              user_name: '1005602280',
-              last_name: 'Fraser',
-              first_name: 'Sidney',
-              id_number: 'frasid',
-              email: 'sidney.fraser@test.com'
-            }
-            expect(received_data).to eq(expected_data)
+          it 'does not create users' do
+            expect { subject }.to raise_exception(RuntimeError)
+            expect(user_type.count).to eq 0
           end
         end
       end
@@ -51,11 +28,30 @@ describe UploadUsersJob do
                  user_name: 'frasid',
                  last_name: 'Fraser',
                  first_name: 'Sidney',
-                 id_number: '1005602280',
-                 email: 'sidney.fraser@test.com'
+                 id_number: '',
+                 email: 'sf@test.com'
         end
         it 'does not create additional valid users' do
           expect { subject }.to change { user_type.count }.to 4
+        end
+        it 'updates user that was already created' do
+          subject
+          updated_user = user_type.find_by(user_name: 'frasid')
+          received_user_data = {
+            user_name: updated_user.user_name,
+            last_name: updated_user.last_name,
+            first_name: updated_user.first_name,
+            id_number: updated_user.id_number,
+            email: updated_user.email
+          }
+          expected_user_data = {
+            user_name: 'frasid',
+            last_name: 'Fraser',
+            first_name: 'Sidney',
+            id_number: '1005602280',
+            email: 'sidney.fraser@test.com'
+          }
+          expect(received_user_data).to eq(expected_user_data)
         end
       end
     end
