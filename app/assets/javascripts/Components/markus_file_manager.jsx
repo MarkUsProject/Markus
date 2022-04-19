@@ -38,9 +38,9 @@ class RawFileManager extends RawFileBrowser {
     }
   };
 
-  upload_text = item => {
+  upload_or_submit_file = () => {
     const locale = this.props.isSubmittingItems ? "submit_the" : "upload_the";
-    return I18n.t(locale, {item: item});
+    return I18n.t(locale, {item: I18n.t("file")});
   };
 
   renderActionBar(selectedItems) {
@@ -148,7 +148,7 @@ class RawFileManager extends RawFileBrowser {
                 role="button"
               >
                 <i className="fa fa-submit-link-o" aria-hidden="true" />
-                &nbsp;{this.upload_text(I18n.t("submissions.student.link"))}
+                &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
               </a>
             </li>
           );
@@ -162,7 +162,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-add-file-o" aria-hidden="true" />
-              &nbsp;{this.upload_text(I18n.t("file"))}
+              &nbsp;{this.upload_or_submit_file()}
             </a>
           </li>
         );
@@ -192,7 +192,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-submit-link-o" aria-hidden="true" />
-              &nbsp;{this.upload_text(I18n.t("submissions.student.link"))}
+              &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
             </a>
           </li>
         );
@@ -206,7 +206,7 @@ class RawFileManager extends RawFileBrowser {
             role="button"
           >
             <i className="fa fa-add-file-o" aria-hidden="true" />
-            &nbsp;{this.upload_text(I18n.t("file"))}
+            &nbsp;{this.upload_or_submit_file()}
           </a>
         </li>
       );
