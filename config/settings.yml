@@ -70,6 +70,19 @@ logging:
   size_threshold: 1024000000
   old_files: 10
 
+# resque-scheduler configuration: https://github.com/resque/resque-scheduler#static-schedules
+# See also: https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
+# Warning: this setting only works if you are using resque to manage background jobs.
+resque_schedule:
+  CleanTmpJob:
+    class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+    queue: DEFAULT_QUEUE
+    every: 2d
+    # never: "* * * * * *"  # replace every: with never: if you want to run the job manually
+    args:
+      job_class:  CleanTmpJob
+      arguments:
+        - 5184000  # 60 days, in seconds
 autotest:
   student_test_buffer_minutes: 60
 

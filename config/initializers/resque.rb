@@ -1,4 +1,6 @@
 require 'resque/server'
+require 'resque-scheduler'
+require 'resque/scheduler/server'
 
 # Modify Resque::Server class to add (manual) authentication
 Rails.application.config.after_initialize do
@@ -12,3 +14,5 @@ Rails.application.config.after_initialize do
     end
   end
 end
+
+Resque.schedule = Settings.resque_schedule.to_h.deep_stringify_keys
