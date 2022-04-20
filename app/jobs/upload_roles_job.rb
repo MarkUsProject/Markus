@@ -1,4 +1,4 @@
-# upload users job
+# upload user roles job
 class UploadRolesJob < ApplicationJob
   def perform(role_class, course, data, encoding)
     progress.total = data.lines.count

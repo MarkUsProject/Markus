@@ -56,6 +56,13 @@ student_csv_order:
   - id_number
   - email
 
+end_user_csv_order:
+  - user_name
+  - last_name
+  - first_name
+  - id_number
+  - email
+
 logging:
   enabled: true
   rotate_by_interval: false
