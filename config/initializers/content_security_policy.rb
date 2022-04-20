@@ -9,10 +9,8 @@
 
 Rails.application.config.content_security_policy do |policy|
   policy.default_src :self
-  policy.script_src :self, "'unsafe-inline'",
-                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js', 'https://code.highcharts.com'
+  policy.script_src :self, "'strict-dynamic'"
   policy.form_action :self
-  policy.style_src :self, "'unsafe-inline'"
   # Safari doesn't support worker-src and defaults to child-src, blob is required because of the way Safari
   # handles dynamically generated images
   policy.child_src :self, :blob
