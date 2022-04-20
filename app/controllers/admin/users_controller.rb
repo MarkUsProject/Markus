@@ -35,6 +35,22 @@ module Admin
       respond_with @user, location: -> { edit_admin_user_path(@user) }
     end
 
+    def upload
+      begin
+        data = process_file_upload
+      rescue StandardError => e
+        flash_message(:error, e.message)
+      else
+        if data[:type] == '.csv'
+          @current_job = UploadUsersJob.perform_later(EndUser,
+                                                      params[:upload_file].read,
+                                                      params[:encoding])
+          session[:job_id] = @current_job.job_id
+        end
+      end
+      redirect_to action: 'index'
+    end
+
     protected
 
     def implicit_authorization_target

@@ -1,0 +1,35 @@
+<%= content_for :modal_id, 'upload_dialog' %>
+<%= content_for :modal_title, t('upload_the', item: EndUser.model_name.human.pluralize) %>
+<%= content_for :modal_open_link, '#uploadModal' %>
+
+<%= content_for :modal_content do %>
+
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script',
+                             upload_id: 'upload_file',
+                             button_id: 'upload',
+                             nonce: true %>
+
+  <p>
+    <%= t('users.admin_csv_upload_help_html', markus_version: @markus_version) %>
+  </p>
+  <%= form_tag upload_admin_users_path, { multipart: true } do %>
+    <div>
+      <%= file_field_tag 'upload_file' %>
+    </div>
+
+    <div>
+      <%= label_tag t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload',
+                     disabled: true %>
+      <input type='reset' id='upload' value='<%= t(:cancel) %>'/>
+    </section>
+  <% end %>
+<% end %>
