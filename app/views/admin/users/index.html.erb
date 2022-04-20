@@ -10,7 +10,12 @@
 
 <% @heading_buttons = [
   { link_text: t('helpers.submit.create', model: User.model_name.human),
-    link_path: new_admin_user_path }
+    link_path: new_admin_user_path },
+  { link_text: t('upload_the', item: EndUser.model_name.human.pluralize),
+    link_path: '#',
+    html_options: { id: 'uploadModal' } }
 ] %>
 
 <div id='admin_users_list'></div>
+
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>

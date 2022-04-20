@@ -123,6 +123,9 @@ Config.setup do |config|
       optional(:student_csv_order).array(
         included_in?: %w[user_name last_name first_name section_name id_number email]
       )
+      optional(:end_user_csv_order).array(
+        included_in?: %w[user_name last_name first_name id_number email]
+      )
       required(:repository).hash do
         required(:storage).filled(:string)
         required(:type).value(included_in?: %w[git svn mem])
