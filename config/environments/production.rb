@@ -4,8 +4,9 @@ Markus::Application.configure do
     Rails.application.config.middleware.use ExceptionNotification::Rack,
                                             email: {
                                               email_prefix: '[ERROR] ',
-                                              sender_address: %("MarkUs Exception Notifier" <notifier@example.com>),
-                                              exception_recipients: %w[exceptions@example.com]
+                                              sender_address: %("MarkUs Exception Notifier"
+                                                                <#{Settings.exception_notification.sender}>),
+                                              exception_recipients: Settings.exception_notification.recipients
                                             }
   end
 end
