@@ -41,6 +41,3 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/prod" %>/starter_files
-
-exception_notification:
-  enabled: false

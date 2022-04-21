@@ -79,4 +79,7 @@ scanned_exams:
 python:
   bin: <%= ::Rails.root %>/venv/bin
 
+exception_notification:
+  enabled: false
+
 pandoc: /usr/bin/pandoc

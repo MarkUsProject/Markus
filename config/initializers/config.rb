@@ -165,6 +165,11 @@ Config.setup do |config|
       required(:python).hash do
         required(:bin).filled(:string)
       end
+      required(:exception_notification).hash do
+        required(:enabled).filled(:bool)
+        optional(:sender).filled(:string)
+        optional(:recipients).array
+      end
       required(:pandoc).filled(:string)
     end
   end
