@@ -24,7 +24,11 @@ class SubmissionsJob < ApplicationJob
       m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                    grouping.id.to_s)
       if options[:revision_identifier].nil?
-        time = options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
+        time = if assignment.scanned_exam?
+                 Time.current
+               else
+                 options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
+               end
         new_submission = Submission.create_by_timestamp(grouping, time)
       else
         new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
