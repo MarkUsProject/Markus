@@ -38,6 +38,11 @@ class RawFileManager extends RawFileBrowser {
     }
   };
 
+  upload_or_submit_file_label = () => {
+    const locale = this.props.isSubmittingItems ? "submit_the" : "upload_the";
+    return I18n.t(locale, {item: I18n.t("file")});
+  };
+
   renderActionBar(selectedItems) {
     // treat multiple selections the same as not targeting
     let selectedItem = selectedItems.length === 1 ? selectedItems[0] : null;
@@ -157,7 +162,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-add-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("submit_the", {item: I18n.t("file")})}
+              &nbsp;{this.upload_or_submit_file_label()}
             </a>
           </li>
         );
@@ -201,7 +206,7 @@ class RawFileManager extends RawFileBrowser {
             role="button"
           >
             <i className="fa fa-add-file-o" aria-hidden="true" />
-            &nbsp;{I18n.t("submit_the", {item: I18n.t("file")})}
+            &nbsp;{this.upload_or_submit_file_label()}
           </a>
         </li>
       );
