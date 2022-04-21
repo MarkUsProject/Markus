@@ -702,8 +702,14 @@ kbd {
   margin-top: 20px;
 
   li {
+    border-bottom: 1px solid $line;
     list-style: none;
     padding: 0.5em 1em;
+
+    &:last-child {
+      border-bottom: 0;
+      border-radius: 0 0 $radius $radius;
+    }
   }
 
   a {

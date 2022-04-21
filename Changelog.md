@@ -27,6 +27,7 @@
 - Display error messages on group csv upload when there are invalid group names (#5952)
 - Created a new admin role (#5956)
 - Added a bulk upload of end users to admin users page (#5959)
+- Added an "Assign Scans" link to exam templates page (#5962)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
