@@ -13,4 +13,8 @@
                 view_logs_course_assignment_exam_templates_path(@current_course, @assignment),
                 remote: true %>
   </li>
+  <li>
+    <%= link_to t('exam_templates.assign_scans.title'),
+                assign_scans_course_assignment_groups_path(@current_course, @assignment) %>
+  </li>
 </div>
