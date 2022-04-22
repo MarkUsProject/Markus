@@ -6,7 +6,6 @@ describe SubmissionsJob do
     let(:job_args) { [groupings] }
     include_examples 'background job'
   end
-
   context 'when creating a submission by timestamp' do
     let(:job_kwargs) { {} }
     before :each do
@@ -34,16 +33,6 @@ describe SubmissionsJob do
           expect(g.reload.current_submission_used.revision_identifier).to be_nil
         end
       end
-      context 'when the assignment is a scanned exam' do
-        let(:assignment) { create :assignment_for_scanned_exam }
-        it 'collects the latest revision' do
-          groupings.each do |g|
-            g.reload
-            latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-            expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
-          end
-        end
-      end
     end
     context 'when a submission exists before the given collection date' do
       let(:collection_dates) { groupings.map { |g| [g.id, 1.hour.ago] }.to_h }
@@ -62,16 +51,6 @@ describe SubmissionsJob do
       it 'collects a nil revision' do
         groupings.each do |g|
           expect(g.reload.current_submission_used.revision_identifier).to be_nil
-        end
-      end
-      context 'when the assignment is a scanned exam' do
-        let(:assignment) { create :assignment_for_scanned_exam }
-        it 'collects the latest revision' do
-          groupings.each do |g|
-            g.reload
-            latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-            expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
-          end
         end
       end
     end
@@ -105,6 +84,20 @@ describe SubmissionsJob do
         SubmissionsJob.perform_now(groupings[0...1], revision_identifier: revision_ids[groupings.first.id] + 'aaaaa')
         g = groupings.first.reload
         expect(g.current_submission_used).to be_nil
+      end
+    end
+  end
+  context 'when creating a submission for a scanned exam' do
+    let(:assignment) { create :assignment_for_scanned_exam }
+    before :each do
+      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', 1.hour.ago.to_s, 'test.txt', 'aaa') }
+      SubmissionsJob.perform_now(groupings)
+    end
+    it 'collects the latest revision' do
+      groupings.each do |g|
+        g.reload
+        latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+        expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
       end
     end
   end
