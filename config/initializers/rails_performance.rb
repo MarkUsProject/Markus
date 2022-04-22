@@ -2,6 +2,13 @@ require 'rails_performance'
 
 Rails.application.config.after_initialize do
   if defined?(RailsPerformance)
+    # Modify CSP for Performance Gem
+    module RailsPerformance
+      class RailsPerformanceController
+        content_security_policy false
+      end
+    end
+
     RailsPerformance.setup do |config|
       config.redis = Redis::Namespace.new(Rails.root.to_s)
       config.duration = 4.hours
