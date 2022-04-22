@@ -14,6 +14,8 @@ class User < ApplicationRecord
 
   # Group relationships
   has_many :key_pairs, dependent: :destroy
+  has_many :roles, inverse_of: :user
+  has_many :courses, through: :roles
   validates :type, format: { with: /\AEndUser|AutotestUser|AdminUser\z/ }
 
   validates :user_name, :last_name, :first_name, :time_zone, :display_name, presence: true

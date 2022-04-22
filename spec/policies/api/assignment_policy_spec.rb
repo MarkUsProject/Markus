@@ -1,5 +1,5 @@
 describe Api::AssignmentPolicy do
-  let(:user) { role.end_user }
+  let(:user) { role.user }
   let(:role) { nil }
   let(:context) { { role: role, real_user: user } }
 

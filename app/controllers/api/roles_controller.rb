@@ -2,9 +2,9 @@ module Api
   # API controller for Roles
   class RolesController < MainApiController
     # Define default fields to display for index and show methods
-    END_USER_FIELDS = [:user_name, :email, :id_number, :first_name, :last_name].freeze
+    USER_FIELDS = [:user_name, :email, :id_number, :first_name, :last_name].freeze
     ROLE_FIELDS = [:type, :grace_credits, :hidden].freeze
-    DEFAULT_FIELDS = [:id, *END_USER_FIELDS, *ROLE_FIELDS].freeze
+    DEFAULT_FIELDS = [:id, *USER_FIELDS, *ROLE_FIELDS].freeze
 
     # Returns users and their attributes
     # Optional: filter, fields
@@ -36,6 +36,10 @@ module Api
       if role.nil?
         # No user with that id
         render 'shared/http_status', locals: { code: '404', message: 'No user exists with that id' }, status: :not_found
+      elsif role.admin_role? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to view information about this user' },
+               status: :forbidden
       else
         respond_to do |format|
           format.xml do
@@ -55,6 +59,10 @@ module Api
       role = Role.find_by(id: params[:id])
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+      elsif role.admin_role? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update the role of this user' },
+               status: :forbidden
       else
         update_role(role)
       end
@@ -68,6 +76,11 @@ module Api
       if role.nil?
         render 'shared/http_status', locals: { code: '404', message: 'Role was not found' }, status: :not_found
         return
+      elsif role.admin_role? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update the role of this user' },
+               status: :forbidden
+        return
       end
       update_role(role) unless role.nil?
     end
@@ -79,6 +92,10 @@ module Api
       role = find_role_by_username
       if role.nil?
         create_role
+      elsif role.admin_role? && !@real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to update the role of this user' },
+               status: :forbidden
       else
         role.update!(hidden: false)
         render 'shared/http_status', locals: { code: '200', message:
@@ -89,9 +106,15 @@ module Api
     private
 
     def create_role
+      unless role_params[:type] != AdminRole.name || @real_user.admin_user?
+        render 'shared/http_status',
+               locals: { code: '403', message: 'You are not allowed to create admin roles' },
+               status: :forbidden
+        return
+      end
       ApplicationRecord.transaction do
-        end_user = EndUser.find_by(user_name: params[:user_name])
-        role = Role.new(**role_params, end_user: end_user, course: @current_course)
+        user = User.find_by(user_name: params[:user_name])
+        role = Role.new(**role_params, user: user, course: @current_course)
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
@@ -131,16 +154,17 @@ module Api
       end
 
       # Check if that user_name is taken
-      end_user = EndUser.find_by(user_name: params[:user_name])
-      Role.find_by(end_user: end_user, course: @current_course)
+      user = User.find_by(user_name: params[:user_name])
+      Role.find_by(user: user, course: @current_course)
     end
 
     def filtered_roles
-      collection = Role.includes(:end_user).where(params.permit(:course_id)).order(:id)
+      collection = Role.includes(:user).where(params.permit(:course_id)).order(:id)
+      collection = collection.where.not(type: AdminRole.name) unless @real_user.admin_user?
       if params[:filter]&.present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
-        end_user_filter = params[:filter].permit(*END_USER_FIELDS).to_h.transform_keys { |k| "users.#{k}" }
-        filter_params = { **role_filter, **end_user_filter }
+        user_filter = params[:filter].permit(*USER_FIELDS).to_h.transform_keys { |k| "users.#{k}" }
+        filter_params = { **role_filter, **user_filter }
         if filter_params.empty?
           render 'shared/http_status',
                  locals: { code: '422', message: 'Invalid or malformed parameter values' },

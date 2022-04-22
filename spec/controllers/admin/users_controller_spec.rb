@@ -36,7 +36,7 @@ describe Admin::UsersController do
 
       describe '#edit' do
         it 'responds with 403' do
-          get_as user, :edit, params: { id: user.end_user.id }
+          get_as user, :edit, params: { id: user.user.id }
           expect(response).to have_http_status(403)
         end
       end
@@ -44,7 +44,7 @@ describe Admin::UsersController do
       describe '#update' do
         let(:params) do
           {
-            id: user.end_user.id,
+            id: user.user.id,
             end_user: {
               user_name: 'Professor X',
               email: 'sample@sample.com',
@@ -57,6 +57,15 @@ describe Admin::UsersController do
         end
         it 'responds with 403' do
           put_as user, :update, params: params
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context '#upload' do
+        it 'responds with 403' do
+          post_as user,
+                  :upload,
+                  params: { upload_file: fixture_file_upload('admin/users_good.csv', 'text/csv') }
           expect(response).to have_http_status(403)
         end
       end
@@ -284,6 +293,19 @@ describe Admin::UsersController do
           last_name: updated_user.last_name
         }
         expect(expected_user_data).to eq(updated_user_data)
+      end
+    end
+
+    context '#upload' do
+      include_examples 'a controller supporting upload', formats: [:csv], background: true, uploader: :admin_user do
+        let(:params) { {} }
+      end
+
+      it 'calls perform_later on a background job' do
+        expect(UploadUsersJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
+        post_as admin,
+                :upload,
+                params: { upload_file: fixture_file_upload('admin/users_good.csv', 'text/csv') }
       end
     end
   end

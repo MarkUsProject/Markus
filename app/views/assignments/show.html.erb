@@ -64,7 +64,7 @@
                        inviter_display_name: grouping.inviter.display_name) %>
               </p>
               <ul>
-                <% grouping.student_memberships.includes(role: :end_user).each do |member|%>
+                <% grouping.student_memberships.includes(role: :user).each do |member|%>
                   <%= render partial: 'assignments/member',
                              locals: { member: member,
                                        grouping: grouping } %>

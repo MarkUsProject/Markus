@@ -1,5 +1,5 @@
 describe AssignmentPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   let(:record) { assignment }
   let(:role) { create :instructor }
   let(:assignment) { create :assignment }
@@ -281,14 +281,14 @@ describe AssignmentPolicy do
 
       succeed 'role is an instructor' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: instructor_role, real_user: instructor_role.end_user } }
+        let(:context) { { role: instructor_role, real_user: instructor_role.user } }
       end
     end
     context 'when the role is a TA' do
       let(:ta_role) { create(:ta) }
       succeed 'user is an instructor' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: ta_role, real_user: ta_role.end_user } }
+        let(:context) { { role: ta_role, real_user: ta_role.user } }
       end
     end
     context 'when there are no section due dates' do

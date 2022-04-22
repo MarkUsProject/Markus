@@ -334,5 +334,13 @@ describe Student do
 
       expect(students[0].section).to be_nil
     end
+
+    it 'cannot be assigned to an admin user' do
+      expect(build(:student, user: create(:admin_user))).not_to be_valid
+    end
+
+    it 'cannot be assigned to an autotest user' do
+      expect(build(:student, user: create(:autotest_user))).not_to be_valid
+    end
   end
 end

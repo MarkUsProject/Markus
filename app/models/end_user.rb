@@ -1,7 +1,8 @@
-# Subclass of User that can be associated with Roles
+# Subclass of User meant for regular users
 class EndUser < User
-  has_many :roles, foreign_key: :user_id, inverse_of: :end_user
-  has_many :courses, through: :roles
+  CSV_ORDER = (
+    Settings.end_user_csv_order || %w[user_name last_name first_name id_number email]
+  ).map(&:to_sym).freeze
 
   def visible_courses
     self.courses.where.not('roles.type': 'Student')

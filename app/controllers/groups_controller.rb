@@ -164,7 +164,7 @@ class GroupsController < ApplicationController
 
   def get_names
     names = current_course.students
-                          .joins(:end_user)
+                          .joins(:user)
                           .where('(lower(first_name) like ? OR
                                    lower(last_name) like ? OR
                                    lower(user_name) like ? OR
@@ -198,7 +198,7 @@ class GroupsController < ApplicationController
       end
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
       if student.nil? || ("#{student.first_name} #{student.last_name}") != params[:names]
-        student = current_course.students.joins(:end_user).where(
+        student = current_course.students.joins(:user).where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
           params[:names].downcase, params[:names].downcase
         ).first
@@ -292,7 +292,7 @@ class GroupsController < ApplicationController
     if @assignment.group_max == 1
       # data is a list of lists containing: [[group_name, group_member], ...]
       data = current_course.students
-                           .joins(:end_user)
+                           .joins(:user)
                            .where(hidden: false)
                            .pluck('users.user_name')
                            .map { |user_name| [user_name, user_name] }
@@ -460,7 +460,7 @@ class GroupsController < ApplicationController
       if errors.blank?
         to_invite.each do |i|
           i = i.strip
-          invited_user = current_course.students.joins(:end_user).where(hidden: false).find_by('users.user_name': i)
+          invited_user = current_course.students.joins(:user).where(hidden: false).find_by('users.user_name': i)
           if invited_user.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
@@ -683,7 +683,7 @@ class GroupsController < ApplicationController
   #
   # This is meant to be called with the params from global_actions
   def remove_members(member_names, groupings)
-    members_to_remove = current_course.students.joins(:end_user).where('users.user_name': member_names)
+    members_to_remove = current_course.students.joins(:user).where('users.user_name': member_names)
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         groupings.each do |grouping|

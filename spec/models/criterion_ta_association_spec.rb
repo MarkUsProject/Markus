@@ -11,11 +11,11 @@ describe CriterionTaAssociation do
 
   describe '#self.from_csv' do
     let!(:grader) do
-      create :ta, end_user_attributes: { user_name: 'beaker', last_name: 'beaker', first_name: 'beaker' }
+      create :ta, user_attributes: { user_name: 'beaker', last_name: 'beaker', first_name: 'beaker', type: 'EndUser' }
     end
     let(:grader2) do
-      create :ta, end_user_attributes: { user_name: 'drteeth',
-                                         last_name: 'drteeth', first_name: 'drteeth' }
+      create :ta,
+             user_attributes: { user_name: 'drteeth', last_name: 'drteeth', first_name: 'drteeth', type: 'EndUser' }
     end
     let(:criterion) { create :flexible_criterion, name: 'criteria1' }
     let!(:cta) { create :criterion_ta_association, criterion: criterion, ta: grader2 }

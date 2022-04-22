@@ -22,6 +22,13 @@
 - Added course visibility status to admin courses list (#5924)
 - Added ability for instructors to edit course visibility (#5925)
 - Fix bugs when handling remark requests with deductive annotations (#5926)
+- Modified model associations so that a role belongs to a user (#5948)
+- Fix display of flash messages when creating criteria and annotations (#5949)
+- Display error messages on group csv upload when there are invalid group names (#5952)
+- Created a new admin role (#5956)
+- Added a bulk upload of end users to admin users page (#5959)
+- Fix display of "Submit File" to "Upload File" for non submission views (#5960)
+- Added an "Assign Scans" link to exam templates page (#5962)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

@@ -57,7 +57,7 @@ class Grouping < ApplicationRecord
   has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy, inverse_of: :grouping
   has_many :test_runs_all_data,
            -> {
-             left_outer_joins(role: :end_user,
+             left_outer_joins(role: :user,
                               test_group_results: [:test_group, :test_results]).order(created_at: :desc)
            },
            class_name: 'TestRun',
@@ -204,7 +204,7 @@ class Grouping < ApplicationRecord
   end
 
   def get_all_students_in_group
-    student_user_names = student_memberships.includes(role: :end_user).collect { |m| m.role.user_name }
+    student_user_names = student_memberships.includes(role: :user).collect { |m| m.role.user_name }
     return I18n.t('groups.empty') if student_user_names.empty?
     student_user_names.join(', ')
   end
@@ -260,7 +260,7 @@ class Grouping < ApplicationRecord
     all_errors = []
     members.each do |m|
       m = m.strip
-      user = course.students.joins(:end_user).where(hidden: false).find_by('users.user_name': m)
+      user = course.students.joins(:user).where(hidden: false).find_by('users.user_name': m)
       begin
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)

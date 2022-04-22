@@ -48,6 +48,7 @@ class Student < Role
   validates :grace_credits,
             numericality: { only_integer: true,
                             greater_than_or_equal_to: 0 }
+  validate :associated_user_is_an_end_user
 
   after_create :create_all_grade_entry_students
 
@@ -87,7 +88,7 @@ class Student < Role
   end
 
   def display_for_note
-    "#{end_user.user_name}: #{end_user.display_name}"
+    "#{user.user_name}: #{user.display_name}"
   end
 
   # invites a student

@@ -82,7 +82,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = @annotation_category.assignment
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
-      render 'show', assignment_id: @assignment.id, id: @annotation_category.id
+      @annotation_texts = annotation_text_data(record)
     else
       respond_with @annotation_category, render: { body: nil, status: :bad_request }
     end
@@ -241,12 +241,12 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_data(category, course: nil)
     shared_values = ['annotation_texts.id AS id',
-                     'end_users_roles.user_name AS last_editor',
+                     'users_roles.user_name AS last_editor',
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     course ||= category&.course
-    base_query = AnnotationText.joins(creator: :end_user)
-                               .left_outer_joins(last_editor: :end_user)
+    base_query = AnnotationText.joins(creator: :user)
+                               .left_outer_joins(last_editor: :user)
                                .where('annotation_texts.annotation_category_id': category)
                                .where('roles.course_id': course)
                                .order('users.user_name')

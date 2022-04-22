@@ -15,9 +15,10 @@ namespace :db do
     puts 'Populate database with Instructors'
     [%w[instructor test instructor],
      %w[reid Karen Reid]].each do |instructor|
-      Instructor.create!(course: Course.first, end_user_attributes: { user_name: instructor[0],
-                                                                      first_name: instructor[1],
-                                                                      last_name: instructor[2] })
+      Instructor.create!(course: Course.first, user_attributes: { user_name: instructor[0],
+                                                                  first_name: instructor[1],
+                                                                  last_name: instructor[2],
+                                                                  type: 'EndUser' })
     end
   end
 
@@ -29,7 +30,10 @@ namespace :db do
      %w[c6gehwol Severin Gehwolf],
      %w[c9varoqu Nelle Varoquaux],
      %w[c9rada Mark Rada]].each do |ta|
-      Ta.create!(course: Course.first, end_user_attributes: { user_name: ta[0], first_name: ta[1], last_name: ta[2] })
+      Ta.create!(course: Course.first, user_attributes: { user_name: ta[0],
+                                                          first_name: ta[1],
+                                                          last_name: ta[2],
+                                                          type: 'EndUser' })
     end
   end
 
