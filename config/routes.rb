@@ -40,7 +40,7 @@ Rails.application.routes.draw do
               post 'create_folders'
             end
           end
-          resources :feedback_files, only: [:index, :create, :update]
+          resources :feedback_files, only: [:index, :show, :create, :update, :destroy]
           member do
             get 'annotations'
             post 'add_annotations'
