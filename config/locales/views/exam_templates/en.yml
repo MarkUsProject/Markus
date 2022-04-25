@@ -70,8 +70,9 @@ en:
         you must collect submissions in order to begin grading. To do this, go to the "Submissions" tab and select all
         rows. Finally, press "Collect Submissions". Grading can then begin as normal.
       </p> <h3>Matching test papers to students</h3> <p>
-        After submissions have been finalized, navigate to the "groups" tab of this assignment. Click on the "Assign
-        Scans" link beside the first group and begin matching each test paper to a student.
+        After submissions have been finalized, to match test papers to students, click on the "Assign Scans" link on
+        the left. Alternatively, navigate to the "groups" tab of this assignment. Click on the "Assign Scans" link
+        beside the first group and begin matching each test paper to a student.
       </p>
     parsing:
       cover_page_for: Cover page for exam template %{id}
