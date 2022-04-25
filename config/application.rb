@@ -96,6 +96,17 @@ module Markus
 
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
+    if Settings.exception_notification.enabled
+      config.middleware.use ExceptionNotification::Rack,
+                            email: {
+                              email_prefix: '[ERROR] ',
+                              sender_address: %("MarkUs Exception Notifier"
+                                              <#{Settings.exception_notification.sender}>),
+                              exception_recipients: Settings.exception_notification.recipients
+                            },
+                            error_grouping: true
+    end
+
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib
