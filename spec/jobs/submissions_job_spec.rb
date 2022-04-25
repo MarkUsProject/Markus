@@ -1,5 +1,5 @@
 describe SubmissionsJob do
-  let(:assignment) { create :assignment, due_date: Time.zone.parse('2010-02-10 15:30:45') }
+  let(:assignment) { create :assignment }
   let(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment) }
 
   context 'when running as a background job' do
@@ -89,27 +89,13 @@ describe SubmissionsJob do
   end
   context 'when creating a submission for a scanned exam' do
     let(:assignment) { create :assignment_for_scanned_exam }
-    context 'when a submission exists before the collection date' do
-      it 'collects the latest revision' do
-        groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', 1.hour.ago.to_s, 'test.txt', 'aaa') }
-        SubmissionsJob.perform_now(groupings)
-        groupings.each do |g|
-          g.reload
-          latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-          expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
-        end
-      end
-    end
-    context 'when a submission exists after the collection date' do
-      it 'collects the latest revision' do
-        groupings.each do |g|
-          submit_file_at_time(g.assignment, g.group, 'test', 1.hour.from_now.to_s, 'test.txt', 'aaa')
-        end
-        SubmissionsJob.perform_now(groupings)
-        groupings.each do |g|
-          g.reload
-          expect(g.current_submission_used).to be_nil
-        end
+    it 'collects the latest revision' do
+      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
+      SubmissionsJob.perform_now(groupings)
+      groupings.each do |g|
+        g.reload
+        latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+        expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
       end
     end
   end
