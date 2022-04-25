@@ -70,7 +70,7 @@ describe SubmissionsJob do
     end
     let(:revision_ids) do
       groupings.map do |g|
-        [g.id, g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier.to_s }]
+        [g.id, g.group.access_repo { |repo| repo.get_all_revisions.first.revision_identifier.to_s }]
       end.to_h
     end
     context 'when a revision id exists in the repo for the group' do
