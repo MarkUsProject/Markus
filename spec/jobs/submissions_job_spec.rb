@@ -6,6 +6,7 @@ describe SubmissionsJob do
     let(:job_args) { [groupings] }
     include_examples 'background job'
   end
+
   context 'when creating a submission by timestamp' do
     let(:job_kwargs) { {} }
     before :each do
@@ -63,7 +64,7 @@ describe SubmissionsJob do
       end
     end
   end
-  context 'when creating a submission by revision id' do
+  shared_examples 'submitting by revision id' do
     before :each do
       groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
     end
@@ -87,16 +88,27 @@ describe SubmissionsJob do
       end
     end
   end
+
+  context 'when creating a submission by revision id' do
+    include_examples 'submitting by revision id'
+  end
+
   context 'when creating a submission for a scanned exam' do
     let(:assignment) { create :assignment_for_scanned_exam }
-    it 'collects the latest revision' do
-      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
-      SubmissionsJob.perform_now(groupings)
-      groupings.each do |g|
-        g.reload
-        latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-        expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
+    context 'when no revision id specified' do
+      it 'collects the latest revision' do
+        groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
+        SubmissionsJob.perform_now(groupings)
+        groupings.each do |g|
+          g.reload
+          latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+          expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
+        end
       end
+    end
+
+    context 'when a revision id is specified' do
+      include_examples 'submitting by revision id'
     end
   end
   xcontext 'when applying a late penalty' do
