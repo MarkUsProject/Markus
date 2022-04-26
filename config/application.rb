@@ -100,7 +100,7 @@ module Markus
       config.middleware.use ExceptionNotification::Rack,
                             email: {
                               email_prefix: Settings.exception_notification.email_prefix,
-                              sender_address: %("#{Settings.exception_notification.sender_display_name}>"
+                              sender_address: %("#{Settings.exception_notification.sender_display_name}"
                                               <#{Settings.exception_notification.sender}>),
                               exception_recipients: Settings.exception_notification.recipients
                             },
