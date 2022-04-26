@@ -168,7 +168,7 @@ Config.setup do |config|
       required(:exception_notification).hash do
         required(:enabled).filled(:bool)
         optional(:sender).filled(:string)
-        optional(:recipients).array
+        optional(:recipients).array(:str?)
       end
       required(:pandoc).filled(:string)
     end
