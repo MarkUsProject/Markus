@@ -23,16 +23,15 @@ class SubmissionsJob < ApplicationJob
     groupings.each do |grouping|
       m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                    grouping.id.to_s)
-      if !assignment.scanned_exam? && options[:revision_identifier].nil?
-        time = options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
+      if options[:revision_identifier].nil?
+        time = if assignment.scanned_exam?
+                 Time.current
+               else
+                 options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
+               end
         new_submission = Submission.create_by_timestamp(grouping, time)
       else
-        revision_id = if assignment.scanned_exam? && options[:revision_identifier].nil?
-                        grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier.to_s }
-                      else
-                        options[:revision_identifier]
-                      end
-        new_submission = Submission.create_by_revision_identifier(grouping, revision_id)
+        new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
       end
 
       if assignment.submission_rule.is_a? GracePeriodSubmissionRule

@@ -64,13 +64,13 @@ describe SubmissionsJob do
       end
     end
   end
-  shared_examples 'submitting by revision id' do
+  context 'when creating a submission by revision id' do
     before :each do
       groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
     end
     let(:revision_ids) do
       groupings.map do |g|
-        [g.id, g.group.access_repo { |repo| repo.get_all_revisions.first.revision_identifier.to_s }]
+        [g.id, g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier.to_s }]
       end.to_h
     end
     context 'when a revision id exists in the repo for the group' do
@@ -89,16 +89,15 @@ describe SubmissionsJob do
     end
   end
 
-  context 'when creating a submission by revision id' do
-    include_examples 'submitting by revision id'
-  end
-
   context 'when creating a submission for a scanned exam' do
     let(:assignment) { create :assignment_for_scanned_exam }
-    context 'when no revision id specified' do
+    before :each do
+      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', submission_date, 'test.txt', 'aaa') }
+      SubmissionsJob.perform_now(groupings)
+    end
+    context 'when submitted before collecting' do
+      let(:submission_date) { Time.current.to_s }
       it 'collects the latest revision' do
-        groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
-        SubmissionsJob.perform_now(groupings)
         groupings.each do |g|
           g.reload
           latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
@@ -107,10 +106,16 @@ describe SubmissionsJob do
       end
     end
 
-    context 'when a revision id is specified' do
-      include_examples 'submitting by revision id'
+    context 'when submitted after collecting' do
+      let(:submission_date) { 1.hour.from_now.to_s }
+      it 'collects a nil revision' do
+        groupings.each do |g|
+          expect(g.reload.current_submission_used.revision_identifier).to be_nil
+        end
+      end
     end
   end
+
   xcontext 'when applying a late penalty' do
     # TODO: the following tests are failing on travis occasionally. Figure out why and re-enable them.
     let!(:period) { create :period, submission_rule: submission_rule, hours: 2 }
