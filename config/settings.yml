@@ -81,5 +81,10 @@ python:
 
 exception_notification:
   enabled: false
+  sender: markus-exception-notification@example.com
+  sender_display_name: MarkUs Exception Notifier
+  email_prefix: '[MarkUs Exception Notification] '
+  recipients:
+    - markus-admin@example.com
 
 pandoc: /usr/bin/pandoc
