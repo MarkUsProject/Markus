@@ -14,6 +14,7 @@ en:
       submit: Collect Submissions
       this_revision: Collect and Grade This Revision
       undo_results_loss_warning: 'This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error. WARNING: All grading work done since the previous Collect All Submissions operation will be lost.'
+      latest_scanned_exam_warning: For scanned exams, the latest submitted file version for each selected group is identified regardless of the due date.
     commit_date: Submission Date
     download_zipped_file:
       file_missing: No file named %{zip_file} found. Please try preparing this file for download again.
