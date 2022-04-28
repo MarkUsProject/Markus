@@ -73,7 +73,7 @@ logging:
 # resque-scheduler configuration: https://github.com/resque/resque-scheduler#static-schedules
 # See also: https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
 # Warning: this setting only works if you are using resque to manage background jobs.
-resque_schedule:
+resque_scheduler:
   CleanTmpJob:
     class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
     queue: DEFAULT_QUEUE

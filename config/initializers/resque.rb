@@ -15,4 +15,4 @@ Rails.application.config.after_initialize do
   end
 end
 
-Resque.schedule = Settings.resque_schedule.to_h.deep_stringify_keys
+Resque.schedule = Settings.resque_scheduler.to_h.deep_stringify_keys
