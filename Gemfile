@@ -61,6 +61,7 @@ gem 'activemodel-serializers-xml'
 gem 'activerecord-session_store'
 gem 'config'
 gem 'cookies_eu'
+gem 'exception_notification'
 gem 'rails-html-sanitizer'
 gem 'responders'
 

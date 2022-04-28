@@ -165,6 +165,13 @@ Config.setup do |config|
       required(:python).hash do
         required(:bin).filled(:string)
       end
+      required(:exception_notification).hash do
+        required(:enabled).filled(:bool)
+        optional(:sender).filled(:string)
+        optional(:sender_display_name).filled(:string)
+        optional(:email_prefix).filled(:string)
+        optional(:recipients).array(:str?)
+      end
       required(:pandoc).filled(:string)
     end
   end
