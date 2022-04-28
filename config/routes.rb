@@ -1,4 +1,5 @@
 require 'resque/server'
+require 'rails_performance'
 
 Rails.application.routes.draw do
   # Install the default routes as the lowest priority.
