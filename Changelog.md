@@ -29,6 +29,7 @@
 - Added a bulk upload of end users to admin users page (#5959)
 - Fix display of "Submit File" to "Upload File" for non submission views (#5960)
 - Added an "Assign Scans" link to exam templates page (#5962)
+- Removed consideration of due date from scanned exam (#5964)
 - Added Exception Notification Gem (#5965)
 
 ## [v2.0.10]

@@ -8,6 +8,7 @@
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= @current_course.sections.exists? %>,
           is_timed: <%= @assignment.is_timed %>,
+          is_scanned_exam: <%= @assignment.scanned_exam? %>,
           can_collect: <%= allowed_to? :manage? %>,
           can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,
           defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
