@@ -337,7 +337,11 @@ class GitRepository < Repository::AbstractRepository
   # 'transaction'. In case of certain conflicts corresponding
   # Repositor::Conflict(s) are added to the transaction object
   def commit(transaction)
+    return true unless transaction.has_jobs?
+
     self.class.redis_exclusive_lock(@connect_string, namespace: :repo_lock) do
+      non_bare_repo  # Ensure non-bare repo exists
+
       transaction.jobs.each do |job|
         case job[:action]
         when :add_path

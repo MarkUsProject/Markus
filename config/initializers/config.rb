@@ -111,6 +111,7 @@ Config.setup do |config|
       required(:redis).hash do
         required(:url).filled(:string)
       end
+      optional(:resque_scheduler).hash
       optional(:validate_file).filled(:string)
       optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
