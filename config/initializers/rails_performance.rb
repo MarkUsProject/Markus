@@ -5,32 +5,22 @@ Rails.application.config.after_initialize do
     # Modify CSP for Performance Gem
     module RailsPerformance
       class RailsPerformanceController
-        content_security_policy false
+        content_security_policy do |p|
+          p.style_src :self, "'unsafe-inline'"
+          p.script_src_elem :self,
+                            "'unsafe-inline'",
+                            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js',
+                            'https://code.highcharts.com'
+        end
       end
     end
 
     RailsPerformance.setup do |config|
-      config.redis = Redis::Namespace.new(Rails.root.to_s)
-      config.duration = 4.hours
-
-      config.debug = false # currently not used>
       config.enabled = true
-
+      config.redis = Redis::Namespace.new(Rails.root.to_s)
+      config.duration = Settings.session_timeout.seconds
       # default path where to mount gem
       config.mount_at = '/admin/performance'
-
-      # protect your Performance Dashboard with HTTP BASIC password
-      config.http_basic_authentication_enabled = false
-      config.http_basic_authentication_user_name = 'rails_performance'
-      config.http_basic_authentication_password = 'password12'
-
-      # if you need an additional rules to check user permissions
-      config.verify_access_proc = proc { |_controller| true }
-      # for example when you have `current_user`
-      # config.verify_access_proc = proc { |controller| controller.current_user && controller.current_user.admin? }
-
-      # You can ignore endpoints with Rails standard notation controller#action
-      # config.ignored_endpoints = ['HomeController#contact']
     end
   end
 end
