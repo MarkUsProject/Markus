@@ -649,11 +649,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     is_review = assignment.is_peer_review?
 
-    if !is_review && params[:groupings].blank?
-      flash_now(:error, t('groups.select_a_group'))
-      head :bad_request
-      return
-    elsif is_review && params[:peer_reviews].blank?
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
       head :bad_request
       return
@@ -716,11 +712,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     is_review = assignment.is_peer_review?
 
-    if !is_review && params[:groupings].blank?
-      flash_now(:error, t('groups.select_a_group'))
-      head :bad_request
-      return
-    elsif is_review && params[:peer_reviews].blank?
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
       head :bad_request
       return
@@ -729,7 +721,7 @@ class SubmissionsController < ApplicationController
     if is_review
       results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
     else
-      results = Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id')
+      results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
     end
 
     errors = Hash.new { |h, k| h[k] = [] }
