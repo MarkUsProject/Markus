@@ -6,6 +6,10 @@ module Admin
     layout 'assignment_content'
 
     def index
+      @dashboards = [
+        { name: t('resque.dashboard'), path: admin_resque_path },
+        { name: 'Rails Performance dashboard', path: admin_performance_path }
+      ]
       render :index
     end
 
