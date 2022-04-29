@@ -613,11 +613,8 @@ class Assignment < Assessment
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
 
-
     all_results = current_results.where('groupings.id': groupings.ids).order(:id)
-    results_data = Hash[
-      all_results.pluck('groupings.id').zip(all_results.includes(:marks))
-    ]
+    results_data = all_results.pluck('groupings.id').zip(all_results.includes(:marks)).to_h
     result_ids = all_results.ids
 
     criteria_shown = Set.new
@@ -648,7 +645,7 @@ class Assignment < Assessment
         group_name: group_name,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
-        marking_state: result&.released_to_students ? 'released' : result &.marking_state,
+        marking_state: result&.released_to_students ? 'released' : result&.marking_state,
         final_grade: [criteria.values.compact.sum, 0].max,
         criteria: criteria,
         max_mark: max_mark,

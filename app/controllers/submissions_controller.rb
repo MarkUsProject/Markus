@@ -651,7 +651,7 @@ class SubmissionsController < ApplicationController
 
     if !is_review && params[:groupings].blank?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     elsif is_review && params[:peer_reviews].blank?
       flash_now(:error, t('groups.select_a_group'))
@@ -718,7 +718,7 @@ class SubmissionsController < ApplicationController
 
     if !is_review && params[:groupings].blank?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     elsif is_review && params[:peer_reviews].blank?
       flash_now(:error, t('groups.select_a_group'))
