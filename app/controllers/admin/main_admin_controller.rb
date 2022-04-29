@@ -8,7 +8,7 @@ module Admin
     def index
       @dashboards = [
         { name: t('resque.dashboard'), path: admin_resque_path },
-        { name: 'Rails Performance dashboard', path: admin_performance_path }
+        { name: t('rails_performance.dashboard'), path: admin_performance_path }
       ]
       render :index
     end
