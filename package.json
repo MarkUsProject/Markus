@@ -11,7 +11,7 @@
     "jquery": "^3.6.0",
     "marked": "^4.0.12",
     "mime": "^3.0.0",
-    "moment": "^2.29.2",
+    "moment": "^2.29.3",
     "mousetrap": "^1.6.5",
     "pdfjs-dist": "2.6.347",
     "prop-types": "^15.8.1",
