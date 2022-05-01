@@ -214,7 +214,7 @@ GEM
     json (2.6.1)
     kgio (2.11.4)
     libv8 (8.4.255.0)
-    loofah (2.15.0)
+    loofah (2.17.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     machinist (2.0)
@@ -352,7 +352,7 @@ GEM
     rspec-mocks (3.11.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.11.0)
-    rspec-rails (5.1.1)
+    rspec-rails (5.1.2)
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       railties (>= 5.2)
@@ -504,7 +504,7 @@ DEPENDENCIES
   resque
   resque-scheduler
   rmagick
-  rspec-rails (~> 5.1.1)
+  rspec-rails (~> 5.1.2)
   rubocop
   rubocop-git
   rubocop-performance
