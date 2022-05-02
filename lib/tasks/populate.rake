@@ -17,9 +17,9 @@ namespace :markus do
 
   desc 'Create a single Instructor'
   task(instructor: :environment) do
-    user_name = ENV['user_name']
-    first_name = ENV['first_name']
-    last_name = ENV['last_name']
+    user_name = ENV.fetch('user_name', nil)
+    first_name = ENV.fetch('first_name', nil)
+    last_name = ENV.fetch('last_name', nil)
     if user_name.blank? || first_name.blank? || last_name.blank?
       warn 'usage:  rake markus:instructor user_name=[user name] first_name=[first name] last_name=[last name]'
       exit(1)

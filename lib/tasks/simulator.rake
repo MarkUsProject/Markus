@@ -22,7 +22,7 @@ namespace :markus do
   namespace :simulator do
     desc 'Generate assignments, random students, submissions and TA data'
     task(create: :environment) do
-      num_of_assignments = Integer(ENV['NUM_OF_ASSIGNMENTS'])
+      num_of_assignments = Integer(ENV.fetch('NUM_OF_ASSIGNMENTS', nil))
       # If the uer did not provide the environment variable "NUM_OF_ASSIGNMENTS",
       # the simulator will create two assignments
       if ENV['NUM_OF_ASSIGNMENTS'].nil?
@@ -55,11 +55,11 @@ namespace :markus do
         assignment_due_date = Time.random(year_range: 1)
         # If the user wants the assignment's due date to be passed, set the
         # assignment_due_date to Time.current.
-        if !ENV['PASSED_DUE_DATE'].nil? && (ENV['PASSED_DUE_DATE'] == 'true')
+        if !ENV['PASSED_DUE_DATE'].nil? && (ENV.fetch('PASSED_DUE_DATE', nil) == 'true')
           assignment_due_date = Time.current
         # If the user wants the assignemnt's due date to be not passed, then
         # set  assignment_due_date to two months from now.
-        elsif !ENV['PASSED_DUE_DATE'].nil? && (ENV['PASSED_DUE_DATE'] == 'false')
+        elsif !ENV['PASSED_DUE_DATE'].nil? && (ENV.fetch('PASSED_DUE_DATE', nil) == 'false')
           assignment_due_date = Time.current + 5_184_000
         end
         assignment.due_date = assignment_due_date
@@ -103,7 +103,7 @@ namespace :markus do
         puts "Finish creating assignment#{assignment_short_identifier}."
 
         puts 'Generating TAs ...'
-        num_of_tas = Integer(ENV['NUM_OF_TAS'])
+        num_of_tas = Integer(ENV.fetch('NUM_OF_TAS', nil))
         # If the uer did not provide the environment variable "NUM_OF_TAS"
         if ENV['NUM_OF_TAS'].nil?
           num_of_tas = rand(1..3)
@@ -127,7 +127,7 @@ namespace :markus do
 
           puts 'Start generating students ...'
 
-          num_of_students = Integer(ENV['NUM_OF_STUDENTS'])
+          num_of_students = Integer(ENV.fetch('NUM_OF_STUDENTS', nil))
           # If the uer did not provide the environment variable "NUM_OF_STUDENTS"
           if ENV['NUM_OF_STUDENTS'].nil?
             num_of_students = rand(10..15)
