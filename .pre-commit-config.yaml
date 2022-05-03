@@ -1,6 +1,6 @@
 repos:
   -   repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.1.0
+      rev: v4.2.0
       hooks:
         -   id: check-yaml
             exclude: |
@@ -31,7 +31,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.26.1
+    rev: v1.28.2
     hooks:
       - id: rubocop
         args: ["--auto-correct"]
