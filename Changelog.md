@@ -31,6 +31,7 @@
 - Added an "Assign Scans" link to exam templates page (#5962)
 - Removed consideration of due date from scanned exam (#5964)
 - Added Exception Notification Gem (#5965)
+- Added Rails Performance to Admin Dashboard (#5967)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
