@@ -1,0 +1,2 @@
+class Lti < ApplicationRecord
+end

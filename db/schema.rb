@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_02_204354) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -353,6 +353,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
     t.index ["criterion_id"], name: "index_levels_on_criterion_id"
   end
 
+  create_table "ltis", force: :cascade do |t|
+    t.string "client_id"
+    t.json "config"
+    t.integer "deployment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "marking_schemes", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil
@@ -400,6 +408,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
     t.string "noteable_type", null: false
     t.integer "noteable_id", null: false
     t.index ["creator_id"], name: "index_notes_on_creator_id"
+  end
+
+  create_table "oauthkeys", force: :cascade do |t|
+    t.string "private_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "peer_reviews", id: :serial, force: :cascade do |t|

@@ -1,0 +1,2 @@
+class Oauthkey < ApplicationRecord
+end

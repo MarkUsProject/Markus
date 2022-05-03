@@ -34,11 +34,7 @@ class ApplicationController < ActionController::Base
 
   # Define default URL options to include the locale if the user is not logged in
   def default_url_options(_options = {})
-    if current_user
-      {}
-    else
-      { locale: I18n.locale }
-    end
+    {}
   end
 
   def page_not_found

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<% content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('load',function () {
+        (window.opener || window.parent).postMessage({subject:'org.imsglobal.lti.close'});
+    });
+  <% end %>
+<% end %>
+  <body>
+<div class="lti-success">Successfully configured LTI.</div>
+  </body>
+</html>
