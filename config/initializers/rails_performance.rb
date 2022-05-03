@@ -1,26 +1,29 @@
 require 'rails_performance'
 
 Rails.application.config.after_initialize do
-  # Modify CSP for Performance Gem
-  RailsPerformance::RailsPerformanceController.class_eval do
-    include SessionHandler
-    before_action :check_user_not_authorized
+  if Settings.rails_performance.enabled
+    RailsPerformance::RailsPerformanceController.class_eval do
+      include SessionHandler
+      before_action :check_user_not_authorized
 
-    content_security_policy do |p|
-      p.style_src :self, "'unsafe-inline'"
-      p.script_src_elem :self,
-                        "'unsafe-inline'",
-                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js',
-                        'https://code.highcharts.com'
-    end
+      # Modify CSP for Performance Gem
+      content_security_policy do |p|
+        p.style_src :self, "'unsafe-inline'"
+        p.script_src_elem :self,
+                          "'unsafe-inline'",
+                          'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js',
+                          'https://code.highcharts.com'
+      end
 
-    protected
+      protected
 
-    def check_user_not_authorized
-      unless real_user&.admin_user?
-        render 'shared/http_status',
-               formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-               status: :forbidden, layout: false
+      # Helper to use SessionHandler to check for permissions
+      def check_user_not_authorized
+        unless real_user&.admin_user?
+          render 'shared/http_status',
+                 formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
+                 status: :forbidden, layout: false
+        end
       end
     end
   end

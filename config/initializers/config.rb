@@ -165,7 +165,7 @@ Config.setup do |config|
       required(:python).hash do
         required(:bin).filled(:string)
       end
-      required(:exception_notification).hash do
+      required(:rails_performance).hash do
         required(:enabled).filled(:bool)
         optional(:duration).value(:integer, gt?: 0)
       end
