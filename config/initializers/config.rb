@@ -167,6 +167,10 @@ Config.setup do |config|
       end
       required(:exception_notification).hash do
         required(:enabled).filled(:bool)
+        optional(:duration).value(:integer, gt?: 0)
+      end
+      required(:exception_notification).hash do
+        required(:enabled).filled(:bool)
         optional(:sender).filled(:string)
         optional(:sender_display_name).filled(:string)
         optional(:email_prefix).filled(:string)

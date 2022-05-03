@@ -27,9 +27,9 @@ Rails.application.config.after_initialize do
 
   if defined?(RailsPerformance)
     RailsPerformance.setup do |config|
-      config.enabled = true
+      config.enabled = Settings.rails_performance.enabled
       config.redis = Redis::Namespace.new(Rails.root.to_s)
-      config.duration = 3.hours
+      config.duration = Settings.rails_performance.duration.minutes
       config.mount_at = '/admin/performance'
       config.home_link = ENV.fetch('RAILS_RELATIVE_URL_ROOT')
     end
