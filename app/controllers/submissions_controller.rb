@@ -654,7 +654,6 @@ class SubmissionsController < ApplicationController
       head :bad_request
       return
     end
-
     release = params[:release_results] == 'true'
 
     begin
