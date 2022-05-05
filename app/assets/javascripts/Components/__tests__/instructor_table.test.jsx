@@ -39,7 +39,7 @@ describe("For the InstructorTable's display of instructors", () => {
       wrapper = mount(<InstructorTable course_id={1} />);
     });
 
-    it("each student is displayed as a row of the table", () => {
+    it("each instructor is displayed as a row of the table", () => {
       instructors_sample.forEach(instructor => instructors_in_one_row(wrapper, instructor));
     });
   });

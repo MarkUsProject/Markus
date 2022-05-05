@@ -70,6 +70,8 @@ class TATable extends React.Component {
   }
 }
 
-export function makeTATable(elem, props) {
+function makeTATable(elem, props) {
   render(<TATable {...props} />, elem);
 }
+
+export {makeTATable, TATable};
