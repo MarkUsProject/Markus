@@ -58,7 +58,7 @@ describe("For the TATable's display of TAs", () => {
     });
   });
 
-  describe("when no tas are fetched", () => {
+  describe("when no TAs are fetched", () => {
     beforeAll(() => {
       tas_sample = [];
       // Mocking the response returned by $.ajax, used in TATable fetchData
