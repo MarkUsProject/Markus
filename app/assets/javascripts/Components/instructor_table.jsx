@@ -68,6 +68,8 @@ class InstructorTable extends React.Component {
   }
 }
 
-export function makeInstructorTable(elem, props) {
+function makeInstructorTable(elem, props) {
   render(<InstructorTable {...props} />, elem);
 }
+
+export {makeInstructorTable, InstructorTable};
