@@ -630,6 +630,10 @@ class AssignmentsController < ApplicationController
     redirect_to course_assignments_path(current_course)
   end
 
+  def statistics
+    @assignment = record
+  end
+
   private
 
   # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+

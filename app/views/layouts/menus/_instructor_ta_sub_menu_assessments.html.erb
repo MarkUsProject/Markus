@@ -47,8 +47,8 @@
                  'annotation_categories',
                  'automated_tests',
                  'exam_templates'].include?(controller.controller_name) ||
-        (controller.controller_name == 'assignments' &&
-          controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
+        (controller.controller_name == 'assignments' && controller.action_name != 'summary' &&
+          controller.action_name != 'batch_runs' && controller.action_name != 'statistics') %>
           class='active'
           <% end %>
       >
@@ -85,6 +85,10 @@
     <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
       <%= link_to t('results.summary'),
                   summary_course_assignment_path(@current_course, target_id) %>
+    </li>
+    <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'statistics' %>'>
+      <%= link_to 'Statistics',
+                  statistics_course_assignment_path(@current_course, target_id) %>
     </li>
     <% if allowed_to?(:view_test_options?, assessment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
