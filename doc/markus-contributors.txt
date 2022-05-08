@@ -163,6 +163,7 @@ Robert Burke
 Robert Tan
 Ryan Spring
 Samuel Gougeon
+Samuel Weiss
 Sean Budning
 Seung Hoon Lee
 Severin Gehwolf
