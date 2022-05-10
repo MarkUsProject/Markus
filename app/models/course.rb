@@ -120,4 +120,31 @@ class Course < ApplicationRecord
       AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
     end
   end
+
+  def download_student_data_csv
+    students = self.students.joins(:user).order('users.user_name').includes(:section)
+    MarkusCsv.generate(students) do |student|
+      Student::CSV_ORDER.map do |field|
+        if field == :section_name
+          student.section&.name
+        else
+          student.public_send(field)
+        end
+      end
+    end
+  end
+
+  def download_student_data_yml
+    output = []
+    students = self.students.joins(:user).order('users.user_name').includes(:section)
+    students.each do |student|
+      output.push(user_name: student.user_name,
+                  las_name: student.last_name,
+                  first_name: student.first_name,
+                  email: student.email,
+                  id_number: student.id_number,
+                  section_name: student.section&.name)
+    end
+    output.to_yaml
+  end
 end
