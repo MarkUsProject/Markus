@@ -93,36 +93,15 @@ class StudentsController < ApplicationController
   end
 
   def download
-    students = current_course.students.joins(:user).order('users.user_name').includes(:section)
     case params[:format]
     when 'csv'
-      output = MarkusCsv.generate(students) do |student|
-        Student::CSV_ORDER.map do |field|
-          if field == :section_name
-            student.section&.name
-          else
-            student.public_send(field)
-          end
-        end
-      end
+      output = current_course.download_student_data_csv
       format = 'text/csv'
     else
-      output = []
-      students.each do |student|
-        output.push(user_name: student.user_name,
-                    last_name: student.last_name,
-                    first_name: student.first_name,
-                    email: student.email,
-                    id_number: student.id_number,
-                    section_name: student.section&.name)
-      end
-      output = output.to_yaml
+      output = current_course.download_student_data_yml
       format = 'text/yaml'
     end
-    send_data(output,
-              type: format,
-              filename: "student_list.#{params[:format]}",
-              disposition: 'attachment')
+    send_data(output, type: format, filename: "student_list.#{params[:format]}", disposition: 'attachment')
   end
 
   def upload
