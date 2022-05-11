@@ -153,4 +153,47 @@ describe Course do
       end
     end
   end
+
+  describe '#export_student_data_csv' do
+    context 'when there are no students in the course' do
+      it 'returns empty string' do
+        result = course.export_student_data_csv
+        expect(result).to eq('')
+      end
+    end
+
+    context 'when there is a student in the course' do
+      let!(:user1) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      it 'returns the data of the student' do
+        result = course.export_student_data_csv
+        expect(result).to eq("#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n")
+      end
+    end
+  end
+
+  describe '#export_student_data_yml' do
+    context 'where there are no students in the course' do
+      it 'returns empty yaml object' do
+        result = course.export_student_data_yml
+        expect(result).to eq([].to_yaml)
+      end
+    end
+
+    context 'where there is a student in the course' do
+      let!(:user1) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      it 'returns the data of the student' do
+        result = course.export_student_data_yml
+        expected = []
+        expected.push(user_name: user1.user_name,
+                      last_name: user1.last_name,
+                      first_name: user1.first_name,
+                      email: user1.email,
+                      id_number: nil,
+                      section_name: nil)
+        expect(result).to eq(expected.to_yaml)
+      end
+    end
+  end
 end
