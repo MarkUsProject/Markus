@@ -473,6 +473,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :lti, only: [] do
+    collection do
+      get 'get_config'
+    end
+  end
+
   post 'main', controller: 'courses', action: 'index'
   post 'main/about', controller: 'main', action: 'about'
   post 'main/logout', controller: 'main', action: 'logout'
