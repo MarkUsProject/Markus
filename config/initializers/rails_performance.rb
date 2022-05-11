@@ -32,7 +32,6 @@ Rails.application.config.after_initialize do
     RailsPerformance.setup do |config|
       config.enabled = Settings.rails_performance.enabled
       config.duration = Settings.rails_performance.duration.minutes
-      config.mount_at = '/admin/performance'
       config.home_link = ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '/' }
     end
   end
