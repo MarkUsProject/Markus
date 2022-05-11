@@ -139,7 +139,7 @@ class Course < ApplicationRecord
     students = self.students.joins(:user).order('users.user_name').includes(:section)
     students.each do |student|
       output.push(user_name: student.user_name,
-                  las_name: student.last_name,
+                  last_name: student.last_name,
                   first_name: student.first_name,
                   email: student.email,
                   id_number: student.id_number,
