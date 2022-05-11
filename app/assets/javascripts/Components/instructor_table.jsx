@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
 
 import ReactTable from "react-table";
 
@@ -68,6 +69,12 @@ class InstructorTable extends React.Component {
   }
 }
 
-export function makeInstructorTable(elem, props) {
+InstructorTable.propTypes = {
+  course_id: PropTypes.number,
+};
+
+function makeInstructorTable(elem, props) {
   render(<InstructorTable {...props} />, elem);
 }
+
+export {makeInstructorTable, InstructorTable};
