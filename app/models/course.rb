@@ -121,7 +121,7 @@ class Course < ApplicationRecord
     end
   end
 
-  def download_student_data_csv
+  def export_student_data_csv
     students = self.students.joins(:user).order('users.user_name').includes(:section)
     MarkusCsv.generate(students) do |student|
       Student::CSV_ORDER.map do |field|
@@ -134,7 +134,7 @@ class Course < ApplicationRecord
     end
   end
 
-  def download_student_data_yml
+  def export_student_data_yml
     output = []
     students = self.students.joins(:user).order('users.user_name').includes(:section)
     students.each do |student|

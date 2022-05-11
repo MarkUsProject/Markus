@@ -95,10 +95,10 @@ class StudentsController < ApplicationController
   def download
     case params[:format]
     when 'csv'
-      output = current_course.download_student_data_csv
+      output = current_course.export_student_data_csv
       format = 'text/csv'
     else
-      output = current_course.download_student_data_yml
+      output = current_course.export_student_data_yml
       format = 'text/yaml'
     end
     send_data(output, type: format, filename: "student_list.#{params[:format]}", disposition: 'attachment')
