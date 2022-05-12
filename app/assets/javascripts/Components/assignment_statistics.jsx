@@ -119,7 +119,16 @@ class AssignmentStatistics extends React.Component {
   }
 }
 
-class AssignmentStatisticsValue extends React.Component {}
+class AssignmentStatisticsValue extends React.Component {
+  render() {
+    return (
+      <div>
+        <p>{this.props.statistic}:</p>
+        <p className={"assignment-stat-value"}>{this.props.value}</p>
+      </div>
+    );
+  }
+}
 
 export function makeAssignmentStatistics(elem, props) {
   return render(<AssignmentStatistics {...props} />, elem);
