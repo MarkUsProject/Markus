@@ -8,7 +8,7 @@ module Admin
     def index
       @dashboards = [{ name: t('resque.dashboard'), path: admin_resque_path }]
       if Settings.rails_performance.enabled
-        @dashboards << { name: t('rails_performance.dashboard'), path: admin_rails_performance_path }
+        @dashboards << { name: t('rails_performance.dashboard'), path: admin_performance_path }
       end
       render :index
     end

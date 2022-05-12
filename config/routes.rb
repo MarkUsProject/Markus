@@ -87,7 +87,7 @@ Rails.application.routes.draw do
     get '/', controller: 'main_admin', action: 'index'
 
     mount Resque::Server.new, at: '/resque', as: 'resque'
-    mount RailsPerformance::Engine, at: '/rails/performance', as: 'rails_performance'
+    mount RailsPerformance::Engine, at: '/rails/performance', as: 'performance'
   end
 
   resources :courses, only: [:show, :index, :edit, :update] do

@@ -1,7 +1,7 @@
 describe 'Rails Performance dashboard authorization', type: :request do
   context 'when the user is not authenticated' do
     it 'returns a 403 status code' do
-      get '/admin/performance'
+      get '/admin/rails/performance'
       expect(response).to have_http_status :forbidden
     end
   end
@@ -16,7 +16,7 @@ describe 'Rails Performance dashboard authorization', type: :request do
       allow_any_instance_of(ActionDispatch::Request::Session).to receive(:[]).and_call_original
       allow_any_instance_of(ActionDispatch::Request::Session).to receive(:[]).with(:real_user_name)
                                                                              .and_return(user.user_name)
-      get '/admin/performance'
+      get '/admin/rails/performance'
     end
 
     context 'and is an admin' do
