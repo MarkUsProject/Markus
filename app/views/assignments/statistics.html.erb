@@ -2,13 +2,10 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-    window.dashboard = makeDashboard(document.getElementById('dashboard-react'),
-    { course_id: <%= @current_course.id %> });
-    <% unless @assignment.nil? %>
-      window.dashboard.setState({assessment_id: <%= @assignment.id %>, assessment_type: 'Assignment'});
-    <% end %>
+    makeAssignmentStatistics(document.getElementById('statistics-react'),
+    { course_id: <%= @current_course.id %>, assessment_id: <%= @assignment.id %> });
     })
   <% end %>
 <% end %>
 
-<div id='dashboard-react'></div>
+<div id='statistics-react'></div>

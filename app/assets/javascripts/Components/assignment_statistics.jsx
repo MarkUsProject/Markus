@@ -1,4 +1,5 @@
 import React from "react";
+import {render} from "react-dom";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "./Helpers/chart_helpers";
 
@@ -80,75 +81,46 @@ class AssignmentStatistics extends React.Component {
   }
 
   render() {
-    const assignment_graph = (
-      <React.Fragment>
-        <h2>
+    const grader_distribution_graph = (
+      <div>
+        <h3>{I18n.t("grader_distribution")}</h3>
+        <Bar
+          data={this.state.ta_grade_distribution.data}
+          options={this.state.ta_grade_distribution.options}
+          width="400"
+          height="350"
+        />
+        <p>
           <a
-            href={Routes.browse_course_assignment_submissions_path(
+            href={Routes.grader_summary_course_assignment_graders_path(
               this.props.course_id,
               this.props.assessment_id
             )}
           >
-            {this.state.summary.name}
+            {I18n.t("activerecord.models.ta.other")}
           </a>
-        </h2>
-        <div className="flex-row">
-          <div>
-            <Bar
-              data={this.state.assignment_grade_distribution.data}
-              options={this.state.assignment_grade_distribution.options}
-              width="500"
-              height="450"
-            />
-          </div>
-        </div>
-      </React.Fragment>
+        </p>
+      </div>
     );
 
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
-      return (
-        <React.Fragment>
-          {assignment_graph}
-          <h3>{I18n.t("grader_distribution")}</h3>
-          <Bar
-            data={this.state.ta_grade_distribution.data}
-            options={this.state.ta_grade_distribution.options}
-            width="400"
-            height="350"
-          />
-          <p>
-            <a
-              href={Routes.grader_summary_course_assignment_graders_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("activerecord.models.ta.other")}
-            </a>
-          </p>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          {assignment_graph}
-          <h3>{I18n.t("grader_distribution")}</h3>
-          <h4>
-            (
-            <a
-              href={Routes.course_assignment_graders_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("graders.actions.assign_grader")}
-            </a>
-            )
-          </h4>
-        </React.Fragment>
-      );
-    }
+    return (
+      <div>
+        <Bar
+          data={this.state.assignment_grade_distribution.data}
+          options={this.state.assignment_grade_distribution.options}
+          width="500"
+          height="450"
+        />
+        {this.state.ta_grade_distribution.data.datasets.length !== 0
+          ? grader_distribution_graph
+          : ""}
+      </div>
+    );
   }
 }
 
 class AssignmentStatisticsValue extends React.Component {}
+
+export function makeAssignmentStatistics(elem, props) {
+  return render(<AssignmentStatistics {...props} />, elem);
+}

@@ -72,6 +72,8 @@ import {ModalMarkus} from "javascripts/modals";
 window.ModalMarkus = ModalMarkus;
 import {makeDashboard} from "javascripts/Components/dashboard";
 window.makeDashboard = makeDashboard;
+import {makeAssignmentStatistics} from "javascripts/Components/assignment_statistics";
+window.makeAssignmentStatistics = makeAssignmentStatistics;
 import {makeTATable} from "javascripts/Components/ta_table";
 window.makeTATable = makeTATable;
 import {makeInstructorTable} from "javascripts/Components/instructor_table";
