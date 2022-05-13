@@ -1,0 +1,35 @@
+.assignment-summary-value {
+  font-size: xx-large;
+}
+
+.assignment-summary-data-dashboard {
+  align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.summary-progress-circle {
+  align-items: center;
+  background-color: $primary-one;
+  border-radius: 50%;
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  width: 60px;
+}
+
+.assignment-summary-percentage {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.bar-graph {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  .canvas {
+    width: 60%;
+  }
+}
