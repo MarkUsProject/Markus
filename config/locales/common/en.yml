@@ -15,6 +15,8 @@ en:
   filter_by: Filter by %{name}
   forbidden: Forbidden
   help: Help
+  lti:
+    launch: Launch MarkUs
   markus: MarkUs
   not_applicable: N/A
   or: Or
@@ -27,5 +29,3 @@ en:
   skip: Skip
   this: This
   working: Loading
-  lti:
-    launch: 'Launch MarkUs'
