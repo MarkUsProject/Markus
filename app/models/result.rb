@@ -43,7 +43,6 @@ class Result < ApplicationRecord
 
     if without_submissions.present?
       group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
-      groupings = groupings.where.not(id: without_submissions.ids)
       raise StandardError, "no_submission #{group_names}"
     end
 
