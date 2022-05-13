@@ -439,6 +439,10 @@ th.required::after {
   vertical-align: middle;
 }
 
+.fa-download-o::before {
+  content: asset-url('icons/download.png');
+  vertical-align: middle;
+}
 .fa-folder-o::before {
   content: asset-url('icons/folder.png');
   vertical-align: middle;
