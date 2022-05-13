@@ -10,7 +10,7 @@ class LtiController < ApplicationController
     config = {
       title: I18n.t('markus'),
       description: I18n.t('markus'),
-      oidc_initiation_url: launch_lti_index_url,
+      oidc_initiation_url: lti_launch_url,
       target_link_uri: root_url,
       scopes: [],
       extensions: [
@@ -35,7 +35,7 @@ class LtiController < ApplicationController
           }
         }
       ],
-      public_jwk_url: public_jwk_lti_index_url
+      public_jwk_url: lti_public_jwk_url
     }
     render json: config.to_json
   end
