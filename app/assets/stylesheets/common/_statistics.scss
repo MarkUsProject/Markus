@@ -24,12 +24,13 @@
   justify-content: center;
 }
 
-.bar-graph {
+.bar-graph-area {
   align-items: center;
   display: flex;
   justify-content: center;
+}
 
-  .canvas {
-    width: 60%;
-  }
+.bar-graph {
+  padding-top: 2vh;
+  width: 60%;
 }

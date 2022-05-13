@@ -132,11 +132,13 @@ class AssignmentStatistics extends React.Component {
             total={this.state.summary.groupings_size}
           />
         </div>
-        <div className="bar-graph">
-          <Bar
-            data={this.state.assignment_grade_distribution.data}
-            options={this.state.assignment_grade_distribution.options}
-          />
+        <div className="bar-graph-area">
+          <div className="bar-graph">
+            <Bar
+              data={this.state.assignment_grade_distribution.data}
+              options={this.state.assignment_grade_distribution.options}
+            />
+          </div>
         </div>
         {this.grader_distribution_graph()}
       </div>
