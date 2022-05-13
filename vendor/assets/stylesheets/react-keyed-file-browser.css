@@ -68,6 +68,8 @@ div.rendered-react-keyed-file-browser div.files table {
         flex: 1; }
   div.rendered-react-keyed-file-browser div.files table tr:hover {
     background-color: #faf2cc; }
+  .color-dark  div.rendered-react-keyed-file-browser div.files table tr:hover {
+    background-color: grey; }
     div.rendered-react-keyed-file-browser div.files table tr td {
       cursor: pointer; }
     div.rendered-react-keyed-file-browser div.files table tr.selected td {
