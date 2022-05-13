@@ -27,3 +27,5 @@ en:
   skip: Skip
   this: This
   working: Loading
+  lti:
+    launch: 'Launch MarkUs'

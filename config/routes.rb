@@ -475,7 +475,9 @@ Rails.application.routes.draw do
 
   resources :lti, only: [] do
     collection do
-      get 'get_config'
+      get 'get_canvas_config'
+      post 'launch'
+      get 'public_jwk'
     end
   end
 
