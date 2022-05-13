@@ -473,6 +473,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :lti do
+    get 'get_canvas_config'
+    post 'launch'
+    get 'public_jwk'
+  end
+
   post 'main', controller: 'courses', action: 'index'
   post 'main/about', controller: 'main', action: 'about'
   post 'main/logout', controller: 'main', action: 'logout'
