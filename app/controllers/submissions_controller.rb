@@ -659,9 +659,23 @@ class SubmissionsController < ApplicationController
       changed = if assignment.is_peer_review?
                   set_pr_release_on_results(groupings, release)
                 else
-                  set_release_on_results(groupings, release)
+                  begin
+                    Result.set_release_on_results(groupings, release)
+                  rescue StandardError => e
+                    error_message, group_names = e.message.split
+                    if error_message == 'no_submission'
+                      flash_now(:error, I18n.t('submissions.errors.no_submission', group_name: group_names))
+                    elsif error_message == 'not_complete'
+                      flash_now(:error, t('submissions.errors.not_complete', group_name: group_names))
+                    elsif error_message == 'not_complete_unrelease'
+                      flash_now(:error, t('submissions.errors.not_complete_unrelease', group_name: group_names))
+                    end
+                  end
                 end
-
+      if changed.is_a? Array
+        # Changed will only be an array if an error message flashed
+        changed = 0
+      end
       if changed > 0
         assignment.update_remark_request_count
 

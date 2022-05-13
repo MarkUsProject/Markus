@@ -165,4 +165,16 @@ describe Result do
       end
     end
   end
+
+  describe '.set_release_on_results' do
+    let!(:assignment) { create :assignment_with_criteria_and_results }
+    it 'should raise StandardError with message not_complete error if result has not been completed' do
+      result = assignment.ungraded_submission_results[0]
+      expect { result.set_release_on_results(grouping, true) }.to raise_error(StandardError)
+    end
+    it 'should raise a StandardError with message no_submission error if the grouping does not have a submission' do
+      grouping = assignment.unassigned_groupings[0]
+      expect { Result.set_release_on_results(grouping, true) }.to raise_error(StandardError)
+    end
+  end
 end
