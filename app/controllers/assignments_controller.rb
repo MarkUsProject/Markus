@@ -727,8 +727,6 @@ class AssignmentsController < ApplicationController
       # Filter properties not supported by peer review assignments, then build assignment
       peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
-      parent_assignment.has_peer_review = true
-      assignment.has_peer_review = false
       assignment.enable_test = false
       assignment.parent_assignment = parent_assignment
       assignment.repository_folder = parent_assignment.repository_folder
