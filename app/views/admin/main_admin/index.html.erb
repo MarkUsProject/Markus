@@ -1,3 +1,6 @@
 <% content_for :title, t('markus_administration') %>
 
-<%= link_to t('resque.dashboard'), admin_resque_path, target: :_blank, rel: 'noopener' %>
+<div class='section'>
+  <h3><%= t('monitoring') %></h3>
+  <%= render partial: 'monitoring_dashboard_list' %>
+</div>
