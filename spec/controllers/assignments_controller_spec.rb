@@ -1881,6 +1881,7 @@ describe AssignmentsController do
       let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:starter_group2_files) { starter_group2.files_and_dirs }
       let!(:assignment_properties) { assignment.assignment_properties }
+      let!(:parent_assignment_properties) { parent_assignment.assignment_properties }
 
       before :each do
         get_as user, :download_config_files,
