@@ -4,7 +4,7 @@ namespace :db do
     include AutomatedTestsHelper
     FileUtils.mkdir_p Settings.autotest.client_dir
     puts 'Set up testing environment for autotest'
-    autotest_setting = AutotestSetting.find_or_create_by!(url: ENV['AUTOTEST_URL'])
+    autotest_setting = AutotestSetting.find_or_create_by!(url: ENV.fetch('AUTOTEST_URL', nil))
     Course.first.update!(autotest_setting_id: autotest_setting.id)
 
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
@@ -52,7 +52,7 @@ class AutotestSetup
     @schema_data = JSON.parse(@assignment.course.autotest_setting.schema)
     fill_in_schema_data!(@schema_data, @test_scripts, @assignment)
 
-    @markus_url = ENV['MARKUS_URL'] || 'http://host.docker.internal:3000'
+    @markus_url = ENV.fetch('MARKUS_URL', nil) || 'http://host.docker.internal:3000'
   end
 
   # Setup seed data for this autotest assignment

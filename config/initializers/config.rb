@@ -111,6 +111,7 @@ Config.setup do |config|
       required(:redis).hash do
         required(:url).filled(:string)
       end
+      optional(:resque_scheduler).hash
       optional(:validate_file).filled(:string)
       optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
@@ -164,6 +165,17 @@ Config.setup do |config|
       end
       required(:python).hash do
         required(:bin).filled(:string)
+      end
+      required(:rails_performance).hash do
+        required(:enabled).filled(:bool)
+        optional(:duration).value(:integer, gt?: 0)
+      end
+      required(:exception_notification).hash do
+        required(:enabled).filled(:bool)
+        optional(:sender).filled(:string)
+        optional(:sender_display_name).filled(:string)
+        optional(:email_prefix).filled(:string)
+        optional(:recipients).array(:str?)
       end
       required(:pandoc).filled(:string)
     end

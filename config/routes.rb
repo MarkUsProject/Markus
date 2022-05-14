@@ -1,4 +1,5 @@
 require 'resque/server'
+require 'rails_performance'
 
 Rails.application.routes.draw do
   # Install the default routes as the lowest priority.
@@ -86,6 +87,7 @@ Rails.application.routes.draw do
     get '/', controller: 'main_admin', action: 'index'
 
     mount Resque::Server.new, at: '/resque', as: 'resque'
+    mount RailsPerformance::Engine, at: '/rails/performance', as: 'performance'
   end
 
   resources :courses, only: [:show, :index, :edit, :update] do
@@ -471,6 +473,12 @@ Rails.application.routes.draw do
     member do
       get 'get'
     end
+  end
+
+  namespace :lti do
+    get 'get_canvas_config'
+    post 'launch'
+    get 'public_jwk'
   end
 
   post 'main', controller: 'courses', action: 'index'

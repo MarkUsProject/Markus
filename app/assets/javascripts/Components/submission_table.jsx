@@ -338,6 +338,7 @@ class RawSubmissionTable extends React.Component {
         />
         <CollectSubmissionsModal
           isOpen={this.state.showModal}
+          isScannedExam={this.props.is_scanned_exam}
           onRequestClose={() => {
             this.setState({showModal: false});
           }}

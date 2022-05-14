@@ -11,7 +11,7 @@ namespace :markus do
       # set up assignments
       a1 = Assignment.new
       rule = PenaltyPeriodSubmissionRule.new
-      a1.short_identifier = ENV['short_id']
+      a1.short_identifier = ENV.fetch('short_id', nil)
       a1.description = 'Conditionals and Loops'
       a1.message = 'Learn to use conditional statements, and loops.'
       a1.due_date = Time.current

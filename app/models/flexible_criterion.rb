@@ -12,10 +12,6 @@ class FlexibleCriterion < Criterion
     end
   end
 
-  def self.symbol
-    :flexible
-  end
-
   def update_assigned_groups_count
     result = []
     tas.each do |ta|

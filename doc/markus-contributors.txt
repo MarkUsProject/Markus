@@ -57,6 +57,7 @@ Daryn Lam
 David Das
 David Liu
 Derek Dowling
+Dhairya Khara
 Diane Tam
 Dina Sabie
 Dmitry Khabarov
@@ -163,6 +164,7 @@ Robert Burke
 Robert Tan
 Ryan Spring
 Samuel Gougeon
+Samuel Weiss
 Sean Budning
 Seung Hoon Lee
 Severin Gehwolf
@@ -196,3 +198,4 @@ Yiqi Zhu
 Yujin Cho
 Yusi Fan
 Zachary Munro-Cape
+Ziyuan (Jerry) Zhang

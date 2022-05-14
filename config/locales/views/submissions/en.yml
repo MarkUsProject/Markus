@@ -11,6 +11,7 @@ en:
       overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
       progress: "%{count}/%{size} submissions collected"
       results_loss_warning: This action identifies the file version for each selected group that meets the assignment due date and/or late penalty, and creates the views for grading each selected group.
+      scanned_exam_latest_warning: For scanned exams, the latest submitted file version for each selected group is used regardless of the due date.
       submit: Collect Submissions
       this_revision: Collect and Grade This Revision
       undo_results_loss_warning: 'This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error. WARNING: All grading work done since the previous Collect All Submissions operation will be lost.'
