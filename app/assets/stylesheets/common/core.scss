@@ -439,10 +439,6 @@ th.required::after {
   vertical-align: middle;
 }
 
-.fa-download-o::before {
-  content: asset-url('icons/download.png');
-  vertical-align: middle;
-}
 .fa-folder-o::before {
   content: asset-url('icons/folder.png');
   vertical-align: middle;
@@ -454,7 +450,7 @@ th.required::after {
 }
 
 .fa-download-file-o::before {
-  content: asset-url('icons/disk.png');
+  content: asset-url('icons/download-file.png');
   vertical-align: middle;
 }
 
@@ -478,8 +474,34 @@ th.required::after {
   vertical-align: middle;
 }
 
+div.rendered-react-keyed-file-browser div.action-bar ul.item-actions {
+  overflow: auto;
+}
+
 div.rendered-react-keyed-file-browser div.action-bar input[type='search'] {
   width: 100%;
+}
+
+div.rendered-react-keyed-file-browser div.files table th.name i,
+div.rendered-react-keyed-file-browser div.files table td.name div * {
+  padding-right: 0.5rem;
+}
+
+div.rendered-react-keyed-file-browser div.files table th.name i,
+div.rendered-react-keyed-file-browser div.files table td.name a i:hover {
+  background-color: #f2e396;
+}
+.color-dark div.rendered-react-keyed-file-browser div.files table th.name i,
+div.rendered-react-keyed-file-browser div.files table td.name a i:hover {
+  background-color: #615e5e;
+}
+
+div.rendered-react-keyed-file-browser div.files table tr:hover {
+  background-color: #faf2cc;
+}
+
+.color-dark div.rendered-react-keyed-file-browser div.files table tr:hover {
+  background-color: #808080;
 }
 
 select.collected-checked,

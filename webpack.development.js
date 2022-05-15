@@ -7,5 +7,6 @@ module.exports = merge(common, {
   watch: true,
   watchOptions: {
     ignored: /node_modules/,
+    poll: true,
   },
 });

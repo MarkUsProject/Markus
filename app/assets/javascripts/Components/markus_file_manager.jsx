@@ -298,7 +298,8 @@ class FileManagerFile extends FileRenderers.RawTableFile {
     } else {
       icon = <i className="fa fa-file-o" aria-hidden="true" />;
     }
-    let download_icon = <i className="fa fa-download-o" aria-hidden="true" />;
+
+    let download_icon = <i title="download" className="fa fa-download-file-o" aria-hidden="true" />;
     const inAction = this.props.isDragging || this.props.action;
 
     let name;
@@ -330,11 +331,13 @@ class FileManagerFile extends FileRenderers.RawTableFile {
       );
     } else {
       name = (
-        <a href={this.props.url || "#"} download={this.getName()}>
+        <React.Fragment>
           {icon}
           <span>{this.getName()}</span>
-          {download_icon}
-        </a>
+          <a href={this.props.url || "#"} download={this.getName()}>
+            {download_icon}
+          </a>
+        </React.Fragment>
       );
     }
 
@@ -402,7 +405,6 @@ FileManager.defaultProps = {
     FolderOpen: <i className="fa fa-folder-open-o" aria-hidden="true" />,
     Delete: <i className="fa fa-trash-o" aria-hidden="true" />,
     Loading: <i className="fa fa-circle-o-notch fa-spin" aria-hidden="true" />,
-    Download: <i className="fa fa-download-o" aria-hidden="true" />,
   },
   disableActions: {},
 };
