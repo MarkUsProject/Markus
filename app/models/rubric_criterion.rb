@@ -5,11 +5,6 @@ class RubricCriterion < Criterion
   validates :levels, presence: true
 
   DEFAULT_MAX_MARK = 4
-
-  def self.symbol
-    :rubric
-  end
-
   # Checks whether the passed in param's level_attributes have unique name and marks.
   # Skips the uniqueness validation if true.
   def update_levels(levels_attributes)

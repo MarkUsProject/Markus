@@ -395,10 +395,6 @@ class Grouping < ApplicationRecord
     has_submission? && !current_submission_used.is_empty
   end
 
-  def marking_completed?
-    !current_result.nil? && current_result.marking_state == Result::MARKING_STATES[:complete]
-  end
-
   # EDIT METHODS
   # Removes the member by its membership id
   def remove_member(mbr_id)

@@ -1,7 +1,9 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
 
 import ReactTable from "react-table";
+import {InstructorTable} from "./instructor_table";
 
 class TATable extends React.Component {
   constructor() {
@@ -70,6 +72,12 @@ class TATable extends React.Component {
   }
 }
 
-export function makeTATable(elem, props) {
+TATable.propTypes = {
+  course_id: PropTypes.number,
+};
+
+function makeTATable(elem, props) {
   render(<TATable {...props} />, elem);
 }
+
+export {makeTATable, TATable};

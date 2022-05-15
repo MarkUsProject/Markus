@@ -1,10 +1,6 @@
 class CheckboxCriterion < Criterion
   DEFAULT_MAX_MARK = 1
 
-  def self.symbol
-    :checkbox
-  end
-
   def update_assigned_groups_count
     result = []
     tas.each do |ta|

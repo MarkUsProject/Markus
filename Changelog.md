@@ -32,6 +32,7 @@
 - Added background job to clean tmp folder (#5963)
 - Removed consideration of due date from scanned exam (#5964)
 - Added Exception Notification Gem (#5965)
+- Added Rails Performance to Admin Dashboard (#5967)
 - Resolved issue 5905 by adding an explicit download icon, hover over background color change for the icon and each individual submission to the submissions UI (#6001)
 
 ## [v2.0.10]
