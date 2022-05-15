@@ -482,21 +482,19 @@ div.rendered-react-keyed-file-browser div.action-bar input[type='search'] {
   width: 100%;
 }
 
-div.rendered-react-keyed-file-browser div.files table th.name i,
 div.rendered-react-keyed-file-browser div.files table td.name div * {
   padding-right: 0.5rem;
 }
 
-div.rendered-react-keyed-file-browser div.files table th.name i,
-div.rendered-react-keyed-file-browser div.files table td.name a i:hover {
+.color-light div.rendered-react-keyed-file-browser div.files td.name a i:hover {
   background-color: #f2e396;
 }
-.color-dark div.rendered-react-keyed-file-browser div.files table th.name i,
-div.rendered-react-keyed-file-browser div.files table td.name a i:hover {
+
+.color-dark div.rendered-react-keyed-file-browser div.files td.name a i:hover {
   background-color: #615e5e;
 }
 
-div.rendered-react-keyed-file-browser div.files table tr:hover {
+.color-light div.rendered-react-keyed-file-browser div.files table tr:hover {
   background-color: #faf2cc;
 }
 
