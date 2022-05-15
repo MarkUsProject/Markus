@@ -16,7 +16,9 @@ describe CourseSummariesController do
         header = [User.human_attribute_name(:user_name),
                   User.human_attribute_name(:first_name),
                   User.human_attribute_name(:last_name),
-                  User.human_attribute_name(:id_number)]
+                  User.human_attribute_name(:id_number),
+                  User.human_attribute_name(:section),
+                  User.human_attribute_name(:email)]
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
@@ -26,8 +28,8 @@ describe CourseSummariesController do
             next
           end
           student_name = csv_row.shift
-          # Skipping first/last name and id_number fields
-          3.times { |_| csv_row.shift }
+          # Skipping first/last name, id_number, section and email fields
+          5.times { |_| csv_row.shift }
           student = Student.joins(:user).where('users.user_name': student_name).first
           expect(student).to be_truthy
           expect(assignments.size).to eq(csv_row.size)
@@ -62,9 +64,9 @@ describe CourseSummariesController do
                             params: { course_id: course.id }, format: :csv).parsed_body
           header = csv_rows[0]
           out_of_row = csv_rows[1]
-          expect(out_of_row.size).to eq(4 + assignments.size + grade_forms.size)
+          expect(out_of_row.size).to eq(6 + assignments.size + grade_forms.size)
           expect(out_of_row.size).to eq(header.size)
-          zipped_info = Assessment.all.order(:id).zip(out_of_row[4, out_of_row.size])
+          zipped_info = Assessment.all.order(:id).zip(out_of_row[6, out_of_row.size])
           zipped_info.each do |model, out_of_element|
             expect(out_of_element).to eq(model.max_mark.to_s)
           end
@@ -112,6 +114,8 @@ describe CourseSummariesController do
               user_name: student.user_name,
               first_name: student.first_name,
               last_name: student.last_name,
+              section: student.section&.name,
+              email: student.email,
               hidden: student.hidden,
               assessment_marks: GradeEntryForm.all.map do |ges|
                 total_grade = ges.grade_entry_students.find_by(role: student).total_grade
@@ -238,6 +242,8 @@ describe CourseSummariesController do
             user_name: @student2.user_name,
             first_name: @student2.first_name,
             last_name: @student2.last_name,
+            section: @student2.section&.name,
+            email: @student2.email,
             hidden: @student2.hidden,
             assessment_marks: {}
           }
