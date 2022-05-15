@@ -79,7 +79,8 @@ class CourseSummariesController < ApplicationController
     grades_data = get_table_json_data(current_role)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|
-      row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
+      row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number],
+             student[:section], student[:email]]
       row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
       row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id][:mark] })
       row
@@ -94,7 +95,7 @@ class CourseSummariesController < ApplicationController
     # Given that each assessment has a maximum possible mark achievable, this row represents this data.
     assessments = current_course.assessments.order(id: :asc)
     marking_schemes = current_course.marking_schemes.order(id: :asc)
-    out_of_row = [Assessment.human_attribute_name(:max_mark), '', '', '']
+    out_of_row = [Assessment.human_attribute_name(:max_mark), '', '', '', '', '']
     out_of_row.concat(assessments.collect(&:max_mark))
     out_of_row.concat([''] * marking_schemes.size)
 
@@ -108,7 +109,9 @@ class CourseSummariesController < ApplicationController
     header = [User.human_attribute_name(:user_name),
               User.human_attribute_name(:first_name),
               User.human_attribute_name(:last_name),
-              User.human_attribute_name(:id_number)]
+              User.human_attribute_name(:id_number),
+              User.human_attribute_name(:section),
+              User.human_attribute_name(:email)]
     header.concat(assessments.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))
 
