@@ -147,11 +147,27 @@ class AssignmentStatistics extends React.Component {
 }
 
 class AssignmentSummaryValue extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      valu: 0,
+    };
+  }
+
+  componentDidUpdate(prevState) {
+    const num = (this.props.value || 0).toFixed(2);
+    if (prevState.valu < num) {
+      this.setState({
+        value: prevState.valu + 1,
+      });
+    }
+  }
+
   render() {
     return (
       <div>
         <span className="assignment-summary-text">{this.props.statistic}:</span>
-        <span className="assignment-summary-value">{(this.props.value || 0).toFixed(2)}%</span>
+        <span className="assignment-summary-value">{this.state.valu}%</span>
       </div>
     );
   }
