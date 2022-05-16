@@ -26,6 +26,7 @@ require File.expand_path('../config/environment', __dir__)
 require 'rspec/rails'
 require 'action_policy/rspec'
 require 'action_policy/rspec/dsl'
+require 'capybara/rspec'
 # Loads lib repo stuff.
 require 'time-warp'
 
