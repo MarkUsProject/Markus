@@ -217,7 +217,6 @@ Rails.application.routes.draw do
         get 'grade_distribution'
         get 'download_config_files'
         get 'download_test_results'
-        get 'statistics'
       end
 
       resources :starter_file_groups, only: [:create]
