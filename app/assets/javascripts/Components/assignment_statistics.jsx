@@ -83,27 +83,27 @@ class AssignmentStatisticsDisplay extends React.Component {
   }
 
   grader_distribution_graph = () => {
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
-      return (
-        <div>
-          <h3>{I18n.t("grader_distribution")}</h3>
+    return (
+      <div>
+        <h3>{I18n.t("grader_distribution")}</h3>
+        <div className="bar-graph">
           <Bar
             data={this.state.ta_grade_distribution.data}
             options={this.state.ta_grade_distribution.options}
           />
-          <p>
-            <a
-              href={Routes.grader_summary_course_assignment_graders_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("activerecord.models.ta.other")}
-            </a>
-          </p>
         </div>
-      );
-    }
+        <p>
+          <a
+            href={Routes.grader_summary_course_assignment_graders_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {I18n.t("activerecord.models.ta.other")}
+          </a>
+        </p>
+      </div>
+    );
   };
 
   render() {
@@ -135,12 +135,29 @@ class AssignmentStatisticsDisplay extends React.Component {
           />
         </div>
         <div className="bar-graph">
+          <h3>{"Assignment Grade Distribution"}</h3>
           <Bar
             data={this.state.assignment_grade_distribution.data}
             options={this.state.assignment_grade_distribution.options}
           />
         </div>
-        {this.grader_distribution_graph()}
+        <div className="bar-graph">
+          <h3>{I18n.t("grader_distribution")}</h3>
+          <Bar
+            data={this.state.ta_grade_distribution.data}
+            options={this.state.ta_grade_distribution.options}
+          />
+          <p>
+            <a
+              href={Routes.grader_summary_course_assignment_graders_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("activerecord.models.ta.other")}
+            </a>
+          </p>
+        </div>
       </div>
     );
   }
