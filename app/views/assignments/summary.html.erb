@@ -1,14 +1,6 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeAssignmentSummaryTable(
-        document.getElementById('assignment_summary_table'),
-        {
-          course_id: <%= @current_course.id %>,
-          assignment_id: <%= @assignment.id %>,
-          is_instructor: <%= @current_role.instructor? %>
-        }
-      );
       makeAssignmentStatistics(document.getElementById('statistics-react'),
       { course_id: <%= @current_course.id %>, assessment_id: <%= @assignment.id %> });
     });
@@ -16,4 +8,3 @@
 <% end %>
 
 <div id='statistics-react'></div>
-<div id='assignment_summary_table'></div>

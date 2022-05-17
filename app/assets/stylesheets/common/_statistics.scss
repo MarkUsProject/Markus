@@ -2,35 +2,35 @@
   font-size: xx-large;
 }
 
-.assignment-summary-data-dashboard {
+.assignment-statistics-display {
   align-items: center;
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
-}
-
-.summary-progress-circle {
-  align-items: center;
-  background-color: $primary-one;
-  border-radius: 50%;
-  display: flex;
-  height: 60px;
-  justify-content: center;
-  width: 60px;
-}
-
-.assignment-summary-percentage {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-}
-
-.bar-graph-area {
-  align-items: center;
-  display: flex;
-  justify-content: center;
+  padding-top: 3vh;
 }
 
 .bar-graph {
   padding-top: 2vh;
   width: 60%;
+}
+
+.circular-progress-bar {
+  background: conic-gradient($primary-one calc(var(--value) * 1%), $primary-two 0);
+  border-radius: 50%;
+  color: $primary-one;
+  display: grid;
+  height: 120px;
+  place-items: center;
+  width: 120px;
+}
+
+.circular-progress-bar-display {
+  background-color: $background-main;
+  border-radius: 50%;
+  display: grid;
+  font-size: x-large;
+  height: 80px;
+  place-items: center;
+  width: 80px;
 }

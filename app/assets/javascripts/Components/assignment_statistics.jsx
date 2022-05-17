@@ -2,8 +2,10 @@ import React from "react";
 import {render} from "react-dom";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "./Helpers/chart_helpers";
+import {AssignmentSummaryTable} from "./assignment_summary_table";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-class AssignmentStatistics extends React.Component {
+class AssignmentStatisticsDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -106,8 +108,8 @@ class AssignmentStatistics extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="grid-2-col assignment-summary-data-dashboard">
+      <div className="assignment-statistics-display">
+        <div className="grid-2-col">
           <AssignmentSummaryValue
             statistic={I18n.t("average")}
             value={this.state.summary.average}
@@ -132,13 +134,11 @@ class AssignmentStatistics extends React.Component {
             total={this.state.summary.groupings_size}
           />
         </div>
-        <div className="bar-graph-area">
-          <div className="bar-graph">
-            <Bar
-              data={this.state.assignment_grade_distribution.data}
-              options={this.state.assignment_grade_distribution.options}
-            />
-          </div>
+        <div className="bar-graph">
+          <Bar
+            data={this.state.assignment_grade_distribution.data}
+            options={this.state.assignment_grade_distribution.options}
+          />
         </div>
         {this.grader_distribution_graph()}
       </div>
@@ -147,27 +147,11 @@ class AssignmentStatistics extends React.Component {
 }
 
 class AssignmentSummaryValue extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      valu: 0,
-    };
-  }
-
-  componentDidUpdate(prevState) {
-    const num = (this.props.value || 0).toFixed(2);
-    if (prevState.valu < num) {
-      this.setState({
-        value: prevState.valu + 1,
-      });
-    }
-  }
-
   render() {
     return (
       <div>
         <span className="assignment-summary-text">{this.props.statistic}:</span>
-        <span className="assignment-summary-value">{this.state.valu}%</span>
+        <span className="assignment-summary-value">{(this.props.value || 0).toFixed(2)}%</span>
       </div>
     );
   }
@@ -175,15 +159,42 @@ class AssignmentSummaryValue extends React.Component {
 
 class AssignmentSummaryPercentage extends React.Component {
   render() {
+    const percentage = Math.floor((this.props.progress / this.props.total || 0) * 100);
     return (
       <div>
-        <div className="summary-progress-circle">
-          {(this.props.progress / this.props.total || 0).toFixed(2) * 100}%
+        <div className="circular-progress-bar" style={{"--value": percentage}}>
+          <div className="circular-progress-bar-display">{percentage}%</div>
         </div>
         <span>
           {this.props.statisticText}: {this.props.progress} / {this.props.total}
         </span>
       </div>
+    );
+  }
+}
+
+class AssignmentStatistics extends React.Component {
+  render() {
+    return (
+      <Tabs>
+        <TabList>
+          <Tab>{"Statistics Display"}</Tab>
+          <Tab>{"Summary Table"}</Tab>
+        </TabList>
+        <TabPanel>
+          <AssignmentStatisticsDisplay
+            course_id={this.props.course_id}
+            assessment_id={this.props.assessment_id}
+          />
+        </TabPanel>
+        <TabPanel>
+          <AssignmentSummaryTable
+            course_id={this.props.course_id}
+            assignment_id={this.props.assessment_id}
+            is_instructor={true}
+          />
+        </TabPanel>
+      </Tabs>
     );
   }
 }

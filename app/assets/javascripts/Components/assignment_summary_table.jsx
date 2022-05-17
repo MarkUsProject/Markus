@@ -5,7 +5,7 @@ import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
 import ReactTable from "react-table";
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 
-class AssignmentSummaryTable extends React.Component {
+export class AssignmentSummaryTable extends React.Component {
   constructor() {
     super();
     const markingStates = getMarkingStates([]);
