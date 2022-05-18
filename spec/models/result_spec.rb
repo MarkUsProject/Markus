@@ -168,13 +168,38 @@ describe Result do
 
   describe '.set_release_on_results' do
     let!(:assignment) { create :assignment_with_criteria_and_results }
+    let!(:released) { create :released_result }
     it 'should raise StandardError with message not_complete error if result has not been completed' do
-      result = assignment.ungraded_submission_results[0]
-      expect { result.set_release_on_results(grouping, true) }.to raise_error(StandardError)
+      create(:incomplete_result)
+      begin
+        Result.set_release_on_results(assignment.groupings, true)
+      rescue StandardError => e
+        expect(e.message).to start_with(I18n.t('submissions.errors.not_complete'))
+      end
+    end
+    it 'should raise StandardError with message not_complete_unrelease error if result has not been completed' do
+      create(:incomplete_result)
+      begin
+        Result.set_release_on_results(assignment.groupings, false)
+      rescue StandardError => e
+        expect(e.message).to start_with(I18n.t('submissions.errors.not_complete_unrelease'))
+      end
     end
     it 'should raise a StandardError with message no_submission error if the grouping does not have a submission' do
-      grouping = assignment.unassigned_groupings[0]
-      expect { Result.set_release_on_results(grouping, true) }.to raise_error(StandardError)
+      create(:grouping)
+      begin
+        Result.set_release_on_results(assignment.groupings, true)
+      rescue StandardError => e
+        expect(e.message).to start_with(I18n.t('submissions.errors.no_submission'))
+      end
+    end
+    it 'should keep a released submission released' do
+      Result.set_release_on_results(assignment.groupings, true)
+      expect(released.released_to_students).to be(true)
+    end
+    it 'should unrelease a released submission' do
+      Result.set_release_on_results(assignment.groupings, false)
+      expect(released.released_to_students).to be(true)
     end
   end
 end

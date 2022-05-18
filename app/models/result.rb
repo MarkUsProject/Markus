@@ -43,7 +43,7 @@ class Result < ApplicationRecord
 
     if without_submissions.present?
       group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
-      raise StandardError, "no_submission #{group_names}"
+      raise StandardError, I18n.t('submissions.errors.no_submission', group_name: group_names)
     end
 
     without_complete_result = groupings.joins(:current_result)
@@ -51,11 +51,10 @@ class Result < ApplicationRecord
 
     if without_complete_result.present?
       group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
-      groupings = groupings.where.not(id: without_complete_result.ids)
       if release
-        raise StandardError, "not_complete #{group_names}"
+        raise StandardError, I18n.t('submissions.errors.not_complete', group_name: group_names)
       else
-        raise StandardError, "not_complete_unrelease #{group_names}"
+        raise StandardError, I18n.t('submissions.errors.not_complete_unrelease', group_name: group_names)
       end
     end
 
