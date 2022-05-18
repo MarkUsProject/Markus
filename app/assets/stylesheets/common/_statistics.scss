@@ -15,22 +15,49 @@
   width: 60%;
 }
 
-.circular-progress-bar {
-  background: conic-gradient($primary-one calc(var(--value) * 1%), $primary-two 0);
+.circular-container {
   border-radius: 50%;
-  color: $primary-one;
   display: grid;
-  height: 120px;
   place-items: center;
+}
+
+.circular-progress-bar-normal {
+  background: conic-gradient($primary-one calc(var(--value) * 1%), $primary-two 0);
+  color: $primary-one;
+  height: 120px;
   width: 120px;
 }
 
-.circular-progress-bar-display {
+.circular-progress-bar-bad {
+  background: conic-gradient($severe-error calc(var(--value) * 1%), $light-error 0);
+  color: $severe-error;
+  height: 120px;
+  width: 120px;
+}
+
+.circular-progress-bar-inner-display {
   background-color: $background-main;
-  border-radius: 50%;
-  display: grid;
   font-size: x-large;
   height: 80px;
-  place-items: center;
   width: 80px;
+}
+
+.assignment-percentage-statistic {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.aaa {
+  display: flex;
+  height: 500px;
+  width: 65%;
+}
+
+.ccc {
+  align-items: center;
+  display: flex;
+  flex: 50%;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
