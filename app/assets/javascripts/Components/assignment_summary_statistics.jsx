@@ -152,10 +152,11 @@ class AssignmentSummaryStatistics extends React.Component {
 
 class RawAssignmentProgressStatistic extends React.Component {
   render() {
-    const {progress, total, label, higherIsWorse} = this.props;
-    const percentage = Math.floor((progress / total || 0) * 100);
+    const percentage = Math.floor((this.props.progress / this.props.total || 0) * 100);
     const progressClass = `circular-container ${
-      higherIsWorse && progress > 0 ? "circular-progress-bar-bad" : "circular-progress-bar-normal"
+      this.props.higherIsWorse && this.props.progress > 0
+        ? "circular-progress-bar-bad"
+        : "circular-progress-bar-normal"
     }`;
     return (
       <div className="middle-align">
@@ -165,7 +166,7 @@ class RawAssignmentProgressStatistic extends React.Component {
           </div>
         </div>
         <span>
-          {label}: {progress} / {total}
+          {this.props.label}: {this.props.progress} / {this.props.total}
         </span>
       </div>
     );
