@@ -5,7 +5,7 @@ import {chartScales} from "./Helpers/chart_helpers";
 import {AssignmentSummaryTable} from "./assignment_summary_table";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-class RawAssignmentDataDisplay extends React.Component {
+class AssignmentSummaryStatistics extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -181,7 +181,7 @@ class RawAssignmentProgressStatistic extends React.Component {
   }
 }
 
-class AssignmentStatistics extends React.Component {
+class AssignmentSummary extends React.Component {
   render() {
     return (
       <Tabs>
@@ -190,7 +190,7 @@ class AssignmentStatistics extends React.Component {
           <Tab>{I18n.t("summary_table")}</Tab>
         </TabList>
         <TabPanel>
-          <RawAssignmentDataDisplay
+          <AssignmentSummaryStatistics
             course_id={this.props.course_id}
             assessment_id={this.props.assessment_id}
           />
@@ -199,7 +199,7 @@ class AssignmentStatistics extends React.Component {
           <AssignmentSummaryTable
             course_id={this.props.course_id}
             assignment_id={this.props.assessment_id}
-            is_instructor={true}
+            is_instructor={this.props.is_instructor}
           />
         </TabPanel>
       </Tabs>
@@ -207,6 +207,6 @@ class AssignmentStatistics extends React.Component {
   }
 }
 
-export function makeAssignmentStatistics(elem, props) {
-  return render(<AssignmentStatistics {...props} />, elem);
+export function makeAssignmentSummary(elem, props) {
+  return render(<AssignmentSummary {...props} />, elem);
 }

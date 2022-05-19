@@ -1,5 +1,4 @@
 import React from "react";
-import {render} from "react-dom";
 import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
 
 import ReactTable from "react-table";
@@ -239,8 +238,4 @@ export class AssignmentSummaryTable extends React.Component {
       </div>
     );
   }
-}
-
-export function makeAssignmentSummaryTable(elem, props) {
-  render(<AssignmentSummaryTable {...props} />, elem);
 }
