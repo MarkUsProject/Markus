@@ -1,5 +1,6 @@
 ---
 en:
+  assignment_distribution: Assignment Grades Distribution
   assignments_graded: Number of submissions graded
   assignments_submitted: Number of submissions collected
   average: Average
@@ -13,3 +14,5 @@ en:
   outstanding_remark_request:
     one: "%{count} outstanding remark request"
     other: "%{count} outstanding remark requests"
+  summary_statistics: Summary Statistics
+  summary_table: Summary Table

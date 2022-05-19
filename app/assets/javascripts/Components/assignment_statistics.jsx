@@ -131,7 +131,7 @@ class RawAssignmentDataDisplay extends React.Component {
           />
         </div>
         <div className="bar-graph">
-          <h3>{"Assignment Grade Distribution"}</h3>
+          <h3>{I18n.t("assignment_distribution")}</h3>
           <Bar
             data={this.state.assignment_grade_distribution.data}
             options={this.state.assignment_grade_distribution.options}
@@ -186,8 +186,8 @@ class AssignmentStatistics extends React.Component {
     return (
       <Tabs>
         <TabList>
-          <Tab>{"Statistics Display"}</Tab>
-          <Tab>{"Summary Table"}</Tab>
+          <Tab>{I18n.t("summary_statistics")}</Tab>
+          <Tab>{I18n.t("summary_table")}</Tab>
         </TabList>
         <TabPanel>
           <RawAssignmentDataDisplay
