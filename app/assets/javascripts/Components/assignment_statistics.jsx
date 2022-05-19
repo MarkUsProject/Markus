@@ -5,7 +5,7 @@ import {chartScales} from "./Helpers/chart_helpers";
 import {AssignmentSummaryTable} from "./assignment_summary_table";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-class AssignmentDataDisplay extends React.Component {
+class RawAssignmentDataDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -93,40 +93,42 @@ class AssignmentDataDisplay extends React.Component {
       groupings_size,
     } = this.state.summary;
     return (
-      <div className="assignment-statistics-display">
-        <div className="aaa">
-          <div className="ccc">
+      <div className="assignment-data-display middle-align">
+        <div className="assignment-statistics-summary">
+          <div className="middle-align">
             <div className="inline-labels">
               <span>{I18n.t("average")}:</span>
-              <span className="assignment-summary-value">{average}%</span>
+              <span className="assignment-statistic-value">{average}%</span>
             </div>
-            <RawAssignmentProgressStatistic
-              label={I18n.t("num_failed")}
-              progress={num_fails}
-              total={groupings_size}
-            />
-            <RawAssignmentProgressStatistic
-              label={I18n.t("assignments_submitted")}
-              progress={num_submissions_collected}
-              total={groupings_size}
-            />
           </div>
-          <div className="ccc">
+          <div className="middle-align">
             <div className="inline-labels">
               <span>{I18n.t("median")}:</span>
-              <span className="assignment-summary-value">{median}%</span>
+              <span className="assignment-statistic-value">{median}%</span>
             </div>
-            <RawAssignmentProgressStatistic
-              label={I18n.t("num_zeros")}
-              progress={num_zeros}
-              total={groupings_size}
-            />
-            <RawAssignmentProgressStatistic
-              label={I18n.t("assignments_graded")}
-              progress={num_submissions_graded}
-              total={groupings_size}
-            />
           </div>
+          <RawAssignmentProgressStatistic
+            label={I18n.t("num_failed")}
+            progress={num_fails}
+            total={groupings_size}
+            higherIsWorse={true}
+          />
+          <RawAssignmentProgressStatistic
+            label={I18n.t("num_zeros")}
+            progress={num_zeros}
+            total={groupings_size}
+            higherIsWorse={true}
+          />
+          <RawAssignmentProgressStatistic
+            label={I18n.t("assignments_submitted")}
+            progress={num_submissions_collected}
+            total={groupings_size}
+          />
+          <RawAssignmentProgressStatistic
+            label={I18n.t("assignments_graded")}
+            progress={num_submissions_graded}
+            total={groupings_size}
+          />
         </div>
         <div className="bar-graph">
           <h3>{"Assignment Grade Distribution"}</h3>
@@ -161,11 +163,12 @@ class RawAssignmentProgressStatistic extends React.Component {
   render() {
     const {progress, total, label, higherIsWorse} = this.props;
     const percentage = Math.floor((progress / total || 0) * 100);
-    const progressClass =
-      higherIsWorse && progress > 0 ? "circular-progress-bar-bad" : "circular-progress-bar-normal";
+    const progressClass = `circular-container ${
+      higherIsWorse && progress > 0 ? "circular-progress-bar-bad" : "circular-progress-bar-normal"
+    }`;
     return (
-      <div className="assignment-percentage-statistic">
-        <div className={`circular-container ${progressClass}`} style={{"--value": percentage}}>
+      <div className="middle-align">
+        <div className={progressClass} style={{"--value": percentage}}>
           <div className="circular-container circular-progress-bar-inner-display">
             {percentage}%
           </div>
@@ -187,7 +190,7 @@ class AssignmentStatistics extends React.Component {
           <Tab>{"Summary Table"}</Tab>
         </TabList>
         <TabPanel>
-          <AssignmentDataDisplay
+          <RawAssignmentDataDisplay
             course_id={this.props.course_id}
             assessment_id={this.props.assessment_id}
           />

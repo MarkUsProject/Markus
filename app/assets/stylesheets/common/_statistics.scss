@@ -1,11 +1,8 @@
-.assignment-summary-value {
+.assignment-statistic-value {
   font-size: xx-large;
 }
 
-.assignment-statistics-display {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+.assignment-data-display {
   justify-content: space-evenly;
   padding-top: 3vh;
 }
@@ -25,6 +22,7 @@
   background: conic-gradient($primary-one calc(var(--value) * 1%), $primary-two 0);
   color: $primary-one;
   height: 120px;
+  margin-bottom: 5px;
   width: 120px;
 }
 
@@ -32,6 +30,7 @@
   background: conic-gradient($severe-error calc(var(--value) * 1%), $light-error 0);
   color: $severe-error;
   height: 120px;
+  margin-bottom: 5px;
   width: 120px;
 }
 
@@ -42,22 +41,16 @@
   width: 80px;
 }
 
-.assignment-percentage-statistic {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-}
-
-.aaa {
-  display: flex;
-  height: 500px;
+.assignment-statistics-summary {
+  display: grid;
+  grid-auto-rows: minmax(30px, auto);
+  grid-row-gap: 30px;
+  grid-template-columns: 1fr 1fr;
   width: 65%;
 }
 
-.ccc {
+.middle-align {
   align-items: center;
   display: flex;
-  flex: 50%;
   flex-direction: column;
-  justify-content: space-evenly;
 }
