@@ -83,51 +83,42 @@ class AssignmentSummaryStatistics extends React.Component {
   }
 
   render() {
-    const {
-      average,
-      median,
-      num_fails,
-      num_zeros,
-      num_submissions_collected,
-      num_submissions_graded,
-      groupings_size,
-    } = this.state.summary;
     return (
       <div className="assignment-data-display middle-align">
         <div className="assignment-statistics-summary">
           <div className="middle-align">
             <div className="inline-labels">
               <span>{I18n.t("average")}:</span>
-              <span className="assignment-statistic-value">{average}%</span>
+              <span className="assignment-statistic-value">{this.state.summary.average}%</span>
             </div>
           </div>
           <div className="middle-align">
             <div className="inline-labels">
               <span>{I18n.t("median")}:</span>
-              <span className="assignment-statistic-value">{median}%</span>
+              <span className="assignment-statistic-value">{this.state.summary.median}%</span>
             </div>
           </div>
           <RawAssignmentProgressStatistic
             label={I18n.t("num_failed")}
-            progress={num_fails}
-            total={groupings_size}
+            progress={this.state.summary.num_fails}
+            total={this.state.summary.groupings_size}
             higherIsWorse={true}
           />
           <RawAssignmentProgressStatistic
             label={I18n.t("num_zeros")}
-            progress={num_zeros}
-            total={groupings_size}
+            progress={this.state.summary.num_zeros}
+            total={this.state.summary.groupings_size}
             higherIsWorse={true}
           />
           <RawAssignmentProgressStatistic
             label={I18n.t("assignments_submitted")}
-            progress={num_submissions_collected}
-            total={groupings_size}
+            progress={this.state.summary.num_submissions_collected}
+            total={this.state.summary.groupings_size}
           />
           <RawAssignmentProgressStatistic
             label={I18n.t("assignments_graded")}
-            progress={num_submissions_graded}
-            total={groupings_size}
+            progress={this.state.summary.num_submissions_graded}
+            total={this.state.summary.groupings_size}
           />
         </div>
         <div className="bar-graph">
@@ -139,11 +130,7 @@ class AssignmentSummaryStatistics extends React.Component {
         </div>
         <div className="bar-graph">
           <h3>{I18n.t("grader_distribution")}</h3>
-          <Bar
-            data={this.state.ta_grade_distribution.data}
-            options={this.state.ta_grade_distribution.options}
-          />
-          <p>
+          <p className="float-right">
             <a
               href={Routes.grader_summary_course_assignment_graders_path(
                 this.props.course_id,
@@ -153,6 +140,10 @@ class AssignmentSummaryStatistics extends React.Component {
               {I18n.t("activerecord.models.ta.other")}
             </a>
           </p>
+          <Bar
+            data={this.state.ta_grade_distribution.data}
+            options={this.state.ta_grade_distribution.options}
+          />
         </div>
       </div>
     );
@@ -183,27 +174,37 @@ class RawAssignmentProgressStatistic extends React.Component {
 
 class AssignmentSummary extends React.Component {
   render() {
-    return (
-      <Tabs>
-        <TabList>
-          <Tab>{I18n.t("summary_statistics")}</Tab>
-          <Tab>{I18n.t("summary_table")}</Tab>
-        </TabList>
-        <TabPanel>
-          <AssignmentSummaryStatistics
-            course_id={this.props.course_id}
-            assessment_id={this.props.assessment_id}
-          />
-        </TabPanel>
-        <TabPanel>
-          <AssignmentSummaryTable
-            course_id={this.props.course_id}
-            assignment_id={this.props.assessment_id}
-            is_instructor={this.props.is_instructor}
-          />
-        </TabPanel>
-      </Tabs>
-    );
+    if (this.props.is_instructor) {
+      return (
+        <Tabs>
+          <TabList>
+            <Tab>{I18n.t("summary_statistics")}</Tab>
+            <Tab>{I18n.t("summary_table")}</Tab>
+          </TabList>
+          <TabPanel>
+            <AssignmentSummaryStatistics
+              course_id={this.props.course_id}
+              assessment_id={this.props.assessment_id}
+            />
+          </TabPanel>
+          <TabPanel>
+            <AssignmentSummaryTable
+              course_id={this.props.course_id}
+              assignment_id={this.props.assessment_id}
+              is_instructor={this.props.is_instructor}
+            />
+          </TabPanel>
+        </Tabs>
+      );
+    } else {
+      return (
+        <AssignmentSummaryTable
+          course_id={this.props.course_id}
+          assignment_id={this.props.assessment_id}
+          is_instructor={this.props.is_instructor}
+        />
+      );
+    }
   }
 }
 
