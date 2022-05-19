@@ -33,7 +33,8 @@
 - Removed consideration of due date from scanned exam (#5964)
 - Added Exception Notification Gem (#5965)
 - Added Rails Performance to Admin Dashboard (#5967)
-- Resolved issue 5905 by adding an explicit download icon, hover over background color change for the icon and each individual submission to the submissions UI (#6001)
+- Resolved issue 5905 by adding an explicit download icon to file manager, to differentiate from file preview action (#6001)
+- Update Groups API to return member role IDs instead of user IDs (#6006)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
