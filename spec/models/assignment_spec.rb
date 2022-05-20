@@ -2128,7 +2128,8 @@ describe Assignment do
 
           expect(summary).to_not be_empty
           expect(summary[0]).to_not be_empty
-          expect(summary[0]).to include('User name', 'Group', 'Final grade')
+          expect(summary[0]).to include('Group', 'User name', 'First Name', 'Last Name', 'Section', 'ID Number',
+                                        'Email')
         end
       end
     end
