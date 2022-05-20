@@ -112,8 +112,8 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_course.marking_schemes
 
     header = [User.human_attribute_name(:user_name),
-              User.human_attribute_name(:first_name),
               User.human_attribute_name(:last_name),
+              User.human_attribute_name(:first_name),
               User.human_attribute_name(:section),
               User.human_attribute_name(:id_number),
               User.human_attribute_name(:email)]

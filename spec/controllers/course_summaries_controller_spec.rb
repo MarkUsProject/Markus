@@ -14,8 +14,8 @@ describe CourseSummariesController do
                           params: { course_id: course.id }, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 2) # one header row, one out of row, plus one row per student
         header = [User.human_attribute_name(:user_name),
-                  User.human_attribute_name(:first_name),
                   User.human_attribute_name(:last_name),
+                  User.human_attribute_name(:first_name),
                   User.human_attribute_name(:section),
                   User.human_attribute_name(:id_number),
                   User.human_attribute_name(:email)]
