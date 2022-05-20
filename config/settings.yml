@@ -103,5 +103,3 @@ exception_notification:
 rails_performance:
   enabled: true
   duration: 180
-
-pandoc: /usr/bin/pandoc

@@ -420,8 +420,6 @@ class SubmissionsController < ApplicationController
       render json: { type: 'pdf' }
     elsif file.is_pynb?
       render json: { type: 'jupyter-notebook' }
-    elsif file.is_rmd?
-      render json: { type: 'rmarkdown' }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -450,7 +448,7 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
 
-    if %(jupyter-notebook rmarkdown).include?(FileHelper.get_file_type(params[:file_name])) && preview
+    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview
       redirect_to action: :notebook_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -728,6 +726,8 @@ class SubmissionsController < ApplicationController
   private
 
   def notebook_to_html(file_contents, unique_path, type)
+    return file_contents unless type == 'jupyter-notebook'
+
     cache_file = Pathname.new('tmp/notebook_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
@@ -735,8 +735,6 @@ class SubmissionsController < ApplicationController
         args = [
           File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
         ]
-      else
-        args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?

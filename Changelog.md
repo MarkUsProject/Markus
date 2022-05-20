@@ -34,6 +34,7 @@
 - Added Exception Notification Gem (#5965)
 - Added Rails Performance to Admin Dashboard (#5967)
 - Update Groups API to return member role IDs instead of user IDs (#6006)
+- Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
