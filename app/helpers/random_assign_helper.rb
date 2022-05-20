@@ -49,7 +49,7 @@ module RandomAssignHelper
     process_existing_peer_reviews(reviewer_ids, reviewee_ids)
 
     # Shuffle the reviewees to emulate randomness.
-    @reviewees = @reviewees.shuffle
+    @reviewees = @reviewees.shuffle.take(@reviewers.size)
   end
 
   # Remove reviewer id occurrences from @reviewers by how many times they
