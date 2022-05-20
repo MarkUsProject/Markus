@@ -679,7 +679,8 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
+    headers = [['Group', 'User name', 'First Name', 'Last Name', 'Section', 'ID Number', 'Email', 'Final grade'],
+               ['', '', '', '', '', '', 'Out of', self.max_mark]]
     self.ta_criteria.each do |crit|
       headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
       headers[1] << crit.max_mark
@@ -697,7 +698,14 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          row = [s.user_name, g.group.group_name]
+          other_info = Student::CSV_ORDER.map do |field|
+            if field == :section_name
+              s.section&.name
+            else
+              s.__send__(field)
+            end
+          end
+          row = [g.group.group_name] + other_info
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
