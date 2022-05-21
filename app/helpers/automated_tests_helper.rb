@@ -38,7 +38,7 @@ module AutomatedTestsHelper
     test_specs = assignment.autotest_settings&.deep_dup || {}
     test_specs['testers']&.each do |tester_specs|
       test_group_ids = tester_specs['test_data'] || []
-      tester_specs['test_data'] = assignment.test_groups.where(id: test_group_ids).map(&:to_json)
+      tester_specs['test_data'] = assignment.test_groups.where(id: test_group_ids).order(:position).map(&:to_json)
     end
     test_specs
   end
@@ -47,6 +47,7 @@ module AutomatedTestsHelper
   def update_test_groups_from_specs(assignment, test_specs)
     test_group_ids = []
     ApplicationRecord.transaction do
+      test_group_position = 1
       test_specs['testers']&.each do |tester_specs|
         current_test_group_ids = []
         tester_specs['test_data']&.each do |test_group_specs|
@@ -61,7 +62,9 @@ module AutomatedTestsHelper
             flash_message(:warning, I18n.t('automated_tests.no_criteria', name: criterion_name))
           end
           fields = { name: test_group_name, display_output: display_output,
-                     criterion_id: criterion&.id, autotest_settings: test_group_specs }
+                     criterion_id: criterion&.id, autotest_settings: test_group_specs,
+                     position: test_group_position }
+          test_group_position += 1
           if test_group_id.nil?
             test_group = assignment.test_groups.create!(fields)
             test_group_id = test_group.id
