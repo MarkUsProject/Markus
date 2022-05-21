@@ -36,6 +36,10 @@ class CoursesController < ApplicationController
     respond_with(@current_course)
   end
 
+  def user_not_authorized
+    redirect_to root_url
+  end
+
   # Sets current_user to nil, which clears a role switch session (see role_switch)
   def clear_role_switch_session
     MarkusLogger.instance.log("Instructor '#{session[:real_user_name]}' logged out from '#{session[:user_name]}'.")
