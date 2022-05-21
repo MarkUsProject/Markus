@@ -167,39 +167,37 @@ describe Result do
   end
 
   describe '.set_release_on_results' do
-    let!(:assignment) { create :assignment_with_criteria_and_results }
-    let!(:released) { create :released_result }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
     it 'should raise StandardError with message not_complete error if result has not been completed' do
-      create(:incomplete_result)
-      begin
-        Result.set_release_on_results(assignment.groupings, true)
-      rescue StandardError => e
-        expect(e.message).to start_with(I18n.t('submissions.errors.not_complete'))
-      end
+      result = assignment.current_results.first
+      result.submission.make_remark_result
+      group_names = result.grouping.group_name_with_student_user_names[0..5] # Get only group name, not student
+      expect { Result.set_release_on_results(assignment.groupings, true) }
+        .to raise_error(I18n.t('submissions.errors.not_complete', group_name: group_names))
     end
     it 'should raise StandardError with message not_complete_unrelease error if result has not been completed' do
-      create(:incomplete_result)
-      begin
-        Result.set_release_on_results(assignment.groupings, false)
-      rescue StandardError => e
-        expect(e.message).to start_with(I18n.t('submissions.errors.not_complete_unrelease'))
-      end
+      result = assignment.current_results.first
+      result.submission.make_remark_result
+      group_names = result.grouping.group_name_with_student_user_names[0..5] # Get only group name, not student
+      expect { Result.set_release_on_results(assignment.groupings, false) }
+        .to raise_error(I18n.t('submissions.errors.not_complete_unrelease', group_name: group_names))
     end
     it 'should raise a StandardError with message no_submission error if the grouping does not have a submission' do
-      create(:grouping)
-      begin
-        Result.set_release_on_results(assignment.groupings, true)
-      rescue StandardError => e
-        expect(e.message).to start_with(I18n.t('submissions.errors.no_submission'))
-      end
+      grouping = create(:grouping)
+      expect { Result.set_release_on_results(assignment.groupings.concat(grouping), true) }
+        .to raise_error(I18n.t('submissions.errors.no_submission', group_name:
+          grouping.group_name_with_student_user_names))
     end
-    it 'should keep a released submission released' do
+    it 'should release submissions' do
       Result.set_release_on_results(assignment.groupings, true)
-      expect(released.released_to_students).to be(true)
+      result = assignment.current_results.first
+      expect(result.released_to_students).to be(true)
     end
     it 'should unrelease a released submission' do
+      Result.set_release_on_results(assignment.groupings, true)
       Result.set_release_on_results(assignment.groupings, false)
-      expect(released.released_to_students).to be(true)
+      result = assignment.current_results.first
+      expect(result.released_to_students).to be(false)
     end
   end
 end
