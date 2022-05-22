@@ -659,9 +659,13 @@ class SubmissionsController < ApplicationController
       changed = if assignment.is_peer_review?
                   set_pr_release_on_results(groupings, release)
                 else
-                  set_release_on_results(groupings, release)
+                  begin
+                    Result.set_release_on_results(groupings, release)
+                  rescue StandardError => e
+                    flash_now(:error, e.message)
+                    0
+                  end
                 end
-
       if changed > 0
         assignment.update_remark_request_count
 
