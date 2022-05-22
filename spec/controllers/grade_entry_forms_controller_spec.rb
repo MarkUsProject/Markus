@@ -194,10 +194,23 @@ describe GradeEntryFormsController do
                                                 .find_by(grade_entry_item: grade_entry_item)
                                                 .grade
       csv_array = [
-        ['', grade_entry_item.name],
-        [GradeEntryItem.human_attribute_name(:out_of), grade_entry_item.out_of],
-        [@user.user_name, student_grade]
+        [GradeEntryForm.human_attribute_name(:user_name),
+         GradeEntryForm.human_attribute_name(:last_name),
+         GradeEntryForm.human_attribute_name(:first_name),
+         GradeEntryForm.human_attribute_name(:section),
+         GradeEntryForm.human_attribute_name(:id_number),
+         GradeEntryForm.human_attribute_name(:email),
+         grade_entry_item.name],
+        ['',
+         '',
+         '',
+         '',
+         '',
+         GradeEntryItem.human_attribute_name(:out_of),
+         grade_entry_item.out_of],
+        [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, student_grade]
       ]
+
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
       end
@@ -226,14 +239,25 @@ describe GradeEntryFormsController do
 
     it 'shows Total column when show_total is true' do
       csv_array = [
-        ['',
+        [GradeEntryForm.human_attribute_name(:user_name),
+         GradeEntryForm.human_attribute_name(:last_name),
+         GradeEntryForm.human_attribute_name(:first_name),
+         GradeEntryForm.human_attribute_name(:section),
+         GradeEntryForm.human_attribute_name(:id_number),
+         GradeEntryForm.human_attribute_name(:email),
          grade_entry_form_with_data_and_total.grade_entry_items[0].name,
          GradeEntryForm.human_attribute_name(:total)],
-        [GradeEntryItem.human_attribute_name(:out_of),
+        ['',
+         '',
+         '',
+         '',
+         '',
+         GradeEntryItem.human_attribute_name(:out_of),
          String(grade_entry_form_with_data_and_total.grade_entry_items[0].out_of),
          grade_entry_form_with_data_and_total.max_mark],
-        [@user.user_name, '', '']
+        [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, '', '']
       ]
+
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
       end
@@ -255,17 +279,28 @@ describe GradeEntryFormsController do
       ges.save
 
       csv_array = [
-        ['',
+        [GradeEntryForm.human_attribute_name(:user_name),
+         GradeEntryForm.human_attribute_name(:last_name),
+         GradeEntryForm.human_attribute_name(:first_name),
+         GradeEntryForm.human_attribute_name(:section),
+         GradeEntryForm.human_attribute_name(:id_number),
+         GradeEntryForm.human_attribute_name(:email),
          gef.grade_entry_items[0].name,
          gef.grade_entry_items[1].name,
          gef.grade_entry_items[2].name,
          GradeEntryForm.human_attribute_name(:total)],
-        [GradeEntryItem.human_attribute_name(:out_of),
+        ['',
+         '',
+         '',
+         '',
+         '',
+         GradeEntryItem.human_attribute_name(:out_of),
          gef.grade_entry_items[0].out_of.to_s,
          gef.grade_entry_items[1].out_of.to_s,
          gef.grade_entry_items[2].out_of.to_s,
          gef.max_mark],
-        [ges.role.user_name, '', '50.0', '', '50.0']
+        [ges.role.user_name, ges.role.last_name, ges.role.first_name, ges.role.section, ges.role.id_number,
+         ges.role.email, '', '50.0', '', '50.0']
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
@@ -283,8 +318,20 @@ describe GradeEntryFormsController do
       let(:gef) { create :grade_entry_form_with_data }
       it 'returns no users when the ta is not assigned a user' do
         csv_array = [
-          ['', gef.grade_entry_items[0].name],
-          [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s]
+          [GradeEntryForm.human_attribute_name(:user_name),
+           GradeEntryForm.human_attribute_name(:last_name),
+           GradeEntryForm.human_attribute_name(:first_name),
+           GradeEntryForm.human_attribute_name(:section),
+           GradeEntryForm.human_attribute_name(:id_number),
+           GradeEntryForm.human_attribute_name(:email),
+           gef.grade_entry_items[0].name],
+          ['',
+           '',
+           '',
+           '',
+           '',
+           GradeEntryItem.human_attribute_name(:out_of),
+           gef.grade_entry_items[0].out_of.to_s]
         ]
         csv_data = MarkusCsv.generate(csv_array, &:itself)
         expect(@controller).to receive(:send_data).with(
@@ -302,9 +349,27 @@ describe GradeEntryFormsController do
         it 'returns data for only the assigned student' do
           student.grades.first.update(grade: 50.0)
           csv_array = [
-            ['', gef.grade_entry_items[0].name],
-            [GradeEntryItem.human_attribute_name(:out_of), gef.grade_entry_items[0].out_of.to_s],
-            [student.role.user_name, '50.0']
+            [GradeEntryForm.human_attribute_name(:user_name),
+             GradeEntryForm.human_attribute_name(:last_name),
+             GradeEntryForm.human_attribute_name(:first_name),
+             GradeEntryForm.human_attribute_name(:section),
+             GradeEntryForm.human_attribute_name(:id_number),
+             GradeEntryForm.human_attribute_name(:email),
+             gef.grade_entry_items[0].name],
+            ['',
+             '',
+             '',
+             '',
+             '',
+             GradeEntryItem.human_attribute_name(:out_of),
+             gef.grade_entry_items[0].out_of.to_s],
+            [student.role.user_name,
+             student.role.last_name,
+             student.role.first_name,
+             nil,
+             nil,
+             student.role.email,
+             '50.0']
           ]
           csv_data = MarkusCsv.generate(csv_array, &:itself)
           expect(@controller).to receive(:send_data).with(
