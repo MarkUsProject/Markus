@@ -93,25 +93,29 @@ class GradeEntryForm < Assessment
 
   def export_as_csv(role)
     if role.instructor?
-      students = Student.left_outer_joins(:grade_entry_students, :user)
-                        .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
-                        .order(:user_name)
-                        .pluck(:user_name, 'grade_entry_students.total_grade')
+      # Export all Students if an role is instructor
+      students = course.students.joins(:user).order('users.user_name').includes(:section)
     elsif role.ta?
-      students = role.grade_entry_students
-                     .joins(role: :user)
-                     .where(grade_entry_form: self, 'role.hidden': false, 'grade_entry_students.assessment_id': self.id)
-                     .order(:user_name)
-                     .pluck(:user_name, 'grade_entry_students.total_grade')
+      # Only export the students assigned to the TA if role is TA
+      all_students = course.students.joins(:user).order('users.user_name').includes(:section)
+      grade_entry_students = role.grade_entry_students.joins(role: :user).order('users.user_name').pluck(:user_name)
+      students = all_students.select do |student|
+        grade_entry_students.include? student.user_name
+      end
     end
     headers = []
     # The first row in the CSV file will contain the column names
-    titles = [''] + self.grade_entry_items.pluck(:name)
+    titles = [GradeEntryForm.human_attribute_name(:user_name),
+              GradeEntryForm.human_attribute_name(:last_name),
+              GradeEntryForm.human_attribute_name(:first_name),
+              GradeEntryForm.human_attribute_name(:section),
+              GradeEntryForm.human_attribute_name(:id_number),
+              GradeEntryForm.human_attribute_name(:email)] + self.grade_entry_items.pluck(:name)
     titles << GradeEntryForm.human_attribute_name(:total) if self.show_total
     headers << titles
 
     # The second row in the CSV file will contain the column totals
-    totals = [GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
+    totals = ['', '', '', '', '', GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
     totals << self.max_mark if self.show_total
     headers << totals
 
@@ -131,13 +135,21 @@ class GradeEntryForm < Assessment
                        .group_by { |x| x[0] }
       num_items = self.grade_entry_items.count
     end
-    MarkusCsv.generate(students, headers) do |user_name, total_grade|
-      row = [user_name]
-      if grade_data.key? user_name
+    MarkusCsv.generate(students, headers) do |student|
+      total_grade = 0
+      row = Student::CSV_ORDER.map do |field|
+        if field == :section_name
+          student.section&.name
+        else
+          student.__send__(field)
+        end
+      end
+      if grade_data.key? student.user_name
         student_grades = Array.new(num_items, '')
-        grade_data[user_name].each do |g|
+        grade_data[student.user_name].each do |g|
           grade_index = g[1] - 1
           student_grades[grade_index] = g[2].nil? ? '' : g[2]
+          total_grade += student_grades[grade_index]
         end
         row.concat(student_grades)
         row << (total_grade.nil? ? '' : total_grade) if self.show_total
