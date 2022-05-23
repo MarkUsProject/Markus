@@ -172,7 +172,7 @@ describe CoursesController do
 
     context 'updating course visibility' do
       context 'as an authorized instructor' do
-        it 'responds with success on update' do
+        it 'responds with 302 on update' do
           put_as instructor, :update,
                  params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
           expect(response).to have_http_status(302)
@@ -213,10 +213,10 @@ describe CoursesController do
 
       context 'as an unauthorized user' do
         shared_examples 'cannot update course' do
-          it 'responds with 302' do
+          it 'responds with 403' do
             put_as user, :update,
                    params: { id: course.id, course: { name: 'CS101', is_hidden: !course.is_hidden } }
-            expect(response).to have_http_status(302)
+            expect(response).to have_http_status(403)
           end
           it 'fails to update the course visibility when user unauthorized' do
             expected_course_data = {
