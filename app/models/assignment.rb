@@ -679,7 +679,7 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    headers = [['Group', 'User name', 'First Name', 'Last Name', 'Section', 'ID Number', 'Email', 'Final grade'],
+    headers = [['Group', 'User name', 'Last Name', 'First Name', 'Section', 'ID Number', 'Email', 'Final grade'],
                ['', '', '', '', '', '', 'Out of', self.max_mark]]
     self.ta_criteria.each do |crit|
       headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
