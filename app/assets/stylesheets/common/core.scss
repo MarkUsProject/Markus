@@ -486,20 +486,24 @@ div.rendered-react-keyed-file-browser div.files table td.name div * {
   padding-right: 0.5rem;
 }
 
-.color-light div.rendered-react-keyed-file-browser div.files td.name a i:hover {
-  background-color: #f2e396;
+.color-light div.rendered-react-keyed-file-browser div.files tbody tr:hover {
+  background-color: $light-alert;
 }
 
-.color-dark div.rendered-react-keyed-file-browser div.files td.name a i:hover {
-  background-color: #615e5e;
+.color-dark div.rendered-react-keyed-file-browser div.files tbody tr:hover {
+  background-color: $primary_two;
 }
 
-.color-light div.rendered-react-keyed-file-browser div.files table tr:hover {
-  background-color: #faf2cc;
+.color-light #submission_download {
+  fill: $primary_three;
 }
 
-.color-dark div.rendered-react-keyed-file-browser div.files table tr:hover {
-  background-color: #808080;
+.color-dark #submission_download {
+  fill: $background_support;
+}
+
+#submission_download:hover {
+  fill: $key_words;
 }
 
 select.collected-checked,
