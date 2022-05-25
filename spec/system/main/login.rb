@@ -3,13 +3,14 @@ require 'rails_helper'
 describe 'logging in', type: :system do
   before do
     driven_by(:rack_test)
+    Capybara.default_max_wait_time = 30
   end
 
   it 'signs user in' do
     create :end_user
     visit '/'
-    click_button I18n.t('main.login_with',
-                        name: Settings.local_auth_login_name || I18n.t('main.local_authentication_default_name'))
+    click_link I18n.t('main.login_with',
+                      name: Settings.local_auth_login_name || I18n.t('main.local_authentication_default_name'))
     within('#session') do
       fill_in '#user_login', with: user.user_name
       fill_in '#user_password', with: 'x'
