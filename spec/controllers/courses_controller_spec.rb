@@ -182,10 +182,10 @@ describe CoursesController do
 
     context 'updating course visibility' do
       context 'as an authorized instructor' do
-        it 'responds with 403 on update' do
+        it 'responds with success on update' do
           put_as instructor, :update,
                  params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(302)
         end
         it 'successfully toggles just the is_hidden attribute of a course' do
           put_as instructor, :update,
