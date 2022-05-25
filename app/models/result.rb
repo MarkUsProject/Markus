@@ -200,9 +200,15 @@ class Result < ApplicationRecord
     # we can't pass in a parameter to the before_save filter, so we need
     # to manually determine the visibility. If it's a pr result, we know we
     # want the peer-visible criteria
-    visibility = is_a_review? ? :peer_visible : user_visibility
+    if is_a_review?
+      visibility = :peer_visible
+      assignment = submission.assignment.pr_assignment
+    else
+      visibility = user_visibility
+      assignment = submission.assignment
+    end
 
-    criteria = submission.assignment.criteria.where(visibility => true).ids
+    criteria = assignment.criteria.where(visibility => true).ids
     nil_marks = false
     num_marks = 0
     marks.each do |mark|

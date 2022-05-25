@@ -380,7 +380,8 @@ class ResultsController < ApplicationController
       head :ok
     else # Failed to pass validations
       # Show error message
-      render 'results/marker/show_result_error'
+      flash_now(:error, @result.errors.full_messages.join(' ;'))
+      head :bad_request
     end
   end
 
