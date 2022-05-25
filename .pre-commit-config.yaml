@@ -34,6 +34,7 @@ repos:
     rev: v1.28.2
     hooks:
       - id: rubocop
+        language_version: 2.7.0
         args: ["--auto-correct"]
         types: ["ruby"]
         exclude: |

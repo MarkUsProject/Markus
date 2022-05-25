@@ -53,6 +53,10 @@ describe Api::GroupsController do
           it 'should return xml content' do
             expect(Hash.from_xml(response.body).dig('groups', 'group', 'id')).to eq(grouping.group.id.to_s)
           end
+          it 'should return the member role id' do
+            expect(Hash.from_xml(response.body).dig('groups', 'group', 'members', 'member',
+                                                    'role_id')).to eq(grouping.student_memberships.first.role_id.to_s)
+          end
           include_examples 'for a different course'
         end
         context 'with multiple assignments' do
@@ -79,6 +83,10 @@ describe Api::GroupsController do
           end
           it 'should return json content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grouping.group.id)
+          end
+          it 'should return the member role id' do
+            expect(JSON.parse(response.body)
+                       .first['members'].first['role_id']).to eq(grouping.student_memberships.first.role_id)
           end
           include_examples 'for a different course'
         end
@@ -127,6 +135,10 @@ describe Api::GroupsController do
           it 'should return xml content' do
             expect(Hash.from_xml(response.body).dig('groups', 'group', 'id')).to eq(grouping.group.id.to_s)
           end
+          it 'should return the member role id' do
+            expect(Hash.from_xml(response.body).dig('groups', 'group', 'members', 'member',
+                                                    'role_id')).to eq(grouping.student_memberships.first.role_id.to_s)
+          end
           include_examples 'for a different course'
         end
       end
@@ -143,6 +155,10 @@ describe Api::GroupsController do
           end
           it 'should return json content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grouping.group.id)
+          end
+          it 'should return the member role id' do
+            expect(JSON.parse(response.body)
+                       .first['members'].first['role_id']).to eq(grouping.student_memberships.first.role_id)
           end
           include_examples 'for a different course'
         end

@@ -153,4 +153,103 @@ describe Course do
       end
     end
   end
+
+  describe '#export_student_data_csv' do
+    context 'when there are no students in the course' do
+      it 'returns empty string' do
+        result = course.export_student_data_csv
+        expect(result).to eq('')
+      end
+    end
+
+    context 'when there is a student in the course' do
+      let!(:user1) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      it 'returns the data of the student' do
+        result = course.export_student_data_csv
+        expect(result).to eq("#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n")
+      end
+    end
+
+    context 'where there are multiple students in the course' do
+      let!(:user1) { create :end_user }
+      let!(:user2) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      let!(:student2) { create :student, user: user2, course: course }
+      it 'returns the data of the students' do
+        result = course.export_student_data_csv
+
+        student1_data = "#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n"
+        student2_data = "#{user2.user_name},#{user2.last_name},#{user2.first_name},,,#{user2.email}\n"
+        if user1.user_name <= user2.user_name
+          expected = student1_data + student2_data
+        else
+          expected = student2_data + student1_data
+        end
+        expect(result).to eq(expected)
+      end
+    end
+  end
+
+  describe '#export_student_data_yml' do
+    context 'where there are no students in the course' do
+      it 'returns empty yaml object' do
+        result = course.export_student_data_yml
+        expect(result).to eq([].to_yaml)
+      end
+    end
+
+    context 'where there is a student in the course' do
+      let!(:user1) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      it 'returns the data of the student' do
+        result = course.export_student_data_yml
+        expected = [{ user_name: user1.user_name,
+                      last_name: user1.last_name,
+                      first_name: user1.first_name,
+                      email: user1.email,
+                      id_number: nil,
+                      section_name: nil }]
+        expect(result).to eq(expected.to_yaml)
+      end
+    end
+
+    context 'when there are multiple students in the course' do
+      let!(:user1) { create :end_user }
+      let!(:user2) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      let!(:student2) { create :student, user: user2, course: course }
+      it 'returns the data of the students' do
+        result = course.export_student_data_yml
+        expected = []
+
+        student1_data = {
+          user_name: user1.user_name,
+          last_name: user1.last_name,
+          first_name: user1.first_name,
+          email: user1.email,
+          id_number: nil,
+          section_name: nil
+        }
+
+        student2_data = {
+          user_name: user2.user_name,
+          last_name: user2.last_name,
+          first_name: user2.first_name,
+          email: user2.email,
+          id_number: nil,
+          section_name: nil
+        }
+
+        if user1.user_name <= user2.user_name
+          expected.push(student1_data)
+          expected.push(student2_data)
+        else
+          expected.push(student2_data)
+          expected.push(student1_data)
+        end
+        expect(result).to eq(expected.to_yaml)
+      end
+    end
+  end
 end

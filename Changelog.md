@@ -34,6 +34,7 @@
 - Added Exception Notification Gem (#5965)
 - Bug fixes for peer reviews (#5968)
 - Added Rails Performance to Admin Dashboard (#5967)
+- Update Groups API to return member role IDs instead of user IDs (#6006)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

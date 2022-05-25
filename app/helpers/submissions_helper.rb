@@ -26,46 +26,6 @@ module SubmissionsHelper
     end
   end
 
-  # Release or unrelease the submissions of a set of groupings.
-  def set_release_on_results(grouping_ids, release)
-    groupings = Grouping.where(id: grouping_ids)
-    without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
-
-    if without_submissions.present?
-      group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
-      flash_now(:error, I18n.t('submissions.errors.no_submission', group_name: group_names))
-      groupings = groupings.where.not(id: without_submissions.ids)
-    end
-
-    without_complete_result = groupings.joins(:current_result)
-                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
-
-    if without_complete_result.present?
-      group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
-      if release
-        flash_now(:error, t('submissions.errors.not_complete', group_name: group_names))
-      else
-        flash_now(:error, t('submissions.errors.not_complete_unrelease', group_name: group_names))
-      end
-      groupings = groupings.where.not(id: without_complete_result.ids)
-    end
-
-    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
-                   .update_all(released_to_students: release)
-
-    if release
-      groupings.includes(:accepted_students).each do |grouping|
-        grouping.accepted_students.each do |student|
-          if student.receives_results_emails?
-            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later
-          end
-        end
-      end
-    end
-
-    result
-  end
-
   def get_file_info(file_name, file, course_id, assignment_id, revision_identifier,
                     path, grouping_id, url_submit: false)
     return if Repository.get_class.internal_file_names.include? file_name

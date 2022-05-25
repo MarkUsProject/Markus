@@ -38,9 +38,9 @@ module Api
 
     # Include student_memberships and user info
     def include_memberships(groups)
-      groups.joins(groupings: [:assignment, { student_memberships: [role: :user] }])
+      groups.joins(groupings: [:assignment, { student_memberships: [:role] }])
             .where('assessments.id': params[:assignment_id])
-            .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
+            .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :role_id)
             .group_by { |h| h.slice(*DEFAULT_FIELDS) }
             .map { |k, v| k.merge(members: v.map { |h| h.except(*DEFAULT_FIELDS) }) }
     end
