@@ -25,13 +25,16 @@ class CoursesController < ApplicationController
   def edit; end
 
   def update
+    if current_role.student? || current_role.ta?
+      raise status => 403
+    end
     @current_course.update(params.require(:course).permit(:is_hidden))
     respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
 
   def show
     if current_role.student? || current_role.ta?
-      redirect_to root_url
+      redirect_to course_assignments_path(@current_course.id)
     elsif current_role.instructor?
       @assignments = @current_course.assignments
       @grade_entry_forms = @current_course.grade_entry_forms

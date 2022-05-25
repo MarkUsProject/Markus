@@ -1,6 +1,8 @@
 describe CoursesController do
   let(:instructor) { create :instructor }
   let(:course) { instructor.course }
+  let(:student) { create :student, course: course }
+  let(:ta) { create :ta, course: course }
 
   describe 'role switching methods' do
     let(:subject) do
@@ -161,9 +163,17 @@ describe CoursesController do
       get_as instructor, :index
       expect(response.status).to eq(200)
     end
-    it 'responds with success on show' do
+    it 'responds with success on show as an instructor' do
       get_as instructor, :show, params: { id: course }
       expect(response.status).to eq(200)
+    end
+    it 'redirects to assignments on show as a student' do
+      get_as student, :show, params: { id: course }
+      expect(response).to redirect_to(course_assignments_path(course.id))
+    end
+    it 'redirects to assignments on show as a ta' do
+      get_as ta, :show, params: { id: course }
+      expect(response).to redirect_to(course_assignments_path(course.id))
     end
     it 'responds with success on edit' do
       get_as instructor, :edit, params: { id: course }
@@ -172,10 +182,10 @@ describe CoursesController do
 
     context 'updating course visibility' do
       context 'as an authorized instructor' do
-        it 'responds with 302 on update' do
+        it 'responds with 403 on update' do
           put_as instructor, :update,
                  params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
-          expect(response).to have_http_status(302)
+          expect(response).to have_http_status(403)
         end
         it 'successfully toggles just the is_hidden attribute of a course' do
           put_as instructor, :update,
