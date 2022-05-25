@@ -18,26 +18,13 @@
   place-items: center;
 }
 
-.circular-progress-bar-normal {
-  background: conic-gradient($primary-one calc(var(--value) * 1%), $primary-two 0);
-  color: $primary-one;
-  height: 120px;
-  margin-bottom: 5px;
-  width: 120px;
-}
-
-.circular-progress-bar-bad {
-  background: conic-gradient($severe-error calc(var(--value) * 1%), $light-error 0);
-  color: $severe-error;
-  height: 120px;
-  margin-bottom: 5px;
-  width: 120px;
-}
-
 .circular-progress-bar-inner-display {
   background-color: $background-main;
   font-size: x-large;
   height: 80px;
+  left: 20px;
+  position: absolute;
+  top: 20px;
   width: 80px;
 }
 

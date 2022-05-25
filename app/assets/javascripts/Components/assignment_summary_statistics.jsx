@@ -1,6 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
-import {Bar} from "react-chartjs-2";
+import {Bar, Pie} from "react-chartjs-2";
 import {chartScales} from "./Helpers/chart_helpers";
 import {AssignmentSummaryTable} from "./assignment_summary_table";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
@@ -151,23 +151,57 @@ class AssignmentSummaryStatistics extends React.Component {
 }
 
 class RawAssignmentProgressStatistic extends React.Component {
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      progress_percentage: 0,
+      chart_data: {
+        datasets: [
+          {
+            data: [],
+            backgroundColor: [],
+            borderColor: [],
+          },
+        ],
+      },
+    };
+  }
+
+  componentDidMount() {
+    this.configChart();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.progress !== this.props.progress) {
+      this.configChart();
+    }
+  }
+
+  configChart = () => {
     const percentage = Math.floor((this.props.progress / this.props.total || 0) * 100);
-    const progressClass = `circular-container ${
-      this.props.higherIsWorse && this.props.progress > 0
-        ? "circular-progress-bar-bad"
-        : "circular-progress-bar-normal"
-    }`;
+    this.setState({
+      progress_percentage: percentage,
+      chart_data: {
+        datasets: [
+          {
+            data: [percentage, 100 - percentage],
+            backgroundColor: ["#245185", "#cee3ea"],
+            borderColor: ["#245185", "#cee3ea"],
+          },
+        ],
+      },
+    });
+  };
+
+  render() {
     return (
       <div className="middle-align">
-        <div className={progressClass} style={{"--value": percentage}}>
+        <div style={{width: 120, position: "relative"}}>
+          <Pie data={this.state.chart_data} />
           <div className="circular-container circular-progress-bar-inner-display">
-            {percentage}%
+            {this.state.progress_percentage}%
           </div>
         </div>
-        <span>
-          {this.props.label}: {this.props.progress} / {this.props.total}
-        </span>
       </div>
     );
   }
