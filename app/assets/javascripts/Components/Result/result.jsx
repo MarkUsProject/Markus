@@ -312,7 +312,7 @@ class Result extends React.Component {
     $.get({
       url: Routes.course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.state.assignment_id
+        this.state.parent_assignment_id || this.state.assignment_id
       ),
       dataType: "json",
     }).then(res => {

@@ -57,6 +57,7 @@ class ResultsController < ApplicationController
           remark_due_date: is_review ? pr_assignment.remark_due_date : assignment.remark_due_date,
           past_remark_due_date: is_review ? pr_assignment.past_remark_due_date? : assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
+          parent_assignment_id: pr_assignment&.id,
           student_view: current_role.student? && !is_reviewer
         }
         if original_result.nil?
@@ -66,7 +67,7 @@ class ResultsController < ApplicationController
           data[:overall_comment] = original_result.overall_comment
           data[:remark_overall_comment] = result.overall_comment
         end
-        if is_reviewer
+        if is_review
           data[:feedback_files] = []
         else
           data[:feedback_files] = submission.feedback_files.where(test_group_result_id: nil).map do |f|
@@ -108,7 +109,8 @@ class ResultsController < ApplicationController
 
         # Annotation categories
         if current_role.instructor? || current_role.ta? || is_reviewer
-          annotation_categories = AnnotationCategory.visible_categories(assignment, current_role)
+          annotation_categories = AnnotationCategory.visible_categories(is_review ? pr_assignment : assignment,
+                                                                        current_role)
                                                     .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
             name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
