@@ -876,8 +876,8 @@ class Assignment < Assessment
     peerreview_assignment.token_period = 1
     peerreview_assignment.non_regenerating_tokens = false
     peerreview_assignment.unlimited_tokens = false
-    peerreview_assignment.repository_folder = repository_folder + '_pr'
     peerreview_assignment.short_identifier = short_identifier + '_pr'
+    peerreview_assignment.repository_folder = peerreview_assignment.short_identifier
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
     peerreview_assignment.is_hidden = true
