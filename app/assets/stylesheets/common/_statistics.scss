@@ -18,14 +18,10 @@
   place-items: center;
 }
 
-.circular-progress-bar-inner-display {
-  background-color: $background-main;
-  font-size: x-large;
-  height: 80px;
-  left: 20px;
-  position: absolute;
-  top: 20px;
-  width: 80px;
+.circular-progress-bar {
+  margin-bottom: 8px;
+  margin-top: 2px;
+  width: 120px;
 }
 
 .assignment-statistics-summary {

@@ -1,6 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
-import {Bar, Pie} from "react-chartjs-2";
+import {Bar, Doughnut} from "react-chartjs-2";
 import {chartScales} from "./Helpers/chart_helpers";
 import {AssignmentSummaryTable} from "./assignment_summary_table";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
@@ -154,7 +154,6 @@ class RawAssignmentProgressStatistic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      progress_percentage: 0,
       chart_data: {
         datasets: [
           {
@@ -168,25 +167,34 @@ class RawAssignmentProgressStatistic extends React.Component {
   }
 
   componentDidMount() {
-    this.configChart();
+    this.configChartData();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.progress !== this.props.progress) {
-      this.configChart();
+      this.configChartData();
     }
   }
 
-  configChart = () => {
+  // Helper to get hex value of CSS colour constants
+  getHexColor = colorVar => document.documentElement.style.getPropertyValue(colorVar);
+
+  // Updates the value and colour of the circular progress bar
+  configChartData = () => {
     const percentage = Math.floor((this.props.progress / this.props.total || 0) * 100);
+    let color;
+    if (this.props.higherIsWorse && percentage > 0) {
+      color = [this.getHexColor("--severe_error"), this.getHexColor("--light_error")];
+    } else {
+      color = [this.getHexColor("--primary_one"), this.getHexColor("--primary_two")];
+    }
     this.setState({
-      progress_percentage: percentage,
       chart_data: {
         datasets: [
           {
             data: [percentage, 100 - percentage],
-            backgroundColor: ["#245185", "#cee3ea"],
-            borderColor: ["#245185", "#cee3ea"],
+            backgroundColor: color,
+            borderColor: color,
           },
         ],
       },
@@ -194,14 +202,41 @@ class RawAssignmentProgressStatistic extends React.Component {
   };
 
   render() {
+    // Plugin for chart that inserts text in chart middle showing progress as a percentage of the total
+    const textCenterPlugin = {
+      beforeDraw: chart => {
+        const ctx = chart.ctx;
+        ctx.restore();
+        ctx.font = "x-large Open Sans";
+        ctx.textBaseline = "center";
+        const percentage = Math.floor((this.props.progress / this.props.total || 0) * 100);
+        if (this.props.higherIsWorse && percentage > 0) {
+          ctx.fillStyle = this.getHexColor("--severe_error");
+        } else {
+          ctx.fillStyle = this.getHexColor("--primary_one");
+        }
+        const textXCoord = Math.round((chart.width - ctx.measureText(`${percentage}%`).width) / 2);
+        const textYCoord = Math.round(chart.height / 2);
+        ctx.fillText(`${percentage}%`, textXCoord, textYCoord);
+        ctx.save();
+      },
+    };
+
     return (
       <div className="middle-align">
-        <div style={{width: 120, position: "relative"}}>
-          <Pie data={this.state.chart_data} />
-          <div className="circular-container circular-progress-bar-inner-display">
-            {this.state.progress_percentage}%
-          </div>
+        <div className="circular-progress-bar">
+          <Doughnut
+            data={this.state.chart_data}
+            plugins={[textCenterPlugin]}
+            options={{
+              cutout: 42,
+              events: [],
+            }}
+          />
         </div>
+        <span>
+          {this.props.label}: {this.props.progress} / {this.props.total}
+        </span>
       </div>
     );
   }
