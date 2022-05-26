@@ -7,10 +7,22 @@ module SubmissionsHelper
     end
   end
 
-  def set_pr_release_on_results(groupings, release)
+  def set_pr_release_on_results(peer_review_ids, release)
     Result.transaction do
-      Result.where(id: groupings.joins(peer_reviews_to_others: :result).pluck('results.id'))
-            .update_all(released_to_students: release)
+      results = Result.joins(:peer_reviews).where('peer_reviews.id': peer_review_ids)
+
+      without_complete_result = results.where.not(marking_state: Result::MARKING_STATES[:complete])
+      if without_complete_result.present?
+        group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
+        if release
+          flash_now(:error, t('submissions.errors.not_complete', group_name: group_names))
+        else
+          flash_now(:error, t('submissions.errors.not_complete_unrelease', group_name: group_names))
+        end
+      end
+
+      results.where(marking_state: Result::MARKING_STATES[:complete])
+             .update_all(released_to_students: release)
     end
   end
 

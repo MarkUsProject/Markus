@@ -2,7 +2,7 @@
 class PeerReviewPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :index?, :populate?, :assign_groups?, to: :manage_reviewers?
-  alias_rule :list_reviews?, :show_reviews?, :show_result?, to: :view?
+  alias_rule :list_reviews?, :show_reviews?, :show_result?, :populate_table?, to: :view?
 
   def view?
     true

@@ -646,21 +646,22 @@ class SubmissionsController < ApplicationController
 
   # Release or unrelease submissions
   def update_submissions
-    if !params.key?(:groupings) || params[:groupings].empty?
+    assignment = Assignment.find(params[:assignment_id])
+    is_review = assignment.is_peer_review?
+
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
       head :bad_request
       return
     end
-    assignment = Assignment.find(params[:assignment_id])
-    groupings = assignment.groupings.where(id: params[:groupings])
     release = params[:release_results] == 'true'
 
     begin
-      changed = if assignment.is_peer_review?
-                  set_pr_release_on_results(groupings, release)
+      changed = if is_review
+                  set_pr_release_on_results(params[:peer_reviews], release)
                 else
                   begin
-                    Result.set_release_on_results(groupings, release)
+                    Result.set_release_on_results(params[:groupings], release)
                   rescue StandardError => e
                     flash_now(:error, e.message)
                     0
@@ -711,12 +712,21 @@ class SubmissionsController < ApplicationController
   end
 
   def set_result_marking_state
-    if !params.key?(:groupings) || params[:groupings].empty?
+    assignment = Assignment.find(params[:assignment_id])
+    is_review = assignment.is_peer_review?
+
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
       head :bad_request
       return
     end
-    results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+
+    if is_review
+      results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
+    else
+      results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+    end
+
     errors = Hash.new { |h, k| h[k] = [] }
     results.each do |result|
       unless result.update(marking_state: params[:marking_state])
