@@ -208,7 +208,7 @@ class RawAssignmentProgressStatistic extends React.Component {
         const ctx = chart.ctx;
         ctx.restore();
         ctx.font = "x-large Open Sans";
-        ctx.textBaseline = "center";
+        ctx.textBaseline = "middle";
         const percentage = Math.floor((this.props.progress / this.props.total || 0) * 100);
         if (this.props.higherIsWorse && percentage > 0) {
           ctx.fillStyle = this.getHexColor("--severe_error");
