@@ -1182,28 +1182,28 @@ describe Grouping do
       end
 
       it 'should return data for the test result' do
-        test_result_data = data[0]['test_data']
+        test_result_data = data[0]['test_results']
         expect(test_result_data.length).to eq 1
-        expect(test_result_data[0]['test_runs.id']).to eq test_run.id
+        expect(data[0]['test_runs.id']).to eq test_run.id
       end
 
       if show_extra
         it 'should show extra info' do
-          expect(data[0]['test_data'][0]['test_group_results.extra_info']).not_to be_nil
+          expect(data[0]['test_results'][0]['test_group_results.extra_info']).not_to be_nil
         end
       else
         it 'should not show extra info' do
-          expect(data[0]['test_data'][0]['test_group_results.extra_info']).to be_nil
+          expect(data[0]['test_results'][0]['test_group_results.extra_info']).to be_nil
         end
       end
 
       if show_output
         it 'should show output data' do
-          expect(data[0]['test_data'][0]['test_results.output']).not_to be_nil
+          expect(data[0]['test_results'][0]['test_results.output']).not_to be_nil
         end
       else
         it 'should not show output data' do
-          expect(data[0]['test_data'][0]['test_results.output']).to be_nil
+          expect(data[0]['test_results'][0]['test_results.output']).to be_nil
         end
       end
 
@@ -1220,7 +1220,7 @@ describe Grouping do
           }
         ]
 
-        expect(data[0]['test_data'][0]['feedback_files']).to eq expected
+        expect(data[0]['test_results'][0]['feedback_files']).to eq expected
       end
     else
       it 'should not return data' do
@@ -1259,7 +1259,7 @@ describe Grouping do
             end
             it 'should only return data from the latest test run' do
               test_group_result2.update(created_at: 1.hour.ago)
-              expect(data.first['test_runs.created_at']).to be_within(0.1).of(test_run.created_at)
+              expect(Time.zone.parse(data.first['test_runs.created_at'])).to be_within(1).of(test_run.created_at)
             end
           end
         end
