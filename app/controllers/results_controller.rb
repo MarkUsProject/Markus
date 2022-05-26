@@ -393,7 +393,7 @@ class ResultsController < ApplicationController
     end
 
     file = select_file
-    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+    if params[:show_in_browser] == 'true' && file.is_pynb?
       redirect_to notebook_content_course_assignment_submissions_url(current_course,
                                                                      record.submission.grouping.assignment,
                                                                      select_file_id: params[:select_file_id])
