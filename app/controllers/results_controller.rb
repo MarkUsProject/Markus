@@ -29,6 +29,7 @@ class ResultsController < ApplicationController
         original_result = remark_submitted ? submission.get_original_result : nil
         is_review = result.is_a_review?
         is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+        pr_assignment = is_review ? assignment.pr_assignment : nil
 
         if current_role.student? && !current_role.is_reviewer_for?(assignment.pr_assignment, result)
           grouping = current_role.accepted_grouping_for(assignment.id)
@@ -48,14 +49,15 @@ class ResultsController < ApplicationController
           detailed_annotations: current_role.instructor? || current_role.ta? || is_reviewer,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
-          allow_remarks: assignment.allow_remarks,
+          allow_remarks: is_review ? pr_assignment.allow_remarks : assignment.allow_remarks,
           remark_submitted: remark_submitted,
           remark_request_text: submission.remark_request,
           remark_request_timestamp: submission.remark_request_timestamp,
           assignment_remark_message: assignment.remark_message,
-          remark_due_date: assignment.remark_due_date,
-          past_remark_due_date: assignment.past_remark_due_date?,
+          remark_due_date: is_review ? pr_assignment.remark_due_date : assignment.remark_due_date,
+          past_remark_due_date: is_review ? pr_assignment.past_remark_due_date? : assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
+          parent_assignment_id: pr_assignment&.id,
           student_view: current_role.student? && !is_reviewer
         }
         if original_result.nil?
@@ -65,7 +67,7 @@ class ResultsController < ApplicationController
           data[:overall_comment] = original_result.overall_comment
           data[:remark_overall_comment] = result.overall_comment
         end
-        if is_reviewer
+        if is_review
           data[:feedback_files] = []
         else
           data[:feedback_files] = submission.feedback_files.where(test_group_result_id: nil).map do |f|
@@ -102,12 +104,13 @@ class ResultsController < ApplicationController
         end
 
         data[:annotations] = all_annotations.map do |annotation|
-          annotation.get_data(include_creator: current_role.instructor? || current_role.ta?)
+          annotation.get_data(include_creator: current_role.instructor? || current_role.ta? || is_reviewer)
         end
 
         # Annotation categories
-        if current_role.instructor? || current_role.ta?
-          annotation_categories = AnnotationCategory.visible_categories(assignment, current_role)
+        if current_role.instructor? || current_role.ta? || is_reviewer
+          annotation_categories = AnnotationCategory.visible_categories(is_review ? pr_assignment : assignment,
+                                                                        current_role)
                                                     .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
             name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
@@ -124,6 +127,9 @@ class ResultsController < ApplicationController
               flexible_criterion_id: category.flexible_criterion_id
             }
           end
+        end
+
+        if current_role.instructor? || current_role.ta?
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
@@ -138,16 +144,20 @@ class ResultsController < ApplicationController
           reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
-          data[:group_name] = PeerReview.model_name.human
+          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_review_id}"
           data[:members] = []
         end
 
         # Marks
         fields = [:id, :name, :description, :position, :max_mark]
+        criteria_query = { assessment_id: is_review ? assignment.pr_assignment.id : assignment.id }
+        if is_review
+          criteria_query[:peer_visible] = true
+        else
+          criteria_query[:ta_visible] = true
+        end
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
-          criteria = klass.where(assessment_id: is_review ? assignment.pr_assignment.id : assignment.id,
-                                 ta_visible: !is_review,
-                                 peer_visible: is_review)
+          criteria = klass.where(**criteria_query)
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
@@ -323,7 +333,7 @@ class ResultsController < ApplicationController
       else
         next_grouping = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
       end
-      next_result = Result.find(next_grouping.result_id)
+      next_result = Result.find_by(id: next_grouping&.result_id)
     else
       groupings = assignment.groupings.joins(:group).order('group_name')
       if params[:direction] == '1'
@@ -370,7 +380,8 @@ class ResultsController < ApplicationController
       head :ok
     else # Failed to pass validations
       # Show error message
-      render 'results/marker/show_result_error'
+      flash_now(:error, @result.errors.full_messages.join(' ;'))
+      head :bad_request
     end
   end
 
@@ -382,7 +393,7 @@ class ResultsController < ApplicationController
     end
 
     file = select_file
-    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+    if params[:show_in_browser] == 'true' && file.is_pynb?
       redirect_to notebook_content_course_assignment_submissions_url(current_course,
                                                                      record.submission.grouping.assignment,
                                                                      select_file_id: params[:select_file_id])
@@ -452,14 +463,17 @@ class ResultsController < ApplicationController
 
   def get_annotations
     result = record
+    assignment = record.grouping.assignment
     all_annots = result.annotations.includes(:submission_file, :creator,
                                              { annotation_text: :annotation_category })
+    is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+
     if result.submission.remark_submitted?
       all_annots += result.submission.get_original_result.annotations
     end
 
     annotation_data = all_annots.map do |annotation|
-      annotation.get_data(include_creator: current_role.instructor? || current_role.ta?)
+      annotation.get_data(include_creator: current_role.instructor? || current_role.ta? || is_reviewer)
     end
 
     render json: annotation_data
@@ -471,6 +485,8 @@ class ResultsController < ApplicationController
     group = submission.grouping.group
     assignment = submission.grouping.assignment
     mark_value = params[:mark].blank? ? nil : params[:mark].to_f
+
+    is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 
     # make this operation atomic (more or less) so that concurrent requests won't make duplicate values
     result_mark = Mark.transaction { result.marks.order(:id).find_or_create_by(criterion_id: params[:criterion_id]) }
@@ -490,7 +506,11 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " \
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      if current_role.ta?
+
+      if is_reviewer
+        reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
+        num_marked = PeerReview.get_num_marked(reviewer_group)
+      elsif current_role.ta?
         num_marked = assignment.get_num_marked(current_role.id)
       else
         num_marked = assignment.get_num_marked(nil)

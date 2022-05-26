@@ -325,6 +325,7 @@ Rails.application.routes.draw do
           post 'upload'
           get 'list_reviews'
           get 'show_reviews'
+          get 'populate_table'
         end
       end
 

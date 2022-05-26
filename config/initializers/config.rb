@@ -177,7 +177,6 @@ Config.setup do |config|
         optional(:email_prefix).filled(:string)
         optional(:recipients).array(:str?)
       end
-      required(:pandoc).filled(:string)
     end
   end
 end

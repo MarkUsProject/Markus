@@ -115,12 +115,10 @@ describe ResultsController do
       end
       context 'file is a rmarkdown file' do
         let(:filename) { 'example.Rmd' }
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to(
-            redirect_to(notebook_content_course_assignment_submissions_path(course,
-                                                                            assignment,
-                                                                            select_file_id: submission_file.id))
-          )
+        it 'should show the file content in the response body' do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          subject
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
         end
       end
     end
