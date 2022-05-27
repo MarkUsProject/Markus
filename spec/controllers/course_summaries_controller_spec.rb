@@ -114,7 +114,7 @@ describe CourseSummariesController do
               user_name: student.user_name,
               first_name: student.first_name,
               last_name: student.last_name,
-              section: student.section&.name,
+              section_name: student.section&.name,
               email: student.email,
               hidden: student.hidden,
               assessment_marks: GradeEntryForm.all.map do |ges|
@@ -242,7 +242,7 @@ describe CourseSummariesController do
             user_name: @student2.user_name,
             first_name: @student2.first_name,
             last_name: @student2.last_name,
-            section: @student2.section&.name,
+            section_name: @student2.section&.name,
             email: @student2.email,
             hidden: @student2.hidden,
             assessment_marks: {}
