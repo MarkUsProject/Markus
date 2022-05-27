@@ -100,6 +100,8 @@ import {makeMarksGradersManager} from "javascripts/Components/marks_graders_mana
 window.makeMarksGradersManager = makeMarksGradersManager;
 import {makePeerReviewsManager} from "javascripts/Components/peer_reviews_manager";
 window.makePeerReviewsManager = makePeerReviewsManager;
+import {makePeerReviewTable} from "javascripts/Components/peer_review_table";
+window.makePeerReviewTable = makePeerReviewTable;
 import {makeGroupsManager} from "javascripts/Components/groups_manager";
 window.makeGroupsManager = makeGroupsManager;
 import {makeGradersManager} from "javascripts/Components/graders_manager";

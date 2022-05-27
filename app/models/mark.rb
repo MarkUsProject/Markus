@@ -95,7 +95,13 @@ class Mark < ApplicationRecord
 
   def assignments_should_match
     return if result.nil? || criterion.nil?
-    unless result.submission.grouping.assignment == criterion.assignment
+
+    if result.is_a_review?
+      assignment = result.submission.grouping.assignment.pr_assignment
+    else
+      assignment = result.submission.grouping.assignment
+    end
+    unless assignment == criterion.assignment
       errors.add(:base, 'result and criterion must all belong to the same assignment')
     end
   end

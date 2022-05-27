@@ -420,8 +420,6 @@ class SubmissionsController < ApplicationController
       render json: { type: 'pdf' }
     elsif file.is_pynb?
       render json: { type: 'jupyter-notebook' }
-    elsif file.is_rmd?
-      render json: { type: 'rmarkdown' }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -450,7 +448,7 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
 
-    if %(jupyter-notebook rmarkdown).include?(FileHelper.get_file_type(params[:file_name])) && preview
+    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview
       redirect_to action: :notebook_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -646,22 +644,27 @@ class SubmissionsController < ApplicationController
 
   # Release or unrelease submissions
   def update_submissions
-    if !params.key?(:groupings) || params[:groupings].empty?
+    assignment = Assignment.find(params[:assignment_id])
+    is_review = assignment.is_peer_review?
+
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
       head :bad_request
       return
     end
-    assignment = Assignment.find(params[:assignment_id])
-    groupings = assignment.groupings.where(id: params[:groupings])
     release = params[:release_results] == 'true'
 
     begin
-      changed = if assignment.is_peer_review?
-                  set_pr_release_on_results(groupings, release)
+      changed = if is_review
+                  set_pr_release_on_results(params[:peer_reviews], release)
                 else
-                  set_release_on_results(groupings, release)
+                  begin
+                    Result.set_release_on_results(params[:groupings], release)
+                  rescue StandardError => e
+                    flash_now(:error, e.message)
+                    0
+                  end
                 end
-
       if changed > 0
         assignment.update_remark_request_count
 
@@ -707,12 +710,21 @@ class SubmissionsController < ApplicationController
   end
 
   def set_result_marking_state
-    if !params.key?(:groupings) || params[:groupings].empty?
+    assignment = Assignment.find(params[:assignment_id])
+    is_review = assignment.is_peer_review?
+
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
       head :bad_request
       return
     end
-    results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+
+    if is_review
+      results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
+    else
+      results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+    end
+
     errors = Hash.new { |h, k| h[k] = [] }
     results.each do |result|
       unless result.update(marking_state: params[:marking_state])
@@ -728,6 +740,8 @@ class SubmissionsController < ApplicationController
   private
 
   def notebook_to_html(file_contents, unique_path, type)
+    return file_contents unless type == 'jupyter-notebook'
+
     cache_file = Pathname.new('tmp/notebook_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
@@ -735,8 +749,6 @@ class SubmissionsController < ApplicationController
         args = [
           File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
         ]
-      else
-        args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?

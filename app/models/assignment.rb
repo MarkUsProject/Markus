@@ -17,6 +17,8 @@ class Assignment < Assessment
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates :assignment_properties, presence: true
   after_initialize :create_associations
+  before_save :reset_collection_time
+  after_create :update_parent_assignment, if: :is_peer_review?
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -80,7 +82,6 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  before_save :reset_collection_time
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
     @prev_assignment_file_ids = assignment_files.ids
@@ -868,15 +869,15 @@ class Assignment < Assessment
   end
 
   def create_peer_review_assignment_if_not_exist
-    return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
+    return unless self.has_peer_review && Assignment.where(parent_assessment_id: self.id).empty?
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
     peerreview_assignment.course = self.course
     peerreview_assignment.token_period = 1
     peerreview_assignment.non_regenerating_tokens = false
     peerreview_assignment.unlimited_tokens = false
-    peerreview_assignment.repository_folder = repository_folder
     peerreview_assignment.short_identifier = short_identifier + '_pr'
+    peerreview_assignment.repository_folder = peerreview_assignment.short_identifier
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
     peerreview_assignment.is_hidden = true
@@ -1317,6 +1318,11 @@ class Assignment < Assessment
         visibility_changed?
 
     Repository.get_class.update_permissions
+  end
+
+  # Update parent assignment of a peer review to ensure that it is marked as having a peer review
+  def update_parent_assignment
+    parent_assignment.update(has_peer_review: true)
   end
 
   # Update list of required files in student repositories. Used for git hooks to prevent submitting

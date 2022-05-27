@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_21_024317) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -98,7 +98,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
   end
 
   create_table "assignment_properties", id: :serial, force: :cascade do |t|
-    t.bigint "assessment_id"
+    t.integer "assessment_id"
     t.integer "group_min", default: 1, null: false
     t.integer "group_max", default: 1, null: false
     t.boolean "student_form_groups", default: false, null: false
@@ -170,7 +170,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
     t.boolean "peer_visible", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "assessment_id", null: false
+    t.integer "assessment_id", null: false
     t.boolean "bonus", default: false, null: false
     t.index ["assessment_id"], name: "index_criteria_on_assessment_id"
   end
@@ -293,8 +293,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
   end
 
   create_table "grouping_starter_file_entries", force: :cascade do |t|
-    t.bigint "grouping_id", null: false
-    t.bigint "starter_file_entry_id", null: false
+    t.integer "grouping_id", null: false
+    t.integer "starter_file_entry_id", null: false
     t.index ["grouping_id"], name: "index_grouping_starter_file_entries_on_grouping_id"
     t.index ["starter_file_entry_id"], name: "index_grouping_starter_file_entries_on_starter_file_entry_id"
   end
@@ -344,7 +344,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
   end
 
   create_table "levels", force: :cascade do |t|
-    t.bigint "criterion_id", null: false
+    t.integer "criterion_id", null: false
     t.string "name", null: false
     t.string "description", null: false
     t.float "mark", null: false
@@ -454,8 +454,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
   end
 
   create_table "section_starter_file_groups", force: :cascade do |t|
-    t.bigint "section_id", null: false
-    t.bigint "starter_file_group_id", null: false
+    t.integer "section_id", null: false
+    t.integer "starter_file_group_id", null: false
     t.index ["section_id"], name: "index_section_starter_file_groups_on_section_id"
     t.index ["starter_file_group_id"], name: "index_section_starter_file_groups_on_starter_file_group_id"
   end
@@ -509,13 +509,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
   end
 
   create_table "starter_file_entries", force: :cascade do |t|
-    t.bigint "starter_file_group_id", null: false
+    t.integer "starter_file_group_id", null: false
     t.string "path", null: false
     t.index ["starter_file_group_id"], name: "index_starter_file_entries_on_starter_file_group_id"
   end
 
   create_table "starter_file_groups", force: :cascade do |t|
-    t.bigint "assessment_id", null: false
+    t.integer "assessment_id", null: false
     t.string "entry_rename", default: "", null: false
     t.boolean "use_rename", default: false, null: false
     t.string "name", null: false
@@ -601,6 +601,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "assessment_id", null: false
     t.json "autotest_settings", default: {}, null: false
+    t.integer "position", null: false
     t.index ["assessment_id"], name: "index_test_groups_on_assessment_id"
     t.index ["criterion_id"], name: "index_test_groups_on_criterion_id"
   end
@@ -615,6 +616,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_21_145827) do
     t.float "marks_total", default: 0.0, null: false
     t.bigint "time"
     t.bigint "test_group_result_id", null: false
+    t.integer "position", null: false
     t.index ["test_group_result_id"], name: "index_test_results_on_test_group_result_id"
   end
 

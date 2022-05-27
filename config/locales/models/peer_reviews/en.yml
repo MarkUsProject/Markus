@@ -3,6 +3,7 @@ en:
   activerecord:
     attributes:
       peer_review:
+        reviewee: Reviewee
         reviewer: Reviewer
     models:
       peer_review:

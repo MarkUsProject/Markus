@@ -59,7 +59,7 @@ export class FileViewer extends React.Component {
   }
 
   isNotebook(type) {
-    return type === "jupyter-notebook" || type === "rmarkdown";
+    return type === "jupyter-notebook";
   }
 
   setFileUrl = submission_file_id => {
