@@ -1,21 +1,20 @@
 require 'rails_helper'
 
 describe 'logging in', type: :system do
+  let!(:user) { create :end_user }
   before do
     driven_by(:rack_test)
-    Capybara.default_max_wait_time = 30
   end
 
   it 'signs user in' do
-    create :end_user
     visit '/'
-    click_link I18n.t('main.login_with',
-                      name: Settings.local_auth_login_name || I18n.t('main.local_authentication_default_name'))
-    within('#session') do
-      fill_in '#user_login', with: user.user_name
-      fill_in '#user_password', with: 'x'
+    within '.login-form' do
+      click_link(I18n.t('main.login_with', name: Settings.local_auth_login_name ||
+        I18n.t('main.local_authentication_default_name')), href: nil)
+      fill_in('user_login', with: user.user_name, id: 'user_login')
+      fill_in('user_password', with: 'x', id: 'user_password')
+      click_button(I18n.t('main.log_in'))
     end
-    click_button I18n.t('main.log_in')
-    expect(page).to have_content 'Success'
+    expect(current_path).to eql('/courses')
   end
 end
