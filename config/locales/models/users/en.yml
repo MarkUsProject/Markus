@@ -18,6 +18,7 @@ en:
         theme: Color Theme
         user_name: User Name
         user_type: User Type
+        section_name: Section
     models:
       admin_user:
         one: Admin User
