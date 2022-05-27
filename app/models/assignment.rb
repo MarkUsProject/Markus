@@ -683,9 +683,7 @@ class Assignment < Assessment
       User.human_attribute_name(field)
     end + [Result.human_attribute_name(:total_mark)]
 
-    second_row = Array.new(Student::CSV_ORDER.length) do
-      ' '
-    end + [Assessment.human_attribute_name(:max_mark), self.max_mark]
+    second_row = [' '] * Student::CSV_ORDER.length + [Assessment.human_attribute_name(:max_mark), self.max_mark]
 
     headers = [first_row, second_row]
 
