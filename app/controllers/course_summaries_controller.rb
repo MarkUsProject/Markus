@@ -96,7 +96,7 @@ class CourseSummariesController < ApplicationController
     # Given that each assessment has a maximum possible mark achievable, this row represents this data.
     assessments = current_course.assessments.order(id: :asc)
     marking_schemes = current_course.marking_schemes.order(id: :asc)
-    out_of_row = [Assessment.human_attribute_name(:max_mark)] + Array.new(Student::CSV_ORDER.length - 1) { ' ' }
+    out_of_row = [Assessment.human_attribute_name(:max_mark)] + [' '] * (Student::CSV_ORDER.length - 1)
     out_of_row.concat(assessments.collect(&:max_mark))
     out_of_row.concat([''] * marking_schemes.size)
 
