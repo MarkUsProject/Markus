@@ -37,6 +37,7 @@
 - Update Groups API to return member role IDs instead of user IDs (#6006)
 - Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 - Ensure consistent order when displaying test results (#6010)
+- Added Capybara Gem (#6012)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
