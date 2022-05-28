@@ -23,6 +23,6 @@ describe 'logging in', type: :system do
     fill_in('user_login', with: user.user_name, id: 'user_login')
     fill_in('user_password', with: 'x', id: 'user_password')
     click_button(I18n.t('main.log_in'), name: 'commit')
-    expect(page.current_path).to eq('/courses')
+    expect(page).to have_current_path('/courses')
   end
 end
