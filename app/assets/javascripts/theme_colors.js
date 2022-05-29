@@ -22,6 +22,9 @@ export const themes = {
     sharp_line: "#e5e5e5",
     strings_color: "var(--severe_error)",
     sub_menu: "var(--primary_one)",
+    submission_download_icon_fill: "var(--sharp_line)",
+    submission_download_icon_hover: "var(--primary_one)",
+    submission_row_hover: "var(--disabled_area)",
   },
   light: {
     annotation_holder: "#ffd452",
@@ -46,6 +49,9 @@ export const themes = {
     sharp_line: "#000",
     strings_color: "var(--severe_error)",
     sub_menu: "#32649B",
+    submission_download_icon_fill: "var(--primary_three)",
+    submission_download_icon_hover: "var(--disabled_text)",
+    submission_row_hover: "var(--light_alert)",
   },
 };
 

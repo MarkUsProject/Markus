@@ -486,24 +486,16 @@ div.rendered-react-keyed-file-browser div.files table td.name div * {
   padding-right: 0.5rem;
 }
 
-.color-light div.rendered-react-keyed-file-browser div.files tbody tr:hover {
-  background-color: $light-alert;
+div.rendered-react-keyed-file-browser div.files tbody tr:hover {
+  background-color: $submission-row-hover;
 }
 
-.color-dark div.rendered-react-keyed-file-browser div.files tbody tr:hover {
-  background-color: $primary_two;
-}
-
-.color-light #submission_download {
-  fill: $primary_three;
-}
-
-.color-dark #submission_download {
-  fill: $background_support;
+#submission_download {
+  fill: $submission-download-icon-fill;
 }
 
 #submission_download:hover {
-  fill: $key_words;
+  fill: $submission-download-icon-hover;
 }
 
 select.collected-checked,
