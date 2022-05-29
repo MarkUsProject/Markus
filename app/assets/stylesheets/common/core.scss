@@ -490,11 +490,11 @@ div.rendered-react-keyed-file-browser div.files tbody tr:hover {
   background-color: $submission-row-hover;
 }
 
-#submission_download {
+.submission-download {
   fill: $submission-download-icon-fill;
 }
 
-#submission_download:hover {
+.submission-download:hover {
   fill: $submission-download-icon-hover;
 }
 
