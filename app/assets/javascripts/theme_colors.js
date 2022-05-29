@@ -50,7 +50,7 @@ export const themes = {
     strings_color: "var(--severe_error)",
     sub_menu: "#32649B",
     submission_download_icon_fill: "var(--primary_three)",
-    submission_download_icon_hover: "var(--disabled_text)",
+    submission_download_icon_hover: "var(--sub_menu)",
     submission_row_hover: "var(--light_alert)",
   },
 };
