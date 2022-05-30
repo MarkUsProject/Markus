@@ -43,10 +43,10 @@
   <h1>
     <% if @result.is_a_review? %>
       <% if @current_role.student? %>
-        <%= "#{t('results.results_for')} #{sanitize(@assignment.short_identifier)}" %>
+        <%= "#{t('results.results_for')} #{sanitize(@assignment.pr_assignment.short_identifier)}" %>
       <% else %>
         <%= t('peer_reviews.review_title',
-              assignment_name: @assignment.short_identifier,
+              assignment_name: @assignment.pr_assignment.short_identifier,
               group_name: @current_group_name,
               reviewer_name: @reviewer.group.group_name) %>
       <% end %>

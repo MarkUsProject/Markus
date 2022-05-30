@@ -33,14 +33,15 @@ class TestRun < ApplicationRecord
         test_group_result = nil
         ApplicationRecord.transaction do
           test_group_result = create_test_group_result(result)
-          result['tests'].each do |test|
+          result['tests'].each_with_index do |test, i|
             test_group_result.test_results.create!(
               name: test['name'],
               status: test['status'],
               marks_earned: test['marks_earned'],
               output: test['output'].gsub("\x00", '\\u0000'),
               marks_total: test['marks_total'],
-              time: test['time']
+              time: test['time'],
+              position: i + 1
             )
           end
         rescue StandardError => e

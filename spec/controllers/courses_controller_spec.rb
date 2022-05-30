@@ -1,6 +1,8 @@
 describe CoursesController do
   let(:instructor) { create :instructor }
   let(:course) { instructor.course }
+  let(:student) { create :student, course: course }
+  let(:ta) { create :ta, course: course }
 
   describe 'role switching methods' do
     let(:subject) do
@@ -161,9 +163,17 @@ describe CoursesController do
       get_as instructor, :index
       expect(response.status).to eq(200)
     end
-    it 'responds with success on show' do
+    it 'responds with success on show as an instructor' do
       get_as instructor, :show, params: { id: course }
       expect(response.status).to eq(200)
+    end
+    it 'redirects to assignments on show as a student' do
+      get_as student, :show, params: { id: course }
+      expect(response).to redirect_to(course_assignments_path(course.id))
+    end
+    it 'redirects to assignments on show as a ta' do
+      get_as ta, :show, params: { id: course }
+      expect(response).to redirect_to(course_assignments_path(course.id))
     end
     it 'responds with success on edit' do
       get_as instructor, :edit, params: { id: course }

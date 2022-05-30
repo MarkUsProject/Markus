@@ -60,28 +60,10 @@ export class TestRunTable extends React.Component {
       };
     }
     $.ajax(ajaxDetails).then(res => {
-      let rows = [];
-      for (let test_run_id in res) {
-        if (res.hasOwnProperty(test_run_id)) {
-          let test_data = res[test_run_id];
-          let row = {
-            id_: test_run_id,
-            "test_runs.created_at": test_data[0]["test_runs.created_at"],
-            "users.user_name": test_data[0]["users.user_name"],
-            "test_runs.status": test_data[0]["test_runs.status"],
-            "test_runs.problems": test_data[0]["test_runs.problems"],
-            test_results: [],
-          };
-          test_data.forEach(data => {
-            Array.prototype.push.apply(row["test_results"], data["test_data"]);
-          });
-          rows.push(row);
-        }
-      }
       this.setState({
-        data: rows,
+        data: res,
         loading: false,
-        expanded: rows.length > 0 ? {0: true} : {},
+        expanded: res.length > 0 ? {0: true} : {},
       });
     });
   };

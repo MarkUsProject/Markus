@@ -103,6 +103,13 @@ describe Assignment do
       a = build(:assignment, course: courses.first, parent_assignment: build(:assignment, course: courses.second))
       expect(a).not_to be_valid
     end
+
+    it 'updates its parent assignment\'s has_peer_review attribute when created' do
+      assignment = create(:assignment)
+      create(:assignment, course: assignment.course, parent_assignment: assignment)
+
+      expect(assignment.has_peer_review).to eq true
+    end
   end
 
   describe 'nested attributes' do
