@@ -51,20 +51,4 @@ describe("For the submissions managed by the FileManager component", () => {
       });
     }
   );
-
-  // TODO: move the test to submission_file_manager.test.jsx as FileManager doesn't handle preview
-  it("clicking on the row of each file opens up the preview for that file", () => {
-    // const rows = wrapper.find('.file')
-    // rows.forEach(row => {
-    //   row.simulate('click')
-    //   wrapper.update()
-    //   // The preview rendered
-    //   const fieldset = wrapper.find('fieldset')
-    //   console.log(wrapper.debug())
-    //   // The preview should have <legend><span>filename</span></legend>
-    //   expect(fieldset.find('legend').find('span').text()).toEqual(row.find('span').text())
-    // })
-    // TODO: placeholder
-    expect(1).toEqual(1);
-  });
 });

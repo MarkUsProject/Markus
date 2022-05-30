@@ -18,3 +18,19 @@ import {configure} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 
 configure({adapter: new Adapter()});
+
+// Worker
+class Worker {
+  constructor(stringUrl) {
+    this.url = stringUrl;
+    this.onmessage = () => {};
+  }
+
+  postMessage(msg) {
+    this.onmessage(msg);
+  }
+}
+window.Worker = Worker;
+
+// URL
+window.URL.createObjectURL = jest.fn();
