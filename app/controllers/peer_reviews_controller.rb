@@ -48,6 +48,29 @@ class PeerReviewsController < ApplicationController
     }
   end
 
+  def populate_table
+    assignment = Assignment.find(params[:assignment_id])
+    peer_review_data = assignment.pr_peer_reviews
+                                 .joins(reviewer: :group,
+                                        result: { grouping: :group })
+                                 .pluck_to_hash(
+                                   'peer_reviews.id as _id',
+                                   'results.id as result_id',
+                                   'results.marking_state',
+                                   'results.released_to_students',
+                                   'results.total_mark as final_grade',
+                                   'groups.group_name as reviewer_name',
+                                   'groups_groupings.group_name as reviewee_name'
+                                 )
+
+    peer_review_data.each do |data|
+      data[:marking_state] = data['results.released_to_students'] ? 'released' : data['results.marking_state']
+      data[:max_mark] = assignment.peer_criteria.sum(&:max_mark)
+    end
+
+    render json: peer_review_data
+  end
+
   # Get data for all reviews for a given reviewer.
   def list_reviews
     assignment = Assignment.find(params[:assignment_id]).pr_assignment
@@ -56,9 +79,9 @@ class PeerReviewsController < ApplicationController
       # is responsible for
       grouping = current_role.grouping_for(assignment.id)
       groupings = grouping.peer_reviews_to_others
-                          .joins(result: { grouping: :group })
-                          .pluck('results.id', 'groups.group_name', 'results.marking_state')
-                          .map { |id, name, state| { id: id, group_name: name, state: state } }
+                          .joins(:result)
+                          .order('peer_reviews.id')
+                          .pluck_to_hash('peer_reviews.id', 'results.id', 'results.marking_state as marking_state')
     else
       groupings = []
     end

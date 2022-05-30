@@ -37,6 +37,44 @@ class Result < ApplicationRecord
     end
   end
 
+  # Release or unrelease the submissions of a set of groupings.
+  def self.set_release_on_results(grouping_ids, release)
+    groupings = Grouping.where(id: grouping_ids)
+    without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
+
+    if without_submissions.present?
+      group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
+      raise StandardError, I18n.t('submissions.errors.no_submission', group_name: group_names)
+    end
+
+    without_complete_result = groupings.joins(:current_result)
+                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
+
+    if without_complete_result.present?
+      group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
+      if release
+        raise StandardError, I18n.t('submissions.errors.not_complete', group_name: group_names)
+      else
+        raise StandardError, I18n.t('submissions.errors.not_complete_unrelease', group_name: group_names)
+      end
+    end
+
+    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
+                   .update_all(released_to_students: release)
+
+    if release
+      groupings.includes(:accepted_students).find_each do |grouping|
+        grouping.accepted_students.each do |student|
+          if student.receives_results_emails?
+            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later
+          end
+        end
+      end
+    end
+
+    result
+  end
+
   # Calculate the total mark for this submission
   def get_total_mark
     user_visibility = is_a_review? ? :peer_visible : :ta_visible
@@ -162,9 +200,15 @@ class Result < ApplicationRecord
     # we can't pass in a parameter to the before_save filter, so we need
     # to manually determine the visibility. If it's a pr result, we know we
     # want the peer-visible criteria
-    visibility = is_a_review? ? :peer_visible : user_visibility
+    if is_a_review?
+      visibility = :peer_visible
+      assignment = submission.assignment.pr_assignment
+    else
+      visibility = user_visibility
+      assignment = submission.assignment
+    end
 
-    criteria = submission.assignment.criteria.where(visibility => true).ids
+    criteria = assignment.criteria.where(visibility => true).ids
     nil_marks = false
     num_marks = 0
     marks.each do |mark|

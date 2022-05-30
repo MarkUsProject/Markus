@@ -74,12 +74,8 @@ class AutomatedTestsController < ApplicationController
   end
 
   def get_test_runs_students
-    @grouping = current_role.accepted_grouping_for(params[:assignment_id])
-    test_runs = @grouping.test_runs_students
-    test_runs.each do |test_run|
-      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
-    end
-    render json: test_runs.group_by { |t| t['test_runs.id'] }
+    grouping = current_role.accepted_grouping_for(params[:assignment_id])
+    render json: grouping.test_runs_students
   end
 
   def populate_autotest_manager

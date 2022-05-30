@@ -34,18 +34,19 @@ class StudentPeerReviewsTable extends React.Component {
   columns = () => [
     {
       Header: I18n.t("activerecord.models.peer_review.one"),
-      accessor: "group_name",
       Cell: row => {
         return (
-          <a href={Routes.edit_course_result_path(this.props.course_id, row.original.id)}>
-            {`${I18n.t("activerecord.models.peer_review.one")} ${row.index + 1}`}
+          <a
+            href={Routes.edit_course_result_path(this.props.course_id, row.original["results.id"])}
+          >
+            {`${I18n.t("activerecord.models.peer_review.one")} ${row.original["peer_reviews.id"]}`}
           </a>
         );
       },
     },
     {
       Header: I18n.t("submissions.status"),
-      accessor: "state",
+      accessor: "marking_state",
     },
   ];
 

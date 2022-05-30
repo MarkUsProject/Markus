@@ -18,24 +18,9 @@ describe TestGroupResult do
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
       @role = create(:instructor)
-      @test_group = TestGroup.create(
-        assessment_id: @asst.id,
-        name: 'test_group'
-      )
-      @test_run = TestRun.create(
-        grouping: @grouping,
-        submission: @sub,
-        role: @role,
-        revision_identifier: '1',
-        status: :complete
-      )
-      @test_group_result = TestGroupResult.create(
-        test_group: @test_group,
-        test_run: @test_run,
-        marks_earned: 1,
-        marks_total: 1,
-        time: 0
-      )
+      @test_group = create(:test_group, assignment: @asst)
+      @test_run = create(:test_run, grouping: @grouping, submission: @sub, role: @role)
+      @test_group_result = create(:test_group_result, test_group: @test_group, test_run: @test_run)
     end
 
     context 'A valid test group' do
