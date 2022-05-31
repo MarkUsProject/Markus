@@ -694,6 +694,16 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def get_next_grouping(going_right, groupings)
+    # direction is 1 if forward and -1 if backwards
+    if going_right
+      next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
+    else
+      next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).last
+    end
+    next_grouping
+  end
+
   private
 
   def add_assignment_folder(group_repo)
