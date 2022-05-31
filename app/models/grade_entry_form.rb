@@ -93,15 +93,19 @@ class GradeEntryForm < Assessment
 
   def export_as_csv(role)
     if role.instructor?
-      # Export all Students if an role is instructor
-      students = course.students.joins(:user).order('users.user_name').includes(:section)
+      students = Student.left_outer_joins(:grade_entry_students, :user, :section)
+                        .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
+                        .order(:user_name)
+                        .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
+                                       :id_number, :email, 'grade_entry_students.total_grade')
     elsif role.ta?
-      # Only export the students assigned to the TA if role is TA
-      all_students = course.students.joins(:user).order('users.user_name').includes(:section)
-      grade_entry_students = role.grade_entry_students.joins(role: :user).order('users.user_name').pluck(:user_name)
-      students = all_students.select do |student|
-        grade_entry_students.include? student.user_name
-      end
+      students = role.grade_entry_students
+                     .joins(role: :user)
+                     .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
+                     .order(:user_name)
+                     .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
+                                    :id_number, :email, 'grade_entry_students.total_grade')
+
     end
     headers = []
     # The first row in the CSV file will contain the column names
@@ -135,24 +139,25 @@ class GradeEntryForm < Assessment
                        .group_by { |x| x[0] }
       num_items = self.grade_entry_items.count
     end
+
     MarkusCsv.generate(students, headers) do |student|
-      total_grade = 0
       row = Student::CSV_ORDER.map do |field|
-        if field == :section_name
-          student.section&.name
-        else
-          student.__send__(field)
-        end
+        student[field]
       end
-      if grade_data.key? student.user_name
+      if grade_data.key? student[:user_name]
         student_grades = Array.new(num_items, '')
-        grade_data[student.user_name].each do |g|
+        grade_data[student[:user_name]].each do |g|
           grade_index = g[1] - 1
           student_grades[grade_index] = g[2].nil? ? '' : g[2]
-          total_grade += student_grades[grade_index]
         end
         row.concat(student_grades)
-        row << (total_grade.nil? ? '' : total_grade) if self.show_total
+        if self.show_total
+          row << (if student['grade_entry_students.total_grade'].nil?
+                    ''
+                  else
+                    student['grade_entry_students.total_grade']
+                  end)
+        end
       else
         row.concat(Array.new(num_items, ''))
         row << '' if self.show_total
