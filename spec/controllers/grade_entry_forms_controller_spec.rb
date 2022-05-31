@@ -197,13 +197,9 @@ describe GradeEntryFormsController do
         Student::CSV_ORDER.map do |field|
           GradeEntryForm.human_attribute_name(field)
         end + [grade_entry_item.name],
-        ['',
-         '',
-         '',
-         '',
-         '',
-         GradeEntryItem.human_attribute_name(:out_of),
-         grade_entry_item.out_of],
+        [''] * (Student::CSV_ORDER.length - 1) +
+          [GradeEntryItem.human_attribute_name(:out_of),
+           grade_entry_item.out_of],
         [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, student_grade]
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
@@ -238,14 +234,10 @@ describe GradeEntryFormsController do
           GradeEntryForm.human_attribute_name(field)
         end + [grade_entry_form_with_data_and_total.grade_entry_items[0].name,
                GradeEntryForm.human_attribute_name(:total)],
-        ['',
-         '',
-         '',
-         '',
-         '',
-         GradeEntryItem.human_attribute_name(:out_of),
-         String(grade_entry_form_with_data_and_total.grade_entry_items[0].out_of),
-         grade_entry_form_with_data_and_total.max_mark],
+        [''] * (Student::CSV_ORDER.length - 1) + [GradeEntryItem.human_attribute_name(:out_of),
+                                                  String(grade_entry_form_with_data_and_total
+                                                           .grade_entry_items[0].out_of),
+                                                  grade_entry_form_with_data_and_total.max_mark],
         [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, '', '']
       ]
 
@@ -274,16 +266,12 @@ describe GradeEntryFormsController do
           GradeEntryForm.human_attribute_name(field)
         end + [gef.grade_entry_items[0].name, gef.grade_entry_items[1].name,
                gef.grade_entry_items[2].name, GradeEntryForm.human_attribute_name(:total)],
-        ['',
-         '',
-         '',
-         '',
-         '',
-         GradeEntryItem.human_attribute_name(:out_of),
-         gef.grade_entry_items[0].out_of.to_s,
-         gef.grade_entry_items[1].out_of.to_s,
-         gef.grade_entry_items[2].out_of.to_s,
-         gef.max_mark],
+        [''] * (Student::CSV_ORDER.length - 1) +
+          [GradeEntryItem.human_attribute_name(:out_of),
+           gef.grade_entry_items[0].out_of.to_s,
+           gef.grade_entry_items[1].out_of.to_s,
+           gef.grade_entry_items[2].out_of.to_s,
+           gef.max_mark],
         [ges.role.user_name, ges.role.last_name, ges.role.first_name, ges.role.section, ges.role.id_number,
          ges.role.email, '', '50.0', '', '50.0']
       ]
@@ -306,13 +294,9 @@ describe GradeEntryFormsController do
           Student::CSV_ORDER.map do |field|
             GradeEntryForm.human_attribute_name(field)
           end + [gef.grade_entry_items[0].name],
-          ['',
-           '',
-           '',
-           '',
-           '',
-           GradeEntryItem.human_attribute_name(:out_of),
-           gef.grade_entry_items[0].out_of.to_s]
+          [''] * (Student::CSV_ORDER.length - 1) +
+            [GradeEntryItem.human_attribute_name(:out_of),
+             gef.grade_entry_items[0].out_of.to_s]
         ]
         csv_data = MarkusCsv.generate(csv_array, &:itself)
         expect(@controller).to receive(:send_data).with(
@@ -333,13 +317,9 @@ describe GradeEntryFormsController do
             Student::CSV_ORDER.map do |field|
               GradeEntryForm.human_attribute_name(field)
             end + [gef.grade_entry_items[0].name],
-            ['',
-             '',
-             '',
-             '',
-             '',
-             GradeEntryItem.human_attribute_name(:out_of),
-             gef.grade_entry_items[0].out_of.to_s],
+            [''] * (Student::CSV_ORDER.length - 1) +
+              [GradeEntryItem.human_attribute_name(:out_of),
+               gef.grade_entry_items[0].out_of.to_s],
             [student.role.user_name,
              student.role.last_name,
              student.role.first_name,
