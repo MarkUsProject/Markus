@@ -82,7 +82,7 @@ export class AssignmentChart extends React.Component {
 
   render() {
     let outstanding_remark_request_link = "";
-    if (this.state.summary.num_outstanding_remark_requests > 0) {
+    if (this.state.summary.num_outstanding_remark_requests > 0 && !this.props.summary_display) {
       outstanding_remark_request_link = (
         <p>
           <a
@@ -103,8 +103,9 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const assignment_graph = (
-      <React.Fragment>
+    let assignment_graph_header = "";
+    if (!this.props.summary_display) {
+      assignment_graph_header = (
         <h2>
           <a
             href={Routes.browse_course_assignment_submissions_path(
@@ -115,6 +116,47 @@ export class AssignmentChart extends React.Component {
             {this.state.summary.name}
           </a>
         </h2>
+      );
+    }
+
+    const assignment_summary_stats = (
+      <div className="flex-row-expand">
+        <div className="grid-2-col">
+          <span>{I18n.t("average")}</span>
+          <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
+          <span>{I18n.t("median")}</span>
+          <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
+          <span>{I18n.t("assignments_submitted")}</span>
+          <span>
+            {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
+          </span>
+          <span>{I18n.t("assignments_graded")}</span>
+          <span>
+            {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
+          </span>
+          <span>{I18n.t("num_failed")}</span>
+          <span>{this.state.summary.num_fails}</span>
+          <span>{I18n.t("num_zeros")}</span>
+          <span>{this.state.summary.num_zeros}</span>
+        </div>
+        {outstanding_remark_request_link}
+        <p>
+          <a
+            data-remote="true"
+            href={Routes.view_summary_course_assignment_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {I18n.t("refresh")}
+          </a>
+        </p>
+      </div>
+    );
+
+    const assignment_graph = (
+      <React.Fragment>
+        {assignment_graph_header}
         <div className="flex-row">
           <div>
             <Bar
@@ -124,43 +166,11 @@ export class AssignmentChart extends React.Component {
               height="450"
             />
           </div>
-          <div className="flex-row-expand">
-            <div className="grid-2-col">
-              <span>{I18n.t("average")}</span>
-              <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
-              <span>{I18n.t("median")}</span>
-              <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
-              <span>{I18n.t("assignments_submitted")}</span>
-              <span>
-                {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
-              </span>
-              <span>{I18n.t("assignments_graded")}</span>
-              <span>
-                {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
-              </span>
-              <span>{I18n.t("num_failed")}</span>
-              <span>{this.state.summary.num_fails}</span>
-              <span>{I18n.t("num_zeros")}</span>
-              <span>{this.state.summary.num_zeros}</span>
-            </div>
-            {outstanding_remark_request_link}
-            <p>
-              <a
-                data-remote="true"
-                href={Routes.view_summary_course_assignment_path(
-                  this.props.course_id,
-                  this.props.assessment_id
-                )}
-              >
-                {I18n.t("refresh")}
-              </a>
-            </p>
-          </div>
         </div>
       </React.Fragment>
     );
 
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0 || this.props.summary_display) {
       return (
         <React.Fragment>
           {assignment_graph}
@@ -168,8 +178,8 @@ export class AssignmentChart extends React.Component {
           <Bar
             data={this.state.ta_grade_distribution.data}
             options={this.state.ta_grade_distribution.options}
-            width="400"
-            height="350"
+            width={this.props.summary_display ? null : "400"}
+            height={this.props.summary_display ? null : "350"}
           />
           <p>
             <a
