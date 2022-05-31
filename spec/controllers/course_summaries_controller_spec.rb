@@ -29,7 +29,7 @@ describe CourseSummariesController do
           end
           student_name = csv_row.shift
           # Skipping first/last name, id_number, section and email fields
-          5.times { |_| csv_row.shift }
+          (Student::CSV_ORDER.length - 1).times { |_| csv_row.shift }
           student = Student.joins(:user).where('users.user_name': student_name).first
           expect(student).to be_truthy
           expect(assignments.size).to eq(csv_row.size)
@@ -64,9 +64,9 @@ describe CourseSummariesController do
                             params: { course_id: course.id }, format: :csv).parsed_body
           header = csv_rows[0]
           out_of_row = csv_rows[1]
-          expect(out_of_row.size).to eq(6 + assignments.size + grade_forms.size)
+          expect(out_of_row.size).to eq(Student::CSV_ORDER.length + assignments.size + grade_forms.size)
           expect(out_of_row.size).to eq(header.size)
-          zipped_info = Assessment.all.order(:id).zip(out_of_row[6, out_of_row.size])
+          zipped_info = Assessment.all.order(:id).zip(out_of_row[Student::CSV_ORDER.length, out_of_row.size])
           zipped_info.each do |model, out_of_element|
             expect(out_of_element).to eq(model.max_mark.to_s)
           end
