@@ -121,6 +121,7 @@ group :development, :test do
   gem 'capybara'
   gem 'i18n-tasks'
   gem 'rspec-rails', '~> 5.1.2'
+  gem 'selenium-webdriver'
 end
 
 # Gems needed (wanted) for development, test and production_test
