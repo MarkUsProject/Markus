@@ -115,3 +115,8 @@ RSpec.configure do |config|
                                                    param_encoder: ->(params) { params },
                                                    response_parser: ->(body) { CSV.parse(body) }
 end
+
+Capybara.configure do |config|
+  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST')
+  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT')
+end

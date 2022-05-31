@@ -12,7 +12,11 @@ describe 'logging in', type: :system do
   end
 
   before do
-    driven_by(:rack_test)
+    driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
+                         options: {
+                           browser: :remote,
+                           url: 'http://host.docker.internal:9515'
+                         }
   end
 
   it 'fails to sign in an unknown user' do
