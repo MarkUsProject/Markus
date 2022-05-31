@@ -161,12 +161,9 @@ describe Api::GradeEntryFormsController do
         before { get :show, params: { id: grade_entry_form.id, course_id: course.id } }
         it 'should download a basic csv' do
           csv_array = [
-            [GradeEntryForm.human_attribute_name(:user_name),
-             GradeEntryForm.human_attribute_name(:last_name),
-             GradeEntryForm.human_attribute_name(:first_name),
-             GradeEntryForm.human_attribute_name(:section),
-             GradeEntryForm.human_attribute_name(:id_number),
-             GradeEntryForm.human_attribute_name(:email)],
+            Student::CSV_ORDER.map do |field|
+              GradeEntryForm.human_attribute_name(field)
+            end,
             ['',
              '',
              '',
