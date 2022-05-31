@@ -108,13 +108,10 @@ class GradeEntryForm < Assessment
 
     end
     headers = []
-    # The first row in the CSV file will contain the column names
-    titles = [GradeEntryForm.human_attribute_name(:user_name),
-              GradeEntryForm.human_attribute_name(:last_name),
-              GradeEntryForm.human_attribute_name(:first_name),
-              GradeEntryForm.human_attribute_name(:section),
-              GradeEntryForm.human_attribute_name(:id_number),
-              GradeEntryForm.human_attribute_name(:email)] + self.grade_entry_items.pluck(:name)
+    titles = Student::CSV_ORDER.map do |field|
+      GradeEntryForm.human_attribute_name(field)
+    end + self.grade_entry_items.pluck(:name)
+
     titles << GradeEntryForm.human_attribute_name(:total) if self.show_total
     headers << titles
 

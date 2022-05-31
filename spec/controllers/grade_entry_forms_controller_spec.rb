@@ -194,13 +194,9 @@ describe GradeEntryFormsController do
                                                 .find_by(grade_entry_item: grade_entry_item)
                                                 .grade
       csv_array = [
-        [GradeEntryForm.human_attribute_name(:user_name),
-         GradeEntryForm.human_attribute_name(:last_name),
-         GradeEntryForm.human_attribute_name(:first_name),
-         GradeEntryForm.human_attribute_name(:section),
-         GradeEntryForm.human_attribute_name(:id_number),
-         GradeEntryForm.human_attribute_name(:email),
-         grade_entry_item.name],
+        Student::CSV_ORDER.map do |field|
+          GradeEntryForm.human_attribute_name(field)
+        end + [grade_entry_item.name],
         ['',
          '',
          '',
@@ -210,7 +206,6 @@ describe GradeEntryFormsController do
          grade_entry_item.out_of],
         [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, student_grade]
       ]
-
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
       end
@@ -239,14 +234,10 @@ describe GradeEntryFormsController do
 
     it 'shows Total column when show_total is true' do
       csv_array = [
-        [GradeEntryForm.human_attribute_name(:user_name),
-         GradeEntryForm.human_attribute_name(:last_name),
-         GradeEntryForm.human_attribute_name(:first_name),
-         GradeEntryForm.human_attribute_name(:section),
-         GradeEntryForm.human_attribute_name(:id_number),
-         GradeEntryForm.human_attribute_name(:email),
-         grade_entry_form_with_data_and_total.grade_entry_items[0].name,
-         GradeEntryForm.human_attribute_name(:total)],
+        Student::CSV_ORDER.map do |field|
+          GradeEntryForm.human_attribute_name(field)
+        end + [grade_entry_form_with_data_and_total.grade_entry_items[0].name,
+               GradeEntryForm.human_attribute_name(:total)],
         ['',
          '',
          '',
@@ -279,16 +270,10 @@ describe GradeEntryFormsController do
       ges.save
 
       csv_array = [
-        [GradeEntryForm.human_attribute_name(:user_name),
-         GradeEntryForm.human_attribute_name(:last_name),
-         GradeEntryForm.human_attribute_name(:first_name),
-         GradeEntryForm.human_attribute_name(:section),
-         GradeEntryForm.human_attribute_name(:id_number),
-         GradeEntryForm.human_attribute_name(:email),
-         gef.grade_entry_items[0].name,
-         gef.grade_entry_items[1].name,
-         gef.grade_entry_items[2].name,
-         GradeEntryForm.human_attribute_name(:total)],
+        Student::CSV_ORDER.map do |field|
+          GradeEntryForm.human_attribute_name(field)
+        end + [gef.grade_entry_items[0].name, gef.grade_entry_items[1].name,
+               gef.grade_entry_items[2].name, GradeEntryForm.human_attribute_name(:total)],
         ['',
          '',
          '',
@@ -318,13 +303,9 @@ describe GradeEntryFormsController do
       let(:gef) { create :grade_entry_form_with_data }
       it 'returns no users when the ta is not assigned a user' do
         csv_array = [
-          [GradeEntryForm.human_attribute_name(:user_name),
-           GradeEntryForm.human_attribute_name(:last_name),
-           GradeEntryForm.human_attribute_name(:first_name),
-           GradeEntryForm.human_attribute_name(:section),
-           GradeEntryForm.human_attribute_name(:id_number),
-           GradeEntryForm.human_attribute_name(:email),
-           gef.grade_entry_items[0].name],
+          Student::CSV_ORDER.map do |field|
+            GradeEntryForm.human_attribute_name(field)
+          end + [gef.grade_entry_items[0].name],
           ['',
            '',
            '',
@@ -349,13 +330,9 @@ describe GradeEntryFormsController do
         it 'returns data for only the assigned student' do
           student.grades.first.update(grade: 50.0)
           csv_array = [
-            [GradeEntryForm.human_attribute_name(:user_name),
-             GradeEntryForm.human_attribute_name(:last_name),
-             GradeEntryForm.human_attribute_name(:first_name),
-             GradeEntryForm.human_attribute_name(:section),
-             GradeEntryForm.human_attribute_name(:id_number),
-             GradeEntryForm.human_attribute_name(:email),
-             gef.grade_entry_items[0].name],
+            Student::CSV_ORDER.map do |field|
+              GradeEntryForm.human_attribute_name(field)
+            end + [gef.grade_entry_items[0].name],
             ['',
              '',
              '',
