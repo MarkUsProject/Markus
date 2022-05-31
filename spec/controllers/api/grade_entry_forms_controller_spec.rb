@@ -164,12 +164,8 @@ describe Api::GradeEntryFormsController do
             Student::CSV_ORDER.map do |field|
               GradeEntryForm.human_attribute_name(field)
             end,
-            ['',
-             '',
-             '',
-             '',
-             '',
-             GradeEntryItem.human_attribute_name(:out_of)]
+            [''] * (Student::CSV_ORDER.length - 1) +
+              [GradeEntryItem.human_attribute_name(:out_of)]
           ]
           csv_data = MarkusCsv.generate(csv_array, &:itself)
           expect(response.body).to eq csv_data
