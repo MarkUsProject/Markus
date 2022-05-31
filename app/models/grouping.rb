@@ -694,8 +694,15 @@ class Grouping < ApplicationRecord
     end
   end
 
-  def get_next_grouping(going_right, groupings)
-    # direction is 1 if forward and -1 if backwards
+  def get_next_grouping(going_right, current_role)
+    if current_role.ta?
+      groupings = current_role.groupings
+                              .where(assignment: assignment)
+                              .joins(:group)
+                              .order('group_name')
+    else
+      groupings = assignment.groupings.joins(:group).order('group_name')
+    end
     if going_right
       next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
     else
