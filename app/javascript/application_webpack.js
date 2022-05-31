@@ -72,7 +72,7 @@ import {ModalMarkus} from "javascripts/modals";
 window.ModalMarkus = ModalMarkus;
 import {makeDashboard} from "javascripts/Components/dashboard";
 window.makeDashboard = makeDashboard;
-import {makeAssignmentSummary} from "javascripts/Components/assignment_summary_statistics";
+import {makeAssignmentSummary} from "javascripts/Components/assignment_summary";
 window.makeAssignmentSummary = makeAssignmentSummary;
 import {makeTATable} from "javascripts/Components/ta_table";
 window.makeTATable = makeTATable;
