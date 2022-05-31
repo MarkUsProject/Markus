@@ -116,7 +116,8 @@ class GradeEntryForm < Assessment
     headers << titles
 
     # The second row in the CSV file will contain the column totals
-    totals = ['', '', '', '', '', GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
+    totals = [''] * (Student::CSV_ORDER.length - 1) +
+      [GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
     totals << self.max_mark if self.show_total
     headers << totals
 
