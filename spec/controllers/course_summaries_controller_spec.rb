@@ -13,9 +13,7 @@ describe CourseSummariesController do
         csv_rows = get_as(instructor, :download_csv_grades_report,
                           params: { course_id: course.id }, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 2) # one header row, one out of row, plus one row per student
-        header = Student::CSV_ORDER.map do |field|
-          User.human_attribute_name(field)
-        end
+        header = Student::CSV_ORDER.map { |field| User.human_attribute_name(field) }
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
@@ -111,7 +109,7 @@ describe CourseSummariesController do
               user_name: student.user_name,
               first_name: student.first_name,
               last_name: student.last_name,
-              section_name: student.section&.name,
+              section_name: student.section_name,
               email: student.email,
               hidden: student.hidden,
               assessment_marks: GradeEntryForm.all.map do |ges|
@@ -239,7 +237,7 @@ describe CourseSummariesController do
             user_name: @student2.user_name,
             first_name: @student2.first_name,
             last_name: @student2.last_name,
-            section_name: @student2.section&.name,
+            section_name: @student2.section_name,
             email: @student2.email,
             hidden: @student2.hidden,
             assessment_marks: {}
