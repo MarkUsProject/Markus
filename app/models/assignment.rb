@@ -680,9 +680,9 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    first_row = [Group.human_attribute_name(:group_name)] + Student::CSV_ORDER.map do |field|
-      User.human_attribute_name(field)
-    end + [Result.human_attribute_name(:total_mark)]
+    first_row = [Group.human_attribute_name(:group_name)] +
+      Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
+      [Result.human_attribute_name(:total_mark)]
 
     second_row = [' '] * Student::CSV_ORDER.length + [Assessment.human_attribute_name(:max_mark), self.max_mark]
 
@@ -705,9 +705,7 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map do |field|
-            s.__send__(field)
-          end
+          other_info = Student::CSV_ORDER.map { |field| s.__send__(field) }
           row = [g.group.group_name] + other_info
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)

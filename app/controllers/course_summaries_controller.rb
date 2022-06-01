@@ -79,9 +79,7 @@ class CourseSummariesController < ApplicationController
     grades_data = get_table_json_data(current_role)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|
-      row = Student::CSV_ORDER.map do |field|
-        student[field]
-      end
+      row = Student::CSV_ORDER.map { |field| student[field] }
       row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
       row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id][:mark] })
       row
@@ -107,10 +105,7 @@ class CourseSummariesController < ApplicationController
     assessments = current_course.assessments.order(id: :asc)
     marking_schemes = current_course.marking_schemes
 
-    header = Student::CSV_ORDER.map do |field|
-      User.human_attribute_name(field)
-    end
-
+    header = Student::CSV_ORDER.map { |field| User.human_attribute_name(field) }
     header.concat(assessments.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))
 
