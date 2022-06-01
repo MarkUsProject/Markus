@@ -103,40 +103,51 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    let assignment_graph_header = "";
-    if (!this.props.summary_display) {
-      assignment_graph_header = (
-        <h2>
-          <a
-            href={Routes.browse_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assessment_id
-            )}
-          >
-            {this.state.summary.name}
-          </a>
-        </h2>
-      );
-    }
+    const renderAssignmentGraphHeader = () => {
+      if (this.props.summary_display) {
+        return <h3>{I18n.t("assignment_distribution")}</h3>;
+      } else {
+        return (
+          <h2>
+            <a
+              href={Routes.browse_course_assignment_submissions_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {this.state.summary.name}
+            </a>
+          </h2>
+        );
+      }
+    };
+
+    const renderStatLabel = stat_label => {
+      if (this.props.summary_display) {
+        return <span>{stat_label}:</span>;
+      } else {
+        return <span>{stat_label}</span>;
+      }
+    };
 
     const assignment_summary_stats = (
       <div className="flex-row-expand">
         <div className="grid-2-col">
-          <span>{I18n.t("average")}</span>
+          {renderStatLabel(I18n.t("average"))}
           <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
-          <span>{I18n.t("median")}</span>
+          {renderStatLabel(I18n.t("median"))}
           <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
-          <span>{I18n.t("assignments_submitted")}</span>
+          {renderStatLabel(I18n.t("assignments_submitted"))}
           <span>
             {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
           </span>
-          <span>{I18n.t("assignments_graded")}</span>
+          {renderStatLabel(I18n.t("assignments_graded"))}
           <span>
             {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
           </span>
-          <span>{I18n.t("num_failed")}</span>
+          {renderStatLabel(I18n.t("num_failed"))}
           <span>{this.state.summary.num_fails}</span>
-          <span>{I18n.t("num_zeros")}</span>
+          {renderStatLabel(I18n.t("num_zeros"))}
           <span>{this.state.summary.num_zeros}</span>
         </div>
         {outstanding_remark_request_link}
@@ -155,42 +166,48 @@ export class AssignmentChart extends React.Component {
     );
 
     const assignment_graph = (
-      <React.Fragment>
-        {assignment_graph_header}
-        <div className="flex-row">
+      <div>
+        {renderAssignmentGraphHeader()}
+        <div className={this.props.summary_display ? null : "flex-row"}>
           <div>
             <Bar
               data={this.state.assignment_grade_distribution.data}
               options={this.state.assignment_grade_distribution.options}
-              width="500"
-              height="450"
+              width={this.props.summary_display ? null : "500"}
+              height={this.props.summary_display ? null : "450"}
             />
           </div>
+          {this.props.summary_display ? null : assignment_summary_stats}
         </div>
-      </React.Fragment>
+      </div>
     );
 
     if (this.state.ta_grade_distribution.data.datasets.length !== 0 || this.props.summary_display) {
       return (
         <React.Fragment>
-          {assignment_graph}
-          <h3>{I18n.t("grader_distribution")}</h3>
-          <Bar
-            data={this.state.ta_grade_distribution.data}
-            options={this.state.ta_grade_distribution.options}
-            width={this.props.summary_display ? null : "400"}
-            height={this.props.summary_display ? null : "350"}
-          />
-          <p>
-            <a
-              href={Routes.grader_summary_course_assignment_graders_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("activerecord.models.ta.other")}
-            </a>
-          </p>
+          <div className={this.props.summary_display ? "assignment-statistics-summary" : null}>
+            {assignment_graph}
+            {this.props.summary_display ? assignment_summary_stats : null}
+            <div>
+              <h3>{I18n.t("grader_distribution")}</h3>
+              <Bar
+                data={this.state.ta_grade_distribution.data}
+                options={this.state.ta_grade_distribution.options}
+                width={this.props.summary_display ? null : "400"}
+                height={this.props.summary_display ? null : "350"}
+              />
+              <p>
+                <a
+                  href={Routes.grader_summary_course_assignment_graders_path(
+                    this.props.course_id,
+                    this.props.assessment_id
+                  )}
+                >
+                  {I18n.t("activerecord.models.ta.other")}
+                </a>
+              </p>
+            </div>
+          </div>
         </React.Fragment>
       );
     } else {
