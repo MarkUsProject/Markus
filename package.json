@@ -1,15 +1,15 @@
 {
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
+    "@babel/runtime": "^7.18.3",
     "@rails/ujs": "^7.0.2",
     "@rjsf/core": "^4.2.0",
-    "chart.js": "^3.7.1",
+    "chart.js": "^3.8.0",
     "dompurify": "^2.3.8",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.9.2",
     "jcrop": "^0.0.1",
     "jquery": "^3.6.0",
-    "marked": "^4.0.14",
+    "marked": "^4.0.16",
     "mime": "^3.0.0",
     "moment": "^2.29.3",
     "mousetrap": "^1.6.5",
