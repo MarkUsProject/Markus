@@ -124,7 +124,7 @@ export class AssignmentChart extends React.Component {
 
     const renderStatLabel = stat_label => {
       if (this.props.summary_display) {
-        return <span>{stat_label}:</span>;
+        return <span className="assignment-statistic-value">{stat_label}:</span>;
       } else {
         return <span>{stat_label}</span>;
       }
