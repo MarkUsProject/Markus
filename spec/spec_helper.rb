@@ -117,6 +117,8 @@ RSpec.configure do |config|
 end
 
 Capybara.configure do |config|
+  config.app_host = 'http://localhost:3000/csc108'
   config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST')
   config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT')
+  config.run_server = false
 end
