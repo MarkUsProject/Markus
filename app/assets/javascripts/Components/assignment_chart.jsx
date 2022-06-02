@@ -82,7 +82,7 @@ export class AssignmentChart extends React.Component {
 
   render() {
     let outstanding_remark_request_link = "";
-    if (this.state.summary.num_outstanding_remark_requests > 0 && !this.props.summary_display) {
+    if (this.state.summary.num_outstanding_remark_requests > 0 && !this.props.is_expanded) {
       outstanding_remark_request_link = (
         <p>
           <a
@@ -104,7 +104,7 @@ export class AssignmentChart extends React.Component {
     }
 
     const renderStatLabel = stat_label => {
-      if (this.props.summary_display) {
+      if (this.props.is_expanded) {
         return <span className="assignment-summary-stat-label">{stat_label} :</span>;
       } else {
         return <span>{stat_label}</span>;
@@ -127,9 +127,7 @@ export class AssignmentChart extends React.Component {
     );
 
     const assignment_summary_stats = (
-      <div
-        className={this.props.summary_display ? "assignment-summary-stats-info" : "flex-row-expand"}
-      >
+      <div className={this.props.is_expanded ? "assignment-summary-stats-info" : "flex-row-expand"}>
         <div className="grid-2-col">
           {renderStatLabel(I18n.t("average"))}
           <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
@@ -147,47 +145,50 @@ export class AssignmentChart extends React.Component {
           <span>{this.state.summary.num_fails}</span>
           {renderStatLabel(I18n.t("num_zeros"))}
           <span>{this.state.summary.num_zeros}</span>
-          {this.props.summary_display ? refresh_stats_link : ""}
+          {this.props.is_expanded ? refresh_stats_link : ""}
         </div>
         {outstanding_remark_request_link}
-        <p>{!this.props.summary_display ? refresh_stats_link : ""}</p>
+        <p>{!this.props.is_expanded ? refresh_stats_link : ""}</p>
       </div>
     );
+
+    let assignment_graph_header = (
+      <h2>
+        <a
+          href={Routes.browse_course_assignment_submissions_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
+        >
+          {this.state.summary.name}
+        </a>
+      </h2>
+    );
+    if (this.props.is_expanded) {
+      assignment_graph_header = <h3>{I18n.t("assignment_distribution")}</h3>;
+    }
 
     const assignment_graph = (
       <React.Fragment>
         <div>
-          {this.props.summary_display ? (
-            <h3>{I18n.t("assignment_distribution")}</h3>
-          ) : (
-            <h2>
-              <a
-                href={Routes.browse_course_assignment_submissions_path(
-                  this.props.course_id,
-                  this.props.assessment_id
-                )}
-              >
-                {this.state.summary.name}
-              </a>
-            </h2>
-          )}
-          <div className={this.props.summary_display ? "" : "flex-row"}>
+          {assignment_graph_header}
+          <div className={this.props.is_expanded ? "" : "flex-row"}>
             <div>
               <Bar
                 data={this.state.assignment_grade_distribution.data}
                 options={this.state.assignment_grade_distribution.options}
-                width={this.props.summary_display ? "" : "500"}
-                height={this.props.summary_display ? "200vh" : "450"}
+                width={this.props.is_expanded ? "" : "500"}
+                height={this.props.is_expanded ? "200vh" : "450"}
               />
             </div>
-            {!this.props.summary_display ? assignment_summary_stats : ""}
+            {!this.props.is_expanded ? assignment_summary_stats : ""}
           </div>
         </div>
-        {this.props.summary_display ? assignment_summary_stats : ""}
+        {this.props.is_expanded ? assignment_summary_stats : ""}
       </React.Fragment>
     );
 
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0 || this.props.summary_display) {
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0 || this.props.is_expanded) {
       return (
         <React.Fragment>
           {assignment_graph}
@@ -196,8 +197,8 @@ export class AssignmentChart extends React.Component {
             <Bar
               data={this.state.ta_grade_distribution.data}
               options={this.state.ta_grade_distribution.options}
-              width={this.props.summary_display ? "" : "400"}
-              height={this.props.summary_display ? "200vh" : "350"}
+              width={this.props.is_expanded ? "" : "400"}
+              height={this.props.is_expanded ? "200vh" : "350"}
             />
             <p>
               <a
