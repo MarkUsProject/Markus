@@ -1,25 +1,35 @@
-.assignment-summary-stat-label {
-  font-size: 1vw;
-  text-align: right;
-}
-
+// Styling for the entire summary statistics page
 .assignment-summary-statistics-layout {
   display: grid;
   grid-auto-rows: minmax(30px, auto);
   grid-row-gap: 30px;
   grid-template-columns: 1fr 1fr;
-  margin-top: 10px;
+  margin-top: 15px;
+
+  // Styling for graph titles on summary stats page
+  h3 {
+    text-align: center;
+  }
 }
 
+// Styling for the summary statistics info panel subsection
 .assignment-summary-stats-info {
   font-size: 1.6vw;
-  margin-left: 20px;
+  margin-left: 30px;
   margin-top: 10px;
 
+  // Styling for each item in info panel
   span {
     margin-top: 5px;
   }
 
+  // Styling specific to labels in info panel
+  .assignment-summary-stat-label {
+    font-size: 1vw;
+    text-align: right;
+  }
+
+  // Styling for links in info panel
   a {
     font-size: 0.9vw;
   }
