@@ -324,8 +324,8 @@ class ResultsController < ApplicationController
       end
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
-      going_right = params[:direction] == '1'
-      next_grouping = grouping.get_next_grouping(going_right, current_role)
+      reversed = params[:direction] == '1'
+      next_grouping = grouping.get_next_grouping(current_role, reversed)
       next_result = next_grouping&.current_result
     end
 
