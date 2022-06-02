@@ -21,11 +21,13 @@ class AssignmentSummary extends React.Component {
             />
           </TabPanel>
           <TabPanel>
-            <AssignmentChart
-              course_id={this.props.course_id}
-              assessment_id={this.props.assessment_id}
-              summary_display={true}
-            />
+            <div className="assignment-summary-statistics-layout">
+              <AssignmentChart
+                course_id={this.props.course_id}
+                assessment_id={this.props.assessment_id}
+                summary_display={true}
+              />
+            </div>
           </TabPanel>
         </Tabs>
       );

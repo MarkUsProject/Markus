@@ -1,9 +1,9 @@
-.assignment-statistic-value {
+.assignment-summary-stat-label {
   font-size: 1vw;
   text-align: right;
 }
 
-.assignment-statistics-summary {
+.assignment-summary-statistics-layout {
   display: grid;
   grid-auto-rows: minmax(30px, auto);
   grid-row-gap: 30px;
@@ -11,7 +11,7 @@
   margin-top: 10px;
 }
 
-.assignment-summary-stats {
+.assignment-summary-stats-info {
   font-size: 1.6vw;
   margin-left: 20px;
   margin-top: 10px;
