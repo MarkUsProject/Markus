@@ -103,7 +103,8 @@ class GradeEntryForm < Assessment
       students = role.grade_entry_students
                      .joins(role: :user)
                      .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
-                     .where(grade_entry_form: self, 'roles.hidden': false, 'grade_entry_students.assessment_id': self.id)
+                     .where(grade_entry_form: self, 'roles.hidden': false,
+                            'grade_entry_students.assessment_id': self.id)
                      .order(:user_name)
                      .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
                                     :id_number, :email, 'grade_entry_students.total_grade')
