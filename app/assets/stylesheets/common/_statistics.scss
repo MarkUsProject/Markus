@@ -1,29 +1,6 @@
 .assignment-statistic-value {
-  font-size: x-large;
-  margin-top: 10px;
-  text-align: left;
-}
-
-.assignment-data-display {
-  justify-content: space-evenly;
-  padding-top: 3vh;
-}
-
-.bar-graph {
-  padding-top: 5vh;
-  width: 60%;
-}
-
-.circular-container {
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-}
-
-.circular-progress-bar {
-  margin-bottom: 8px;
-  margin-top: 2px;
-  width: 120px;
+  font-size: 1vw;
+  text-align: right;
 }
 
 .assignment-statistics-summary {
@@ -31,11 +8,19 @@
   grid-auto-rows: minmax(30px, auto);
   grid-row-gap: 30px;
   grid-template-columns: 1fr 1fr;
-  width: 100%;
+  margin-top: 10px;
 }
 
-.middle-align {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+.assignment-summary-stats {
+  font-size: 1.6vw;
+  margin-left: 20px;
+  margin-top: 10px;
+
+  span {
+    margin-top: 5px;
+  }
+
+  a {
+    font-size: 0.9vw;
+  }
 }

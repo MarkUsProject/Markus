@@ -124,14 +124,29 @@ export class AssignmentChart extends React.Component {
 
     const renderStatLabel = stat_label => {
       if (this.props.summary_display) {
-        return <span className="assignment-statistic-value">{stat_label}:</span>;
+        return <span className="assignment-statistic-value">{stat_label} :</span>;
       } else {
         return <span>{stat_label}</span>;
       }
     };
 
+    const renderRefreshStats = (
+      <React.Fragment>
+        <span />
+        <a
+          data-remote="true"
+          href={Routes.view_summary_course_assignment_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
+        >
+          {I18n.t("refresh")}
+        </a>
+      </React.Fragment>
+    );
+
     const assignment_summary_stats = (
-      <div className="flex-row-expand">
+      <div className={this.props.summary_display ? "assignment-summary-stats" : "flex-row-expand"}>
         <div className="grid-2-col">
           {renderStatLabel(I18n.t("average"))}
           <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
@@ -149,19 +164,10 @@ export class AssignmentChart extends React.Component {
           <span>{this.state.summary.num_fails}</span>
           {renderStatLabel(I18n.t("num_zeros"))}
           <span>{this.state.summary.num_zeros}</span>
+          {this.props.summary_display ? renderRefreshStats : ""}
         </div>
         {outstanding_remark_request_link}
-        <p>
-          <a
-            data-remote="true"
-            href={Routes.view_summary_course_assignment_path(
-              this.props.course_id,
-              this.props.assessment_id
-            )}
-          >
-            {I18n.t("refresh")}
-          </a>
-        </p>
+        <p>{!this.props.summary_display ? renderRefreshStats : ""}</p>
       </div>
     );
 
@@ -174,7 +180,7 @@ export class AssignmentChart extends React.Component {
               data={this.state.assignment_grade_distribution.data}
               options={this.state.assignment_grade_distribution.options}
               width={this.props.summary_display ? null : "500"}
-              height={this.props.summary_display ? null : "450"}
+              height={this.props.summary_display ? "200vh" : "450"}
             />
           </div>
           {this.props.summary_display ? null : assignment_summary_stats}
@@ -194,7 +200,7 @@ export class AssignmentChart extends React.Component {
                 data={this.state.ta_grade_distribution.data}
                 options={this.state.ta_grade_distribution.options}
                 width={this.props.summary_display ? null : "400"}
-                height={this.props.summary_display ? null : "350"}
+                height={this.props.summary_display ? "200vh" : "350"}
               />
               <p>
                 <a
