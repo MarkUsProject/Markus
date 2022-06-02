@@ -99,9 +99,11 @@ class GradeEntryForm < Assessment
                         .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
                                        :id_number, :email, 'grade_entry_students.total_grade')
     elsif role.ta?
+
       students = role.grade_entry_students
                      .joins(role: :user)
                      .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
+                     .where(grade_entry_form: self, 'roles.hidden': false, 'grade_entry_students.assessment_id': self.id)
                      .order(:user_name)
                      .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
                                     :id_number, :email, 'grade_entry_students.total_grade')
@@ -139,6 +141,7 @@ class GradeEntryForm < Assessment
     end
 
     MarkusCsv.generate(students, headers) do |student|
+      total_grade = student['grade_entry_students.total_grade']
       row = Student::CSV_ORDER.map do |field|
         student[field]
       end
@@ -150,10 +153,10 @@ class GradeEntryForm < Assessment
         end
         row.concat(student_grades)
         if self.show_total
-          row << (if student['grade_entry_students.total_grade'].nil?
+          row << (if total_grade.nil?
                     ''
                   else
-                    student['grade_entry_students.total_grade']
+                    total_grade
                   end)
         end
       else
