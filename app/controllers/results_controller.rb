@@ -718,20 +718,12 @@ class ResultsController < ApplicationController
 
   def get_test_runs_instructors
     submission = record.submission
-    test_runs = submission.grouping.test_runs_instructors(submission)
-    test_runs.each do |test_run|
-      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
-    end
-    render json: test_runs.group_by { |t| t['test_runs.id'] }
+    render json: submission.grouping.test_runs_instructors(submission)
   end
 
   def get_test_runs_instructors_released
     submission = record.submission
-    test_runs = submission.grouping.test_runs_instructors_released(submission)
-    test_runs.each do |test_run|
-      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
-    end
-    render json: test_runs.group_by { |t| t['test_runs.id'] }
+    render json: submission.grouping.test_runs_instructors_released(submission)
   end
 
   private
