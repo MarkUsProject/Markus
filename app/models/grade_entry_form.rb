@@ -111,9 +111,8 @@ class GradeEntryForm < Assessment
 
     end
     headers = []
-    titles = Student::CSV_ORDER.map do |field|
-      GradeEntryForm.human_attribute_name(field)
-    end + self.grade_entry_items.pluck(:name)
+    titles = Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+      self.grade_entry_items.pluck(:name)
 
     titles << GradeEntryForm.human_attribute_name(:total) if self.show_total
     headers << titles
@@ -153,13 +152,7 @@ class GradeEntryForm < Assessment
           student_grades[grade_index] = g[2].nil? ? '' : g[2]
         end
         row.concat(student_grades)
-        if self.show_total
-          row << (if total_grade.nil?
-                    ''
-                  else
-                    total_grade
-                  end)
-        end
+        row << (total_grade.nil? ? '' : total_grade) if self.show_total
       else
         row.concat(Array.new(num_items, ''))
         row << '' if self.show_total
