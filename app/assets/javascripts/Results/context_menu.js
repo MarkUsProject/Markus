@@ -7,10 +7,6 @@
     * jquery.ui-contextmenu.min.js (..\app\assets\javascripts\)
       * Depends on jQuery and jQuery-ui
     * context_menu.scss (..\app\assets\stylesheets\)
-
-  Context-Menu button functionality:
-    * _annotations.js.erb (..\app\views\results\common\)
-
    */
 var annotation_context_menu = {
   setup: function () {
@@ -110,15 +106,7 @@ var annotation_context_menu = {
       ],
       beforeOpen: function (event, ui) {
         // Enable annotation menu items only if a selection has been made
-        var selection_exists = (function () {
-          if (annotation_type === ANNOTATION_TYPES.CODE) {
-            return window.getSelection().toString() !== "";
-          } else if (annotation_type === ANNOTATION_TYPES.PDF) {
-            return !!get_pdf_box_attrs();
-          } else {
-            return !!get_selection_box_coordinates();
-          }
-        })();
+        var selection_exists = !!window.annotation_manager.getSelection(false);
         $(document).contextmenu("enableEntry", "new_annotation", selection_exists);
         $(document).contextmenu("enableEntry", "common_annotations", selection_exists);
         $(document).contextmenu("enableEntry", "copy", selection_exists);
