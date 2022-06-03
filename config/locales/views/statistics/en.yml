@@ -1,12 +1,12 @@
 ---
 en:
-  assignment_distribution: Assignment Grades Distribution
   assignment_summary: 'Summary: %{short_id}'
   assignments_graded: Number of submissions graded
   assignments_submitted: Number of submissions collected
   average: Average
   class_average: Class average
   class_median: Class median
+  grade_distribution: Grades Distribution
   grader_distribution: Grader Distribution
   median: Median
   num_entries: Number of entries

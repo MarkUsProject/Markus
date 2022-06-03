@@ -138,7 +138,7 @@ export class AssignmentChart extends React.Component {
     const assignment_graph = (
       <React.Fragment>
         <div>
-          <h3>{I18n.t("assignment_distribution")}</h3>
+          <h3>{I18n.t("grade_distribution")}</h3>
           <div className={this.props.is_expanded ? "" : "flex-row"}>
             <div>
               <Bar
