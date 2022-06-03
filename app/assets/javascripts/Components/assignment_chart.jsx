@@ -177,19 +177,21 @@ export class AssignmentChart extends React.Component {
       return (
         <React.Fragment>
           {assignment_graph}
-          <h3>{I18n.t("grader_distribution")}</h3>
-          <h4>
-            (
-            <a
-              href={Routes.course_assignment_graders_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("graders.actions.assign_grader")}
-            </a>
-            )
-          </h4>
+          <div className="distribution-graph">
+            <h3>{I18n.t("grader_distribution")}</h3>
+            <h4>
+              (
+              <a
+                href={Routes.course_assignment_graders_path(
+                  this.props.course_id,
+                  this.props.assessment_id
+                )}
+              >
+                {I18n.t("graders.actions.assign_grader")}
+              </a>
+              )
+            </h4>
+          </div>
         </React.Fragment>
       );
     }
