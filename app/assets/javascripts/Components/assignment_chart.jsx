@@ -155,7 +155,7 @@ export class AssignmentChart extends React.Component {
       </React.Fragment>
     );
 
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0 || this.props.is_expanded) {
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
       return (
         <React.Fragment>
           {assignment_graph}
