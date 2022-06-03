@@ -1517,4 +1517,84 @@ describe Grouping do
       end
     end
   end
+  describe '#get_next_group as instructor' do
+    let(:role) { create :instructor }
+    let(:assignment) { create :assignment }
+    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    it 'should let one navigate right if there is a result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, false)
+      expect(new_grouping.group_id).to be(groupings.last.group_id)
+    end
+    it 'should let one navigate left if there is a result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, true)
+      expect(new_grouping.group_id).to be(groupings.first.group_id)
+    end
+    it 'should not one navigate right if there is no result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, false)
+      expect(new_grouping).to be(nil)
+    end
+    it 'should not let one navigate left if there is no result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, true)
+      expect(new_grouping).to be(nil)
+    end
+    describe 'with collected results separated by an uncollected results' do
+      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
+      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      it 'should let me navigate to the right if any result exists towards the right' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.first.get_next_grouping(role, false)
+        expect(new_grouping.group_id).to be(groupings.last.group_id)
+      end
+      it 'should let one navigate left if there is a result directly to the left' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.last.get_next_grouping(role, true)
+        expect(new_grouping.group_id).to be(groupings.first.group_id)
+      end
+    end
+  end
+  describe '#get_next_group as ta' do
+    let(:assignment) { create :assignment }
+    let(:role) { create :ta, groupings: assignment.groupings }
+    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    it 'should let one navigate right if there is a result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, false)
+      expect(new_grouping.group_id).to be(groupings.last.group_id)
+    end
+    it 'should let one navigate left if there is a result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, true)
+      expect(new_grouping.group_id).to be(groupings.first.group_id)
+    end
+    it 'should not one navigate right if there is no result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, false)
+      expect(new_grouping).to be(nil)
+    end
+    it 'should not let one navigate left if there is no result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, true)
+      expect(new_grouping).to be(nil)
+    end
+    describe 'with collected results separated by an uncollected results' do
+      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
+      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      it 'should let me navigate to the right if any result exists towards the right' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.first.get_next_grouping(role, false)
+        expect(new_grouping.group_id).to be(groupings.last.group_id)
+      end
+      it 'should let one navigate left if there is a result directly to the left' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.last.get_next_grouping(role, true)
+        expect(new_grouping.group_id).to be(groupings.first.group_id)
+      end
+    end
+  end
 end
