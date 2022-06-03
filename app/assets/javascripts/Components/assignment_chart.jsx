@@ -107,30 +107,6 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const assignment_summary_stats = (
-      <div className="flex-row-expand">
-        <div className="grid-2-col">
-          <span className="summary-stats-label">{I18n.t("average")}</span>
-          <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
-          <span className="summary-stats-label">{I18n.t("median")}</span>
-          <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
-          <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
-          <span>
-            {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
-          </span>
-          <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
-          <span>
-            {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
-          </span>
-          <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-          <span>{this.state.summary.num_fails}</span>
-          <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-          <span>{this.state.summary.num_zeros}</span>
-        </div>
-        {outstanding_remark_request_link}
-      </div>
-    );
-
     const assignment_graph = (
       <React.Fragment>
         <div className="flex-row">
@@ -143,7 +119,27 @@ export class AssignmentChart extends React.Component {
               height="450"
             />
           </div>
-          {assignment_summary_stats}
+          <div className="flex-row-expand">
+            <div className="grid-2-col">
+              <span className="summary-stats-label">{I18n.t("average")}</span>
+              <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
+              <span className="summary-stats-label">{I18n.t("median")}</span>
+              <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
+              <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
+              <span>
+                {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
+              </span>
+              <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
+              <span>
+                {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
+              </span>
+              <span className="summary-stats-label">{I18n.t("num_failed")}</span>
+              <span>{this.state.summary.num_fails}</span>
+              <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
+              <span>{this.state.summary.num_zeros}</span>
+            </div>
+            {outstanding_remark_request_link}
+          </div>
         </div>
       </React.Fragment>
     );
