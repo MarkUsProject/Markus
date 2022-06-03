@@ -19,10 +19,22 @@ class Dashboard extends React.Component {
       return <CourseSummaryChart course_id={this.props.course_id} />;
     } else if (this.state.assessment_type === "Assignment") {
       return (
-        <AssignmentChart
-          course_id={this.props.course_id}
-          assessment_id={this.state.assessment_id}
-        />
+        <React.Fragment>
+          <h2>
+            <a
+              href={Routes.browse_course_assignment_submissions_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {this.state.summary.name}
+            </a>
+          </h2>
+          <AssignmentChart
+            course_id={this.props.course_id}
+            assessment_id={this.state.assessment_id}
+          />
+        </React.Fragment>
       );
     } else if (this.state.assessment_type === "GradeEntryForm") {
       return (

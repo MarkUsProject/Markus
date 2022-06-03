@@ -135,26 +135,10 @@ export class AssignmentChart extends React.Component {
       </div>
     );
 
-    let assignment_graph_header = (
-      <h2>
-        <a
-          href={Routes.browse_course_assignment_submissions_path(
-            this.props.course_id,
-            this.props.assessment_id
-          )}
-        >
-          {this.state.summary.name}
-        </a>
-      </h2>
-    );
-    if (this.props.is_expanded) {
-      assignment_graph_header = <h3>{I18n.t("assignment_distribution")}</h3>;
-    }
-
     const assignment_graph = (
       <React.Fragment>
         <div>
-          {assignment_graph_header}
+          <h3>{I18n.t("assignment_distribution")}</h3>
           <div className={this.props.is_expanded ? "" : "flex-row"}>
             <div>
               <Bar
