@@ -2135,8 +2135,13 @@ describe Assignment do
 
           expect(summary).to_not be_empty
           expect(summary[0]).to_not be_empty
-          expect(summary[0]).to include('Group name', 'User Name', 'Last Name', 'First Name', 'Section', 'ID number',
-                                        'Email')
+          expect(summary[0]).to include(User.human_attribute_name(:group_name),
+                                        User.human_attribute_name(:user_name),
+                                        User.human_attribute_name(:last_name),
+                                        User.human_attribute_name(:first_name),
+                                        User.human_attribute_name(:section_name),
+                                        User.human_attribute_name(:id_number),
+                                        User.human_attribute_name(:email))
         end
       end
     end
