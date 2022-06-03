@@ -9,6 +9,7 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {
       assessment_id: null,
+      assessment_name: null,
       assessment_type: null,
       display_course_summary: false,
     };
@@ -24,10 +25,10 @@ class Dashboard extends React.Component {
             <a
               href={Routes.browse_course_assignment_submissions_path(
                 this.props.course_id,
-                this.props.assessment_id
+                this.state.assessment_id
               )}
             >
-              {this.state.summary.name}
+              {this.state.assessment_name}
             </a>
           </h2>
           <AssignmentChart

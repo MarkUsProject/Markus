@@ -1,26 +1,33 @@
-// Styling for the entire summary statistics page
-.assignment-summary-statistics-layout {
-  display: grid;
-  grid-auto-rows: minmax(30px, auto);
-  grid-row-gap: 30px;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 15px;
+.summary-stats-label {
+  text-align: right;
+}
 
-  // Styling for graph titles on summary stats page
+// Styling for the entire summary statistics page
+.expanded-summary-stats {
+  // Styling for graph titles
   h3 {
     text-align: center;
   }
-}
 
-// Styling for the summary statistics info panel subsection
-.assignment-summary-stats-info {
-  font-size: 1.6vw;
-  margin-left: 30px;
-  margin-top: 10px;
+  .flex-row {
+    margin-bottom: 40px;
+    margin-top: 15px;
+  }
 
-  // Styling specific to labels in info panel
-  .assignment-summary-stat-label {
-    font-size: 1vw;
-    text-align: right;
+  .flex-row-expand {
+    margin-left: 60px;
+  }
+
+  .distribution-graph {
+    width: 50%;
+  }
+
+  span {
+    font-size: x-large;
+    margin-top: 10px;
+  }
+
+  .summary-stats-label {
+    font-size: large;
   }
 }

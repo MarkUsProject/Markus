@@ -103,32 +103,24 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const renderStatLabel = stat_label => {
-      if (this.props.is_expanded) {
-        return <span className="assignment-summary-stat-label">{stat_label}&nbsp;:</span>;
-      } else {
-        return <span>{stat_label}</span>;
-      }
-    };
-
     const assignment_summary_stats = (
-      <div className={this.props.is_expanded ? "assignment-summary-stats-info" : "flex-row-expand"}>
+      <div className="flex-row-expand">
         <div className="grid-2-col">
-          {renderStatLabel(I18n.t("average"))}
+          <span className="summary-stats-label">{I18n.t("average")}</span>
           <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
-          {renderStatLabel(I18n.t("median"))}
+          <span className="summary-stats-label">{I18n.t("median")}</span>
           <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
-          {renderStatLabel(I18n.t("assignments_submitted"))}
+          <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
           <span>
             {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
           </span>
-          {renderStatLabel(I18n.t("assignments_graded"))}
+          <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
           <span>
             {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
           </span>
-          {renderStatLabel(I18n.t("num_failed"))}
+          <span className="summary-stats-label">{I18n.t("num_failed")}</span>
           <span>{this.state.summary.num_fails}</span>
-          {renderStatLabel(I18n.t("num_zeros"))}
+          <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
           <span>{this.state.summary.num_zeros}</span>
         </div>
         {outstanding_remark_request_link}
@@ -137,21 +129,18 @@ export class AssignmentChart extends React.Component {
 
     const assignment_graph = (
       <React.Fragment>
-        <div>
-          <h3>{I18n.t("grade_distribution")}</h3>
-          <div className={this.props.is_expanded ? "" : "flex-row"}>
-            <div>
-              <Bar
-                data={this.state.assignment_grade_distribution.data}
-                options={this.state.assignment_grade_distribution.options}
-                width={this.props.is_expanded ? "" : "500"}
-                height={this.props.is_expanded ? "200vh" : "450"}
-              />
-            </div>
-            {!this.props.is_expanded ? assignment_summary_stats : ""}
+        <div className="flex-row">
+          <div className="distribution-graph">
+            <h3>{I18n.t("grade_distribution")}</h3>
+            <Bar
+              data={this.state.assignment_grade_distribution.data}
+              options={this.state.assignment_grade_distribution.options}
+              width="500"
+              height="450"
+            />
           </div>
+          {assignment_summary_stats}
         </div>
-        {this.props.is_expanded ? assignment_summary_stats : ""}
       </React.Fragment>
     );
 
@@ -159,13 +148,13 @@ export class AssignmentChart extends React.Component {
       return (
         <React.Fragment>
           {assignment_graph}
-          <div>
+          <div className="distribution-graph">
             <h3>{I18n.t("grader_distribution")}</h3>
             <Bar
               data={this.state.ta_grade_distribution.data}
               options={this.state.ta_grade_distribution.options}
-              width={this.props.is_expanded ? "" : "400"}
-              height={this.props.is_expanded ? "200vh" : "350"}
+              width="400"
+              height="350"
             />
             <p>
               <a
