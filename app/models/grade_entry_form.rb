@@ -142,9 +142,7 @@ class GradeEntryForm < Assessment
 
     MarkusCsv.generate(students, headers) do |student|
       total_grade = student['grade_entry_students.total_grade']
-      row = Student::CSV_ORDER.map do |field|
-        student[field]
-      end
+      row = Student::CSV_ORDER.map { |field| student[field] }
       if grade_data.key? student[:user_name]
         student_grades = Array.new(num_items, '')
         grade_data[student[:user_name]].each do |g|
