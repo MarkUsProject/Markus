@@ -82,7 +82,7 @@ export class AssignmentChart extends React.Component {
 
   render() {
     let outstanding_remark_request_link = "";
-    if (this.state.summary.num_outstanding_remark_requests > 0 && !this.props.is_expanded) {
+    if (this.state.summary.num_outstanding_remark_requests > 0) {
       outstanding_remark_request_link = (
         <p>
           <a
