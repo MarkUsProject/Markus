@@ -71,6 +71,10 @@ export class AssignmentChart extends React.Component {
             data: res.ta_data,
           },
         });
+
+        if (typeof this.props.set_assessment_name === "function") {
+          this.props.set_assessment_name(res.summary.name);
+        }
       });
   };
 

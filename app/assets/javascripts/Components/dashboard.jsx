@@ -15,6 +15,8 @@ class Dashboard extends React.Component {
     };
   }
 
+  setAssessmentName = name => this.setState({assessment_name: name});
+
   render() {
     if (this.state.display_course_summary) {
       return <CourseSummaryChart course_id={this.props.course_id} />;
@@ -34,6 +36,7 @@ class Dashboard extends React.Component {
           <AssignmentChart
             course_id={this.props.course_id}
             assessment_id={this.state.assessment_id}
+            set_assessment_name={this.setAssessmentName}
           />
         </React.Fragment>
       );
