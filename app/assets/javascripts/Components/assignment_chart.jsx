@@ -111,21 +111,6 @@ export class AssignmentChart extends React.Component {
       }
     };
 
-    const refresh_stats_link = (
-      <React.Fragment>
-        <span />
-        <a
-          data-remote="true"
-          href={Routes.view_summary_course_assignment_path(
-            this.props.course_id,
-            this.props.assessment_id
-          )}
-        >
-          {I18n.t("refresh")}
-        </a>
-      </React.Fragment>
-    );
-
     const assignment_summary_stats = (
       <div className={this.props.is_expanded ? "assignment-summary-stats-info" : "flex-row-expand"}>
         <div className="grid-2-col">
@@ -145,10 +130,8 @@ export class AssignmentChart extends React.Component {
           <span>{this.state.summary.num_fails}</span>
           {renderStatLabel(I18n.t("num_zeros"))}
           <span>{this.state.summary.num_zeros}</span>
-          {this.props.is_expanded ? refresh_stats_link : ""}
         </div>
         {outstanding_remark_request_link}
-        <p>{!this.props.is_expanded ? refresh_stats_link : ""}</p>
       </div>
     );
 
