@@ -37,13 +37,6 @@
   <% end %>
 <% end %>
 
-<%= render partial: 'results/common/annotations',
-           formats: [:js],
-           locals: {
-             result_id: @result.id,
-             assignment_id: @result.submission.grouping.assignment.id
-           } %>
-
 <!-- Dialogs -->
 <aside class='dialog no-display' id='notes_dialog'></aside>
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>

@@ -694,6 +694,27 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def get_next_grouping(current_role, reversed)
+    if current_role.ta?
+      # Get relevant groupings for a TA
+      groupings = current_role.groupings
+                              .where(assignment: assignment)
+                              .joins(:group)
+                              .order('group_name')
+    else
+      # Get all groupings in an assignment -- typically for an instructor
+      groupings = assignment.groupings.joins(:group).order('group_name')
+    end
+    if !reversed
+      # get next grouping with a result
+      next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
+    else
+      # get previous grouping with a result
+      next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).last
+    end
+    next_grouping
+  end
+
   private
 
   def add_assignment_folder(group_repo)
