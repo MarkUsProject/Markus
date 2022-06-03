@@ -1,33 +1,40 @@
+// Styling for labels in the summary stats chart
 .summary-stats-label {
   text-align: right;
 }
 
-// Styling for the entire summary statistics page
+// Specific styling for the expanded summary statistics page
 .expanded-summary-stats {
   // Styling for graph titles
   h3 {
     text-align: center;
   }
 
+  // Styling for assignment statistics container
   .flex-row {
     margin-bottom: 40px;
     margin-top: 15px;
   }
 
-  .flex-row-expand {
-    margin-left: 60px;
+  // Styling for number statistics layout
+  .grid-2-col {
+    column-gap: 15px;
+    margin-left: 40px;
+    row-gap: 2vw;
   }
 
+  // Styling for distribution bar graph container
   .distribution-graph {
     width: 50%;
   }
 
+  // Specific styling for each item in summary number statistics
   span {
-    font-size: x-large;
-    margin-top: 10px;
+    font-size: 1.6vw;
   }
 
+  // Extra styling for summary stats label
   .summary-stats-label {
-    font-size: large;
+    font-size: 1vw;
   }
 }
