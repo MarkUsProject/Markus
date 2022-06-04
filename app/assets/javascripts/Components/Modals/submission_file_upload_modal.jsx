@@ -7,6 +7,7 @@ class SubmissionFileUploadModal extends React.Component {
     this.state = {
       newFiles: [],
       unzip: false,
+      single_file_name: "",
     };
   }
 
@@ -16,15 +17,23 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newFiles, this.state.unzip);
+    if (this.state.newFiles.length == 1) {
+      this.props.onSubmit(this.state.newFiles, this.state.unzip, this.state.single_file_name);
+    } else {
+      this.props.onSubmit(this.state.newFiles, this.state.unzip);
+    }
   };
 
   handleFileUpload = event => {
-    this.setState({newFiles: event.target.files});
+    this.setState({newFiles: event.target.files, single_file_name: event.target.files[0].name});
   };
 
   toggleUnzip = () => {
     this.setState({unzip: !this.state.unzip});
+  };
+
+  handleNameChange = event => {
+    this.setState({single_file_name: event.target.value});
   };
 
   render() {
@@ -57,6 +66,16 @@ class SubmissionFileUploadModal extends React.Component {
                 onChange={this.handleFileUpload}
               />
             </div>
+            {this.state.newFiles.length == 1 ? (
+              <input
+                value={this.state.single_file_name}
+                type={"text"}
+                name={"filename"}
+                onChange={this.handleNameChange}
+              />
+            ) : (
+              <div></div>
+            )}
             <div className={"modal-container"}>
               <input type="submit" value={I18n.t("save")} />
             </div>

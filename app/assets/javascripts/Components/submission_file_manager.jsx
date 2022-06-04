@@ -87,7 +87,7 @@ class SubmissionFileManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleCreateFiles = (files, unzip) => {
+  handleCreateFiles = (files, unzip, single_file_name = "") => {
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
@@ -95,7 +95,11 @@ class SubmissionFileManager extends React.Component {
       const prefix = this.state.uploadTarget || "";
       this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
-      Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
+      if (files.length == 1) {
+        Array.from(files).forEach(f => data.append("new_files[]", f, single_file_name));
+      } else {
+        Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
+      }
       data.append("path", "/" + prefix); // Server expects path with leading slash (TODO: fix that)
       if (this.props.grouping_id) {
         data.append("grouping_id", this.props.grouping_id);
