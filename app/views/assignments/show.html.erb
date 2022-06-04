@@ -40,6 +40,9 @@
       <% # If student has no group, inform them
          if @grouping.nil? %>
         <p class='notice'>
+          <% if @assignment.submission_rule.type == GracePeriodSubmissionRule && @assignment.group_max > 1%>
+            <%= t('groups.student_interface.no_group_yet') %>
+          <% end %>
           <% if !@assignment.scanned_exam && @assignment.past_collection_date?(@current_role.section) %>
             <%= t('assignments.due_date.final_due_date_passed') %>
           <% end %>
@@ -210,7 +213,7 @@
 
       <h3><%= t('groups.student_interface.group_properties') %></h3>
       <ul>
-        <% if @assignment.section_groups_only && @current_course.sections.any? && @assignment.group_max > 1 %>
+        <% if @assignment.section_groups_only && @current_course.sections.any? && @assignment.group_max == 1 %>
           <li><%= t('groups.student_interface.section_groups_only') %></li>
         <% end %>
 
