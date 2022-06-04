@@ -46,7 +46,4 @@
       <%= @annotation.result.grouping.assignment.get_num_marked(@current_role.instructor? ? nil : @current_role.id) %>
     );
   <% end %>
-
-  hide_all_annotation_content_editors();
-  reloadDOM();
 })();

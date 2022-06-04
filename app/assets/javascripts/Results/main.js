@@ -6,21 +6,16 @@
 //= require syntaxhighlighter
 
 // Source code highlighting
-//= require SourceCodeGlower/AnnotationText
-//= require SourceCodeGlower/AnnotationTextDisplayer
-//= require SourceCodeGlower/AnnotationTextManager
-//= require SourceCodeGlower/SourceCodeLine
-//= require SourceCodeGlower/SourceCodeLineAnnotations
-//= require SourceCodeGlower/SourceCodeLineCollection
-//= require SourceCodeGlower/SourceCodeLineArray
-//= require SourceCodeGlower/SyntaxHighlighter1p5Line
-//= require SourceCodeGlower/SourceCodeLineManager
-//= require SourceCodeGlower/SourceCodeLineFactory
-//= require SourceCodeGlower/SourceCodeAdapter
-//= require SourceCodeGlower/SyntaxHighlighter1p5Adapter
-//= require SourceCodeGlower/ImageAnnotationGrid
-//= require SourceCodeGlower/ImageEventHandler
-//= require SourceCodeGlower/PdfAnnotationManager
+//= require Annotations/globals
+//= require Annotations/annotation_manager
+//= require Annotations/annotation_text
+//= require Annotations/annotation_text_displayer
+//= require Annotations/annotation_text_manager
+//= require Annotations/source_code_line
+//= require Annotations/text_annotation_manager
+//= require Annotations/image_annotation_manager
+//= require Annotations/pdf_annotation_manager
+//= require Annotations/notebook_annotations
 
 // Page-specific Javascript
 //= require Grader/marking

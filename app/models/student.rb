@@ -274,4 +274,8 @@ class Student < Role
     end
     visible
   end
+
+  def section_name
+    self.section&.name
+  end
 end

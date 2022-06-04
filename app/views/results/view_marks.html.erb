@@ -29,13 +29,6 @@
 <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
 <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
 
-<%= render partial: 'results/common/annotations',
-           formats: [:js],
-           locals: {
-             result_id: @result.id,
-             assignment_id: @result.submission.grouping.assignment.id
-           } %>
-
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 

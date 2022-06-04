@@ -315,18 +315,7 @@ class ResultsController < ApplicationController
     grouping = result.submission.grouping
     assignment = grouping.assignment
 
-    if current_role.ta?
-      groupings = current_role.groupings
-                              .where(assignment: assignment)
-                              .joins(:group)
-                              .order('group_name')
-      if params[:direction] == '1'
-        next_grouping = groupings.where('group_name > ?', grouping.group.group_name).first
-      else
-        next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
-      end
-      next_result = next_grouping&.current_result
-    elsif result.is_a_review? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+    if result.is_a_review? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
       assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
       if params[:direction] == '1'
         next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
@@ -335,12 +324,8 @@ class ResultsController < ApplicationController
       end
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
-      groupings = assignment.groupings.joins(:group).order('group_name')
-      if params[:direction] == '1'
-        next_grouping = groupings.where('group_name > ?', grouping.group.group_name).first
-      else
-        next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
-      end
+      reversed = params[:direction] != '1'
+      next_grouping = grouping.get_next_grouping(current_role, reversed)
       next_result = next_grouping&.current_result
     end
 
