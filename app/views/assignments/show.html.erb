@@ -167,7 +167,11 @@
         <% end %>
         <% # Display the URL of this group's repository if applicable
            if allowed_to?(:access_repo?, @grouping) %>
-          <h3><%= t('groups.student_interface.url_group_repository') %></h3>
+          <% if @grouping.student_membership_number > 1 %>
+            <h3><%= t('groups.student_interface.url_group_repository') %></h3>
+          <% else %>
+            <h3><%= t('groups.student_interface.url_repository') %></h3>
+          <% end %>
           <div class='sub_block'>
             HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
             <% if allowed_to?(:view?, with: KeyPairPolicy) %>
