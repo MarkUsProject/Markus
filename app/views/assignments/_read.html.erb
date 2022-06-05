@@ -40,7 +40,7 @@
     <p><%= @assignment.submission_rule.class.human_attribute_name(:description) unless @assignment.is_timed %></p>
 
     <ul>
-      <% if @grouping.nil? %>
+      <% if @grouping.nil? && @assignment.group_max > 1 %>
         <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
       <% elsif !@assignment.is_timed || !@grouping.start_time.nil? %>
         <% acc = 0 %>
@@ -79,8 +79,13 @@
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% unless @grouping.nil? %>
             <li>
-              <%= t('grace_period_submission_rules.group_credits_html',
-                    available_grace_credits: @grouping.available_grace_credits) %>
+              <% if @grouping.student_membership_number > 1 %>
+                <%= t('grace_period_submission_rules.group_credits_html',
+                      available_grace_credits: @grouping.available_grace_credits) %>
+              <% else %>
+                <%= t('grace_period_submission_rules.individual_credits_html',
+                      available_grace_credits: @grouping.available_grace_credits) %>
+              <% end %>
             </li>
           <% end %>
         <% elsif @assignment.submission_rule.type == "PenaltyDecayPeriodSubmissionRule" %>
