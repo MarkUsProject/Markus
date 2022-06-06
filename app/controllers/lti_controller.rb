@@ -104,13 +104,13 @@ class LtiController < ApplicationController
         nil,
         true, # Verify the signature of this token
         algorithms: ['RS256'],
-        iss: 'https://canvas.instructure.com',
+        iss: "#{referrer_uri.scheme}://#{referrer_uri.host}",
         verify_iss: true,
         aud: session[:client_id], # canvas uses client ID as the aud parameter
         verify_aud: true,
         jwks: canvas_jwks
       )
-    rescue JWT::Error
+    rescue JWT::DecodeError
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
       return
     end

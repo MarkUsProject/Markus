@@ -85,7 +85,7 @@ describe LtiController do
       end
     end
     context 'with correct parameters' do
-      let(:jwk_url) { 'http://canvas.instructure.com:443/api/lti/security/jwks' }
+      let(:jwk_url) { 'https://canvas.instructure.com:443/api/lti/security/jwks' }
       let(:payload) do
         { aud: client_id,
           iss: 'https://canvas.instructure.com',
