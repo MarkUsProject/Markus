@@ -1,10 +1,12 @@
 ---
 en:
+  assignment_summary: 'Summary: %{short_id}'
   assignments_graded: Number of submissions graded
   assignments_submitted: Number of submissions collected
   average: Average
   class_average: Class average
   class_median: Class median
+  grade_distribution: Grades Distribution
   grader_distribution: Grader Distribution
   median: Median
   num_entries: Number of entries
@@ -13,3 +15,5 @@ en:
   outstanding_remark_request:
     one: "%{count} outstanding remark request"
     other: "%{count} outstanding remark requests"
+  summary_statistics: Summary Statistics
+  summary_table: Summary Table

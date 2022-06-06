@@ -14,6 +14,7 @@
 @import 'react_tabs';
 @import 'courses';
 @import 'url_viewer';
+@import 'statistics';
 
 /** Main */
 
@@ -1107,9 +1108,14 @@ nav {
 .annotation-holder-active {
   background: $annotation-holder;
   border: 3px solid $severe-error;
+  cursor: crosshair;
   opacity: 0.5;
   position: absolute;
   z-index: 1;
+}
+
+.enable-annotations {
+  cursor: crosshair;
 }
 
 #image_container {

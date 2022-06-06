@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.2'
+gem 'rails', '~> 7.0.3'
 gem 'sprockets'
 gem 'sprockets-rails'
 

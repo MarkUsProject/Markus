@@ -66,7 +66,6 @@ describe SubmissionsController do
                            membership_status: 'inviter',
                            grouping: @grouping)
       @student = @membership.role
-      request.env['HTTP_REFERER'] = 'back'
     end
 
     it 'should be rejected if it is a scanned assignment' do
@@ -1078,7 +1077,6 @@ describe SubmissionsController do
         )
       end
 
-      request.env['HTTP_REFERER'] = 'back'
       get_as @instructor,
              :downloads,
              params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id }
@@ -1099,7 +1097,6 @@ describe SubmissionsController do
           repo.get_latest_revision
         )
       end
-      request.env['HTTP_REFERER'] = 'back'
       get_as @instructor,
              :downloads,
              params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
