@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_21_024317) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -353,6 +353,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_21_024317) do
     t.index ["criterion_id"], name: "index_levels_on_criterion_id"
   end
 
+  create_table "ltis", force: :cascade do |t|
+    t.string "client_id"
+    t.string "deployment_id"
+    t.string "host"
+    t.bigint "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_ltis_on_course_id"
+  end
+
   create_table "marking_schemes", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil
@@ -651,6 +661,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_21_024317) do
     t.string "locale", default: "en", null: false
     t.integer "theme", default: 1, null: false
     t.string "time_zone", null: false
+    t.string "lti_id"
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end

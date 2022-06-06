@@ -17,7 +17,9 @@ en:
   good: Good!
   help: Help
   lti:
+    config_error: Error configuring LTI.
     launch: Launch MarkUs
+    select_course: Please select the course that matches %{course_name}.
   markus: MarkUs
   not_applicable: N/A
   or: Or

@@ -86,6 +86,8 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
     autoprefixer-rails (10.4.2.0)
       execjs (~> 2)
@@ -124,6 +126,8 @@ GEM
       dry-validation (~> 1.0, >= 1.0.0)
     cookies_eu (1.7.8)
       js_cookie_rails (~> 2.2.0)
+    crack (0.4.5)
+      rexml
     crass (1.0.6)
     debug_inspector (1.0.0)
     deep_merge (1.2.2)
@@ -186,6 +190,7 @@ GEM
       ruby-progressbar (~> 1.4)
     globalid (1.0.0)
       activesupport (>= 5.0)
+    hashdiff (1.0.1)
     highline (2.0.3)
     histogram (0.2.4.1)
     html_tokenizer (0.0.7)
@@ -211,6 +216,7 @@ GEM
     jsbundling-rails (1.0.2)
       railties (>= 6.0.0)
     json (2.6.2)
+    jwt (2.3.0)
     kgio (2.11.4)
     libv8 (8.4.255.0)
     loofah (2.18.0)
@@ -265,6 +271,7 @@ GEM
       rqrcode (>= 1.0.0)
     psych (4.0.3)
       stringio
+    public_suffix (4.0.7)
     puma (5.6.4)
       nio4r (~> 2.0)
     raabro (1.4.0)
@@ -446,6 +453,10 @@ GEM
       kgio (~> 2.6)
       raindrops (~> 0.7)
     uniform_notifier (1.14.2)
+    webmock (3.14.0)
+      addressable (>= 2.8.0)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -485,6 +496,7 @@ DEPENDENCIES
   js-routes
   jsbundling-rails
   json
+  jwt
   libv8
   machinist (< 3)
   mini_mime
@@ -524,6 +536,7 @@ DEPENDENCIES
   time-warp
   uglifier
   unicorn
+  webmock
   zxing_cpp
 
 BUNDLED WITH
