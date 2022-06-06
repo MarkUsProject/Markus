@@ -84,11 +84,9 @@ class GitRepository < Repository::AbstractRepository
       server_hooks.each do |hook_symbol, hook_script|
         FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
       end
-      # rubocop:disable Style/StringConcatenation
       max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size' + course.name
       unless File.exist?(max_file_size_file)
         max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size' + '.default'
-        # rubocop:enable Style/StringConcatenation
       end
       FileUtils.ln_s(max_file_size_file, File.join(barepath, 'hooks', 'max_file_size'))
 
