@@ -543,7 +543,6 @@ class AssignmentsController < ApplicationController
   # Downloads a zip file containing all the information and settings about an assignment
   def download_config_files
     assignment = record
-    child_assignment = Assignment.find_by(parent_assessment_id: params[:id])
 
     zip_name = "#{assignment.short_identifier}-config-files.zip"
     zip_path = File.join('tmp', zip_name)
@@ -569,22 +568,6 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
         f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
       end
-      unless child_assignment.nil?
-        zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
-          f.write(child_assignment.assignment_properties_config.to_yaml)
-        end
-        zipfile.get_output_stream(CONFIG_FILES[:peer_review_criteria]) do |f|
-          yml_criteria = child_assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
-          f.write yml_criteria.to_yaml
-        end
-        zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
-          f.write annotation_categories_to_yml(child_assignment.annotation_categories)
-        end
-        child_assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:peer_review_starter_files])
-        zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
-          f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
-        end
-      end
     end
     send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
   end
@@ -604,20 +587,6 @@ class AssignmentsController < ApplicationController
         tag_prop = build_hash_from_zip(zipfile, :tags)
         criteria_prop = build_hash_from_zip(zipfile, :criteria)
         annotations_prop = build_hash_from_zip(zipfile, :annotations)
-        # Build peer review assignment if it exists
-        child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
-        unless child_prop_file.nil?
-          child_assignment = build_uploaded_assignment(child_prop_file, assignment)
-          child_assignment.save!
-          child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
-          Tag.from_yml(child_tag_prop, current_course, child_assignment.id, allow_ta_upload: true)
-          child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
-          upload_criteria_from_yaml(child_assignment, child_criteria_prop)
-          child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
-          upload_annotations_from_yaml(child_annotations_prop, child_assignment)
-          config_starter_files(child_assignment, zipfile)
-          child_assignment.save!
-        end
         assignment.save!
         Tag.from_yml(tag_prop, current_course, assignment.id, allow_ta_upload: true)
         upload_criteria_from_yaml(assignment, criteria_prop)
