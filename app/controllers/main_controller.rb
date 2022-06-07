@@ -30,7 +30,7 @@ class MainController < ApplicationController
           # Redirect to course picker page
           redirect_to lti_choose_course_path
         else
-          redirect_to course_assignments_path(lti_instance.course)
+          redirect_to course_path(lti_instance.course)
         end
         return
       end
@@ -81,7 +81,7 @@ class MainController < ApplicationController
         # Redirect to course picker page
         redirect_to lti_choose_course_path
       else
-        redirect_to courses_path(lti_instance.course)
+        redirect_to course_path(lti_instance.course)
       end
       return
     end

@@ -124,4 +124,24 @@ describe LtiController do
       end
     end
   end
+  describe '#choose_course', :choose_course do
+    let!(:course) { create :course }
+    let(:instructor) { create :instructor, course: course }
+    let!(:lti) { create :lti }
+
+    before :each do
+      session[:lti_client_id] = lti.id
+    end
+    context 'when picking a course' do
+      it 'redirects to a course on success' do
+        post_as instructor, :choose_course, params: { course: course.id }
+        expect(response).to redirect_to course_path(course)
+      end
+      it 'updates the course on the lti object' do
+        post_as instructor, :choose_course, params: { course: course.id }
+        lti.reload
+        expect(lti.course).to eq(course)
+      end
+    end
+  end
 end
