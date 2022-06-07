@@ -66,7 +66,6 @@ en:
     select_a_student: Select a student
     select_only_one_group: You may only assign each student to one group.
     student_interface:
-      assignment_information: Assignment information
       confirm_create_group: This action will decline your pending invitations. Are you sure?
       confirm_delete_group: 'WARNING: You will lose access to your submitted files after deleting your group. Make sure you have a local copy of your files before clicking OK.'
       create_individual_folder_on_start: A submission folder will be created for you upon starting the assessment

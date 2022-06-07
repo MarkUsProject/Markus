@@ -151,6 +151,27 @@
       <% end %>
     <% end %>
 <% end %>
+<% # Display the URL of this group's repository if applicable
+   if allowed_to?(:access_repo?, @grouping) %>
+  <% if @grouping.student_membership_number > 1 %>
+    <h3><%= t('groups.student_interface.url_group_repository') %></h3>
+  <% else %>
+    <h3><%= t('groups.student_interface.url_repository') %></h3>
+  <% end %>
+  <div class='sub_block'>
+    HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
+    <% if allowed_to?(:view?, with: KeyPairPolicy) %>
+      <br/>
+      SSH: <a href='#'><%= @grouping.group.repository_ssh_access_url %></a>
+    <% end %>
+  </div>
+<% end %>
+<% if @assignment.group_max == 1 %>
+    <h3><%= t('groups.student_interface.group_properties') %></h3>
+    <ul>
+      <li><%= t('groups.student_interface.students_work_alone') %></li>
+    </ul>
+<% end %>
 <% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
   <% if allowed_to?(:download_starter_file?, @grouping) %>
     <h3><%= I18n.t('assignments.starter_file.title') %></h3>
