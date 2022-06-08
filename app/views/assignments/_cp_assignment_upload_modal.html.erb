@@ -16,23 +16,6 @@
   <%= form_tag upload_config_files_course_assignments_path(@current_course),
                { multipart: true } do %>
 
-    <div>
-      <div class="inline-labels">
-        <label>Is Peer Review</label>
-        <%= check_box_tag('is_peer_review', value: nil, checked: false) %>
-      </div>
-      <div id='upload-parent-assignment-select-dropdown' class="inline-labels">
-        <label>Source Assignment</label>
-        <%= select_tag :parent_assessment_id,
-                       options_from_collection_for_select(
-                         @current_course.assignments.where(parent_assignment: nil),
-                         'id',
-                         'short_identifier'
-                       ),
-                       { include_blank: false } %>
-      </div>
-    </div>
-
     <%= file_field_tag 'upload_files_for_config', required: true, accept: '.zip' %>
 
     <section class='dialog-actions'>
