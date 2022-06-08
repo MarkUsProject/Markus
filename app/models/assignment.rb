@@ -1183,7 +1183,7 @@ class Assignment < Assessment
   # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
   def assignment_properties_config
     # Data to avoid including
-    exclude = %w[id created_at updated_at outstanding_remark_request_count repository_folder]
+    exclude = %w[id created_at updated_at outstanding_remark_request_count repository_folder has_peer_review]
     should_reject = ->(attr) { attr.end_with?('_id', '_created_at', '_updated_at') }
     # Helper lambda functions for filtering attributes
     filter_attr = ->(attributes) { attributes.except(*exclude).reject { |attr| should_reject.call(attr) } }
@@ -1192,6 +1192,7 @@ class Assignment < Assessment
     end
     # Build properties
     properties = self.attributes.except(*exclude).reject { |attr| should_reject.call(attr) || attr == 'type' }
+    properties['parent_assessment_short_identifier'] = self.parent_assignment.short_identifier if self.is_peer_review?
     properties['assignment_properties_attributes'] = filter_attr.call(self.assignment_properties.attributes)
     properties['assignment_files_attributes'] = filter_table.call(self.assignment_files, AssignmentFile)
     properties['submission_rule_attributes'] = filter_attr.call(self.submission_rule.attributes)

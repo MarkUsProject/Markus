@@ -20,14 +20,7 @@ class AssignmentsController < ApplicationController
     annotations: 'annotations.yml',
     automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
     automated_tests: File.join('automated-test-config-files', 'automated-test-specs.json'),
-    starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
-    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
-    peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
-    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
-    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml'),
-    peer_review_starter_files: File.join('peer-review-config-files',
-                                         'starter-file-config-files',
-                                         'starter-file-rules.yml')
+    starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -560,7 +553,7 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write annotation_categories_to_yml(assignment.annotation_categories)
       end
-      unless assignment.scanned_exam
+      unless assignment.scanned_exam || assignment.is_peer_review?
         assignment.automated_test_config_to_zip(zipfile, CONFIG_FILES[:automated_tests_dir_entry],
                                                 CONFIG_FILES[:automated_tests])
       end
@@ -591,7 +584,7 @@ class AssignmentsController < ApplicationController
         Tag.from_yml(tag_prop, current_course, assignment.id, allow_ta_upload: true)
         upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
-        config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
+        config_automated_tests(assignment, zipfile) unless assignment.scanned_exam || assignment.is_peer_review?
         config_starter_files(assignment, zipfile)
         assignment.save!
         redirect_to edit_course_assignment_path(current_course, assignment)
@@ -632,8 +625,7 @@ class AssignmentsController < ApplicationController
 
   # Configures the starter files for an +assignment+ provided in the +zip_file+
   def config_starter_files(assignment, zip_file)
-    starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
-    starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
+    starter_file_settings = build_hash_from_zip(zip_file, :starter_files).symbolize_keys
     starter_group_mappings = {}
     starter_file_settings[:starter_file_groups].each do |group|
       group = group.symbolize_keys
@@ -647,10 +639,10 @@ class AssignmentsController < ApplicationController
     if !default_name.nil? && starter_group_mappings.key?(default_name)
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
-    zip_starter_dir = File.dirname(CONFIG_FILES[starter_config_file])
+    zip_starter_dir = File.dirname(CONFIG_FILES[:starter_files])
     starter_file_glob_pattern = File.join(zip_starter_dir, '**', '*')
     zip_file.glob(starter_file_glob_pattern) do |entry|
-      next if entry.name == CONFIG_FILES[starter_config_file]
+      next if entry.name == CONFIG_FILES[:starter_files]
       # Set working directory to the location of all the starter file content, then find
       # directory for a starter group and add the file found in that directory to group
       zip_file_path = Pathname.new(entry.name)
@@ -677,7 +669,7 @@ class AssignmentsController < ApplicationController
     yaml_file = zip_file.get_entry(CONFIG_FILES[hash_to_build])
     yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content)
-    if [:tags, :peer_review_tags].include?(hash_to_build)
+    if hash_to_build == :tags
       properties.each { |row| row[:user] = current_role.user_name }
     end
     properties
@@ -686,17 +678,20 @@ class AssignmentsController < ApplicationController
   # Builds an uploaded assignment/peer review assignment from its properties file
   # Precondition: prop_file must be a Zip::Entry object
   #               If +parent_assignment+ is not nil, this is a peer review assignment.
-  def build_uploaded_assignment(prop_file, parent_assignment = nil)
+  def build_uploaded_assignment(prop_file)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
-    if parent_assignment.nil?
+    if properties[:parent_assessment_short_identifier].blank?
       assignment = current_course.assignments.new(properties)
     else
       # Filter properties not supported by peer review assignments, then build assignment
-      peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
+      peer_review_properties = properties.except(:parent_assessment_short_identifier,
+                                                 :submission_rule_attributes,
+                                                 :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
       assignment.enable_test = false
-      assignment.parent_assignment = parent_assignment
+      assignment.parent_assignment =
+        current_course.assignments.find_by(short_identifier: properties[:parent_assessment_short_identifier])
     end
     assignment.repository_folder = assignment.short_identifier
     assignment
