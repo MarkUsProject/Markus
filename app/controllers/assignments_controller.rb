@@ -681,7 +681,8 @@ class AssignmentsController < ApplicationController
   def build_uploaded_assignment(prop_file)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
-    if properties[:parent_assessment_short_identifier].blank?
+    parent_short_id = properties[:parent_assessment_short_identifier]
+    if parent_short_id.blank?
       assignment = current_course.assignments.new(properties)
     else
       # Filter properties not supported by peer review assignments, then build assignment
@@ -690,8 +691,9 @@ class AssignmentsController < ApplicationController
                                                  :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
       assignment.enable_test = false
-      assignment.parent_assignment =
-        current_course.assignments.find_by(short_identifier: properties[:parent_assessment_short_identifier])
+      parent_assignment = current_course.assignments.find_by(short_identifier: parent_short_id)
+      raise "Cannot find the source assignment #{parent_short_id}" if parent_assignment.nil?
+      assignment.parent_assignment = parent_assignment
     end
     assignment.repository_folder = assignment.short_identifier
     assignment
