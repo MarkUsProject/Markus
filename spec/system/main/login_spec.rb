@@ -15,7 +15,7 @@ describe 'logging in', type: :system do
   end
 
   before do
-    driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
+    driven_by :selenium, using: :headless_chrome, screen_size: [700, 700],
                          options: {
                            browser: :remote,
                            url: 'http://host.docker.internal:9515'
