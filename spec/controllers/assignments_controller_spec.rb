@@ -1583,6 +1583,19 @@ describe AssignmentsController do
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
         expect(uploaded_assignment.tags.count).to eq(2)
       end
+
+      it 'does not automatically configure a peer review assignment' do
+        subject
+        expected_peer_review_data = {
+          uploaded_child_assignment: nil,
+          uploaded_assignment_has_peer_review: false
+        }
+        recieved_peer_review_data = {
+          uploaded_child_assignment: Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review'),
+          uploaded_assignment_has_peer_review: Assignment.find_by(short_identifier: 'mtt_ex_1').has_peer_review
+        }
+        expect(recieved_peer_review_data).to eq(expected_peer_review_data)
+      end
     end
 
     # Check to ensure appropriate access is given
