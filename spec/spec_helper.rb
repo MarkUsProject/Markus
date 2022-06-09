@@ -116,21 +116,20 @@ RSpec.configure do |config|
                                                    param_encoder: ->(params) { params },
                                                    response_parser: ->(body) { CSV.parse(body) }
 
-  options = Selenium::WebDriver::Chrome::Options.new
-  options.add_preference(:download, prompt_for_download: false, default_directory: '/tmp/downloads')
-  options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
-
   Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+    Capybara::Selenium::Driver.new(app, browser: :chrome)
   end
 
   Capybara.register_driver :headless_chrome do |app|
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--window-size=1280,800')
-    options.add_argument('--no-sandbox')
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+      chromeOptions: {
+        args: %w[no-sandbox headless disable-gpu window-size=1280,800]
+      }
+    )
 
-    Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+    Capybara::Selenium::Driver.new app,
+                                   browser: :chrome,
+                                   desired_capabilities: capabilities
   end
 
   Capybara.javascript_driver = :headless_chrome
