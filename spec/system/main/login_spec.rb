@@ -18,7 +18,7 @@ describe 'logging in', type: :system do
     driven_by :selenium, using: :headless_chrome, screen_size: [700, 700],
                          options: {
                            browser: :remote,
-                           url: 'http://host.docker.internal:9515'
+                           url: 'http://host.docker.internal:9515/wd/hub'
                          }
   end
 
