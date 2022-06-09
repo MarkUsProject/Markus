@@ -90,7 +90,7 @@ jobs:
       - name: Set up chromedriver
         uses: nanasess/setup-chromedriver@v1
       - name: Configure chromedriver
-        run: chromedriver --whitelisted-ips --allowed-origins=''*
+        run: chromedriver --url-base=/wd/hub --whitelisted-ips --allowed-origins=''*
       - name: Run rspec tests
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)
