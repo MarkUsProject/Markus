@@ -18,7 +18,7 @@ describe 'logging in', type: :system do
     driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
-                           url: 'http://localhost:9515'
+                           url: 'http://localhost:9515/wd/hub'
                          }
   end
 
