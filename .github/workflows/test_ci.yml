@@ -84,9 +84,9 @@ jobs:
       - name: Set up database
         run: bundle exec rails db:migrate
       - name: 'Setup Chromedriver'
-      - uses: nanasess/setup-chromedriver@v1
+        uses: nanasess/setup-chromedriver@v1
       - name: 'Run Chromedriver'
-      - run: |
+        run: |
           export DISPLAY=:99
           chromedriver --url-base=/wd/hub &
       - name: Run rspec tests
