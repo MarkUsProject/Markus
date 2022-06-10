@@ -44,8 +44,8 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 Capybara.configure do |config|
-  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST')
-  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT')
+  config.server_host = '0.0.0.0'
+  config.server_port = '3434'
   config.default_max_wait_time = 30
   config.server = :puma
 end
