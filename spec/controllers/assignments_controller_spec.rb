@@ -1645,11 +1645,11 @@ describe AssignmentsController do
           uploaded_child_assignment: nil,
           uploaded_assignment_has_peer_review: false
         }
-        recieved_peer_review_data = {
+        received_peer_review_data = {
           uploaded_child_assignment: Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review'),
           uploaded_assignment_has_peer_review: Assignment.find_by(short_identifier: 'mtt_ex_1').has_peer_review
         }
-        expect(recieved_peer_review_data).to eq(expected_peer_review_data)
+        expect(received_peer_review_data).to eq(expected_peer_review_data)
       end
     end
 
