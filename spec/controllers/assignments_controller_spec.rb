@@ -1289,7 +1289,11 @@ describe AssignmentsController do
     let!(:criteria) { create :checkbox_criterion, assignment: assignment, name: 'Optimal' }
     let!(:annotation) { create :annotation_category, assignment: assignment }
     let!(:starter_files) { create :starter_file_group_with_entries, assignment: assignment }
-    subject { get_as user, :download_config_files, params: { id: assignment.id, course_id: assignment.course.id } }
+    subject do
+      get_as user, :download_config_files,
+             params: { id: downloaded_assignment.id, course_id: downloaded_assignment.course.id }
+    end
+    let(:downloaded_assignment) { assignment }
 
     before :each do
       create_automated_test(assignment)
@@ -1318,7 +1322,7 @@ describe AssignmentsController do
       end
 
       # Check file content
-      describe 'downloaded zip file' do
+      describe 'downloading a normal assignment' do
         it 'should have a valid properties file' do
           subject
           properties = read_file_from_zip(response.body, 'properties.yml')
@@ -1332,6 +1336,13 @@ describe AssignmentsController do
                                         assignment_properties_attributes: a_kind_of(Hash),
                                         submission_rule_attributes: a_kind_of(Hash),
                                         assignment_files_attributes: a_kind_of(Array))
+        end
+
+        it 'should not have peer review information' do
+          subject
+          properties = read_file_from_zip(response.body, 'properties.yml')
+          properties = properties.deep_symbolize_keys
+          expect(properties).not_to include(:has_peer_review, :parent_assessment_short_identifier)
         end
 
         it 'should have a valid criteria file' do
@@ -1394,6 +1405,50 @@ describe AssignmentsController do
           tags = tags.map(&:symbolize_keys)
           expect(tags).to match_array([{ name: tag1.name, description: tag1.description },
                                        { name: tag2.name, description: tag2.description }])
+        end
+      end
+
+      describe 'downloading a peer review zip file' do
+        let(:downloaded_assignment) { Assignment.find_by(parent_assessment_id: assignment.id) }
+        it 'should contain a peer review tags file' do
+          subject
+          tags = read_file_from_zip(response.body, File.join('tags.yml'))
+          expect(tags).to be_a(Array)
+        end
+
+        it 'should have a valid peer review properties file' do
+          subject
+          properties = read_file_from_zip(response.body, File.join('properties.yml'))
+          properties = properties.deep_symbolize_keys
+          peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
+          expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
+                                        description: peer_review_assignment.description,
+                                        due_date: peer_review_assignment.due_date,
+                                        message: peer_review_assignment.message,
+                                        is_hidden: peer_review_assignment.is_hidden,
+                                        show_total: peer_review_assignment.show_total,
+                                        assignment_properties_attributes: a_kind_of(Hash),
+                                        parent_assessment_short_identifier: assignment.short_identifier)
+        end
+
+        it 'should contain a peer review criteria file' do
+          subject
+          criteria = read_file_from_zip(response.body, File.join('criteria.yml'))
+          expect(criteria).to be_a(Hash)
+        end
+
+        it 'should contain a peer review annotations file' do
+          subject
+          annotations = read_file_from_zip(response.body, File.join('annotations.yml'))
+          expect(annotations).to be_a(Hash)
+        end
+
+        it 'should contain a peer review starter file settings file' do
+          subject
+          starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
+                                                                              'starter-file-rules.yml'))
+          starter_file_settings = starter_file_settings.deep_symbolize_keys
+          expect(starter_file_settings).to include(:default_starter_file_group, :starter_file_groups)
         end
       end
     end
