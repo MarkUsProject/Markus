@@ -34,8 +34,6 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
-      CAPYBARA_SERVER_PORT: ${CAPYBARA_SERVER_PORT:-3434}
-      CAPYBARA_SERVER_HOST: ${CAPYBARA_SERVER_HOST:-0.0.0.0}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -83,14 +81,13 @@ jobs:
           bundle exec rake javascript:build
       - name: Set up database
         run: bundle exec rails db:migrate
-      - name: Set up chrome
-        uses: browser-actions/setup-chrome@latest
-      - name: Run chrome
-        run: chrome --version
-      - name: Set up chromedriver
+      - name: 'Setup Chromedriver'
         uses: nanasess/setup-chromedriver@v1
-      - name: Configure chromedriver
-        run: chromedriver --whitelisted-ips --allowed-origins=''*
+      - name: 'Run Chromedriver'
+        run: |
+          google-chrome --version
+          export DISPLAY=:99
+          chromedriver --whitelisted-ips --allowed-origins=''* &
       - name: Run rspec tests
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)

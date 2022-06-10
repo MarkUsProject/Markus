@@ -43,6 +43,13 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 
+Capybara.configure do |config|
+  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST') { '0.0.0.0' }
+  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT') { '3434' }
+  config.default_max_wait_time = 30
+  config.server = :puma
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -82,6 +89,21 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Configure the selenium webdriver for system tests
+  config.before type: :system do
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+
+    driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400],
+                         options: {
+                           browser: :remote,
+                           url: 'http://localhost:9515',
+                           capabilities: [options]
+                         }
+  end
+
   config.after :each do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
     FactoryBot.rewind_sequences
@@ -115,29 +137,4 @@ RSpec.configure do |config|
   ActionDispatch::IntegrationTest.register_encoder :csv,
                                                    param_encoder: ->(params) { params },
                                                    response_parser: ->(body) { CSV.parse(body) }
-
-  Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, browser: :chrome)
-  end
-
-  Capybara.register_driver :headless_chrome do |app|
-    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-      chromeOptions: {
-        args: %w[no-sandbox headless disable-gpu window-size=1280,800]
-      }
-    )
-
-    Capybara::Selenium::Driver.new app,
-                                   browser: :chrome,
-                                   desired_capabilities: capabilities
-  end
-
-  Capybara.javascript_driver = :headless_chrome
-end
-
-Capybara.configure do |config|
-  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST')
-  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT')
-  config.default_max_wait_time = 30
-  config.server = :puma
 end
