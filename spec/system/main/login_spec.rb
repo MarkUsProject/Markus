@@ -15,10 +15,16 @@ describe 'logging in', type: :system do
   end
 
   before do
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+
     driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
-                           url: 'http://localhost:9515/wd/hub'
+                           url: 'http://localhost:9515/wd/hub',
+                           desired_capabilities: options
                          }
   end
 
