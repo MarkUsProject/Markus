@@ -99,7 +99,7 @@ RSpec.configure do |config|
     driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
-                           url: ENV.fetch('CHROME_DRIVER_URL') { 'http://host.docker.internal:9515' },
+                           url: ENV.fetch('CHROME_DRIVER_URL'),
                            capabilities: [options]
                          }
   end
