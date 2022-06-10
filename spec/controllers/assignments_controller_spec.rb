@@ -1338,7 +1338,7 @@ describe AssignmentsController do
                                         assignment_files_attributes: a_kind_of(Array))
         end
 
-        it 'should not have peer review information' do
+        it 'should not have peer review information in the properties file' do
           subject
           properties = read_file_from_zip(response.body, 'properties.yml')
           properties = properties.deep_symbolize_keys
@@ -1410,13 +1410,13 @@ describe AssignmentsController do
 
       describe 'downloading a peer review zip file' do
         let(:downloaded_assignment) { Assignment.find_by(parent_assessment_id: assignment.id) }
-        it 'should contain a peer review tags file' do
+        it 'should contain a tags file' do
           subject
           tags = read_file_from_zip(response.body, File.join('tags.yml'))
           expect(tags).to be_a(Array)
         end
 
-        it 'should have a valid peer review properties file' do
+        it 'should have a valid properties file' do
           subject
           properties = read_file_from_zip(response.body, File.join('properties.yml'))
           properties = properties.deep_symbolize_keys
@@ -1431,19 +1431,19 @@ describe AssignmentsController do
                                         parent_assessment_short_identifier: assignment.short_identifier)
         end
 
-        it 'should contain a peer review criteria file' do
+        it 'should contain a criteria file' do
           subject
           criteria = read_file_from_zip(response.body, File.join('criteria.yml'))
           expect(criteria).to be_a(Hash)
         end
 
-        it 'should contain a peer review annotations file' do
+        it 'should contain an annotations file' do
           subject
           annotations = read_file_from_zip(response.body, File.join('annotations.yml'))
           expect(annotations).to be_a(Hash)
         end
 
-        it 'should contain a peer review starter file settings file' do
+        it 'should contain a starter file settings file' do
           subject
           starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
