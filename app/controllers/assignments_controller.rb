@@ -692,7 +692,7 @@ class AssignmentsController < ApplicationController
       assignment = current_course.assignments.new(peer_review_properties)
       assignment.enable_test = false
       parent_assignment = current_course.assignments.find_by(short_identifier: parent_short_id)
-      raise "Cannot find the source assignment #{parent_short_id}" if parent_assignment.nil?
+      raise t('peer_reviews.errors.no_source_assignment', source_assignment: parent_short_id) if parent_assignment.nil?
       assignment.parent_assignment = parent_assignment
     end
     assignment.repository_folder = assignment.short_identifier
