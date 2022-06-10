@@ -89,6 +89,21 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Configure the selenium webdriver for system tests
+  config.before type: :system do
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+
+    driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400],
+                         options: {
+                           browser: :remote,
+                           url: 'http://localhost:9515',
+                           capabilities: [options]
+                         }
+  end
+
   config.after :each do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
     FactoryBot.rewind_sequences
