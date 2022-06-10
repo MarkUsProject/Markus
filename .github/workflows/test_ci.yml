@@ -87,6 +87,7 @@ jobs:
         uses: nanasess/setup-chromedriver@v1
       - name: 'Run Chromedriver'
         run: |
+          google-chrome --version
           export DISPLAY=:99
           chromedriver --url-base=/wd/hub &
       - name: Run rspec tests
