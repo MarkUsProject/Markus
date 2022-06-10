@@ -34,7 +34,6 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
-      CHROME_DRIVER_URL: http://localhost:9515
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
