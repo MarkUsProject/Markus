@@ -14,6 +14,14 @@ describe 'logging in', type: :system do
     click_button(I18n.t('main.log_in'), name: 'commit')
   end
 
+  before do
+    driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
+                         options: {
+                           browser: :remote,
+                           url: 'http://localhost:9515'
+                         }
+  end
+
   context 'Instructor' do
     let(:user_name) { create(:instructor).user_name }
     it 'signs in and redirects to the courses page' do
