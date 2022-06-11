@@ -40,7 +40,8 @@
     <p><%= @assignment.submission_rule.class.human_attribute_name(:description) unless @assignment.is_timed %></p>
 
     <ul>
-      <% if @grouping.nil? && @assignment.group_max > 1 %>
+      <% if @grouping.nil? && @assignment.group_max > 1 &&
+        @assignment.submission_rule.type == GracePeriodSubmissionRule %>
         <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
       <% elsif !@assignment.is_timed || !@grouping.start_time.nil? %>
         <% acc = 0 %>
@@ -154,7 +155,7 @@
 <% if @assignment.group_max == 1 %>
     <h3><%= t('groups.student_interface.group_properties') %></h3>
     <ul>
-      <li><%= t('groups.student_interface.students_work_alone') %></li>
+      <p><%= t('groups.student_interface.students_work_alone') %></p>
     </ul>
 <% end %>
 <% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
@@ -185,11 +186,7 @@
 <% end %>
   <% unless @grouping.nil? %>
     <% if allowed_to?(:access_repo?, @grouping) %>
-      <% if @grouping.student_membership_number > 1 %>
-        <h3><%= t('groups.student_interface.url_group_repository') %></h3>
-      <% else %>
-        <h3><%= t('groups.student_interface.url_repository') %></h3>
-      <% end %>
+      <h3><%= t('groups.student_interface.url_repository') %></h3>
       <div class='sub_block'>
         HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
         <% if allowed_to?(:view?, with: KeyPairPolicy) %>

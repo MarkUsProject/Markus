@@ -69,7 +69,6 @@ en:
       confirm_create_group: This action will decline your pending invitations. Are you sure?
       confirm_delete_group: 'WARNING: You will lose access to your submitted files after deleting your group. Make sure you have a local copy of your files before clicking OK.'
       create_individual_folder_on_start: A submission folder will be created for you upon starting the assessment
-      currently_alone: You currently have no other group members
       form_group: Create a group
       group_information: Group information
       group_options: Group options
@@ -85,7 +84,6 @@ en:
       not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
       section_groups_only: You can only form a group with students in your section.
       students_work_alone: Students work individually.
-      url_group_repository: Group repository URL
       url_repository: Repository URL
       work_alone: Work alone
       working_alone: You have indicated you are working individually on this assignment. If you change your mind and want to create or join a group, first delete your group using the button below.
