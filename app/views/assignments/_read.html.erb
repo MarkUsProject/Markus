@@ -41,7 +41,7 @@
 
     <ul>
       <% if @grouping.nil? && @assignment.group_max > 1 &&
-        @assignment.submission_rule.type == GracePeriodSubmissionRule %>
+        @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
         <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
       <% elsif !@assignment.is_timed || !@grouping.start_time.nil? %>
         <% acc = 0 %>
