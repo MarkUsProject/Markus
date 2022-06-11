@@ -130,7 +130,7 @@
           <% # Display group properties are read only warning
              # when the due date and grace period (if any) have passed.
              if @assignment.past_collection_date?(@current_role.section) && @assignment.student_form_groups &&
-               !@assignment.invalid_override && @assignment.group_max > 1 %>
+               !@assignment.invalid_override %>
             <p class='information'>
               <%= t('groups.student_interface.modification_limited') %>
             </p>
@@ -203,8 +203,7 @@
           <% end %>
 
           <% if @assignment.student_form_groups &&
-            !@assignment.invalid_override &&
-            @assignment.group_max > 1 %>
+            !@assignment.invalid_override %>
             <li><%= Assignment.human_attribute_name(:student_form_groups) %>.</li>
             <li>
               <%= t('groups.student_interface.group_size_html',
