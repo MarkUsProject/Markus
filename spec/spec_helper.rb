@@ -91,12 +91,7 @@ RSpec.configure do |config|
 
   # Configure the selenium webdriver for system tests
   config.before type: :system do
-    options = Selenium::WebDriver::Chrome::Options.new
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-gpu')
-
-    puts(ENV.fetch('CHROMEDRIVER_URL'))
+    options = Selenium::WebDriver::Chrome::Options.new(args: ['--no-sandbox', '--disable-gpu'])
 
     driven_by :selenium, using: :chrome, screen_size: [1400, 1400],
                          options: {
