@@ -88,7 +88,6 @@ jobs:
           google-chrome --version
           export DISPLAY=:99
           chromedriver --whitelisted-ips --allowed-origins=''* &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
       - name: Run rspec tests
         env:
           CHROMEDRIVER_HOST: localhost
