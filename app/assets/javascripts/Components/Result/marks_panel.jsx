@@ -1,5 +1,8 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
+
+import safe_marked from "../../safe_marked";
 
 export class MarksPanel extends React.Component {
   static defaultProps = {
@@ -153,8 +156,12 @@ class CheckboxCriterionInput extends React.Component {
         id={`checkbox_criterion_${this.props.id}`}
         className={`checkbox_criterion ${expandedClass} ${unassignedClass}`}
       >
-        <div data-id={this.props.id}>
-          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+        <div>
+          <div
+            className="criterion-name"
+            id={`checkbox_criterion_${this.props.id}_expand`}
+            onClick={this.props.toggleExpanded}
+          >
             <div
               className={this.props.expanded ? "arrow-up" : "arrow-down"}
               style={{float: "left"}}
@@ -166,6 +173,7 @@ class CheckboxCriterionInput extends React.Component {
               this.props.mark !== null && (
                 <a
                   href="#"
+                  id={`checkbox_criterion_${this.props.id}_destroy`}
                   onClick={e => this.props.destroyMark(e, this.props.id)}
                   style={{float: "right"}}
                 >
@@ -218,6 +226,24 @@ class CheckboxCriterionInput extends React.Component {
     );
   }
 }
+
+CheckboxCriterionInput.propTypes = {
+  id: PropTypes.number.isRequired,
+  max_mark: PropTypes.number,
+  mark: PropTypes.number,
+
+  expanded: PropTypes.bool.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  released_to_students: PropTypes.bool.isRequired,
+
+  oldMark: PropTypes.array,
+
+  description: PropTypes.string.isRequired,
+
+  updateMark: PropTypes.func.isRequired,
+  destroyMark: PropTypes.func.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+};
 
 class FlexibleCriterionInput extends React.Component {
   constructor(props) {
@@ -402,6 +428,30 @@ class FlexibleCriterionInput extends React.Component {
   }
 }
 
+FlexibleCriterionInput.propTypes = {
+  expanded: PropTypes.bool.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  released_to_students: PropTypes.bool.isRequired,
+  bonus: PropTypes.bool,
+  override: PropTypes.bool,
+
+  id: PropTypes.number.isRequired,
+  mark: PropTypes.number.isRequired,
+  max_mark: PropTypes.number,
+
+  description: PropTypes.string.isRequired,
+
+  oldMark: PropTypes.array,
+
+  annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
+
+  findDeductiveAnnotation: PropTypes.func.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+  revertToAutomaticDeductions: PropTypes.func.isRequired,
+  destroyMark: PropTypes.func.isRequired,
+  updateMark: PropTypes.func.isRequired,
+};
+
 class RubricCriterionInput extends React.Component {
   constructor(props) {
     super(props);
@@ -490,3 +540,21 @@ class RubricCriterionInput extends React.Component {
     );
   }
 }
+
+RubricCriterionInput.propTypes = {
+  expanded: PropTypes.bool.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  released_to_students: PropTypes.bool.isRequired,
+  bonus: PropTypes.bool,
+
+  id: PropTypes.number.isRequired,
+  mark: PropTypes.number.isRequired,
+  max_mark: PropTypes.number,
+
+  oldMark: PropTypes.array,
+  levels: PropTypes.array,
+
+  toggleExpanded: PropTypes.func.isRequired,
+  destroyMark: PropTypes.func.isRequired,
+  updateMark: PropTypes.func.isRequired,
+};
