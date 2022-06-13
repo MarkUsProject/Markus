@@ -41,7 +41,11 @@ class SubmissionFileUploadModal extends React.Component {
     if (this.state.newFiles.length == 1) {
       if (this.props.onlyRequiredFiles) {
         fileInput = (
-          <select onChange={this.handleNameChange} value={this.state.single_file_name}>
+          <select
+            className={"select-filename"}
+            onChange={this.handleNameChange}
+            value={this.state.single_file_name}
+          >
             <option key={"select_file"}>Please Select File Name</option>
             {this.props.requiredFiles.map(file => {
               return (
@@ -55,6 +59,7 @@ class SubmissionFileUploadModal extends React.Component {
       } else if (this.props.requiredFiles.length >= 1) {
         fileInput = (
           <input
+            className={"datalist-textbox"}
             list="fileInput_datalist"
             onChange={this.handleNameChange}
             placeholder={"Change File Name"}
@@ -63,6 +68,7 @@ class SubmissionFileUploadModal extends React.Component {
       } else {
         fileInput = (
           <input
+            className={"file-rename-textbox"}
             value={this.state.single_file_name}
             type={"text"}
             name={"filename"}
@@ -104,7 +110,7 @@ class SubmissionFileUploadModal extends React.Component {
               />
             </div>
             {this.state.newFiles.length == 1 ? (
-              <div>
+              <div className={"file-input"}>
                 <datalist id="fileInput_datalist">
                   {this.props.requiredFiles.map(file => {
                     return <option key={file.filename} value={file.filename}></option>;
