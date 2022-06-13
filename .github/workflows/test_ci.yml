@@ -89,6 +89,10 @@ jobs:
           export DISPLAY=:99
           chromedriver --whitelisted-ips --allowed-origins=''* &
       - name: Run rspec tests
+        env:
+          CHROMEDRIVER_URL: http://localhost:9515
+          CAPYBARA_SERVER_HOST: 0.0.0.0
+          CAPYBARA_SERVER_PORT: 3434
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)
         uses: coverallsapp/github-action@1.1.3

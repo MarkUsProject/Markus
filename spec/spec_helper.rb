@@ -44,8 +44,8 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 Capybara.configure do |config|
-  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST') { '0.0.0.0' }
-  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT') { '3434' }
+  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST')
+  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT')
   config.default_max_wait_time = 30
   config.server = :puma
 end
@@ -99,7 +99,7 @@ RSpec.configure do |config|
     driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
-                           url: 'http://localhost:9515',
+                           url: ENV.fetch('CHROMEDRIVER_URL'),
                            capabilities: [options]
                          }
   end
