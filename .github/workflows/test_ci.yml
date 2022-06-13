@@ -34,6 +34,7 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
+      ENABLE_CAPYBARA_TESTING: true
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -89,10 +90,7 @@ jobs:
           export DISPLAY=:99
           chromedriver --whitelisted-ips --allowed-origins=''* &
       - name: Run rspec tests
-        env:
-          CHROMEDRIVER_HOST: localhost
-          ENABLE_CAPYBARA_TESTING: true
-        run: bundle exec rspec ./spec/system
+        run: bundle exec rspec
       - name: Coveralls Parallel (rspec)
         uses: coverallsapp/github-action@1.1.3
         with:

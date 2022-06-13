@@ -96,7 +96,7 @@ RSpec.configure do |config|
     driven_by :selenium, using: browser, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
-                           url: "http://#{ENV.fetch('CHROMEDRIVER_HOST')}:9515",
+                           url: 'http://localhost:9515',
                            capabilities: [
                              Selenium::WebDriver::Chrome::Options.new(args: ['--no-sandbox', '--disable-gpu'])
                            ]
