@@ -96,7 +96,8 @@ module Helpers
     criterion = assignment.criteria.empty? ? nil : assignment.criteria.first
     specs = create_sample_spec_file(criterion)
     new_test_group = assignment.test_groups.create!(
-      name: specs['testers'][0]['test_data'][0]['extra_info']['name']
+      name: specs['testers'][0]['test_data'][0]['extra_info']['name'],
+      position: 1
     )
     specs['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = new_test_group.id
     new_test_group.update!(

@@ -1182,28 +1182,28 @@ describe Grouping do
       end
 
       it 'should return data for the test result' do
-        test_result_data = data[0]['test_data']
+        test_result_data = data[0]['test_results']
         expect(test_result_data.length).to eq 1
-        expect(test_result_data[0]['test_runs.id']).to eq test_run.id
+        expect(data[0]['test_runs.id']).to eq test_run.id
       end
 
       if show_extra
         it 'should show extra info' do
-          expect(data[0]['test_data'][0]['test_group_results.extra_info']).not_to be_nil
+          expect(data[0]['test_results'][0]['test_group_results.extra_info']).not_to be_nil
         end
       else
         it 'should not show extra info' do
-          expect(data[0]['test_data'][0]['test_group_results.extra_info']).to be_nil
+          expect(data[0]['test_results'][0]['test_group_results.extra_info']).to be_nil
         end
       end
 
       if show_output
         it 'should show output data' do
-          expect(data[0]['test_data'][0]['test_results.output']).not_to be_nil
+          expect(data[0]['test_results'][0]['test_results.output']).not_to be_nil
         end
       else
         it 'should not show output data' do
-          expect(data[0]['test_data'][0]['test_results.output']).to be_nil
+          expect(data[0]['test_results'][0]['test_results.output']).to be_nil
         end
       end
 
@@ -1220,7 +1220,7 @@ describe Grouping do
           }
         ]
 
-        expect(data[0]['test_data'][0]['feedback_files']).to eq expected
+        expect(data[0]['test_results'][0]['feedback_files']).to eq expected
       end
     else
       it 'should not return data' do
@@ -1259,7 +1259,7 @@ describe Grouping do
             end
             it 'should only return data from the latest test run' do
               test_group_result2.update(created_at: 1.hour.ago)
-              expect(data.first['test_runs.created_at']).to be_within(0.1).of(test_run.created_at)
+              expect(Time.zone.parse(data.first['test_runs.created_at'])).to be_within(1).of(test_run.created_at)
             end
           end
         end
@@ -1514,6 +1514,86 @@ describe Grouping do
       grouping.group.access_repo { |repo| repo.get_latest_revision.files.clear }
       grouping.access_repo do |repo|
         expect(repo.get_latest_revision.files[0].name).to eq grouping.assignment.repository_folder
+      end
+    end
+  end
+  describe '#get_next_group as instructor' do
+    let(:role) { create :instructor }
+    let(:assignment) { create :assignment }
+    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    it 'should let one navigate right if there is a result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, false)
+      expect(new_grouping.group_id).to be(groupings.last.group_id)
+    end
+    it 'should let one navigate left if there is a result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, true)
+      expect(new_grouping.group_id).to be(groupings.first.group_id)
+    end
+    it 'should not one navigate right if there is no result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, false)
+      expect(new_grouping).to be(nil)
+    end
+    it 'should not let one navigate left if there is no result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, true)
+      expect(new_grouping).to be(nil)
+    end
+    describe 'with collected results separated by an uncollected results' do
+      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
+      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      it 'should let me navigate to the right if any result exists towards the right' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.first.get_next_grouping(role, false)
+        expect(new_grouping.group_id).to be(groupings.last.group_id)
+      end
+      it 'should let one navigate left if there is a result directly to the left' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.last.get_next_grouping(role, true)
+        expect(new_grouping.group_id).to be(groupings.first.group_id)
+      end
+    end
+  end
+  describe '#get_next_group as ta' do
+    let(:assignment) { create :assignment }
+    let(:role) { create :ta, groupings: assignment.groupings }
+    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    it 'should let one navigate right if there is a result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, false)
+      expect(new_grouping.group_id).to be(groupings.last.group_id)
+    end
+    it 'should let one navigate left if there is a result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, true)
+      expect(new_grouping.group_id).to be(groupings.first.group_id)
+    end
+    it 'should not one navigate right if there is no result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, false)
+      expect(new_grouping).to be(nil)
+    end
+    it 'should not let one navigate left if there is no result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, true)
+      expect(new_grouping).to be(nil)
+    end
+    describe 'with collected results separated by an uncollected results' do
+      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
+      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      it 'should let me navigate to the right if any result exists towards the right' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.first.get_next_grouping(role, false)
+        expect(new_grouping.group_id).to be(groupings.last.group_id)
+      end
+      it 'should let one navigate left if there is a result directly to the left' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.last.get_next_grouping(role, true)
+        expect(new_grouping.group_id).to be(groupings.first.group_id)
       end
     end
   end

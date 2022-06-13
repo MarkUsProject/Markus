@@ -17,6 +17,8 @@ class Assignment < Assessment
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates :assignment_properties, presence: true
   after_initialize :create_associations
+  before_save :reset_collection_time
+  after_create :update_parent_assignment, if: :is_peer_review?
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -80,7 +82,6 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  before_save :reset_collection_time
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
     @prev_assignment_file_ids = assignment_files.ids
@@ -679,7 +680,14 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
+    first_row = [Group.human_attribute_name(:group_name)] +
+      Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
+      [Result.human_attribute_name(:total_mark)]
+
+    second_row = [' '] * Student::CSV_ORDER.length + [Assessment.human_attribute_name(:max_mark), self.max_mark]
+
+    headers = [first_row, second_row]
+
     self.ta_criteria.each do |crit|
       headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
       headers[1] << crit.max_mark
@@ -697,7 +705,8 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          row = [s.user_name, g.group.group_name]
+          other_info = Student::CSV_ORDER.map { |field| s.__send__(field) }
+          row = [g.group.group_name] + other_info
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
@@ -868,15 +877,15 @@ class Assignment < Assessment
   end
 
   def create_peer_review_assignment_if_not_exist
-    return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
+    return unless self.has_peer_review && Assignment.where(parent_assessment_id: self.id).empty?
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
     peerreview_assignment.course = self.course
     peerreview_assignment.token_period = 1
     peerreview_assignment.non_regenerating_tokens = false
     peerreview_assignment.unlimited_tokens = false
-    peerreview_assignment.repository_folder = repository_folder
     peerreview_assignment.short_identifier = short_identifier + '_pr'
+    peerreview_assignment.repository_folder = peerreview_assignment.short_identifier
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
     peerreview_assignment.is_hidden = true
@@ -1317,6 +1326,11 @@ class Assignment < Assessment
         visibility_changed?
 
     Repository.get_class.update_permissions
+  end
+
+  # Update parent assignment of a peer review to ensure that it is marked as having a peer review
+  def update_parent_assignment
+    parent_assignment.update(has_peer_review: true)
   end
 
   # Update list of required files in student repositories. Used for git hooks to prevent submitting

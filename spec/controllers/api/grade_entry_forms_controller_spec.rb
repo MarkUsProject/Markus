@@ -160,7 +160,13 @@ describe Api::GradeEntryFormsController do
       context 'requesting an existant grade entry form' do
         before { get :show, params: { id: grade_entry_form.id, course_id: course.id } }
         it 'should download a basic csv' do
-          expect(response.body).to eq "\"\"\nOut Of\n"
+          csv_array = [
+            Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) },
+            [''] * (Student::CSV_ORDER.length - 1) +
+              [GradeEntryItem.human_attribute_name(:out_of)]
+          ]
+          csv_data = MarkusCsv.generate(csv_array, &:itself)
+          expect(response.body).to eq csv_data
         end
         # TODO: add more tests
       end

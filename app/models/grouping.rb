@@ -58,7 +58,8 @@ class Grouping < ApplicationRecord
   has_many :test_runs_all_data,
            -> {
              left_outer_joins(role: :user,
-                              test_group_results: [:test_group, :test_results]).order(created_at: :desc)
+                              test_group_results: [:test_group, :test_results])
+               .order('test_groups.position', 'test_results.position')
            },
            class_name: 'TestRun',
            inverse_of: :grouping
@@ -562,7 +563,7 @@ class Grouping < ApplicationRecord
     if assignment.unlimited_tokens || Time.current < assignment.token_start_date
       self.test_tokens = 0
     else
-      last_student_run = test_runs_students_simple.first
+      last_student_run = test_runs.where(role: accepted_students).first
       if last_student_run.nil?
         self.test_tokens = assignment.tokens_per_period
       else
@@ -591,26 +592,19 @@ class Grouping < ApplicationRecord
   end
 
   # TODO: Refactor into more flexible code from here to the end:
-  # - ability to chain filters instead of exploding all cases
-  # - pluck_test_runs and group_hash_list could be done in a single loop probably
   # - be able to return test_runs currently in progress and add them to the react table
-  def filter_test_runs(filters: {}, all_data: true)
-    if all_data
-      runs = self.test_runs_all_data
-    else
-      runs = self.test_runs
-    end
-    runs.where(filters)
-  end
-
-  def self.pluck_test_runs(assoc)
+  def self.pluck_test_runs(assoc, filter_output: false, include_extra_info: true)
     # Active record tries to convert the test_results.status values based on the test_run.status
     # enum conversion. In order to prevent this, we have to rename test_results.status so that it
     # doesn't trigger this conversion.
-    fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name', 'test_groups.name',
-              'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
+    fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'test_runs.status',
+              'roles.type', 'users.user_name',
+              'test_groups.name', 'test_groups.position', 'test_groups.display_output',
+              'test_group_results.time',
               'test_results.name', 'test_results.status as test_results_status', 'test_results.marks_earned',
-              'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_runs.status']
+              'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_results.position']
+    fields << 'test_group_results.extra_info' if include_extra_info
+
     hash_list = assoc.pluck_to_hash(*fields)
 
     # Add feedback files. This has to be done separately because there can be multiple feedback files
@@ -625,75 +619,65 @@ class Grouping < ApplicationRecord
       h['feedback_files'].each do |f|
         f['type'] = FileHelper.get_file_type(f['filename'])
       end
+
+      h['test_runs.created_at'] = I18n.l(h['test_runs.created_at'])
+
+      # Hide display_output
+      if filter_output && ((h['roles.type'] == 'Student' && h['test_groups.display_output'] == 'instructors') ||
+            (%w[Instructor Ta].include?(h['roles.type']) &&
+                                          %w[instructors_and_student_tests
+                                             instructors].include?(h['test_groups.display_output'])))
+        h.delete('test_results.output')
+      end
     end
 
     hash_list
   end
 
-  def self.group_hash_list(hash_list)
-    new_hash_list = []
-    group_by_keys = %w[test_runs.id test_runs.created_at test_runs.problems
-                       users.user_name test_groups.name test_runs.status]
-    hash_list.group_by { |g| g.values_at(*group_by_keys) }.each_value do |val|
-      h = {}
-      group_by_keys.each do |key|
-        h[key] = val[0][key]
-      end
-      h['test_data'] = val
-      new_hash_list << h
-    end
-
-    new_hash_list
-  end
-
   def test_runs_instructors(submission)
-    filtered = filter_test_runs(filters: { 'roles.type': %w[Instructor Ta], 'test_runs.submission': submission })
+    filtered = test_runs_all_data.where('roles.type': %w[Instructor Ta], 'test_runs.submission': submission)
     plucked = Grouping.pluck_test_runs(filtered)
-    Grouping.group_hash_list(plucked)
+    Util.group_hashes(plucked,
+                      %w[test_runs.id test_runs.created_at test_runs.status test_runs.problems users.user_name],
+                      :test_results)
   end
 
   def test_runs_instructors_released(submission)
-    filtered = filter_test_runs(filters: { 'roles.type': %w[Instructor Ta], 'test_runs.submission': submission })
-    latest_test_group_results = filtered.pluck_to_hash('test_groups.id as tgid',
-                                                       'test_group_results.id as tgrid',
-                                                       'test_group_results.created_at as date')
-                                        .group_by { |h| h['tgid'] }
+    filtered = test_runs_all_data.where('roles.type': %w[Instructor Ta], 'test_runs.submission': submission)
+    latest_test_group_results = filtered.pluck_to_hash('test_groups.id',
+                                                       'test_group_results.id',
+                                                       'test_group_results.created_at')
+                                        .group_by { |h| h['test_groups.id'] }
                                         .values
-                                        .map { |v| v.max_by { |h| h['date'] }['tgrid'] }
-                                        .compact
-    plucked = Grouping.pluck_test_runs(filtered.where('test_group_results.id': latest_test_group_results))
-    plucked.map! do |data|
-      if %w[instructors_and_student_tests instructors].include? data['test_groups.display_output']
-        data.delete('test_results.output')
-      end
-      data.delete('test_group_results.extra_info')
-      data
+                                        .map do |v|
+      v.max_by do |h|
+        h['test_group_results.created_at']
+      end ['test_group_results.id']
     end
-    Grouping.group_hash_list(plucked)
+                                        .compact
+    plucked = Grouping.pluck_test_runs(
+      filtered.where('test_group_results.id': latest_test_group_results),
+      filter_output: true,
+      include_extra_info: false
+    )
+    Util.group_hashes(plucked,
+                      %w[test_runs.id test_runs.created_at test_runs.status test_runs.problems users.user_name],
+                      :test_results)
   end
 
   def test_runs_students
-    filtered = filter_test_runs(filters: { 'test_runs.role': self.accepted_students })
-    plucked = Grouping.pluck_test_runs(filtered)
-    plucked.map! do |data|
-      if data['test_groups.display_output'] == 'instructors'
-        data.delete('test_results.output')
-      end
-      data.delete('test_group_results.extra_info')
-      data
-    end
-    Grouping.group_hash_list(plucked)
-  end
-
-  def test_runs_students_simple
-    filter_test_runs(filters: { 'test_runs.role': self.accepted_students }, all_data: false)
+    filtered = test_runs_all_data.where('test_runs.role': self.accepted_students)
+    plucked = Grouping.pluck_test_runs(filtered, filter_output: true, include_extra_info: false)
+    Util.group_hashes(plucked,
+                      %w[test_runs.id test_runs.created_at test_runs.status test_runs.problems users.user_name],
+                      :test_results)
   end
 
   # Checks whether a student test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented test results to be stored)
   def student_test_run_in_progress?
     buffer_time = Settings.autotest.student_test_buffer_minutes.minutes
-    last_student_run = test_runs_students_simple.first
+    last_student_run = test_runs.where(role: self.accepted_students).first
     if last_student_run.nil? || # first test
       (last_student_run.created_at + buffer_time) < Time.current || # buffer time expired (for unhandled problems)
       !last_student_run.in_progress? # test results not back yet
@@ -708,6 +692,27 @@ class Grouping < ApplicationRecord
       add_assignment_folder(repo)
       yield repo if block_given?
     end
+  end
+
+  def get_next_grouping(current_role, reversed)
+    if current_role.ta?
+      # Get relevant groupings for a TA
+      groupings = current_role.groupings
+                              .where(assignment: assignment)
+                              .joins(:group)
+                              .order('group_name')
+    else
+      # Get all groupings in an assignment -- typically for an instructor
+      groupings = assignment.groupings.joins(:group).order('group_name')
+    end
+    if !reversed
+      # get next grouping with a result
+      next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
+    else
+      # get previous grouping with a result
+      next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).last
+    end
+    next_grouping
   end
 
   private

@@ -22,6 +22,7 @@ en:
         is_hidden: Hide assignment from students
         non_regenerating_tokens: Tokens do not regenerate
         only_required_files: Only allow students to submit the required files (this also restricts the file extensions)
+        parent_assignment: Source assignment
         remark_due_date: Remark Due Date
         remark_message: Remark Request Instructions
         repository_folder: Repository Folder
@@ -46,6 +47,8 @@ en:
     models:
       assignment:
         one: Assignment
+      peer_review_assignment:
+        one: Peer Review Assignment
       scanned_assignment:
         one: Scanned Assignment
       timed_assignment:

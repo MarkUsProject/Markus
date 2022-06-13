@@ -30,10 +30,14 @@ class CoursesController < ApplicationController
   end
 
   def show
-    @assignments = @current_course.assignments
-    @grade_entry_forms = @current_course.grade_entry_forms
-    @current_assignment = @current_course.get_current_assignment
-    respond_with(@current_course)
+    if current_role.student? || current_role.ta?
+      redirect_to course_assignments_path(@current_course.id)
+    elsif current_role.instructor?
+      @assignments = @current_course.assignments
+      @grade_entry_forms = @current_course.grade_entry_forms
+      @current_assignment = @current_course.get_current_assignment
+      respond_with(@current_course)
+    end
   end
 
   # Sets current_user to nil, which clears a role switch session (see role_switch)

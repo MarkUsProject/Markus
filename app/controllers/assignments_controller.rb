@@ -218,6 +218,9 @@ class AssignmentsController < ApplicationController
     if params[:timed].present?
       @assignment.is_timed = true
     end
+    if params[:is_peer_review].present?
+      @assignment.parent_assignment = @assignments.first
+    end
     @clone_assignments = @assignments.joins(:assignment_properties)
                                      .where(assignment_properties: { vcs_submit: true })
                                      .order(:id)
@@ -719,17 +722,14 @@ class AssignmentsController < ApplicationController
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     if parent_assignment.nil?
       assignment = current_course.assignments.new(properties)
-      assignment.repository_folder = assignment.short_identifier
     else
       # Filter properties not supported by peer review assignments, then build assignment
       peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
-      parent_assignment.has_peer_review = true
-      assignment.has_peer_review = false
       assignment.enable_test = false
       assignment.parent_assignment = parent_assignment
-      assignment.repository_folder = parent_assignment.repository_folder
     end
+    assignment.repository_folder = assignment.short_identifier
     assignment
   end
 
@@ -759,7 +759,7 @@ class AssignmentsController < ApplicationController
     assignment.assign_attributes(assignment_params)
     SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
-    assignment.repository_folder = short_identifier unless assignment.is_peer_review?
+    assignment.repository_folder = short_identifier
 
     # if there are no assessment section properties, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
@@ -827,6 +827,7 @@ class AssignmentsController < ApplicationController
       :message,
       :due_date,
       :is_hidden,
+      :parent_assessment_id,
       assignment_properties_attributes: [
         :id,
         :allow_web_submits,

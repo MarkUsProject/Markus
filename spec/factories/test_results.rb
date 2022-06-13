@@ -7,5 +7,6 @@ FactoryBot.define do
     marks_total { 1 }
     association :test_group_result
     time { Faker::Number.number(digits: 4) }
+    sequence(:position) { |n| n }
   end
 end

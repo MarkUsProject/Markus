@@ -83,14 +83,14 @@ class PeerReview < ApplicationRecord
   end
 
   def self.get_num_collected(reviewer_group)
-    Grouping.joins(:peer_reviews)
-            .where('peer_reviews.reviewer_id': reviewer_group)
-            .where(is_collected: true).count
+    Grouping.joins(peer_reviews: :reviewee)
+            .where('peer_reviews.reviewer_id': reviewer_group,
+                   'reviewees_peer_reviews.is_collected': true) # "groupings" aliased to "reviewees_peer_reviews"
+            .count
   end
 
   def self.get_num_marked(reviewer_group)
-    self.includes(:result, :reviewer).where(reviewer_id: reviewer_group)
-        .where('groupings.is_collected': true).count do |pr|
+    self.includes(:result, :reviewer).where(reviewer_id: reviewer_group).count do |pr|
       pr.result.marking_state == Result::MARKING_STATES[:complete]
     end
   end

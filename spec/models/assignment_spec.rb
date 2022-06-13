@@ -103,6 +103,13 @@ describe Assignment do
       a = build(:assignment, course: courses.first, parent_assignment: build(:assignment, course: courses.second))
       expect(a).not_to be_valid
     end
+
+    it 'updates its parent assignment\'s has_peer_review attribute when created' do
+      assignment = create(:assignment)
+      create(:assignment, course: assignment.course, parent_assignment: assignment)
+
+      expect(assignment.has_peer_review).to eq true
+    end
   end
 
   describe 'nested attributes' do
@@ -2128,7 +2135,13 @@ describe Assignment do
 
           expect(summary).to_not be_empty
           expect(summary[0]).to_not be_empty
-          expect(summary[0]).to include('User name', 'Group', 'Final grade')
+          expect(summary[0]).to include(User.human_attribute_name(:group_name),
+                                        User.human_attribute_name(:user_name),
+                                        User.human_attribute_name(:last_name),
+                                        User.human_attribute_name(:first_name),
+                                        User.human_attribute_name(:section_name),
+                                        User.human_attribute_name(:id_number),
+                                        User.human_attribute_name(:email))
         end
       end
     end

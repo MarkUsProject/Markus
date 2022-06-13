@@ -3,10 +3,10 @@ describe CoursePolicy do
   let(:role) { create :instructor }
   describe_rule :show? do
     succeed 'role is an instructor'
-    failed 'role is a ta' do
+    succeed 'role is a ta' do
       let(:role) { create :ta }
     end
-    failed 'role is a student' do
+    succeed 'role is a student' do
       let(:role) { create :student }
     end
   end

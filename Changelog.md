@@ -32,9 +32,14 @@
 - Added background job to clean tmp folder (#5963)
 - Removed consideration of due date from scanned exam (#5964)
 - Added Exception Notification Gem (#5965)
+- Bug fixes for peer reviews (#5968)
 - Added Rails Performance to Admin Dashboard (#5967)
+- Added a detailed view for assignment statistics (#6000)
 - Resolved issue 5905 by adding an explicit download icon to file manager, to differentiate from file preview action (#6001)
+- Added student data such as user name, last name, first name, section, id number and email on grade reports for the whole course, individual assignments and grade entry forms (#6005)
 - Update Groups API to return member role IDs instead of user IDs (#6006)
+- Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
+- Ensure consistent order when displaying test results (#6010)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

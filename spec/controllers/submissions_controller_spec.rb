@@ -66,7 +66,6 @@ describe SubmissionsController do
                            membership_status: 'inviter',
                            grouping: @grouping)
       @student = @membership.role
-      request.env['HTTP_REFERER'] = 'back'
     end
 
     it 'should be rejected if it is a scanned assignment' do
@@ -1078,7 +1077,6 @@ describe SubmissionsController do
         )
       end
 
-      request.env['HTTP_REFERER'] = 'back'
       get_as @instructor,
              :downloads,
              params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id }
@@ -1099,7 +1097,6 @@ describe SubmissionsController do
           repo.get_latest_revision
         )
       end
-      request.env['HTTP_REFERER'] = 'back'
       get_as @instructor,
              :downloads,
              params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
@@ -1213,11 +1210,13 @@ describe SubmissionsController do
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:file3) { fixture_file_upload('example.ipynb') }
     let(:file4) { fixture_file_upload('sample.markusurl') }
+    let(:file5) { fixture_file_upload('example.Rmd') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
       submit_file(assignment, grouping, file3.original_filename, file3.read)
       submit_file(assignment, grouping, file4.original_filename, file4.read)
+      submit_file(assignment, grouping, file5.original_filename, file5.read)
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
@@ -1248,19 +1247,13 @@ describe SubmissionsController do
         end
       end
       describe 'When the file is an rmarkdown file' do
-        subject do
+        it 'should render the contents of the file' do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: 'example.Rmd',
+                                                  file_name: file5.original_filename,
                                                   preview: true,
                                                   grouping_id: grouping.id }
-        end
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to redirect_to(
-            notebook_content_course_assignment_submissions_url(file_name: 'example.Rmd',
-                                                               assignment_id: assignment.id,
-                                                               grouping_id: grouping.id)
-          )
+          expect(response.body).to eq(File.read(file5))
         end
       end
       describe 'When the file is a binary file' do

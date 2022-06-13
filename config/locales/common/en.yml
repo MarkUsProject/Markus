@@ -14,6 +14,7 @@ en:
   file: File
   filter_by: Filter by %{name}
   forbidden: Forbidden
+  good: Good!
   help: Help
   lti:
     launch: Launch MarkUs
@@ -23,7 +24,6 @@ en:
   other_info: Other Info
   please_wait: Please wait…
   preview: Preview
-  refresh: Refresh
   save: Save
   search: Search
   skip: Skip
