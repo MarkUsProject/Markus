@@ -91,6 +91,7 @@ jobs:
       - name: Run rspec tests
         env:
           CHROMEDRIVER_HOST: localhost
+          ENABLE_CAPYBARA_TESTING: true
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)
         uses: coverallsapp/github-action@1.1.3
