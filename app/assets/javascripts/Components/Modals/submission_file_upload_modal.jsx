@@ -37,6 +37,43 @@ class SubmissionFileUploadModal extends React.Component {
   };
 
   render() {
+    let fileInput;
+    if (this.state.newFiles.length == 1) {
+      if (this.props.onlyRequiredFiles) {
+        fileInput = (
+          <select onChange={this.handleNameChange} value={this.state.single_file_name}>
+            <option key={"select_file"}>Please Select File Name</option>
+            {this.props.requiredFiles.map(file => {
+              return (
+                <option key={file.filename} value={file.filename}>
+                  {file.filename}
+                </option>
+              );
+            })}
+          </select>
+        );
+      } else if (this.props.requiredFiles.length >= 1) {
+        fileInput = (
+          <input
+            list="fileInput_datalist"
+            onChange={this.handleNameChange}
+            placeholder={"Change File Name"}
+          ></input>
+        );
+      } else {
+        fileInput = (
+          <input
+            value={this.state.single_file_name}
+            type={"text"}
+            name={"filename"}
+            onChange={this.handleNameChange}
+          />
+        );
+      }
+    } else {
+      fileInput = <div></div>;
+    }
+
     return (
       <Modal
         className="react-modal"
@@ -67,12 +104,15 @@ class SubmissionFileUploadModal extends React.Component {
               />
             </div>
             {this.state.newFiles.length == 1 ? (
-              <input
-                value={this.state.single_file_name}
-                type={"text"}
-                name={"filename"}
-                onChange={this.handleNameChange}
-              />
+              <div>
+                <datalist id="fileInput_datalist">
+                  {this.props.requiredFiles.map(file => {
+                    return <option key={file.filename} value={file.filename}></option>;
+                  })}
+                </datalist>
+
+                {fileInput}
+              </div>
             ) : (
               <div></div>
             )}
