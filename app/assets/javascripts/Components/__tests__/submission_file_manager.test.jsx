@@ -3,8 +3,7 @@ import {SubmissionFileManager} from "../submission_file_manager";
 import {mount} from "enzyme";
 
 describe("For the submissions managed by SubmissionFileManager's FileManager child component", () => {
-  let wrapper;
-  // TODO: check whether need to separate cases into img vs non img
+  let wrapper, rows;
   const files_sample = [
     {
       id: 136680,
@@ -36,7 +35,7 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
     },
   ];
 
-  beforeAll(() => {
+  beforeEach(() => {
     // Unlike FileManager, files are stored in SubmissionFileManager's states, which are set when the component mounts
     // and calls fetchData. As a result, we need to mock that fetch to return our data.
     // We need to mock "twice" (i.e. two promises) because of how fetch works.
@@ -45,28 +44,47 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
         json: () => Promise.resolve(files_sample),
       })
     );
-  });
 
-  beforeEach(() => {
     wrapper = mount(<SubmissionFileManager course_id={1} assignment_id={1} />);
 
-    // Mock the renderFileViewer as we don't care about its implementation.
-    wrapper.instance().renderFileViewer = jest.fn();
+    // Mock the document to have a section called content so that renderFileViewer can be called.
+    // We can do this because we have Jest running in jsdom environment as configured by our jest.config.js.
+    // https://jestjs.io/docs/tutorial-jquery the shown code example is JQuery but equally applicable here.
+    document.body.innerHTML = `<div id="content"></div>`;
   });
 
-  // TODO: testing plan: here, we test that renderFileViewer is called;
-  //  Then in another file, test that FileViewer generates the correct URL
   it("clicking on the row of each file opens up the preview for that file", () => {
     wrapper.update();
-
-    const rows = wrapper.find(".file");
-    // Make sure that all files are displayed .
-    expect(rows.length).toEqual(2);
+    rows = wrapper.find(".file");
+    expect(rows.length).toEqual(files_sample.length);
 
     rows.forEach(row => {
       row.simulate("click");
       wrapper.update();
-      expect(wrapper.instance().renderFileViewer).toBeCalled();
+
+      // Locate the preview block
+      const file_viewer_comp = wrapper.find("FileViewer");
+      expect(file_viewer_comp).toBeTruthy();
+    });
+  });
+
+  it("the preview opened is called with the correct props", () => {
+    wrapper.update();
+    rows = wrapper.find(".file");
+    expect(rows.length).toEqual(files_sample.length);
+
+    rows.forEach(row => {
+      row.simulate("click");
+      wrapper.update();
+
+      // Locate the preview block
+      const file_viewer_comp = wrapper.find("FileViewer");
+      const file_displayed = files_sample.find(
+        file => file.url === file_viewer_comp.props().selectedFileURL
+      );
+
+      expect(file_viewer_comp.props().selectedFile).toEqual(file_displayed.relativeKey);
+      expect(file_viewer_comp.props().selectedFileType).toEqual(file_displayed.type);
     });
   });
 });
