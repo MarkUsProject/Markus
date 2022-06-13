@@ -675,9 +675,10 @@ class AssignmentsController < ApplicationController
     properties
   end
 
-  # Builds an uploaded assignment/peer review assignment from its properties file
+  # Builds an uploaded assignment/peer review assignment from its properties file. A peer review assignment is
+  # built if and only if the provided properties file contains the +parent_assessment_short_identifier+ attribute
+  # and an assignment with the same short identifier exists.
   # Precondition: prop_file must be a Zip::Entry object
-  #               If +parent_assignment+ is not nil, this is a peer review assignment.
   def build_uploaded_assignment(prop_file)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
