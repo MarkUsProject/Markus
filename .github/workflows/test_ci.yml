@@ -85,7 +85,7 @@ jobs:
       - name: Setup chromedriver
         uses: nanasess/setup-chromedriver@v1
       - name: Run chromedriver
-        run: chromedriver --whitelisted-ips
+        run: chromedriver --whitelisted-ips &
       - name: Run rspec tests
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)
