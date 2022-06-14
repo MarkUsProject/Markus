@@ -1,4 +1,4 @@
-describe LtiController do
+describe LtiDeploymentController do
   let(:instructor) { create :instructor }
   let!(:client_id) { 'LMS defined ID' }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
@@ -120,17 +120,17 @@ describe LtiController do
       end
       it 'successfully creates a new lti object' do
         post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
-        expect(Lti.count).to eq(1)
+        expect(LtiDeployment.count).to eq(1)
       end
     end
   end
   describe '#choose_course', :choose_course do
     let!(:course) { create :course }
     let(:instructor) { create :instructor, course: course }
-    let!(:lti) { create :lti }
+    let!(:lti) { create :lti_deployment }
 
     before :each do
-      session[:lti_client_id] = lti.id
+      session[:lti_deployment_id] = lti.id
     end
     context 'when picking a course' do
       it 'redirects to a course on success' do
@@ -142,6 +142,25 @@ describe LtiController do
         lti.reload
         expect(lti.course).to eq(course)
       end
+      context 'when the user does not have permission to link' do
+        let(:course2) { create :course }
+        let(:instructor2) { create :instructor, course: course2 }
+        it 'does not allow users to link courses they are not instructors for' do
+          post_as instructor2, :choose_course, params: { course: course.id }
+          expect(flash[:error]).not_to be_empty
+        end
+      end
+    end
+  end
+  describe '#check_host' do
+    it 'does not redirect to an error with a known host' do
+      get_as instructor, :get_canvas_config
+      is_expected.to respond_with(:success)
+    end
+    it 'does redirect to an error with an unknown host' do
+      @request.host = 'example.com'
+      get_as instructor, :get_canvas_config
+      expect(response).to render_template('shared/http_status')
     end
   end
 end

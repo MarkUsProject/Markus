@@ -115,7 +115,7 @@ describe MainController do
       context 'when there is no course association' do
         it 'redirects to choose_course' do
           sign_in instructor
-          expect(response).to redirect_to action: 'choose_course', controller: 'lti'
+          expect(response).to redirect_to action: 'choose_course', controller: 'lti_deployment'
         end
       end
       context 'when there is a course association' do

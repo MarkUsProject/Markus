@@ -21,17 +21,8 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      if session[:lti_user_id].present? && @real_user.lti_id.nil?
-        @real_user.update!(lti_id: session[:lti_user_id])
-      end
-      if session[:lti_course_id].present?
-        lti_instance = Lti.find(session[:lti_client_id])
-        if lti_instance.course.nil?
-          # Redirect to course picker page
-          redirect_to lti_choose_course_path
-        else
-          redirect_to course_path(lti_instance.course)
-        end
+      if session[:lti_deployment_id].present?
+        redirect_to set_lti_user_association
         return
       end
       if @real_user.admin_user?
@@ -72,23 +63,13 @@ class MainController < ApplicationController
 
     self.real_user = found_user
 
-    if session[:lti_user_id].present? && real_user.lti_id.nil?
-      @real_user.update!(lti_id: session[:lti_user_id])
-    end
-    if session[:lti_course_id].present?
-      lti_instance = Lti.find(session[:lti_client_id])
-      if lti_instance.course.nil?
-        # Redirect to course picker page
-        redirect_to lti_choose_course_path
-      else
-        redirect_to course_path(lti_instance.course)
-      end
-      return
-    end
-
     uri = session[:redirect_uri]
     session[:redirect_uri] = nil
     refresh_timeout
+    if session[:lti_deployment_id].present?
+      redirect_to set_lti_user_association
+      return
+    end
     # redirect to last visited page or to main page
     if uri.present?
       redirect_to(uri)
@@ -138,6 +119,19 @@ class MainController < ApplicationController
   def refresh_session
     refresh_timeout
     head :ok
+  end
+
+  def set_lti_user_association
+    if session[:lti_user_id].present?
+      LtiUser.find_or_create_by(user: @real_user, lti_client: LtiClient.find(session[:lti_client_id]))
+    end
+    lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+    if lti_deployment.course.nil?
+      # Redirect to course picker page
+      lti_deployment_choose_course_path
+    else
+      course_path(lti_deployment.course)
+    end
   end
 
   private
