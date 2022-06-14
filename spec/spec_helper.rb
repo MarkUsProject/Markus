@@ -91,8 +91,8 @@ RSpec.configure do |config|
 
   # Configure the selenium webdriver for system tests
   config.before type: :system do
-    skip('System Tests Disabled') unless ENV.fetch('ENABLE_CAPYBARA_TESTING', nil) == 'true'
-    browser = ENV.fetch('DISABLE_HEADLESS', nil) == 'true' ? :chrome : :headless_chrome
+    skip('System Tests Disabled') unless ENV.fetch('ENABLE_UI_TESTING', nil) == 'true'
+    browser = ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true' ? :chrome : :headless_chrome
     driven_by :selenium, using: browser, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
