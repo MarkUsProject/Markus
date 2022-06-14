@@ -1,8 +1,5 @@
 if Settings.repository.type == 'git'
-  # rubocop:disable Style/StringConcatenation
   max_file_size_dir = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size'
-  # rubocop:enable Style/StringConcatenation
-
   FileUtils.rm_rf(max_file_size_dir)
   FileUtils.mkdir_p(max_file_size_dir)
 
