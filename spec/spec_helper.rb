@@ -44,8 +44,9 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 Capybara.configure do |config|
-  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST') { '0.0.0.0' }
-  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT') { '3434' }
+  config.app_host = "http://localhost:#{ENV.fetch('CAPYBARA_SERVER_PORT', '3434')}"
+  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST', '0.0.0.0')
+  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT', '3434')
   config.default_max_wait_time = 30
   config.server = :puma
 end
@@ -89,18 +90,19 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-  # Configure the selenium webdriver for system tests
   config.before type: :system do
-    options = Selenium::WebDriver::Chrome::Options.new
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-gpu')
+    # Disable UI system tests by default when testing locally
+    skip('UI system testing is currently disabled') unless ENV.fetch('ENABLE_UI_TESTING', nil) == 'true'
 
-    driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400],
+    # Configure the selenium webdriver for system tests
+    browser = ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true' ? :chrome : :headless_chrome
+    driven_by :selenium, using: browser, screen_size: [1400, 1400],
                          options: {
                            browser: :remote,
                            url: 'http://localhost:9515',
-                           capabilities: [options]
+                           capabilities: [
+                             Selenium::WebDriver::Chrome::Options.new(args: ['--no-sandbox', '--disable-gpu'])
+                           ]
                          }
   end
 

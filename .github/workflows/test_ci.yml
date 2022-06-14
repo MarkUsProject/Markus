@@ -34,6 +34,7 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
+      ENABLE_UI_TESTING: true
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -81,13 +82,10 @@ jobs:
           bundle exec rake javascript:build
       - name: Set up database
         run: bundle exec rails db:migrate
-      - name: 'Setup Chromedriver'
+      - name: Install chrome and chromedriver
         uses: nanasess/setup-chromedriver@v1
-      - name: 'Run Chromedriver'
-        run: |
-          google-chrome --version
-          export DISPLAY=:99
-          chromedriver --whitelisted-ips --allowed-origins=''* &
+      - name: Run chromedriver
+        run: chromedriver --whitelisted-ips &
       - name: Run rspec tests
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)
