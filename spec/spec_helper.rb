@@ -89,9 +89,11 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-  # Configure the selenium webdriver for system tests
   config.before type: :system do
+    # Disable UI system tests by default when testing locally
     skip('System Tests Disabled') unless ENV.fetch('ENABLE_UI_TESTING', nil) == 'true'
+
+    # Configure the selenium webdriver for system tests
     browser = ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true' ? :chrome : :headless_chrome
     driven_by :selenium, using: browser, screen_size: [1400, 1400],
                          options: {

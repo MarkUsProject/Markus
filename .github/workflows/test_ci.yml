@@ -82,11 +82,10 @@ jobs:
           bundle exec rake javascript:build
       - name: Set up database
         run: bundle exec rails db:migrate
-      - name: 'Setup Chromedriver'
+      - name: Setup chromedriver
         uses: nanasess/setup-chromedriver@v1
-      - name: 'Run Chromedriver'
-        run: |
-          chromedriver --whitelisted-ips --allowed-origins=''* &
+      - name: Run chromedriver
+        run: chromedriver --whitelisted-ips
       - name: Run rspec tests
         run: bundle exec rspec ./spec/system
       - name: Coveralls Parallel (rspec)
