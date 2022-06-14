@@ -99,18 +99,12 @@ describe MainController do
       end
     end
     context 'logging in after an LTI launch' do
-      let(:lti) { create :lti }
+      let(:lti) { create :lti_deployment }
       before :each do
-        session[:lti_client_id] = lti.id
+        session[:lti_deployment_id] = lti.id
+        session[:lti_client_id] = lti.lti_client.id
         session[:lti_course_id] = 1
         session[:lti_user_id] = 1
-      end
-      context 'when the instructor has no lti_id' do
-        it 'associates the user with the lti id' do
-          sign_in instructor
-          instructor.reload
-          expect(instructor.lti_id).to eq('1')
-        end
       end
       context 'when there is no course association' do
         it 'redirects to choose_course' do
