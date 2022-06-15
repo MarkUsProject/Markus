@@ -14,28 +14,14 @@ describe 'logging in', type: :system do
     click_button(I18n.t('main.log_in'), name: 'commit')
   end
 
-  context 'Instructor' do
-    let(:user_name) { create(:instructor).user_name }
+  context 'End User' do
+    let(:user_name) { create(:end_user).user_name }
     it 'signs in and redirects to the courses page' do
       simulate_login
       expect(page).to have_current_path(courses_path)
     end
   end
-  context 'TA' do
-    let(:user_name) { create(:ta).user_name }
-    it 'signs in and redirects to the courses page' do
-      simulate_login
-      expect(page).to have_current_path(courses_path)
-    end
-  end
-  context 'Student' do
-    let(:user_name) { create(:student).user_name }
-    it 'signs in and redirects to the courses page' do
-      simulate_login
-      expect(page).to have_current_path(courses_path)
-    end
-  end
-  context 'Admin' do
+  context 'Admin User' do
     let(:user_name) { create(:admin_user).user_name }
     it 'signs in and redirects to the admin page' do
       simulate_login
