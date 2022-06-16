@@ -107,6 +107,14 @@ export class AssignmentChart extends React.Component {
       );
     }
 
+    const renderFractionStat = (a, b) => {
+      return (
+        <span>
+          {a} / {b} ({Math.floor((a / b || 0) * 100)}%)
+        </span>
+      );
+    };
+
     const assignment_graph = (
       <React.Fragment>
         <div className="flex-row">
@@ -123,11 +131,17 @@ export class AssignmentChart extends React.Component {
             <div className="grid-2-col">
               <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
               <span>
-                {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
+                {renderFractionStat(
+                  this.state.summary.num_submissions_collected,
+                  this.state.summary.groupings_size
+                )}
               </span>
               <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
               <span>
-                {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
+                {renderFractionStat(
+                  this.state.summary.num_submissions_graded,
+                  this.state.summary.groupings_size
+                )}
               </span>
               <span className="summary-stats-label">{"Number of Groups"}</span>
               <span>{this.state.summary.groupings_size}</span>
@@ -135,15 +149,21 @@ export class AssignmentChart extends React.Component {
               <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
               <span className="summary-stats-label">{I18n.t("median")}</span>
               <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
-              <span>{"Standard Deviation"}</span>
-              <span>{(this.state.summary.standard_deviation || 0).toFixed(2)}σ</span>
+              <span className="summary-stats-label">{"Standard Deviation"}</span>
+              <span>{(this.state.summary.standard_deviation || 0).toFixed(2)} σ</span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>
               <span>
-                {this.state.summary.num_fails} / {this.state.summary.groupings_size}
+                {renderFractionStat(
+                  this.state.summary.num_fails,
+                  this.state.summary.groupings_size
+                )}
               </span>
               <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
               <span>
-                {this.state.summary.num_zeros} / {this.state.summary.groupings_size}
+                {renderFractionStat(
+                  this.state.summary.num_zeros,
+                  this.state.summary.groupings_size
+                )}
               </span>
             </div>
             {outstanding_remark_request_link}
