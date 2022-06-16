@@ -129,6 +129,8 @@ export class AssignmentChart extends React.Component {
               <span>
                 {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
               </span>
+              <span className="summary-stats-label">{"Number of Groups"}</span>
+              <span>{this.state.summary.groupings_size}</span>
               <span className="summary-stats-label">{I18n.t("average")}</span>
               <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
               <span className="summary-stats-label">{I18n.t("median")}</span>
