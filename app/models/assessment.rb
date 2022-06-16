@@ -96,4 +96,15 @@ class Assessment < ApplicationRecord
   def results_zeros
     self.completed_result_marks.count(&:zero?)
   end
+
+  def results_standard_deviation
+    return 0 if self.max_mark.zero?
+
+    marks = percentage_grades_array
+    if marks.empty?
+      0
+    else
+      (DescriptiveStatistics.standard_deviation(marks)).round(2).to_f
+    end
+  end
 end

@@ -348,6 +348,7 @@ class AssignmentsController < ApplicationController
       name: "#{assignment.short_identifier}: #{assignment.description}",
       average: assignment.results_average || 0,
       median: assignment.results_median || 0,
+      standard_deviation: assignment.results_standard_deviation || 0,
       num_submissions_collected: assignment.current_submissions_used.size,
       num_submissions_graded: assignment.current_submissions_used.size -
         assignment.ungraded_submission_results.size,
