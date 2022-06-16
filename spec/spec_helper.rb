@@ -73,6 +73,7 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  # Ignore system tests by default unless they are explicitly run
   config.exclude_pattern = 'system/**/*_spec.rb'
 
   # Automatically infer an example group's spec type from the file location.
