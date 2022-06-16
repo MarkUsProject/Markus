@@ -190,6 +190,7 @@ class CheckboxCriterionInput extends React.Component {
                   <input
                     type="radio"
                     readOnly={true}
+                    id={`check_correct_${this.props.id}`}
                     checked={this.props.mark === this.props.max_mark}
                     disabled={this.props.released_to_students || this.props.unassigned}
                   />
@@ -198,6 +199,7 @@ class CheckboxCriterionInput extends React.Component {
                 <label onClick={() => this.props.updateMark(this.props.id, 0)}>
                   <input
                     type="radio"
+                    id={`check_no_${this.props.id}`}
                     readOnly={true}
                     checked={this.props.mark === 0}
                     disabled={this.props.released_to_students || this.props.unassigned}
@@ -401,8 +403,12 @@ class FlexibleCriterionInput extends React.Component {
         id={`flexible_criterion_${this.props.id}`}
         className={`flexible_criterion ${expandedClass} ${unassignedClass}`}
       >
-        <div data-id={this.props.id}>
-          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+        <div data-testid={this.props.id}>
+          <div
+            className="criterion-name"
+            id={`flexible_criterion_${this.props.id}_expand`}
+            onClick={this.props.toggleExpanded}
+          >
             <div
               className={this.props.expanded ? "arrow-up" : "arrow-down"}
               style={{float: "left"}}
@@ -510,7 +516,7 @@ class RubricCriterionInput extends React.Component {
         id={`rubric_criterion_${this.props.id}`}
         className={`rubric_criterion ${expandedClass} ${unassignedClass}`}
       >
-        <div data-id={this.props.id}>
+        <div data-testid={this.props.id}>
           <div className="criterion-name" onClick={this.props.toggleExpanded}>
             <div
               className={this.props.expanded ? "arrow-up" : "arrow-down"}
