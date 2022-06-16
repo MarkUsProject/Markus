@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe 'logging in', type: :system do
   let(:simulate_login) do
     # Go to root path

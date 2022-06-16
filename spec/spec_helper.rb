@@ -28,7 +28,6 @@ require 'action_policy/rspec'
 require 'action_policy/rspec/dsl'
 require 'capybara/rspec'
 require 'selenium/webdriver'
-require 'byebug'
 # Loads lib repo stuff.
 require 'time-warp'
 
@@ -73,6 +72,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.exclude_pattern = 'system/**/*_spec.rb'
 
   # Automatically infer an example group's spec type from the file location.
   config.infer_spec_type_from_file_location!
