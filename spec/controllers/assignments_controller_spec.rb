@@ -1289,7 +1289,11 @@ describe AssignmentsController do
     let!(:criteria) { create :checkbox_criterion, assignment: assignment, name: 'Optimal' }
     let!(:annotation) { create :annotation_category, assignment: assignment }
     let!(:starter_files) { create :starter_file_group_with_entries, assignment: assignment }
-    subject { get_as user, :download_config_files, params: { id: assignment.id, course_id: assignment.course.id } }
+    subject do
+      get_as user, :download_config_files,
+             params: { id: downloaded_assignment.id, course_id: downloaded_assignment.course.id }
+    end
+    let(:downloaded_assignment) { assignment }
 
     before :each do
       create_automated_test(assignment)
@@ -1318,7 +1322,7 @@ describe AssignmentsController do
       end
 
       # Check file content
-      describe 'downloaded zip file' do
+      describe 'downloading a normal assignment' do
         it 'should have a valid properties file' do
           subject
           properties = read_file_from_zip(response.body, 'properties.yml')
@@ -1332,6 +1336,13 @@ describe AssignmentsController do
                                         assignment_properties_attributes: a_kind_of(Hash),
                                         submission_rule_attributes: a_kind_of(Hash),
                                         assignment_files_attributes: a_kind_of(Array))
+        end
+
+        it 'should not have peer review information in the properties file' do
+          subject
+          properties = read_file_from_zip(response.body, 'properties.yml')
+          properties = properties.deep_symbolize_keys
+          expect(properties).not_to include(:has_peer_review, :parent_assessment_short_identifier)
         end
 
         it 'should have a valid criteria file' do
@@ -1395,16 +1406,19 @@ describe AssignmentsController do
           expect(tags).to match_array([{ name: tag1.name, description: tag1.description },
                                        { name: tag2.name, description: tag2.description }])
         end
+      end
 
-        it 'should contain a peer review tags file' do
+      describe 'downloading a peer review zip file' do
+        let(:downloaded_assignment) { Assignment.find_by(parent_assessment_id: assignment.id) }
+        it 'should contain a tags file' do
           subject
-          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'tags.yml'))
+          tags = read_file_from_zip(response.body, File.join('tags.yml'))
           expect(tags).to be_a(Array)
         end
 
-        it 'should have a valid peer review properties file' do
+        it 'should have a valid properties file' do
           subject
-          properties = read_file_from_zip(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          properties = read_file_from_zip(response.body, File.join('properties.yml'))
           properties = properties.deep_symbolize_keys
           peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
           expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
@@ -1413,26 +1427,25 @@ describe AssignmentsController do
                                         message: peer_review_assignment.message,
                                         is_hidden: peer_review_assignment.is_hidden,
                                         show_total: peer_review_assignment.show_total,
-                                        assignment_properties_attributes: a_kind_of(Hash))
+                                        assignment_properties_attributes: a_kind_of(Hash),
+                                        parent_assessment_short_identifier: assignment.short_identifier)
         end
 
-        it 'should contain a peer review criteria file' do
+        it 'should contain a criteria file' do
           subject
-          criteria = read_file_from_zip(response.body, File.join('peer-review-config-files', 'criteria.yml'))
+          criteria = read_file_from_zip(response.body, File.join('criteria.yml'))
           expect(criteria).to be_a(Hash)
         end
 
-        it 'should contain a peer review annotations file' do
+        it 'should contain an annotations file' do
           subject
-          annotations = read_file_from_zip(response.body, File.join('peer-review-config-files',
-                                                                    'annotations.yml'))
+          annotations = read_file_from_zip(response.body, File.join('annotations.yml'))
           expect(annotations).to be_a(Hash)
         end
 
-        it 'should contain a peer review starter file settings file' do
+        it 'should contain a starter file settings file' do
           subject
-          starter_file_settings = read_file_from_zip(response.body, File.join('peer-review-config-files',
-                                                                              'starter-file-config-files',
+          starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
           expect(starter_file_settings).to include(:default_starter_file_group, :starter_file_groups)
@@ -1505,15 +1518,6 @@ describe AssignmentsController do
       starter_file1 = fixture_file_upload(File.join(starter_file_dir, 'c_file.c'), 'text/c')
       starter_file2 = fixture_file_upload(File.join(starter_file_dir, 'Helpers', 'template.tex'), 'text/tex')
 
-      peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
-      pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
-      pr_tags_good = fixture_file_upload(File.join(peer_review_dir, 'tags.yml'), 'text/yaml')
-      pr_criteria_good = fixture_file_upload(File.join(peer_review_dir, 'criteria.yml'), 'text/yaml')
-      pr_annotations_good = fixture_file_upload(File.join(peer_review_dir, 'annotations.yml'), 'text/yaml')
-      pr_starter_settings_good = fixture_file_upload(File.join(peer_review_dir,
-                                                               'starter-file-config-files',
-                                                               'starter-file-rules.yml'), 'text/yaml')
-
       zip_name = 'mtt_ex_1-config-files.zip'
       zip_path = File.join('tmp', zip_name)
       FileUtils.rm_f(zip_path)
@@ -1526,15 +1530,9 @@ describe AssignmentsController do
         zip_file.add('starter-file-config-files/sample_starter_group/c_file.c', starter_file1.path)
         zip_file.mkdir(File.join(starter_file_dir, 'Helpers'))
         zip_file.add('starter-file-config-files/sample_starter_group/Helpers/template.tex', starter_file2.path)
-        zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
-        zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
-        zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
-        zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
         zip_file.add('automated-test-config-files/automated-test-specs.json', test_specs_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
-        zip_file.add('peer-review-config-files/starter-file-config-files/starter-file-rules.yml',
-                     pr_starter_settings_good.path)
       end
       @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
     end
@@ -1641,35 +1639,17 @@ describe AssignmentsController do
         expect(uploaded_assignment.tags.count).to eq(2)
       end
 
-      it 'properly uploads a peer review assignment' do
+      it 'does not automatically configure a peer review assignment' do
         subject
-        uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
-        parent_assignment = Assignment.find(uploaded_child_assignment.parent_assessment_id)
-        uploaded_pr_assessment_data = {
-          message: uploaded_child_assignment.message,
-          is_timed: uploaded_child_assignment.is_timed,
-          scanned_exam: uploaded_child_assignment.scanned_exam,
-          parent_short_id: parent_assignment.short_identifier,
-          num_criteria: uploaded_child_assignment.criteria.count,
-          num_annotations: uploaded_child_assignment.annotation_categories.count,
-          has_no_starter_files: uploaded_child_assignment.starter_file_groups.count == 0,
-          automated_tests_enabled: uploaded_child_assignment.enable_test,
-          has_no_required_files: uploaded_child_assignment.assignment_files.count == 0,
-          submission_rule_type: uploaded_child_assignment.submission_rule.type
+        expected_peer_review_data = {
+          uploaded_child_assignment: nil,
+          uploaded_assignment_has_peer_review: false
         }
-        expected_pr_assessment_data = {
-          message: 'Review the sample midterm of your peers to help you practice for our second midterm',
-          is_timed: false,
-          scanned_exam: false,
-          parent_short_id: 'mtt_ex_1',
-          num_criteria: 1,
-          num_annotations: 2,
-          has_no_starter_files: true,
-          automated_tests_enabled: false,
-          has_no_required_files: true,
-          submission_rule_type: 'NoLateSubmissionRule'
+        received_peer_review_data = {
+          uploaded_child_assignment: Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review'),
+          uploaded_assignment_has_peer_review: Assignment.find_by(short_identifier: 'mtt_ex_1').has_peer_review
         }
-        expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
+        expect(received_peer_review_data).to eq(expected_peer_review_data)
       end
     end
 
@@ -1884,8 +1864,17 @@ describe AssignmentsController do
       let!(:parent_assignment_properties) { parent_assignment.assignment_properties }
 
       before :each do
+        # Download Parent
         get_as user, :download_config_files,
                params: { id: parent_assignment.id, course_id: parent_assignment.course.id }
+        parent_zip_name = 'parent-assignment-copy-test-config-files.zip'
+        parent_zip_path = File.join('tmp', parent_zip_name)
+        FileUtils.rm_f(parent_zip_path)
+        File.write(parent_zip_path, response.body, mode: 'wb')
+        parent_assignment_zip = fixture_file_upload(parent_zip_path, 'application/zip')
+        # Download Peer Review
+        get_as user, :download_config_files,
+               params: { id: assignment.id, course_id: assignment.course.id }
         zip_name = 'assignment-copy-test-config-files.zip'
         zip_path = File.join('tmp', zip_name)
         FileUtils.rm_f(zip_path)
@@ -1893,9 +1882,13 @@ describe AssignmentsController do
         assignment_zip = fixture_file_upload(zip_path, 'application/zip')
         Tag.all.destroy_all
         Assignment.all.destroy_all
-        post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
+        # Upload parent first then peer review
+        post_as user, :upload_config_files, params: { upload_files_for_config: parent_assignment_zip,
                                                       is_timed: false, is_scanned: false,
                                                       course_id: parent_assignment.course.id }
+        post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
+                                                      is_timed: false, is_scanned: false,
+                                                      course_id: assignment.course.id }
         expect(flash[:error]).to be_nil
       end
 
