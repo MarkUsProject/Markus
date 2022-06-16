@@ -35,7 +35,6 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
-      ENABLE_UI_TESTING: true
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
