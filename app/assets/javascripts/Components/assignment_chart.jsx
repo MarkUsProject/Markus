@@ -115,7 +115,7 @@ export class AssignmentChart extends React.Component {
     const renderFractionStat = (a, b) => {
       return (
         <span>
-          {a} / {b} ({Math.floor((a / b || 0) * 100)}%)
+          {a} / {b} ({((a / b || 0) * 100).toFixed(2)}%)
         </span>
       );
     };
@@ -151,9 +151,16 @@ export class AssignmentChart extends React.Component {
               <span className="summary-stats-label">{"Number of Groups"}</span>
               <span>{this.state.summary.groupings_size}</span>
               <span className="summary-stats-label">{I18n.t("average")}</span>
-              <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
+              <span>
+                {renderFractionStat(
+                  (this.state.summary.average_mark || 0).toFixed(2),
+                  this.state.summary.max_mark
+                )}
+              </span>
               <span className="summary-stats-label">{I18n.t("median")}</span>
-              <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
+              <span>
+                {renderFractionStat(this.state.summary.median_mark, this.state.summary.max_mark)}
+              </span>
               <span className="summary-stats-label">{"Standard Deviation"}</span>
               <span>{(this.state.summary.standard_deviation || 0).toFixed(2)} σ</span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>

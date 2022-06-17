@@ -64,26 +64,12 @@ class Assessment < ApplicationRecord
 
   # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
   def results_average
-    return 0 if self.max_mark.zero?
-
-    marks = self.completed_result_marks
-    if marks.empty?
-      0
-    else
-      (DescriptiveStatistics.mean(marks) * 100 / self.max_mark).round(2).to_f
-    end
+    (results_average_raw * 100 / self.max_mark).round(2).to_f
   end
 
   # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
   def results_median
-    return 0 if self.max_mark.zero?
-
-    marks = self.completed_result_marks
-    if marks.empty?
-      0
-    else
-      (DescriptiveStatistics.median(marks) * 100 / self.max_mark).round(2).to_f
-    end
+    (results_median_raw * 100 / self.max_mark).round(2).to_f
   end
 
   # Returns the number of grades under 50% for this assessment, using all grades in self.completed_result_marks.
@@ -105,6 +91,28 @@ class Assessment < ApplicationRecord
       0
     else
       (DescriptiveStatistics.standard_deviation(marks)).round(2).to_f
+    end
+  end
+
+  def results_average_raw
+    return 0 if self.max_mark.zero?
+
+    marks = self.completed_result_marks
+    if marks.empty?
+      0
+    else
+      DescriptiveStatistics.mean(marks)
+    end
+  end
+
+  def results_median_raw
+    return 0 if self.max_mark.zero?
+
+    marks = self.completed_result_marks
+    if marks.empty?
+      0
+    else
+      DescriptiveStatistics.median(marks)
     end
   end
 end
