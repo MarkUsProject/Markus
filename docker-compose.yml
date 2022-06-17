@@ -59,6 +59,10 @@ services:
       - PGDATABASETEST=markus_test
       - MARKUS__REPOSITORY__SSH_URL=ssh://git@localhost:2222/~/csc108
       - MARKUS__REPOSITORY__MARKUS_GIT_SHELL=/markus-git-shell.sh
+      - CAPYBARA_SERVER_PORT=${CAPYBARA_SERVER_PORT:-3434}
+      - CAPYBARA_SERVER_HOST=${CAPYBARA_SERVER_HOST:-0.0.0.0}
+    extra_hosts:
+      - localhost:host-gateway
     ports:
       - '3000:3000'
     volumes:

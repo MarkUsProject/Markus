@@ -39,6 +39,7 @@
 - Update Groups API to return member role IDs instead of user IDs (#6006)
 - Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 - Ensure consistent order when displaying test results (#6010)
+- Added Capybara Gem (#6012)
 - Separated peer review assignment upload/download from parent (#6048)
 
 ## [v2.0.10]
