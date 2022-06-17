@@ -90,7 +90,8 @@ class Assessment < ApplicationRecord
     if marks.empty?
       0
     else
-      (DescriptiveStatistics.standard_deviation(marks)).round(2).to_f
+      marks = marks.map { |mark| mark / self.max_mark * 100 }
+      DescriptiveStatistics.standard_deviation(marks).round(2).to_f
     end
   end
 

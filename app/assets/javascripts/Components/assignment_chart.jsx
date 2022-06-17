@@ -87,27 +87,27 @@ export class AssignmentChart extends React.Component {
   render() {
     let outstanding_remark_request_link = "";
     if (this.state.summary.num_outstanding_remark_requests > 0) {
+      const remark_submissions_list_link = Routes.browse_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assessment_id,
+        {
+          filter_by: "marking_state",
+          filter_value: "remark",
+        }
+      );
       outstanding_remark_request_link = (
         <React.Fragment>
-          <a
-            className="summary-stats-label"
-            href={Routes.browse_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assessment_id,
-              {
-                filter_by: "marking_state",
-                filter_value: "remark",
-              }
-            )}
-          >
+          <a className="summary-stats-label" href={remark_submissions_list_link}>
             {I18n.t("outstanding_remark_request", {
               count: this.state.summary.num_outstanding_remark_requests,
             })}
           </a>
-          <span>
-            {this.state.summary.num_remark_requests_completed} /{" "}
-            {this.state.summary.num_remark_requests}
-          </span>
+          <a href={remark_submissions_list_link}>
+            <span>
+              {this.state.summary.num_remark_requests_completed} /{" "}
+              {this.state.summary.num_remark_requests}
+            </span>
+          </a>
         </React.Fragment>
       );
     }
@@ -139,7 +139,10 @@ export class AssignmentChart extends React.Component {
               <span className="summary-stats-label">
                 {"Number of Students with Submitted Work"}
               </span>
-              <span>{this.state.summary.num_students_who_submitted_work}</span>
+              <span>
+                {this.state.summary.num_students_who_submitted_work} /{" "}
+                {this.state.summary.num_active_students}
+              </span>
               <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
               <span>
                 {renderFractionStat(
