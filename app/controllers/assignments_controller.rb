@@ -355,7 +355,13 @@ class AssignmentsController < ApplicationController
       num_fails: assignment.results_fails,
       num_zeros: assignment.results_zeros,
       groupings_size: assignment.groupings.size,
-      num_outstanding_remark_requests: assignment.outstanding_remark_request_count
+      num_active_students: @current_course.students.active.size,
+      num_outstanding_remark_requests: assignment.outstanding_remark_request_count,
+      num_remark_requests: assignment.groupings.joins(current_submission_used: :submitted_remark).count,
+      num_remark_requests_completed: assignment.groupings
+                                               .joins(current_submission_used: :submitted_remark)
+                                               .where('results.marking_state': :complete)
+                                               .count
     }
     intervals = 20
     assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }

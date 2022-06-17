@@ -88,8 +88,9 @@ export class AssignmentChart extends React.Component {
     let outstanding_remark_request_link = "";
     if (this.state.summary.num_outstanding_remark_requests > 0) {
       outstanding_remark_request_link = (
-        <p>
+        <React.Fragment>
           <a
+            className="summary-stats-label"
             href={Routes.browse_course_assignment_submissions_path(
               this.props.course_id,
               this.props.assessment_id,
@@ -103,7 +104,11 @@ export class AssignmentChart extends React.Component {
               count: this.state.summary.num_outstanding_remark_requests,
             })}
           </a>
-        </p>
+          <span>
+            {this.state.summary.num_remark_requests_completed} /{" "}
+            {this.state.summary.num_remark_requests}
+          </span>
+        </React.Fragment>
       );
     }
 
@@ -165,8 +170,8 @@ export class AssignmentChart extends React.Component {
                   this.state.summary.groupings_size
                 )}
               </span>
+              {outstanding_remark_request_link}
             </div>
-            {outstanding_remark_request_link}
           </div>
         </div>
       </React.Fragment>
