@@ -358,6 +358,7 @@ class AssignmentsController < ApplicationController
       num_fails: assignment.results_fails,
       num_zeros: assignment.results_zeros,
       groupings_size: assignment.groupings.size,
+      num_students_who_submitted_work: assignment.groupings.joins(:accepted_students).count,
       num_active_students: @current_course.students.active.size,
       num_outstanding_remark_requests: assignment.outstanding_remark_request_count,
       num_remark_requests: assignment.groupings.joins(current_submission_used: :submitted_remark).count,

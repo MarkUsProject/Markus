@@ -134,6 +134,12 @@ export class AssignmentChart extends React.Component {
           </div>
           <div className="flex-row-expand">
             <div className="grid-2-col">
+              <span className="summary-stats-label">{"Number of Groups"}</span>
+              <span>{this.state.summary.groupings_size}</span>
+              <span className="summary-stats-label">
+                {"Number of Students with Submitted Work"}
+              </span>
+              <span>{this.state.summary.num_students_who_submitted_work}</span>
               <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
               <span>
                 {renderFractionStat(
@@ -148,18 +154,15 @@ export class AssignmentChart extends React.Component {
                   this.state.summary.groupings_size
                 )}
               </span>
-              <span className="summary-stats-label">{"Number of Groups"}</span>
-              <span>{this.state.summary.groupings_size}</span>
               <span className="summary-stats-label">{I18n.t("average")}</span>
               <span>
-                {renderFractionStat(
-                  (this.state.summary.average_mark || 0).toFixed(2),
-                  this.state.summary.max_mark
-                )}
+                {(this.state.summary.average_mark || 0).toFixed(2)} / {this.state.summary.max_mark}
+                &nbsp;({(this.state.summary.average || 0).toFixed(2)}%)
               </span>
               <span className="summary-stats-label">{I18n.t("median")}</span>
               <span>
-                {renderFractionStat(this.state.summary.median_mark, this.state.summary.max_mark)}
+                {(this.state.summary.median_mark || 0).toFixed(2)} / {this.state.summary.max_mark}
+                &nbsp;({(this.state.summary.median || 0).toFixed(2)}%)
               </span>
               <span className="summary-stats-label">{"Standard Deviation"}</span>
               <span>{(this.state.summary.standard_deviation || 0).toFixed(2)} σ</span>
