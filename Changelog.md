@@ -39,6 +39,7 @@
 - Update Groups API to return member role IDs instead of user IDs (#6006)
 - Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 - Ensure consistent order when displaying test results (#6010)
+- Students can rename files during upload. The file rename is either a selection box, datalist field or a textbox based on assignment parameters (#6045)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
