@@ -124,9 +124,14 @@ class SubmissionsController < ApplicationController
       end
       entries = get_all_file_data(revision, grouping, '')
     end
-    entries.append({ only_required_files: assignment.only_required_files,
-                     required_files: assignment.assignment_properties_config['assignment_files_attributes'] })
-    render json: entries
+
+    response = {
+      entries: entries,
+      only_required_files: assignment.only_required_files,
+      required_files: assignment.assignment_files.collect(&:filename)
+    }
+
+    render json: response
   end
 
   def manually_collect_and_begin_grading
