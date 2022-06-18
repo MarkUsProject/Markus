@@ -5,6 +5,7 @@ en:
   all: All
   apply: Apply
   cancel: Cancel
+  change_filename: Change File Name
   close: Close
   continue: Continue
   copy: Copy
@@ -20,6 +21,7 @@ en:
     launch: Launch MarkUs
   markus: MarkUs
   not_applicable: N/A
+  one_file_allowed: Supports only one file
   or: Or
   other_info: Other Info
   please_wait: Please wait…
