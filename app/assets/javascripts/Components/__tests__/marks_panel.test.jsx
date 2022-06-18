@@ -1,4 +1,4 @@
-import {shallow, mount} from "enzyme";
+import {shallow} from "enzyme";
 
 import {
   MarksPanel,
@@ -81,7 +81,7 @@ describe("CheckboxCriterionInput", () => {
       destroyMark: jest.fn(),
       toggleExpanded: jest.fn(),
     };
-    wrapper = mount(<CheckboxCriterionInput {...basicProps} />);
+    wrapper = shallow(<CheckboxCriterionInput {...basicProps} />);
   });
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
     basicProps.toggleExpanded.mockImplementation(() => {
@@ -101,7 +101,7 @@ describe("CheckboxCriterionInput", () => {
     wrapper.setProps(basicProps);
 
     wrapper.find(`#checkbox_criterion_${basicProps.id}_destroy`).simulate("click");
-    expect(basicProps.destroyMark).toHaveBeenCalledWith(expect.any(Object), basicProps.id);
+    expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
   });
   it("correctly updates mark to max_mark and 0 when clicking on respective buttons", () => {
     basicProps.updateMark.mockImplementation((id, new_mark) => {
@@ -148,7 +148,7 @@ describe("CheckboxCriterionInput", () => {
 describe("FlexibleCriterionInput", () => {
   let basicProps;
   const getWrapper = props => {
-    return mount(<FlexibleCriterionInput {...props} />);
+    return shallow(<FlexibleCriterionInput {...props} />);
   };
   beforeEach(() => {
     basicProps = {
