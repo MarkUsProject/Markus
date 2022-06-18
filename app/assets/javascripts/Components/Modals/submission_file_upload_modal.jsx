@@ -17,11 +17,7 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    if (this.state.newFiles.length == 1) {
-      this.props.onSubmit(this.state.newFiles, this.state.unzip, this.state.single_file_name);
-    } else {
-      this.props.onSubmit(this.state.newFiles, this.state.unzip);
-    }
+    this.props.onSubmit(this.state.newFiles, this.state.unzip, this.state.single_file_name);
   };
 
   handleFileUpload = event => {
@@ -36,50 +32,80 @@ class SubmissionFileUploadModal extends React.Component {
     this.setState({single_file_name: event.target.value});
   };
 
-  render() {
-    let fileInput;
-    if (this.state.newFiles.length == 1) {
-      if (this.props.onlyRequiredFiles) {
-        fileInput = (
-          <select
-            className={"select-filename"}
-            onChange={this.handleNameChange}
-            value={this.state.single_file_name}
-          >
-            <option key={"select_file"}>Please Select File Name</option>
-            {this.props.requiredFiles.map(file => {
-              return (
-                <option key={file.filename} value={file.filename}>
-                  {file.filename}
-                </option>
-              );
-            })}
-          </select>
+  fileRenameInputBox = () => {
+    let fileRenameInput;
+    let filesToShow;
+    if (this.props.uploadTarget) {
+      let filenames = this.props.requiredFiles.filter(
+        filename =>
+          filename.indexOf(this.props.uploadTarget) === 0 &&
+          filename
+            .slice(filename.indexOf(this.props.uploadTarget) + this.props.uploadTarget.length)
+            .indexOf("/") === -1
+      );
+      filesToShow = filenames.map(filename => {
+        return filename.slice(
+          filename.indexOf(this.props.uploadTarget) + this.props.uploadTarget.length
         );
-      } else if (this.props.requiredFiles.length >= 1) {
-        fileInput = (
+      });
+    } else {
+      filesToShow = this.props.requiredFiles.filter(filename => filename.indexOf("/") === -1);
+    }
+    if (this.props.onlyRequiredFiles) {
+      fileRenameInput = (
+        <select
+          className={"select-filename"}
+          onChange={this.handleNameChange}
+          value={this.state.single_file_name}
+          disabled={this.state.newFiles.length !== 1}
+          title={I18n.t("one_file_allowed")}
+        >
+          <option key={"select_file"}>{I18n.t("change_filename")}</option>
+          {filesToShow.map(filename => {
+            return (
+              <option key={filename} value={filename}>
+                {filename}
+              </option>
+            );
+          })}
+        </select>
+      );
+    } else if (this.props.requiredFiles.length >= 1) {
+      fileRenameInput = (
+        <div>
+          <datalist id="fileInput_datalist">
+            {filesToShow.map(filename => {
+              return <option key={filename} value={filename}></option>;
+            })}
+          </datalist>
           <input
             className={"datalist-textbox"}
             list="fileInput_datalist"
             onChange={this.handleNameChange}
-            placeholder={"Change File Name"}
-          ></input>
-        );
-      } else {
-        fileInput = (
-          <input
-            className={"file-rename-textbox"}
+            placeholder={I18n.t("change_filename")}
             value={this.state.single_file_name}
-            type={"text"}
-            name={"filename"}
-            onChange={this.handleNameChange}
-          />
-        );
-      }
+            disabled={this.state.newFiles.length !== 1}
+            title={I18n.t("one_file_allowed")}
+          ></input>
+        </div>
+      );
     } else {
-      fileInput = <div></div>;
+      fileRenameInput = (
+        <input
+          className={"file-rename-textbox"}
+          value={this.state.single_file_name}
+          type={"text"}
+          name={"filename"}
+          onChange={this.handleNameChange}
+          disabled={this.state.newFiles.length !== 1}
+          title={I18n.t("one_file_allowed")}
+        />
+      );
     }
+    return fileRenameInput;
+  };
 
+  render() {
     return (
       <Modal
         className="react-modal"
@@ -109,19 +135,8 @@ class SubmissionFileUploadModal extends React.Component {
                 onChange={this.handleFileUpload}
               />
             </div>
-            {this.state.newFiles.length == 1 ? (
-              <div className={"file-input"}>
-                <datalist id="fileInput_datalist">
-                  {this.props.requiredFiles.map(file => {
-                    return <option key={file.filename} value={file.filename}></option>;
-                  })}
-                </datalist>
-
-                {fileInput}
-              </div>
-            ) : (
-              <div></div>
-            )}
+            <h3>File Name</h3>
+            {this.fileRenameInputBox()}
             <div className={"modal-container"}>
               <input type="submit" value={I18n.t("save")} />
             </div>
