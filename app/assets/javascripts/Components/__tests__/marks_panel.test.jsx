@@ -1,6 +1,11 @@
 import {shallow, mount} from "enzyme";
 
-import {MarksPanel} from "../Result/marks_panel";
+import {
+  MarksPanel,
+  CheckboxCriterionInput,
+  FlexibleCriterionInput,
+  RubricCriterionInput,
+} from "../Result/marks_panel";
 import {screen} from "@testing-library/dom";
 
 const convertToKebabCase = {
@@ -59,99 +64,129 @@ describe("MarksPanel", () => {
       expect(wrapper.find(`#${convertToKebabCase[mark.criterion_type]}_${mark.id}`)).toBeTruthy();
     });
   });
-  describe("CheckboxCriterionInput", () => {
-    let wrapper;
-    beforeEach(() => {
-      basicProps = {
-        released_to_students: false,
-        old_marks: {67: []},
-        marks: [
-          {
-            max_mark: 1,
-            criterion_type: "CheckboxCriterion",
-            id: 67,
-            mark: 0,
-            description: "testing_criterion_description",
-          },
-        ],
-        assigned_criteria: [],
-        annotations: [],
-        updateMark: jest.fn(),
-        revertToAutomaticDeductions: jest.fn(),
-        findDeductiveAnnotation: jest.fn(),
-      };
-      wrapper = mount(<MarksPanel {...basicProps} />);
-    });
-    it("should toggle expand and contract upon clicking the expand/contract button", () => {
-      wrapper.find(`#checkbox_criterion_${basicProps.marks[0].id}_expand`).simulate("click");
-      expect(wrapper.state().expanded.has(basicProps.marks[0].id)).toBe(true);
-
-      wrapper.find(`#checkbox_criterion_${basicProps.marks[0].id}_expand`).simulate("click");
-      expect(wrapper.state().expanded.has(basicProps.marks[0].id)).toBe(false);
-    });
-    it("it delete upon the delete button being pressed", async () => {
-      basicProps["released_to_students"] = false;
-      basicProps["unassigned"] = false;
-      basicProps["mark"] = {mark: 5};
-
-      await wrapper.update();
-      wrapper.find(`checkbox_criterion_${basicProps.marks[0].id}_destroy`).simulate("click");
-      expect(wrapper.destroyMark).toHaveBeenCalledWith(expect.any(Object), basicProps.marks[0].id);
-    });
-    it("has the correct checkbox enabled when the mark is 0", async () => {
-      const wrapper = getWrapper(basicProps);
-
-      await wrapper.update();
-
-      const no_button = wrapper.find(`#check_no_${basicProps.marks[0].mark}`);
-      const yes_button = wrapper.find(`#check_correct_${basicProps.marks[0].mark}`);
-      expect(no_button.checked).toBeTruthy();
-      expect(yes_button.checked).toBeFalsy();
-    });
-    // it("has the correct checkbox enabled when the mark is max_mark", () => {
-    //   const wrapper = getWrapper(basicProps);
-
-    //   wrapper.update();
-
-    //   const no_button = wrapper.find(`#check_no_${basicProps.marks[0].mark}`)
-    //   const yes_button = wrapper.find(`#check_correct_${basicProps.marks[0].mark}`)
-
-    //   expect(no_button.checked).toBeFalsy()
-    //   expect(yes_button.checked).toBeTruthy()
-    //   });
-  });
-  describe("FlexibleCriterionInput", () => {
-    const getWrapper = props => {
-      return mount(<MarksPanel {...props} />);
+});
+describe("CheckboxCriterionInput", () => {
+  let wrapper, basicProps;
+  beforeEach(() => {
+    basicProps = {
+      id: 67,
+      mark: 0,
+      max_mark: 1,
+      expanded: false,
+      unassigned: false,
+      released_to_students: false,
+      oldMark: {},
+      description: " ",
+      updateMark: jest.fn(),
+      destroyMark: jest.fn(),
+      toggleExpanded: jest.fn(),
     };
-    beforeEach(() => {
-      basicProps = {
-        released_to_students: false,
-        old_marks: {67: []},
-        marks: [
-          {
-            max_mark: 2,
-            criterion_type: "FlexibleCriterion",
-            id: 67,
-            mark: 0,
-            description: "testing_criterion_description",
-          },
-        ],
-        assigned_criteria: [],
-        annotations: [],
-        updateMark: jest.fn(),
-        revertToAutomaticDeductions: jest.fn(),
-        findDeductiveAnnotation: jest.fn(),
-      };
+    wrapper = mount(<CheckboxCriterionInput {...basicProps} />);
+  });
+  it("should toggle expand and contract upon clicking the expand/contract button", () => {
+    basicProps.toggleExpanded.mockImplementation(() => {
+      basicProps.expanded = !basicProps.expanded;
     });
-    it("should toggle expand and contract upon clicking the expand/contract button", () => {
-      const wrapper = getWrapper(basicProps);
+    wrapper.find(`#checkbox_criterion_${basicProps.id}_expand`).simulate("click");
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBeTruthy();
 
-      wrapper.find(`#flexible_criterion_${basicProps.marks[0].id}_expand`).simulate("click");
-      expect(wrapper.state().expanded.has(basicProps.marks[0].id)).toBe(true);
+    wrapper.find(`#checkbox_criterion_${basicProps.id}_expand`).simulate("click");
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBeFalsy();
+  });
+  it("it delete upon the delete button being pressed", () => {
+    basicProps.unassigned = false;
+    basicProps.mark = 1;
+    wrapper.setProps(basicProps);
 
-      wrapper.find(`#flexible_criterion_${basicProps.marks[0].id}_expand`).simulate("click");
-      expect(wrapper.state().expanded.has(basicProps.marks[0].id)).toBe(false);
+    wrapper.find(`#checkbox_criterion_${basicProps.id}_destroy`).simulate("click");
+    expect(basicProps.destroyMark).toHaveBeenCalledWith(expect.any(Object), basicProps.id);
+  });
+  it("correctly updates mark to max_mark and 0 when clicking on respective buttons", () => {
+    basicProps.updateMark.mockImplementation((id, new_mark) => {
+      basicProps.mark = new_mark;
     });
+
+    const no_button = wrapper.find(`#check_no_${basicProps.id}`);
+    const yes_button = wrapper.find(`#check_correct_${basicProps.id}`);
+
+    yes_button.simulate("click");
+
+    expect(basicProps.mark).toBe(basicProps.max_mark);
+
+    no_button.simulate("click");
+
+    expect(basicProps.mark).toBe(0);
+  });
+  it("should show bonus if bonus is true", () => {
+    wrapper.setProps({
+      bonus: true,
+    });
+
+    expect(wrapper.html()).toContain(I18n.t("activerecord.attributes.criterion.bonus"));
+  });
+  it("should not let you update mark if released to studnets", () => {
+    wrapper.setProps({
+      released_to_students: true,
+    });
+
+    expect(wrapper.find(`#checkbox_criterion_${basicProps.id}_destroy`).exists()).toBeFalsy();
+    expect(wrapper.find(`#check_no_${basicProps.id}`).exists()).toBeFalsy();
+    expect(wrapper.find(`#check_correct_${basicProps.id}`).exists()).toBeFalsy();
+  });
+  it("should display oldMark.mark", () => {
+    wrapper.setProps({
+      oldMark: {
+        mark: 1,
+      },
+    });
+
+    expect(wrapper.find(".old-mark").text()).toBe(`(${I18n.t("results.remark.old_mark")}: 1)`);
+  });
+});
+describe("FlexibleCriterionInput", () => {
+  let basicProps;
+  const getWrapper = props => {
+    return mount(<FlexibleCriterionInput {...props} />);
+  };
+  beforeEach(() => {
+    basicProps = {
+      expanded: false,
+      unassigned: false,
+      released_to_students: false,
+      bonus: false,
+      override: false,
+
+      id: 66,
+      mark: 0,
+      max_mark: 2,
+
+      description: " ",
+
+      oldMark: {},
+
+      annotations: [],
+
+      findDeductiveAnnotation: jest.fn(),
+      toggleExpanded: jest.fn(),
+      revertToAutomaticDeductions: jest.fn(),
+      destroyMark: jest.fn(),
+      updateMark: jest.fn(),
+    };
+  });
+  it("should toggle expand and contract upon clicking the expand/contract button", () => {
+    basicProps.toggleExpanded.mockImplementation(() => {
+      basicProps.expanded = !basicProps.expanded;
+    });
+    const wrapper = getWrapper(basicProps);
+
+    wrapper.find(`#flexible_criterion_${basicProps.id}_expand`).simulate("click");
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBeTruthy();
+
+    wrapper.find(`#flexible_criterion_${basicProps.id}_expand`).simulate("click");
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBeFalsy();
   });
 });

@@ -143,7 +143,7 @@ export class MarksPanel extends React.Component {
   }
 }
 
-class CheckboxCriterionInput extends React.Component {
+export class CheckboxCriterionInput extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -186,20 +186,24 @@ class CheckboxCriterionInput extends React.Component {
           <div>
             {!this.props.released_to_students && (
               <span className="checkbox-criterion-inputs">
-                <label onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}>
+                <label
+                  onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}
+                  id={`check_correct_${this.props.id}`}
+                >
                   <input
                     type="radio"
                     readOnly={true}
-                    id={`check_correct_${this.props.id}`}
                     checked={this.props.mark === this.props.max_mark}
                     disabled={this.props.released_to_students || this.props.unassigned}
                   />
                   {I18n.t("checkbox_criteria.answer_yes")}
                 </label>
-                <label onClick={() => this.props.updateMark(this.props.id, 0)}>
+                <label
+                  onClick={() => this.props.updateMark(this.props.id, 0)}
+                  id={`check_no_${this.props.id}`}
+                >
                   <input
                     type="radio"
-                    id={`check_no_${this.props.id}`}
                     readOnly={true}
                     checked={this.props.mark === 0}
                     disabled={this.props.released_to_students || this.props.unassigned}
@@ -238,7 +242,7 @@ CheckboxCriterionInput.propTypes = {
   unassigned: PropTypes.bool.isRequired,
   released_to_students: PropTypes.bool.isRequired,
 
-  oldMark: PropTypes.array,
+  oldMark: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 
   description: PropTypes.string.isRequired,
 
@@ -247,7 +251,7 @@ CheckboxCriterionInput.propTypes = {
   toggleExpanded: PropTypes.func.isRequired,
 };
 
-class FlexibleCriterionInput extends React.Component {
+export class FlexibleCriterionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -447,7 +451,7 @@ FlexibleCriterionInput.propTypes = {
 
   description: PropTypes.string.isRequired,
 
-  oldMark: PropTypes.array,
+  oldMark: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 
   annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
 
@@ -458,7 +462,7 @@ FlexibleCriterionInput.propTypes = {
   updateMark: PropTypes.func.isRequired,
 };
 
-class RubricCriterionInput extends React.Component {
+export class RubricCriterionInput extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -557,7 +561,7 @@ RubricCriterionInput.propTypes = {
   mark: PropTypes.number.isRequired,
   max_mark: PropTypes.number,
 
-  oldMark: PropTypes.array,
+  oldMark: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   levels: PropTypes.array,
 
   toggleExpanded: PropTypes.func.isRequired,
