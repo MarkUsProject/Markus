@@ -41,7 +41,9 @@
 
     <ul>
       <% if @grouping.nil? %>
-        <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
+        <% if @assignment.group_max > 1 && @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
+          <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
+        <% end %>
       <% elsif !@assignment.is_timed || !@grouping.start_time.nil? %>
         <% acc = 0 %>
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
@@ -79,8 +81,13 @@
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% unless @grouping.nil? %>
             <li>
-              <%= t('grace_period_submission_rules.group_credits_html',
-                    available_grace_credits: @grouping.available_grace_credits) %>
+              <% if @grouping.student_membership_number > 1 %>
+                <%= t('grace_period_submission_rules.group_credits_html',
+                      available_grace_credits: @grouping.available_grace_credits) %>
+              <% else %>
+                <%= t('grace_period_submission_rules.individual_credits_html',
+                      available_grace_credits: @grouping.available_grace_credits) %>
+              <% end %>
             </li>
           <% end %>
         <% elsif @assignment.submission_rule.type == "PenaltyDecayPeriodSubmissionRule" %>
@@ -105,7 +112,22 @@
       <% end %>
     </ul>
   <% end %>
-
+  <% if @assignment.group_max == 1 %>
+    <h3><%= t('groups.student_interface.group_properties') %></h3>
+    <p><%= t('groups.student_interface.students_work_alone') %></p>
+  <% end %>
+  <% unless @grouping.nil? %>
+    <% if allowed_to?(:access_repo?, @grouping) %>
+      <h3><%= t('groups.student_interface.url_repository') %></h3>
+      <div class='sub_block'>
+        HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
+        <% if allowed_to?(:view?, with: KeyPairPolicy) %>
+          <br/>
+          SSH: <a href='#'><%= @grouping.group.repository_ssh_access_url %></a>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
   <% if !peer_review && (!@assignment.is_timed || !@grouping&.start_time.nil? || @grouping&.past_collection_date?) %>
     <h3><%= Submission.model_name.human.pluralize %></h3>
     <% if @grouping.nil? %>
