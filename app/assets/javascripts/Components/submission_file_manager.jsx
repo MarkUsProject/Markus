@@ -53,12 +53,12 @@ class SubmissionFileManager extends React.Component {
       .then(data => data.json())
       .then(data =>
         this.setState({
-          files: data.slice(0, -1),
+          files: data.entries,
           viewFile: null,
           viewFileType: null,
           viewFileURL: null,
-          onlyRequiredFiles: data[data.length - 1].only_required_files,
-          requiredFiles: data[data.length - 1].required_files,
+          onlyRequiredFiles: data.only_required_files,
+          requiredFiles: data.required_files,
         })
       );
   };
@@ -99,7 +99,7 @@ class SubmissionFileManager extends React.Component {
       const prefix = this.state.uploadTarget || "";
       this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
-      if (files.length == 1) {
+      if (files.length === 1) {
         Array.from(files).forEach(f => data.append("new_files[]", f, single_file_name));
       } else {
         Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
@@ -288,6 +288,7 @@ class SubmissionFileManager extends React.Component {
           onSubmit={this.handleCreateFiles}
           onlyRequiredFiles={this.state.onlyRequiredFiles}
           requiredFiles={this.state.requiredFiles}
+          uploadTarget={this.state.uploadTarget}
         />
         <SubmitUrlUploadModal
           isOpen={this.state.showURLModal}
