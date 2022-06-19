@@ -39,9 +39,7 @@ class SubmissionFileUploadModal extends React.Component {
       let filenames = this.props.requiredFiles.filter(
         filename =>
           filename.indexOf(this.props.uploadTarget) === 0 &&
-          filename
-            .slice(filename.indexOf(this.props.uploadTarget) + this.props.uploadTarget.length)
-            .indexOf("/") === -1
+          filename.slice(this.props.uploadTarget.length).indexOf("/") === -1
       );
       filesToShow = filenames.map(filename => {
         return filename.slice(
