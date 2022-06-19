@@ -135,7 +135,7 @@ class SubmissionFileUploadModal extends React.Component {
                 onChange={this.handleFileUpload}
               />
             </div>
-            <h3>File Name</h3>
+            <h3>{I18n.t("file_name")}</h3>
             {this.fileRenameInputBox()}
             <div className={"modal-container"}>
               <input type="submit" value={I18n.t("save")} />

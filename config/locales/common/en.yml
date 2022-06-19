@@ -13,6 +13,7 @@ en:
   edit: Edit
   encoding: Encoding
   file: File
+  file_name: File Name
   filter_by: Filter by %{name}
   forbidden: Forbidden
   good: Good!
