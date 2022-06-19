@@ -6,7 +6,6 @@ import {
   FlexibleCriterionInput,
   RubricCriterionInput,
 } from "../Result/marks_panel";
-import {screen} from "@testing-library/dom";
 
 const convertToKebabCase = {
   CheckboxCriterion: "checkbox_criterion",
@@ -65,6 +64,7 @@ describe("MarksPanel", () => {
     });
   });
 });
+
 describe("CheckboxCriterionInput", () => {
   let wrapper, basicProps;
   beforeEach(() => {
@@ -126,7 +126,7 @@ describe("CheckboxCriterionInput", () => {
 
     expect(wrapper.html()).toContain(I18n.t("activerecord.attributes.criterion.bonus"));
   });
-  it("should not let you update mark if released to studnets", () => {
+  it("should not let you update mark if released to students", () => {
     wrapper.setProps({
       released_to_students: true,
     });
@@ -145,6 +145,7 @@ describe("CheckboxCriterionInput", () => {
     expect(wrapper.find(".old-mark").text()).toBe(`(${I18n.t("results.remark.old_mark")}: 1)`);
   });
 });
+
 describe("FlexibleCriterionInput", () => {
   let basicProps;
   const getWrapper = props => {
@@ -166,7 +167,7 @@ describe("FlexibleCriterionInput", () => {
 
       oldMark: {},
 
-      annotations: [],
+      annotations: [{annotation: "annotation"}],
 
       findDeductiveAnnotation: jest.fn(),
       toggleExpanded: jest.fn(),
@@ -188,5 +189,237 @@ describe("FlexibleCriterionInput", () => {
     wrapper.find(`#flexible_criterion_${basicProps.id}_expand`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
+  });
+  it("should show bonus if bonus is true", () => {
+    basicProps.bonus = true;
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.html()).toContain(I18n.t("activerecord.attributes.criterion.bonus"));
+  });
+  it("should show list deductions correctly when there is a deduction", () => {
+    basicProps.annotations = [
+      {
+        deduction: 1,
+        criterion_id: basicProps.id,
+        submission_file_id: basicProps.id,
+        id: basicProps.id + 1,
+        line_start: 1,
+        is_remark: false,
+        filename: "filename",
+      },
+    ];
+    const wrapper = getWrapper(basicProps);
+
+    const deductionLink = wrapper.find(`#flexible_deduction_${basicProps.id}`);
+    expect(deductionLink.exists()).toBeTruthy();
+    deductionLink.simulate("click");
+    expect(basicProps.findDeductiveAnnotation).toHaveBeenCalledWith(
+      "filename",
+      basicProps.id,
+      1,
+      basicProps.id + 1
+    );
+  });
+  it("should notify if the mark is overriden", () => {
+    basicProps.annotations = [
+      {
+        deduction: 1,
+        criterion_id: basicProps.id,
+        submission_file_id: basicProps.id,
+        id: basicProps.id + 1,
+        line_start: 1,
+        is_remark: false,
+        filename: "filename",
+      },
+    ];
+    basicProps.override = true;
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".mark-deductions").text()).toContain(
+      "(" + I18n.t("results.overridden_deductions") + ") "
+    );
+  });
+  it("should display oldMark if it exists", () => {
+    basicProps.oldMark = {mark: 1};
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".old-mark").exists()).toBeTruthy();
+    expect(wrapper.find(".old-mark").text()).toBe(
+      `(${I18n.t("results.remark.old_mark")}: ${basicProps.oldMark.mark})`
+    );
+  });
+  it("should display oldMark with override if it exists", () => {
+    basicProps.oldMark = {mark: 1, override: true};
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".old-mark").exists()).toBeTruthy();
+    expect(wrapper.find(".old-mark").text()).toBe(
+      `(${I18n.t("results.remark.old_mark")}: (${I18n.t("results.overridden_deductions")}) ${
+        basicProps.oldMark.mark
+      })`
+    );
+  });
+  it("should call handleChange on change and set rawText to new value", () => {
+    const wrapper = getWrapper(basicProps);
+
+    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    input.simulate("change", {target: {value: 1}});
+    expect(wrapper.state().rawText).toBe(1);
+  });
+  it("should set the mark as invalid if it is greater than max_mark", () => {
+    const wrapper = getWrapper(basicProps);
+
+    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    input.simulate("change", {target: {value: 999}});
+    expect(wrapper.state().rawText).toBe(999);
+    expect(wrapper.state().invalid).toBeTruthy();
+  });
+  it("should set the mark as invalid if it is not a number", () => {
+    const wrapper = getWrapper(basicProps);
+
+    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    input.simulate("change", {target: {value: "Hi Prof Liu"}});
+    expect(wrapper.state().rawText).toBe("Hi Prof Liu");
+    expect(wrapper.state().invalid).toBeTruthy();
+  });
+  it("should set the mark as valid if it has a decimal", () => {
+    const wrapper = getWrapper(basicProps);
+
+    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    input.simulate("change", {target: {value: 2.0}});
+    expect(wrapper.state().rawText).toBe(2.0);
+    expect(wrapper.state().invalid).toBeFalsy();
+  });
+  it("should delete a mark correctly", () => {
+    basicProps.mark = 1;
+    basicProps.override = true;
+    const wrapper = getWrapper(basicProps);
+
+    const destroyer = wrapper.find(`#flexible_destroy_${basicProps.id}_criteria`);
+
+    destroyer.simulate("click");
+
+    expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
+  });
+  it("should revert a mark correctly", () => {
+    basicProps.mark = 1;
+    basicProps.override = true;
+    basicProps.annotations = [
+      {
+        deduction: 1,
+        criterion_id: basicProps.id,
+        submission_file_id: basicProps.id,
+        id: basicProps.id + 1,
+        line_start: 1,
+        is_remark: false,
+        filename: "filename",
+      },
+    ];
+    const wrapper = getWrapper(basicProps);
+
+    const reverter = wrapper.find(`#flexible_revert_${basicProps.id}`);
+
+    reverter.simulate("click");
+
+    expect(basicProps.revertToAutomaticDeductions).toHaveBeenCalledWith(basicProps.id);
+  });
+});
+
+describe("RubricCriterionInput", () => {
+  let basicProps;
+  const getWrapper = props => {
+    return shallow(<RubricCriterionInput {...props} />);
+  };
+  beforeEach(() => {
+    basicProps = {
+      expanded: false,
+      unassigned: false,
+      released_to_students: false,
+      bonus: false,
+
+      id: 66,
+      mark: 0,
+      max_mark: 1,
+
+      oldMark: {},
+      levels: [
+        {mark: 1, name: "level 1", description: "description"},
+        {mark: 2, name: "level 2", description: "description2"},
+      ],
+
+      toggleExpanded: jest.fn(),
+      destroyMark: jest.fn(),
+      updateMark: jest.fn(),
+    };
+  });
+  it("should toggle expand and contract upon clicking the expand/contract button", () => {
+    basicProps.toggleExpanded.mockImplementation(() => {
+      basicProps.expanded = !basicProps.expanded;
+    });
+    const wrapper = getWrapper(basicProps);
+
+    wrapper.find(`#rubric_criterion_${basicProps.id}_expand`).simulate("click");
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBeTruthy();
+
+    wrapper.find(`#rubric_criterion_${basicProps.id}_expand`).simulate("click");
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBeFalsy();
+  });
+  it("should destroy properly upon clicking destroy", () => {
+    const wrapper = getWrapper(basicProps);
+
+    wrapper.find(`#rubric_${basicProps.id}_destroy`).simulate("click");
+    expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
+  });
+  it("should mark as bonus", () => {
+    basicProps.bonus = true;
+
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.html()).toContain(` (${I18n.t("activerecord.attributes.criterion.bonus")})`);
+  });
+  it("should display as many rubric levels as in levels", () => {
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".level-description").length).toBe(2);
+  });
+  it("should handleChange on clicking a rubric level", () => {
+    const wrapper = getWrapper(basicProps);
+
+    const level1 = wrapper.find(`#rubric_${basicProps.id}_1`);
+    const level2 = wrapper.find(`#rubric_${basicProps.id}_2`);
+
+    level1.simulate("click");
+
+    expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 1);
+
+    level2.simulate("click");
+
+    expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 2);
+  });
+  it("should not show a class is selected or an old-mark by default", () => {
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".old-mark").exists()).toBeFalsy();
+    expect(wrapper.find(".selected").exists()).toBeFalsy();
+  });
+  it("should show a class is selected", () => {
+    basicProps.mark = 1;
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".selected").exists()).toBeTruthy();
+  });
+  it("should show a class is selected", () => {
+    basicProps.oldMark.mark = 1;
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(".old-mark").exists()).toBeTruthy();
+  });
+  it("should not let you destroy if released_to_students", () => {
+    basicProps.released_to_students = true;
+    const wrapper = getWrapper(basicProps);
+
+    expect(wrapper.find(`#rubric_${basicProps.id}_destroy`).exists()).toBeFalsy();
   });
 });
