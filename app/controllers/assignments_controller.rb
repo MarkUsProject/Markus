@@ -362,7 +362,7 @@ class AssignmentsController < ApplicationController
       num_students_who_submitted_work: assignment.groupings.joins(:accepted_students).count,
       num_active_students: @current_course.students.active.size,
       num_remark_requests: assignment_remark_requests.count,
-      num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete).count
+      num_remark_requests_completed: assignment_remark_requests.count - assignment.outstanding_remark_request_count
     }
     intervals = 20
     assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
