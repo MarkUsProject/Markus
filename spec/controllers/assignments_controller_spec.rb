@@ -1076,12 +1076,18 @@ describe AssignmentsController do
         expect(keys).to contain_exactly('name',
                                         'average',
                                         'median',
+                                        'average_mark',
+                                        'median_mark',
+                                        'max_mark',
                                         'num_submissions_collected',
                                         'num_submissions_graded',
                                         'num_fails',
                                         'num_zeros',
                                         'groupings_size',
-                                        'num_outstanding_remark_requests')
+                                        'num_outstanding_remark_requests',
+                                        'num_students_who_submitted_work',
+                                        'num_active_students',
+                                        'num_remark_requests')
       end
 
       it 'should contain the right values' do

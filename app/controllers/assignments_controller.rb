@@ -344,6 +344,7 @@ class AssignmentsController < ApplicationController
   # Return assignment grade distributions
   def grade_distribution
     assignment = record
+    assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
     summary = {
       name: "#{assignment.short_identifier}: #{assignment.description}",
       average: assignment.results_average || 0,
@@ -360,12 +361,8 @@ class AssignmentsController < ApplicationController
       groupings_size: assignment.groupings.size,
       num_students_who_submitted_work: assignment.groupings.joins(:accepted_students).count,
       num_active_students: @current_course.students.active.size,
-      num_outstanding_remark_requests: assignment.outstanding_remark_request_count,
-      num_remark_requests: assignment.groupings.joins(current_submission_used: :submitted_remark).count,
-      num_remark_requests_completed: assignment.groupings
-                                               .joins(current_submission_used: :submitted_remark)
-                                               .where('results.marking_state': :complete)
-                                               .count
+      num_remark_requests: assignment_remark_requests.count,
+      num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete).count
     }
     intervals = 20
     assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }

@@ -86,7 +86,7 @@ export class AssignmentChart extends React.Component {
 
   render() {
     let outstanding_remark_request_link = "";
-    if (this.state.summary.num_outstanding_remark_requests > 0) {
+    if (this.state.summary.num_remark_requests > 0) {
       const remark_submissions_list_link = Routes.browse_course_assignment_submissions_path(
         this.props.course_id,
         this.props.assessment_id,
@@ -98,9 +98,7 @@ export class AssignmentChart extends React.Component {
       outstanding_remark_request_link = (
         <React.Fragment>
           <a className="summary-stats-label" href={remark_submissions_list_link}>
-            {I18n.t("outstanding_remark_request", {
-              count: this.state.summary.num_outstanding_remark_requests,
-            })}
+            {I18n.t("remark_requests_completed")}
           </a>
           <a href={remark_submissions_list_link}>
             <span>
@@ -112,10 +110,14 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const renderFractionStat = (a, b) => {
+    const renderFractionStat = (a, b, c = null) => {
+      let result = c;
+      if (c === null) {
+        result = ((a / b || 0) * 100).toFixed(2);
+      }
       return (
         <span>
-          {a} / {b} ({((a / b || 0) * 100).toFixed(2)}%)
+          {a} / {b} ({result}%)
         </span>
       );
     };
@@ -134,10 +136,10 @@ export class AssignmentChart extends React.Component {
           </div>
           <div className="flex-row-expand">
             <div className="grid-2-col">
-              <span className="summary-stats-label">{"Number of Groups"}</span>
+              <span className="summary-stats-label">{I18n.t("num_groups")}</span>
               <span>{this.state.summary.groupings_size}</span>
               <span className="summary-stats-label">
-                {"Number of Students with Submitted Work"}
+                {I18n.t("num_students_with_submitted_work")}
               </span>
               <span>
                 {this.state.summary.num_students_who_submitted_work} /{" "}
@@ -159,15 +161,21 @@ export class AssignmentChart extends React.Component {
               </span>
               <span className="summary-stats-label">{I18n.t("average")}</span>
               <span>
-                {(this.state.summary.average_mark || 0).toFixed(2)} / {this.state.summary.max_mark}
-                &nbsp;({(this.state.summary.average || 0).toFixed(2)}%)
+                {renderFractionStat(
+                  (this.state.summary.average_mark || 0).toFixed(2),
+                  this.state.summary.max_mark,
+                  (this.state.summary.average || 0).toFixed(2)
+                )}
               </span>
               <span className="summary-stats-label">{I18n.t("median")}</span>
               <span>
-                {(this.state.summary.median_mark || 0).toFixed(2)} / {this.state.summary.max_mark}
-                &nbsp;({(this.state.summary.median || 0).toFixed(2)}%)
+                {renderFractionStat(
+                  (this.state.summary.median_mark || 0).toFixed(2),
+                  this.state.summary.max_mark,
+                  (this.state.summary.median || 0).toFixed(2)
+                )}
               </span>
-              <span className="summary-stats-label">{"Standard Deviation"}</span>
+              <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
               <span>{(this.state.summary.standard_deviation || 0).toFixed(2)} σ</span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>
               <span>
