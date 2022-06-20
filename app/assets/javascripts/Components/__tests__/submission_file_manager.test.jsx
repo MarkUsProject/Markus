@@ -39,12 +39,8 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
     // Unlike FileManager, files are stored in SubmissionFileManager's states, which are set when the component mounts
     // and calls fetchData. As a result, we need to mock that fetch to return our data.
     // We need to mock "twice" (i.e. two promises) because of how fetch works.
-    window.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(files_sample),
-      })
-    );
-
+    fetch.resetMocks();
+    fetch.mockResponseOnce(JSON.stringify(files_sample));
     wrapper = mount(<SubmissionFileManager course_id={1} assignment_id={1} />);
 
     // Mock the document to have a section called content so that renderFileViewer can be called.

@@ -125,7 +125,7 @@ module.exports = {
   // The paths to modules that run some code to configure or set up the testing environment before each test
   // Installed jest-canvas-mock to prevent HTMLCanvasElement.prototype.getContext not implemented warnings.
   // https://stackoverflow.com/questions/48828759/unit-test-raises-error-because-of-getcontext-is-not-implemented
-  setupFiles: ["<rootDir>/jest_env_setup", "jest-canvas-mock"],
+  setupFiles: ["<rootDir>/jest_env_setup", "jest-canvas-mock", "jsdom-worker"],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   setupFilesAfterEnv: ["<rootDir>/jest_after_env_setup"],

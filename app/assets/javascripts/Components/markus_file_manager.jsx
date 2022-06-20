@@ -299,9 +299,10 @@ class FileManagerFile extends FileRenderers.RawTableFile {
       icon = <i className="fa fa-file-o" aria-hidden="true" />;
     }
 
+    // SVG path generated from https://fontawesome.com/icons/download?s=solid
     let download_icon = (
       <svg
-        className="submission-download"
+        className="file-download"
         xmlns="http://www.w3.org/2000/svg"
         width="24px"
         height="24px"

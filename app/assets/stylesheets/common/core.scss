@@ -487,15 +487,16 @@ div.rendered-react-keyed-file-browser div.files table td.name div * {
 }
 
 div.rendered-react-keyed-file-browser div.files tbody tr:hover {
-  background-color: $submission-row-hover;
+  background-color: $file-row-hover;
 }
 
-.submission-download {
-  fill: $submission-download-icon-fill;
+.file-download {
+  fill: $file-download-icon-fill;
+  vertical-align: bottom;
 }
 
-.submission-download:hover {
-  fill: $submission-download-icon-hover;
+.file-download:hover {
+  fill: $file-download-icon-hover;
 }
 
 select.collected-checked,
