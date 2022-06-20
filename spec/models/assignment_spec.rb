@@ -1678,6 +1678,29 @@ describe Assignment do
     end
   end
 
+  describe '#standard_deviation' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_standard_deviation).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_standard_deviation).to eq 1
+    end
+
+    it 'returns the correct number when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_standard_deviation).to eq 0
+    end
+  end
+
   describe '#current_submission_data' do
     let(:assignment) { create :assignment }
     let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment }
