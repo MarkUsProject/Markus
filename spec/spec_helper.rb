@@ -2,6 +2,7 @@
 require 'simplecov'
 require 'simplecov-lcov'
 require 'webmock/rspec'
+WebMock.disable_net_connect!(allow_localhost: true)
 
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true
