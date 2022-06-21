@@ -123,7 +123,8 @@ class MainController < ApplicationController
 
   def set_lti_user_association
     if session[:lti_user_id].present?
-      LtiUser.find_or_create_by(user: @real_user, lti_client: LtiClient.find(session[:lti_client_id]))
+      LtiUser.find_or_create_by(user: @real_user, lti_client: LtiClient.find(session[:lti_client_id]),
+                                lti_user_id: session[:lti_user_id])
     end
     lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
     if lti_deployment.course.nil?

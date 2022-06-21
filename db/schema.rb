@@ -354,8 +354,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
   end
 
   create_table "lti_clients", force: :cascade do |t|
-    t.string "client_id"
-    t.string "host"
+    t.string "client_id", null: false
+    t.string "host", null: false
     t.bigint "course_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -363,9 +363,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
   end
 
   create_table "lti_deployments", force: :cascade do |t|
-    t.bigint "lti_client_id"
+    t.bigint "lti_client_id", null: false
     t.bigint "course_id"
-    t.string "external_deployment_id"
+    t.string "external_deployment_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_lti_deployments_on_course_id"
@@ -373,9 +373,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
   end
 
   create_table "lti_users", force: :cascade do |t|
-    t.bigint "lti_client_id"
-    t.bigint "user_id"
-    t.string "lti_user_id"
+    t.bigint "lti_client_id", null: false
+    t.bigint "user_id", null: false
+    t.string "lti_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lti_client_id"], name: "index_lti_users_on_lti_client_id"
