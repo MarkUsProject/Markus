@@ -14,6 +14,7 @@ describe User do
   it { is_expected.to allow_value('-22125-k1lj42_').for(:user_name) }
   it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
   it { is_expected.to have_many(:roles) }
+  it { is_expected.to have_many(:lti_users) }
 
   describe 'AutotestUser' do
     subject { create :autotest_user }
@@ -116,6 +117,23 @@ describe User do
           expect(User.authenticate('ab', '123')).to eq '3'
         end
       end
+    end
+  end
+  describe '#admin_courses' do
+    let(:course1) { create :course }
+    let(:course2) { create :course }
+    let(:admin) { create :admin_user }
+    let(:instructor1) { create :instructor, course: course1 }
+    let(:student) { create :student, course: course2 }
+
+    it 'returns only courses where an instructor is an admin' do
+      expect(instructor1.user.admin_courses).to contain_exactly(course1)
+    end
+    it 'returns no courses for a student' do
+      expect(student.user.admin_courses).to be_empty
+    end
+    it 'returns all courses for an admin user' do
+      expect(admin.admin_courses).to contain_exactly(course1, course2)
     end
   end
 end
