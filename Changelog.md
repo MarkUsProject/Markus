@@ -42,6 +42,7 @@
 - Ensure consistent order when displaying test results (#6010)
 - Added Capybara Gem (#6012)
 - Separated peer review assignment upload/download from parent (#6048)
+- Expanded summary stats UI (#6050)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
