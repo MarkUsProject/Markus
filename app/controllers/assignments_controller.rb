@@ -347,8 +347,8 @@ class AssignmentsController < ApplicationController
     assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
     summary = {
       name: "#{assignment.short_identifier}: #{assignment.description}",
-      average: assignment.results_average(as_point_mark: true) || 0,
-      median: assignment.results_median(as_point_mark: true) || 0,
+      average: assignment.results_average(point_mark: true) || 0,
+      median: assignment.results_median(point_mark: true) || 0,
       max_mark: assignment.max_mark || 0,
       standard_deviation: assignment.results_standard_deviation || 0,
       num_submissions_collected: assignment.current_submissions_used.size,

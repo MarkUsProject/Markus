@@ -1610,7 +1610,7 @@ describe Assignment do
 
     it 'returns the correct number when viewing raw point value' do
       allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
-      expect(assignment.results_average(as_point_mark: true)).to eq(3.0)
+      expect(assignment.results_average(point_mark: true)).to eq(3.0)
     end
   end
 
@@ -1638,7 +1638,7 @@ describe Assignment do
 
     it 'returns the correct number when viewing raw point value' do
       allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
-      expect(assignment.results_median(as_point_mark: true)).to eq(2.5)
+      expect(assignment.results_median(point_mark: true)).to eq(2.5)
     end
   end
 
