@@ -1607,6 +1607,11 @@ describe Assignment do
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_average).to eq 0
     end
+
+    it 'returns the correct number when viewing raw point value' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_average(as_point_mark: true)).to eq(3.0)
+    end
   end
 
   describe '#results_median' do
@@ -1629,6 +1634,11 @@ describe Assignment do
       allow(assignment).to receive(:max_mark).and_return(0)
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_median).to eq 0
+    end
+
+    it 'returns the correct number when viewing raw point value' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_median(as_point_mark: true)).to eq(2.5)
     end
   end
 
@@ -1698,26 +1708,6 @@ describe Assignment do
       allow(assignment).to receive(:max_mark).and_return(0)
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_standard_deviation).to eq 0
-    end
-  end
-
-  describe '#results_average_raw' do
-    let(:assignment) { create :assignment }
-
-    it 'returns the correct number when there are completed results' do
-      allow(assignment).to receive(:max_mark).and_return(10)
-      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
-      expect(assignment.results_average_raw).to eq(3.0)
-    end
-  end
-
-  describe '#results_median_raw' do
-    let(:assignment) { create :assignment }
-
-    it 'returns the correct number when there are completed results' do
-      allow(assignment).to receive(:max_mark).and_return(10)
-      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
-      expect(assignment.results_median_raw).to eq(2.5)
     end
   end
 

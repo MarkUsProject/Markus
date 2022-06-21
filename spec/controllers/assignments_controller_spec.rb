@@ -1093,8 +1093,8 @@ describe AssignmentsController do
         summary = response.parsed_body['summary']
         assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
         expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
-                     average: assignment.results_average_raw || 0,
-                     median: assignment.results_median_raw || 0,
+                     average: assignment.results_average(as_point_mark: true) || 0,
+                     median: assignment.results_median(as_point_mark: true) || 0,
                      max_mark: assignment.max_mark || 0,
                      standard_deviation: assignment.results_standard_deviation || 0,
                      num_submissions_collected: assignment.current_submissions_used.size,

@@ -62,16 +62,34 @@ class Assessment < ApplicationRecord
     self.completed_result_marks.map { |mark| mark * factor }
   end
 
-  # Returns the average percentage grade for this assessment, using all grades in self.completed_result_marks.
-  def results_average
+  # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
+  # If +as_point_mark+ is true, this returns raw average point grade for this assessment.
+  # Otherwise, the average percentage grade for this assessment is returned.
+  def results_average(as_point_mark: false)
     return 0 if self.max_mark.zero?
-    (results_average_raw * 100 / self.max_mark).round(2).to_f
+
+    marks = self.completed_result_marks
+    if marks.empty?
+      0
+    else
+      point_average = DescriptiveStatistics.mean(marks)
+      as_point_mark ? point_average : (point_average * 100 / self.max_mark).round(2).to_f
+    end
   end
 
-  # Returns the median percentage grade for this assessment, using all grades in self.completed_result_marks.
-  def results_median
+  # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
+  # If +as_point_mark+ is true, this returns raw median point grade for this assessment.
+  # Otherwise, the median percentage grade for this assessment is returned.
+  def results_median(as_point_mark: false)
     return 0 if self.max_mark.zero?
-    (results_median_raw * 100 / self.max_mark).round(2).to_f
+
+    marks = self.completed_result_marks
+    if marks.empty?
+      0
+    else
+      point_median = DescriptiveStatistics.median(marks)
+      as_point_mark ? point_median : (point_median * 100 / self.max_mark).round(2).to_f
+    end
   end
 
   # Returns the number of grades under 50% for this assessment, using all grades in self.completed_result_marks.
@@ -94,30 +112,6 @@ class Assessment < ApplicationRecord
       0
     else
       DescriptiveStatistics.standard_deviation(marks)
-    end
-  end
-
-  # Returns the raw average point grade for this assessment, using all grades in self.completed_result_marks.
-  def results_average_raw
-    return 0 if self.max_mark.zero?
-
-    marks = self.completed_result_marks
-    if marks.empty?
-      0
-    else
-      DescriptiveStatistics.mean(marks)
-    end
-  end
-
-  # Returns the raw median point grade for this assessment, using all grades in self.completed_result_marks.
-  def results_median_raw
-    return 0 if self.max_mark.zero?
-
-    marks = self.completed_result_marks
-    if marks.empty?
-      0
-    else
-      DescriptiveStatistics.median(marks)
     end
   end
 end
