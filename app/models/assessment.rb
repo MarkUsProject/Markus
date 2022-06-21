@@ -86,12 +86,11 @@ class Assessment < ApplicationRecord
   def results_standard_deviation
     return 0 if self.max_mark.zero?
 
-    marks = percentage_grades_array
+    marks = self.completed_result_marks
     if marks.empty?
       0
     else
-      marks = marks.map { |mark| mark / self.max_mark * 100 }
-      DescriptiveStatistics.standard_deviation(marks).round(2).to_f
+      DescriptiveStatistics.standard_deviation(marks)
     end
   end
 
