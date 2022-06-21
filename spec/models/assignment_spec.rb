@@ -1701,6 +1701,26 @@ describe Assignment do
     end
   end
 
+  describe '#results_average_raw' do
+    let(:assignment) { create :assignment }
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:max_mark).and_return(10)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_average_raw).to eq(3.0)
+    end
+  end
+
+  describe '#results_median_raw' do
+    let(:assignment) { create :assignment }
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:max_mark).and_return(10)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_median_raw).to eq(2.5)
+    end
+  end
+
   describe '#current_submission_data' do
     let(:assignment) { create :assignment }
     let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment }

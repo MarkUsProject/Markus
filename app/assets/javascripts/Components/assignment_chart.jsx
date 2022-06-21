@@ -110,6 +110,14 @@ export class AssignmentChart extends React.Component {
       );
     }
 
+    const percentage_standard_deviation = () => {
+      const max_mark = Number(this.state.summary.max_mark) || 0;
+      if (max_mark === 0) {
+        return "0.00";
+      }
+      return ((100 / max_mark) * (Number(this.state.summary.standard_deviation) || 0)).toFixed(2);
+    };
+
     const assignment_graph = (
       <React.Fragment>
         <div className="flex-row">
@@ -155,12 +163,8 @@ export class AssignmentChart extends React.Component {
               />
               <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
               <span>
-                {(this.state.summary.standard_deviation || 0).toFixed(2)} (
-                {(
-                  (100 / Number(this.state.summary.max_mark) || 0) *
-                  (Number(this.state.summary.standard_deviation) || 0)
-                ).toFixed(2)}
-                %)
+                {(this.state.summary.standard_deviation || 0).toFixed(2)}
+                &nbsp;({percentage_standard_deviation()}%)
               </span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>
               <FractionStat
@@ -232,10 +236,13 @@ export class AssignmentChart extends React.Component {
 class FractionStat extends React.Component {
   render() {
     const numerator = +(Number(this.props.numerator) || 0).toFixed(2),
-      denominator = +(Number(this.props.denominator) || 0).toFixed(2),
+      denominator = +(Number(this.props.denominator) || 0).toFixed(2);
+    let result = "0.00";
+    if (denominator !== 0) {
       result = ((Number(this.props.numerator) / Number(this.props.denominator) || 0) * 100).toFixed(
         2
       );
+    }
     return (
       <span>
         {numerator} / {denominator} ({result}%)

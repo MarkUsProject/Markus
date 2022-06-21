@@ -64,11 +64,13 @@ class Assessment < ApplicationRecord
 
   # Returns the average percentage grade for this assessment, using all grades in self.completed_result_marks.
   def results_average
+    return 0 if self.max_mark.zero?
     (results_average_raw * 100 / self.max_mark).round(2).to_f
   end
 
   # Returns the median percentage grade for this assessment, using all grades in self.completed_result_marks.
   def results_median
+    return 0 if self.max_mark.zero?
     (results_median_raw * 100 / self.max_mark).round(2).to_f
   end
 
