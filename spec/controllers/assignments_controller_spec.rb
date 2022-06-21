@@ -1076,8 +1076,6 @@ describe AssignmentsController do
         expect(keys).to contain_exactly('name',
                                         'average',
                                         'median',
-                                        'average_mark',
-                                        'median_mark',
                                         'max_mark',
                                         'standard_deviation',
                                         'num_submissions_collected',
@@ -1085,7 +1083,7 @@ describe AssignmentsController do
                                         'num_fails',
                                         'num_zeros',
                                         'groupings_size',
-                                        'num_students_who_submitted_work',
+                                        'num_students_with_submitted_work',
                                         'num_active_students',
                                         'num_remark_requests',
                                         'num_remark_requests_completed')
@@ -1095,10 +1093,8 @@ describe AssignmentsController do
         summary = response.parsed_body['summary']
         assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
         expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
-                     average: assignment.results_average || 0,
-                     median: assignment.results_median,
-                     average_mark: assignment.results_average_raw || 0,
-                     median_mark: assignment.results_median_raw || 0,
+                     average: assignment.results_average_raw || 0,
+                     median: assignment.results_median_raw || 0,
                      max_mark: assignment.max_mark || 0,
                      standard_deviation: assignment.results_standard_deviation || 0,
                      num_submissions_collected: assignment.current_submissions_used.size,
@@ -1107,11 +1103,12 @@ describe AssignmentsController do
                      num_fails: assignment.results_fails,
                      num_zeros: assignment.results_zeros,
                      groupings_size: assignment.groupings.size,
-                     num_students_who_submitted_work: assignment.groupings.joins(:accepted_students).count,
+                     num_students_with_submitted_work: assignment.groupings.joins(:accepted_students).count,
                      num_active_students: assignment.course.students.active.size,
                      num_remark_requests: assignment_remark_requests.count,
                      num_remark_requests_completed: assignment_remark_requests.count -
-                       assignment.outstanding_remark_request_count }
+                       (assignment.outstanding_remark_request_count || 0) }
+        puts summary
         expect(summary).to eq expected.as_json
       end
     end
