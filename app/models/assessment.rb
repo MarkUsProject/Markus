@@ -62,12 +62,12 @@ class Assessment < ApplicationRecord
     self.completed_result_marks.map { |mark| mark * factor }
   end
 
-  # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
+  # Returns the average percentage grade for this assessment, using all grades in self.completed_result_marks.
   def results_average
     (results_average_raw * 100 / self.max_mark).round(2).to_f
   end
 
-  # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
+  # Returns the median percentage grade for this assessment, using all grades in self.completed_result_marks.
   def results_median
     (results_median_raw * 100 / self.max_mark).round(2).to_f
   end
@@ -83,6 +83,7 @@ class Assessment < ApplicationRecord
     self.completed_result_marks.count(&:zero?)
   end
 
+  # Returns the standard deviation for this assessment, using all grades in self.completed_result_marks.
   def results_standard_deviation
     return 0 if self.max_mark.zero?
 
@@ -94,6 +95,7 @@ class Assessment < ApplicationRecord
     end
   end
 
+  # Returns the raw average point grade for this assessment, using all grades in self.completed_result_marks.
   def results_average_raw
     return 0 if self.max_mark.zero?
 
@@ -105,6 +107,7 @@ class Assessment < ApplicationRecord
     end
   end
 
+  # Returns the raw median point grade for this assessment, using all grades in self.completed_result_marks.
   def results_median_raw
     return 0 if self.max_mark.zero?
 
