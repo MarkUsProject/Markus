@@ -41,7 +41,7 @@
 - Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 - Ensure consistent order when displaying test results (#6010)
 - Added Capybara Gem (#6012)
-- Students can rename files during upload. The file rename is either a selection box, datalist field or a textbox based on assignment parameters (#6045)
+- Enable students to rename files during submission (#6045)
 - Separated peer review assignment upload/download from parent (#6048)
 
 ## [v2.0.10]
