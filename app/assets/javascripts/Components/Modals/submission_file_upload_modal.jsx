@@ -63,7 +63,11 @@ class SubmissionFileUploadModal extends React.Component {
               />
             </div>
             <div className={"modal-container"}>
-              <input type="submit" value={I18n.t("save")} />
+              <input
+                type="submit"
+                value={I18n.t("save")}
+                disabled={this.state.newFiles.length === 0}
+              />
             </div>
           </div>
         </form>
