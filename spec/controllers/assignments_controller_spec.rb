@@ -1083,7 +1083,7 @@ describe AssignmentsController do
                                         'num_fails',
                                         'num_zeros',
                                         'groupings_size',
-                                        'num_students_with_submitted_work',
+                                        'num_students_in_group',
                                         'num_active_students',
                                         'num_remark_requests',
                                         'num_remark_requests_completed')
@@ -1103,7 +1103,7 @@ describe AssignmentsController do
                      num_fails: assignment.results_fails,
                      num_zeros: assignment.results_zeros,
                      groupings_size: assignment.groupings.size,
-                     num_students_with_submitted_work: assignment.groupings.joins(:accepted_students).size,
+                     num_students_in_group: assignment.groupings.joins(:accepted_students).size,
                      num_active_students: assignment.course.students.active.size,
                      num_remark_requests: assignment_remark_requests.size,
                      num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete)

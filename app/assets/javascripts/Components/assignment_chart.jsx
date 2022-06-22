@@ -134,11 +134,9 @@ export class AssignmentChart extends React.Component {
             <div className="grid-2-col">
               <span className="summary-stats-label">{I18n.t("num_groups")}</span>
               <span>{this.state.summary.groupings_size}</span>
-              <span className="summary-stats-label">
-                {I18n.t("num_students_with_submitted_work")}
-              </span>
+              <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
               <FractionStat
-                numerator={this.state.summary.num_students_with_submitted_work}
+                numerator={this.state.summary.num_students_in_group}
                 denominator={this.state.summary.num_active_students}
               />
               <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
