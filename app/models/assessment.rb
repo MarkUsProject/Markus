@@ -63,9 +63,9 @@ class Assessment < ApplicationRecord
   end
 
   # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
-  # If +point_mark+ is true, this returns the raw average point grade for this assessment.
+  # If +points+ is true, this returns the raw average point grade for this assessment.
   # Otherwise, the average percentage grade for this assessment is returned.
-  def results_average(point_mark: false)
+  def results_average(points: false)
     return 0 if self.max_mark.zero?
 
     marks = self.completed_result_marks
@@ -73,14 +73,14 @@ class Assessment < ApplicationRecord
       0
     else
       point_average = DescriptiveStatistics.mean(marks)
-      point_mark ? point_average : (point_average * 100 / self.max_mark).round(2).to_f
+      points ? point_average : (point_average * 100 / self.max_mark).round(2).to_f
     end
   end
 
   # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
-  # If +point_mark+ is true, this returns the raw median point grade for this assessment.
+  # If +points+ is true, this returns the raw median point grade for this assessment.
   # Otherwise, the median percentage grade for this assessment is returned.
-  def results_median(point_mark: false)
+  def results_median(points: false)
     return 0 if self.max_mark.zero?
 
     marks = self.completed_result_marks
@@ -88,7 +88,7 @@ class Assessment < ApplicationRecord
       0
     else
       point_median = DescriptiveStatistics.median(marks)
-      point_mark ? point_median : (point_median * 100 / self.max_mark).round(2).to_f
+      points ? point_median : (point_median * 100 / self.max_mark).round(2).to_f
     end
   end
 

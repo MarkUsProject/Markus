@@ -1093,8 +1093,8 @@ describe AssignmentsController do
         summary = response.parsed_body['summary']
         assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
         expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
-                     average: assignment.results_average(point_mark: true) || 0,
-                     median: assignment.results_median(point_mark: true) || 0,
+                     average: assignment.results_average(points: true) || 0,
+                     median: assignment.results_median(points: true) || 0,
                      max_mark: assignment.max_mark || 0,
                      standard_deviation: assignment.results_standard_deviation || 0,
                      num_submissions_collected: assignment.current_submissions_used.size,
@@ -1103,11 +1103,11 @@ describe AssignmentsController do
                      num_fails: assignment.results_fails,
                      num_zeros: assignment.results_zeros,
                      groupings_size: assignment.groupings.size,
-                     num_students_with_submitted_work: assignment.groupings.joins(:accepted_students).count,
+                     num_students_with_submitted_work: assignment.groupings.joins(:accepted_students).size,
                      num_active_students: assignment.course.students.active.size,
-                     num_remark_requests: assignment_remark_requests.count,
-                     num_remark_requests_completed: assignment_remark_requests.count -
-                       (assignment.outstanding_remark_request_count || 0) }
+                     num_remark_requests: assignment_remark_requests.size,
+                     num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete)
+                                                                              .size }
         expect(summary).to eq expected.as_json
       end
     end
