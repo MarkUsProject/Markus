@@ -1085,6 +1085,7 @@ describe AssignmentsController do
                                         'groupings_size',
                                         'num_students_in_group',
                                         'num_active_students',
+                                        'remark_requests_enabled',
                                         'num_remark_requests',
                                         'num_remark_requests_completed')
       end
@@ -1105,6 +1106,7 @@ describe AssignmentsController do
                      groupings_size: assignment.groupings.size,
                      num_students_in_group: assignment.groupings.joins(:accepted_students).size,
                      num_active_students: assignment.course.students.active.size,
+                     remark_requests_enabled: assignment.allow_remarks,
                      num_remark_requests: assignment_remark_requests.size,
                      num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete)
                                                                               .size }

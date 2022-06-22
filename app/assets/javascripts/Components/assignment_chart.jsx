@@ -86,7 +86,7 @@ export class AssignmentChart extends React.Component {
 
   render() {
     let outstanding_remark_request_link = "";
-    if (this.state.summary.num_remark_requests > 0) {
+    if (this.state.summary.remark_requests_enabled) {
       const remark_submissions_list_link = Routes.browse_course_assignment_submissions_path(
         this.props.course_id,
         this.props.assessment_id,
