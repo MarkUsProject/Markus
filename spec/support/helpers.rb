@@ -142,4 +142,8 @@ module Helpers
     end
     spec_data.deep_stringify_keys
   end
+
+  def redis
+    Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
+  end
 end
