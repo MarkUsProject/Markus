@@ -38,12 +38,12 @@ class SubmissionFileUploadModal extends React.Component {
     if (this.props.uploadTarget) {
       let filenames = this.props.requiredFiles.filter(
         filename =>
-          filename.indexOf(this.props.uploadTarget) === 0 &&
-          filename.slice(this.props.uploadTarget.length).indexOf("/") === -1
+          filename.startsWith(this.props.uploadTarget) &&
+          !filename.includes("/", this.props.uploadTarget.length)
       );
       filesToShow = filenames.map(filename => filename.slice(this.props.uploadTarget.length));
     } else {
-      filesToShow = this.props.requiredFiles.filter(filename => filename.indexOf("/") === -1);
+      filesToShow = this.props.requiredFiles.filter(filename => !filename.includes("/"));
     }
     if (this.props.onlyRequiredFiles) {
       fileRenameInput = (
