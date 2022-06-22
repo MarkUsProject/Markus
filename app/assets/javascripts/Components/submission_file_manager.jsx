@@ -91,7 +91,7 @@ class SubmissionFileManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleCreateFiles = (files, unzip, single_file_name = "") => {
+  handleCreateFiles = (files, unzip, renameTo = "") => {
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
@@ -100,7 +100,7 @@ class SubmissionFileManager extends React.Component {
       this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
       if (files.length === 1) {
-        Array.from(files).forEach(f => data.append("new_files[]", f, single_file_name));
+        Array.from(files).forEach(f => data.append("new_files[]", f, renameTo));
       } else {
         Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
       }

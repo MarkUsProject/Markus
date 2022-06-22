@@ -7,7 +7,7 @@ class SubmissionFileUploadModal extends React.Component {
     this.state = {
       newFiles: [],
       unzip: false,
-      single_file_name: "",
+      renameTo: "",
     };
   }
 
@@ -17,19 +17,19 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newFiles, this.state.unzip, this.state.single_file_name);
+    this.props.onSubmit(this.state.newFiles, this.state.unzip, this.state.renameTo);
   };
 
   handleFileUpload = event => {
-    this.setState({newFiles: event.target.files, single_file_name: event.target.files[0].name});
+    this.setState({newFiles: event.target.files, renameTo: event.target.files[0].name});
   };
 
   toggleUnzip = () => {
     this.setState({unzip: !this.state.unzip});
   };
 
-  handleNameChange = event => {
-    this.setState({single_file_name: event.target.value});
+  handleRenameChange = event => {
+    this.setState({renameTo: event.target.value});
   };
 
   fileRenameInputBox = () => {
@@ -49,8 +49,8 @@ class SubmissionFileUploadModal extends React.Component {
       fileRenameInput = (
         <select
           className={"select-filename"}
-          onChange={this.handleNameChange}
-          value={this.state.single_file_name}
+          onChange={this.handleRenameChange}
+          value={this.state.renameTo}
           disabled={this.state.newFiles.length !== 1}
           title={I18n.t("one_file_allowed")}
         >
@@ -75,9 +75,9 @@ class SubmissionFileUploadModal extends React.Component {
           <input
             className={"datalist-textbox"}
             list="fileInput_datalist"
-            onChange={this.handleNameChange}
+            onChange={this.handleRenameChange}
             placeholder={I18n.t("change_filename")}
-            value={this.state.single_file_name}
+            value={this.state.renameTo}
             disabled={this.state.newFiles.length !== 1}
             title={I18n.t("one_file_allowed")}
           ></input>
@@ -87,10 +87,10 @@ class SubmissionFileUploadModal extends React.Component {
       fileRenameInput = (
         <input
           className={"file-rename-textbox"}
-          value={this.state.single_file_name}
+          value={this.state.renameTo}
           type={"text"}
           name={"filename"}
-          onChange={this.handleNameChange}
+          onChange={this.handleRenameChange}
           disabled={this.state.newFiles.length !== 1}
           title={I18n.t("one_file_allowed")}
         />
