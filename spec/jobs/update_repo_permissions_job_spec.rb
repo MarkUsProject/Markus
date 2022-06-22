@@ -1,14 +1,14 @@
 describe UpdateRepoPermissionsJob do
   context 'when running as a background job' do
     let(:job_args) { [] }
-    before { Redis::Namespace.new(Rails.root.to_s).del('repo_permissions') }
+    before { redis.del('repo_permissions') }
     include_examples 'background job'
   end
 
   describe '#perform' do
     it 'should delete the redis key when finished' do
       UpdateRepoPermissionsJob.perform_now('MemoryRepository')
-      expect(Redis::Namespace.new(Rails.root.to_s).get('repo_permissions')).to be_nil
+      expect(redis.get('repo_permissions')).to be_nil
     end
 
     context 'when called with "MemoryRepository"' do

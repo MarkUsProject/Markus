@@ -6,7 +6,7 @@ class UpdateKeysJob < ApplicationJob
   # If another job that will update the authorized_keys file is alread enqueued, then
   # do not enqueue this one.
   around_enqueue do |job, block|
-    redis = Redis::Namespace.new(Rails.root.to_s)
+    redis = Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
     block.call if redis.setnx('authorized_keys', job.job_id)
     redis.expire('authorized_keys', 300) # expire the key just in case
   end
@@ -17,7 +17,7 @@ class UpdateKeysJob < ApplicationJob
     FileUtils.mkdir_p(Settings.repository.storage)
     auth_keys_file = File.join(Settings.repository.storage, KeyPair::AUTHORIZED_KEYS_FILE)
     FileUtils.touch(auth_keys_file) unless File.exist? auth_keys_file
-    redis = Redis::Namespace.new(Rails.root.to_s)
+    redis = Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
     redis.del('authorized_keys')
     data = KeyPair.joins(:user).pluck('users.user_name', :public_key)
     File.open(auth_keys_file, 'r+') do |f|
@@ -30,7 +30,7 @@ class UpdateKeysJob < ApplicationJob
       end
     end
   ensure
-    redis = Redis::Namespace.new(Rails.root.to_s)
+    redis = Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
     if redis.get('authorized_keys') == self.job_id
       redis.del('authorized_keys')
     end
