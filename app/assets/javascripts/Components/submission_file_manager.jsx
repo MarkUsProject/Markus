@@ -99,7 +99,7 @@ class SubmissionFileManager extends React.Component {
       const prefix = this.state.uploadTarget || "";
       this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
-      if (files.length === 1) {
+      if (!!renameTo && files.length === 1) {
         Array.from(files).forEach(f => data.append("new_files[]", f, renameTo));
       } else {
         Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
