@@ -66,24 +66,23 @@ class SubmissionFileUploadModal extends React.Component {
         </select>
       );
     } else if (this.props.requiredFiles.length >= 1) {
-      fileRenameInput = (
-        <div>
-          <datalist id="fileInput_datalist">
-            {filesToShow.map(filename => {
-              return <option key={filename} value={filename}></option>;
-            })}
-          </datalist>
-          <input
-            className={"datalist-textbox"}
-            list="fileInput_datalist"
-            onChange={this.handleRenameChange}
-            placeholder={I18n.t("change_filename")}
-            value={this.state.renameTo}
-            disabled={this.state.newFiles.length !== 1}
-            title={I18n.t("one_file_allowed")}
-          />
-        </div>
-      );
+      fileRenameInput = [
+        <datalist id="fileInput_datalist">
+          {filesToShow.map(filename => {
+            return <option key={filename} value={filename}></option>;
+          })}
+        </datalist>,
+        <input
+          className={"datalist-textbox"}
+          list="fileInput_datalist"
+          onChange={this.handleRenameChange}
+          placeholder={I18n.t("change_filename")}
+          value={this.state.renameTo}
+          disabled={this.state.newFiles.length !== 1}
+          title={I18n.t("one_file_allowed")}
+          id={"rename-box"}
+        />,
+      ];
     } else {
       fileRenameInput = (
         <input
@@ -137,7 +136,7 @@ class SubmissionFileUploadModal extends React.Component {
               />
             </div>
             <label htmlFor={"rename-box"}>
-              (optional) Rename file to
+              {I18n.t("rename_box_label")}&nbsp;
               {this.fileRenameInputBox()}
             </label>
             <div className={"modal-container"}>
