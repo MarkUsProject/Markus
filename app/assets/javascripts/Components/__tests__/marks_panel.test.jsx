@@ -82,17 +82,18 @@ describe("CheckboxCriterionInput", () => {
       released_to_students: false,
       oldMark: {},
       description: " ",
-      updateMark: jest.fn(),
+      updateMark: jest.fn().mockImplementation((id, new_mark) => {
+        basicProps.mark = new_mark;
+      }),
       destroyMark: jest.fn(),
-      toggleExpanded: jest.fn(),
+      toggleExpanded: jest.fn().mockImplementation(() => {
+        basicProps.expanded = !basicProps.expanded;
+      }),
     };
     wrapper = shallow(<CheckboxCriterionInput {...basicProps} />);
   });
 
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    basicProps.toggleExpanded.mockImplementation(() => {
-      basicProps.expanded = !basicProps.expanded;
-    });
     wrapper.find(`#checkbox_criterion_${basicProps.id}_expand`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
@@ -112,10 +113,6 @@ describe("CheckboxCriterionInput", () => {
   });
 
   it("correctly updates mark to max_mark and 0 when clicking on respective buttons", () => {
-    basicProps.updateMark.mockImplementation((id, new_mark) => {
-      basicProps.mark = new_mark;
-    });
-
     const no_button = wrapper.find(`#check_no_${basicProps.id}`);
     const yes_button = wrapper.find(`#check_correct_${basicProps.id}`);
 
@@ -181,17 +178,18 @@ describe("FlexibleCriterionInput", () => {
       annotations: [{annotation: "annotation"}],
 
       findDeductiveAnnotation: jest.fn(),
-      toggleExpanded: jest.fn(),
       revertToAutomaticDeductions: jest.fn(),
+      updateMark: jest.fn().mockImplementation((id, new_mark) => {
+        basicProps.mark = new_mark;
+      }),
       destroyMark: jest.fn(),
-      updateMark: jest.fn(),
+      toggleExpanded: jest.fn().mockImplementation(() => {
+        basicProps.expanded = !basicProps.expanded;
+      }),
     };
   });
 
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    basicProps.toggleExpanded.mockImplementation(() => {
-      basicProps.expanded = !basicProps.expanded;
-    });
     const wrapper = getWrapper(basicProps);
 
     wrapper.find(`#flexible_criterion_${basicProps.id}_expand`).simulate("click");
@@ -348,6 +346,7 @@ describe("FlexibleCriterionInput", () => {
   });
 
   it("should have no number input fields", () => {
+    basicProps.released_to_students = true;
     const wrapper = getWrapper(basicProps);
     expect(wrapper.find("input[number]").length).toBe(0);
   });
@@ -375,16 +374,20 @@ describe("RubricCriterionInput", () => {
         {mark: 2, name: "level 2", description: "description2"},
       ],
 
-      toggleExpanded: jest.fn(),
+      updateMark: jest.fn().mockImplementation((id, new_mark) => {
+        if (basicProps.released_to_students) {
+          return;
+        }
+        basicProps.mark = new_mark;
+      }),
       destroyMark: jest.fn(),
-      updateMark: jest.fn(),
+      toggleExpanded: jest.fn().mockImplementation(() => {
+        basicProps.expanded = !basicProps.expanded;
+      }),
     };
   });
 
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    basicProps.toggleExpanded.mockImplementation(() => {
-      basicProps.expanded = !basicProps.expanded;
-    });
     const wrapper = getWrapper(basicProps);
 
     wrapper.find(`#rubric_criterion_${basicProps.id}_expand`).simulate("click");
@@ -434,7 +437,6 @@ describe("RubricCriterionInput", () => {
 
   it("should not show a class is selected or an old-mark by default", () => {
     const wrapper = getWrapper(basicProps);
-
     expect(wrapper.find(".old-mark").exists()).toBeFalsy();
     expect(wrapper.find(".selected").exists()).toBeFalsy();
   });
@@ -461,11 +463,14 @@ describe("RubricCriterionInput", () => {
   });
 
   it("should not call updateMark upon clicking a level's tr element", () => {
+    basicProps.released_to_students = true;
+    const initialMark = basicProps.mark;
     const wrapper = getWrapper(basicProps);
     const levels = wrapper.find(".rubric-level");
     levels.forEach((level, index) => {
       level.simulate("click");
       expect(basicProps.updateMark).toHaveBeenCalledTimes(index + 1);
+      expect(basicProps.mark).toBe(initialMark);
     });
   });
 });
