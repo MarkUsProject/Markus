@@ -53,6 +53,7 @@ class SubmissionFileUploadModal extends React.Component {
           value={this.state.renameTo}
           disabled={this.state.newFiles.length !== 1}
           title={I18n.t("one_file_allowed")}
+          id={"rename-box"}
         >
           <option key={"select_file"}>{I18n.t("change_filename")}</option>
           {filesToShow.map(filename => {
@@ -80,7 +81,7 @@ class SubmissionFileUploadModal extends React.Component {
             value={this.state.renameTo}
             disabled={this.state.newFiles.length !== 1}
             title={I18n.t("one_file_allowed")}
-          ></input>
+          />
         </div>
       );
     } else {
@@ -93,6 +94,7 @@ class SubmissionFileUploadModal extends React.Component {
           onChange={this.handleRenameChange}
           disabled={this.state.newFiles.length !== 1}
           title={I18n.t("one_file_allowed")}
+          id={"rename-box"}
         />
       );
     }
@@ -129,8 +131,10 @@ class SubmissionFileUploadModal extends React.Component {
                 onChange={this.handleFileUpload}
               />
             </div>
-            <h3>{I18n.t("file_name")}</h3>
-            {this.fileRenameInputBox()}
+            <label htmlFor={"rename-box"}>
+              (optional) Rename file to
+              {this.fileRenameInputBox()}
+            </label>
             <div className={"modal-container"}>
               <input type="submit" value={I18n.t("save")} />
             </div>
