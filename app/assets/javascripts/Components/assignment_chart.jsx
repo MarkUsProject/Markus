@@ -86,26 +86,37 @@ export class AssignmentChart extends React.Component {
 
   render() {
     let outstanding_remark_request_link = "";
-    if (this.state.summary.num_outstanding_remark_requests > 0) {
+    if (this.state.summary.remark_requests_enabled) {
+      const remark_submissions_list_link = Routes.browse_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assessment_id,
+        {
+          filter_by: "marking_state",
+          filter_value: "remark",
+        }
+      );
       outstanding_remark_request_link = (
-        <p>
-          <a
-            href={Routes.browse_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assessment_id,
-              {
-                filter_by: "marking_state",
-                filter_value: "remark",
-              }
-            )}
-          >
-            {I18n.t("outstanding_remark_request", {
-              count: this.state.summary.num_outstanding_remark_requests,
-            })}
+        <React.Fragment>
+          <a className="summary-stats-label" href={remark_submissions_list_link}>
+            {I18n.t("remark_requests_completed")}
           </a>
-        </p>
+          <a href={remark_submissions_list_link}>
+            <FractionStat
+              numerator={this.state.summary.num_remark_requests_completed}
+              denominator={this.state.summary.num_remark_requests}
+            />
+          </a>
+        </React.Fragment>
       );
     }
+
+    const percentage_standard_deviation = () => {
+      const max_mark = Number(this.state.summary.max_mark) || 0;
+      if (max_mark === 0) {
+        return "0.00";
+      }
+      return ((100 / max_mark) * (Number(this.state.summary.standard_deviation) || 0)).toFixed(2);
+    };
 
     const assignment_graph = (
       <React.Fragment>
@@ -121,24 +132,50 @@ export class AssignmentChart extends React.Component {
           </div>
           <div className="flex-row-expand">
             <div className="grid-2-col">
-              <span className="summary-stats-label">{I18n.t("average")}</span>
-              <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
-              <span className="summary-stats-label">{I18n.t("median")}</span>
-              <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
+              <span className="summary-stats-label">{I18n.t("num_groups")}</span>
+              <span>{this.state.summary.groupings_size}</span>
+              <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
+              <FractionStat
+                numerator={this.state.summary.num_students_in_group}
+                denominator={this.state.summary.num_active_students}
+              />
               <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
-              <span>
-                {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}
-              </span>
+              <FractionStat
+                numerator={this.state.summary.num_submissions_collected}
+                denominator={this.state.summary.groupings_size}
+              />
               <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
+              <FractionStat
+                numerator={this.state.summary.num_submissions_graded}
+                denominator={this.state.summary.groupings_size}
+              />
+              <span className="summary-stats-label">{I18n.t("average")}</span>
+              <FractionStat
+                numerator={this.state.summary.average}
+                denominator={this.state.summary.max_mark}
+              />
+              <span className="summary-stats-label">{I18n.t("median")}</span>
+              <FractionStat
+                numerator={this.state.summary.median}
+                denominator={this.state.summary.max_mark}
+              />
+              <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
               <span>
-                {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}
+                {(this.state.summary.standard_deviation || 0).toFixed(2)}
+                &nbsp;({percentage_standard_deviation()}%)
               </span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-              <span>{this.state.summary.num_fails}</span>
+              <FractionStat
+                numerator={this.state.summary.num_fails}
+                denominator={this.state.summary.groupings_size}
+              />
               <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-              <span>{this.state.summary.num_zeros}</span>
+              <FractionStat
+                numerator={this.state.summary.num_zeros}
+                denominator={this.state.summary.groupings_size}
+              />
+              {outstanding_remark_request_link}
             </div>
-            {outstanding_remark_request_link}
           </div>
         </div>
       </React.Fragment>
@@ -191,5 +228,23 @@ export class AssignmentChart extends React.Component {
         </React.Fragment>
       );
     }
+  }
+}
+
+class FractionStat extends React.Component {
+  render() {
+    const numerator = +(Number(this.props.numerator) || 0).toFixed(2),
+      denominator = +(Number(this.props.denominator) || 0).toFixed(2);
+    let result = "0.00";
+    if (denominator !== 0) {
+      result = ((Number(this.props.numerator) / Number(this.props.denominator) || 0) * 100).toFixed(
+        2
+      );
+    }
+    return (
+      <span>
+        {numerator} / {denominator} ({result}%)
+      </span>
+    );
   }
 }
