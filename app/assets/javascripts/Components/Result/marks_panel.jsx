@@ -234,21 +234,17 @@ export class CheckboxCriterionInput extends React.Component {
 }
 
 CheckboxCriterionInput.propTypes = {
-  id: PropTypes.number.isRequired,
-  max_mark: PropTypes.number,
-  mark: PropTypes.number,
-
-  expanded: PropTypes.bool.isRequired,
-  unassigned: PropTypes.bool.isRequired,
-  released_to_students: PropTypes.bool.isRequired,
-
-  oldMark: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-
   description: PropTypes.string.isRequired,
-
-  updateMark: PropTypes.func.isRequired,
   destroyMark: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  mark: PropTypes.number,
+  max_mark: PropTypes.number.isRequired,
+  oldMark: PropTypes.object,
+  released_to_students: PropTypes.bool.isRequired,
   toggleExpanded: PropTypes.func.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  updateMark: PropTypes.func.isRequired,
 };
 
 export class FlexibleCriterionInput extends React.Component {
@@ -443,26 +439,21 @@ export class FlexibleCriterionInput extends React.Component {
 }
 
 FlexibleCriterionInput.propTypes = {
-  expanded: PropTypes.bool.isRequired,
-  unassigned: PropTypes.bool.isRequired,
-  released_to_students: PropTypes.bool.isRequired,
-  bonus: PropTypes.bool,
-  override: PropTypes.bool,
-
-  id: PropTypes.number.isRequired,
-  mark: PropTypes.number.isRequired,
-  max_mark: PropTypes.number,
-
-  description: PropTypes.string.isRequired,
-
-  oldMark: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-
   annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
-
-  findDeductiveAnnotation: PropTypes.func.isRequired,
-  toggleExpanded: PropTypes.func.isRequired,
-  revertToAutomaticDeductions: PropTypes.func.isRequired,
+  bonus: PropTypes.bool,
+  description: PropTypes.string.isRequired,
   destroyMark: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  findDeductiveAnnotation: PropTypes.func.isRequired,
+  id: PropTypes.number.isRequired,
+  mark: PropTypes.number,
+  max_mark: PropTypes.number.isRequired,
+  oldMark: PropTypes.object,
+  override: PropTypes.bool,
+  released_to_students: PropTypes.bool.isRequired,
+  revertToAutomaticDeductions: PropTypes.func.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+  unassigned: PropTypes.bool.isRequired,
   updateMark: PropTypes.func.isRequired,
 };
 
@@ -562,19 +553,16 @@ export class RubricCriterionInput extends React.Component {
 }
 
 RubricCriterionInput.propTypes = {
-  expanded: PropTypes.bool.isRequired,
-  unassigned: PropTypes.bool.isRequired,
-  released_to_students: PropTypes.bool.isRequired,
   bonus: PropTypes.bool,
-
-  id: PropTypes.number.isRequired,
-  mark: PropTypes.number.isRequired,
-  max_mark: PropTypes.number,
-
-  oldMark: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  levels: PropTypes.array,
-
-  toggleExpanded: PropTypes.func.isRequired,
   destroyMark: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  levels: PropTypes.array,
+  mark: PropTypes.number,
+  max_mark: PropTypes.number,
+  oldMark: PropTypes.object,
+  released_to_students: PropTypes.bool.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+  unassigned: PropTypes.bool.isRequired,
   updateMark: PropTypes.func.isRequired,
 };
