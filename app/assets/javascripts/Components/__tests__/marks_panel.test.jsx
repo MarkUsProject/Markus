@@ -461,16 +461,4 @@ describe("RubricCriterionInput", () => {
 
     expect(wrapper.find(`#rubric_${basicProps.id}_destroy`).exists()).toBeFalsy();
   });
-
-  it("should not call updateMark upon clicking a level's tr element", () => {
-    basicProps.released_to_students = true;
-    const initialMark = basicProps.mark;
-    const wrapper = getWrapper(basicProps);
-    const levels = wrapper.find(".rubric-level");
-    levels.forEach((level, index) => {
-      level.simulate("click");
-      expect(basicProps.updateMark).toHaveBeenCalledTimes(index + 1);
-      expect(basicProps.mark).toBe(initialMark);
-    });
-  });
 });
