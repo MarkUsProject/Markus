@@ -27,12 +27,17 @@ class SubmissionFileUploadModal extends React.Component {
     this.setState({unzip: !this.state.unzip});
   };
 
+  clearState = () => {
+    this.setState({newFiles: []});
+  };
+
   render() {
     return (
       <Modal
         className="react-modal"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
+        onAfterClose={this.clearState}
       >
         <h2>{I18n.t("upload")}</h2>
         <form onSubmit={this.onSubmit}>
@@ -58,7 +63,11 @@ class SubmissionFileUploadModal extends React.Component {
               />
             </div>
             <div className={"modal-container"}>
-              <input type="submit" value={I18n.t("save")} />
+              <input
+                type="submit"
+                value={I18n.t("save")}
+                disabled={this.state.newFiles.length === 0}
+              />
             </div>
           </div>
         </form>
