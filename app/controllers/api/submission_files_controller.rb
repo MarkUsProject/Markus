@@ -199,6 +199,12 @@ module Api
       end
     end
 
+    def submit_file
+      # It worked, render success
+      message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\nSuccess"
+      render 'shared/http_status', locals: { code: '200', message: message }, status: :ok
+    end
+
     protected
 
     def implicit_authorization_target
