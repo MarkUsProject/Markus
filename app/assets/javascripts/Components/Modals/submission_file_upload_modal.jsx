@@ -97,6 +97,9 @@ class SubmissionFileUploadModal extends React.Component {
       );
     }
     return fileRenameInput;
+
+  clearState = () => {
+    this.setState({newFiles: []});
   };
 
   render() {
@@ -105,6 +108,7 @@ class SubmissionFileUploadModal extends React.Component {
         className="react-modal"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
+        onAfterClose={this.clearState}
       >
         <h2>{I18n.t("upload")}</h2>
         <form onSubmit={this.onSubmit}>
@@ -132,7 +136,11 @@ class SubmissionFileUploadModal extends React.Component {
             <h3>{I18n.t("file_name")}</h3>
             {this.fileRenameInputBox()}
             <div className={"modal-container"}>
-              <input type="submit" value={I18n.t("save")} />
+              <input
+                type="submit"
+                value={I18n.t("save")}
+                disabled={this.state.newFiles.length === 0}
+              />
             </div>
           </div>
         </form>
