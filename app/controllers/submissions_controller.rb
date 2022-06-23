@@ -128,7 +128,7 @@ class SubmissionsController < ApplicationController
     response = {
       entries: entries,
       only_required_files: assignment.only_required_files,
-      required_files: assignment.assignment_files.collect(&:filename)
+      required_files: assignment.assignment_files.pluck(:filename).sort
     }
 
     render json: response
