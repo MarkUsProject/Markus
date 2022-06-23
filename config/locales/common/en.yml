@@ -5,7 +5,6 @@ en:
   all: All
   apply: Apply
   cancel: Cancel
-  change_filename: Change File Name
   close: Close
   continue: Continue
   copy: Copy
@@ -13,7 +12,6 @@ en:
   edit: Edit
   encoding: Encoding
   file: File
-  file_name: File Name
   filter_by: Filter by %{name}
   forbidden: Forbidden
   good: Good!
@@ -27,14 +25,13 @@ en:
     select_course: Please select the course that matches %{course_name}.
   markus: MarkUs
   not_applicable: N/A
-  one_file_allowed: Supports only one file
   or: Or
   other_info: Other Info
   please_wait: Please wait…
   preview: Preview
-  rename_box_label: (optional) Rename file to
   save: Save
   search: Search
+  select_filename: Select Filename
   skip: Skip
   this: This
   working: Loading
