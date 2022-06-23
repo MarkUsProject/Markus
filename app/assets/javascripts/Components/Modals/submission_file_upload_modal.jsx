@@ -102,7 +102,7 @@ class SubmissionFileUploadModal extends React.Component {
   };
 
   clearState = () => {
-    this.setState({newFiles: []});
+    this.setState({newFiles: [], renameTo: ""});
   };
 
   render() {
