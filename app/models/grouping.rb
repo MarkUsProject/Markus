@@ -138,11 +138,11 @@ class Grouping < ApplicationRecord
   def self.assign_tas(grouping_ids, ta_ids, assignment)
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
     # Only use IDs that identify existing model instances.
-    ta_ids = Ta.where(id: ta_ids).ids
+    confirmed_ta_ids = Ta.where(id: ta_ids).ids
     grouping_ids = Grouping.where(id: grouping_ids).ids
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
-                      .where(grouping_id: grouping_ids, role_id: ta_ids)
+                      .where(grouping_id: grouping_ids, role_id: confirmed_ta_ids)
                       .pluck(:grouping_id, :role_id)
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.

@@ -4,6 +4,7 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
+import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 
 class GradersManager extends React.Component {
   constructor(props) {
@@ -19,12 +20,33 @@ class GradersManager extends React.Component {
       anonymize_groups: false,
       hide_unassigned_criteria: false,
       sections: {},
+      isGradeerDistributionModalOpen: false,
+      weightings: {},
     };
   }
 
   componentDidMount() {
     this.fetchData();
   }
+
+  showDistributionModal = () => {
+    let groups = this.groupsTable ? this.groupsTable.state.selection : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let graders = this.assignedGraders();
+    if (groups.length === 0 && criteria.length === 0) {
+      alert(I18n.t("groups.select_a_group"));
+      return;
+    }
+
+    if (graders.length === 0) {
+      alert(I18n.t("graders.select_a_grader"));
+      return;
+    }
+
+    this.setState({
+      isGradeerDistributionModalOpen: true,
+    });
+  };
 
   fetchData = () => {
     $.get({
@@ -51,7 +73,7 @@ class GradersManager extends React.Component {
   assignAll = () => {
     let groups = this.groupsTable ? this.groupsTable.state.selection : [];
     let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
+    let graders = this.assignedGraders();
 
     if (groups.length === 0 && criteria.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -79,20 +101,24 @@ class GradersManager extends React.Component {
     }).then(this.fetchData);
   };
 
+  assignedGraders = () => {
+    return this.gradersTable.state.selection;
+  };
+
   assignRandomly = () => {
     let groups = this.groupsTable ? this.groupsTable.state.selection : [];
     let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
+    let graders = this.assignedGraders();
+    this.setState({
+      isGradeerDistributionModalOpen: false,
+    });
 
-    if (groups.length === 0 && criteria.length === 0) {
-      alert(I18n.t("groups.select_a_group"));
-      return;
-    }
-
-    if (graders.length === 0) {
-      alert(I18n.t("graders.select_a_grader"));
-      return;
-    }
+    let weighted_graders = [];
+    graders.forEach(grader => {
+      for (let i = 0; i < this.state.weightings[grader]; i++) {
+        weighted_graders.push(grader);
+      }
+    });
 
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
@@ -105,7 +131,7 @@ class GradersManager extends React.Component {
         skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
-        graders: graders,
+        graders: weighted_graders,
       },
     }).then(this.fetchData);
   };
@@ -113,7 +139,7 @@ class GradersManager extends React.Component {
   unassignAll = () => {
     let groups = this.groupsTable ? this.groupsTable.state.selection : [];
     let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
+    let graders = this.assignedGraders();
 
     if (groups.length === 0 && criteria.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -251,7 +277,7 @@ class GradersManager extends React.Component {
       <div>
         <GradersActionBox
           assignAll={this.assignAll}
-          assignRandomly={this.assignRandomly}
+          showDistributionModal={this.showDistributionModal}
           unassignAll={this.unassignAll}
         />
         <div className="mapping-tables">
@@ -333,6 +359,21 @@ class GradersManager extends React.Component {
             </Tabs>
           </div>
         </div>
+        {this.state.isGradeerDistributionModalOpen && (
+          <GraderDistributionModal
+            isOpen={this.state.isGradeerDistributionModalOpen}
+            onRequestClose={() =>
+              this.setState({
+                isGradeerDistributionModalOpen: false,
+              })
+            }
+            graders={this.state.graders.filter(grader => {
+              return this.assignedGraders().includes(grader._id);
+            })}
+            weightings={this.state.weightings}
+            onSubmit={this.assignRandomly}
+          />
+        )}
       </div>
     );
   }
@@ -569,7 +610,7 @@ class GradersActionBox extends React.Component {
         <button className="assign-all-button" onClick={this.props.assignAll}>
           {I18n.t("graders.actions.assign_grader")}
         </button>
-        <button className="assign-randomly-button" onClick={this.props.assignRandomly}>
+        <button className="assign-randomly-button" onClick={this.props.showDistributionModal}>
           {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
         <button className="unassign-all-button" onClick={this.props.unassignAll}>

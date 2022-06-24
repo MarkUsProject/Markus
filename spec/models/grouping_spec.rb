@@ -69,7 +69,7 @@ describe Grouping do
     let!(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping) }
     let(:groupings) do
-      Array.new(2) { create(:grouping, assignment: assignment) }
+      Array.new(4) { create(:grouping, assignment: assignment) }
     end
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:grouping_ids) { groupings.map(&:id) }
@@ -96,6 +96,21 @@ describe Grouping do
           expect(grouping.tas.size).to eq 1
           expect(tas).to include grouping.tas.first
         end
+      end
+      it 'can randomly bulk assign TAs with weighting' do
+        ta_ids.append(ta_ids[0])
+        ta_ids.append(ta_ids[0])
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas.size).to eq 1
+          expect(tas).to include grouping.tas.first
+        end
+        grouping1 = groupings.select { |grouping| grouping.tas.first == tas.first }
+        grouping2 = groupings.select { |grouping| grouping.tas.first == tas.last }
+        print(grouping2.length, grouping1.length)
+        expect(grouping1.length > grouping2.length).to be(true)
       end
 
       it 'can randomly bulk assign duplicated TAs to groupings' do
