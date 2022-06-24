@@ -79,7 +79,7 @@ class SubmissionFileUploadModal extends React.Component {
           placeholder={I18n.t("select_filename")}
           value={this.state.renameTo}
           disabled={this.state.newFiles.length !== 1}
-          title={I18n.t("submissions.student..one_file_allowed")}
+          title={I18n.t("submissions.student.one_file_allowed")}
           id={"rename-box"}
         />,
       ];
@@ -92,7 +92,7 @@ class SubmissionFileUploadModal extends React.Component {
           name={"filename"}
           onChange={this.handleRenameChange}
           disabled={this.state.newFiles.length !== 1}
-          title={I18n.t("submissions.student..one_file_allowed")}
+          title={I18n.t("submissions.student.one_file_allowed")}
           id={"rename-box"}
         />
       );
