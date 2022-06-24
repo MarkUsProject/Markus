@@ -43,6 +43,7 @@
 - Added Capybara Gem (#6012)
 - Enable students to rename files during submission (#6045)
 - Separated peer review assignment upload/download from parent (#6048)
+- Expanded summary stats UI (#6050)
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
 
 ## [v2.0.10]
