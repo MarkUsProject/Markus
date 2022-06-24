@@ -174,7 +174,7 @@ module Api
       end
 
       grouping = if student.has_accepted_grouping_for?(assignment.id)
-                   accepted_grouping_for(assignment.id)
+                   student.accepted_grouping_for(assignment.id)
                  elsif assignment.group_max == 1
                    student.create_group_for_working_alone_student(assignment.id)
                  else

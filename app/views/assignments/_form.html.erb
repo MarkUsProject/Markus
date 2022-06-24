@@ -205,6 +205,10 @@
           <%= ap_f.label :url_submit,
                          Assignment.human_attribute_name(:url_submit) %>
           <%= ap_f.check_box :url_submit %>
+
+          <%= ap_f.label :api_submit,
+                       Assignment.human_attribute_name(:api_submit) %>
+          <%= ap_f.check_box :api_submit %>
         <% end %>
 
         <%= ap_f.label :display_median_to_students,

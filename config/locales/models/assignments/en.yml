@@ -6,6 +6,7 @@ en:
         allow_groups: Students can work in groups
         allow_remarks: Allow remark requests
         allow_web_submits: Allow students to submit through the web interface
+        api_submit: Allow students to submit through the MarkUs API
         assignment_files: Required files
         collection_date: Due date including maximum late penalty (if any)
         description: Assignment description
