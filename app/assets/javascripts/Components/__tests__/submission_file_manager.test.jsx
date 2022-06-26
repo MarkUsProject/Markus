@@ -4,36 +4,40 @@ import {mount} from "enzyme";
 
 describe("For the submissions managed by SubmissionFileManager's FileManager child component", () => {
   let wrapper, rows;
-  const files_sample = [
-    {
-      id: 136680,
-      url: "test.url",
-      filename: '<img src="" /><a href=""> HelloWorld.java</a>',
-      raw_name: "HelloWorld.java",
-      last_revised_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
-      last_modified_revision: "58ca2e15254aa63c4d41cb5db7dfc398b6bda3fb",
-      revision_by: "c5anthei",
-      submitted_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
-      type: "java",
-      key: "HelloWorld.java",
-      modified: 1652577324,
-      relativeKey: "HelloWorld.java",
-    },
-    {
-      id: 136700,
-      url: "test2.url",
-      filename: '<img src="" /><a href=""> deferred-process.java</a>',
-      raw_name: "deferred-process.java",
-      last_revised_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
-      last_modified_revision: "58ca2e15254aa63c4d41cb5db7dfc398b6bda3fb",
-      revision_by: "c5anthei",
-      submitted_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
-      type: "java",
-      key: "deferred-process.java",
-      modified: 1652577324,
-      relativeKey: "deferred-process.java",
-    },
-  ];
+  const files_sample = {
+    entries: [
+      {
+        id: 136680,
+        url: "test.url",
+        filename: '<img src="" /><a href=""> HelloWorld.java</a>',
+        raw_name: "HelloWorld.java",
+        last_revised_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
+        last_modified_revision: "58ca2e15254aa63c4d41cb5db7dfc398b6bda3fb",
+        revision_by: "c5anthei",
+        submitted_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
+        type: "java",
+        key: "HelloWorld.java",
+        modified: 1652577324,
+        relativeKey: "HelloWorld.java",
+      },
+      {
+        id: 136700,
+        url: "test2.url",
+        filename: '<img src="" /><a href=""> deferred-process.java</a>',
+        raw_name: "deferred-process.java",
+        last_revised_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
+        last_modified_revision: "58ca2e15254aa63c4d41cb5db7dfc398b6bda3fb",
+        revision_by: "c5anthei",
+        submitted_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
+        type: "java",
+        key: "deferred-process.java",
+        modified: 1652577324,
+        relativeKey: "deferred-process.java",
+      },
+    ],
+    only_required_files: false,
+    required_files: [],
+  };
 
   beforeEach(() => {
     // Unlike FileManager, files are stored in SubmissionFileManager's states, which are set when the component mounts
@@ -52,6 +56,7 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
   it("clicking on the row of each file opens up the preview for that file", () => {
     wrapper.update();
     rows = wrapper.find(".file");
+    console.log(rows.debug());
     expect(rows.length).toEqual(files_sample.length);
 
     rows.forEach(row => {
