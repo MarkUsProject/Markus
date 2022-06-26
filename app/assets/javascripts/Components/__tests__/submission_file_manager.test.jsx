@@ -56,8 +56,7 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
   it("clicking on the row of each file opens up the preview for that file", () => {
     wrapper.update();
     rows = wrapper.find(".file");
-    console.log(rows.debug());
-    expect(rows.length).toEqual(files_sample.length);
+    expect(rows.length).toEqual(files_sample.entries.length);
 
     rows.forEach(row => {
       row.simulate("click");
@@ -72,7 +71,7 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
   it("the preview opened is called with the correct props", () => {
     wrapper.update();
     rows = wrapper.find(".file");
-    expect(rows.length).toEqual(files_sample.length);
+    expect(rows.length).toEqual(files_sample.entries.length);
 
     rows.forEach(row => {
       row.simulate("click");
@@ -80,7 +79,7 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
 
       // Locate the preview block
       const file_viewer_comp = wrapper.find("FileViewer");
-      const file_displayed = files_sample.find(
+      const file_displayed = files_sample.entries.find(
         file => file.url === file_viewer_comp.props().selectedFileURL
       );
 
