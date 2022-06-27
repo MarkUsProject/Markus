@@ -265,8 +265,63 @@ describe Api::SubmissionFilesController do
       end
 
       shared_examples 'submits a file' do
-        it 'allows students to submit a file' do
-          nil
+        context 'when the file does not exist yet' do
+          it 'submits a file' do
+            subject
+            path = Pathname.new('v1/x/y')
+            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              files.keys.include? 'test.txt'
+            end
+            expect(success).to be_truthy
+          end
+        end
+
+        context 'when the file already exists' do
+          it 'replaces the file' do
+            subject
+            post :submit_file, params: { assignment_id: assignment.id, filename: 'v1/x/y/test.txt',
+                                         mime_type: 'text', file_content: 'Updated Content', course_id: course.id }
+            received_file_content = nil
+            path = Pathname.new('v1/x/y')
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              file = repo.get_latest_revision.files_at_path(file_path.to_s)['test.txt']
+              received_file_content = repo.download_as_string(file)
+            end
+            expect(received_file_content).to eq('Updated Content')
+          end
+        end
+
+        context 'when the assignment requires submission of only required files' do
+          let(:test_file) { create :assignment_file, assessment_id: assignment.id }
+          before :each do
+            assignment.update(only_required_files: true)
+          end
+
+          it 'does not allow upload of different non required filename' do
+            subject
+            path = Pathname.new('v1/x/y')
+            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              files.keys.include? 'test.txt'
+            end
+            expect(success).to be_falsey
+          end
+
+          it 'allows submission of required files' do
+            post :submit_file, params: { assignment_id: assignment.id, filename: test_file.filename,
+                                         mime_type: 'text', file_content: 'content', course_id: course.id }
+            path = Pathname.new('v1/x/y')
+            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              files.keys.include? test_file.filename
+            end
+            expect(success).to be_truthy
+          end
         end
       end
 
@@ -282,6 +337,8 @@ describe Api::SubmissionFilesController do
           student_group = student.accepted_groupings.where(assessment_id: assignment.id).first
           expect(student_group.group.group_name).to eq(student.user_name)
         end
+
+        include_examples 'submits a file'
       end
 
       context 'when student is already in a group' do
@@ -290,6 +347,8 @@ describe Api::SubmissionFilesController do
           subject
           expect(student.accepted_groupings.where(assessment_id: assignment.id).count).to eq(1)
         end
+
+        include_examples 'submits a file'
       end
     end
   end
