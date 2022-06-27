@@ -252,4 +252,45 @@ describe Api::SubmissionFilesController do
       end
     end
   end
+  context 'An authenticated student request' do
+    before :each do
+      student.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
+    end
+
+    context 'POST submit_file' do
+      subject do
+        post :submit_file, params: { assignment_id: assignment.id, filename: 'v1/x/y/test.txt',
+                                     mime_type: 'text', file_content: 'This is a test file', course_id: course.id }
+      end
+
+      shared_examples 'submits a file' do
+        it 'allows students to submit a file' do
+          nil
+        end
+      end
+
+      context 'when student is not in a group' do
+        let(:student) { create :student, course: course }
+        it 'creates a new group for the student' do
+          subject
+          expect(student.accepted_groupings.where(assessment_id: assignment.id).first).not_to be_nil
+        end
+
+        it 'creates a working alone group' do
+          subject
+          student_group = student.accepted_groupings.where(assessment_id: assignment.id).first
+          expect(student_group.group.group_name).to eq(student.user_name)
+        end
+      end
+
+      context 'when student is already in a group' do
+        let(:student) { grouping.inviter }
+        it 'does not create a new group for the student' do
+          subject
+          expect(student.accepted_groupings.where(assessment_id: assignment.id).count).to eq(1)
+        end
+      end
+    end
+  end
 end
