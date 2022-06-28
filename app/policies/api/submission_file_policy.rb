@@ -6,7 +6,7 @@ module Api
     end
 
     def submit_file?
-      role&.student? || check?(:manage?)
+      role&.student?
     end
   end
 end
