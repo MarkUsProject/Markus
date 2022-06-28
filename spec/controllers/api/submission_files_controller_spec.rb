@@ -308,16 +308,17 @@ describe Api::SubmissionFilesController do
           it 'submits a file' do
             subject
             path = Pathname.new('v1/x/y')
-            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+            submitted_file = nil
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
               file_path = Pathname.new(assignment.repository_folder).join path
               files = repo.get_latest_revision.files_at_path(file_path.to_s)
-              files.keys.include? 'test.txt'
+              submitted_file = files.keys.first
             end
-            expect(success).to be_truthy
+            expect(submitted_file).to eq('test.txt')
           end
         end
 
-        shared_examples 'fails to submit' do
+        shared_examples 'does not permit submit' do
           it 'responds with 403' do
             subject
             expect(response).to have_http_status(403)
@@ -326,12 +327,13 @@ describe Api::SubmissionFilesController do
           it 'does not submit a file' do
             subject
             path = Pathname.new('v1/x/y')
-            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+            submitted_file = nil
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
               file_path = Pathname.new(assignment.repository_folder).join path
               files = repo.get_latest_revision.files_at_path(file_path.to_s)
-              files.keys.include? 'test.txt'
+              submitted_file = files.keys.first
             end
-            expect(success).to be_falsey
+            expect(submitted_file).to be_nil
           end
         end
 
@@ -361,7 +363,7 @@ describe Api::SubmissionFilesController do
             assignment.update(api_submit: false)
           end
 
-          include_examples 'fails to submit'
+          include_examples 'does not permit submit'
         end
 
         context 'when the assignment requires submission of only required files' do
@@ -371,7 +373,7 @@ describe Api::SubmissionFilesController do
 
           context 'the file is not required' do
             let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
-            include_examples 'fails to submit'
+            include_examples 'does not permit submit'
           end
 
           context 'the file is required' do
