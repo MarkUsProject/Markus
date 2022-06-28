@@ -47,17 +47,6 @@ class RawFileManager extends RawFileBrowser {
     // treat multiple selections the same as not targeting
     let selectedItem = selectedItems.length === 1 ? selectedItems[0] : null;
     const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith("/");
-    let filter;
-    if (this.props.canFilter) {
-      filter = (
-        <this.props.filterRenderer
-          value={this.state.nameFilter}
-          updateFilter={this.updateFilter}
-          {...this.props.filterRendererProps}
-        />
-      );
-    }
-
     let actions = [];
 
     if (!this.props.readOnly && selectedItem) {
@@ -237,12 +226,7 @@ class RawFileManager extends RawFileBrowser {
       actionList = <div className="item-actions">&nbsp;</div>;
     }
 
-    return (
-      <div className="action-bar">
-        {filter}
-        {actionList}
-      </div>
-    );
+    return <div className="action-bar">{actionList}</div>;
   }
 }
 
