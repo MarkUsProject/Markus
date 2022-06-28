@@ -251,8 +251,18 @@ describe Api::SubmissionFilesController do
         end
       end
     end
+
+    context 'POST submit_file' do
+      it 'responds with 403' do
+        post :submit_file, params: { assignment_id: assignment.id, filename: 'v1/x/y/test.txt',
+                                     mime_type: 'text', file_content: 'This is a test file', course_id: course.id }
+        expect(response).to have_http_status(403)
+      end
+    end
   end
+
   context 'An authenticated student request' do
+    let(:student) { grouping.inviter }
     before :each do
       student.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
@@ -265,8 +275,36 @@ describe Api::SubmissionFilesController do
                                      mime_type: 'text', file_content: 'This is a test file', course_id: course.id }
       end
 
-      shared_examples 'submits a file' do
-        context 'when the file does not exist yet' do
+      describe 'group creation' do
+        context 'when the student is not yet in a group' do
+          let(:student) { create :student, course: course }
+          it 'creates a new group for the student' do
+            subject
+            expect(student.accepted_groupings.where(assessment_id: assignment.id).first).not_to be_nil
+          end
+
+          it 'creates a working alone group' do
+            subject
+            student_group = student.accepted_groupings.where(assessment_id: assignment.id).first
+            expect(student_group.group.group_name).to eq(student.user_name)
+          end
+        end
+
+        context 'when student is already in a group' do
+          it 'does not create a new group for the student' do
+            subject
+            expect(student.accepted_groupings.where(assessment_id: assignment.id).count).to eq(1)
+          end
+        end
+      end
+
+      describe 'file submission' do
+        shared_examples 'submits successfully' do
+          it 'responds with 201' do
+            subject
+            expect(response).to have_http_status(201)
+          end
+
           it 'submits a file' do
             subject
             path = Pathname.new('v1/x/y')
@@ -277,6 +315,28 @@ describe Api::SubmissionFilesController do
             end
             expect(success).to be_truthy
           end
+        end
+
+        shared_examples 'fails to submit' do
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+
+          it 'does not submit a file' do
+            subject
+            path = Pathname.new('v1/x/y')
+            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              files.keys.include? 'test.txt'
+            end
+            expect(success).to be_falsey
+          end
+        end
+
+        context 'when the file does not exist yet' do
+          include_examples 'submits successfully'
         end
 
         context 'when the file already exists' do
@@ -301,60 +361,24 @@ describe Api::SubmissionFilesController do
             assignment.update(api_submit: false)
           end
 
-          it 'responds with 403' do
-            subject
-            expect(response).to have_http_status(403)
-          end
+          include_examples 'fails to submit'
         end
 
         context 'when the assignment requires submission of only required files' do
-          let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
           before :each do
             assignment.update(only_required_files: true)
           end
 
-          it 'does not allow upload of different non required filename' do
-            subject
-            expect(response).to have_http_status(403)
+          context 'the file is not required' do
+            let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
+            include_examples 'fails to submit'
           end
 
-          it 'allows submission of required files' do
-            post :submit_file, params: { assignment_id: assignment.id, filename: test_file.filename,
-                                         mime_type: 'text', file_content: 'content', course_id: course.id }
-            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
-              file_path = Pathname.new(assignment.repository_folder)
-              files = repo.get_latest_revision.files_at_path(file_path.to_s)
-              files.keys.include? test_file.filename
-            end
-            expect(success).to be_truthy
+          context 'the file is required' do
+            let!(:test_file) { create :assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id }
+            include_examples 'submits successfully'
           end
         end
-      end
-
-      context 'when student is not in a group' do
-        let(:student) { create :student, course: course }
-        it 'creates a new group for the student' do
-          subject
-          expect(student.accepted_groupings.where(assessment_id: assignment.id).first).not_to be_nil
-        end
-
-        it 'creates a working alone group' do
-          subject
-          student_group = student.accepted_groupings.where(assessment_id: assignment.id).first
-          expect(student_group.group.group_name).to eq(student.user_name)
-        end
-
-        include_examples 'submits a file'
-      end
-
-      context 'when student is already in a group' do
-        let(:student) { grouping.inviter }
-        it 'does not create a new group for the student' do
-          subject
-          expect(student.accepted_groupings.where(assessment_id: assignment.id).count).to eq(1)
-        end
-
-        include_examples 'submits a file'
       end
     end
   end
