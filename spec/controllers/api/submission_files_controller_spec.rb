@@ -256,6 +256,7 @@ describe Api::SubmissionFilesController do
     before :each do
       student.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
+      assignment.update(api_submit: true)
     end
 
     context 'POST submit_file' do
@@ -281,8 +282,9 @@ describe Api::SubmissionFilesController do
         context 'when the file already exists' do
           it 'replaces the file' do
             subject
+            expected_content = 'Updated Content'
             post :submit_file, params: { assignment_id: assignment.id, filename: 'v1/x/y/test.txt',
-                                         mime_type: 'text', file_content: 'Updated Content', course_id: course.id }
+                                         mime_type: 'text', file_content: expected_content, course_id: course.id }
             received_file_content = nil
             path = Pathname.new('v1/x/y')
             student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
@@ -290,33 +292,37 @@ describe Api::SubmissionFilesController do
               file = repo.get_latest_revision.files_at_path(file_path.to_s)['test.txt']
               received_file_content = repo.download_as_string(file)
             end
-            expect(received_file_content).to eq('Updated Content')
+            expect(received_file_content).to eq(expected_content)
+          end
+        end
+
+        context 'when the instructor has disabled API submission' do
+          before :each do
+            assignment.update(api_submit: false)
+          end
+
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
           end
         end
 
         context 'when the assignment requires submission of only required files' do
-          let(:test_file) { create :assignment_file, assessment_id: assignment.id }
+          let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
           before :each do
             assignment.update(only_required_files: true)
           end
 
           it 'does not allow upload of different non required filename' do
             subject
-            path = Pathname.new('v1/x/y')
-            success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
-              file_path = Pathname.new(assignment.repository_folder).join path
-              files = repo.get_latest_revision.files_at_path(file_path.to_s)
-              files.keys.include? 'test.txt'
-            end
-            expect(success).to be_falsey
+            expect(response).to have_http_status(403)
           end
 
           it 'allows submission of required files' do
             post :submit_file, params: { assignment_id: assignment.id, filename: test_file.filename,
                                          mime_type: 'text', file_content: 'content', course_id: course.id }
-            path = Pathname.new('v1/x/y')
             success, _messages = student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
-              file_path = Pathname.new(assignment.repository_folder).join path
+              file_path = Pathname.new(assignment.repository_folder)
               files = repo.get_latest_revision.files_at_path(file_path.to_s)
               files.keys.include? test_file.filename
             end

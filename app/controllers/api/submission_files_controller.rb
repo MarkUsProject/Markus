@@ -171,6 +171,10 @@ module Api
         render 'shared/http_status', locals: { code: '422', message:
           'You must respond to your group request on MarkUs before you can submit' }, status: :unprocessable_entity
         return
+      elsif !assignment.api_submit
+        render 'shared/http_status', locals: { code: '403', message:
+          'The instructor has disabled submission via the API' }, status: :forbidden
+        return
       end
 
       if !student.has_accepted_grouping_for?(assignment.id) && assignment.group_max == 1
@@ -198,7 +202,7 @@ module Api
         return
       end
 
-      if only_required_files && grouping.assignment.assignment_files.pluck(:filename).include?(params[:filename])
+      if only_required_files && grouping.assignment.assignment_files.pluck(:filename).exclude?(params[:filename])
         render 'shared/http_status', locals: { code: '403', message:
           'Only required files can be uploaded' }, status: :forbidden
         return
