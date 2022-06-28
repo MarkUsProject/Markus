@@ -80,7 +80,9 @@ en:
         other: "%{count} missing required files"
       no_revision_available: No revision available.
       no_submission: You have not submitted any work yet.
+      one_file_allowed: File renaming is only supported when one file is selected.
       only_required_files: You may only submit the required files listed above.
+      rename_file_to: "(optional) Rename file to"
       select_file: Select a file to view
       url: URL
       url_text: Display URL as
