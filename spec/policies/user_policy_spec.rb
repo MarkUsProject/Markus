@@ -13,6 +13,9 @@ describe UserPolicy do
     succeed 'user is an instructor in at least one course' do
       let(:user) { create(:instructor).user }
     end
+    succeed 'user is a student in at least one course' do
+      let(:user) { create(:student).user }
+    end
   end
   describe_rule :settings? do
     succeed

@@ -6,7 +6,7 @@ module Api
     end
 
     def submit_file?
-      role&.student?
+      role&.student? || false
     end
   end
 end
