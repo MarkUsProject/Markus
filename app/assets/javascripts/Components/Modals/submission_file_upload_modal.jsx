@@ -21,7 +21,7 @@ class SubmissionFileUploadModal extends React.Component {
   };
 
   handleFileUpload = event => {
-    this.setState({newFiles: event.target.files, renameTo: event.target.files[0].name});
+    this.setState({newFiles: event.target.files});
   };
 
   toggleUnzip = () => {
