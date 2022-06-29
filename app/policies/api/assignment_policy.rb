@@ -4,5 +4,9 @@ module Api
     def test_files?
       real_user.autotest_user? || check?(:manage?)
     end
+
+    def submit_file?
+      role&.student? || false
+    end
   end
 end
