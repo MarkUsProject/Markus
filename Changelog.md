@@ -45,7 +45,7 @@
 - Separated peer review assignment upload/download from parent (#6048)
 - Expanded summary stats UI (#6050)
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
-- Added new "submit_file" API submission route for students (#6057)
+- Added new "submit_file" API assignment route for students (#6057)
 - Removed searchbar used to filter files on submissions page (#6058)
 
 ## [v2.0.10]
