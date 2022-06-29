@@ -61,7 +61,7 @@ module SubmissionsHelper
     f
   end
 
-  # API Helper that uploads a file to this particular +grouping+'s assignment repository.
+  # Helper for the API that uploads a file to this particular +grouping+'s assignment repository.
   # If +only_required_files+ is true, only required files for this grouping's assignment can be uploaded.
   def upload_file(grouping, only_required_files: false)
     if has_missing_params?([:filename, :mime_type, :file_content])
