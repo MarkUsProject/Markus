@@ -38,9 +38,7 @@ describe UsersController do
         expect(response).to render_template(:settings)
       end
     end
-  end
 
-  describe 'User is an instructor in at least one course' do
     describe '#reset_api_key' do
       it 'responds with a success' do
         post_as user, :reset_api_key
@@ -53,18 +51,14 @@ describe UsersController do
         expect(user.api_key).not_to eq(old_key)
       end
     end
+  end
 
+  describe 'User is an instructor in at least one course' do
     include_examples 'settings'
   end
 
   describe 'User is not an instructor in at least one course' do
     let(:role) { create :ta }
-    describe '#reset_api_key' do
-      it 'cannot reset their api key' do
-        post_as user, :reset_api_key
-        expect(response).to have_http_status(:forbidden)
-      end
-    end
     include_examples 'settings'
   end
 end
