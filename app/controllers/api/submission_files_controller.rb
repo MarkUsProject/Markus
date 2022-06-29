@@ -164,7 +164,7 @@ module Api
     end
 
     def submit_file
-      student = Student.find_by(user: @real_user, course: @current_course)
+      student = current_role
       assignment = Assignment.find_by(id: params[:assignment_id], course: @current_course)
 
       # Disable submission via API if the instructor desires to
