@@ -174,13 +174,6 @@ module Api
         return
       end
 
-      # Reject submission if the student has pending grouping
-      if student.has_pending_groupings_for?(assignment.id)
-        render 'shared/http_status', locals: { code: '422', message:
-          'You must respond to your group request on MarkUs before you can submit' }, status: :unprocessable_entity
-        return
-      end
-
       grouping = if student.has_accepted_grouping_for?(assignment.id)
                    student.accepted_grouping_for(assignment.id)
                  elsif assignment.group_max == 1
