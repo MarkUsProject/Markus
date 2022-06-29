@@ -2,7 +2,6 @@ module Api
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionFilesController < MainApiController
-    include RepositoryHelper
     include SubmissionsHelper
     # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
