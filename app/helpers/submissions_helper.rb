@@ -58,4 +58,53 @@ module SubmissionsHelper
     f[:type] = file_type == 'markusurl' && !url_submit ? 'unknown' : file_type
     f
   end
+
+  # API Helper that uploads a file to this particular +grouping+'s assignment repository.
+  # If +only_required_files+ is true, only required files for this grouping's assignment can be uploaded.
+  def upload_file(grouping, only_required_files: false)
+    if has_missing_params?([:filename, :mime_type, :file_content])
+      # incomplete/invalid HTTP params
+      render 'shared/http_status', locals: { code: '422', message:
+        HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+      return
+    end
+
+    # Only allow required files to be uploaded if +only_required_files+ is true
+    if only_required_files && grouping.assignment.assignment_files.pluck(:filename).exclude?(params[:filename])
+      render 'shared/http_status', locals: { code: '422', message:
+        'Only required files can be uploaded' }, status: :unprocessable_entity
+      return
+    end
+
+    if params[:file_content].respond_to? :read # binary data
+      content = params[:file_content].read
+    else
+      content = params[:file_content]
+    end
+
+    tmpfile = Tempfile.new
+    begin
+      tmpfile.write(content)
+      tmpfile.rewind
+      file = ActionDispatch::Http::UploadedFile.new(tempfile: tmpfile,
+                                                    filename: params[:filename],
+                                                    type: params[:mime_type])
+      success, messages = grouping.access_repo do |repo|
+        path = Pathname.new(grouping.assignment.repository_folder)
+        add_file(file, current_role, repo, path: path)
+      end
+    ensure
+      tmpfile.close!
+    end
+    message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+    if success
+      # It worked, render success
+      message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
+      render 'shared/http_status', locals: { code: '201', message: message }, status: :created
+    else
+      # Some other error occurred
+      message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+      render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
+    end
+  end
 end

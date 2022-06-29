@@ -53,16 +53,12 @@ Rails.application.routes.draw do
           end
         end
         resources :starter_file_groups, only: [:index, :create]
-        resources :submission_files, only: [] do
-          collection do
-            post 'submit_file'
-          end
-        end
         member do
           get 'test_files'
           get 'grades_summary'
           get 'test_specs'
           post 'update_test_specs'
+          post 'submit_file'
         end
       end
       resources :feedback_files, only: [:show, :update, :destroy]
