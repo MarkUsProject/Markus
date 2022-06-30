@@ -128,7 +128,8 @@ class SubmissionsController < ApplicationController
     response = {
       entries: entries,
       only_required_files: assignment.only_required_files,
-      required_files: assignment.assignment_files.pluck(:filename).sort
+      required_files: assignment.assignment_files.pluck(:filename).sort,
+      max_file_size: assignment.course.max_file_size_settings / 1_000_000
     }
 
     render json: response
