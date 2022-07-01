@@ -33,7 +33,7 @@ export class GraderDistributionModal extends React.Component {
         <input
           id={`input-${grader.user_name}`}
           type="Number"
-          step="1"
+          step="0.01"
           min="0"
           max="100"
           defaultValue={this.props.weightings[grader._id] || 1}
