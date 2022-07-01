@@ -11,6 +11,18 @@
 var annotation_context_menu = {
   setup: function () {
     var menu_items = {
+      check_mark_annotation: {
+        title: "✅",
+        action: () => resultComponent.addQuickAnnotation("✅"),
+      },
+      thumbs_up_annotation: {
+        title: "👍",
+        action: () => resultComponent.addQuickAnnotation("👍"),
+      },
+      heart_annotation: {
+        title: "❤",
+        action: () => resultComponent.addQuickAnnotation("❤"),
+      },
       new_annotation: {
         title: I18n.t("helpers.submit.create", {
           model: I18n.t("activerecord.models.annotation.one"),
@@ -96,6 +108,9 @@ var annotation_context_menu = {
         duration: "fast",
       },
       menu: [
+        menu_items.check_mark_annotation,
+        menu_items.thumbs_up_annotation,
+        menu_items.heart_annotation,
         menu_items.new_annotation,
         menu_items.common_annotations,
         menu_items.edit_annotation,
