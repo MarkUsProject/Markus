@@ -326,22 +326,6 @@
 
         selectionBoxActive = false;
       });
-
-      if (navigator.userAgent.toLowerCase().indexOf("firefox") <= -1) {
-        $pages.click(ev => {
-          if (ev.ctrlKey || ev.metaKey) {
-            let point = getRelativePointForMouseEvent(ev);
-            this.setSelectionBox($(ev.delegateTarget), {
-              x: point.x,
-              y: point.y,
-              width: 0.03,
-              height: 0.03,
-              visible: true,
-            });
-            resultComponent.addQuickAnnotation(I18n.t("good"));
-          }
-        });
-      }
     }
   }
 
