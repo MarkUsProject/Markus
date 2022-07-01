@@ -13,14 +13,17 @@ var annotation_context_menu = {
     var menu_items = {
       check_mark_annotation: {
         title: "✅",
+        cmd: "check_mark_annotation",
         action: () => resultComponent.addQuickAnnotation("✅"),
       },
       thumbs_up_annotation: {
         title: "👍",
+        cmd: "thumbs_up_annotation",
         action: () => resultComponent.addQuickAnnotation("👍"),
       },
       heart_annotation: {
         title: "❤",
+        cmd: "heart_annotation",
         action: () => resultComponent.addQuickAnnotation("❤"),
       },
       new_annotation: {
@@ -111,6 +114,7 @@ var annotation_context_menu = {
         menu_items.check_mark_annotation,
         menu_items.thumbs_up_annotation,
         menu_items.heart_annotation,
+        menu_items.separator,
         menu_items.new_annotation,
         menu_items.common_annotations,
         menu_items.edit_annotation,
