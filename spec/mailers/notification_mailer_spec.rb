@@ -66,7 +66,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the subject' do
-      subject_line = "MarkUs Notification (#{grade_entry_form.course.name}) Your marks for "\
+      subject_line = "MarkUs Notification (#{grade_entry_form.course.name}) Your marks for " \
                      "#{grade_entry_form.short_identifier} have been released!"
       expect(mail.subject).to eq(subject_line)
     end

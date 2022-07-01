@@ -20,7 +20,7 @@ class DownloadSubmissionsJob < ApplicationJob
 
   def perform(grouping_ids, zip_path, _assignment_id, _course_id)
     ## delete the old file if it exists
-    File.delete(zip_path) if File.exist?(zip_path)
+    FileUtils.rm_f(zip_path)
 
     progress.total = grouping_ids.length
     Zip::File.open(zip_path, create: true) do |zip_file|

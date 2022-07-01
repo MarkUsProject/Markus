@@ -17,7 +17,7 @@ class Course < ApplicationRecord
   validates :name, presence: true
   validates :name, uniqueness: true
   validates :name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                             message: 'name must only contain alphanumeric, hyphen, or '\
+                             message: 'name must only contain alphanumeric, hyphen, or ' \
                                       'underscore' }
 
   # Note rails provides built-in sanitization via active record.

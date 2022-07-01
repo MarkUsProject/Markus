@@ -190,7 +190,7 @@ module AutomatedTestsHelper
       markus_address = get_markus_address(host_with_port)
       file_urls = group_ids.map do |id_|
         param = collected ? 'collected=true' : ''
-        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/"\
+        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
           "groups/#{id_}/submission_files?#{param}"
       end
       req.body = {
@@ -220,7 +220,7 @@ module AutomatedTestsHelper
     def cancel_tests(assignment, test_runs)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.remote_autotest_settings_id
 
-      uri = URI("#{assignment.course.autotest_setting.url}/settings/"\
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/" \
                 "#{assignment.remote_autotest_settings_id}/tests/cancel")
       req = Net::HTTP::Delete.new(uri)
       req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
@@ -233,7 +233,7 @@ module AutomatedTestsHelper
     def statuses(assignment, test_runs)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.remote_autotest_settings_id
 
-      uri = URI("#{assignment.course.autotest_setting.url}/settings/"\
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/" \
                 "#{assignment.remote_autotest_settings_id}/tests/status")
       req = Net::HTTP::Get.new(uri)
       req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json

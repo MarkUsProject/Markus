@@ -232,7 +232,7 @@ describe Mark do
       expect(mark.reload.mark).to eq(nil)
     end
 
-    it 'updates the override of a mark to false when last deductive annotation deleted if the override '\
+    it 'updates the override of a mark to false when last deductive annotation deleted if the override ' \
        'was true before and the mark was nil' do
       mark.update!(mark: nil, override: true)
       result.annotations.joins(annotation_text: :annotation_category)
