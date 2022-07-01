@@ -60,7 +60,7 @@ describe AnnotationCategory do
                                                                                            expected_message)
     end
 
-    it 'returns an error message if a deduction given for an annotation text '\
+    it 'returns an error message if a deduction given for an annotation text ' \
        'is greater than the max mark of the criterion' do
       row = ['category_name', 'criterion_name', 'text_content', '1.0']
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
@@ -90,7 +90,7 @@ describe AnnotationCategory do
       expect(AnnotationText.find_by(content: 'text_content').deduction).to eq(1.33)
     end
 
-    it 'returns an error message if given another text rather than a deduction for an annotation text '\
+    it 'returns an error message if given another text rather than a deduction for an annotation text ' \
        'despite there being a criterion specified for the category' do
       row = %w[category_name criterion_name text_content other_text_content]
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
@@ -101,7 +101,7 @@ describe AnnotationCategory do
                                                                                            expected_message)
     end
 
-    it 'returns an error message if given nil rather than a deduction for an annotation text '\
+    it 'returns an error message if given nil rather than a deduction for an annotation text ' \
        'despite there being a criterion specified for the category' do
       row = ['category_name', 'criterion_name', 'text_content', nil]
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
@@ -257,7 +257,7 @@ describe AnnotationCategory do
       expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotDestroyed
     end
 
-    it 'does not prevent deletion of an annotation_category if annotations have '\
+    it 'does not prevent deletion of an annotation_category if annotations have ' \
        'no deduction and results not released' do
       annotation_category_with_criteria.update!(flexible_criterion_id: nil)
       expect { assignment.annotation_categories.destroy_all }.to_not raise_error
@@ -273,7 +273,7 @@ describe AnnotationCategory do
       expect { assignment.annotation_categories.destroy_all }.to_not raise_error
     end
 
-    it 'does not prevent deletion of an annotation_category if results released '\
+    it 'does not prevent deletion of an annotation_category if results released ' \
        'and annotations have deductions of value 0 only' do
       annotation_category_with_criteria.annotation_texts.first.update!(deduction: 0)
       expect { assignment.annotation_categories.destroy_all }.to_not raise_error

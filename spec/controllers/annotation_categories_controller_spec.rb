@@ -202,7 +202,7 @@ describe AnnotationCategoriesController do
         expect(category.reload.flexible_criterion_id).to eq(nil)
       end
 
-      it 'fails to update the AnnotationCategory\'s associated flexible_criterion to an id '\
+      it 'fails to update the AnnotationCategory\'s associated flexible_criterion to an id ' \
          'of a criterion for another assignment' do
         assignment = annotation_category.assignment
         flexible_criterion = create(:flexible_criterion)
@@ -216,7 +216,7 @@ describe AnnotationCategoriesController do
         expect(annotation_category.flexible_criterion_id).to eq(nil)
       end
 
-      it 'fails to update the AnnotationCategory\'s associated flexible_criterion'\
+      it 'fails to update the AnnotationCategory\'s associated flexible_criterion' \
          'after results have been released' do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
@@ -389,7 +389,7 @@ describe AnnotationCategoriesController do
         expect(category.annotation_texts.first.deduction).to eq 0.5
       end
 
-      it 'does not allow creation of an annotation text associated with an annotation category with a deduction '\
+      it 'does not allow creation of an annotation text associated with an annotation category with a deduction ' \
          'with a nil deduction' do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
@@ -449,7 +449,7 @@ describe AnnotationCategoriesController do
         expect(text.reload.deduction).to eq 0.1
       end
 
-      it 'correctly responds when updating an annotation text\'s (associated with an annotation category) '\
+      it 'correctly responds when updating an annotation text\'s (associated with an annotation category) ' \
          'deduction with nil value when its category belongs to a flexible criterion' do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
@@ -466,7 +466,7 @@ describe AnnotationCategoriesController do
         expect(text.reload.deduction).to_not be nil
       end
 
-      it 'fails to update an annotation text\'s (associated with an annotation category) '\
+      it 'fails to update an annotation text\'s (associated with an annotation category) ' \
          'content when it is a deductive annotation that has been applied to released results' do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first

@@ -62,8 +62,8 @@ describe FlexibleCriterion do
       let(:flexible_criterion) { annotation_category.flexible_criterion }
 
       context 'when being destroyed' do
-        it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark '\
-           ' through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
+        it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark ' \
+           'through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
           result = assignment.groupings.first.current_result
           new_criterion = create(:flexible_criterion, assignment: assignment)
           create(:flexible_mark, result: result, criterion: new_criterion, mark: 1)
