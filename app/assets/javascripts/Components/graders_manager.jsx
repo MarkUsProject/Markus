@@ -130,7 +130,7 @@ class GradersManager extends React.Component {
         graders: Object.keys(groupsPerGrader).sort(
           (a, b) => groupsPerGrader[a] - groupsPerGrader[b]
         ),
-        groupsPerGrader: Object.values(groupsPerGrader).sort((a, b) => a - b),
+        groups_per_grader: Object.values(groupsPerGrader).sort((a, b) => a - b),
       },
     }).then(this.fetchData);
   };
