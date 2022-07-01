@@ -38,7 +38,7 @@ export class GraderDistributionModal extends React.Component {
           max="100"
           defaultValue={this.props.weightings[grader._id] || 1}
           onChange={event => {
-            this.props.weightings[grader._id] = parseInt(event.target.value);
+            this.props.weightings[grader._id] = parseFloat(event.target.value);
           }}
         />
       </div>
