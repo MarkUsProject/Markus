@@ -107,9 +107,20 @@ class Grouping < ApplicationRecord
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
-  def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, ta_ids_|
+  def self.randomly_assign_tas(grouping_ids, ta_ids, groups_per_grader, assignment)
+    weightings = {}
+    ta_ids.each_with_index do |group, index|
+      weightings[group] = groups_per_grader[index]
+    end
+
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, _|
       # Assign TAs in a round-robin fashion to a list of random groupings.
+      ta_ids_ = []
+      ta_ids.each do |id|
+        unless weightings[id].nil?
+          (ta_ids_ << Array([id].cycle(weightings[id].to_i))).flatten!
+        end
+      end
       grouping_ids_.shuffle.zip(ta_ids_.cycle).reject { |pair| pair.include?(nil) }
     end
   end

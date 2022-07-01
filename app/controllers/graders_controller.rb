@@ -123,10 +123,10 @@ class GradersController < ApplicationController
           end
         end
         if found_empty_submission
-          randomly_assign_graders(filtered_grouping_ids, grader_ids)
+          randomly_assign_graders(filtered_grouping_ids, grader_ids, params[:groupsPerGrader])
           flash_now(:info, I18n.t('graders.group_submission_no_files'))
         else
-          randomly_assign_graders(grouping_ids, grader_ids)
+          randomly_assign_graders(grouping_ids, grader_ids, params[:groupsPerGrader])
         end
       end
     when 'criteria_table'
@@ -167,8 +167,8 @@ class GradersController < ApplicationController
 
   private
 
-  def randomly_assign_graders(grouping_ids, grader_ids)
-    Grouping.randomly_assign_tas(grouping_ids, grader_ids, @assignment)
+  def randomly_assign_graders(grouping_ids, grader_ids, groups_per_grader)
+    Grouping.randomly_assign_tas(grouping_ids, grader_ids, groups_per_grader, @assignment)
   end
 
   def assign_all_graders(grouping_ids, grader_ids)

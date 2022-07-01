@@ -15,10 +15,10 @@ export class GraderDistributionModal extends React.Component {
   }
 
   componentDidMount() {
-    Modal.setAppElement("body");
     this.props.graders.forEach(grader => {
       !this.props.weightings[grader._id] ? (this.props.weightings[grader._id] = 1) : null;
     });
+    Modal.setAppElement("body");
   }
 
   onSubmit = event => {

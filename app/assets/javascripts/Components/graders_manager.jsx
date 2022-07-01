@@ -6,6 +6,8 @@ import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 
+import {sum} from "lodash";
+
 class GradersManager extends React.Component {
   constructor(props) {
     super(props);
@@ -112,13 +114,7 @@ class GradersManager extends React.Component {
     this.setState({
       isGradeerDistributionModalOpen: false,
     });
-
-    let weighted_graders = [];
-    graders.forEach(grader => {
-      for (let i = 0; i < this.state.weightings[grader]; i++) {
-        weighted_graders.push(grader);
-      }
-    });
+    const groupsPerGrader = this.calculateGroupsPerGrader(graders, groups);
 
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
@@ -131,9 +127,32 @@ class GradersManager extends React.Component {
         skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
-        graders: weighted_graders,
+        graders: Object.keys(groupsPerGrader).sort(
+          (a, b) => groupsPerGrader[a] - groupsPerGrader[b]
+        ),
+        groupsPerGrader: Object.values(groupsPerGrader).sort((a, b) => a - b),
       },
     }).then(this.fetchData);
+  };
+
+  calculateGroupsPerGrader = (graders, groups) => {
+    const result = {};
+    const total = sum(Object.values(this.state.weightings));
+    // Assign each grader their proportional number of groups (leaning towards the low end to reduce complexity)
+    graders.forEach(grader => {
+      result[grader] = Math.floor((this.state.weightings[grader] / total) * groups.length);
+    });
+    // Increase the number of groups assigned to the lowest grouped grader by 1 until the sum of result's values is equal to total
+    while (sum(Object.values(result)) < total) {
+      let leastGroupedGrader;
+      graders.forEach(grader => {
+        if (!leastGroupedGrader || result[leastGroupedGrader] > result[grader]) {
+          leastGroupedGrader = grader;
+        }
+      });
+      result[leastGroupedGrader] += 1;
+    }
+    return result;
   };
 
   unassignAll = () => {
