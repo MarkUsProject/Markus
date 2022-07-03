@@ -999,7 +999,7 @@ describe ResultsController do
 
       context 'when accessing an assignment with deductive annotations' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
-        it 'receives limited annotation category data when assigned '\
+        it 'receives limited annotation category data when assigned ' \
            'to a subset of criteria that have associated categories' do
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|
