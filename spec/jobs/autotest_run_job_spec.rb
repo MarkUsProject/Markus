@@ -84,7 +84,7 @@ describe AutotestRunJob do
       context 'when collected is true' do
         it 'should send the correct url' do
           file_urls = groups.map do |group|
-            "http://localhost:3000#{Rails.configuration.action_controller.relative_url_root}/api/courses"\
+            "http://localhost:3000#{Rails.configuration.action_controller.relative_url_root}/api/courses" \
               "/#{assignment.course.id}/assignments/#{assignment.id}/groups/#{group.id}/submission_files?collected=true"
           end
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
@@ -107,7 +107,7 @@ describe AutotestRunJob do
         it 'should send the correct url' do
           url_root = Rails.configuration.action_controller.relative_url_root
           file_urls = groups.map do |group|
-            "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/"\
+            "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
               "groups/#{group.id}/submission_files?"
           end
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
