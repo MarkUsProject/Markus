@@ -15,16 +15,19 @@ var annotation_context_menu = {
         title: "✅",
         cmd: "check_mark_annotation",
         action: () => resultComponent.addQuickAnnotation("✅"),
+        addClass: "check_mark_annotation",
       },
       thumbs_up_annotation: {
         title: "👍",
         cmd: "thumbs_up_annotation",
         action: () => resultComponent.addQuickAnnotation("👍"),
+        addClass: "thumbs_up_annotation",
       },
       heart_annotation: {
         title: "❤",
         cmd: "heart_annotation",
         action: () => resultComponent.addQuickAnnotation("❤"),
+        addClass: "heart_annotation",
       },
       new_annotation: {
         title: I18n.t("helpers.submit.create", {
