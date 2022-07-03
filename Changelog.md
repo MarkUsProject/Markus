@@ -46,6 +46,7 @@
 - Expanded summary stats UI (#6050)
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
 - Removed searchbar used to filter files on submissions page (#6058)
+- Added emoji annotations for graders and Removed `control+click` quick annotations. (#6093)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
