@@ -262,17 +262,26 @@ class SubmissionFileManager extends React.Component {
     if (this.state.requiredFiles.length > 0) {
       requiredFilesBox = (
         <div>
-          <p>{I18n.t("assignments.assignment_files")}</p>
+          <h2>{I18n.t("assignments.assignment_files")}</h2>
           {this.state.requiredFiles.map(filename => {
             return (
-              <div key={filename}>
+              <div key={filename} className={"required-files-container"}>
                 <input
+                  className={"required-files-checkbox"}
                   value={filename}
                   type={"checkbox"}
                   disabled={true}
                   checked={this.state.files.some(element => element.key === filename)}
                 />
-                <span> {filename}</span>
+                <p>
+                  {" "}
+                  &nbsp; {filename}{" "}
+                  {this.state.files.some(element => element.key === filename) ? (
+                    <div></div>
+                  ) : (
+                    <b>(missing)</b>
+                  )}
+                </p>
               </div>
             );
           })}
