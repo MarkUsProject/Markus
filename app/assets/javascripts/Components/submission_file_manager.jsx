@@ -274,7 +274,6 @@ class SubmissionFileManager extends React.Component {
                   checked={this.state.files.some(element => element.key === filename)}
                 />
                 <p>
-                  {" "}
                   &nbsp; {filename}{" "}
                   {this.state.files.some(element => element.key === filename) ? (
                     <div></div>
