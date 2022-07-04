@@ -129,7 +129,8 @@ class SubmissionsController < ApplicationController
       entries: entries,
       only_required_files: assignment.only_required_files,
       required_files: assignment.assignment_files.pluck(:filename).sort,
-      max_file_size: assignment.course.max_file_size_settings / 1_000_000
+      max_file_size: assignment.course.max_file_size_settings / 1_000_000,
+      number_of_missing_files: grouping.missing_assignment_files(@revision).length
     }
 
     render json: response
@@ -808,12 +809,8 @@ class SubmissionsController < ApplicationController
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end
 
-    if !@grouping.is_valid?
+    unless @grouping.is_valid?
       flash_message(:error, t('groups.invalid_group_warning'))
-    elsif @missing_assignment_files.present?
-      flash_message(:warning,
-                    partial: 'submissions/missing_assignment_file_toggle_list',
-                    locals: { missing_assignment_files: @missing_assignment_files })
     end
 
     if @assignment.allow_web_submits && @assignment.vcs_submit
