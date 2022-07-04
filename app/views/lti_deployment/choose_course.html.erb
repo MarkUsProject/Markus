@@ -1,0 +1,34 @@
+<div class="lti-flash">
+  <%= render partial: 'shared/flash_message' %>
+</div>
+<div id="course_selector">
+  <% if @real_user.admin_courses.empty? %>
+    <div id="no_courses_available"><h3><%= t('lti.no_courses') %></h3></div>
+  <% else %>
+    <div id="lti_course_info">
+      <h3><%=t('lti.select_course', course_name: session[:lti_course_name]) %></h3>
+    </div>
+    <%= form_with(local:true) do |f| %>
+      <div class="table">
+        <table>
+          <thead>
+          <tr>
+            <th><%= Course.model_name.human %></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @real_user.admin_courses.each do |course| %>
+            <tr>
+              <td>
+                <%= f.label :course, "#{course.name}: #{course.display_name}", value: course.id %>
+                <%= f.radio_button 'course', course.id %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div><%= f.submit t('save') %></div>
+    <% end %>
+  <% end %>
+</div>

@@ -19,8 +19,8 @@ class SplitPdfJob < ApplicationJob
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
-      FileUtils.mkdir_p error_dir unless Dir.exist? error_dir
-      FileUtils.mkdir_p raw_dir unless Dir.exist? raw_dir
+      FileUtils.mkdir_p error_dir
+      FileUtils.mkdir_p raw_dir
 
       filename = split_pdf_log.filename
 

@@ -39,3 +39,6 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/dev" %>/starter_files
+
+lti:
+  domains: <%= %w[host.docker.internal] %>

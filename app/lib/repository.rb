@@ -319,7 +319,7 @@ module Repository
     # as separate resources as long as the +namespace+ value is distinct. By default the +namespace+ is the relative
     # root of the current MarkUs instance.
     def self.redis_exclusive_lock(resource_id, namespace: Rails.root.to_s, timeout: 5000, interval: 100)
-      redis = Redis::Namespace.new(namespace)
+      redis = Redis::Namespace.new(namespace, redis: Redis.new(url: Settings.redis.url))
       return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
 
       # clear any threads that are no longer alive from the queue

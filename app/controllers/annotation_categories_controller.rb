@@ -25,7 +25,7 @@ class AnnotationCategoriesController < ApplicationController
         data = @annotation_categories.map do |cat|
           {
             id: cat.id,
-            annotation_category_name: "#{cat.annotation_category_name}"\
+            annotation_category_name: "#{cat.annotation_category_name}" \
                                       "#{cat.flexible_criterion_id.nil? ? '' : " [#{cat.flexible_criterion.name}]"}",
             texts: cat.annotation_texts.map do |text|
               {

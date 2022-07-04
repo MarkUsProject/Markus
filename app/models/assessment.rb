@@ -22,7 +22,7 @@ class Assessment < ApplicationRecord
   validates :description, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
   validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                                         message: 'short_identifier must only contain alphanumeric, hyphen, or '\
+                                         message: 'short_identifier must only contain alphanumeric, hyphen, or ' \
                                                   'underscore' }
 
   def self.type
@@ -63,26 +63,32 @@ class Assessment < ApplicationRecord
   end
 
   # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
-  def results_average
+  # If +points+ is true, this returns the raw average point grade for this assessment.
+  # Otherwise, the average percentage grade for this assessment is returned.
+  def results_average(points: false)
     return 0 if self.max_mark.zero?
 
     marks = self.completed_result_marks
     if marks.empty?
       0
     else
-      (DescriptiveStatistics.mean(marks) * 100 / self.max_mark).round(2).to_f
+      point_average = DescriptiveStatistics.mean(marks)
+      points ? point_average : (point_average * 100 / self.max_mark).round(2).to_f
     end
   end
 
   # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
-  def results_median
+  # If +points+ is true, this returns the raw median point grade for this assessment.
+  # Otherwise, the median percentage grade for this assessment is returned.
+  def results_median(points: false)
     return 0 if self.max_mark.zero?
 
     marks = self.completed_result_marks
     if marks.empty?
       0
     else
-      (DescriptiveStatistics.median(marks) * 100 / self.max_mark).round(2).to_f
+      point_median = DescriptiveStatistics.median(marks)
+      points ? point_median : (point_median * 100 / self.max_mark).round(2).to_f
     end
   end
 
@@ -95,5 +101,17 @@ class Assessment < ApplicationRecord
   # Returns the number of grades equal to 0 for this assessment, using all grades in self.completed_result_marks.
   def results_zeros
     self.completed_result_marks.count(&:zero?)
+  end
+
+  # Returns the standard deviation for this assessment, using all grades in self.completed_result_marks.
+  def results_standard_deviation
+    return 0 if self.max_mark.zero?
+
+    marks = self.completed_result_marks
+    if marks.empty?
+      0
+    else
+      DescriptiveStatistics.standard_deviation(marks)
+    end
   end
 end

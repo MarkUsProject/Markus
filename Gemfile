@@ -66,6 +66,9 @@ gem 'rails-html-sanitizer'
 gem 'rails_performance'
 gem 'responders'
 
+# LTI and OAuth
+gem 'jwt'
+
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
@@ -112,14 +115,17 @@ group :test do
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'time-warp'
+  gem 'webmock'
 end
 
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
   gem 'byebug'
+  gem 'capybara'
   gem 'i18n-tasks'
   gem 'rspec-rails', '~> 5.1.2'
+  gem 'selenium-webdriver'
 end
 
 # Gems needed (wanted) for development, test and production_test
