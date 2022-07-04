@@ -72,9 +72,11 @@ module SubmissionsHelper
     end
 
     # Only allow required files to be uploaded if +only_required_files+ is true
-    if only_required_files && grouping.assignment.assignment_files.pluck(:filename).exclude?(params[:filename])
-      render 'shared/http_status', locals: { code: '422', message:
-        'Only required files can be uploaded' }, status: :unprocessable_entity
+    required_files = grouping.assignment.assignment_files.pluck(:filename)
+    if only_required_files && required_files.exclude?(params[:filename])
+      message = t('assignments.upload_file_requirement') +
+        "\n#{Assignment.human_attribute_name(:assignment_files)}: #{required_files.join(', ')}"
+      render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_entity
       return
     end
 

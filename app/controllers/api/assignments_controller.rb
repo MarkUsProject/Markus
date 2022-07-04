@@ -275,7 +275,7 @@ module Api
       assignment = record
 
       # Do not submit a file if assignment is hidden
-      unless student.visible_assessments(assessment_id: assignment.id).exists?
+      unless allowed_to?(:see_hidden?, assignment)
         render 'shared/http_status', locals: { code: '403', message:
           HttpStatusHelper::ERROR_CODE['message']['403'] }, status: :forbidden
         return
