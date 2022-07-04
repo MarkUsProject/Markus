@@ -15,7 +15,7 @@ describe("GraderDistributionModal", () => {
       ],
       isOpen: true,
       onSubmit: jest.fn().mockImplementation(() => (props.isOpen = false)),
-      weightings: {},
+      setWeighting: jest.fn(),
     };
   });
 
@@ -25,36 +25,6 @@ describe("GraderDistributionModal", () => {
     expect(wrapper.find(".modal-inline-label").length).toBe(2);
   });
 
-  it("should default weightings to 1 if none are received", () => {
-    wrapper = getWrapper(props);
-
-    expect(props.weightings).toEqual({
-      1: 1,
-      2: 1,
-    });
-  });
-
-  it("should update weightings on an input change", () => {
-    wrapper = getWrapper(props);
-
-    wrapper.find(`#input-1`).simulate("change", {target: {value: "2"}});
-
-    expect(props.weightings).toEqual({
-      1: 2,
-      2: 1,
-    });
-  });
-
-  it("should keep any given weightings", () => {
-    props.weightings["1"] = 100;
-    wrapper = getWrapper(props);
-
-    expect(props.weightings).toEqual({
-      1: 100,
-      2: 1,
-    });
-  });
-
   it("should close on submit", () => {
     wrapper = getWrapper(props);
 
@@ -62,5 +32,20 @@ describe("GraderDistributionModal", () => {
 
     expect(props.onSubmit).toHaveBeenCalled();
     expect(props.isOpen).toBeFalsy();
+  });
+
+  it("should call setWeighting with value of 1 on build", () => {
+    wrapper = getWrapper(props);
+
+    expect(props.setWeighting).toHaveBeenCalledWith(1, 1);
+
+    expect(props.setWeighting).toHaveBeenCalledWith(2, 1);
+  });
+
+  it("should call setWeighting with correct ID and number upon an event", () => {
+    wrapper = getWrapper(props);
+
+    wrapper.find(`#input-1`).simulate("change", {target: {value: "2"}});
+    expect(props.setWeighting).toHaveBeenCalledWith(1, 2);
   });
 });

@@ -7,16 +7,9 @@ export class GraderDistributionModal extends React.Component {
     override: false,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      override: this.props.override,
-    };
-  }
-
   componentDidMount() {
     this.props.graders.forEach(grader => {
-      !this.props.weightings[grader._id] ? (this.props.weightings[grader._id] = 1) : null;
+      this.props.setWeighting(grader._id, 1);
     });
     Modal.setAppElement("body");
   }
@@ -26,24 +19,28 @@ export class GraderDistributionModal extends React.Component {
     this.props.onSubmit();
   };
 
-  createGraderRow = grader => {
+  renderGraderRow = grader => {
     return (
       <div className="flex-row-expand" key={grader.user_name}>
-        <label className="modal-inline-label">{grader.user_name}:</label>
+        <label htmlFor={`input-${grader.user_name}`} className="modal-inline-label">
+          {grader.user_name}
+        </label>
         <input
           id={`input-${grader.user_name}`}
-          type="Number"
+          type="number"
           step="0.01"
           min="0"
           max="100"
-          defaultValue={this.props.weightings[grader._id] || 1}
+          defaultValue="1"
           onChange={event => {
-            this.props.weightings[grader._id] = parseFloat(event.target.value);
+            this.props.setWeighting(grader._id, parseFloat(event.target.value));
           }}
+          required={true}
         />
       </div>
     );
   };
+
   render() {
     return (
       <Modal
@@ -52,12 +49,12 @@ export class GraderDistributionModal extends React.Component {
         onRequestClose={this.props.onRequestClose}
       >
         <form id="grader-form-random" onSubmit={this.onSubmit}>
-          <h2>{I18n.t("graders.weight")}:</h2>
+          <h2>{I18n.t("graders.weight")}</h2>
           <div className={"modal-container-vertical"}>
-            {this.props.graders.map(grader => this.createGraderRow(grader))}
+            {this.props.graders.map(grader => this.renderGraderRow(grader))}
           </div>
           <div className={"modal-container"}>
-            <input type="submit" value={I18n.t("graders.submit")} />
+            <input type="submit" value={I18n.t("graders.actions.randomly_assign")} />
           </div>
         </form>
       </Modal>
@@ -69,5 +66,5 @@ GraderDistributionModal.propTypes = {
   graders: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  weightings: PropTypes.object.isRequired,
+  setWeighting: PropTypes.func.isRequired,
 };

@@ -107,16 +107,18 @@ class Grouping < ApplicationRecord
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
-  def self.randomly_assign_tas(grouping_ids, ta_ids, groups_per_grader, assignment)
+  def self.randomly_assign_tas(grouping_ids, ta_ids, weightings_arr, assignment)
     # Create a hash of TA's to the number of groups they are supposed to mark
+    total = weightings_arr.map(&:to_f).reduce(:+)
     weightings = {}
     ta_ids.each_with_index do |group, index|
-      weightings[group] = groups_per_grader[index]
+      weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).floor
     end
 
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, _|
       ta_ids_ = []
       # Create 1 TA for each group they are supposed to be assigned to
+      ta_ids = ta_ids.sort_by { |ta| weightings[ta] }
       ta_ids.each do |id|
         # Make sure TA is supposed to be assigned to gorup
         unless weightings[id].nil?
