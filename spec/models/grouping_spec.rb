@@ -82,11 +82,11 @@ describe Grouping do
       end
 
       it 'can randomly bulk assign TAs to no groupings' do
-        Grouping.randomly_assign_tas([], ta_ids, [], assignment)
+        Grouping.randomly_assign_tas([], ta_ids, [1], assignment)
       end
 
       it 'can randomly bulk assign no TAs to all groupings' do
-        Grouping.randomly_assign_tas(grouping_ids, [], [0], assignment)
+        Grouping.randomly_assign_tas(grouping_ids, [], [], assignment)
       end
 
       it 'can randomly bulk assign TAs to all groupings' do
