@@ -109,7 +109,7 @@ describe Annotation do
       expect(mark.mark).to eq 2.0
     end
 
-    it 'creates a mark when associated with its category\'s flexible criterion '\
+    it 'creates a mark when associated with its category\'s flexible criterion ' \
        'was made after annotations were made ' do
       annotation_text.annotations.destroy_all
       new_flex = create(:flexible_criterion, assignment: assignment)
