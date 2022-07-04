@@ -112,7 +112,7 @@ class Grouping < ApplicationRecord
     total = weightings_arr.map(&:to_f).reduce(:+)
     weightings = {}
     ta_ids.each_with_index do |group, index|
-      weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).floor
+      weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).round
     end
 
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, _|
