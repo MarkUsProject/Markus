@@ -20,6 +20,7 @@ class SubmissionFileManager extends React.Component {
       onlyRequiredFiles: false,
       requiredFiles: [],
       maxFileSize: 0,
+      numberOfMissingFiles: 0,
     };
   }
 
@@ -61,6 +62,7 @@ class SubmissionFileManager extends React.Component {
           onlyRequiredFiles: data.only_required_files,
           requiredFiles: data.required_files,
           maxFileSize: data.max_file_size,
+          numberOfMissingFiles: data.number_of_missing_files,
         })
       );
   };
@@ -263,6 +265,13 @@ class SubmissionFileManager extends React.Component {
       requiredFilesBox = (
         <div>
           <h2>{I18n.t("assignments.assignment_files")}</h2>
+          <p>
+            {this.state.numberOfMissingFiles === 0 ? (
+              <p>{I18n.t("student.submission.all_files_submitted")}</p>
+            ) : (
+              I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})
+            )}
+          </p>
           {this.state.requiredFiles.map(filename => {
             return (
               <div key={filename} className={"required-files-container"}>
