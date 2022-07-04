@@ -385,7 +385,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
-                            global_actions: 'random_assign', groupings: [@grouping1], groups_per_grader: [1],
+                            global_actions: 'random_assign', groupings: [@grouping1], weightings: [1],
                             graders: [@ta1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
@@ -398,7 +398,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1],
-                            groups_per_grader: [1], current_table: 'groups_table' }
+                            weightings: [1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas[0].id).to eq @ta1.id
@@ -410,7 +410,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1], graders: [@ta1, @ta2],
-                            groups_per_grader: [1, 1], current_table: 'groups_table' }
+                            weightings: [1, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas).to eq []
@@ -422,7 +422,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
-                            groups_per_grader: [1, 1], current_table: 'groups_table' }
+                            weightings: [1, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
@@ -435,7 +435,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
-                            groups_per_grader: [1, 0], current_table: 'groups_table' }
+                            weightings: [1, 0], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id)
@@ -447,7 +447,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
-                            groups_per_grader: [2, 1], current_table: 'groups_table' }
+                            weightings: [2, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
@@ -461,7 +461,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
-                            groups_per_grader: [1, 1, 1], current_table: 'groups_table' }
+                            weightings: [1, 1, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas.size).to eq 1
           expect(@grouping2.tas.size).to eq 1

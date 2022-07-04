@@ -19,11 +19,12 @@ en:
     help: Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria.
     hide_unassigned_criteria: Only show assigned criteria to graders (if unselected, all graders will be able to see all criteria)
     no_grader_assigned: 'Default grader: course instructor(s)'
+    random_instruction: Assign a weight for randomized distribution
     select_a_criterion: Select at least one criterion
     select_a_grader: Select at least one grader to assign.
     skip_empty_submissions: Assign graders to groups with no files submitted
     skip_empty_submissions_tooltip: When unchecked, groups are skipped if their submissions have been collected and no files were submitted.
-    submit: submit
     upload:
       remove_existing_mappings: Remove existing grader assignments
     weight: Grader Weight
+    wiki: wiki
