@@ -40,6 +40,7 @@
 - Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 - Ensure consistent order when displaying test results (#6010)
 - Separated peer review assignment upload/download from parent (#6048)
+- Added ability to have a non-uniform group distribution when assigning graders (#6055)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
