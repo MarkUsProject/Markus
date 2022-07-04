@@ -92,3 +92,4 @@ en:
     unrelease_marks: Unrelease Marks
     url_preview_error: Unable to display a preview for this URL
     urls_disabled: Unable to submit URL. URL submissions are disabled for this assignment.
+    api_submission_disabled: The instructor has disabled submission via the API

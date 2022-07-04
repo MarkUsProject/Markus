@@ -277,7 +277,7 @@ module Api
       # Disable submission via API if the instructor desires to
       unless assignment.api_submit
         render 'shared/http_status', locals: { code: '403', message:
-          'The instructor has disabled submission via the API' }, status: :forbidden
+          t('submissions.api_submission_disabled') }, status: :forbidden
         return
       end
 

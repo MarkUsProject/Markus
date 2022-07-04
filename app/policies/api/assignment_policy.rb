@@ -6,7 +6,7 @@ module Api
     end
 
     def submit_file?
-      role&.student? || false
+      role&.student? && check?(:see_hidden?)
     end
   end
 end
