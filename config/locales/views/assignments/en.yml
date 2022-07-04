@@ -1,7 +1,6 @@
 ---
 en:
   assignments:
-    assignment_files: Required Files
     average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.

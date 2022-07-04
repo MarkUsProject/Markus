@@ -264,7 +264,7 @@ class SubmissionFileManager extends React.Component {
     if (this.state.requiredFiles.length > 0) {
       requiredFilesBox = (
         <div>
-          <h2>{I18n.t("assignments.assignment_files")}</h2>
+          <h2>Required Files</h2>
           <p>
             {this.state.numberOfMissingFiles === 0 ? (
               <p>{I18n.t("student.submission.all_files_submitted")}</p>
@@ -285,7 +285,7 @@ class SubmissionFileManager extends React.Component {
                 <p>
                   &nbsp; {filename}{" "}
                   {this.state.files.some(element => element.key === filename) ? (
-                    <div></div>
+                    <span></span>
                   ) : (
                     <b>(missing)</b>
                   )}
