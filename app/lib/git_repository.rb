@@ -119,9 +119,9 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.get_checkout_command(external_repo_url, revision_hash, group_name, _repo_folder = nil)
-    "git clone \"#{external_repo_url}\" \"#{group_name}\" && "\
-      "cd \"#{group_name}\" && "\
-      "git reset --hard #{revision_hash} && "\
+    "git clone \"#{external_repo_url}\" \"#{group_name}\" && " \
+      "cd \"#{group_name}\" && " \
+      "git reset --hard #{revision_hash} && " \
       'cd ..'
   end
 

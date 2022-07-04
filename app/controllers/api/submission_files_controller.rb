@@ -56,7 +56,7 @@ module Api
         zip_path = Pathname.new('tmp') + zip_name
 
         ## delete the old file if it exists
-        File.delete(zip_path) if File.exist?(zip_path)
+        FileUtils.rm_f(zip_path)
 
         Zip::File.open(zip_path, create: true) do |zip_file|
           grouping.access_repo do |repo|

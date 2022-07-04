@@ -368,7 +368,7 @@ class GroupsController < ApplicationController
       status = :unprocessable_entity
     else
       m_logger = MarkusLogger.instance
-      m_logger.log("Student '#{current_role.user_name}' joined group "\
+      m_logger.log("Student '#{current_role.user_name}' joined group " \
                    "'#{@grouping.group.group_name}'(accepted invitation).")
       status = :found
     end
@@ -419,7 +419,7 @@ class GroupsController < ApplicationController
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     m_logger = MarkusLogger.instance
     if @grouping.nil?
-      m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
+      m_logger.log('Failed to delete group, since no accepted group for this user existed.' \
                    "User: '#{current_role.user_name}'.", MarkusLogger::ERROR)
       flash_message(:error, I18n.t('groups.destroy.errors.do_not_have_a_group'))
       redirect_to course_assignment_path(current_course, @assignment)
@@ -434,10 +434,10 @@ class GroupsController < ApplicationController
         end
         @grouping.destroy
         flash_message(:success, I18n.t('flash.actions.destroy.success', resource_name: Group.model_name.human))
-        m_logger.log("Student '#{current_role.user_name}' deleted group '"\
+        m_logger.log("Student '#{current_role.user_name}' deleted group '" \
                      "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
       rescue RuntimeError => e
-        m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '"\
+        m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '" \
                      "#{current_role.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
