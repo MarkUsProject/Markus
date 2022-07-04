@@ -540,6 +540,19 @@ describe Api::AssignmentsController do
           include_examples 'does not submit'
         end
 
+        context 'when the assignment is hidden' do
+          before :each do
+            assignment.update(is_hidden: true)
+          end
+
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+
+          include_examples 'does not submit'
+        end
+
         context 'when the assignment requires submission of only required files' do
           before :each do
             assignment.update(only_required_files: true)
