@@ -76,7 +76,16 @@ dump.rdb
 yarn-debug.log*
 .yarn-integrity
 yarn-error.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # If this file is pre-generated, for Windows and WSL 2 (see Wiki docker setup instructions)
+
 app/javascript/routes.js
 # js-routes v2.2.0 always generates a Typescript definition file, but we aren't using Typescript
 app/javascript/routes.d.ts
