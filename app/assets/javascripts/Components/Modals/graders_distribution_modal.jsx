@@ -9,10 +9,8 @@ export class GraderDistributionModal extends React.Component {
 
   constructor(props) {
     super(props);
-    this.form = React.createRef();
+    this.input = React.createRef();
   }
-
-  form = React.createRef();
 
   componentDidMount() {
     this.props.graders.forEach(grader => {
@@ -23,7 +21,7 @@ export class GraderDistributionModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.form);
+    console.log(this.input); //logs: { current: null }
     this.props.onSubmit();
   };
 
@@ -56,7 +54,7 @@ export class GraderDistributionModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <form id="grader-form-random" onSubmit={this.onSubmit} ref={this.form}>
+        <form id="grader-form-random" onSubmit={this.onSubmit} ref={this.input}>
           <div className={"modal-container-vertical"}>
             <h2>{I18n.t("graders.weight")}</h2>
             <p className="word-wrap">{I18n.t("graders.random_instruction")}</p>
