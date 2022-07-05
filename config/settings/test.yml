@@ -38,3 +38,6 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/test" %>/starter_files
+
+lti:
+  domains: <%= %w[test.host] %>

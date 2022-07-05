@@ -35,12 +35,18 @@
 - Bug fixes for peer reviews (#5968)
 - Added Rails Performance to Admin Dashboard (#5967)
 - Added a detailed view for assignment statistics (#6000)
+- Resolved issue 5905 by adding an explicit download icon to file manager, to differentiate from file preview action (#6001)
 - Added student data such as user name, last name, first name, section, id number and email on grade reports for the whole course, individual assignments and grade entry forms (#6005)
 - Update Groups API to return member role IDs instead of user IDs (#6006)
 - Switch rendering of RMarkdown submission files to plaintext, rather than converting to HTML (#6008)
 - Ensure consistent order when displaying test results (#6010)
+- Added Capybara Gem (#6012)
+- Enable students to rename files during submission (#6045)
 - Separated peer review assignment upload/download from parent (#6048)
+- Expanded summary stats UI (#6050)
+- Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
 - Added ability to have a non-uniform group distribution when assigning graders (#6055)
+- Removed searchbar used to filter files on submissions page (#6058)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

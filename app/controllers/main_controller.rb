@@ -21,6 +21,10 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
+      if session[:lti_deployment_id].present?
+        redirect_to set_lti_user_association
+        return
+      end
       if @real_user.admin_user?
         redirect_to(admin_path)
       elsif allowed_to?(:role_is_switched?)
@@ -58,9 +62,14 @@ class MainController < ApplicationController
     end
 
     self.real_user = found_user
+
     uri = session[:redirect_uri]
     session[:redirect_uri] = nil
     refresh_timeout
+    if session[:lti_deployment_id].present?
+      redirect_to set_lti_user_association
+      return
+    end
     # redirect to last visited page or to main page
     if uri.present?
       redirect_to(uri)
@@ -110,6 +119,20 @@ class MainController < ApplicationController
   def refresh_session
     refresh_timeout
     head :ok
+  end
+
+  def set_lti_user_association
+    if session[:lti_user_id].present?
+      LtiUser.find_or_create_by(user: @real_user, lti_client: LtiClient.find(session[:lti_client_id]),
+                                lti_user_id: session[:lti_user_id])
+    end
+    lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+    if lti_deployment.course.nil?
+      # Redirect to course picker page
+      lti_deployment_choose_course_path
+    else
+      course_path(lti_deployment.course)
+    end
   end
 
   private

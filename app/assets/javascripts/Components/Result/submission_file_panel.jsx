@@ -141,43 +141,45 @@ export class SubmissionFilePanel extends React.Component {
         a => a.submission_file_id === submission_file_id
       );
     }
-    return [
-      <div key="annotation_menu" className="react-tabs-panel-action-bar">
-        <FileSelector
-          fileData={this.props.fileData}
-          onSelectFile={this.selectFile}
-          selectedFile={this.state.selectedFile}
-          course_id={this.props.course_id}
-        />
-        {this.props.canDownload && (
-          <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
-        )}
-        {this.props.show_annotation_manager && this.state.selectedFileType !== "markusurl" && (
-          <AnnotationManager
-            categories={this.props.annotation_categories}
-            newAnnotation={this.props.newAnnotation}
-            addExistingAnnotation={this.props.addExistingAnnotation}
+    return (
+      <React.Fragment>
+        <div key="annotation_menu" className="react-tabs-panel-action-bar">
+          <FileSelector
+            fileData={this.props.fileData}
+            onSelectFile={this.selectFile}
+            selectedFile={this.state.selectedFile}
             course_id={this.props.course_id}
           />
-        )}
-      </div>,
-      <div key="codeviewer" id="codeviewer">
-        <FileViewer
-          ref={this.submissionFileViewer}
-          handleFileTypeUpdate={this.handleFileTypeUpdate}
-          assignment_id={this.props.assignment_id}
-          submission_id={this.props.submission_id}
-          mime_type={submission_file_mime_type}
-          result_id={this.props.result_id}
-          selectedFile={submission_file_id}
-          annotations={visibleAnnotations}
-          focusLine={this.state.focusLine}
-          annotationFocus={this.state.annotationFocus}
-          released_to_students={this.props.released_to_students}
-          course_id={this.props.course_id}
-        />
-      </div>,
-    ];
+          {this.props.canDownload && (
+            <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
+          )}
+          {this.props.show_annotation_manager && this.state.selectedFileType !== "markusurl" && (
+            <AnnotationManager
+              categories={this.props.annotation_categories}
+              newAnnotation={this.props.newAnnotation}
+              addExistingAnnotation={this.props.addExistingAnnotation}
+              course_id={this.props.course_id}
+            />
+          )}
+        </div>
+        <div key="codeviewer" id="codeviewer">
+          <FileViewer
+            ref={this.submissionFileViewer}
+            handleFileTypeUpdate={this.handleFileTypeUpdate}
+            assignment_id={this.props.assignment_id}
+            submission_id={this.props.submission_id}
+            mime_type={submission_file_mime_type}
+            result_id={this.props.result_id}
+            selectedFile={submission_file_id}
+            annotations={visibleAnnotations}
+            focusLine={this.state.focusLine}
+            annotationFocus={this.state.annotationFocus}
+            released_to_students={this.props.released_to_students}
+            course_id={this.props.course_id}
+          />
+        </div>
+      </React.Fragment>
+    );
   }
 }
 

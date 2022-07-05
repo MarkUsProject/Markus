@@ -1607,6 +1607,11 @@ describe Assignment do
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_average).to eq 0
     end
+
+    it 'returns the correct number when viewing raw point value' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_average(points: true)).to eq(3.0)
+    end
   end
 
   describe '#results_median' do
@@ -1629,6 +1634,11 @@ describe Assignment do
       allow(assignment).to receive(:max_mark).and_return(0)
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_median).to eq 0
+    end
+
+    it 'returns the correct number when viewing raw point value' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_median(points: true)).to eq(2.5)
     end
   end
 
@@ -1675,6 +1685,29 @@ describe Assignment do
       allow(assignment).to receive(:max_mark).and_return(0)
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_zeros).to eq 4
+    end
+  end
+
+  describe '#standard_deviation' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(11)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_standard_deviation).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([1, 10, 6, 5])
+      expect(assignment.results_standard_deviation.round(9)).to eq 3.201562119
+    end
+
+    it 'returns the correct number when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_standard_deviation).to eq 0
     end
   end
 

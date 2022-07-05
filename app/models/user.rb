@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :key_pairs, dependent: :destroy
   has_many :roles, inverse_of: :user
   has_many :courses, through: :roles
+  has_many :lti_users
   validates :type, format: { with: /\AEndUser|AutotestUser|AdminUser\z/ }
 
   validates :user_name, :last_name, :first_name, :time_zone, :display_name, presence: true
@@ -115,6 +116,15 @@ class User < ApplicationRecord
     md5.update(key)
     # base64 encode md5 hash
     self.update(api_key: Base64.encode64(md5.to_s).strip)
+  end
+
+  def admin_courses
+    if self.admin_user?
+      courses = Course.all
+    else
+      courses = self.courses.where('roles.type': 'Instructor')
+    end
+    courses
   end
 
   private

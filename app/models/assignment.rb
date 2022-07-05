@@ -860,7 +860,7 @@ class Assignment < Assessment
                    .select('groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
 
     Result.joins(:grouping)
-          .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND "\
+          .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND " \
                  'results.created_at = sub.results_created_at')
   end
 

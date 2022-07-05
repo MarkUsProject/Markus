@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_21_024317) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -351,6 +351,35 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_21_024317) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["criterion_id"], name: "index_levels_on_criterion_id"
+  end
+
+  create_table "lti_clients", force: :cascade do |t|
+    t.string "client_id", null: false
+    t.string "host", null: false
+    t.bigint "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_lti_clients_on_course_id"
+  end
+
+  create_table "lti_deployments", force: :cascade do |t|
+    t.bigint "lti_client_id", null: false
+    t.bigint "course_id"
+    t.string "external_deployment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_lti_deployments_on_course_id"
+    t.index ["lti_client_id"], name: "index_lti_deployments_on_lti_client_id"
+  end
+
+  create_table "lti_users", force: :cascade do |t|
+    t.bigint "lti_client_id", null: false
+    t.bigint "user_id", null: false
+    t.string "lti_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lti_client_id"], name: "index_lti_users_on_lti_client_id"
+    t.index ["user_id"], name: "index_lti_users_on_user_id"
   end
 
   create_table "marking_schemes", id: :serial, force: :cascade do |t|
