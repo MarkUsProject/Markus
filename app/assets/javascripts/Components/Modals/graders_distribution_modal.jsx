@@ -7,12 +7,12 @@ export class GraderDistributionModal extends React.Component {
     override: false,
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.form = React.createRef()
-  };
+    this.form = React.createRef();
+  }
 
-  form = React.createRef()
+  form = React.createRef();
 
   componentDidMount() {
     this.props.graders.forEach(grader => {
@@ -23,7 +23,7 @@ export class GraderDistributionModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.form)
+    console.log(this.form);
     this.props.onSubmit();
   };
 
