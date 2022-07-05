@@ -3,8 +3,7 @@ namespace :markus do
   task lti_key: :environment do
     print('Creating new private key')
     key = OpenSSL::PKey::RSA.new(2048)
-    file_path = Settings.lti.key_path
-    f = File.new("#{file_path}/key.pem", 'w')
+    f = File.new(Settings.lti.key_path, 'w')
     f.write(key.to_s)
     f.close
   end
