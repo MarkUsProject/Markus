@@ -180,7 +180,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_29_225622) do
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
   end
-   create_table "criterion_ta_associations", id: :serial, force: :cascade do |t|
+
+  create_table "criterion_ta_associations", id: :serial, force: :cascade do |t|
     t.integer "ta_id"
     t.integer "criterion_id"
     t.datetime "created_at", precision: nil
