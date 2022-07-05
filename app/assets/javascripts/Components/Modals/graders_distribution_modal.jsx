@@ -7,6 +7,13 @@ export class GraderDistributionModal extends React.Component {
     override: false,
   };
 
+  constructor(props){
+    super(props);
+    this.form = React.createRef()
+  };
+
+  form = React.createRef()
+
   componentDidMount() {
     this.props.graders.forEach(grader => {
       this.props.setWeighting(grader._id, 1);
@@ -16,6 +23,7 @@ export class GraderDistributionModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
+    console.log(this.form)
     this.props.onSubmit();
   };
 
@@ -48,7 +56,7 @@ export class GraderDistributionModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <form id="grader-form-random" onSubmit={this.onSubmit}>
+        <form id="grader-form-random" onSubmit={this.onSubmit} ref={this.form}>
           <div className={"modal-container-vertical"}>
             <h2>{I18n.t("graders.weight")}</h2>
             <p className="word-wrap">{I18n.t("graders.random_instruction")}</p>
