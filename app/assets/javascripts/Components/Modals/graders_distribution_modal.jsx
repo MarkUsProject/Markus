@@ -21,9 +21,9 @@ export class GraderDistributionModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.input.current);
-    const form = new FormData(this.input.current.value);
-    console.log(form);
+    console.log(this.input.current); // prints null
+    const form = new FormData(this.input.current.value); //throws error (if just current also throws error)
+    console.log(form); // never reached this point
     this.props.onSubmit();
   };
 
