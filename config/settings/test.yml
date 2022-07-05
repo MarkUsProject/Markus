@@ -42,4 +42,4 @@ starter_file:
 lti:
   domains: <%= %w[test.host] %>
   token_endpoint: "http://test.host.com/login/oauth2/token"
-  key_path: <%= "#{::Rails.root.to_s}/data/test" %>/lti
+  key_path: <%= "#{::Rails.root.to_s}/data/test" %>/lti/key.pem

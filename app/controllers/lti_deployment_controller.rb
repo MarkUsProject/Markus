@@ -127,7 +127,7 @@ class LtiDeploymentController < ApplicationController
   end
 
   def public_jwk
-    key = OpenSSL::PKey::RSA.new File.read("#{Settings.lti.key_path}/key.pem")
+    key = OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path)
     jwk = JWT::JWK.new(key)
     render json: { keys: [jwk.export] }
   end

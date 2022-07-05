@@ -9,7 +9,7 @@ class LtiClient < ApplicationRecord
   # https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html
   def get_oauth_token(host_url, scopes)
     iat = Time.now.to_i # issued at
-    jti_raw = ['hmac_secret', iat].join(':').to_s
+    jti_raw = [SecureRandom.alphanumeric(8), iat].join(':').to_s
     jti = Digest::MD5.hexdigest(jti_raw) # Identifier
     payload = {
       iss: host_url,
@@ -19,7 +19,7 @@ class LtiClient < ApplicationRecord
       iat: iat,
       jti: jti
     }
-    key = OpenSSL::PKey::RSA.new File.read("#{Settings.lti.key_path}/key.pem")
+    key = OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path)
     jwk = JWT::JWK.new(key)
     token = JWT.encode payload, jwk.keypair, 'RS256', { kid: jwk.kid } # encode and add kid as a header
     # See https://canvas.instructure.com/doc/api/file.oauth_endpoints.html#post-login-oauth2-token
