@@ -5,7 +5,7 @@ if Rails.env.development?
   Bullet.alert = true
   Bullet.bullet_logger = true
   Bullet.console = true
-  Bullet.growl = false
+  # Bullet.growl = false
   # Bullet.xmpp = { account:  'bullets_account@jabber.org',
   #                 password: 'bullets_password_for_jabber',
   #                 receiver: 'your_account@jabber.org',

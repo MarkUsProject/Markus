@@ -337,10 +337,10 @@ class ResultsController < ApplicationController
       m_logger = MarkusLogger.instance
       assignment = @result.submission.assignment
       if released_to_students
-        m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '"\
+        m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" \
                      "#{assignment.id}' (for 1 group).")
       else
-        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '"\
+        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" \
                      "#{assignment.id}' (for 1 group).")
       end
     end

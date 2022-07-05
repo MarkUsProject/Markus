@@ -4,9 +4,7 @@ namespace :markus do
     task(drop: :environment) do
       puts 'Destroying Repositories...'
       FileUtils.rm_r Dir.glob(File.join(Settings.repository.storage, '*'))
-      if File.exist?(Repository::PERMISSION_FILE)
-        File.delete(Repository::PERMISSION_FILE)
-      end
+      FileUtils.rm_f(Repository::PERMISSION_FILE)
     end
 
     desc 'Build repositories for all existing groups'
