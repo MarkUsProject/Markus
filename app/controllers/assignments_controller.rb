@@ -379,10 +379,15 @@ class AssignmentsController < ApplicationController
       { label: "#{ta.display_name} (#{num_marked_label})",
         data: ta.grade_distribution_array(assignment, intervals) }
     end
+    criteria_datasets = assignment.criteria.map do |criteria|
+      { label: criteria.name,
+        data: criteria.grade_distribution_array(intervals) }
+    end
     render json: {
       summary: summary,
       assignment_data: assignment_data,
-      ta_data: { labels: ta_labels, datasets: ta_datasets }
+      ta_data: { labels: ta_labels, datasets: ta_datasets },
+      criteria_data: { datasets: criteria_datasets }
     }
   end
 

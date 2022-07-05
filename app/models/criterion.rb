@@ -173,6 +173,8 @@ class Criterion < ApplicationRecord
     false
   end
 
+  def grade_distribution_array; end
+
   private
 
   # Checks if the criterion is visible to either the ta or the peer reviewer.
