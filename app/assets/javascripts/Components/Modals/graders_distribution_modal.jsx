@@ -23,6 +23,8 @@ export class GraderDistributionModal extends React.Component {
     keys.slice(0, keys.length - 1).forEach(key => {
       weightings[this.input.current[key].name] = this.input.current[key].value;
     });
+    console.log(weightings);
+    console.log(new FormData(this.input.current));
     this.props.onSubmit(weightings);
   };
 

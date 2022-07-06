@@ -7,8 +7,6 @@ describe("GraderDistributionModal", () => {
   const getWrapper = props => {
     return shallow(<GraderDistributionModal {...props} />);
   };
-  const fakeEvent = {preventDefault: jest.fn()};
-
   beforeEach(() => {
     props = {
       graders: [
@@ -36,9 +34,10 @@ describe("GraderDistributionModal", () => {
   });
 
   it("should call setWeighting with value of 1 on build", () => {
+    const fakeEvent = {preventDefault: jest.fn()};
     wrapper = getWrapper(props);
 
-    wrapper.find("#grader-form-random").simulate("submit", fakeEvent);
+    wrapper.find("#grader-form-random").trigger("submit", fakeEvent);
     expect(props.onSubmit).toHaveBeenCalledWith({
       1: 1,
       2: 1,
@@ -46,10 +45,11 @@ describe("GraderDistributionModal", () => {
   });
 
   it("should call setWeighting with correct ID and number upon an event", () => {
+    const fakeEvent = {preventDefault: jest.fn()};
     wrapper = getWrapper(props);
 
     wrapper.find(`#input-1`).simulate("change", {target: {value: "2"}});
-    wrapper.find("#grader-form-random").simulate("submit", fakeEvent);
+    wrapper.find("#grader-form-random").trigger("submit", fakeEvent);
     expect(props.onSubmit).toHaveBeenCalledWith({
       1: 2,
       2: 1,
