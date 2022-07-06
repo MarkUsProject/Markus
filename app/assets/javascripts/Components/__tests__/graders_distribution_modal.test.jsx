@@ -2,11 +2,21 @@ import {shallow} from "enzyme";
 
 import {GraderDistributionModal} from "../Modals/graders_distribution_modal";
 
+const createExampleForm = () => {
+  const form1 = new FormData();
+  form1.append("2", "1");
+  form1.append("1", "1");
+  return form1;
+};
+
 describe("GraderDistributionModal", () => {
   let wrapper, props;
   const getWrapper = props => {
     return shallow(<GraderDistributionModal {...props} />);
   };
+  const fakeEvent = {preventDefault: jest.fn()};
+  let mockRef;
+  const form1 = createExampleForm();
   beforeEach(() => {
     props = {
       graders: [
@@ -16,6 +26,7 @@ describe("GraderDistributionModal", () => {
       isOpen: true,
       onSubmit: jest.fn().mockImplementation(() => (props.isOpen = false)),
     };
+    jest.spyOn(window, "FormData").mockImplementationOnce(() => form1);
   });
 
   it("should display as many rows as there are graders", () => {
@@ -27,32 +38,19 @@ describe("GraderDistributionModal", () => {
   it("should close on submit", () => {
     wrapper = getWrapper(props);
 
-    wrapper.find("#grader-form-random").simulate("submit", {preventDefault: jest.fn()});
+    wrapper.find("#grader-form-random").simulate("submit", fakeEvent);
 
     expect(props.onSubmit).toHaveBeenCalled();
     expect(props.isOpen).toBeFalsy();
   });
 
   it("should call setWeighting with value of 1 on build", () => {
-    const fakeEvent = {preventDefault: jest.fn()};
     wrapper = getWrapper(props);
 
-    wrapper.find("#grader-form-random").trigger("submit", fakeEvent);
+    wrapper.find("#grader-form-random").simulate("submit", fakeEvent);
     expect(props.onSubmit).toHaveBeenCalledWith({
-      1: 1,
-      2: 1,
-    });
-  });
-
-  it("should call setWeighting with correct ID and number upon an event", () => {
-    const fakeEvent = {preventDefault: jest.fn()};
-    wrapper = getWrapper(props);
-
-    wrapper.find(`#input-1`).simulate("change", {target: {value: "2"}});
-    wrapper.find("#grader-form-random").trigger("submit", fakeEvent);
-    expect(props.onSubmit).toHaveBeenCalledWith({
-      1: 2,
-      2: 1,
+      1: "1",
+      2: "1",
     });
   });
 });
