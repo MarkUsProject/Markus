@@ -47,6 +47,7 @@
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
 - Removed searchbar used to filter files on submissions page (#6058)
 - Added checklist for required files on submissions page (#6061)
+- Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

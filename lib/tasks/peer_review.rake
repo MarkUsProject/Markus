@@ -6,7 +6,7 @@ namespace :db do
   task peer_reviews: :environment do
     puts 'Creating A1 Peer Review and updating A1 to have the peer review'
     a1 = Assignment.find_by(short_identifier: 'A1')
-    a1.assignment_properties.update(has_peer_review: true) # Creates 'a1pr' via callback.
+    a1.update(has_peer_review: true) # Creates 'a1pr' via callback.
 
     a1pr = a1.pr_assignment
     a1pr.clone_groupings_from(a1.id)
