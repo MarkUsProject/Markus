@@ -23,7 +23,6 @@ class GradersManager extends React.Component {
       hide_unassigned_criteria: false,
       sections: {},
       isGraderDistributionModalOpen: false,
-      weightings: {},
     };
   }
 
@@ -104,15 +103,12 @@ class GradersManager extends React.Component {
     }).then(this.fetchData);
   };
 
-  setWeighting = (id, value) => {
-    this.state.weightings[id] = value;
-  };
-
-  assignRandomly = () => {
+  assignRandomly = weightings => {
+    console.log(weightings);
     let groups = this.groupsTable ? this.groupsTable.state.selection : [];
     let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = Object.keys(this.state.weightings);
-    let weightings = Object.values(this.state.weightings);
+    let graders = Object.keys(weightings);
+    let weights = Object.values(weightings);
 
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
@@ -126,7 +122,7 @@ class GradersManager extends React.Component {
         groupings: groups,
         criteria: criteria,
         graders: graders,
-        weightings: weightings,
+        weightings: weights,
       },
     }).then(this.fetchData);
   };
@@ -369,7 +365,6 @@ class GradersManager extends React.Component {
               })
             }
             graders={this.getAssignedGraderObjects()}
-            setWeighting={this.setWeighting}
             onSubmit={this.assignRandomly}
           />
         )}

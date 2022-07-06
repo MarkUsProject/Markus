@@ -13,18 +13,17 @@ export class GraderDistributionModal extends React.Component {
   }
 
   componentDidMount() {
-    this.props.graders.forEach(grader => {
-      this.props.setWeighting(grader._id, 1);
-    });
     Modal.setAppElement("body");
   }
 
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.input.current); // prints null
-    const form = new FormData(this.input.current.value); //throws error (if just current also throws error)
-    console.log(form); // never reached this point
-    this.props.onSubmit();
+    const weightings = {};
+    const keys = Object.keys(this.input.current);
+    keys.slice(0, keys.length - 1).forEach(key => {
+      weightings[this.input.current[key].name] = this.input.current[key].value;
+    });
+    this.props.onSubmit(weightings);
   };
 
   renderGraderRow = grader => {
@@ -40,9 +39,7 @@ export class GraderDistributionModal extends React.Component {
           min="0"
           max="100"
           defaultValue="1"
-          onChange={event => {
-            this.props.setWeighting(grader._id, parseFloat(event.target.value));
-          }}
+          name={`${grader._id}`}
           required={true}
         />
       </div>
@@ -78,5 +75,4 @@ GraderDistributionModal.propTypes = {
   graders: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  setWeighting: PropTypes.func.isRequired,
 };
