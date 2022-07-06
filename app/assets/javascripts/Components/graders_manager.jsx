@@ -104,7 +104,6 @@ class GradersManager extends React.Component {
   };
 
   assignRandomly = weightings => {
-    console.log(weightings);
     let groups = this.groupsTable ? this.groupsTable.state.selection : [];
     let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
     let graders = Object.keys(weightings);
