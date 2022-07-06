@@ -173,7 +173,41 @@ class Criterion < ApplicationRecord
     false
   end
 
-  def grade_distribution_array; end
+  def percentage_grades_array
+    grades = []
+    out_of = self.max_mark
+    return [] if out_of.zero?
+
+    mark_data = self.assignment.groupings
+                    .joins(current_result: :marks)
+                    .where('marks.criterion_id': self.id)
+                    .where.not('marks.mark': nil)
+                    .pluck('results.id', 'marks.mark')
+                    .group_by { |x| x[0] }
+    mark_data.each_value do |marks|
+      next if marks.empty?
+
+      subtotal = 0
+      has_mark = false
+      marks.each do |_, mark|
+        subtotal += mark
+        has_mark = true
+      end
+      grades << subtotal / out_of * 100 if has_mark
+    end
+    grades
+  end
+
+  def grade_distribution_array(intervals = 20)
+    data = percentage_grades_array
+    data.extend(Histogram)
+    histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count { |x| x < 1 }
+    distribution[-1] = distribution.last + data.count { |x| x > 100 }
+
+    distribution
+  end
 
   private
 

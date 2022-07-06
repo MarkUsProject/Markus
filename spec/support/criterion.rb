@@ -359,4 +359,21 @@ shared_examples 'a criterion' do
       end
     end
   end
+
+  describe '#percentage_grades_array' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    let(:criteria) { assignment.criteria.first }
+
+    it 'returns the grades for their assigned groupings based on assigned criterion marks' do
+      out_of = criteria.max_mark
+
+      expected = criteria.assignment.groupings.map do |g|
+        subtotal = g.current_result.marks.find_by(criterion: criteria).mark
+        subtotal / out_of * 100
+      end
+
+      actual = criteria.percentage_grades_array
+      expect(actual.sort).to eq expected.sort
+    end
+  end
 end
