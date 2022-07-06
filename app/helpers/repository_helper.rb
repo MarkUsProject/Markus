@@ -228,8 +228,17 @@ module RepositoryHelper
       when :invalid_filename
         flash_message(:error, I18n.t('student.submission.invalid_file_name'))
       when :extra_files
-        flash_message(:error,
-                      I18n.t('assignments.upload_file_requirement', file_name: other_info[0].partition('/').last))
+        full_file_path = other_info[0].rpartition('/')
+        file_name = full_file_path.last
+        file_path = full_file_path.first.partition('/').last
+        if file_path == ''
+          flash_message(:error,
+                        I18n.t('assignments.upload_file_requirement', file_name: file_name))
+        else
+          flash_message(:error,
+                        I18n.t('assignments.upload_file_requirement_in_folder', file_name: file_name,
+                                                                                file_path: file_path))
+        end
       when :no_files
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       when :txn_conflicts
