@@ -264,7 +264,7 @@ class SubmissionFileManager extends React.Component {
     if (this.state.requiredFiles.length > 0) {
       requiredFilesBox = (
         <div>
-          <h2>Required Files</h2>
+          <h2>{I18n.t("activerecord.attributes.assignment.assignment_files")}</h2>
           <p>
             {this.state.numberOfMissingFiles === 0 ? (
               <p>{I18n.t("student.submission.all_files_submitted")}</p>
