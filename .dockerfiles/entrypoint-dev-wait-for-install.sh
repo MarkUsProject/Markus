@@ -7,7 +7,7 @@ until bundle check &> /dev/null; do
 done
 
 # wait until yarn packages are installed
-until yarn check --integrity &>/dev/null; do
+until yarn install --immutable --immutable-cache &>/dev/null; do
   echo "waiting for yarn packages to be installed"
   sleep 5
 done

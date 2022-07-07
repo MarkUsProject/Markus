@@ -7,15 +7,15 @@ services:
       dockerfile: ./.dockerfiles/Dockerfile
       target: prod
       args:
-        UBUNTU_VERSION: bionic
+        UBUNTU_VERSION: focal
         RUBY_VERSION: '2.7'
         PG_MAJOR: '12'
-        NODE_MAJOR: '12'
-        YARN_VERSION: '1.22.5'
-        BUNDLER_VERSION: '1.17.3'
+        NODE_MAJOR: '18'
+        YARN_VERSION: '3.2.1'
+        BUNDLER_VERSION: '2.3.17'
         PYTHON_VERSION: '3.9'
         USER: 'markus'
-    image: markus:1.0.0
+    image: markus:1.0.1
     tmpfs:
       - /tmp
     stdin_open: true
@@ -30,9 +30,9 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile-ssh
       args:
-        UBUNTU_VERSION: bionic
+        UBUNTU_VERSION: focal
         SSH_USER: git
-    image: markus-ssh:1.0.0
+    image: markus-ssh:1.0.1
     volumes:
       - repos_108:/home/git/csc108
       - repos_209:/home/git/csc209
@@ -113,7 +113,7 @@ services:
     ports: []
 
   postgres:
-    image: postgres:10
+    image: postgres:12.11
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
@@ -121,7 +121,7 @@ services:
       - POSTGRES_INITDB_ARGS="-A md5"
 
   redis:
-    image: redis:3.2-alpine
+    image: redis:5.0.14-alpine
     volumes:
       - redis:/data
     ports:

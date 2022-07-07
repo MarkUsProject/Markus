@@ -52,9 +52,9 @@
     "defaults"
   ],
   "scripts": {
-    "build": "webpack --progress --config webpack.production.js",
-    "build-dev": "webpack --progress --config webpack.development.js",
-    "test": "jest --no-cache",
-    "test-cov": "jest --no-cache --collect-coverage"
+    "build": "node_modules/.bin/webpack --progress --config webpack.production.js",
+    "build-dev": "node_modules/.bin/webpack --progress --config webpack.development.js",
+    "test": "node_modules/.bin/jest --no-cache",
+    "test-cov": "node_modules/.bin/jest --no-cache --collect-coverage"
   }
 }
