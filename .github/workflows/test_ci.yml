@@ -86,6 +86,8 @@ jobs:
         uses: nanasess/setup-chromedriver@v1
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
+      - name: Create LTI key
+        run: bundle exec rails markus:lti_key
       - name: Run rspec tests
         run: bundle exec rspec
       - name: Run rspec system tests

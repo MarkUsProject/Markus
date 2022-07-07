@@ -30,6 +30,7 @@ class AssignmentProperties < ApplicationRecord
   validates :unlimited_tokens, inclusion: { in: [true, false] }
   validates :non_regenerating_tokens, inclusion: { in: [true, false] }
   validates :url_submit, inclusion: { in: [true, false] }
+  validates :api_submit, inclusion: { in: [true, false] }
 
   validates :enable_test, inclusion: { in: [true, false] }
   validates :enable_student_tests, inclusion: { in: [true, false], if: :enable_test }
