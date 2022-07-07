@@ -1,6 +1,7 @@
 ---
 en:
   submissions:
+    api_submission_disabled: The instructor has disabled submission via the API
     cannot_display: Cannot display this file. Please download it to view.
     collect:
       apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)

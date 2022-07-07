@@ -812,6 +812,7 @@ class AssignmentsController < ApplicationController
         :allow_web_submits,
         :vcs_submit,
         :url_submit,
+        :api_submit,
         :display_median_to_students,
         :display_grader_names_to_students,
         :group_min,

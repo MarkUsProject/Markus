@@ -50,7 +50,7 @@ jobs:
       - name: Set up node/yarn and cache packages
         uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 18
           cache: yarn
       - name: Install yarn packages
         run: yarn install
@@ -86,6 +86,8 @@ jobs:
         uses: nanasess/setup-chromedriver@v1
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
+      - name: Create LTI key
+        run: bundle exec rails markus:lti_key
       - name: Run rspec tests
         run: bundle exec rspec
       - name: Run rspec system tests
