@@ -3,8 +3,8 @@
 # install bundle gems if not up to date with the Gemfile.lock file
 bundle check 2>/dev/null || bundle install --without mysql sqlite unicorn
 
-# install yarn packages if not up to date with yarn.lock file
-yarn check --integrity 2>/dev/null || yarn install --check-files
+# install yarn packages
+yarn install
 
 # install python packages
 python3 -m venv ./venv

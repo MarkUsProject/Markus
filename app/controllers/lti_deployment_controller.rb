@@ -118,7 +118,7 @@ class LtiDeploymentController < ApplicationController
     session[:lti_user_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['user_id']
     session[:lti_course_name] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['course_name']
     deployment_id = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/deployment_id']
-    lti_host = referrer_uri.host
+    lti_host = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}"
     lti_client = LtiClient.find_or_create_by(client_id: session[:client_id], host: lti_host)
     lti_deployment = LtiDeployment.find_or_create_by(lti_client: lti_client, external_deployment_id: deployment_id)
     session[:lti_client_id] = lti_client.id
@@ -127,8 +127,9 @@ class LtiDeploymentController < ApplicationController
   end
 
   def public_jwk
-    # TODO: implement this function
-    render json: { state: 'success' }
+    key = OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path)
+    jwk = JWT::JWK.new(key)
+    render json: { keys: [jwk.export] }
   end
 
   def choose_course
