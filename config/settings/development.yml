@@ -42,3 +42,5 @@ starter_file:
 
 lti:
   domains: <%= %w[host.docker.internal] %>
+  token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
+  key_path: <%= "#{::Rails.root.to_s}/data/dev" %>/lti/key.pem
