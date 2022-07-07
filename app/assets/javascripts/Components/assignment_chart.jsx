@@ -1,6 +1,6 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
-
+import ReactTable from "react-table";
 import {chartScales} from "./Helpers/chart_helpers";
 
 export class AssignmentChart extends React.Component {
@@ -210,10 +210,12 @@ export class AssignmentChart extends React.Component {
             <Bar
               data={this.state.criteria_grade_distribution.data}
               options={this.state.criteria_grade_distribution.options}
+              width="400"
+              height="350"
             />
           </div>
           <div className="flex-row-expand">
-            <div className="grid-2-col"></div>
+            <CriteriaStatsTable />
           </div>
         </div>
       </React.Fragment>
@@ -285,6 +287,56 @@ class FractionStat extends React.Component {
       <span>
         {numerator} / {denominator} ({result}%)
       </span>
+    );
+  }
+}
+
+class CriteriaStatsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+    };
+  }
+
+  render() {
+    return (
+      <ReactTable
+        data={[
+          {criteria_name: "Criterion A", average: "1 / 2"},
+          {criteria_name: "Criterion B", average: "12 / 50"},
+        ]}
+        columns={[
+          {
+            Header: I18n.t("activerecord.models.criterion.one"),
+            accessor: "criteria_name",
+            minWidth: 150,
+          },
+          {
+            Header: I18n.t("average"),
+            accessor: "average",
+            sortable: false,
+            filterable: false,
+          },
+        ]}
+        filterable
+        defaultSorted={[{id: "criteria_name"}]}
+        SubComponent={row => (
+          <div className="criteria-stats">
+            <span className="summary-stats-label">{I18n.t("average")}</span>
+            <FractionStat numerator={0} denominator={0} />
+            <span className="summary-stats-label">{I18n.t("median")}</span>
+            <FractionStat numerator={0} denominator={0} />
+            <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
+            <span>{0} (0%)</span>
+            <span className="summary-stats-label">{I18n.t("num_failed")}</span>
+            <FractionStat numerator={0} denominator={0} />
+            <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
+            <FractionStat numerator={0} denominator={0} />
+          </div>
+        )}
+        loading={this.state.loading}
+      />
     );
   }
 }
