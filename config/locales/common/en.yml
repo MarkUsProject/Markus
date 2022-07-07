@@ -14,7 +14,6 @@ en:
   file: File
   filter_by: Filter by %{name}
   forbidden: Forbidden
-  good: Good!
   help: Help
   lti:
     config_error: Error configuring LTI.
