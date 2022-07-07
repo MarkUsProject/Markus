@@ -178,12 +178,11 @@ class Criterion < ApplicationRecord
     out_of = self.max_mark
     return [] if out_of.zero?
 
-    mark_data = self.assignment.groupings
-                    .joins(current_result: :marks)
-                    .where('marks.criterion_id': self.id)
-                    .where.not('marks.mark': nil)
-                    .pluck('results.id', 'marks.mark')
-                    .group_by { |x| x[0] }
+    mark_data = self.assignment
+                    .current_results
+                    .where(marking_state: Result::MARKING_STATES[:complete])
+                    .order(:total_mark)
+                    .pluck(:total_mark)
     mark_data.each_value do |marks|
       next if marks.empty?
 

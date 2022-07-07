@@ -39,6 +39,20 @@ export class AssignmentChart extends React.Component {
           scales: chartScales(),
         },
       },
+      criteria_grade_distribution: {
+        data: {
+          labels: [],
+          datasets: [],
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+            },
+          },
+          scales: chartScales(),
+        },
+      },
     };
   }
 
@@ -69,6 +83,10 @@ export class AssignmentChart extends React.Component {
           ta_grade_distribution: {
             ...this.state.ta_grade_distribution,
             data: res.ta_data,
+          },
+          criteria_grade_distribution: {
+            ...this.state.criteria_grade_distribution,
+            data: res.criteria_data,
           },
         });
 
@@ -181,10 +199,30 @@ export class AssignmentChart extends React.Component {
       </React.Fragment>
     );
 
+    const criteria_graph = (
+      <React.Fragment>
+        <div className="flex-row">
+          <div className="distribution-graph">
+            <h3>{I18n.t("grade_distribution")}</h3>
+            <Bar
+              data={this.state.criteria_grade_distribution.data}
+              options={this.state.criteria_grade_distribution.options}
+              width="500"
+              height="450"
+            />
+          </div>
+          <div className="flex-row-expand">
+            <div className="grid-2-col"></div>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+
     if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
       return (
         <React.Fragment>
           {assignment_graph}
+          {criteria_graph}
           <div className="distribution-graph">
             <h3>{I18n.t("grader_distribution")}</h3>
             <Bar
@@ -210,6 +248,7 @@ export class AssignmentChart extends React.Component {
       return (
         <React.Fragment>
           {assignment_graph}
+          {criteria_graph}
           <div className="distribution-graph">
             <h3>{I18n.t("grader_distribution")}</h3>
             <h4>
