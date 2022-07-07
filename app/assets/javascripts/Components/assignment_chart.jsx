@@ -73,6 +73,9 @@ export class AssignmentChart extends React.Component {
         for (const [index, element] of res.ta_data.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
+        for (const [index, element] of res.criteria_data.datasets.entries()) {
+          element.backgroundColor = colours[index];
+        }
 
         this.setState({
           summary: res.summary,
@@ -207,8 +210,6 @@ export class AssignmentChart extends React.Component {
             <Bar
               data={this.state.criteria_grade_distribution.data}
               options={this.state.criteria_grade_distribution.options}
-              width="500"
-              height="450"
             />
           </div>
           <div className="flex-row-expand">

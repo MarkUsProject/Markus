@@ -173,32 +173,13 @@ class Criterion < ApplicationRecord
     false
   end
 
-  def percentage_grades_array
-    grades = []
-    out_of = self.max_mark
-    return [] if out_of.zero?
-
-    mark_data = self.assignment
-                    .current_results
-                    .where(marking_state: Result::MARKING_STATES[:complete])
-                    .order(:total_mark)
-                    .pluck(:total_mark)
-    mark_data.each_value do |marks|
-      next if marks.empty?
-
-      subtotal = 0
-      has_mark = false
-      marks.each do |_, mark|
-        subtotal += mark
-        has_mark = true
-      end
-      grades << subtotal / out_of * 100 if has_mark
-    end
-    grades
+  def grades_array
+    return [] if self.max_mark.zero?
+    self.marks.where.not(mark: nil).pluck(:mark)
   end
 
   def grade_distribution_array(intervals = 20)
-    data = percentage_grades_array
+    data = grades_array.map { |mark| mark / self.max_mark * 100 }
     data.extend(Histogram)
     histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
     distribution = histogram.fetch(1)

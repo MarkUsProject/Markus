@@ -379,6 +379,7 @@ class AssignmentsController < ApplicationController
       { label: "#{ta.display_name} (#{num_marked_label})",
         data: ta.grade_distribution_array(assignment, intervals) }
     end
+    criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
     criteria_datasets = assignment.criteria.map do |criteria|
       { label: criteria.name,
         data: criteria.grade_distribution_array(intervals) }
@@ -387,7 +388,7 @@ class AssignmentsController < ApplicationController
       summary: summary,
       assignment_data: assignment_data,
       ta_data: { labels: ta_labels, datasets: ta_datasets },
-      criteria_data: { datasets: criteria_datasets }
+      criteria_data: { labels: criteria_labels, datasets: criteria_datasets }
     }
   end
 
