@@ -384,8 +384,20 @@ class AssignmentsController < ApplicationController
       { label: criteria.name,
         data: criteria.grade_distribution_array(intervals) }
     end
+    criteria_summary = assignment.criteria.map do |criteria|
+      {
+        name: criteria.name,
+        average: criteria.average || 0,
+        median: criteria.median || 0,
+        max_mark: criteria.max_mark || 0,
+        standard_deviation: criteria.standard_deviation || 0,
+        num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
+        num_zeros: criteria.grades_array.count(&:zero?)
+      }
+    end
     render json: {
       summary: summary,
+      criteria_summary: criteria_summary,
       assignment_data: assignment_data,
       ta_data: { labels: ta_labels, datasets: ta_datasets },
       criteria_data: { labels: criteria_labels, datasets: criteria_datasets }

@@ -175,7 +175,10 @@ class Criterion < ApplicationRecord
 
   def grades_array
     return [] if self.max_mark.zero?
-    self.marks.where.not(mark: nil).pluck(:mark)
+    # results with specific assignment
+    results = Result.includes(submission: :grouping)
+                    .where(groupings: { assessment_id: self.assignment.id })
+    self.marks.where.not(mark: nil).where(result_id: results.ids).pluck(:mark)
   end
 
   def grade_distribution_array(intervals = 20)
@@ -187,6 +190,27 @@ class Criterion < ApplicationRecord
     distribution[-1] = distribution.last + data.count { |x| x > 100 }
 
     distribution
+  end
+
+  def average
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.mean(marks)
+  end
+
+  def median
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.median(marks)
+  end
+
+  def standard_deviation
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.standard_deviation(marks)
   end
 
   private
