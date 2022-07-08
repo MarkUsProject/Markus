@@ -266,37 +266,36 @@ class SubmissionFileManager extends React.Component {
         <div>
           <h2>{I18n.t("activerecord.attributes.assignment.assignment_files")}</h2>
           <p>
-            {this.state.numberOfMissingFiles === 0 ? (
-              <p>{I18n.t("student.submission.all_files_submitted")}</p>
-            ) : (
-              I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})
-            )}
+            {this.state.numberOfMissingFiles === 0
+              ? I18n.t("student.submission.all_files_submitted")
+              : I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})}
           </p>
           {this.state.requiredFiles.map(filename => {
             return (
-              <div key={filename} className={"required-files-container"}>
+              <p key={filename} className={"required-files-container"}>
                 <input
                   className={"required-files-checkbox"}
-                  value={filename}
                   type={"checkbox"}
                   disabled={true}
                   checked={this.state.files.some(element => element.key === filename)}
+                  name={`required-file-${filename}`}
+                  id={`required-file-${filename}`}
                 />
-                <p>
-                  &nbsp; {filename}{" "}
+                <label htmlFor={`required-file-${filename}`}>
+                  &nbsp; {filename}
                   {this.state.files.some(element => element.key === filename) ? (
-                    <span></span>
+                    ""
                   ) : (
-                    <b>(missing)</b>
+                    <strong>&nbsp; {I18n.t("submissions.student.missing")}</strong>
                   )}
-                </p>
-              </div>
+                </label>
+              </p>
             );
           })}
         </div>
       );
     } else {
-      requiredFilesBox = <div></div>;
+      requiredFilesBox = "";
     }
     return (
       <div className={"pane-wrapper small-bottom-margin"}>
@@ -305,7 +304,7 @@ class SubmissionFileManager extends React.Component {
           {this.state.onlyRequiredFiles ? (
             <p>{I18n.t("submissions.student.only_required_files")}</p>
           ) : (
-            <div></div>
+            ""
           )}
           <p>
             {I18n.t("submissions.student.maximum_file_size", {file_size: this.state.maxFileSize})}
