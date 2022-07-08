@@ -58,6 +58,7 @@ Rails.application.routes.draw do
           get 'grades_summary'
           get 'test_specs'
           post 'update_test_specs'
+          post 'submit_file'
         end
       end
       resources :feedback_files, only: [:show, :update, :destroy]

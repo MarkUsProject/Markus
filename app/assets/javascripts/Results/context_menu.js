@@ -11,6 +11,30 @@
 var annotation_context_menu = {
   setup: function () {
     var menu_items = {
+      check_mark_annotation: {
+        title: "✔️",
+        cmd: "check_mark_annotation",
+        action: () => resultComponent.addQuickAnnotation("✔️"),
+        addClass: "emoji-annotation-context-menu-item",
+      },
+      thumbs_up_annotation: {
+        title: "👍",
+        cmd: "thumbs_up_annotation",
+        action: () => resultComponent.addQuickAnnotation("👍"),
+        addClass: "emoji-annotation-context-menu-item",
+      },
+      heart_annotation: {
+        title: "❤️",
+        cmd: "heart_annotation",
+        action: () => resultComponent.addQuickAnnotation("❤️"),
+        addClass: "emoji-annotation-context-menu-item",
+      },
+      smile_annotation: {
+        title: "😄",
+        cmd: "smile_annotation",
+        action: () => resultComponent.addQuickAnnotation("😄️"),
+        addClass: "emoji-annotation-context-menu-item",
+      },
       new_annotation: {
         title: I18n.t("helpers.submit.create", {
           model: I18n.t("activerecord.models.annotation.one"),
@@ -96,6 +120,11 @@ var annotation_context_menu = {
         duration: "fast",
       },
       menu: [
+        menu_items.check_mark_annotation,
+        menu_items.thumbs_up_annotation,
+        menu_items.heart_annotation,
+        menu_items.smile_annotation,
+        menu_items.separator,
         menu_items.new_annotation,
         menu_items.common_annotations,
         menu_items.edit_annotation,

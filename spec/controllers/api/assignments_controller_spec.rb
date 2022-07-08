@@ -426,5 +426,155 @@ describe Api::AssignmentsController do
         end
       end
     end
+    context 'POST submit_file' do
+      it 'responds with 403' do
+        post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+                                     file_content: 'This is a test file', course_id: course.id }
+        expect(response).to have_http_status(403)
+      end
+    end
+  end
+  context 'An authenticated student request' do
+    let(:student) { create(:grouping_with_inviter, assignment: assignment).inviter }
+    before :each do
+      student.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
+      assignment.update(api_submit: true)
+    end
+
+    context 'POST submit_file' do
+      subject do
+        post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+                                     file_content: 'This is a test file', course_id: course.id }
+      end
+
+      describe 'group creation' do
+        context 'when the student is not yet in a group' do
+          let(:student) { create :student, course: course }
+
+          it 'creates a new group for the student' do
+            subject
+            expect(student.accepted_groupings.where(assessment_id: assignment.id).first).not_to be_nil
+          end
+
+          it 'creates a working alone group' do
+            subject
+            student_group = student.accepted_groupings.where(assessment_id: assignment.id).first
+            expect(student_group.group.group_name).to eq(student.user_name)
+          end
+        end
+
+        context 'when student is already in a group' do
+          it 'does not create a new group for the student' do
+            subject
+            expect(student.accepted_groupings.where(assessment_id: assignment.id).count).to eq(1)
+          end
+        end
+      end
+
+      describe 'file submission' do
+        shared_examples 'submits successfully' do
+          it 'responds with 201' do
+            subject
+            expect(response).to have_http_status(201)
+          end
+
+          it 'submits a file' do
+            subject
+            path = Pathname.new('v1/x/y')
+            submitted_file = nil
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              submitted_file = files.keys.first
+            end
+            expect(submitted_file).to eq('test.txt')
+          end
+        end
+
+        shared_examples 'does not submit' do
+          it 'does not submit a file' do
+            subject
+            path = Pathname.new('v1/x/y')
+            submitted_file = nil
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              submitted_file = files.keys.first
+            end
+            expect(submitted_file).to be_nil
+          end
+        end
+
+        context 'when the file does not exist yet' do
+          include_examples 'submits successfully'
+        end
+
+        context 'when the file already exists' do
+          it 'replaces the file' do
+            subject
+            expected_content = 'Updated Content'
+            post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+                                         file_content: expected_content, course_id: course.id }
+            received_file_content = nil
+            path = Pathname.new('v1/x/y')
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              file = repo.get_latest_revision.files_at_path(file_path.to_s)['test.txt']
+              received_file_content = repo.download_as_string(file)
+            end
+            expect(received_file_content).to eq(expected_content)
+          end
+        end
+
+        context 'when the instructor has disabled API submission' do
+          before :each do
+            assignment.update(api_submit: false)
+          end
+
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+
+          include_examples 'does not submit'
+        end
+
+        context 'when the assignment is hidden' do
+          before :each do
+            assignment.update(is_hidden: true)
+          end
+
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+
+          include_examples 'does not submit'
+        end
+
+        context 'when the assignment requires submission of only required files' do
+          before :each do
+            assignment.update(only_required_files: true)
+          end
+
+          context 'the file is not required' do
+            let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
+
+            it 'responds with 422' do
+              subject
+              expect(response).to have_http_status(422)
+            end
+
+            include_examples 'does not submit'
+          end
+
+          context 'the file is required' do
+            let!(:test_file) { create :assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id }
+            include_examples 'submits successfully'
+          end
+        end
+      end
+    end
   end
 end

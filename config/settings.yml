@@ -23,6 +23,9 @@ rails:
     asset_host: 'http://localhost:3000'
     perform_deliveries: false
     deliver_later_queue_name: ~
+  action_controller:
+    default_url_options:
+      host: 'localhost:3000'
 
 queues:
   default: DEFAULT_QUEUE
