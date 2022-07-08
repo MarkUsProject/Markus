@@ -7,6 +7,7 @@
   <% else %>
     <div id="lti_course_info">
       <h3><%=t('lti.select_course', course_name: session[:lti_course_name]) %></h3>
+      <%= render partial: 'new_course' %>
     </div>
     <%= form_with(local:true) do |f| %>
       <div class="table">

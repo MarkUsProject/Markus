@@ -484,6 +484,7 @@ Rails.application.routes.draw do
     post 'redirect_login'
     get 'choose_course'
     post 'choose_course'
+    post 'new_course'
   end
 
   post 'main', controller: 'courses', action: 'index'

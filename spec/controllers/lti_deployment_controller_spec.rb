@@ -163,4 +163,21 @@ describe LtiDeploymentController do
       expect(response).to render_template('shared/http_status')
     end
   end
+  describe '#new_course' do
+    let(:lti_deployment) { create :lti_deployment }
+    let(:course_params) { { display_name: 'Introduction to Computer Science', name: 'csc108' } }
+    before :each do
+      session[:lti_deployment_id] = lti_deployment.id
+      post_as instructor, :new_course, params: course_params
+    end
+    it 'creates a course' do
+      expect(Course.find_by(name: 'csc108')).not_to be_nil
+    end
+    it 'sets the course display name' do
+      expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
+    end
+    it 'creates an instructor role for the user' do
+      expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+    end
+  end
 end

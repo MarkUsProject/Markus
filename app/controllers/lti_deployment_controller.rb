@@ -116,7 +116,8 @@ class LtiDeploymentController < ApplicationController
     end
     session[:lti_course_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['course_id']
     session[:lti_user_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['user_id']
-    session[:lti_course_name] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['course_name']
+    session[:lti_course_name] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/context']['title']
+    session[:lti_course_label] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/context']['label']
     deployment_id = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/deployment_id']
     lti_host = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}"
     lti_client = LtiClient.find_or_create_by(client_id: session[:client_id], host: lti_host)
@@ -159,6 +160,14 @@ class LtiDeploymentController < ApplicationController
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
       nil
     end
+  end
+
+  def new_course
+    new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
+    Role.create!(user: current_user, course: new_course, type: 'Instructor')
+    lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+    lti_deployment.update!(course: new_course)
+    redirect_to edit_course_path(new_course)
   end
 
   # Define default URL options to not include locale
