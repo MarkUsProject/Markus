@@ -133,12 +133,12 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const percentage_standard_deviation = () => {
-      const max_mark = Number(this.state.summary.max_mark) || 0;
+    const percentage_standard_deviation = (maximum_mark, standard_deviation) => {
+      const max_mark = Number(maximum_mark) || 0;
       if (max_mark === 0) {
         return "0.00";
       }
-      return ((100 / max_mark) * (Number(this.state.summary.standard_deviation) || 0)).toFixed(2);
+      return ((100 / max_mark) * (Number(standard_deviation) || 0)).toFixed(2);
     };
 
     const assignment_graph = (
@@ -184,8 +184,12 @@ export class AssignmentChart extends React.Component {
               />
               <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
               <span>
-                {(this.state.summary.standard_deviation || 0).toFixed(2)}
-                &nbsp;({percentage_standard_deviation()}%)
+                {(this.state.summary.standard_deviation || 0).toFixed(2)}&nbsp; (
+                {percentage_standard_deviation(
+                  this.state.summary.max_mark,
+                  this.state.summary.standard_deviation
+                )}
+                %)
               </span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>
               <FractionStat
@@ -208,7 +212,7 @@ export class AssignmentChart extends React.Component {
       <React.Fragment>
         <div className="flex-row">
           <div className="distribution-graph">
-            <h3>{I18n.t("grade_distribution")}</h3>
+            <h3>{I18n.t("criteria_distribution")}</h3>
             <Bar
               data={this.state.criteria_grade_distribution.data}
               options={this.state.criteria_grade_distribution.options}
@@ -220,6 +224,7 @@ export class AssignmentChart extends React.Component {
             <CriteriaStatsTable
               data={this.state.criteria_summary}
               num_groupings={this.state.summary.groupings_size}
+              percentage_standard_deviation={percentage_standard_deviation}
             />
           </div>
         </div>
@@ -337,7 +342,14 @@ class CriteriaStatsTable extends React.Component {
               <span className="summary-stats-label">{I18n.t("median")}</span>
               <FractionStat numerator={row.original.median} denominator={row.original.max_mark} />
               <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
-              <span>{0} (0%)</span>
+              <span>
+                {(row.original.standard_deviation || 0).toFixed(2)}&nbsp; (
+                {this.props.percentage_standard_deviation(
+                  row.original.max_mark,
+                  row.original.standard_deviation
+                )}
+                %)
+              </span>
               <span className="summary-stats-label">{I18n.t("num_failed")}</span>
               <FractionStat
                 numerator={row.original.num_fails}
