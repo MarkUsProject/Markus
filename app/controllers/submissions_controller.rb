@@ -788,13 +788,12 @@ class SubmissionsController < ApplicationController
     grouping.access_repo do |repo|
       @revision = repo.get_latest_revision
       @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
-      @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
   end
 
   # Generate flash messages to show the status of a group's submitted files.
   # Used in update_files and file_manager actions.
-  # Requires @grouping, @assignment, and @missing_assignment_files variables to be set.
+  # Requires @grouping and @assignment variables to be set.
   def flash_file_manager_messages
     if @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
       flash_message(:warning,
