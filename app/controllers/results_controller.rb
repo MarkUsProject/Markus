@@ -1,8 +1,5 @@
 class ResultsController < ApplicationController
   before_action { authorize! }
-  after_action :update_remark_request_count,
-               only: [:update_remark_request, :cancel_remark_request,
-                      :set_released_to_students]
 
   authorize :from_codeviewer, through: :from_codeviewer_param
   authorize :select_file, through: :select_file
@@ -712,14 +709,6 @@ class ResultsController < ApplicationController
   end
 
   private
-
-  def update_remark_request_count
-    if record
-      record.submission.grouping.assignment.update_remark_request_count
-    else
-      Submission.find(params[:submission_id]).grouping.assignment.update_remark_request_count
-    end
-  end
 
   def from_codeviewer_param
     params[:from_codeviewer] == 'true'
