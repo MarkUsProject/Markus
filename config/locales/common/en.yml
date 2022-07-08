@@ -19,9 +19,10 @@ en:
     config_error: Error configuring LTI.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
+    create_course: Create Course
     launch: Launch MarkUs
     no_courses: No courses available for matching.
-    select_course: Please select the course that matches %{course_name}.
+    select_course: Please select the course that matches %{course_name}, or create a new course.
   markus: MarkUs
   not_applicable: N/A
   or: Or
