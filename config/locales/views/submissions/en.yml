@@ -76,6 +76,7 @@ en:
       last_revision_date: Last revised
       link: Link
       maximum_file_size: 'Maximum file upload size: %{file_size} MB'
+      missing: (missing)
       missing_required_files:
         one: One missing required file
         other: "%{count} missing required files"

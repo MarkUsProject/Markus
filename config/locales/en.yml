@@ -29,7 +29,7 @@ en:
     timeout: Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.
   student:
     submission:
-      all_files_submitted: Good Job! All required files have been submitted.
+      all_files_submitted: Good job! All required files have been submitted.
       conflicts: Conflicts
       empty_file_warning: "%{file_name} is empty"
       external_submit_only: MarkUs is only accepting external submits
