@@ -19,6 +19,8 @@ class SubmissionFileManager extends React.Component {
       viewFileURL: null,
       onlyRequiredFiles: false,
       requiredFiles: [],
+      maxFileSize: 0,
+      numberOfMissingFiles: 0,
     };
   }
 
@@ -59,6 +61,8 @@ class SubmissionFileManager extends React.Component {
           viewFileURL: null,
           onlyRequiredFiles: data.only_required_files,
           requiredFiles: data.required_files,
+          maxFileSize: data.max_file_size,
+          numberOfMissingFiles: data.number_of_missing_files,
         })
       );
   };
@@ -254,9 +258,66 @@ class SubmissionFileManager extends React.Component {
     );
   };
 
+  renderRequiredFiles = () => {
+    let requiredFilesBox;
+
+    if (this.state.requiredFiles.length > 0) {
+      requiredFilesBox = (
+        <div>
+          <h2>{I18n.t("activerecord.attributes.assignment.assignment_files")}</h2>
+          <p>
+            {this.state.numberOfMissingFiles === 0
+              ? I18n.t("student.submission.all_files_submitted")
+              : I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})}
+          </p>
+          {this.state.requiredFiles.map(filename => {
+            return (
+              <p key={filename} className={"required-files-container"}>
+                <input
+                  className={"required-files-checkbox"}
+                  type={"checkbox"}
+                  disabled={true}
+                  checked={this.state.files.some(element => element.key === filename)}
+                  name={`required-file-${filename}`}
+                  id={`required-file-${filename}`}
+                />
+                <label htmlFor={`required-file-${filename}`}>
+                  &nbsp; {filename}
+                  {this.state.files.some(element => element.key === filename) ? (
+                    ""
+                  ) : (
+                    <strong>&nbsp; {I18n.t("submissions.student.missing")}</strong>
+                  )}
+                </label>
+              </p>
+            );
+          })}
+        </div>
+      );
+    } else {
+      requiredFilesBox = "";
+    }
+    return (
+      <div className={"pane-wrapper small-bottom-margin"}>
+        <div className={"pane"}>
+          {requiredFilesBox}
+          {this.state.onlyRequiredFiles ? (
+            <p>{I18n.t("submissions.student.only_required_files")}</p>
+          ) : (
+            ""
+          )}
+          <p>
+            {I18n.t("submissions.student.maximum_file_size", {file_size: this.state.maxFileSize})}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   render() {
     return (
       <div>
+        {this.renderRequiredFiles()}
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t("submissions.no_files_available")}
