@@ -123,7 +123,7 @@ class GradersController < ApplicationController
           end
         end
         begin
-          weights = params[:weightings].map(&:to_f)
+          weights = params[:weightings].map { |weight| Float(weight) }
           if weights.reduce(:+) == 0 || weights.select(&:negative?).length > 0
             head :bad_request
           elsif found_empty_submission

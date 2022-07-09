@@ -494,6 +494,15 @@ describe GradersController do
           expect(@grouping1.tas.size).to eq 0
           expect(@grouping2.tas.size).to eq 0
         end
+        it 'and weights being an invalid string results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: ['weight', 0], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
       end
 
       context 'POST on :global_actions on assign' do
