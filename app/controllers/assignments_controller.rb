@@ -344,17 +344,24 @@ class AssignmentsController < ApplicationController
   # Return assignment grade distributions
   def grade_distribution
     assignment = record
+    assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
     summary = {
       name: "#{assignment.short_identifier}: #{assignment.description}",
-      average: assignment.results_average || 0,
-      median: assignment.results_median || 0,
+      average: assignment.results_average(points: true) || 0,
+      median: assignment.results_median(points: true) || 0,
+      max_mark: assignment.max_mark || 0,
+      standard_deviation: assignment.results_standard_deviation || 0,
       num_submissions_collected: assignment.current_submissions_used.size,
       num_submissions_graded: assignment.current_submissions_used.size -
         assignment.ungraded_submission_results.size,
       num_fails: assignment.results_fails,
       num_zeros: assignment.results_zeros,
       groupings_size: assignment.groupings.size,
-      num_outstanding_remark_requests: assignment.outstanding_remark_request_count
+      num_students_in_group: assignment.groupings.joins(:accepted_students).size,
+      num_active_students: assignment.course.students.active.size,
+      remark_requests_enabled: assignment.allow_remarks,
+      num_remark_requests: assignment_remark_requests.size,
+      num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete).size
     }
     intervals = 20
     assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
@@ -800,6 +807,7 @@ class AssignmentsController < ApplicationController
         :allow_web_submits,
         :vcs_submit,
         :url_submit,
+        :api_submit,
         :display_median_to_students,
         :display_grader_names_to_students,
         :group_min,

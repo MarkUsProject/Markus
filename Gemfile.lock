@@ -86,8 +86,10 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
-    autoprefixer-rails (10.4.2.0)
+    autoprefixer-rails (10.4.7.0)
       execjs (~> 2)
     awesome_print (1.9.2)
     better_errors (2.9.1)
@@ -104,14 +106,24 @@ GEM
       smart_properties
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bootsnap (1.11.1)
+    bootsnap (1.12.0)
       msgpack (~> 1.2)
     brakeman (5.2.3)
     builder (3.2.4)
-    bullet (7.0.1)
+    bullet (7.0.2)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     byebug (11.1.3)
+    capybara (3.37.1)
+      addressable
+      matrix
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (>= 1.5, < 3.0)
+      xpath (~> 3.2)
+    childprocess (4.1.0)
     choice (0.2.0)
     chunky_png (1.3.12)
     coderay (1.1.3)
@@ -124,6 +136,8 @@ GEM
       dry-validation (~> 1.0, >= 1.0.0)
     cookies_eu (1.7.8)
       js_cookie_rails (~> 2.2.0)
+    crack (0.4.5)
+      rexml
     crass (1.0.6)
     debug_inspector (1.0.0)
     deep_merge (1.2.2)
@@ -186,6 +200,7 @@ GEM
       ruby-progressbar (~> 1.4)
     globalid (1.0.0)
       activesupport (>= 5.0)
+    hashdiff (1.0.1)
     highline (2.0.3)
     histogram (0.2.4.1)
     html_tokenizer (0.0.7)
@@ -193,7 +208,7 @@ GEM
       concurrent-ruby (~> 1.0)
     i18n-js (3.9.2)
       i18n (>= 0.6.6)
-    i18n-tasks (1.0.10)
+    i18n-tasks (1.0.11)
       activesupport (>= 4.0.2)
       ast (>= 2.1.0)
       better_html (~> 1.0)
@@ -208,9 +223,10 @@ GEM
       railties (>= 4)
     js_cookie_rails (2.2.0)
       railties (>= 3.1)
-    jsbundling-rails (1.0.2)
+    jsbundling-rails (1.0.3)
       railties (>= 6.0.0)
     json (2.6.2)
+    jwt (2.4.1)
     kgio (2.11.4)
     libv8 (8.4.255.0)
     loofah (2.18.0)
@@ -224,9 +240,9 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
-    minitest (5.15.0)
+    minitest (5.16.1)
     mono_logger (1.1.1)
-    msgpack (1.4.5)
+    msgpack (1.5.3)
     multi_json (1.15.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
@@ -253,7 +269,7 @@ GEM
     parser (3.1.2.0)
       ast (~> 2.4.1)
     pdf-core (0.9.0)
-    pg (1.3.5)
+    pg (1.4.1)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
@@ -265,15 +281,16 @@ GEM
       rqrcode (>= 1.0.0)
     psych (4.0.3)
       stringio
+    public_suffix (4.0.7)
     puma (5.6.4)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.6.0)
-    rack (2.2.3.1)
+    rack (2.2.4)
     rack-protection (2.2.0)
       rack
-    rack-test (1.1.0)
-      rack (>= 1.0, < 3)
+    rack-test (2.0.2)
+      rack (>= 1.3)
     railroady (1.6.0)
     rails (7.0.3)
       actioncable (= 7.0.3)
@@ -296,12 +313,12 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-erd (1.7.0)
+    rails-erd (1.7.1)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
       choice (~> 0.2.0)
       ruby-graphviz (~> 1.2)
-    rails-html-sanitizer (1.4.2)
+    rails-html-sanitizer (1.4.3)
       loofah (~> 2.3)
     rails-i18n (7.0.3)
       i18n (>= 0.7, < 2)
@@ -363,7 +380,8 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.11.0)
-    rubocop (1.30.0)
+    rubocop (1.31.2)
+      json (~> 2.3)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -376,7 +394,7 @@ GEM
       parser (>= 3.1.1.0)
     rubocop-git (0.1.3)
       rubocop (>= 0.24.1)
-    rubocop-performance (1.14.0)
+    rubocop-performance (1.14.2)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     ruby-graphviz (1.2.5)
@@ -399,6 +417,11 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    selenium-webdriver (4.3.0)
+      childprocess (>= 0.5, < 5.0)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
     shoulda (4.0.0)
       shoulda-context (~> 2.0)
       shoulda-matchers (~> 4.0)
@@ -420,14 +443,14 @@ GEM
       rack-protection (= 2.2.0)
       tilt (~> 2.0)
     smart_properties (1.17.0)
-    sprockets (4.0.3)
+    sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.4.2)
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.2)
+    sqlite3 (1.4.4)
     stringio (3.0.1)
     strscan (3.0.3)
     terminal-table (3.0.2)
@@ -441,15 +464,22 @@ GEM
       concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
-    unicode-display_width (2.1.0)
+    unicode-display_width (2.2.0)
     unicorn (6.1.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    uniform_notifier (1.14.2)
+    uniform_notifier (1.16.0)
+    webmock (3.14.0)
+      addressable (>= 2.8.0)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
+    websocket (1.2.9)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.5.4)
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
+    zeitwerk (2.6.0)
     zxing_cpp (0.1.1)
       ffi (~> 1.1)
       rmagick (~> 2.13)
@@ -470,6 +500,7 @@ DEPENDENCIES
   brakeman
   bullet
   byebug
+  capybara
   combine_pdf
   config
   cookies_eu
@@ -485,6 +516,7 @@ DEPENDENCIES
   js-routes
   jsbundling-rails
   json
+  jwt
   libv8
   machinist (< 3)
   mini_mime
@@ -514,6 +546,7 @@ DEPENDENCIES
   rubyzip
   rugged
   sass-rails
+  selenium-webdriver
   shoulda
   shoulda-callback-matchers (~> 1.1.1)
   simplecov
@@ -524,7 +557,8 @@ DEPENDENCIES
   time-warp
   uglifier
   unicorn
+  webmock
   zxing_cpp
 
 BUNDLED WITH
-   1.17.3
+   2.3.17

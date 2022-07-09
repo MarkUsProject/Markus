@@ -1,5 +1,8 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
+
+import safe_marked from "../../safe_marked";
 
 export class MarksPanel extends React.Component {
   static defaultProps = {
@@ -140,7 +143,7 @@ export class MarksPanel extends React.Component {
   }
 }
 
-class CheckboxCriterionInput extends React.Component {
+export class CheckboxCriterionInput extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -153,8 +156,12 @@ class CheckboxCriterionInput extends React.Component {
         id={`checkbox_criterion_${this.props.id}`}
         className={`checkbox_criterion ${expandedClass} ${unassignedClass}`}
       >
-        <div data-id={this.props.id}>
-          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+        <div>
+          <div
+            className="criterion-name"
+            id={`checkbox_criterion_${this.props.id}_expand`}
+            onClick={this.props.toggleExpanded}
+          >
             <div
               className={this.props.expanded ? "arrow-up" : "arrow-down"}
               style={{float: "left"}}
@@ -166,6 +173,7 @@ class CheckboxCriterionInput extends React.Component {
               this.props.mark !== null && (
                 <a
                   href="#"
+                  id={`checkbox_criterion_${this.props.id}_destroy`}
                   onClick={e => this.props.destroyMark(e, this.props.id)}
                   style={{float: "right"}}
                 >
@@ -178,7 +186,10 @@ class CheckboxCriterionInput extends React.Component {
           <div>
             {!this.props.released_to_students && (
               <span className="checkbox-criterion-inputs">
-                <label onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}>
+                <label
+                  onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}
+                  id={`check_correct_${this.props.id}`}
+                >
                   <input
                     type="radio"
                     readOnly={true}
@@ -187,7 +198,10 @@ class CheckboxCriterionInput extends React.Component {
                   />
                   {I18n.t("checkbox_criteria.answer_yes")}
                 </label>
-                <label onClick={() => this.props.updateMark(this.props.id, 0)}>
+                <label
+                  onClick={() => this.props.updateMark(this.props.id, 0)}
+                  id={`check_no_${this.props.id}`}
+                >
                   <input
                     type="radio"
                     readOnly={true}
@@ -219,7 +233,21 @@ class CheckboxCriterionInput extends React.Component {
   }
 }
 
-class FlexibleCriterionInput extends React.Component {
+CheckboxCriterionInput.propTypes = {
+  description: PropTypes.string.isRequired,
+  destroyMark: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  mark: PropTypes.number,
+  max_mark: PropTypes.number.isRequired,
+  oldMark: PropTypes.object,
+  released_to_students: PropTypes.bool.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  updateMark: PropTypes.func.isRequired,
+};
+
+export class FlexibleCriterionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -252,6 +280,7 @@ class FlexibleCriterionInput extends React.Component {
                 a.id
               )
             }
+            id={`flexible_deduction_${this.props.id}`}
             className={"red-text"}
           >
             {"-" + a.deduction}
@@ -282,6 +311,7 @@ class FlexibleCriterionInput extends React.Component {
         return (
           <a
             href="#"
+            id={`flexible_revert_${this.props.id}`}
             onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
             style={{float: "right"}}
           >
@@ -292,6 +322,7 @@ class FlexibleCriterionInput extends React.Component {
         return (
           <a
             href="#"
+            id={`flexible_destroy_${this.props.id}_criteria`}
             onClick={e => this.props.destroyMark(e, this.props.id)}
             style={{float: "right"}}
           >
@@ -360,6 +391,7 @@ class FlexibleCriterionInput extends React.Component {
     } else {
       markElement = (
         <input
+          id={`flexible_input_${this.props.id}`}
           className={this.state.invalid ? "invalid" : ""}
           type="text"
           size={4}
@@ -375,8 +407,12 @@ class FlexibleCriterionInput extends React.Component {
         id={`flexible_criterion_${this.props.id}`}
         className={`flexible_criterion ${expandedClass} ${unassignedClass}`}
       >
-        <div data-id={this.props.id}>
-          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+        <div data-testid={this.props.id}>
+          <div
+            className="criterion-name"
+            id={`flexible_criterion_${this.props.id}_expand`}
+            onClick={this.props.toggleExpanded}
+          >
             <div
               className={this.props.expanded ? "arrow-up" : "arrow-down"}
               style={{float: "left"}}
@@ -402,7 +438,26 @@ class FlexibleCriterionInput extends React.Component {
   }
 }
 
-class RubricCriterionInput extends React.Component {
+FlexibleCriterionInput.propTypes = {
+  annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
+  bonus: PropTypes.bool,
+  description: PropTypes.string.isRequired,
+  destroyMark: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  findDeductiveAnnotation: PropTypes.func.isRequired,
+  id: PropTypes.number.isRequired,
+  mark: PropTypes.number,
+  max_mark: PropTypes.number.isRequired,
+  oldMark: PropTypes.object,
+  override: PropTypes.bool,
+  released_to_students: PropTypes.bool.isRequired,
+  revertToAutomaticDeductions: PropTypes.func.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  updateMark: PropTypes.func.isRequired,
+};
+
+export class RubricCriterionInput extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -435,6 +490,7 @@ class RubricCriterionInput extends React.Component {
     return (
       <tr
         onClick={() => this.handleChange(level)}
+        id={`rubric_${this.props.id}_${level.mark}`}
         key={`${this.props.id}-${levelMark}`}
         className={`rubric-level ${selectedClass} ${oldMarkClass}`}
       >
@@ -460,8 +516,12 @@ class RubricCriterionInput extends React.Component {
         id={`rubric_criterion_${this.props.id}`}
         className={`rubric_criterion ${expandedClass} ${unassignedClass}`}
       >
-        <div data-id={this.props.id}>
-          <div className="criterion-name" onClick={this.props.toggleExpanded}>
+        <div data-testid={this.props.id}>
+          <div
+            id={`rubric_criterion_${this.props.id}_expand`}
+            className="criterion-name"
+            onClick={this.props.toggleExpanded}
+          >
             <div
               className={this.props.expanded ? "arrow-up" : "arrow-down"}
               style={{float: "left"}}
@@ -473,6 +533,7 @@ class RubricCriterionInput extends React.Component {
               this.props.mark !== null && (
                 <a
                   href="#"
+                  id={`rubric_${this.props.id}_destroy`}
                   onClick={e => this.props.destroyMark(e, this.props.id)}
                   style={{float: "right"}}
                 >
@@ -490,3 +551,18 @@ class RubricCriterionInput extends React.Component {
     );
   }
 }
+
+RubricCriterionInput.propTypes = {
+  bonus: PropTypes.bool,
+  destroyMark: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  levels: PropTypes.array,
+  mark: PropTypes.number,
+  max_mark: PropTypes.number,
+  oldMark: PropTypes.object,
+  released_to_students: PropTypes.bool.isRequired,
+  toggleExpanded: PropTypes.func.isRequired,
+  unassigned: PropTypes.bool.isRequired,
+  updateMark: PropTypes.func.isRequired,
+};

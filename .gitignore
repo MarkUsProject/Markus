@@ -10,12 +10,15 @@
 !/data/dev/autotest/.gitkeep
 !/data/dev/exam_templates/.gitkeep
 !/data/dev/repos/.gitkeep
+!/data/dev/lti/.gitkeep
 !/data/prod/autotest/.gitkeep
 !/data/prod/exam_templates/.gitkeep
 !/data/prod/repos/.gitkeep
+!/data/prod/lti/.gitkeep
 !/data/test/autotest/.gitkeep
 !/data/test/exam_templates/.gitkeep
 !/data/test/repos/.gitkeep
+!/data/test/lti/.gitkeep
 /log/
 /tmp/
 /doc/app/
@@ -76,7 +79,16 @@ dump.rdb
 yarn-debug.log*
 .yarn-integrity
 yarn-error.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # If this file is pre-generated, for Windows and WSL 2 (see Wiki docker setup instructions)
+
 app/javascript/routes.js
 # js-routes v2.2.0 always generates a Typescript definition file, but we aren't using Typescript
 app/javascript/routes.d.ts

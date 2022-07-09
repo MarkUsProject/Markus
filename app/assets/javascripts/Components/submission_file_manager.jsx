@@ -17,6 +17,8 @@ class SubmissionFileManager extends React.Component {
       viewFile: null,
       viewFileType: null,
       viewFileURL: null,
+      onlyRequiredFiles: false,
+      requiredFiles: [],
     };
   }
 
@@ -51,10 +53,12 @@ class SubmissionFileManager extends React.Component {
       .then(data => data.json())
       .then(data =>
         this.setState({
-          files: data,
+          files: data.entries,
           viewFile: null,
           viewFileType: null,
           viewFileURL: null,
+          onlyRequiredFiles: data.only_required_files,
+          requiredFiles: data.required_files,
         })
       );
   };
@@ -87,7 +91,7 @@ class SubmissionFileManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleCreateFiles = (files, unzip) => {
+  handleCreateFiles = (files, unzip, renameTo = "") => {
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
@@ -95,7 +99,11 @@ class SubmissionFileManager extends React.Component {
       const prefix = this.state.uploadTarget || "";
       this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
-      Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
+      if (!!renameTo && files.length === 1) {
+        Array.from(files).forEach(f => data.append("new_files[]", f, renameTo));
+      } else {
+        Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
+      }
       data.append("path", "/" + prefix); // Server expects path with leading slash (TODO: fix that)
       if (this.props.grouping_id) {
         data.append("grouping_id", this.props.grouping_id);
@@ -278,6 +286,9 @@ class SubmissionFileManager extends React.Component {
           isOpen={this.state.showUploadModal}
           onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+          onlyRequiredFiles={this.state.onlyRequiredFiles}
+          requiredFiles={this.state.requiredFiles}
+          uploadTarget={this.state.uploadTarget}
         />
         <SubmitUrlUploadModal
           isOpen={this.state.showURLModal}

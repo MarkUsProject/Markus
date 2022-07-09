@@ -124,7 +124,14 @@ class SubmissionsController < ApplicationController
       end
       entries = get_all_file_data(revision, grouping, '')
     end
-    render json: entries
+
+    response = {
+      entries: entries,
+      only_required_files: assignment.only_required_files,
+      required_files: assignment.assignment_files.pluck(:filename).sort
+    }
+
+    render json: response
   end
 
   def manually_collect_and_begin_grading
@@ -631,7 +638,7 @@ class SubmissionsController < ApplicationController
         return
       end
 
-      zip_path = "tmp/#{assignment.short_identifier}_#{grouping.group.group_name}_"\
+      zip_path = "tmp/#{assignment.short_identifier}_#{grouping.group.group_name}_" \
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, create: true) do |zip_file|
@@ -666,21 +673,19 @@ class SubmissionsController < ApplicationController
                   end
                 end
       if changed > 0
-        assignment.update_remark_request_count
-
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('submissions.successfully_changed',
                                    changed: changed))
         if release
           MarkusLogger.instance.log(
-            'Marks released for assignment' \
-            " '#{assignment.short_identifier}', ID: '" \
+            'Marks released for assignment ' \
+            "'#{assignment.short_identifier}', ID: '" \
             "#{assignment.id}' for #{changed} group(s)."
           )
         else
           MarkusLogger.instance.log(
-            'Marks unreleased for assignment' \
-            " '#{assignment.short_identifier}', ID: '" \
+            'Marks unreleased for assignment ' \
+            "'#{assignment.short_identifier}', ID: '" \
             "#{assignment.id}' for #{changed} group(s)."
           )
         end

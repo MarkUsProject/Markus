@@ -7,23 +7,23 @@ describe AutotestResultsJob do
     let(:job_args) { [assignment.id] }
     let(:job) { described_class.perform_later(*job_args) }
     context 'if there is no job currently in progress' do
-      before { Redis::Namespace.new(Rails.root.to_s).del('autotest_results') }
+      before { redis.del('autotest_results') }
       include_examples 'background job'
       it 'sets the redis key' do
         job
-        expect(Redis::Namespace.new(Rails.root.to_s).get('autotest_results')).not_to be_nil
+        expect(redis.get('autotest_results')).not_to be_nil
       end
     end
     context 'if there is a job currently in progress' do
       before do
-        Redis::Namespace.new(Rails.root.to_s).set('autotest_results', 1)
+        redis.set('autotest_results', 1)
         clear_enqueued_jobs
         clear_performed_jobs
       end
       after do
         clear_enqueued_jobs
         clear_performed_jobs
-        Redis::Namespace.new(Rails.root.to_s).del('autotest_results')
+        redis.del('autotest_results')
       end
 
       it 'does not enqueue a job' do
@@ -33,7 +33,7 @@ describe AutotestResultsJob do
   end
   describe '#perform' do
     before do
-      Redis::Namespace.new(Rails.root.to_s).del('autotest_results')
+      redis.del('autotest_results')
       allow_any_instance_of(AutotestSetting).to(
         receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
       )

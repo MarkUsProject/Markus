@@ -30,7 +30,7 @@ class ExamTemplate < ApplicationRecord
       assignment.scanned_exams_path,
       exam_template_name
     )
-    FileUtils.mkdir_p template_path unless Dir.exist? template_path
+    FileUtils.mkdir_p template_path
     File.binwrite(File.join(template_path, filename), blob)
     pdf = CombinePDF.parse blob
     num_pages = pdf.pages.length
@@ -114,7 +114,7 @@ class ExamTemplate < ApplicationRecord
     # if there isn't corresponding file in incomplete group
     unless File.exist?(File.join(complete_dir, page_num)) && !File.exist?(File.join(incomplete_dir, page_num))
       # if incomplete directory doesn't exist yet
-      FileUtils.mkdir_p incomplete_dir unless Dir.exist? incomplete_dir
+      FileUtils.mkdir_p incomplete_dir
       # move the file into incomplete group
       FileUtils.mv(error_file, incomplete_dir)
       # rename the error file into page_num.pdf

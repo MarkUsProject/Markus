@@ -38,3 +38,8 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/test" %>/starter_files
+
+lti:
+  domains: <%= %w[test.host] %>
+  token_endpoint: "http://test.host.com/login/oauth2/token"
+  key_path: <%= "#{::Rails.root.to_s}/data/test" %>/lti/key.pem

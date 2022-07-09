@@ -295,13 +295,6 @@ class Assignment < Assessment
                                   .pluck(:total_mark)
   end
 
-  def update_remark_request_count
-    self.outstanding_remark_request_count = groupings.joins(current_submission_used: :submitted_remark)
-                                                     .where('results.marking_state': :incomplete)
-                                                     .count
-    self.save
-  end
-
   def all_grouping_data
     student_data = self.course
                        .students
@@ -860,7 +853,7 @@ class Assignment < Assessment
                    .select('groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
 
     Result.joins(:grouping)
-          .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND "\
+          .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND " \
                  'results.created_at = sub.results_created_at')
   end
 
@@ -1183,7 +1176,7 @@ class Assignment < Assessment
   # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
   def assignment_properties_config
     # Data to avoid including
-    exclude = %w[id created_at updated_at outstanding_remark_request_count repository_folder has_peer_review]
+    exclude = %w[id created_at updated_at repository_folder has_peer_review]
     should_reject = ->(attr) { attr.end_with?('_id', '_created_at', '_updated_at') }
     # Helper lambda functions for filtering attributes
     filter_attr = ->(attributes) { attributes.except(*exclude).reject { |attr| should_reject.call(attr) } }

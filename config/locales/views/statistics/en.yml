@@ -11,9 +11,10 @@ en:
   median: Median
   num_entries: Number of entries
   num_failed: Number of fails
+  num_groups: Number of groups
+  num_students_in_group: Number of students in a group
   num_zeros: Number of zeros
-  outstanding_remark_request:
-    one: "%{count} outstanding remark request"
-    other: "%{count} outstanding remark requests"
+  remark_requests_completed: Remark requests completed
+  standard_deviation: Standard deviation
   summary_statistics: Summary Statistics
   summary_table: Summary Table

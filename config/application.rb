@@ -91,6 +91,7 @@ module Markus
     end
 
     config.action_controller.perform_caching = Settings.rails.action_controller&.perform_caching
+    config.action_controller.default_url_options = Settings.rails.action_controller&.default_url_options.to_h
 
     config.hosts.push(*Settings.rails.hosts)
 

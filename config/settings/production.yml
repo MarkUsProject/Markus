@@ -41,3 +41,8 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/prod" %>/starter_files
+
+lti:
+  domains: <%= %w[canvas.instructure.com] %>
+  token_endpoint: "https://canvas.instructure.com/login/oauth2/token"
+  key_path: <%= "#{::Rails.root.to_s}/data/prod" %>/lti/key.pem
