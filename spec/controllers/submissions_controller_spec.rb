@@ -106,7 +106,6 @@ describe SubmissionsController do
       expect(assigns(:path)).to_not be_nil
       expect(assigns(:revision)).to_not be_nil
       expect(assigns(:files)).to_not be_nil
-      expect(assigns(:missing_assignment_files)).to_not be_nil
 
       # Check to see if the file was added
       @grouping.group.access_repo do |repo|
@@ -457,7 +456,6 @@ describe SubmissionsController do
       expect(assigns(:path)).to_not be_nil
       expect(assigns(:revision)).to_not be_nil
       expect(assigns(:files)).to_not be_nil
-      expect(assigns(:missing_assignment_files)).to_not be_nil
     end
 
     it 'should render with the assignment content layout' do
@@ -502,7 +500,6 @@ describe SubmissionsController do
       expect(assigns(:path)).to_not be_nil
       expect(assigns(:revision)).to_not be_nil
       expect(assigns(:files)).to_not be_nil
-      expect(assigns(:missing_assignment_files)).to_not be_nil
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -550,7 +547,6 @@ describe SubmissionsController do
       expect(assigns(:path)).to_not be_nil
       expect(assigns(:revision)).to_not be_nil
       expect(assigns(:files)).to_not be_nil
-      expect(assigns(:missing_assignment_files)).to_not be_nil
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
