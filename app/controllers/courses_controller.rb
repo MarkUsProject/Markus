@@ -17,6 +17,7 @@ class CoursesController < ApplicationController
         courses = current_user.visible_courses
                               .pluck_to_hash('courses.id', 'courses.name',
                                              'courses.display_name', 'roles.type')
+                              .sort_by { |k| k['courses.name'] }
         render json: { data: courses }
       end
     end
