@@ -26,6 +26,7 @@ describe("GraderDistributionModal", () => {
       isOpen: true,
       onSubmit: jest.fn().mockImplementation(() => (props.isOpen = false)),
     };
+    global.MARKUS_VERSION = "master";
     jest.spyOn(window, "FormData").mockImplementationOnce(() => form1);
   });
 
