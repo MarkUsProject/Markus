@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_29_225622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -78,7 +78,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
     t.datetime "due_date", precision: nil
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
-    t.integer "outstanding_remark_request_count"
     t.integer "parent_assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -139,6 +138,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_183807) do
     t.boolean "starter_files_after_due", default: true, null: false
     t.boolean "url_submit", default: false, null: false
     t.json "autotest_settings"
+    t.boolean "api_submit", default: false, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end

@@ -309,7 +309,6 @@ class Result extends React.Component {
     }
   };
 
-  // Used for ctrl-click as a shortcut for "Good!" annotation.
   addQuickAnnotation = content => {
     const submission_file_id =
       this.leftPane.current.submissionFilePanel.current.state.selectedFile[1];
