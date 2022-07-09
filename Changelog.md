@@ -47,6 +47,7 @@
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
 - Added new "submit_file" API assignment route for students (#6057)
 - Removed searchbar used to filter files on submissions page (#6058)
+- Removed "outstanding_remark_request_count" attribute (#6059)
 - Added checklist for required files on submissions page (#6061)
 - Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
