@@ -6,8 +6,6 @@ import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 
-import {sum} from "lodash";
-
 class GradersManager extends React.Component {
   constructor(props) {
     super(props);

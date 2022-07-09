@@ -3,7 +3,6 @@ en:
   graders:
     actions:
       assign_grader: Assign grader(s)
-      randomly_assign: Randomly Assign Graders
       randomly_assign_graders: Randomly assign grader(s)
       unassign_grader: Unassign grader(s)
     anonymize_groups: Hide group membership information from graders
@@ -27,4 +26,4 @@ en:
     upload:
       remove_existing_mappings: Remove existing grader assignments
     weight: Grader Weight
-    wiki: wiki
+    wiki: See our wiki for more information.

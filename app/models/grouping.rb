@@ -105,26 +105,22 @@ class Grouping < ApplicationRecord
   has_many :starter_file_entries, through: :grouping_starter_file_entries
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
-  # grouping in a list of groupings specified by +grouping_ids+. The groupings
+  # grouping in a list of groupings specified by +grouping_ids+.
+  # The ratio of groupings to ta is specified in +weightings_arr+
+  # which is a parallel array to +ta_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, weightings_arr, assignment)
     # Create a hash of TA's to the number of groups they are supposed to mark
-    total = weightings_arr.map(&:to_f).reduce(:+)
+    total = weightings_arr.reduce(:+)
     weightings = {}
     ta_ids.each_with_index do |group, index|
       weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).round
     end
 
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, _|
-      ta_ids_ = []
       # Create 1 TA for each group they are supposed to be assigned to
       ta_ids = ta_ids.sort_by { |ta| weightings[ta] }
-      ta_ids.each do |id|
-        # Make sure TA is supposed to be assigned to gorup
-        unless weightings[id].nil?
-          (ta_ids_ << Array([id].cycle(weightings[id].to_i))).flatten!
-        end
-      end
+      ta_ids_ = ta_ids.flat_map { |ta_id| [ta_id] * weightings[ta_id] }
       # Assign TAs in a round-robin fashion to a list of random groupings.
       grouping_ids_.shuffle.zip(ta_ids_.cycle).reject { |pair| pair.include?(nil) }
     end

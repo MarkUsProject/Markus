@@ -34,7 +34,6 @@ export class GraderDistributionModal extends React.Component {
           type="number"
           step="0.01"
           min="0"
-          max="100"
           defaultValue="1"
           name={`${grader._id}`}
           required={true}
@@ -53,14 +52,19 @@ export class GraderDistributionModal extends React.Component {
         <form id="grader-form-random" onSubmit={this.onSubmit} ref={this.input}>
           <div className={"modal-container-vertical"}>
             <h2>{I18n.t("graders.weight")}</h2>
-            <p className="word-wrap">{I18n.t("graders.random_instruction")}</p>
-            <a href="https://github.com/MarkUsProject/Wiki/blob/release/Instructor-Guide--Assignments--Assigning-Graders.md">
-              {I18n.t("graders.wiki")}
-            </a>
+            <p className="word-wrap">
+              {I18n.t("graders.random_instruction")}
+              <br></br>
+              <a
+                href={`https://github.com/MarkUsProject/Wiki/blob/${MARKUS_VERSION}/Instructor-Guide--Assignments--Assigning-Graders.md`}
+              >
+                {I18n.t("graders.wiki")}
+              </a>
+            </p>
             {this.props.graders.map(grader => this.renderGraderRow(grader))}
           </div>
           <div className={"modal-container"}>
-            <input type="submit" value={I18n.t("graders.actions.randomly_assign")} />
+            <input type="submit" value={I18n.t("graders.actions.randomly_assign_graders")} />
           </div>
         </form>
       </Modal>

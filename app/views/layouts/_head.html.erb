@@ -6,3 +6,6 @@
 <%= stylesheet_link_tag 'application' %>
 <%= favicon_link_tag(@current_user&.theme == 'dark' ? 'favicon_dark.svg' : 'favicon.ico') %>
 <%= javascript_tag("const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;", nonce: true) if protect_against_forgery?%>
+<%= javascript_tag nonce: true do %>
+  const MARKUS_VERSION = '<%= @markus_version %>';
+<% end %>

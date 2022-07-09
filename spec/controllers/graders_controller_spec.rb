@@ -467,6 +467,33 @@ describe GradersController do
           expect(@grouping2.tas.size).to eq 1
           expect(@grouping3.tas.size).to eq 1
         end
+        it 'and weights all being 0 results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [0, 0], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
+        it 'and any weight being negative results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [-1, 1], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
+        it 'and weights being invalid results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [[], 0], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
       end
 
       context 'POST on :global_actions on assign' do

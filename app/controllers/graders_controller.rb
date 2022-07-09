@@ -122,11 +122,18 @@ class GradersController < ApplicationController
             found_empty_submission = true
           end
         end
-        if found_empty_submission
-          randomly_assign_graders(filtered_grouping_ids, grader_ids, params[:weightings])
-          flash_now(:info, I18n.t('graders.group_submission_no_files'))
-        else
-          randomly_assign_graders(grouping_ids, grader_ids, params[:weightings])
+        begin
+          weights = params[:weightings].map(&:to_f)
+          if weights.reduce(:+) == 0 || weights.select(&:negative?).length > 0
+            head :bad_request
+          elsif found_empty_submission
+            randomly_assign_graders(filtered_grouping_ids, grader_ids, weights)
+            flash_now(:info, I18n.t('graders.group_submission_no_files'))
+          else
+            randomly_assign_graders(grouping_ids, grader_ids, weights)
+          end
+        rescue StandardError
+          head :bad_request
         end
       end
     when 'criteria_table'
