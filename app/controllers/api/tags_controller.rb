@@ -2,7 +2,7 @@ module Api
   # Api controller for tags
   class TagsController < ApplicationController
     TAG_FIELDS = [:tag, :name, :description].freeze
-    DEFAULT_FIELDS = [:id, :result_id, :assignment_id, :grouping_id, *TAG_FIELDS].freeze
+    DEFAULT_FIELDS = [:id, :role, :groupings, :result_id, :assignment_id, :grouping_id, *TAG_FIELDS].freeze
 
     def index
       @assignment = Assignment.find_by(id: params[:assignment_id])
