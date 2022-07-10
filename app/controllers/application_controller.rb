@@ -42,11 +42,15 @@ class ApplicationController < ActionController::Base
   end
 
   def page_not_found
-    render 'shared/http_status',
-           formats: [:html],
-           locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-           status: :not_found,
-           layout: false
+    if current_user
+      render 'shared/http_status',
+             formats: [:html],
+             locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: :not_found,
+             layout: false
+    else
+      redirect_to root_path
+    end
   end
 
   protected
@@ -121,9 +125,15 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    render 'shared/http_status',
-           formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-           status: :forbidden, layout: false
+    if current_user
+      render 'shared/http_status',
+             formats: [:html],
+             locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
+             status: :not_found,
+             layout: false
+    else
+      redirect_to root_path
+    end
   end
 
   # Render 403 if the current user is switching roles and they try to view a route for a different course
