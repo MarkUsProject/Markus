@@ -128,7 +128,9 @@ class SubmissionsController < ApplicationController
     response = {
       entries: entries,
       only_required_files: assignment.only_required_files,
-      required_files: assignment.assignment_files.pluck(:filename).sort
+      required_files: assignment.assignment_files.pluck(:filename).sort,
+      max_file_size: assignment.course.max_file_size_settings / 1_000_000,
+      number_of_missing_files: grouping.missing_assignment_files(@revision).length
     }
 
     render json: response
@@ -673,8 +675,6 @@ class SubmissionsController < ApplicationController
                   end
                 end
       if changed > 0
-        assignment.update_remark_request_count
-
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('submissions.successfully_changed',
                                    changed: changed))
@@ -786,13 +786,12 @@ class SubmissionsController < ApplicationController
     grouping.access_repo do |repo|
       @revision = repo.get_latest_revision
       @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
-      @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
   end
 
   # Generate flash messages to show the status of a group's submitted files.
   # Used in update_files and file_manager actions.
-  # Requires @grouping, @assignment, and @missing_assignment_files variables to be set.
+  # Requires @grouping and @assignment variables to be set.
   def flash_file_manager_messages
     if @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
       flash_message(:warning,
@@ -807,12 +806,8 @@ class SubmissionsController < ApplicationController
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end
 
-    if !@grouping.is_valid?
+    unless @grouping.is_valid?
       flash_message(:error, t('groups.invalid_group_warning'))
-    elsif @missing_assignment_files.present?
-      flash_message(:warning,
-                    partial: 'submissions/missing_assignment_file_toggle_list',
-                    locals: { missing_assignment_files: @missing_assignment_files })
     end
 
     if @assignment.allow_web_submits && @assignment.vcs_submit
