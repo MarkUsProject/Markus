@@ -52,13 +52,12 @@ export class GraderDistributionModal extends React.Component {
         <form id="grader-form-random" onSubmit={this.onSubmit} ref={this.input}>
           <div className={"modal-container-vertical"}>
             <h2>{I18n.t("graders.weight")}</h2>
-            <p className="word-wrap">
+            <p className="auto-overflow" style={{maxWidth: "300px"}}>
               {I18n.t("graders.random_instruction")}
-              <br></br>
               <a
                 href={`https://github.com/MarkUsProject/Wiki/blob/${MARKUS_VERSION}/Instructor-Guide--Assignments--Assigning-Graders.md`}
               >
-                {I18n.t("graders.wiki")}
+                {" " + I18n.t("graders.wiki")}
               </a>
             </p>
             {this.props.graders.map(grader => this.renderGraderRow(grader))}

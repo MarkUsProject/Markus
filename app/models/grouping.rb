@@ -111,7 +111,7 @@ class Grouping < ApplicationRecord
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, weightings_arr, assignment)
     # Create a hash of TA's to the number of groups they are supposed to mark
-    total = weightings_arr.reduce(:+)
+    total = weightings_arr.sum
     weightings = {}
     ta_ids.each_with_index do |group, index|
       weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).round

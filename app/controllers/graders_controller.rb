@@ -124,16 +124,20 @@ class GradersController < ApplicationController
         end
         begin
           weights = params[:weightings].map { |weight| Float(weight) }
-          if weights.reduce(:+) == 0 || weights.select(&:negative?).length > 0
+          if weights.sum == 0 || weights.select(&:negative?).length > 0
             head :bad_request
+            flash_now(:error, I18n('graders.errors.number'))
+            return
           elsif found_empty_submission
             randomly_assign_graders(filtered_grouping_ids, grader_ids, weights)
             flash_now(:info, I18n.t('graders.group_submission_no_files'))
           else
             randomly_assign_graders(grouping_ids, grader_ids, weights)
           end
-        rescue StandardError
+        rescue StandardError => e
           head :bad_request
+          flash_now(:error, e.message)
+          return
         end
       end
     when 'criteria_table'
