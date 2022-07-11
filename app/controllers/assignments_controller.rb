@@ -382,7 +382,8 @@ class AssignmentsController < ApplicationController
     criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
     criteria_datasets = assignment.criteria.map do |criteria|
       { label: criteria.name,
-        data: criteria.grade_distribution_array(intervals) }
+        data: criteria.grade_distribution_array(intervals),
+        hidden: true }
     end
     criteria_summary = assignment.criteria.map do |criteria|
       {
