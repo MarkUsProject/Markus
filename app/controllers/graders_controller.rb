@@ -126,7 +126,7 @@ class GradersController < ApplicationController
           weights = params[:weightings].map { |weight| Float(weight) }
           if weights.sum == 0 || weights.select(&:negative?).length > 0
             head :bad_request
-            flash_now(:error, I18n('graders.errors.number'))
+            flash_now(:error, I18n.t('graders.number_error'))
             return
           elsif found_empty_submission
             randomly_assign_graders(filtered_grouping_ids, grader_ids, weights)
