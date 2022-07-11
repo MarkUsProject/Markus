@@ -1158,14 +1158,15 @@ describe AssignmentsController do
       end
 
       it 'should contain the right values' do
-        summary = response.parsed_body['criteria_summary']
-        expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
-                     average: assignment.results_average(points: true) || 0,
-                     median: assignment.results_median(points: true) || 0,
-                     max_mark: assignment.max_mark || 0,
-                     standard_deviation: assignment.results_standard_deviation || 0,
-                     num_fails: assignment.results_fails,
-                     num_zeros: assignment.results_zeros }
+        summary = response.parsed_body['criteria_summary'].first
+        criteria = assignment.criteria.first
+        expected = { name: criteria.name,
+                     average: criteria.average,
+                     median: criteria.median || 0,
+                     max_mark: criteria.max_mark || 0,
+                     standard_deviation: criteria.standard_deviation || 0,
+                     num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
+                     num_zeros: criteria.grades_array.count(&:zero?) }
         expect(summary).to eq expected.as_json
       end
     end
