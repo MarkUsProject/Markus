@@ -180,6 +180,17 @@ describe CoursesController do
       expect(response).to have_http_status(200)
     end
 
+    context 'visiting the index page' do
+      let(:course2) { create :course }
+      let(:student2) { create :student }
+      it 'sorts the courses' do
+        student2.course = course
+        student2.course = course2
+        get_as student2, :index, params: { format: 'json' }
+        expect(true)
+      end
+    end
+
     context 'updating course visibility' do
       context 'as an authorized instructor' do
         it 'responds with success on update' do
