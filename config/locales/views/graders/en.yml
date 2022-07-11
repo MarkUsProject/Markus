@@ -14,8 +14,8 @@ en:
       grader_groups: Graders to groups (CSV)
       grader_students: Graders to students (CSV)
     errors:
-      number: The sum of the weights must be greater than 0 and no weight can be negative.
       conversion: There was a problem converting one of your weights to a number.
+      number: The sum of the weights must be greater than 0 and no weight can be negative.
     grader_maps: Grader Assignments
     group_submission_no_files: One or more of the groups selected has no files submitted. Grader not assigned.
     help: Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria.
