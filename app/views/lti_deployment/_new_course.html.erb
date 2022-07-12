@@ -4,6 +4,7 @@
   <%= f.hidden_field :name, :value => session[:lti_course_label] %>
   <%= f.submit  t('lti.create_course'),
   url: lti_deployment_new_course_path,
-  data: { disable_with: t('working') } %>
+  data: { disable_with: t('working') },
+  class: 'button' %>
   <% end %>
 </p>

@@ -1,14 +1,29 @@
+<%= javascript_tag nonce: true do %>
+  document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('lti-selector').addEventListener('click', () => {
+  const formElem = document.getElementById('lti-course-table');
+  if (getComputedStyle(formElem).display === 'none') {
+  formElem.style.display = 'block';
+  } else {
+  formElem.style.display = 'none';
+  }
+  })
+  })
+<% end %>
 <div class="lti-flash">
   <%= render partial: 'shared/flash_message' %>
 </div>
-<div id="course_selector">
+<div class="course-selector">
   <% if @real_user.admin_courses.empty? %>
-    <div id="no_courses_available"><h3><%= t('lti.no_courses') %></h3></div>
+    <div id="no-courses-available"><h3><%= t('lti.no_courses') %></h3></div>
   <% else %>
-    <div id="lti_course_info">
-      <h3><%=t('lti.select_course', course_name: session[:lti_course_name]) %></h3>
-      <%= render partial: 'new_course' %>
+    <div id="lti-course-info">
+      <h3><%=t('lti.course_select_instructions') %></h3>
     </div>
+    <div class="lti-course-selector">
+      <a class="button" id="lti-selector"><%=t('lti.select_course', course_name: session[:lti_course_name]) %></a>
+    </div>
+    <div id="lti-course-table" class="no-display">
     <%= form_with(local:true) do |f| %>
       <div class="table">
         <table>
@@ -29,7 +44,10 @@
           </tbody>
         </table>
       </div>
-      <div><%= f.submit t('save') %></div>
+      <div><%= f.submit t('save'), class: 'button' %></div>
     <% end %>
+    </div>
+    <div id='selector-or-container' class=""><h4 id="selector-or"><%= I18n.t('or').upcase %></h4></div>
+    <%= render partial: 'new_course' %>
   <% end %>
 </div>

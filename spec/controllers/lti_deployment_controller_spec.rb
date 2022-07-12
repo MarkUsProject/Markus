@@ -90,10 +90,13 @@ describe LtiDeploymentController do
         { aud: client_id,
           iss: 'https://canvas.instructure.com',
           'https://purl.imsglobal.org/spec/lti/claim/deployment_id': 'some_deployment_id',
+          'https://purl.imsglobal.org/spec/lti/claim/context': {
+            label: 'csc108',
+            title: 'test'
+          },
           'https://purl.imsglobal.org/spec/lti/claim/custom': {
             course_id: 1,
-            user_id: 1,
-            course_name: 'test'
+            user_id: 1
           } }
       end
       let(:pub_jwk) { JWT::JWK.new(OpenSSL::PKey::RSA.new(1024)) }
@@ -113,6 +116,10 @@ describe LtiDeploymentController do
       it 'successfully decodes the jwt and sets lti_course_name in the session' do
         post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
         expect(session[:lti_course_name]).to eq('test')
+      end
+      it 'successfully decodes the jwt and sets lti_course_label in the session' do
+        post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
+        expect(session[:lti_course_label]).to eq('csc108')
       end
       it 'successfully decodes the jwt and sets lti_user_id in the session' do
         post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
