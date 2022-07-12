@@ -180,17 +180,6 @@ describe CoursesController do
       expect(response).to have_http_status(200)
     end
 
-    context 'visiting the index page' do
-      let(:course2) { create :course }
-      let(:student2) { create :student }
-      it 'sorts the courses' do
-        student2.course = course
-        student2.course = course2
-        get_as student2, :index, params: { format: 'json' }
-        expect(true)
-      end
-    end
-
     context 'updating course visibility' do
       context 'as an authorized instructor' do
         it 'responds with success on update' do
@@ -426,6 +415,45 @@ describe CoursesController do
       get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq 'assignments.yml'
+    end
+  end
+
+  describe 'visiting index page' do
+    let(:course1) { create :course, is_hidden: false }
+    let(:course2) { create :course, is_hidden: false }
+    let(:end_user) { create :end_user }
+
+    context 'Student' do
+      let!(:student2c1) { create :student, course: course1, user: end_user }
+      let!(:student2c2) { create :student, course: course2, user: end_user }
+      it 'responds with a list sorted by courses.name' do
+        get_as end_user, :index, params: { format: 'json' }
+        parsed_body = JSON.parse(response.body)['data']
+        sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
+        expect(parsed_body == sorted_body)
+      end
+    end
+
+    context 'TA' do
+      let!(:ta2c1) { create :ta, course: course1, user: end_user }
+      let!(:ta2c2) { create :ta, course: course2, user: end_user }
+      it 'responds with a list sorted by courses.name' do
+        get_as end_user, :index, params: { format: 'json' }
+        parsed_body = JSON.parse(response.body)['data']
+        sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
+        expect(parsed_body == sorted_body)
+      end
+    end
+
+    context 'Instructor' do
+      let!(:instructor2c1) { create :instructor, course: course1, user: end_user }
+      let!(:instructor2c2) { create :instructor, course: course2, user: end_user }
+      it 'responds with a list sorted by courses.name' do
+        get_as end_user, :index, params: { format: 'json' }
+        parsed_body = JSON.parse(response.body)['data']
+        sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
+        expect(parsed_body == sorted_body)
+      end
     end
   end
 end
