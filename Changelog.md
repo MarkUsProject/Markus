@@ -51,6 +51,7 @@
 - Added checklist for required files on submissions page (#6061)
 - Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
+- Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
