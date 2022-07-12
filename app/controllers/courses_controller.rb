@@ -15,6 +15,7 @@ class CoursesController < ApplicationController
       format.html { render :index }
       format.json do
         courses = current_user.visible_courses
+                              .order('courses.name')
                               .pluck_to_hash('courses.id', 'courses.name',
                                              'courses.display_name', 'roles.type')
         render json: { data: courses }
