@@ -42,7 +42,7 @@ STUDENT_QUERY = %(
 ).freeze
 
 begin
-  rails_env = ENV['RAILS_ENV'] || 'development'
+  rails_env = ENV.fetch('RAILS_ENV', 'development')
   user_name, repo_path = ARGV
 
   raise 'no repository path given' unless repo_path
@@ -61,7 +61,13 @@ begin
 
   db_connection = ActiveRecord::Base.connection
 
-  role = db_connection.exec_query(ROLE_QUERY, 'SQL', [[nil, course_name], [nil, user_name]], prepare: true)
+  role = db_connection.exec_query(ROLE_QUERY,
+                                  'SQL',
+                                  [ActiveRecord::Relation::QueryAttribute.new(nil, course_name,
+                                                                              ActiveRecord::Type::String.new),
+                                   ActiveRecord::Relation::QueryAttribute.new(nil, user_name,
+                                                                              ActiveRecord::Type::String.new)],
+                                  prepare: true)
 
   case role.first&.[] 'type'
   when 'Instructor'
@@ -69,13 +75,19 @@ begin
   when 'Ta'
     ta = db_connection.exec_query(TA_QUERY,
                                   'SQL',
-                                  [[nil, role.first&.[]('id')], [nil, repo_name]],
+                                  [ActiveRecord::Relation::QueryAttribute.new(nil, role.first&.[]('id'),
+                                                                              ActiveRecord::Type::Integer.new),
+                                   ActiveRecord::Relation::QueryAttribute.new(nil, repo_name,
+                                                                              ActiveRecord::Type::String.new)],
                                   prepare: true)
     exit(0) if ta.first&.[]('id')
   when 'Student'
     student = db_connection.exec_query(STUDENT_QUERY,
                                        'SQL',
-                                       [[nil, role.first&.[]('id')], [nil, repo_name]],
+                                       [ActiveRecord::Relation::QueryAttribute.new(nil, role.first&.[]('id'),
+                                                                                   ActiveRecord::Type::Integer.new),
+                                        ActiveRecord::Relation::QueryAttribute.new(nil, repo_name,
+                                                                                   ActiveRecord::Type::String.new)],
                                        prepare: true)
     exit(0) if student.first&.[]('id')
   else
