@@ -129,7 +129,7 @@ class ApplicationController < ActionController::Base
       render 'shared/http_status',
              formats: [:html],
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-             status: :not_found,
+             status: :forbidden,
              layout: false
     else
       redirect_to root_path
