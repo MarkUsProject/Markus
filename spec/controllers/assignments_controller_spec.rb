@@ -1312,7 +1312,6 @@ describe AssignmentsController do
     before :each do
       # Clear uploaded autotest files to prepare for next test
       FileUtils.rm_rf(assignment.autotest_files_dir)
-      FileUtils.rm_f(assignment.autotest_settings_file)
 
       create_automated_test(assignment)
     end
@@ -1877,9 +1876,7 @@ describe AssignmentsController do
       before :each do
         # Clear uploaded autotest files to prepare for next test
         FileUtils.rm_rf(parent_assignment.autotest_files_dir)
-        FileUtils.rm_f(parent_assignment.autotest_settings_file)
         FileUtils.rm_rf(assignment.autotest_files_dir)
-        FileUtils.rm_f(assignment.autotest_settings_file)
         # Download Parent
         get_as user, :download_config_files,
                params: { id: parent_assignment.id, course_id: parent_assignment.course.id }
