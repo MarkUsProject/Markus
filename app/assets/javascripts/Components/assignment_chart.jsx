@@ -133,14 +133,6 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const percentage_standard_deviation = (maximum_mark, standard_deviation) => {
-      const max_mark = Number(maximum_mark) || 0;
-      if (max_mark === 0) {
-        return "0.00";
-      }
-      return ((100 / max_mark) * (Number(standard_deviation) || 0)).toFixed(2);
-    };
-
     const assignment_graph = (
       <React.Fragment>
         <div className="flex-row">
@@ -172,34 +164,13 @@ export class AssignmentChart extends React.Component {
                 numerator={this.state.summary.num_submissions_graded}
                 denominator={this.state.summary.groupings_size}
               />
-              <span className="summary-stats-label">{I18n.t("average")}</span>
-              <FractionStat
-                numerator={this.state.summary.average}
-                denominator={this.state.summary.max_mark}
-              />
-              <span className="summary-stats-label">{I18n.t("median")}</span>
-              <FractionStat
-                numerator={this.state.summary.median}
-                denominator={this.state.summary.max_mark}
-              />
-              <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
-              <span>
-                {(this.state.summary.standard_deviation || 0).toFixed(2)}&nbsp; (
-                {percentage_standard_deviation(
-                  this.state.summary.max_mark,
-                  this.state.summary.standard_deviation
-                )}
-                %)
-              </span>
-              <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_fails}
-                denominator={this.state.summary.groupings_size}
-              />
-              <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_zeros}
-                denominator={this.state.summary.groupings_size}
+              <CoreStatistics
+                average={this.state.summary.average}
+                median={this.state.summary.median}
+                standard_deviation={this.state.summary.standard_deviation}
+                max_mark={this.state.summary.max_mark}
+                num_fails={this.state.summary.num_fails}
+                num_groupings={this.state.summary.num_groupings}
               />
               {outstanding_remark_request_link}
             </div>
@@ -208,29 +179,31 @@ export class AssignmentChart extends React.Component {
       </React.Fragment>
     );
 
-    const criteria_graph = (
-      <React.Fragment>
-        <div className="flex-row">
-          <div className="distribution-graph">
-            <h3>{I18n.t("criteria_distribution")}</h3>
-            <Bar
-              data={this.state.criteria_grade_distribution.data}
-              options={this.state.criteria_grade_distribution.options}
-              width="400"
-              height="350"
-            />
+    let criteria_graph = "";
+    if (this.props.show_criteria_stats) {
+      criteria_graph = (
+        <React.Fragment>
+          <div className="flex-row">
+            <div className="distribution-graph">
+              <h3>{I18n.t("criteria_distribution")}</h3>
+              <Bar
+                data={this.state.criteria_grade_distribution.data}
+                options={this.state.criteria_grade_distribution.options}
+                width="400"
+                height="350"
+              />
+            </div>
+            <div className="flex-row-expand">
+              <CriteriaStatsTable
+                data={this.state.criteria_summary}
+                num_groupings={this.state.summary.groupings_size}
+                criteria_labels={this.state.criteria_grade_distribution.data.labels}
+              />
+            </div>
           </div>
-          <div className="flex-row-expand">
-            <CriteriaStatsTable
-              data={this.state.criteria_summary}
-              num_groupings={this.state.summary.groupings_size}
-              percentage_standard_deviation={percentage_standard_deviation}
-              criteria_labels={this.state.criteria_grade_distribution.data.labels}
-            />
-          </div>
-        </div>
-      </React.Fragment>
-    );
+        </React.Fragment>
+      );
+    }
 
     if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
       return (
@@ -302,6 +275,36 @@ class FractionStat extends React.Component {
   }
 }
 
+class CoreStatistics extends React.Component {
+  render() {
+    const percentage_standard_deviation = () => {
+      const max_mark = Number(this.props.max_mark) || 0;
+      if (max_mark === 0) {
+        return "0.00";
+      }
+      return ((100 / max_mark) * (Number(this.props.standard_deviation) || 0)).toFixed(2);
+    };
+
+    return (
+      <React.Fragment>
+        <span className="summary-stats-label">{I18n.t("average")}</span>
+        <FractionStat numerator={this.props.average} denominator={this.props.max_mark} />
+        <span className="summary-stats-label">{I18n.t("median")}</span>
+        <FractionStat numerator={this.props.median} denominator={this.props.max_mark} />
+        <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
+        <span>
+          {(this.props.standard_deviation || 0).toFixed(2)}
+          &nbsp;({percentage_standard_deviation()}%)
+        </span>
+        <span className="summary-stats-label">{I18n.t("num_failed")}</span>
+        <FractionStat numerator={this.props.num_fails} denominator={this.props.groupings_size} />
+        <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
+        <FractionStat numerator={this.props.num_zeros} denominator={this.props.groupings_size} />
+      </React.Fragment>
+    );
+  }
+}
+
 class CriteriaStatsTable extends React.Component {
   constructor(props) {
     super(props);
@@ -354,34 +357,13 @@ class CriteriaStatsTable extends React.Component {
               </div>
               <div className="flex-row-expand">
                 <div className="criteria-stat-breakdown">
-                  <span className="summary-stats-label">{I18n.t("average")}</span>
-                  <FractionStat
-                    numerator={row.original.average}
-                    denominator={row.original.max_mark}
-                  />
-                  <span className="summary-stats-label">{I18n.t("median")}</span>
-                  <FractionStat
-                    numerator={row.original.median}
-                    denominator={row.original.max_mark}
-                  />
-                  <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
-                  <span>
-                    {(row.original.standard_deviation || 0).toFixed(2)}&nbsp; (
-                    {this.props.percentage_standard_deviation(
-                      row.original.max_mark,
-                      row.original.standard_deviation
-                    )}
-                    %)
-                  </span>
-                  <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-                  <FractionStat
-                    numerator={row.original.num_fails}
-                    denominator={this.props.num_groupings}
-                  />
-                  <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-                  <FractionStat
-                    numerator={row.original.num_zeros}
-                    denominator={this.props.num_groupings}
+                  <CoreStatistics
+                    average={row.original.average}
+                    median={row.original.median}
+                    standard_deviation={row.original.standard_deviation}
+                    max_mark={row.original.max_mark}
+                    num_fails={row.original.num_fails}
+                    num_groupings={this.props.num_groupings}
                   />
                 </div>
               </div>
