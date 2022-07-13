@@ -379,34 +379,37 @@ class AssignmentsController < ApplicationController
       { label: "#{ta.display_name} (#{num_marked_label})",
         data: ta.grade_distribution_array(assignment, intervals) }
     end
-    criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
-    criteria_datasets = assignment.criteria.map do |criteria|
-      { label: criteria.name,
-        data: criteria.grade_distribution_array(intervals),
-        hidden: true }
-    end
-    criteria_summary = assignment.criteria.map do |criteria|
-      {
-        name: criteria.name,
-        average: criteria.average || 0,
-        median: criteria.median || 0,
-        max_mark: criteria.max_mark || 0,
-        standard_deviation: criteria.standard_deviation || 0,
-        num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
-        num_zeros: criteria.grades_array.count(&:zero?),
-        dataset: {
-          label: criteria.name,
-          data: criteria.grade_distribution_array(intervals)
-        }
-      }
-    end
-    render json: {
+    json_data = {
       summary: summary,
-      criteria_summary: criteria_summary,
       assignment_data: assignment_data,
-      ta_data: { labels: ta_labels, datasets: ta_datasets },
-      criteria_data: { labels: criteria_labels, datasets: criteria_datasets }
+      ta_data: { labels: ta_labels, datasets: ta_datasets }
     }
+    if params[:get_criteria_data]
+      criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      criteria_datasets = assignment.criteria.map do |criteria|
+        { label: criteria.name,
+          data: criteria.grade_distribution_array(intervals),
+          hidden: true }
+      end
+      criteria_summary = assignment.criteria.map do |criteria|
+        {
+          name: criteria.name,
+          average: criteria.average || 0,
+          median: criteria.median || 0,
+          max_mark: criteria.max_mark || 0,
+          standard_deviation: criteria.standard_deviation || 0,
+          num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
+          num_zeros: criteria.grades_array.count(&:zero?),
+          dataset: {
+            label: criteria.name,
+            data: criteria.grade_distribution_array(intervals)
+          }
+        }
+      end
+      json_data[:criteria_summary] = criteria_summary
+      json_data[:criteria_data] = { labels: criteria_labels, datasets: criteria_datasets }
+    end
+    render json: json_data
   end
 
   def view_summary

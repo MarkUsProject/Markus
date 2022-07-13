@@ -62,43 +62,48 @@ export class AssignmentChart extends React.Component {
   }
 
   fetchData = () => {
-    fetch(
-      Routes.grade_distribution_course_assignment_path(
+    $.ajax({
+      url: Routes.grade_distribution_course_assignment_path(
         this.props.course_id,
         this.props.assessment_id
-      )
-    )
-      .then(data => data.json())
-      .then(res => {
-        // Load in background colours
-        for (const [index, element] of res.ta_data.datasets.entries()) {
-          element.backgroundColor = colours[index];
-        }
+      ),
+      dataType: "json",
+      data: {get_criteria_data: this.props.show_criteria_stats},
+    }).then(res => {
+      // Load in background colours
+      for (const [index, element] of res.ta_data.datasets.entries()) {
+        element.backgroundColor = colours[index];
+      }
+
+      this.setState({
+        summary: res.summary,
+        assignment_grade_distribution: {
+          ...this.state.assignment_grade_distribution,
+          data: res.assignment_data,
+        },
+        ta_grade_distribution: {
+          ...this.state.ta_grade_distribution,
+          data: res.ta_data,
+        },
+      });
+
+      if (typeof this.props.set_assessment_name === "function") {
+        this.props.set_assessment_name(res.summary.name);
+      }
+
+      if (this.props.show_criteria_stats) {
         for (const [index, element] of res.criteria_data.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
-
         this.setState({
-          summary: res.summary,
           criteria_summary: res.criteria_summary,
-          assignment_grade_distribution: {
-            ...this.state.assignment_grade_distribution,
-            data: res.assignment_data,
-          },
-          ta_grade_distribution: {
-            ...this.state.ta_grade_distribution,
-            data: res.ta_data,
-          },
           criteria_grade_distribution: {
             ...this.state.criteria_grade_distribution,
             data: res.criteria_data,
           },
         });
-
-        if (typeof this.props.set_assessment_name === "function") {
-          this.props.set_assessment_name(res.summary.name);
-        }
-      });
+      }
+    });
   };
 
   componentDidUpdate(prevProps, prevState) {
