@@ -31,6 +31,7 @@ STUDENT_QUERY = %(
   JOIN assessments ON groupings.assessment_id=assessments.id
   LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
   WHERE memberships.type='StudentMembership'
+    AND memberships.membership_status IN ('inviter','accepted')
     AND assignment_properties.vcs_submit=true
     AND roles.id=$1
     AND groups.repo_name=$2
@@ -70,7 +71,7 @@ begin
                                   prepare: true)
 
   case role.first&.[] 'type'
-  when 'Instructor'
+  when 'Instructor', 'AdminRole'
     exit(0)
   when 'Ta'
     ta = db_connection.exec_query(TA_QUERY,
