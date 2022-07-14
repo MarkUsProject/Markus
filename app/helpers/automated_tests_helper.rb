@@ -188,13 +188,15 @@ module AutomatedTestsHelper
       req = Net::HTTP::Put.new(uri)
       set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
-      file_urls = group_ids.map do |id_|
+      test_data = assignment.course.groups.where(id: group_ids).pluck(:id, :group_name).map do |id_, name|
         param = collected ? 'collected=true' : ''
-        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
-          "groups/#{id_}/submission_files?#{param}"
+        file_url = "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
+                   "groups/#{id_}/submission_files?#{param}"
+        # TODO: add other relevant info to env_vars as needed and make the environment variable customizable
+        { file_url: file_url, env_vars: { MARKUS_GROUP: name } }
       end
       req.body = {
-        file_urls: file_urls,
+        test_data: test_data,
         categories: role.student? ? ['student'] : ['instructor'],
         request_high_priority: batch.nil? && role.student?
       }.to_json
