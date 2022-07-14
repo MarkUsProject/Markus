@@ -333,7 +333,7 @@ module AutomatedTestsHelper
               .where('groups.id': group_ids)
               .pluck('groups.id', 'groups.group_name', 'starter_file_entries.path')
               .group_by { |val| val[...2] }
-              .map { |key, val| [*key, val.map(&:last).compact] }
+              .map { |key, val| [*key, val.map(&:last).compact.sort] }
   end
 
   def server_api_key
