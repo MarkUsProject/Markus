@@ -17,14 +17,14 @@
   <div id='wrapper'>
     <nav id='menus'>
       <div id='menus_child'>
-        <%= render partial: 'layouts/header' %>
-        <%= render partial: 'layouts/menu' %>
+        <%= render partial: 'layouts/header' rescue nil%>
+        <%= render partial: 'layouts/menu' rescue nil%>
       </div>
     </nav>
     <div class="error-pages-container">
       <h1><%= code + ' ' + HttpStatusHelper::ERROR_CODE[code] %></h1>
       <p>Uh oh! <%= message %></p>
-      <%= link_to "Go Home", root_path, class: "button" %>
+      <%= link_to "Go Home", root_path, class: "button" rescue nil%>
     </div>
   </div>
 </div>
