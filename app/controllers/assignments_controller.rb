@@ -399,11 +399,7 @@ class AssignmentsController < ApplicationController
           max_mark: criteria.max_mark || 0,
           standard_deviation: criteria.standard_deviation || 0,
           num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
-          num_zeros: criteria.grades_array.count(&:zero?),
-          dataset: {
-            label: criteria.name,
-            data: criteria.grade_distribution_array(intervals)
-          }
+          num_zeros: criteria.grades_array.count(&:zero?)
         }
       end
       json_data[:criteria_summary] = criteria_summary
