@@ -188,12 +188,12 @@ module AutomatedTestsHelper
       req = Net::HTTP::Put.new(uri)
       set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
-      test_data = assignment.course.groups.where(id: group_ids).pluck(:id, :group_name).map do |id_, name|
+      test_data = group_info_for_tests(assignment, group_ids).map do |id_, name, starter_files|
         param = collected ? 'collected=true' : ''
         file_url = "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
                    "groups/#{id_}/submission_files?#{param}"
         # TODO: add other relevant info to env_vars as needed and make the environment variable customizable
-        { file_url: file_url, env_vars: { MARKUS_GROUP: name } }
+        { file_url: file_url, env_vars: { MARKUS_GROUP: name, MARKUS_STARTER_FILES: starter_files.join(':') } }
       end
       req.body = {
         test_data: test_data,
@@ -322,7 +322,19 @@ module AutomatedTestsHelper
     end
   end
 
-  private
+  # Returns an array of arrays containing a group id and group name to the
+  # starter file entry paths assigned to the grouping associated with the +assignment+
+  # and the given group.
+  #
+  # Only groups with id in +group_ids+ are included in the list.
+  def group_info_for_tests(assignment, group_ids)
+    assignment.groupings
+              .left_outer_joins(:group, :starter_file_entries)
+              .where('groups.id': group_ids)
+              .pluck('groups.id', 'groups.group_name', 'starter_file_entries.path')
+              .group_by { |val| val[...2] }
+              .map { |key, val| [*key, val.map(&:last).compact] }
+  end
 
   def server_api_key
     AutotestUser.find_or_create.api_key
