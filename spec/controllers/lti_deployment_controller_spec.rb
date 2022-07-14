@@ -90,10 +90,13 @@ describe LtiDeploymentController do
         { aud: client_id,
           iss: 'https://canvas.instructure.com',
           'https://purl.imsglobal.org/spec/lti/claim/deployment_id': 'some_deployment_id',
+          'https://purl.imsglobal.org/spec/lti/claim/context': {
+            label: 'csc108',
+            title: 'test'
+          },
           'https://purl.imsglobal.org/spec/lti/claim/custom': {
             course_id: 1,
-            user_id: 1,
-            course_name: 'test'
+            user_id: 1
           } }
       end
       let(:pub_jwk) { JWT::JWK.new(OpenSSL::PKey::RSA.new(1024)) }
@@ -113,6 +116,10 @@ describe LtiDeploymentController do
       it 'successfully decodes the jwt and sets lti_course_name in the session' do
         post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
         expect(session[:lti_course_name]).to eq('test')
+      end
+      it 'successfully decodes the jwt and sets lti_course_label in the session' do
+        post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
+        expect(session[:lti_course_label]).to eq('csc108')
       end
       it 'successfully decodes the jwt and sets lti_user_id in the session' do
         post :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
@@ -161,6 +168,23 @@ describe LtiDeploymentController do
       @request.host = 'example.com'
       get_as instructor, :get_canvas_config
       expect(response).to render_template('shared/http_status')
+    end
+  end
+  describe '#new_course' do
+    let(:lti_deployment) { create :lti_deployment }
+    let(:course_params) { { display_name: 'Introduction to Computer Science', name: 'csc108' } }
+    before :each do
+      session[:lti_deployment_id] = lti_deployment.id
+      post_as instructor, :create_course, params: course_params
+    end
+    it 'creates a course' do
+      expect(Course.find_by(name: 'csc108')).not_to be_nil
+    end
+    it 'sets the course display name' do
+      expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
+    end
+    it 'creates an instructor role for the user' do
+      expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
     end
   end
 end
