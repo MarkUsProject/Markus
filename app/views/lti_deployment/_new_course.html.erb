@@ -1,10 +1,9 @@
 <p>
-  <%= form_with local: true, url: lti_deployment_new_course_path do |f| %>
-  <%= f.hidden_field :display_name, :value => session[:lti_course_name] %>
-  <%= f.hidden_field :name, :value => session[:lti_course_label] %>
-  <%= f.submit  t('lti.create_course'),
-  url: lti_deployment_new_course_path,
-  data: { disable_with: t('working') },
-  class: 'button' %>
+  <%= form_with local: true, url: lti_deployment_create_course_path do |f| %>
+    <%= f.hidden_field :display_name, value: session[:lti_course_name] %>
+    <%= f.hidden_field :name, value: session[:lti_course_label] %>
+    <%= f.submit t('lti.create_course'),
+                  data: { disable_with: t('working') },
+                  class: 'button' %>
   <% end %>
 </p>

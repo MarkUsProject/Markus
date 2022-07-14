@@ -1,13 +1,13 @@
 <%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('lti-selector').addEventListener('click', () => {
-  const formElem = document.getElementById('lti-course-table');
-  if (getComputedStyle(formElem).display === 'none') {
-  formElem.style.display = 'block';
-  } else {
-  formElem.style.display = 'none';
-  }
-  })
+    document.getElementById('lti-selector').addEventListener('click', () => {
+      const formElem = document.getElementById('lti-course-table');
+      if (getComputedStyle(formElem).display === 'none') {
+        formElem.style.display = 'block';
+      } else {
+        formElem.style.display = 'none';
+      }
+    })
   })
 <% end %>
 <div class="lti-flash">

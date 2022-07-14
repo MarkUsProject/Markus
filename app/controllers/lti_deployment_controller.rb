@@ -162,9 +162,9 @@ class LtiDeploymentController < ApplicationController
     end
   end
 
-  def new_course
+  def create_course
     new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
-    Role.create!(user: current_user, course: new_course, type: 'Instructor')
+    Instructor.create!(user: current_user, course: new_course)
     lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
     lti_deployment.update!(course: new_course)
     redirect_to edit_course_path(new_course)
