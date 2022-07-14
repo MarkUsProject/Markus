@@ -185,28 +185,77 @@ export class AssignmentChart extends React.Component {
     );
 
     let criteria_graph = "";
-    if (this.props.show_criteria_stats) {
+    if (this.props.show_criteria_stats && this.state.criteria_summary.length > 0) {
       criteria_graph = (
-        <React.Fragment>
-          <div className="flex-row">
-            <div className="distribution-graph">
-              <h3>{I18n.t("criteria_distribution")}</h3>
-              <Bar
-                data={this.state.criteria_grade_distribution.data}
-                options={this.state.criteria_grade_distribution.options}
-                width="400"
-                height="350"
-              />
-            </div>
-            <div className="flex-row-expand">
-              <CriteriaStatsTable
+        <div className="flex-row">
+          <div className="distribution-graph">
+            <h3>{I18n.t("criteria_distribution")}</h3>
+            <Bar
+              data={this.state.criteria_grade_distribution.data}
+              options={this.state.criteria_grade_distribution.options}
+              width="400"
+              height="350"
+            />
+          </div>
+          <div className="flex-row-expand">
+            <div className="criteria-summary-table">
+              <ReactTable
                 data={this.state.criteria_summary}
-                num_groupings={this.state.summary.groupings_size}
-                criteria_labels={this.state.criteria_grade_distribution.data.labels}
+                columns={[
+                  {
+                    Header: I18n.t("activerecord.models.criterion.one"),
+                    accessor: "name",
+                    minWidth: 150,
+                  },
+                  {
+                    Header: I18n.t("average"),
+                    accessor: "average",
+                    sortable: false,
+                    filterable: false,
+                    Cell: row => (
+                      <FractionStat
+                        numerator={row.original.average}
+                        denominator={row.original.max_mark}
+                      />
+                    ),
+                  },
+                ]}
+                filterable
+                defaultSorted={[{id: "name"}]}
+                SubComponent={row => (
+                  <div className="criteria-stat-breakdown">
+                    <CoreStatistics
+                      average={row.original.average}
+                      median={row.original.median}
+                      standard_deviation={row.original.standard_deviation}
+                      max_mark={row.original.max_mark}
+                      num_fails={row.original.num_fails}
+                      num_groupings={this.state.summary.groupings_size}
+                    />
+                  </div>
+                )}
               />
             </div>
           </div>
-        </React.Fragment>
+        </div>
+      );
+    } else if (this.props.show_criteria_stats) {
+      criteria_graph = (
+        <div className="distribution-graph">
+          <h3>{I18n.t("criteria_distribution")}</h3>
+          <h4>
+            (
+            <a
+              href={Routes.course_assignment_criteria_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {"Create New Criteria"}
+            </a>
+            )
+          </h4>
+        </div>
       );
     }
 
@@ -306,77 +355,6 @@ class CoreStatistics extends React.Component {
         <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
         <FractionStat numerator={this.props.num_zeros} denominator={this.props.groupings_size} />
       </React.Fragment>
-    );
-  }
-}
-
-class CriteriaStatsTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-    };
-  }
-
-  render() {
-    return (
-      <div className="criteria-summary-table">
-        <ReactTable
-          data={this.props.data}
-          columns={[
-            {
-              Header: I18n.t("activerecord.models.criterion.one"),
-              accessor: "name",
-              minWidth: 150,
-            },
-            {
-              Header: I18n.t("average"),
-              accessor: "average",
-              sortable: false,
-              filterable: false,
-              Cell: row => (
-                <FractionStat
-                  numerator={row.original.average}
-                  denominator={row.original.max_mark}
-                />
-              ),
-            },
-          ]}
-          filterable
-          defaultSorted={[{id: "name"}]}
-          SubComponent={row => (
-            <div className="flex-row">
-              <div className="distribution-graph">
-                <h3> {I18n.t("criteria_distribution")}</h3>
-                <Bar
-                  data={{
-                    labels: this.props.criteria_labels,
-                    datasets: [row.original.dataset],
-                  }}
-                  options={{
-                    scales: chartScales(),
-                  }}
-                  width="400"
-                  height="350"
-                />
-              </div>
-              <div className="flex-row-expand">
-                <div className="criteria-stat-breakdown">
-                  <CoreStatistics
-                    average={row.original.average}
-                    median={row.original.median}
-                    standard_deviation={row.original.standard_deviation}
-                    max_mark={row.original.max_mark}
-                    num_fails={row.original.num_fails}
-                    num_groupings={this.props.num_groupings}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          loading={this.state.loading}
-        />
-      </div>
     );
   }
 }

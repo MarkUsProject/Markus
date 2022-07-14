@@ -360,20 +360,81 @@ shared_examples 'a criterion' do
     end
   end
 
-  describe '#percentage_grades_array' do
+  describe '#grades_array' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
-    let(:criteria) { assignment.criteria.first }
+    let(:criterion) { create(criterion_factory_name, assignment: assignment) }
+    let(:grades) { assignment.groupings.map { rand(criterion.max_mark + 1) } }
+
+    before :each do
+      assignment.groupings.each_with_index do |grouping, index|
+        mark = grouping.current_result.marks.create(criterion: criterion)
+        mark.update(mark: grades[index])
+        grouping.current_result.update_total_mark
+      end
+    end
 
     it 'returns the grades for their assigned groupings based on assigned criterion marks' do
-      out_of = criteria.max_mark
+      expect(criterion.grades_array).to match_array(grades)
+    end
+  end
 
-      expected = criteria.assignment.groupings.map do |g|
-        subtotal = g.current_result.marks.find_by(criterion: criteria).mark
-        subtotal / out_of * 100
-      end
+  describe '#average' do
+    let(:criterion) { create(criterion_factory_name, max_mark: 10) }
 
-      actual = criteria.percentage_grades_array
-      expect(actual.sort).to eq expected.sort
+    it 'returns 0 when there are no results' do
+      allow(criterion).to receive(:grades_array).and_return([])
+      expect(criterion.average).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.average).to eq 2
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      criterion.update(max_mark: 0)
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.average).to eq 0
+    end
+  end
+
+  describe '#median' do
+    let(:criterion) { create(criterion_factory_name, max_mark: 10) }
+
+    it 'returns 0 when there are no results' do
+      allow(criterion).to receive(:grades_array).and_return([])
+      expect(criterion.median).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.median).to eq 2
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      criterion.update(max_mark: 0)
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.median).to eq 0
+    end
+  end
+
+  describe '#standard_deviation' do
+    let(:criterion) { create(criterion_factory_name, max_mark: 10) }
+
+    it 'returns 0 when there are no results' do
+      allow(criterion).to receive(:grades_array).and_return([])
+      expect(criterion.standard_deviation).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.standard_deviation).to eq 2
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      criterion.update(max_mark: 0)
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.standard_deviation).to eq 0
     end
   end
 end
