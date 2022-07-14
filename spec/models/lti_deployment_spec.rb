@@ -7,7 +7,10 @@ describe LtiDeployment do
     let(:student_user_name) { student.user_name }
     let(:student_first_name) { student.first_name }
     let(:student_last_name) { student.last_name }
-    let(:lti_service) { create :lti_service }
+    let(:student_display_name) { student.display_name }
+    let(:course) { create :course }
+    let(:lti_deployment) { create :lti_deployment, course: course }
+    let(:lti_service) { create :lti_service, lti_deployment: lti_deployment }
     let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path) }
     let(:jwk) { { keys: [JWT::JWK.new(pub_jwk_key).export] } }
     let(:scope) { 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly' }
@@ -35,7 +38,7 @@ describe LtiDeployment do
                                            id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
                                            context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
                                                       label: 'tst1', title: 'test course' },
-                                           members: [{ status: 'Active', name: student_user_name,
+                                           members: [{ status: 'Active', name: student_display_name,
                                                        picture: 'http://example.com/picture.png',
                                                        given_name: student_first_name,
                                                        family_name: student_last_name,
@@ -62,6 +65,22 @@ describe LtiDeployment do
         lti_service.lti_deployment.get_students
         expect(User.count).to eq(2)
       end
+      it 'sets the correct username' do
+        lti_service.lti_deployment.get_students
+        expect(User.find_by(user_name: student_user_name)).not_to be_nil
+      end
+      it 'sets the correct first name' do
+        lti_service.lti_deployment.get_students
+        expect(User.find_by(user_name: student_user_name).first_name).to eq(student_first_name)
+      end
+      it 'sets the correct last name' do
+        lti_service.lti_deployment.get_students
+        expect(User.find_by(user_name: student_user_name).last_name).to eq(student_last_name)
+      end
+      it 'sets the correct display name' do
+        lti_service.lti_deployment.get_students
+        expect(User.find_by(user_name: student_user_name).display_name).to eq(student_display_name)
+      end
       it 'creates a new role' do
         lti_service.lti_deployment.get_students
         expect(Role.count).to eq(2)
@@ -71,9 +90,9 @@ describe LtiDeployment do
       end
     end
     context 'when there is no lti_service' do
-      let(:lti_deployment) { create :lti_deployment }
+      let(:second_lti_deployment) { create :lti_deployment }
       it 'fails with an error' do
-        expect { lti_deployment.get_students }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { second_lti_deployment.get_students }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

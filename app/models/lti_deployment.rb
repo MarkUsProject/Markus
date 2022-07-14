@@ -21,7 +21,7 @@ class LtiDeployment < ApplicationRecord
       user = EndUser.find_by(user_name: member['lis_person_sourcedid'])
       if user.nil?
         user = EndUser.create!(user_name: member['lis_person_sourcedid'], first_name: member['given_name'],
-                               last_name: member['family_name'])
+                               last_name: member['family_name'], display_name: member['name'])
         Student.create!(user: user, course: course)
       end
       LtiUser.find_or_create_by(user: user, lti_client: lti_client, lti_user_id: member['user_id'])
