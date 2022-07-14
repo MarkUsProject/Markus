@@ -173,11 +173,12 @@ class Criterion < ApplicationRecord
     false
   end
 
+  # Returns an array of all marks for this criteria that are not nil and are for a completed submission
   def grades_array
     return [] if self.max_mark.zero?
-    # results with specific assignment
-    results = Result.includes(submission: :grouping)
-                    .where(groupings: { assessment_id: self.assignment.id })
+    results = self.assignment.current_results
+                  .where(marking_state: Result::MARKING_STATES[:complete])
+                  .order(:total_mark)
     self.marks.where.not(mark: nil).where(result_id: results.ids).pluck(:mark)
   end
 
@@ -192,6 +193,7 @@ class Criterion < ApplicationRecord
     distribution
   end
 
+  # Returns the raw average grade of marks given for this criteria based on the marks given by self.grades_array
   def average
     return 0 if self.max_mark.zero?
 
@@ -199,6 +201,7 @@ class Criterion < ApplicationRecord
     marks.empty? ? 0 : DescriptiveStatistics.mean(marks)
   end
 
+  # Returns the raw median grade of marks given for this criteria based on the marks given by self.grades_array
   def median
     return 0 if self.max_mark.zero?
 
@@ -206,6 +209,7 @@ class Criterion < ApplicationRecord
     marks.empty? ? 0 : DescriptiveStatistics.median(marks)
   end
 
+  # Returns the raw standard deviation of marks given for this criteria based on the marks given by self.grades_array
   def standard_deviation
     return 0 if self.max_mark.zero?
 

@@ -373,8 +373,13 @@ shared_examples 'a criterion' do
       end
     end
 
-    it 'returns the grades for their assigned groupings based on assigned criterion marks' do
+    it 'returns the correct grades' do
       expect(criterion.grades_array).to match_array(grades)
+    end
+
+    it 'does not include marks for incomplete submissions' do
+      assignment.groupings.first.current_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+      expect(criterion.grades_array).to match_array(grades[1..-1])
     end
   end
 
