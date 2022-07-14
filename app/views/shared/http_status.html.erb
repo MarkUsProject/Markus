@@ -7,15 +7,9 @@
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1'>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet'>
   <%= stylesheet_link_tag 'application', media: 'all' %>
-  <%= render partial: 'layouts/head' %>
+  <%= render partial: 'layouts/head' rescue nil%>
   <title><%= code + ' ' + HttpStatusHelper::ERROR_CODE[code] %></title>
   <%= javascript_include_tag 'application_webpack', nonce: true %>
-  <%= javascript_include_tag 'application', nonce: true %>
-  <% unless session[:auth_type] == 'remote' %>
-    <%= javascript_include_tag 'check_timeout', nonce: true %>
-  <% end %>
-  <%= render partial: 'layouts/jsroutes_config' %>
-  <%= render partial: 'layouts/i18n_config' %>
   <%= yield :head %>
 </head>
 <body>
@@ -30,7 +24,7 @@
         <%= render partial: 'layouts/menu' rescue nil%>
       </div>
     </nav>
-    <%= render partial: 'layouts/modals' %>
+    <%= render partial: 'layouts/modals' rescue nil%>
     <div class="error-pages-container">
       <h1><%= code + ' ' + HttpStatusHelper::ERROR_CODE[code] %></h1>
       <p>Uh oh! <%= message %></p>
