@@ -175,7 +175,7 @@ describe LtiDeploymentController do
     let(:course_params) { { display_name: 'Introduction to Computer Science', name: 'csc108' } }
     before :each do
       session[:lti_deployment_id] = lti_deployment.id
-      post_as instructor, :new_course, params: course_params
+      post_as instructor, :create_course, params: course_params
     end
     it 'creates a course' do
       expect(Course.find_by(name: 'csc108')).not_to be_nil
