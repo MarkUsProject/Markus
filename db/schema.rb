@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_24_220107) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_07_182822) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -373,6 +373,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_220107) do
     t.index ["lti_client_id"], name: "index_lti_deployments_on_lti_client_id"
   end
 
+  create_table "lti_services", force: :cascade do |t|
+    t.bigint "lti_deployment_id", null: false
+    t.string "service_type"
+    t.string "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lti_deployment_id", "service_type"], name: "index_lti_services_on_lti_deployment_id_and_service_type", unique: true
+    t.index ["lti_deployment_id"], name: "index_lti_services_on_lti_deployment_id"
+  end
+
   create_table "lti_users", force: :cascade do |t|
     t.bigint "lti_client_id", null: false
     t.bigint "user_id", null: false
@@ -711,6 +721,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_220107) do
   add_foreign_key "groups", "courses"
   add_foreign_key "key_pairs", "users"
   add_foreign_key "levels", "criteria"
+  add_foreign_key "lti_services", "lti_deployments"
   add_foreign_key "marking_schemes", "courses"
   add_foreign_key "marking_weights", "assessments"
   add_foreign_key "marks", "criteria"

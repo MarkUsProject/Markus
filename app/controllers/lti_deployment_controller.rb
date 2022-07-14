@@ -15,7 +15,7 @@ class LtiDeploymentController < ApplicationController
       description: I18n.t('markus'),
       oidc_initiation_url: lti_deployment_launch_url,
       target_link_uri: lti_deployment_redirect_login_url,
-      scopes: [],
+      scopes: ['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'],
       extensions: [
         {
           domain: request.domain(3),
@@ -123,6 +123,11 @@ class LtiDeploymentController < ApplicationController
     lti_deployment = LtiDeployment.find_or_create_by(lti_client: lti_client, external_deployment_id: deployment_id)
     session[:lti_client_id] = lti_client.id
     session[:lti_deployment_id] = lti_deployment.id
+    if decoded_token[0].key?('https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice')
+      name_and_roles_endpoint = decoded_token[0]['https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice']['context_memberships_url']
+      names_service = LtiService.find_or_create_by(lti_deployment: lti_deployment, service_type: 'namesroles')
+      names_service.update!(url: name_and_roles_endpoint)
+    end
     redirect_to root_path
   end
 
