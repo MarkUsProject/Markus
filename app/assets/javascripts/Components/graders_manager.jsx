@@ -4,6 +4,7 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
+import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 
 class GradersManager extends React.Component {
   constructor(props) {
@@ -19,12 +20,32 @@ class GradersManager extends React.Component {
       anonymize_groups: false,
       hide_unassigned_criteria: false,
       sections: {},
+      isGraderDistributionModalOpen: false,
     };
   }
 
   componentDidMount() {
     this.fetchData();
   }
+
+  openGraderDistributionModal = () => {
+    let groups = this.groupsTable ? this.groupsTable.state.selection : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let graders = this.gradersTable.state.selection;
+    if (groups.length === 0 && criteria.length === 0) {
+      alert(I18n.t("groups.select_a_group"));
+      return;
+    }
+
+    if (graders.length === 0) {
+      alert(I18n.t("graders.select_a_grader"));
+      return;
+    }
+
+    this.setState({
+      isGraderDistributionModalOpen: true,
+    });
+  };
 
   fetchData = () => {
     $.get({
@@ -44,6 +65,7 @@ class GradersManager extends React.Component {
         sections: res.sections,
         anonymize_groups: res.anonymize_groups,
         hide_unassigned_criteria: res.hide_unassigned_criteria,
+        isGraderDistributionModalOpen: false,
       });
     });
   };
@@ -79,20 +101,11 @@ class GradersManager extends React.Component {
     }).then(this.fetchData);
   };
 
-  assignRandomly = () => {
+  assignRandomly = weightings => {
     let groups = this.groupsTable ? this.groupsTable.state.selection : [];
     let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
-
-    if (groups.length === 0 && criteria.length === 0) {
-      alert(I18n.t("groups.select_a_group"));
-      return;
-    }
-
-    if (graders.length === 0) {
-      alert(I18n.t("graders.select_a_grader"));
-      return;
-    }
+    let graders = Object.keys(weightings);
+    let weights = Object.values(weightings);
 
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
@@ -106,6 +119,7 @@ class GradersManager extends React.Component {
         groupings: groups,
         criteria: criteria,
         graders: graders,
+        weightings: weights,
       },
     }).then(this.fetchData);
   };
@@ -220,6 +234,12 @@ class GradersManager extends React.Component {
     }).then(() => this.setState({hide_unassigned_criteria: assign}));
   };
 
+  getAssignedGraderObjects = () => {
+    return this.state.graders.filter(grader => {
+      return this.gradersTable.state.selection.includes(grader._id);
+    });
+  };
+
   renderHideUnassignedCriteria = () => {
     if (this.state.assign_graders_to_criteria) {
       return (
@@ -251,7 +271,7 @@ class GradersManager extends React.Component {
       <div>
         <GradersActionBox
           assignAll={this.assignAll}
-          assignRandomly={this.assignRandomly}
+          openGraderDistributionModal={this.openGraderDistributionModal}
           unassignAll={this.unassignAll}
         />
         <div className="mapping-tables">
@@ -333,6 +353,18 @@ class GradersManager extends React.Component {
             </Tabs>
           </div>
         </div>
+        {this.state.isGraderDistributionModalOpen && (
+          <GraderDistributionModal
+            isOpen={this.state.isGraderDistributionModalOpen}
+            onRequestClose={() =>
+              this.setState({
+                isGraderDistributionModalOpen: false,
+              })
+            }
+            graders={this.getAssignedGraderObjects()}
+            onSubmit={this.assignRandomly}
+          />
+        )}
       </div>
     );
   }
@@ -569,7 +601,7 @@ class GradersActionBox extends React.Component {
         <button className="assign-all-button" onClick={this.props.assignAll}>
           {I18n.t("graders.actions.assign_grader")}
         </button>
-        <button className="assign-randomly-button" onClick={this.props.assignRandomly}>
+        <button className="assign-randomly-button" onClick={this.props.openGraderDistributionModal}>
           {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
         <button className="unassign-all-button" onClick={this.props.unassignAll}>

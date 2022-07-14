@@ -69,27 +69,28 @@ describe Grouping do
     let!(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping) }
     let(:groupings) do
-      Array.new(2) { create(:grouping, assignment: assignment) }
+      Array.new(4) { create(:grouping, assignment: assignment) }
     end
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:grouping_ids) { groupings.map(&:id) }
     let(:ta_ids) { tas.map(&:id) }
+    let(:weightings) { Array.new(tas.size) { 1 } }
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no groupings' do
-        Grouping.randomly_assign_tas([], [], assignment)
+        Grouping.randomly_assign_tas([], [], [], assignment)
       end
 
       it 'can randomly bulk assign TAs to no groupings' do
-        Grouping.randomly_assign_tas([], ta_ids, assignment)
+        Grouping.randomly_assign_tas([], ta_ids, [1], assignment)
       end
 
       it 'can randomly bulk assign no TAs to all groupings' do
-        Grouping.randomly_assign_tas(grouping_ids, [], assignment)
+        Grouping.randomly_assign_tas(grouping_ids, [], [], assignment)
       end
 
       it 'can randomly bulk assign TAs to all groupings' do
-        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
 
         groupings.each do |grouping|
           grouping.reload
@@ -97,12 +98,26 @@ describe Grouping do
           expect(tas).to include grouping.tas.first
         end
       end
+      it 'can randomly bulk assign TAs with weighting' do
+        weightings = [3, 1]
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
+
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas.size).to eq 1
+          expect(tas).to include grouping.tas.first
+        end
+        grouping1 = groupings.select { |grouping| grouping.tas.first == tas.first }
+        grouping2 = groupings.select { |grouping| grouping.tas.first == tas.last }
+        print(grouping2.length, grouping1.length)
+        expect(grouping1.length > grouping2.length).to be(true)
+      end
 
       it 'can randomly bulk assign duplicated TAs to groupings' do
         # The probability of assigning no duplicated TAs after (tas.size + 1)
         # trials is 0.
         (tas.size + 1).times do
-          Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+          Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
         end
 
         ta_set = tas.to_set
@@ -116,13 +131,13 @@ describe Grouping do
       it 'updates criteria coverage counts after randomly bulk assign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
           .with(assignment, match_array(grouping_ids))
-        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
       end
 
       it 'updates assigned groups counts after randomly bulk assign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts)
           .with(assignment)
-        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
       end
     end
 

@@ -78,7 +78,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_07_182822) do
     t.datetime "due_date", precision: nil
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
-    t.integer "outstanding_remark_request_count"
     t.integer "parent_assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

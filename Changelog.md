@@ -45,10 +45,14 @@
 - Separated peer review assignment upload/download from parent (#6048)
 - Expanded summary stats UI (#6050)
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
+- Added ability to have a non-uniform group distribution when assigning graders (#6055)
 - Added new "submit_file" API assignment route for students (#6057)
 - Removed searchbar used to filter files on submissions page (#6058)
+- Removed "outstanding_remark_request_count" attribute (#6059)
+- Added checklist for required files on submissions page (#6061)
 - Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
+- Sorted courses on the dashboard. (#6099)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
