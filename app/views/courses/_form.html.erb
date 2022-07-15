@@ -8,14 +8,14 @@
     <%= f.text_field :name,
                      size: 35,
                      required: true,
-                     readonly: !@current_user.admin_user? %>
+                     readonly: !create_form %>
     <%= f.label :display_name,
                 Course.human_attribute_name(:display_name),
                 class: 'required' %>
     <%= f.text_field :display_name,
                      size: 35,
                      required: true,
-                     readonly: !@current_user.admin_user? %>
+                     readonly: !@current_user.admin_user? || !@current_role.nil? %>
     <%= f.label :is_hidden, Course.human_attribute_name(:is_hidden) %>
     <span>
       <%= f.label :is_hidden, I18n.t('courses.hidden'), value: 'true' %>
