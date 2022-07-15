@@ -434,7 +434,7 @@ shared_examples 'a criterion' do
 
     it 'returns the correct number when there are completed results' do
       allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
-      expect(criterion.standard_deviation).to eq 2
+      expect(criterion.standard_deviation.round(9)).to eq 1.414213562
     end
 
     it 'returns 0 when the assignment has a max_mark of 0' do
