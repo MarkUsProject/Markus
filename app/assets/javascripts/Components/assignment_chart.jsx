@@ -223,7 +223,7 @@ export class AssignmentChart extends React.Component {
                 filterable
                 defaultSorted={[{id: "name"}]}
                 SubComponent={row => (
-                  <div className="criteria-stat-breakdown">
+                  <div className="criteria-stat-breakdown grid-2-col">
                     <CoreStatistics
                       average={row.original.average}
                       median={row.original.median}
@@ -251,7 +251,9 @@ export class AssignmentChart extends React.Component {
                 this.props.assessment_id
               )}
             >
-              {"Create New Criteria"}
+              {I18n.t("helpers.submit.create", {
+                model: I18n.t("activerecord.models.criterion.one"),
+              })}
             </a>
             )
           </h4>

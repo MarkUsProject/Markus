@@ -41,17 +41,10 @@
   .criteria-summary-table {
     .criteria-stat-breakdown {
       column-gap: 10px;
-      display: grid;
-      grid-template-columns: max-content max-content;
       margin-bottom: 10px;
       margin-left: 40px;
       margin-top: 10px;
       row-gap: 1em;
-    }
-
-    h3 {
-      font-size: small;
-      text-align: center;
     }
 
     span {
