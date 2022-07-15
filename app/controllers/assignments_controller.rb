@@ -392,14 +392,15 @@ class AssignmentsController < ApplicationController
           hidden: true }
       end
       criteria_summary = assignment.criteria.map do |criteria|
+        criteria_grades = criteria.grades_array
         {
           name: criteria.name,
           average: criteria.average || 0,
           median: criteria.median || 0,
           max_mark: criteria.max_mark || 0,
           standard_deviation: criteria.standard_deviation || 0,
-          num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
-          num_zeros: criteria.grades_array.count(&:zero?)
+          num_fails: criteria_grades.count { |m| m < criteria.max_mark / 2.0 },
+          num_zeros: criteria_grades.count(&:zero?)
         }
       end
       json_data[:criteria_summary] = criteria_summary

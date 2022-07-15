@@ -1146,6 +1146,8 @@ describe AssignmentsController do
     end
 
     context 'criteria_summary' do
+      let(:params) { { course_id: assignment.course.id, id: assignment.id, get_criteria_data: true } }
+
       it 'should contain the right keys' do
         keys = response.parsed_body['criteria_summary'].first.keys
         expect(keys).to contain_exactly('name',
@@ -1172,6 +1174,8 @@ describe AssignmentsController do
     end
 
     context 'criteria_data' do
+      let(:params) { { course_id: assignment.course.id, id: assignment.id, get_criteria_data: true } }
+
       it 'should contain the right data' do
         expected_data = assignment.criteria.map(&:grade_distribution_array)
         received_data = response.parsed_body['criteria_data']['datasets'].map do |data_response|
