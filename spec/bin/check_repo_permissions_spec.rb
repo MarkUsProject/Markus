@@ -46,6 +46,20 @@ describe 'Check Repo Permissions Standalone File' do
         expect(script_success?(role.user_name, bad_repo_name)).to be_truthy
       end
     end
+    context 'when requested course is different' do
+      let(:course) { create :course }
+      let(:assignment) { create :assignment, course: course }
+      let(:grouping) { create :grouping, assignment: assignment }
+      it 'should fail' do
+        expect(script_success?(role.user_name, repo_path)).to be_falsy
+      end
+    end
+    context 'when requested course does not exist' do
+      let(:repo_path) { "#{grouping.course.name}123/#{grouping.group.repo_name}.git" }
+      it 'should fail' do
+        expect(script_success?(role.user_name, repo_path)).to be_falsy
+      end
+    end
   end
   context 'role is an AdminRole' do
     let(:role) { create :admin_role }
