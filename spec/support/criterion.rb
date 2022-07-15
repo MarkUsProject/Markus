@@ -367,9 +367,10 @@ shared_examples 'a criterion' do
 
     before :each do
       assignment.groupings.each_with_index do |grouping, index|
-        mark = grouping.current_result.marks.create(criterion: criterion)
-        mark.update(mark: grades[index])
-        grouping.current_result.update_total_mark
+        result = grouping.current_result
+        result.marks.create(criterion: criterion, mark: grades[index])
+        result.update_total_mark
+        result.update(marking_state: Result::MARKING_STATES[:complete])
       end
     end
 
