@@ -9,23 +9,77 @@ describe Api::TagsController do
     end
 
     it 'should fail to authenticate a GET index request' do
-      get :index, params: { assignment_id: assignment.id, grouping_id: grouping.id }
-      expect(response).to have_http_status(403)
-    end
-
-    it 'should fail to authenticate a GET show request' do
-      get :show, params: { assignment_id: assignment.id, grouping_id: grouping.id }
+      get :index, params: { assignment_id: assignment.id }
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create, params: { tag: tag, name: 'new_tag', description: 'desc' }
+      post :create, params: { assignment_id: assignment.id, grouping_id: grouping.id, tag: tag }
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
-      post :update, params: { tag: tag, name: 'update_tag', description: 'desc' }
+      put :update, params: { id: tag.id }
       expect(response).to have_http_status(403)
+    end
+
+    it 'should fail to authenticate a PUT add_tag request' do
+      put :add_tag, params: { id: tag.id, result_id: grouping.results.first }
+      expect(response).to have_http_status(403)
+    end
+
+    it 'should fail to authenticate a post destroy request' do
+      delete :destroy, params: { id: tag.id }
+      expect(response).to have_http_status(403)
+    end
+  end
+  context 'An authenticated request requesting' do
+    let(:instructor) { create :instructor }
+    before :each do
+      instructor.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
+    end
+    shared_examples 'for a different course' do
+      context 'an instructor for a different course' do
+        let(:instructor) { create :instructor, course: create(:course) }
+        it 'should return a 403 error' do
+          expect(response).to have_http_status(403)
+        end
+      end
+    end
+    context 'GET index' do
+      context 'expecting an xml response' do
+        before :each do
+          request.env['HTTP_ACCEPT'] = 'application/xml'
+        end
+        context 'with a single tag' do
+          before :each do
+            get :index, params: { assignment_id: assignment.id }
+          end
+          it 'should be successful' do
+            expect(response.status).to eq(200)
+          end
+          it 'should return xml content' do
+            expect(Hash.from_xml(response.body).dig('tags', 'tag', 'id')).to eq(assignment.tags.ids.to_s)
+          end
+        end
+      end
+      context 'expecting a json response' do
+        before :each do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+        end
+        context 'with a single assignment' do
+          before :each do
+            get :index, params: { assignment_id: assignment.id }
+          end
+          it 'should be successful' do
+            expect(response.status).to eq(200)
+          end
+          it 'should return json content' do
+            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(tag.id)
+          end
+        end
+      end
     end
   end
 end

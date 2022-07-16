@@ -1,5 +1,6 @@
 module Api
   # Api controller for tags
+  # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class TagsController < ApplicationController
     TAG_FIELDS = [:tag, :name, :description].freeze
     DEFAULT_FIELDS = [:id, :role, :groupings, :result_id, :assignment_id, :grouping_id, *TAG_FIELDS].freeze
