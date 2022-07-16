@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     resources :tags, only: [:index, :create, :update, :destroy, :edit] do
-      member do
+      collection do
         put 'add_tag'
         put 'remove_tag'
       end
