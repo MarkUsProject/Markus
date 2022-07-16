@@ -19,24 +19,22 @@ describe Api::TagsController do
       expect(response).to have_http_status(403)
     end
 
-    # it 'should fail to authenticate a PUT update request' do
-    #   put :update, params: { id: tag.id, name: "new_name" }
-    #   expect(response).to have_http_status(403)
-    # end
+    it 'should fail to authenticate a PUT update request' do
+      put :update, params: { id: tag.id, name: 'new_name' }
+      expect(response).to have_http_status(403)
+    end
 
     it 'should fail to authenticate a PUT add_tag request' do
       put :add_tag, params: { id: tag.id, result_id: grouping.results.first }
       expect(response).to have_http_status(403)
     end
-    it 'should fail to authenticate a PUT add_tag request' do
+    it 'should fail to authenticate a PUT remove_tag request' do
       put :remove_tag, params: { id: tag.id, result_id: grouping.results.first }
       expect(response).to have_http_status(403)
     end
   end
 
   context 'An authenticated user requesting' do
-    let(:instructor) { create :instructor }
-
     before :each do
       instructor.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
