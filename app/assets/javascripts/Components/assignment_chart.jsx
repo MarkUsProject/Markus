@@ -1,6 +1,7 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
 import ReactTable from "react-table";
+import PropTypes from "prop-types";
 import {chartScales} from "./Helpers/chart_helpers";
 
 export class AssignmentChart extends React.Component {
@@ -174,6 +175,7 @@ export class AssignmentChart extends React.Component {
                 standard_deviation={this.state.summary.standard_deviation}
                 max_mark={this.state.summary.max_mark}
                 num_fails={this.state.summary.num_fails}
+                num_zeros={this.state.summary.num_zeros}
                 num_groupings={this.state.summary.num_groupings}
               />
               {outstanding_remark_request_link}
@@ -228,7 +230,7 @@ export class AssignmentChart extends React.Component {
                       median={row.original.median}
                       standard_deviation={row.original.standard_deviation}
                       max_mark={row.original.max_mark}
-                      num_fails={row.original.num_fails}
+                      num_zeros={row.original.num_zeros}
                       num_groupings={this.state.summary.groupings_size}
                     />
                   </div>
@@ -345,7 +347,7 @@ class CoreStatistics extends React.Component {
       num_fails = (
         <React.Fragment>
           <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-          <FractionStat numerator={this.props.num_fails} denominator={this.props.groupings_size} />
+          <FractionStat numerator={this.props.num_fails} denominator={this.props.num_groupings} />
         </React.Fragment>
       );
     }
@@ -363,8 +365,18 @@ class CoreStatistics extends React.Component {
         </span>
         {num_fails}
         <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-        <FractionStat numerator={this.props.num_zeros} denominator={this.props.groupings_size} />
+        <FractionStat numerator={this.props.num_zeros} denominator={this.props.num_groupings} />
       </React.Fragment>
     );
   }
 }
+
+CoreStatistics.propTypes = {
+  average: PropTypes.number.isRequired,
+  median: PropTypes.number.isRequired,
+  standard_deviation: PropTypes.number.isRequired,
+  max_mark: PropTypes.number.isRequired,
+  num_fails: PropTypes.number,
+  num_zeros: PropTypes.number.isRequired,
+  num_groupings: PropTypes.number.isRequired,
+};
