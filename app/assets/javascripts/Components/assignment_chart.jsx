@@ -189,7 +189,7 @@ export class AssignmentChart extends React.Component {
       criteria_graph = (
         <div className="flex-row">
           <div className="distribution-graph">
-            <h3>{I18n.t("criteria_distribution")}</h3>
+            <h3>{I18n.t("criteria_grade_distribution")}</h3>
             <Bar
               data={this.state.criteria_grade_distribution.data}
               options={this.state.criteria_grade_distribution.options}
@@ -242,7 +242,7 @@ export class AssignmentChart extends React.Component {
     } else if (this.props.show_criteria_stats) {
       criteria_graph = (
         <div className="distribution-graph">
-          <h3>{I18n.t("criteria_distribution")}</h3>
+          <h3>{I18n.t("criteria_grade_distribution")}</h3>
           <h4>
             (
             <a
@@ -333,13 +333,14 @@ class FractionStat extends React.Component {
 
 class CoreStatistics extends React.Component {
   render() {
-    const percentage_standard_deviation = () => {
-      const max_mark = Number(this.props.max_mark) || 0;
-      if (max_mark === 0) {
-        return "0.00";
-      }
-      return ((100 / max_mark) * (Number(this.props.standard_deviation) || 0)).toFixed(2);
-    };
+    const max_mark_value = Number(this.props.max_mark) || 0;
+    if (max_mark_value === 0) {
+      return "0.00";
+    }
+    const percent_standard_deviation = (
+      (100 / max_mark_value) *
+      (Number(this.props.standard_deviation) || 0)
+    ).toFixed(2);
 
     return (
       <React.Fragment>
@@ -350,7 +351,7 @@ class CoreStatistics extends React.Component {
         <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
         <span>
           {(this.props.standard_deviation || 0).toFixed(2)}
-          &nbsp;({percentage_standard_deviation()}%)
+          &nbsp;({percent_standard_deviation}%)
         </span>
         <span className="summary-stats-label">{I18n.t("num_failed")}</span>
         <FractionStat numerator={this.props.num_fails} denominator={this.props.groupings_size} />

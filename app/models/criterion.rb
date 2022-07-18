@@ -175,11 +175,10 @@ class Criterion < ApplicationRecord
 
   # Returns an array of all marks for this criteria that are not nil and are for a completed submission
   def grades_array
-    return [] if self.max_mark.zero?
+    return @grades_array if defined? @grades_array
     results = self.assignment.current_results
                   .where(marking_state: Result::MARKING_STATES[:complete])
-                  .order(:total_mark)
-    self.marks.where.not(mark: nil).where(result_id: results.ids).pluck(:mark)
+    @grades_array = self.marks.where.not(mark: nil).where(result_id: results.ids).pluck(:mark)
   end
 
   def grade_distribution_array(intervals = 20)
