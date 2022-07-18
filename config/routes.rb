@@ -8,12 +8,6 @@ Rails.application.routes.draw do
   # optional path scope (denoted by the parentheses)
   # API routes
   namespace :api do
-    resources :tags, only: [:index, :create, :update, :destroy, :edit] do
-      member do
-        put 'add_tag'
-        put 'remove_tag'
-      end
-    end
     resources :users, only: [:index, :create, :show, :update] do
       collection do
         put 'update_by_username'
@@ -22,6 +16,12 @@ Rails.application.routes.draw do
     resources :courses, only: [:index, :show, :create, :update] do
       member do
         put 'update_autotest_url'
+      end
+      resources :tags, only: [:index, :create, :update, :destroy, :edit] do
+        member do
+          put 'add_tag'
+          put 'remove_tag'
+        end
       end
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
