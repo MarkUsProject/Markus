@@ -193,7 +193,7 @@ module AutomatedTestsHelper
         file_url = "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
                    "groups/#{id_}/submission_files?#{param}"
         # TODO: add other relevant info to env_vars as needed and make the environment variable customizable
-        { file_url: file_url, env_vars: { MARKUS_GROUP: name, MARKUS_STARTER_FILES: starter_files.join(':') } }
+        { file_url: file_url, env_vars: { MARKUS_GROUP: name, MARKUS_STARTER_FILES: starter_files.to_json } }
       end
       req.body = {
         test_data: test_data,
@@ -322,18 +322,21 @@ module AutomatedTestsHelper
     end
   end
 
-  # Returns an array of arrays containing a group id and group name to the
+  # Returns an array of arrays containing a group id, group name, and an array of
   # starter file entry paths assigned to the grouping associated with the +assignment+
   # and the given group.
   #
   # Only groups with id in +group_ids+ are included in the list.
   def group_info_for_tests(assignment, group_ids)
     assignment.groupings
-              .left_outer_joins(:group, :starter_file_entries)
+              .left_outer_joins(:group, starter_file_entries: :starter_file_group)
               .where('groups.id': group_ids)
-              .pluck('groups.id', 'groups.group_name', 'starter_file_entries.path')
+              .pluck('groups.id', 'groups.group_name', 'starter_file_groups.name', 'starter_file_entries.path')
               .group_by { |val| val[...2] }
-              .map { |key, val| [*key, val.map(&:last).compact.sort] }
+              .map do |key, val|
+                [*key,
+                 val.map { |v| { starter_file_group: v[2], starter_file_path: v[3] } if v[2] }.compact]
+              end
   end
 
   def server_api_key

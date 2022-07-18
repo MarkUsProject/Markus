@@ -87,13 +87,14 @@ describe AutotestRunJob do
           file_url = "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/" \
                      "#{assignment.id}/groups/#{group.id}/submission_files?#{collected ? 'collected=true' : ''}"
           starter_files = assignment.groupings
-                                    .joins(:starter_file_entries)
+                                    .joins(starter_file_entries: :starter_file_group)
                                     .where(group_id: group.id)
-                                    .pluck('starter_file_entries.path')
-                                    .sort
+                                    .pluck('starter_file_entries.path', 'starter_file_groups.name')
+                                    .map { |v| { starter_file_group: v.second, starter_file_path: v.first } if v.first }
+                                    .compact
           {
             file_url: file_url,
-            env_vars: { MARKUS_GROUP: group.group_name, MARKUS_STARTER_FILES: starter_files.join(':') }
+            env_vars: { MARKUS_GROUP: group.group_name, MARKUS_STARTER_FILES: starter_files.to_json }
           }.deep_stringify_keys
         end
       end
