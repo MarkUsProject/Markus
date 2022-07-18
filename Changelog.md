@@ -54,6 +54,7 @@
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
 - Sorted courses on the dashboard. (#6099)
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
+- Handle multiple feedback files sent from the autotester (#6106)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
