@@ -62,48 +62,47 @@ export class AssignmentChart extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.grade_distribution_course_assignment_path(
+    fetch(
+      Routes.grade_distribution_course_assignment_path(
         this.props.course_id,
         this.props.assessment_id
-      ),
-      dataType: "json",
-      data: {get_criteria_data: this.props.show_criteria_stats},
-    }).then(res => {
-      // Load in background colours
-      for (const [index, element] of res.ta_data.datasets.entries()) {
-        element.backgroundColor = colours[index];
-      }
-
-      this.setState({
-        summary: res.summary,
-        assignment_grade_distribution: {
-          ...this.state.assignment_grade_distribution,
-          data: res.assignment_data,
-        },
-        ta_grade_distribution: {
-          ...this.state.ta_grade_distribution,
-          data: res.ta_data,
-        },
-      });
-
-      if (typeof this.props.set_assessment_name === "function") {
-        this.props.set_assessment_name(res.summary.name);
-      }
-
-      if (this.props.show_criteria_stats) {
-        for (const [index, element] of res.criteria_data.datasets.entries()) {
+      ) + `?get_criteria_data=${this.props.show_criteria_stats}`
+    )
+      .then(data => data.json())
+      .then(res => {
+        // Load in background colours
+        for (const [index, element] of res.ta_data.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
+
         this.setState({
-          criteria_summary: res.criteria_summary,
-          criteria_grade_distribution: {
-            ...this.state.criteria_grade_distribution,
-            data: res.criteria_data,
+          summary: res.summary,
+          assignment_grade_distribution: {
+            ...this.state.assignment_grade_distribution,
+            data: res.assignment_data,
+          },
+          ta_grade_distribution: {
+            ...this.state.ta_grade_distribution,
+            data: res.ta_data,
           },
         });
-      }
-    });
+
+        if (typeof this.props.set_assessment_name === "function") {
+          this.props.set_assessment_name(res.summary.name);
+        }
+        if (this.props.show_criteria_stats) {
+          for (const [index, element] of res.criteria_data.datasets.entries()) {
+            element.backgroundColor = colours[index];
+          }
+          this.setState({
+            criteria_summary: res.criteria_summary,
+            criteria_grade_distribution: {
+              ...this.state.criteria_grade_distribution,
+              data: res.criteria_data,
+            },
+          });
+        }
+      });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -334,13 +333,22 @@ class FractionStat extends React.Component {
 class CoreStatistics extends React.Component {
   render() {
     const max_mark_value = Number(this.props.max_mark) || 0;
-    if (max_mark_value === 0) {
-      return "0.00";
+    let percent_standard_deviation = "0.00";
+    if (max_mark_value !== 0) {
+      percent_standard_deviation = (
+        (100 / max_mark_value) *
+        (Number(this.props.standard_deviation) || 0)
+      ).toFixed(2);
     }
-    const percent_standard_deviation = (
-      (100 / max_mark_value) *
-      (Number(this.props.standard_deviation) || 0)
-    ).toFixed(2);
+    let num_fails = "";
+    if (this.props.num_fails !== undefined) {
+      num_fails = (
+        <React.Fragment>
+          <span className="summary-stats-label">{I18n.t("num_failed")}</span>
+          <FractionStat numerator={this.props.num_fails} denominator={this.props.groupings_size} />
+        </React.Fragment>
+      );
+    }
 
     return (
       <React.Fragment>
@@ -353,8 +361,7 @@ class CoreStatistics extends React.Component {
           {(this.props.standard_deviation || 0).toFixed(2)}
           &nbsp;({percent_standard_deviation}%)
         </span>
-        <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-        <FractionStat numerator={this.props.num_fails} denominator={this.props.groupings_size} />
+        {num_fails}
         <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
         <FractionStat numerator={this.props.num_zeros} denominator={this.props.groupings_size} />
       </React.Fragment>
