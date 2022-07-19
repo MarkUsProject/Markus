@@ -184,16 +184,16 @@ describe CoursesController do
       context 'as an authorized instructor' do
         it 'responds with success on update' do
           put_as instructor, :update,
-                 params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+                 params: { id: course.id, course: { display_name: 'Intro to CS', is_hidden: false } }
           expect(response).to have_http_status(302)
         end
-        it 'successfully toggles just the is_hidden attribute of a course' do
+        it 'updates the course' do
           put_as instructor, :update,
-                 params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+                 params: { id: course.id, course: { display_name: 'Intro to CS', is_hidden: false } }
           updated_course = Course.find(course.id)
           expected_course_data = {
             name: course.name,
-            display_name: course.display_name,
+            display_name: 'Intro to CS',
             is_hidden: false
           }
           updated_course_data = {
@@ -203,7 +203,13 @@ describe CoursesController do
           }
           expect(updated_course_data).to eq(expected_course_data)
         end
-        it 'fails to update the is_hidden attribute when it is invalid' do
+        it 'does not update the course name' do
+          put_as instructor, :update,
+                 params: { id: course.id, course: { name: 'CS101' } }
+          updated_course = Course.find(course.id)
+          expect(updated_course.name).not_to eq('CS101')
+        end
+        it 'does not update when parameters are invalid' do
           expected_course_data = {
             name: course.name,
             display_name: course.display_name,
