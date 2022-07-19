@@ -1310,12 +1310,10 @@ describe AssignmentsController do
     let(:downloaded_assignment) { assignment }
 
     before :each do
-      create_automated_test(assignment)
-    end
-
-    after :each do
       # Clear uploaded autotest files to prepare for next test
       FileUtils.rm_rf(assignment.autotest_files_dir)
+
+      create_automated_test(assignment)
     end
 
     shared_examples 'download sample config files' do
@@ -1502,15 +1500,13 @@ describe AssignmentsController do
                                                     course_id: user.course.id }
     end
 
-    after :each do
+    before :each do
       uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
       # Clear uploaded autotest files to prepare for next test
       unless uploaded_assignment.nil?
         FileUtils.rm_rf(uploaded_assignment.autotest_files_dir)
       end
-    end
 
-    before :each do
       # Build sample assignment zip file
       base_dir = File.join('assignments', 'sample-timed-assessment-good')
       properties_good = fixture_file_upload(File.join(base_dir, 'properties.yml'), 'text/yaml')
@@ -1878,6 +1874,9 @@ describe AssignmentsController do
       let!(:parent_assignment_properties) { parent_assignment.assignment_properties }
 
       before :each do
+        # Clear uploaded autotest files to prepare for next test
+        FileUtils.rm_rf(parent_assignment.autotest_files_dir)
+        FileUtils.rm_rf(assignment.autotest_files_dir)
         # Download Parent
         get_as user, :download_config_files,
                params: { id: parent_assignment.id, course_id: parent_assignment.course.id }
@@ -1904,12 +1903,6 @@ describe AssignmentsController do
                                                       is_timed: false, is_scanned: false,
                                                       course_id: assignment.course.id }
         expect(flash[:error]).to be_nil
-      end
-
-      after :each do
-        # Clear uploaded autotest files to prepare for next test
-        FileUtils.rm_rf(parent_assignment.autotest_files_dir)
-        FileUtils.rm_rf(assignment.autotest_files_dir)
       end
 
       it 'has a peer review assignment copied' do
