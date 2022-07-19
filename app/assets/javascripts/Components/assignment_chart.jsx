@@ -74,8 +74,9 @@ export class AssignmentChart extends React.Component {
     fetch(
       Routes.grade_distribution_course_assignment_path(
         this.props.course_id,
-        this.props.assessment_id
-      ) + `?get_criteria_data=${this.props.show_criteria_stats}`
+        this.props.assessment_id,
+        {get_criteria_data: this.props.show_criteria_stats}
+      )
     )
       .then(data => data.json())
       .then(res => {
