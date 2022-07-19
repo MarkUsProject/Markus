@@ -55,6 +55,7 @@
 - Sorted courses on the dashboard. (#6099)
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
+- Pass group name and starter files to the autotester when running tests (#6104)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
