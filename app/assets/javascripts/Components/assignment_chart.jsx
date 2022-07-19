@@ -50,6 +50,14 @@ export class AssignmentChart extends React.Component {
           plugins: {
             legend: {
               display: true,
+              labels: {
+                // Ensure criteria labels are sorted in position order
+                sort: (a, b) => {
+                  const itemA = this.state.criteria_summary.find(item => item.name === a.text);
+                  const itemB = this.state.criteria_summary.find(item => item.name === b.text);
+                  return itemA.position - itemB.position;
+                },
+              },
             },
           },
           scales: chartScales(),
@@ -221,8 +229,7 @@ export class AssignmentChart extends React.Component {
                     ),
                   },
                 ]}
-                filterable
-                defaultSorted={[{id: "name"}]}
+                defaultSorted={[{id: "position"}]}
                 SubComponent={row => (
                   <div className="criteria-stat-breakdown grid-2-col">
                     <CoreStatistics

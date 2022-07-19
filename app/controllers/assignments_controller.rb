@@ -399,6 +399,7 @@ class AssignmentsController < ApplicationController
           median: criterion.median || 0,
           max_mark: criterion.max_mark || 0,
           standard_deviation: criterion.standard_deviation || 0,
+          position: criterion.position,
           num_zeros: criterion_grades.count(&:zero?)
         }
       end

@@ -1155,20 +1155,20 @@ describe AssignmentsController do
                                         'median',
                                         'max_mark',
                                         'standard_deviation',
-                                        'num_fails',
+                                        'position',
                                         'num_zeros')
       end
 
       it 'should contain the right values' do
         summary = response.parsed_body['criteria_summary'].first
-        criteria = assignment.criteria.first
-        expected = { name: criteria.name,
-                     average: criteria.average,
-                     median: criteria.median || 0,
-                     max_mark: criteria.max_mark || 0,
-                     standard_deviation: criteria.standard_deviation || 0,
-                     num_fails: criteria.grades_array.count { |m| m < criteria.max_mark / 2.0 },
-                     num_zeros: criteria.grades_array.count(&:zero?) }
+        criterion = assignment.criteria.first
+        expected = { name: criterion.name,
+                     average: criterion.average,
+                     median: criterion.median || 0,
+                     max_mark: criterion.max_mark || 0,
+                     standard_deviation: criterion.standard_deviation || 0,
+                     position: criterion.position,
+                     num_zeros: criterion.grades_array.count(&:zero?) }
         expect(summary).to eq expected.as_json
       end
     end
