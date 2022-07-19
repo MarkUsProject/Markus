@@ -185,7 +185,7 @@ export class AssignmentChart extends React.Component {
                 max_mark={this.state.summary.max_mark}
                 num_fails={this.state.summary.num_fails}
                 num_zeros={this.state.summary.num_zeros}
-                num_groupings={this.state.summary.num_groupings}
+                num_groupings={this.state.summary.groupings_size}
               />
               {outstanding_remark_request_link}
             </div>
