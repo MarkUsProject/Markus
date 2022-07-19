@@ -298,7 +298,7 @@ class Assignment < Assessment
   def all_grouping_data
     student_data = self.course
                        .students
-                       .joins(:user)
+                       .joins(user: :roles)
                        .pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
@@ -313,6 +313,7 @@ class Assignment < Assessment
                                    'groupings.instructor_approved',
                                    'groups.group_name',
                                    'users.user_name',
+                                   'roles.hidden',
                                    'memberships.membership_status',
                                    'sections.name',
                                    'extensions.id',
@@ -323,7 +324,8 @@ class Assignment < Assessment
     members = Hash.new { |h, k| h[k] = [] }
     grouping_data.each do |data|
       if data['users.user_name']
-        members[data['groupings.id']] << [data['users.user_name'], data['memberships.membership_status']]
+        members[data['groupings.id']] << [data['users.user_name'], data['memberships.membership_status'],
+                                          data['roles.hidden']]
         students[data['users.user_name']][:assigned] = true
       end
     end

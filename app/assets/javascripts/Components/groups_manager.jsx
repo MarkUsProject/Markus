@@ -9,9 +9,11 @@ class GroupsManager extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      graders: [],
+      groups: [],
       students: [],
       show_hidden: false,
+      hidden_students_count: 0,
+      inactive_groups_count: 0,
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
@@ -43,9 +45,15 @@ class GroupsManager extends React.Component {
       this.studentsTable.resetSelection();
       this.groupsTable.resetSelection();
       this.setState({
-        groups: res.groups,
+        groups: res.groups.map(group => ({
+          ...group,
+          inactive: group.members.every(member => member[2]),
+        })),
         students: res.students || [],
         loading: false,
+        hidden_students_count: res.students.filter(student => student.hidden).length,
+        inactive_groups_count: res.groups.filter(group => group.members.every(member => member[2]))
+          .length,
       });
     });
   };
@@ -225,6 +233,8 @@ class GroupsManager extends React.Component {
           createAllGroups={this.createAllGroups}
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
+          hiddenStudentsCount={this.state.loading ? "" : this.state.hidden_students_count}
+          hiddenGroupsCount={this.state.loading ? "" : this.state.inactive_groups_count}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.updateShowHidden}
         />
@@ -253,6 +263,7 @@ class GroupsManager extends React.Component {
               onExtensionModal={this.handleShowModal}
               extensionColumnHeader={title}
               times={times}
+              showInactive={this.state.show_hidden}
             />
           </div>
         </div>
@@ -280,7 +291,22 @@ class GroupsManager extends React.Component {
 }
 
 class RawGroupsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filtered: [],
+    };
+  }
+
   getColumns = () => [
+    {
+      accessor: "inactive",
+      id: "inactive",
+      width: 0,
+      className: "rt-hidden",
+      headerClassName: "rt-hidden",
+      resizable: false,
+    },
     {
       show: false,
       accessor: "id",
@@ -314,7 +340,7 @@ class RawGroupsTable extends React.Component {
             if (member[1] === "pending") {
               status = <strong>({member[1]})</strong>;
             } else {
-              status = `(${member[1]})`;
+              status = `(${member[1]}${member[2] ? ", inactive" : ""})`;
             }
             return (
               <div key={`${row.original._id}-${member[0]}`}>
@@ -340,7 +366,9 @@ class RawGroupsTable extends React.Component {
       },
       filterMethod: (filter, row) => {
         if (filter.value) {
-          return row._original.members.some(member => member[0].includes(filter.value));
+          return row._original.members.some(member =>
+            `${member[1]}${member[2] ? ", inactive" : ""}`.includes(filter.value)
+          );
         } else {
           return true;
         }
@@ -445,6 +473,23 @@ class RawGroupsTable extends React.Component {
     },
   ];
 
+  static getDerivedStateFromProps(props, state) {
+    let filtered = [];
+    for (let i = 0; i < state.filtered.length; i++) {
+      if (state.filtered[i].id !== "inactive") {
+        filtered.push(state.filtered[i]);
+      }
+    }
+    if (!props.showInactive) {
+      filtered.push({id: "inactive", value: false});
+    }
+    return {filtered};
+  }
+
+  onFilteredChange = filtered => {
+    this.setState({filtered});
+  };
+
   render() {
     return (
       <CheckboxTable
@@ -458,6 +503,8 @@ class RawGroupsTable extends React.Component {
         ]}
         loading={this.props.loading}
         filterable
+        filtered={this.state.filtered}
+        onFilteredChange={this.onFilteredChange}
         {...this.props.getCheckboxProps()}
       />
     );
@@ -491,6 +538,17 @@ class RawStudentsTable extends React.Component {
         Header: I18n.t("activerecord.attributes.user.user_name"),
         accessor: "user_name",
         id: "user_name",
+        Cell: props => (props.original.hidden ? props.value + " (inactive)" : props.value),
+        filterMethod: (filter, row) => {
+          if (filter.value) {
+            return `${row._original.user_name}${row._original.hidden ? ", inactive" : ""}`.includes(
+              filter.value
+            );
+          } else {
+            return true;
+          }
+        },
+        sortable: false,
         minWidth: 90,
       },
       {
@@ -570,6 +628,10 @@ const StudentsTable = withSelection(RawStudentsTable);
 
 class GroupsActionBox extends React.Component {
   render = () => {
+    const showHiddenTooltip =
+      this.props.hiddenStudentsCount && this.props.hiddenGroupsCount
+        ? `${this.props.hiddenStudentsCount} hidden student(s), ${this.props.hiddenGroupsCount} inactive group(s)`
+        : "";
     // TODO: 'icons/bin_closed.png' for Group deletion icon
     return (
       <div className="rt-action-box">
@@ -582,7 +644,9 @@ class GroupsActionBox extends React.Component {
             onChange={this.props.updateShowHidden}
             style={{marginLeft: "5px", marginRight: "5px"}}
           />
-          <label htmlFor="show_hidden">{I18n.t("students.display_inactive")}</label>
+          <label title={showHiddenTooltip} htmlFor="show_hidden">
+            {I18n.t("students.display_inactive")}
+          </label>
         </span>
         <button className="" onClick={this.props.assign}>
           {I18n.t("groups.add_to_group")}
