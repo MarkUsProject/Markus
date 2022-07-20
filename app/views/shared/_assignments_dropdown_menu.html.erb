@@ -28,19 +28,17 @@
 
 <li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
-<% if @current_role%>
-  <% assignments = @current_role.visible_assessments(assessment_type: 'Assignment') %>
-  <% grade_entry_forms = @current_role.visible_assessments(assessment_type: 'GradeEntryForm') %>
+<% assignments = @current_role.visible_assessments(assessment_type: 'Assignment') %>
+<% grade_entry_forms = @current_role.visible_assessments(assessment_type: 'GradeEntryForm') %>
 
-  <%= render partial: 'shared/assignment_dropdown_link',
-             collection: assignments,
-             as: :assignment,
-             locals: { active_id: @assignment&.id } %>
+<%= render partial: 'shared/assignment_dropdown_link',
+           collection: assignments,
+           as: :assignment,
+           locals: { active_id: @assignment&.id } %>
 
-  <li class='section'><%= GradeEntryForm.model_name.human.pluralize %></li>
+<li class='section'><%= GradeEntryForm.model_name.human.pluralize %></li>
 
-  <%= render partial: 'shared/grade_entry_form_dropdown_link',
-             collection: grade_entry_forms,
-             as: :grade_entry_form,
-             locals: { active_id: @grade_entry_form&.id } %>
-<% end %>
+<%= render partial: 'shared/grade_entry_form_dropdown_link',
+           collection: grade_entry_forms,
+           as: :grade_entry_form,
+           locals: { active_id: @grade_entry_form&.id } %>
