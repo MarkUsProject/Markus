@@ -638,7 +638,7 @@ class GroupsActionBox extends React.Component {
     const showHiddenTooltip =
       this.props.hiddenStudentsCount && this.props.hiddenGroupsCount
         ? `${this.props.hiddenStudentsCount} ${I18n.t(
-            "activerecord.attributes.user.inactive_students"
+            "activerecord.attributes.grouping.inactive_students"
           )}, ${this.props.hiddenGroupsCount} ${I18n.t(
             "activerecord.attributes.grouping.inactive_groups"
           )}`
