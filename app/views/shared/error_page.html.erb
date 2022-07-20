@@ -1,4 +1,4 @@
-<% content_for(:html_title) { code + ' ' + HttpStatusHelper::ERROR_CODE[code]}%>
+<% content_for(:html_title) {HttpStatusHelper::ERROR_CODE[code]} %>
 <div class="error-pages-container">
   <h1><%= HttpStatusHelper::ERROR_CODE[code] %></h1>
   <p><%= message %></p>
