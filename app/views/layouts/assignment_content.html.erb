@@ -2,7 +2,7 @@
 <html lang="<%= I18n.locale %>">
 <head>
   <%= render partial: 'layouts/head' %>
-  <title><%= content_for?(:html_title) ? yield(:html_title) : t(:markus) + ' - ' + controller.action_name.titleize%></title>
+  <title><%= t(:markus) + ' - ' + (content_for?(:html_title) ? yield(:html_title) : controller.action_name.titleize) %></title>
   <%= javascript_include_tag 'application_webpack', nonce: true %>
   <%= javascript_include_tag 'application', nonce: true %>
   <% unless session[:auth_type] == 'remote' %>
