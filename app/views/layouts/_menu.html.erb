@@ -4,102 +4,95 @@
   <% else %>
     <a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.home') %>'></a>
   <% end %>
-  <ul>
-    <% is_admin_route = controller.class.module_parent.to_s == 'Admin' %>
-    <% if !is_admin_route && @current_course %>
-      <% if @current_role %>>
-        <% if @current_role.instructor? %>
-          <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'show' %>'>
-            <%= link_to t('menu.dashboard'), course_path(@current_course) %>
-          </li>
+<ul>
+  <% is_admin_route = controller.class.module_parent.to_s == 'Admin' %>
+  <% if !is_admin_route && @current_course && @current_role %>
 
-          <li
-            <% if controller.controller_name == 'assignments' ||
-              controller.controller_name == 'criteria' ||
-              controller.controller_name == 'ta_assignments' ||
-              controller.controller_name == 'tags' ||
-              controller.controller_name == 'submissions' ||
-              controller.controller_name == 'summaries' ||
-              controller.controller_name == 'groups' ||
-              controller.controller_name == 'graders' ||
-              controller.controller_name == 'marks_graders' ||
-              controller.controller_name == 'results' ||
-              controller.controller_name == 'annotation_categories' ||
-              controller.controller_name == 'grade_entry_forms' ||
-              controller.controller_name == 'automated_tests' ||
-              controller.controller_name == 'exam_templates' %>
-            class='active'
-            <% end %>>
-            <%= link_to Assignment.model_name.human.pluralize, course_assignments_path(@current_course) %>
-          </li>
+    <% if @current_role.instructor? %>
+      <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'show' %>'>
+        <%= link_to t('menu.dashboard'), course_path(@current_course) %>
+      </li>
 
-          <li
-            <% if controller.controller_name == 'instructors' ||
-              controller.controller_name == 'students' ||
-              controller.controller_name == 'tas' ||
-              controller.controller_name == 'sections' %>
+      <li <% if controller.controller_name == 'assignments' ||
+                controller.controller_name == 'criteria' ||
+                controller.controller_name == 'ta_assignments' ||
+                controller.controller_name == 'tags' ||
+                controller.controller_name == 'submissions' ||
+                controller.controller_name == 'summaries' ||
+                controller.controller_name == 'groups' ||
+                controller.controller_name == 'graders' ||
+                controller.controller_name == 'marks_graders' ||
+                controller.controller_name == 'results' ||
+                controller.controller_name == 'annotation_categories' ||
+                controller.controller_name == 'grade_entry_forms' ||
+                controller.controller_name == 'automated_tests' ||
+                controller.controller_name == 'exam_templates'%>
+            class='active'
+          <% end %>>
+        <%= link_to Assignment.model_name.human.pluralize, course_assignments_path(@current_course) %>
+      </li>
+
+      <li <% if controller.controller_name == 'instructors' ||
+                controller.controller_name == 'students' ||
+                controller.controller_name == 'tas' ||
+                controller.controller_name == 'sections' %>
+            class='active'
+          <% end %>>
+        <%= link_to User.model_name.human.pluralize, course_students_path(@current_course) %>
+      </li>
+    <% else %>
+      <li <% if controller.controller_name == 'assignments' ||
+                controller.controller_name == 'criteria' ||
+                controller.controller_name == 'ta_assignments' ||
+                controller.controller_name == 'submissions' ||
+                controller.controller_name == 'summaries' ||
+                controller.controller_name == 'groups' ||
+                controller.controller_name == 'results' ||
+                controller.controller_name == 'grade_entry_forms' ||
+                controller.controller_name == 'automated_tests' %>
+            class='active'
+          <% end %>>
+        <%= link_to t('menu.home'), course_assignments_path(@current_course) %>
+      </li>
+      <% unless @current_role.instructor? || @current_role.ta? %>
+        <li <% if controller.controller_name == 'course_summaries'%>
             class='active'
             <% end %>>
-            <%= link_to User.model_name.human.pluralize, course_students_path(@current_course) %>
-          </li>
-        <% else %>
-          <li
-            <% if controller.controller_name == 'assignments' ||
-              controller.controller_name == 'criteria' ||
-              controller.controller_name == 'ta_assignments' ||
-              controller.controller_name == 'submissions' ||
-              controller.controller_name == 'summaries' ||
-              controller.controller_name == 'groups' ||
-              controller.controller_name == 'results' ||
-              controller.controller_name == 'grade_entry_forms' ||
-              controller.controller_name == 'automated_tests' %>
-            class='active'
-            <% end %>>
-            <%= link_to t('menu.home'), course_assignments_path(@current_course) %>
-          </li>
-          <% unless @current_role.instructor? || @current_role.ta? %>
-            <li
-              <% if controller.controller_name == 'course_summaries' %>
+          <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
+        </li>
+        <% if Settings.rails.action_mailer.perform_deliveries %>
+          <li <% if controller.controller_name == 'students' %>
               class='active'
               <% end %>>
-              <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
-            </li>
-            <% if Settings.rails.action_mailer.perform_deliveries %>
-              <li
-                <% if controller.controller_name == 'students' %>
-                class='active'
-                <% end %>>
-                <%= link_to t('menu.email_settings'), settings_course_students_path(@current_course) %>
-              </li>
-            <% end %>
-          <% end %>
-        <% end %>
-
-        <% if @current_role.instructor? || @current_role.ta? %>
-          <li class='<%= "active" if controller.controller_name == 'notes' %>'>
-            <%= link_to Note.model_name.human.pluralize, course_notes_path(@current_course) %>
+            <%= link_to t('menu.email_settings'), settings_course_students_path(@current_course) %>
           </li>
         <% end %>
-
-        <% if @current_role.instructor? %>
-          <li
-            <% if controller.controller_name == 'course_summaries' ||
-              controller.controller_name == 'marking_schemes' %>
-            class='active'
-            <% end %>>
-            <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
-          </li>
-
-          <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'edit' %>'>
-            <%= link_to t('courses.settings'), edit_course_path(@current_course) %>
-          </li>
-        <% end %>
-      <% end %>
-      <% if @current_user.admin_user? %>
-        <li class='<%= "active" if is_admin_route %>'>
-          <%= link_to t('administration'), admin_path %>
-        </li>
       <% end %>
     <% end %>
-  </ul>
+
+    <% if @current_role.instructor? || @current_role.ta? %>
+      <li class='<%= "active" if controller.controller_name == 'notes' %>'>
+        <%= link_to Note.model_name.human.pluralize, course_notes_path(@current_course) %>
+      </li>
+    <% end %>
+
+    <% if @current_role.instructor? %>
+     <li <% if controller.controller_name == 'course_summaries' ||
+               controller.controller_name == 'marking_schemes' %>
+            class='active'
+          <% end %>>
+        <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
+      </li>
+
+      <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'edit' %>'>
+        <%= link_to t('courses.settings'), edit_course_path(@current_course) %>
+      </li>
+    <% end %>
+  <% end %>
+  <% if @current_user.admin_user? %>
+    <li class='<%= "active" if is_admin_route %>'>
+      <%= link_to t('administration'), admin_path %>
+    </li>
+  <% end %>
+</ul>
 </div>
