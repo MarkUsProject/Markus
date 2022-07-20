@@ -54,7 +54,7 @@
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
 - Sorted courses on the dashboard. (#6099)
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
-- Added summary statistics for criteria to summary stats page (#6100)
+- Added summary statistics for criteria (#6100)
 - Pass group name and starter files to the autotester when running tests (#6104)
 
 ## [v2.0.10]
