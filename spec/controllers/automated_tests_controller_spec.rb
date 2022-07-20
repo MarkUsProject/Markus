@@ -136,11 +136,8 @@ describe AutomatedTestsController do
       end
       context 'non empty automated test files' do
         before :each do
-          create_automated_test(assignment)
-        end
-        after :each do
-          # Clear uploaded autotest files to prepare for next test
           FileUtils.rm_rf(assignment.autotest_files_dir)
+          create_automated_test(assignment)
         end
         it 'should receive the appropriate files' do
           subject
