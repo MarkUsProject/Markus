@@ -125,7 +125,7 @@ class LtiDeploymentController < ApplicationController
     session[:lti_deployment_id] = lti_deployment.id
     if decoded_token[0].key?('https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice')
       name_and_roles_endpoint = decoded_token[0]['https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice']['context_memberships_url']
-      names_service = LtiService.find_or_create_by(lti_deployment: lti_deployment, service_type: 'namesroles')
+      names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
       names_service.update!(url: name_and_roles_endpoint)
     end
     redirect_to root_path
