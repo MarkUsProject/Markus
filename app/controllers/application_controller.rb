@@ -44,7 +44,6 @@ class ApplicationController < ActionController::Base
   def page_not_found
     if current_user
       render 'shared/error_page',
-             formats: [:html],
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: :not_found
     else
@@ -126,7 +125,6 @@ class ApplicationController < ActionController::Base
   def user_not_authorized
     if current_user
       render 'shared/error_page',
-             formats: [:html],
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
              status: :forbidden
     else
