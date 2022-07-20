@@ -3,4 +3,6 @@ en:
   activerecord:
     attributes:
       grouping:
+        inactive_groups: inactive group(s)
+        inactive_students: inactive student(s)
         test_tokens: Tokens available

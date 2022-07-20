@@ -340,7 +340,9 @@ class RawGroupsTable extends React.Component {
             if (member[1] === "pending") {
               status = <strong>({member[1]})</strong>;
             } else {
-              status = `(${member[1]}${member[2] ? ", inactive" : ""})`;
+              status = `(${member[1]}${
+                member[2] ? `, ${I18n.t("activerecord.attributes.user.inactive")}` : ""
+              })`;
             }
             return (
               <div key={`${row.original._id}-${member[0]}`}>
@@ -367,7 +369,9 @@ class RawGroupsTable extends React.Component {
       filterMethod: (filter, row) => {
         if (filter.value) {
           return row._original.members.some(member =>
-            `${member[1]}${member[2] ? ", inactive" : ""}`.includes(filter.value)
+            `${member[1]}${
+              member[2] ? `, ${I18n.t("activerecord.attributes.user.inactive")}` : ""
+            }`.includes(filter.value)
           );
         } else {
           return true;
@@ -538,12 +542,15 @@ class RawStudentsTable extends React.Component {
         Header: I18n.t("activerecord.attributes.user.user_name"),
         accessor: "user_name",
         id: "user_name",
-        Cell: props => (props.original.hidden ? props.value + " (inactive)" : props.value),
+        Cell: props =>
+          props.original.hidden
+            ? `${props.value} (${I18n.t("activerecord.attributes.user.inactive")})`
+            : props.value,
         filterMethod: (filter, row) => {
           if (filter.value) {
-            return `${row._original.user_name}${row._original.hidden ? ", inactive" : ""}`.includes(
-              filter.value
-            );
+            return `${row._original.user_name}${
+              row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.inactive")}` : ""
+            }`.includes(filter.value);
           } else {
             return true;
           }
@@ -630,7 +637,11 @@ class GroupsActionBox extends React.Component {
   render = () => {
     const showHiddenTooltip =
       this.props.hiddenStudentsCount && this.props.hiddenGroupsCount
-        ? `${this.props.hiddenStudentsCount} hidden student(s), ${this.props.hiddenGroupsCount} inactive group(s)`
+        ? `${this.props.hiddenStudentsCount} ${I18n.t(
+            "activerecord.attributes.user.inactive_students"
+          )}, ${this.props.hiddenGroupsCount} ${I18n.t(
+            "activerecord.attributes.grouping.inactive_groups"
+          )}`
         : "";
     // TODO: 'icons/bin_closed.png' for Group deletion icon
     return (
