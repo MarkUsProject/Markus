@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_15_174215) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_07_182822) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -82,7 +82,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_174215) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_id", null: false
-    t.string "lti_line_item_id"
     t.index ["course_id"], name: "index_assessments_on_course_id"
     t.index ["short_identifier", "course_id"], name: "index_assessments_on_short_identifier_and_course_id", unique: true
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
