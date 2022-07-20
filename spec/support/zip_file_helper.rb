@@ -2,15 +2,13 @@ shared_examples 'zip file download' do
   let(:dirs) { [] }
   let(:files) { {} }
   before :each do
+    FileUtils.rm_rf assignment.autotest_files_dir
     FileUtils.mkdir_p assignment.autotest_files_dir
     dirs.each { |dir_path| FileUtils.mkdir_p File.join(assignment.autotest_files_dir, dir_path) }
     files.each do |file_path, content|
       File.write(File.join(assignment.autotest_files_dir, file_path.to_s), content)
     end
     subject
-  end
-  after :each do
-    FileUtils.rm_rf assignment.autotest_files_dir
   end
   context 'when there are no test files' do
     it 'should return a zip containing no files' do
