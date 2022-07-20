@@ -1,9 +1,16 @@
 <% is_not_admin_route = controller.class.module_parent.to_s != 'Admin' %>
 <header id='header'>
-  <div id='course'>
-    <% if is_not_admin_route && @current_course %>
-      <strong><%= @current_course.display_name %></strong>
+  <div id = "container-for-logo-and-course">
+    <% if allowed_to?(:role_is_switched?) %>
+      <span id='logo-img'></span>
+    <% else %>
+      <a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.home') %>'></a>
     <% end %>
+    <div id='course'>
+      <% if is_not_admin_route && @current_course %>
+        <h1><%= @current_course.display_name %></h1>
+      <% end %>
+    </div>
   </div>
   <div id='user-info'>
     <ul>

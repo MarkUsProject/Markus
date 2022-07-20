@@ -35,6 +35,7 @@ nav {
   .main {
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
     padding: 0 $dimen-horizontal-nav;
 
     li,
@@ -51,6 +52,7 @@ nav {
 
 #logo-img {
   background: transparent asset-url('markus_logo.svg') no-repeat center center / 90px 30px;
+  display: block;
   margin-right: $dimen-horizontal-nav;
   min-height: 38px;
   width: 90px;
@@ -293,6 +295,13 @@ nav {
   #course {
     @include breakpoint(mobile) {
       border-bottom: 1px solid $primary-three;
+    }
+  }
+
+  #container-for-logo-and-course {
+    display: flex;
+    @include breakpoint(mobile) {
+      display: block;
     }
   }
 
