@@ -59,10 +59,9 @@ module Api
         render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
       else
         begin
-          if !params[:name].is_a?(String) || !params[:description].is_a?(String)
-            raise 'Invalid name or description'
-          end
-          tag.update!(name: params[:name] || tag.name, description: params[:description] || tag.description)
+          name = params[:name]
+          desc = params[:description]
+          tag.update!(name: name || tag.name, description: desc || tag.description)
         rescue StandardError => e
           render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
         else

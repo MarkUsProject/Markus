@@ -116,18 +116,21 @@ describe Api::TagsController do
       it 'should update a tags name if given a name and a valid tag' do
         put :update, params: { course_id: course.id, id: tag.id, name: 'new_name' }
         expect(response.status).to be(200)
+        tag.reload
         expect(tag.name).to eq('new_name')
       end
 
       it 'should update a tags description if given a name and a valid tag' do
         put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc' }
         expect(response.status).to be(200)
+        tag.reload
         expect(tag.description).to eq('new_desc')
       end
 
       it 'should update a tags name and description if given a name and a valid tag' do
         put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc', name: 'new_name' }
         expect(response.status).to be(200)
+        tag.reload
         expect(tag.description).to eq('new_desc')
         expect(tag.name).to eq('new_name')
       end
@@ -135,11 +138,6 @@ describe Api::TagsController do
       it 'should throw 404 if tag does not exist' do
         put :update, params: { course_id: course.id, id: tag.id + 1, description: 'new_desc' }
         expect(response.status).to be(404)
-      end
-
-      it 'should throw 422 if the parameter is invalid does not exist' do
-        put :update, params: { course_id: course.id, id: tag.id, description: grouping }
-        expect(response.status).to be(422)
       end
     end
     context 'DELETE destroy' do
