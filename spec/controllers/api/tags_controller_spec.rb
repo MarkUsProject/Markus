@@ -25,12 +25,8 @@ describe Api::TagsController do
       expect(response).to have_http_status(403)
     end
 
-    it 'should fail to authenticate a PUT add_tag request' do
-      put :add_tag, params: { course_id: course.id, id: tag.id, result_id: grouping.results.first }
-      expect(response).to have_http_status(403)
-    end
-    it 'should fail to authenticate a PUT remove_tag request' do
-      put :remove_tag, params: { course_id: course.id, id: tag.id, result_id: grouping.results.first }
+    it 'should fail to authenticate a DELETE destroy request' do
+      delete :destroy, params: { course_id: course.id, id: tag.id }
       expect(response).to have_http_status(403)
     end
   end
@@ -111,6 +107,56 @@ describe Api::TagsController do
         post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id,
                                 grouping_id: grouping.id + 1 }
         expect(response.status).to be(422)
+      end
+    end
+    context 'PUT update' do
+      before :each do
+        request.env['HTTP_ACCEPT'] = 'application/xml'
+      end
+      it 'should update a tags name if given a name and a valid tag' do
+        put :update, params: { course_id: course.id, id: tag.id, name: 'new_name' }
+        expect(response.status).to be(200)
+        expect(tag.name).to eq('new_name')
+      end
+
+      it 'should update a tags description if given a name and a valid tag' do
+        put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc' }
+        expect(response.status).to be(200)
+        expect(tag.description).to eq('new_desc')
+      end
+
+      it 'should update a tags name and description if given a name and a valid tag' do
+        put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc', name: 'new_name' }
+        expect(response.status).to be(200)
+        expect(tag.description).to eq('new_desc')
+        expect(tag.name).to eq('new_name')
+      end
+
+      it 'should throw 404 if tag does not exist' do
+        put :update, params: { course_id: course.id, id: tag.id + 1, description: 'new_desc' }
+        expect(response.status).to be(404)
+      end
+
+      it 'should throw 422 if the parameter is invalid does not exist' do
+        put :update, params: { course_id: course.id, id: tag.id, description: grouping }
+        expect(response.status).to be(422)
+      end
+    end
+    context 'DELETE destroy' do
+      before :each do
+        request.env['HTTP_ACCEPT'] = 'application/xml'
+      end
+      it 'should send 404 back if the tag does not exist' do
+        delete :destroy, params: { course_id: course.id, id: tag.id + 1 }
+        expect(response.status).to be(404)
+      end
+
+      it 'should delete a tag' do
+        old_id = tag.id
+        delete :destroy, params: { course_id: course.id, id: tag.id }
+        expect(response.status).to be(200)
+
+        expect(Tag.find_by(id: old_id)).to be(nil)
       end
     end
   end

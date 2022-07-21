@@ -17,12 +17,7 @@ Rails.application.routes.draw do
       member do
         put 'update_autotest_url'
       end
-      resources :tags, only: [:index, :create, :update, :destroy, :edit] do
-        member do
-          put 'add_tag'
-          put 'remove_tag'
-        end
-      end
+      resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
           post 'create_or_unhide'
@@ -39,6 +34,8 @@ Rails.application.routes.draw do
           collection do
             get 'annotations'
             get 'group_ids_by_name'
+            put 'add_tag'
+            put 'remove_tag'
           end
           resources :submission_files, only: [:index, :create] do
             collection do

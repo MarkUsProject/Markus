@@ -55,28 +55,32 @@ module Api
 
     def update
       tag = Tag.find(params[:id])
-      tag.update(params.require(:tag).permit(:name, :description))
-
-      respond_with tag, location: -> { request.headers['Referer'] || root_path }
+      if tag.nil?
+        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+      else
+        begin
+          if !params[:name].is_a?(String) || !params[:description].is_a?(String)
+            raise 'Invalid name or description'
+          end
+          tag.update!(name: params[:name] || tag.name, description: params[:description] || tag.description)
+        rescue StandardError => e
+          render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+        else
+          render 'shared/http_status',
+                 locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        end
+      end
     end
 
     def destroy
-      Tag.find(params[:id]).destroy
-      head :ok
-    end
-
-    def add_tag
-      result = Result.find(params[:result_id])
-      tag = Tag.find(params[:id])
-      result.submission.grouping.tags << tag
-      head :ok
-    end
-
-    def remove_tag
-      result = Result.find(params[:result_id])
-      tag = Tag.find(params[:tag_id])
-      result.submission.grouping.tags.destroy(tag)
-      head :ok
+      tag = Tag.find_by(id: params[:id])
+      if tag.nil?
+        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+      else
+        tag.destroy!
+        render 'shared/http_status',
+               locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      end
     end
   end
 end
