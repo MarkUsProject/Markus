@@ -23,7 +23,8 @@ class LtiDeployment < ApplicationRecord
           display_name: user['name'],
           email: user['email'],
           lti_user_id: user['user_id'],
-          time_zone: Time.zone.name }
+          time_zone: Time.zone.name,
+          type: 'EndUser' }
       end
     end
     if user_data.empty?
@@ -33,9 +34,8 @@ class LtiDeployment < ApplicationRecord
                                returning: %w[id user_name], unique_by: :user_name)
 
     users.each do |user|
-      user[:lti_user_id] = user_data.find do |data|
-                             data['user_name'] == user[:user_name]
-                           end [:lti_user_id]
+      matched_user = user_data.find { |data| data[:user_name] == user['user_name'] }
+      user[:lti_user_id] = matched_user[:lti_user_id]
     end
     Student.upsert_all(users.map do |user|
                          { user_id: user['id'], course_id: course.id, type: 'Student' }

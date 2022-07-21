@@ -51,18 +51,30 @@ describe LtiDeployment do
                                                                  roles:
                                                          [
                                                            'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
-                                                         ] }]
+                                                         ] },
+                                                               { status: status, name: 'second user',
+                                                                 picture: 'http://example.com/picture.png',
+                                                                 given_name: student_first_name,
+                                                                 family_name: student_last_name,
+                                                                 lis_person_sourcedid: 'second_username',
+                                                                 email: student_email,
+                                                                 user_id: 'another_user_id',
+                                                                 lti11_legacy_user_id: 'legacy_lti_user_id',
+                                                                 roles:
+                                                                   [
+                                                                     'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                                   ] }]
                                                    }.to_json)
     end
-    it 'does not create an additional user' do
+    it 'creates additional users' do
       lti_service_namesrole.lti_deployment.get_students
-      expect(User.count).to eq(1)
+      expect(User.count).to eq(2)
     end
-    it 'does not create an additional role' do
+    it 'creates additional roles' do
       lti_service_namesrole.lti_deployment.get_students
-      expect(Role.count).to eq(1)
+      expect(Role.count).to eq(2)
     end
-    it 'creates an lti user' do
+    it 'creates lti users' do
       lti_service_namesrole.lti_deployment.get_students
       expect(LtiUser.first.user).to eq(student.user)
     end
@@ -70,11 +82,15 @@ describe LtiDeployment do
       lti_service_namesrole.lti_deployment.get_students
       expect(LtiUser.first.lti_user_id).to eq('lti_user_id')
     end
+    it 'saves a second correct lti id' do
+      lti_service_namesrole.lti_deployment.get_students
+      expect(LtiUser.second.lti_user_id).to eq('another_user_id')
+    end
     context 'with students who are not users on markus' do
       let(:student_user_name) { 'lti_student' }
       it 'creates a new user' do
         lti_service_namesrole.lti_deployment.get_students
-        expect(User.count).to eq(2)
+        expect(User.count).to eq(3)
       end
       it 'sets the correct username' do
         lti_service_namesrole.lti_deployment.get_students
@@ -94,7 +110,7 @@ describe LtiDeployment do
       end
       it 'creates a new role' do
         lti_service_namesrole.lti_deployment.get_students
-        expect(Role.count).to eq(2)
+        expect(Role.count).to eq(3)
       end
       it 'creates a new role with the course' do
         expect(Role.first.course).to eq(lti_service_namesrole.lti_deployment.course)
