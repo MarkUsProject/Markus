@@ -55,6 +55,7 @@
 - Sorted courses on the dashboard. (#6099)
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Pass group name and starter files to the autotester when running tests (#6104)
+- Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
