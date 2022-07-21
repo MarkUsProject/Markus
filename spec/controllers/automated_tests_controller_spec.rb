@@ -164,8 +164,10 @@ describe AutomatedTestsController do
       end
     end
     context 'POST upload_files' do
-      before { post_as role, :upload_files, params: params }
-      after { FileUtils.rm_r assignment.autotest_files_dir }
+      before do
+        FileUtils.rm_r assignment.autotest_files_dir
+        post_as role, :upload_files, params: params
+      end
       context 'uploading a zip file' do
         let(:params) do
           { course_id: assignment.course.id, assignment_id: assignment.id,
