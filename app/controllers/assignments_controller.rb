@@ -379,11 +379,34 @@ class AssignmentsController < ApplicationController
       { label: "#{ta.display_name} (#{num_marked_label})",
         data: ta.grade_distribution_array(assignment, intervals) }
     end
-    render json: {
+    json_data = {
       summary: summary,
       assignment_data: assignment_data,
       ta_data: { labels: ta_labels, datasets: ta_datasets }
     }
+    if params[:get_criteria_data] == 'true'
+      criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      criteria_datasets = assignment.criteria.map do |criterion|
+        { label: criterion.name,
+          data: criterion.grade_distribution_array(intervals),
+          hidden: true }
+      end
+      criteria_summary = assignment.criteria.map do |criterion|
+        criterion_grades = criterion.grades_array
+        {
+          name: criterion.name,
+          average: criterion.average || 0,
+          median: criterion.median || 0,
+          max_mark: criterion.max_mark || 0,
+          standard_deviation: criterion.standard_deviation || 0,
+          position: criterion.position,
+          num_zeros: criterion_grades.count(&:zero?)
+        }
+      end
+      json_data[:criteria_summary] = criteria_summary
+      json_data[:criteria_data] = { labels: criteria_labels, datasets: criteria_datasets }
+    end
+    render json: json_data
   end
 
   def view_summary
