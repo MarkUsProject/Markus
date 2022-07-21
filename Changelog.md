@@ -54,6 +54,7 @@
 - Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
 - Sorted courses on the dashboard. (#6099)
+- Added summary statistics for criteria (#6100)
 - Pass group name and starter files to the autotester when running tests (#6104)
 - Added explicit status and filtering for inactive students and groups in grouping page. (#6112)
 

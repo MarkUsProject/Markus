@@ -37,4 +37,18 @@
   .summary-stats-label {
     font-size: 1vw;
   }
+
+  .criteria-summary-table {
+    .criteria-stat-breakdown {
+      column-gap: 10px;
+      margin-bottom: 10px;
+      margin-left: 40px;
+      margin-top: 10px;
+      row-gap: 1em;
+    }
+
+    span {
+      font-size: small;
+    }
+  }
 }
