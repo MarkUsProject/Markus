@@ -25,6 +25,7 @@ class AssignmentSummary extends React.Component {
               <AssignmentChart
                 course_id={this.props.course_id}
                 assessment_id={this.props.assessment_id}
+                show_criteria_stats={true}
               />
             </div>
           </TabPanel>

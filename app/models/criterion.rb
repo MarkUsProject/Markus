@@ -173,6 +173,49 @@ class Criterion < ApplicationRecord
     false
   end
 
+  # Returns an array of all marks for this criteria that are not nil and are for a completed submission
+  def grades_array
+    return @grades_array if defined? @grades_array
+    results = self.assignment.current_results
+                  .where(marking_state: Result::MARKING_STATES[:complete])
+    @grades_array = self.marks.where.not(mark: nil).where(result_id: results.ids).pluck(:mark)
+  end
+
+  def grade_distribution_array(intervals = 20)
+    data = grades_array.map { |mark| mark / self.max_mark * 100 }
+    data.extend(Histogram)
+    histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count { |x| x < 1 }
+    distribution[-1] = distribution.last + data.count { |x| x > 100 }
+
+    distribution
+  end
+
+  # Returns the raw average grade of marks given for this criteria based on the marks given by self.grades_array
+  def average
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.mean(marks)
+  end
+
+  # Returns the raw median grade of marks given for this criteria based on the marks given by self.grades_array
+  def median
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.median(marks)
+  end
+
+  # Returns the raw standard deviation of marks given for this criteria based on the marks given by self.grades_array
+  def standard_deviation
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.standard_deviation(marks)
+  end
+
   private
 
   # Checks if the criterion is visible to either the ta or the peer reviewer.
