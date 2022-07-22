@@ -1144,6 +1144,46 @@ describe AssignmentsController do
         end
       end
     end
+
+    context 'criteria_summary' do
+      let(:params) { { course_id: assignment.course.id, id: assignment.id, get_criteria_data: true } }
+
+      it 'should contain the right keys' do
+        keys = response.parsed_body['criteria_summary'].first.keys
+        expect(keys).to contain_exactly('name',
+                                        'average',
+                                        'median',
+                                        'max_mark',
+                                        'standard_deviation',
+                                        'position',
+                                        'num_zeros')
+      end
+
+      it 'should contain the right values' do
+        summary = response.parsed_body['criteria_summary'].first
+        criterion = assignment.criteria.first
+        expected = { name: criterion.name,
+                     average: criterion.average,
+                     median: criterion.median || 0,
+                     max_mark: criterion.max_mark || 0,
+                     standard_deviation: criterion.standard_deviation || 0,
+                     position: criterion.position,
+                     num_zeros: criterion.grades_array.count(&:zero?) }
+        expect(summary).to eq expected.as_json
+      end
+    end
+
+    context 'criteria_data' do
+      let(:params) { { course_id: assignment.course.id, id: assignment.id, get_criteria_data: true } }
+
+      it 'should contain the right data' do
+        expected_data = assignment.criteria.map(&:grade_distribution_array)
+        received_data = response.parsed_body['criteria_data']['datasets'].map do |data_response|
+          data_response['data']
+        end
+        expect(received_data).to match_array(expected_data)
+      end
+    end
   end
 
   describe '#switch' do
