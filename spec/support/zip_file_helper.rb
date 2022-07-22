@@ -10,6 +10,9 @@ shared_examples 'zip file download' do
     end
     subject
   end
+  after :each do
+    FileUtils.rm_rf assignment.autotest_files_dir
+  end
   context 'when there are no test files' do
     it 'should return a zip containing no files' do
       check_zip_file_count(content, 0, 0)

@@ -139,6 +139,10 @@ describe AutomatedTestsController do
           FileUtils.rm_rf(assignment.autotest_files_dir)
           create_automated_test(assignment)
         end
+        after :each do
+          # Clear uploaded autotest files to prepare for next test
+          FileUtils.rm_rf(assignment.autotest_files_dir)
+        end
         it 'should receive the appropriate files' do
           subject
           received_content = []
@@ -168,6 +172,7 @@ describe AutomatedTestsController do
         FileUtils.rm_r assignment.autotest_files_dir
         post_as role, :upload_files, params: params
       end
+      after { FileUtils.rm_r assignment.autotest_files_dir }
       context 'uploading a zip file' do
         let(:params) do
           { course_id: assignment.course.id, assignment_id: assignment.id,
