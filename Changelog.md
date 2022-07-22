@@ -64,6 +64,8 @@
 - Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
 - Ensure each file viewer has independent syntax highlighting (#6139)
+- Replace standalone ruby script to check for repository access with database function (#6116)
+- Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
