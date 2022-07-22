@@ -56,6 +56,7 @@
 - Sorted courses on the dashboard. (#6099)
 - Added summary statistics for criteria (#6100)
 - Pass group name and starter files to the autotester when running tests (#6104)
+- Disabled admin editing of course name and allowed instructors to edit display name (#6111)
 - Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 
 ## [v2.0.10]
