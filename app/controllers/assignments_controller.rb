@@ -381,7 +381,7 @@ class AssignmentsController < ApplicationController
     end
     json_data = {
       summary: summary,
-      assignment_data: assignment_data,
+      assessment_data: assignment_data,
       ta_data: { labels: ta_labels, datasets: ta_datasets }
     }
     if params[:get_criteria_data] == 'true'

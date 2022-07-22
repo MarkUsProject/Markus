@@ -252,20 +252,22 @@ class GradeEntryFormsController < ApplicationController
     num_students = grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count
     num_entries = "#{num_non_nil}/#{num_students}"
 
-    info_summary = {
+    summary = {
       name: "#{grade_entry_form.short_identifier}: #{grade_entry_form.description}",
       date: I18n.l(grade_entry_form.due_date),
-      average: grade_entry_form.results_average || 0,
-      median: grade_entry_form.results_median || 0,
+      average: grade_entry_form.results_average(points: true) || 0,
+      median: grade_entry_form.results_median(points: true) || 0,
+      standard_deviation: grade_entry_form.results_standard_deviation || 0,
+      max_mark: grade_entry_form.max_mark,
       num_entries: num_entries,
       num_fails: grade_entry_form.results_fails,
       num_zeros: grade_entry_form.results_zeros
     }
 
     render json: {
-      grade_dist_data: grade_dist_data,
+      assessment_data: grade_dist_data,
       column_breakdown_data: column_breakdown_data,
-      info_summary: info_summary
+      summary: summary
     }
   end
 

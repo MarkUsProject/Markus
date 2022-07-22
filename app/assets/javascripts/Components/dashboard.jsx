@@ -17,36 +17,31 @@ class Dashboard extends React.Component {
 
   setAssessmentName = name => this.setState({assessment_name: name});
 
+  renderAssessmentChart = headerPath => {
+    return (
+      <React.Fragment>
+        <h2>
+          <a href={headerPath(this.props.course_id, this.state.assessment_id)}>
+            {this.state.assessment_name}
+          </a>
+        </h2>
+        <AssignmentChart
+          course_id={this.props.course_id}
+          assessment_id={this.state.assessment_id}
+          set_assessment_name={this.setAssessmentName}
+          assessment_type={this.state.assessment_type}
+        />
+      </React.Fragment>
+    );
+  };
+
   render() {
     if (this.state.display_course_summary) {
       return <CourseSummaryChart course_id={this.props.course_id} />;
     } else if (this.state.assessment_type === "Assignment") {
-      return (
-        <React.Fragment>
-          <h2>
-            <a
-              href={Routes.browse_course_assignment_submissions_path(
-                this.props.course_id,
-                this.state.assessment_id
-              )}
-            >
-              {this.state.assessment_name}
-            </a>
-          </h2>
-          <AssignmentChart
-            course_id={this.props.course_id}
-            assessment_id={this.state.assessment_id}
-            set_assessment_name={this.setAssessmentName}
-          />
-        </React.Fragment>
-      );
+      return this.renderAssessmentChart(Routes.browse_course_assignment_submissions_path);
     } else if (this.state.assessment_type === "GradeEntryForm") {
-      return (
-        <GradeEntryFormChart
-          course_id={this.props.course_id}
-          assessment_id={this.state.assessment_id}
-        />
-      );
+      return this.renderAssessmentChart(Routes.edit_course_grade_entry_form_path);
     } else {
       return "";
     }
