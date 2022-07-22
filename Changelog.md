@@ -56,6 +56,7 @@
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Added summary statistics for criteria (#6100)
 - Pass group name and starter files to the autotester when running tests (#6104)
+- Disabled admin editing of course name and allowed instructors to edit display name (#6111)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
