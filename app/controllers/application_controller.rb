@@ -43,6 +43,11 @@ class ApplicationController < ActionController::Base
 
   def page_not_found
     if current_user
+      if current_user.admin_user?
+        @current_role ||= AdminRole.find_or_create_by(user: current_user, course: current_course)
+      else
+        @current_role ||= Role.find_by(user: current_user, course: current_course)
+      end
       render 'shared/error_page',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: :not_found
