@@ -56,7 +56,7 @@
 - Sorted courses on the dashboard. (#6099)
 - Added summary statistics for criteria (#6100)
 - Pass group name and starter files to the autotester when running tests (#6104)
-- Added explicit status and filtering for inactive students and groups in grouping page. (#6112)
+- Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

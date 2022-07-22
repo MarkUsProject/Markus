@@ -44,16 +44,26 @@ class GroupsManager extends React.Component {
     }).then(res => {
       this.studentsTable.resetSelection();
       this.groupsTable.resetSelection();
+      var inactive_groups_count = 0;
+      res.groups.forEach(group => {
+        if (group.members.every(member => member[2])) {
+          group.inactive = true;
+          inactive_groups_count += 1;
+        } else {
+          group.inactive = false;
+        }
+        group.members.forEach(member => {
+          member.display_label = `(${member[1]}${
+            member[2] ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
+          })`;
+        });
+      });
       this.setState({
-        groups: res.groups.map(group => ({
-          ...group,
-          inactive: group.members.every(member => member[2]),
-        })),
+        groups: res.groups,
         students: res.students || [],
         loading: false,
         hidden_students_count: res.students.filter(student => student.hidden).length,
-        inactive_groups_count: res.groups.filter(group => group.members.every(member => member[2]))
-          .length,
+        inactive_groups_count: inactive_groups_count,
       });
     });
   };
@@ -340,9 +350,7 @@ class RawGroupsTable extends React.Component {
             if (member[1] === "pending") {
               status = <strong>({member[1]})</strong>;
             } else {
-              status = `(${member[1]}${
-                member[2] ? `, ${I18n.t("activerecord.attributes.user.inactive")}` : ""
-              })`;
+              status = member.display_label;
             }
             return (
               <div key={`${row.original._id}-${member[0]}`}>
@@ -370,7 +378,7 @@ class RawGroupsTable extends React.Component {
         if (filter.value) {
           return row._original.members.some(member =>
             `${member[1]}${
-              member[2] ? `, ${I18n.t("activerecord.attributes.user.inactive")}` : ""
+              member[2] ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
             }`.includes(filter.value)
           );
         } else {
@@ -478,12 +486,8 @@ class RawGroupsTable extends React.Component {
   ];
 
   static getDerivedStateFromProps(props, state) {
-    let filtered = [];
-    for (let i = 0; i < state.filtered.length; i++) {
-      if (state.filtered[i].id !== "inactive") {
-        filtered.push(state.filtered[i]);
-      }
-    }
+    let filtered = state.filtered.filter(group => group.id !== "inactive");
+
     if (!props.showInactive) {
       filtered.push({id: "inactive", value: false});
     }
@@ -544,18 +548,18 @@ class RawStudentsTable extends React.Component {
         id: "user_name",
         Cell: props =>
           props.original.hidden
-            ? `${props.value} (${I18n.t("activerecord.attributes.user.inactive")})`
+            ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
             : props.value,
         filterMethod: (filter, row) => {
           if (filter.value) {
             return `${row._original.user_name}${
-              row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.inactive")}` : ""
+              row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
             }`.includes(filter.value);
           } else {
             return true;
           }
         },
-        sortable: false,
+        sortable: true,
         minWidth: 90,
       },
       {
@@ -635,14 +639,14 @@ const StudentsTable = withSelection(RawStudentsTable);
 
 class GroupsActionBox extends React.Component {
   render = () => {
-    const showHiddenTooltip =
-      this.props.hiddenStudentsCount && this.props.hiddenGroupsCount
-        ? `${this.props.hiddenStudentsCount} ${I18n.t(
-            "activerecord.attributes.grouping.inactive_students"
-          )}, ${this.props.hiddenGroupsCount} ${I18n.t(
-            "activerecord.attributes.grouping.inactive_groups"
-          )}`
-        : "";
+    var showHiddenTooltip = "";
+    if (this.props.hiddenStudentsCount && this.props.hiddenGroupsCount) {
+      showHiddenTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_students", {
+        count: this.props.hiddenStudentsCount,
+      })}, ${I18n.t("activerecord.attributes.grouping.inactive_groups", {
+        count: this.props.hiddenGroupsCount,
+      })}`;
+    }
     // TODO: 'icons/bin_closed.png' for Group deletion icon
     return (
       <div className="rt-action-box">

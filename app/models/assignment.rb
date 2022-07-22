@@ -298,7 +298,7 @@ class Assignment < Assessment
   def all_grouping_data
     student_data = self.course
                        .students
-                       .joins(user: :roles)
+                       .joins(:user)
                        .pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
