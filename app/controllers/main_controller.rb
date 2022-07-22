@@ -182,4 +182,13 @@ class MainController < ApplicationController
   def implicit_authorization_target
     OpenStruct.new policy_class: MainPolicy
   end
+
+  def resolve_layout
+    case action_name
+    when 'page_not_found'
+      'content'
+    else
+      'main'
+    end
+  end
 end
