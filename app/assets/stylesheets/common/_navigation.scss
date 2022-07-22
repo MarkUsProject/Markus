@@ -285,6 +285,7 @@ nav {
   }
 
   #course {
+    padding-top: 1.25em;
     @include breakpoint(mobile) {
       display: block;
       float: none !important;
@@ -303,6 +304,11 @@ nav {
     @include breakpoint(mobile) {
       display: block;
     }
+  }
+
+  h1 {
+    font-size: 1.1em;
+    font-weight: bold;
   }
 
   #user-info .dropdown {
