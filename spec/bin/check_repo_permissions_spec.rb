@@ -1,26 +1,15 @@
 describe 'Check Repo Permissions Standalone File' do
-  # Disable transactional tests and clean up manually because we need models to be both saved AND committed to the
-  # database in order for the standalone script to be able to see the changes (uncommitted changes are not visible).
-  self.use_transactional_tests = false
-  after do
-    tables = ApplicationRecord.connection.tables - %w[schema_migrations ar_internal_metadata]
-    ActiveRecord::Base.connection.truncate_tables(*tables)
-  end
-
   let(:grouping) { create :grouping }
   let(:repo_path) { "#{grouping.course.name}/#{grouping.group.repo_name}.git" }
   let(:section) { create :section }
 
   context 'invalid args' do
-    it 'should fail when there is an arg missing' do
-      expect(script_success?('test', '')).to be_falsy
+    it 'should report an error when there is a path missing' do
+      expect { exec_query('test', 'abc.git') }.to raise_exception(ActiveRecord::StatementInvalid)
     end
     context 'when the repo path does not include the course name' do
-      it 'should fail' do
-        expect(script_success?('test', 'abc.git')).to be_falsy
-      end
       it 'should report an error' do
-        expect(exec_script('test', 'abc.git').second.strip).to eq 'repository path does not include course directory'
+        expect { exec_query('test', 'abc.git') }.to raise_exception(ActiveRecord::StatementInvalid)
       end
     end
   end
@@ -29,7 +18,7 @@ describe 'Check Repo Permissions Standalone File' do
       expect(script_success?('test', repo_path)).to be_falsy
     end
     it 'should report an error' do
-      expect(exec_script('test', repo_path).second.strip).to eq 'user not found'
+      expect { exec_query('test', 'abc.git') }.to raise_exception(ActiveRecord::StatementInvalid)
     end
   end
   context 'role is an Instructor' do
@@ -215,11 +204,10 @@ describe 'Check Repo Permissions Standalone File' do
   end
 end
 
-def exec_script(user_name, repo_path)
-  exec_path = Rails.root.join('bin/check_repo_permissions.rb')
-  Open3.capture3({ RAILS_ENV: Rails.env }.stringify_keys, "#{exec_path} #{user_name} #{repo_path}")
+def exec_query(user_name, repo_path)
+  ActiveRecord::Base.connection.execute("SELECT check_repo_permissions('#{user_name}', '#{repo_path}')")
 end
 
 def script_success?(user_name, repo_path)
-  exec_script(user_name, repo_path).last.exitstatus.zero?
+  exec_query(user_name, repo_path).first.[]('check_repo_permissions')
 end
