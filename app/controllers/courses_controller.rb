@@ -26,7 +26,7 @@ class CoursesController < ApplicationController
   def edit; end
 
   def update
-    @current_course.update(params.require(:course).permit(:is_hidden))
+    @current_course.update(params.require(:course).permit(:is_hidden, :display_name))
     respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
 
