@@ -282,10 +282,10 @@ module Api
     end
 
     def add_tag
-      tag = Tag.find_by(id: params[:tag_id])
-      grouping = Grouping.find_by(id: params[:grouping_id])
+      grouping = self.grouping
+      tag = self.assignment.tags.find_by(id: params[:tag_id])
       if tag.nil? || grouping.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+        render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
       else
         grouping.tags << tag
         render 'shared/http_status', locals: { code: '200', message:
@@ -294,10 +294,11 @@ module Api
     end
 
     def remove_tag
-      tag = Tag.find_by(id: params[:tag_id])
-      grouping = Grouping.find_by(id: params[:grouping_id])
+      grouping = self.grouping
+      tag = self.assignment.tags.find_by(id: params[:tag_id])
+
       if tag.nil? || grouping.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+        render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
       else
         grouping.tags.destroy(tag)
         render 'shared/http_status', locals: { code: '200', message:

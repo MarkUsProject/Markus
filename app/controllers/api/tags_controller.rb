@@ -29,20 +29,14 @@ module Api
       end
     end
 
-    def edit
-      @tag = Tag.find(params[:id])
-    end
-
     # Creates a new instance of the tag.
     def create
       params.permit(:name, :description)
       begin
-        new_tag = Tag.new(name: params[:name], description: params[:description],
-                          course: Course.find_by(id: params[:course_id]),
-                          role: current_role, assessment: Assessment.find_by(id: params[:assignment_id]))
-
+        assignment = current_course.assignments.find_by(id: params[:assignment_id])
+        new_tag = Tag.new(course: current_course, role: current_role, assessment: assignment, **self.tag_params)
         if new_tag.save && params[:grouping_id]
-          grouping = Grouping.find(params[:grouping_id])
+          grouping = assignment.groupings.find(params[:grouping_id])
           grouping.tags << new_tag
         end
       rescue StandardError => e
@@ -56,11 +50,13 @@ module Api
     def update
       tag = Tag.find(params[:id])
       if tag.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+        render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
       else
         begin
           name = params[:name]
           desc = params[:description]
+
+          # not using tag_params so it can default to the previous name/description if nil
           tag.update!(name: name || tag.name, description: desc || tag.description)
         rescue StandardError => e
           render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
@@ -74,12 +70,18 @@ module Api
     def destroy
       tag = Tag.find_by(id: params[:id])
       if tag.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'User was not found' }, status: :not_found
+        render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
       else
         tag.destroy!
         render 'shared/http_status',
                locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       end
+    end
+
+    private
+
+    def tag_params
+      { name: params[:name] || '', description: params[:description] || '' }
     end
   end
 end

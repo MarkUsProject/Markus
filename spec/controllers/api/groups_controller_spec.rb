@@ -600,28 +600,30 @@ describe Api::GroupsController do
     end
     context 'PUT remove_tag' do
       let(:response_type) { 'application/xml' }
-      let(:grouping) { create :grouping, assignment: assignment }
+      let(:group) { create :group, assignments: [assignment], course: course }
       let!(:tag) { create :tag, groupings: [grouping] }
+      let(:grouping) { create :grouping, group: group }
+
       before do
         request.env['HTTP_ACCEPT'] = response_type
       end
 
       it 'should let the user remove a tag' do
-        put :remove_tag, params: { assignment_id: assignment.id, grouping_id: grouping.id,
+        put :remove_tag, params: { assignment_id: assignment.id, id: group.id,
                                    course_id: course.id, tag_id: tag.id }
         expect(response.status).to be(200)
         expect(grouping.tags.first).to eq(nil)
       end
 
       it 'should throw a 404 if the grouping id is invalid not found' do
-        put :remove_tag, params: { assignment_id: assignment.id, grouping_id: grouping.id + 1,
+        put :remove_tag, params: { assignment_id: assignment.id, id: group.id + 1,
                                    course_id: course.id, tag_id: tag.id }
         expect(response.status).to be(404)
         expect(grouping.tags.first).to eq(tag)
       end
 
       it 'should throw a 404 if the tag id is not found' do
-        put :remove_tag, params: { assignment_id: assignment.id, grouping_id: grouping.id,
+        put :remove_tag, params: { assignment_id: assignment.id, id: group.id,
                                    course_id: course.id, tag_id: tag.id + 1 }
         expect(response.status).to be(404)
         expect(grouping.tags.first).to eq(tag)
@@ -630,27 +632,28 @@ describe Api::GroupsController do
 
     context 'PUT add_tag' do
       let(:response_type) { 'application/xml' }
-      let(:grouping) { create :grouping, assignment: assignment }
+      let(:group) { create :group, assignment: assignment }
+      let(:grouping) { create :grouping, group: group }
       before do
         request.env['HTTP_ACCEPT'] = response_type
       end
 
       it 'should let the user add a tag' do
-        put :add_tag, params: { assignment_id: assignment.id, grouping_id: grouping.id,
+        put :add_tag, params: { assignment_id: assignment.id, group_id: group.id,
                                 course_id: course.id, tag_id: tag.id }
         expect(response.status).to be(200)
         expect(grouping.tags.first).to eq(tag)
       end
 
       it 'should throw a 404 if the grouping id is invalid not found' do
-        put :add_tag, params: { assignment_id: assignment.id, grouping_id: grouping.id + 1,
+        put :add_tag, params: { assignment_id: assignment.id, group_id: group.id + 1,
                                 course_id: course.id, tag_id: tag.id }
         expect(response.status).to be(404)
         expect(grouping.tags.first).to eq(nil)
       end
 
       it 'should throw a 404 if the tag id is not found' do
-        put :add_tag, params: { assignment_id: assignment.id, grouping_id: grouping.id,
+        put :add_tag, params: { assignment_id: assignment.id, group_id: group.id,
                                 course_id: course.id, tag_id: tag.id + 1 }
         expect(response.status).to be(404)
         expect(grouping.tags.first).to eq(nil)
