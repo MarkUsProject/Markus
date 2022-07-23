@@ -6,6 +6,7 @@ en:
   average: Average
   class_average: Class average
   class_median: Class median
+  criteria_grade_distribution: Criteria Grade Distribution
   grade_distribution: Grades Distribution
   grader_distribution: Grader Distribution
   median: Median
