@@ -230,7 +230,7 @@ class RawFileManager extends RawFileBrowser {
   }
 }
 
-class FileManagerHeader extends Headers.TableHeader {
+class FileManagerHeader extends FileRenderers.RawTableFile {
   render() {
     const header = (
       <tr
@@ -250,9 +250,7 @@ class FileManagerHeader extends Headers.TableHeader {
       typeof this.props.browserProps.moveFile === "function" ||
       typeof this.props.browserProps.moveFolder === "function"
     ) {
-      return header;
-      // TODO: look into activating the following instead.
-      // return this.props.connectDropTarget(header);
+      return this.connectDND(header);
     } else {
       return header;
     }
@@ -378,6 +376,18 @@ FileManagerFile = DragSource(
     BaseFileConnectors.targetSource,
     BaseFileConnectors.targetCollect
   )(FileManagerFile)
+);
+
+FileManagerHeader = DragSource(
+  "file",
+  BaseFileConnectors.dragSource,
+  BaseFileConnectors.dragCollect
+)(
+  DropTarget(
+    ["file", "folder", NativeTypes.FILE],
+    BaseFileConnectors.targetSource,
+    BaseFileConnectors.targetCollect
+  )(FileManagerHeader)
 );
 
 class FileManager extends React.Component {
