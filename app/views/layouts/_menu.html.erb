@@ -1,7 +1,7 @@
 <div class='main'>
 <ul>
   <% is_admin_route = controller.class.module_parent.to_s == 'Admin' %>
-  <% if !is_admin_route && @current_course %>
+  <% if !is_admin_route && @current_course && @current_role %>
 
     <% if @current_role.instructor? %>
       <li class='<%= "active" if controller.controller_name == 'courses' && controller.action_name == 'show' %>'>
