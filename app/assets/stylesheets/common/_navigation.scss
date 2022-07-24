@@ -6,26 +6,31 @@
 /* Header */
 
 header#header {
+  align-items: center;
   border-bottom: 1px solid $primary-three;
-  display: table;
+  display: flex;
   padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
   @include breakpoint(mobile) {
     border-bottom: 0;
+    display: block;
   }
 
   #course,
+  #logo-img,
   #user-info {
-    display: table-cell;
-
     @include breakpoint(mobile) {
       display: block;
     }
   }
 
+  #course {
+    flex: 1;
+  }
+
   #user-info {
-    text-align: right;
+    margin-left: auto;
   }
 }
 
@@ -35,7 +40,6 @@ nav {
   .main {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
     padding: 0 $dimen-horizontal-nav;
 
     li,
@@ -57,7 +61,7 @@ nav {
   width: 90px;
 
   @include breakpoint(mobile) {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -284,7 +288,6 @@ nav {
   }
 
   #course {
-    padding-top: 1.25em;
     @include breakpoint(mobile) {
       display: block;
       float: none !important;
@@ -298,16 +301,8 @@ nav {
     }
   }
 
-  #container-for-logo-and-course {
-    display: flex;
-    @include breakpoint(mobile) {
-      display: block;
-    }
-  }
-
   h1 {
-    font-size: 1.1em;
-    font-weight: bold;
+    font-size: 1.5em;
   }
 
   #user-info .dropdown {
