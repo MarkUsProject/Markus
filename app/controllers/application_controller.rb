@@ -128,7 +128,8 @@ class ApplicationController < ActionController::Base
     if current_user
       render 'shared/error_page',
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-             status: :forbidden
+             status: :forbidden,
+             layout: 'content'
     else
       redirect_to root_path
     end
