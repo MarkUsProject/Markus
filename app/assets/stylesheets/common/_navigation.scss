@@ -18,7 +18,6 @@ header#header {
   }
 
   #course,
-  #logo-img,
   #user-info {
     @include breakpoint(mobile) {
       display: block;
@@ -61,7 +60,7 @@ nav {
   width: 90px;
 
   @include breakpoint(mobile) {
-    display: none !important;
+    display: none;
   }
 }
 
