@@ -31,6 +31,10 @@ header#header {
   #user-info {
     margin-left: auto;
   }
+
+  h1 {
+    font-size: 1.5em;
+  }
 }
 
 /* Menus */
@@ -298,10 +302,6 @@ nav {
     @include breakpoint(mobile) {
       border-bottom: 1px solid $primary-three;
     }
-  }
-
-  h1 {
-    font-size: 1.5em;
   }
 
   #user-info .dropdown {
