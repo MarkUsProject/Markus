@@ -632,7 +632,7 @@ describe Api::GroupsController do
 
     context 'PUT add_tag' do
       let(:response_type) { 'application/xml' }
-      let(:group) { create :group, assignment: assignment }
+      let(:group) { create :group, assignments: [assignment] }
       let(:grouping) { create :grouping, group: group }
       before do
         request.env['HTTP_ACCEPT'] = response_type
