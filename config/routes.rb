@@ -34,6 +34,8 @@ Rails.application.routes.draw do
           collection do
             get 'annotations'
             get 'group_ids_by_name'
+          end
+          member do
             put 'add_tag'
             put 'remove_tag'
           end
