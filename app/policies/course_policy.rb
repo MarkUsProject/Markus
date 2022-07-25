@@ -22,7 +22,7 @@ class CoursePolicy < ApplicationPolicy
   end
 
   def role_switch?
-    real_role.instructor? && !check?(:role_is_switched?)
+    real_role&.instructor? && !check?(:role_is_switched?)
   end
 
   def switch_role?

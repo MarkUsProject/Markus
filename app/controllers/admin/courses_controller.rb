@@ -25,7 +25,7 @@ module Admin
     def edit; end
 
     def update
-      @current_course.update(course_params)
+      current_course.update(params.require(:course).permit(:is_hidden, :display_name))
       respond_with @current_course, location: -> { edit_admin_course_path(@current_course) }
     end
 
