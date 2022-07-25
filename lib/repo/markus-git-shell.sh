@@ -59,14 +59,15 @@ REQUESTED_REPO_PATH=$(echo "${SSH_ORIGINAL_COMMAND}" | rev | cut -f1 -d' ' | rev
 _REQUESTED_DIR_PATH=$(dirname "${REQUESTED_REPO_PATH}") # ex: /2021/csc108
 REQUESTED_COURSE=$(basename "${_REQUESTED_DIR_PATH}") # ex: csc108
 REQUESTED_INSTANCE=$(basename "$(dirname "${_REQUESTED_DIR_PATH}")") # ex: 2021-02
-REQUESTED_REPO_DIR="${REQUESTED_COURSE}/$(basename "${REQUESTED_REPO_PATH}")" # ex: csc108/group_1.git'
+REQUESTED_REPO_BASE=$(basename "${REQUESTED_REPO_PATH}") # ex: group_1.git
+REQUESTED_REPO_DIR="${REQUESTED_COURSE}/${REQUESTED_REPO_BASE}" # ex: csc108/group_1.git'
 UPDATED_REPO_PATH="$(updated_repo_path)" # ex: /some/path/csc108/repos/group_123.git
 SSH_UPDATED_COMMAND="$(echo "${SSH_ORIGINAL_COMMAND}" | rev | cut -f2- -d' ' | rev) '${UPDATED_REPO_PATH}" # ex: upload-pack '/some/path/csc108/repos/group_123.git'
 
 if [[ -z ${MARKUS_USE_ACCESS_FILE} ]]; then
-  PERMITTED_QUERY="SELECT check_repo_permissions(:'user_name', :'repo_path')"
-  SERVICE=$(if [ "${REQUESTED_INSTANCE}" == '/' ]; then echo "${DEFAULT_SERVICE}"; else echo "${REQUESTED_INSTANCE}"; fi)
-  USER_PERMITTED=$(echo "${PERMITTED_QUERY}" | psql service="${SERVICE}" -qtA -v user_name="${LOGIN_USER}" -v repo_path="${REQUESTED_REPO_DIR}")
+  PERMITTED_QUERY="SELECT check_repo_permissions(:'user_name', :'course_name', :'repo_name')"
+  SERVICE=$(if [ "${REQUESTED_INSTANCE}" == '/' ]; then echo "${DEFAULT_SERVICE:-markus}"; else echo "${REQUESTED_INSTANCE}"; fi)
+  USER_PERMITTED=$(echo "${PERMITTED_QUERY}" | psql service="${SERVICE}" -qtA -v user_name="${LOGIN_USER}" -v course_name="${REQUESTED_COURSE}" -v repo_name="${REQUESTED_REPO_BASE%.*}")
 else
   GIT_ACCESS_FILE="$(dirname "$(dirname "${UPDATED_REPO_PATH}")")/.access" # ex: /some/path/csc108/repos/.access
   # A string containing all repository names (without .git) that the user with username == LOGIN_USER is

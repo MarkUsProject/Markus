@@ -1,6 +1,6 @@
 DROP FUNCTION IF EXISTS check_repo_permissions(varchar, varchar);
 
-CREATE FUNCTION check_repo_permissions(username varchar, repo_path varchar)
+CREATE FUNCTION check_repo_permissions(user_name_ varchar, course_name varchar, repo_name_ varchar)
     RETURNS boolean
     LANGUAGE plpgsql
 AS
@@ -8,23 +8,13 @@ $$
 DECLARE
     role_type varchar;
     role_id_ integer;
-    repo_path_ varchar[];
-    course_name varchar;
-    repo_name_ varchar;
 BEGIN
-    SELECT regexp_split_to_array(repo_path, '/') INTO repo_path_;
-
-    ASSERT (array_length(repo_path_, 1) = 2), 'repository path is malformed';
-
-    SELECT repo_path_[1] into course_name;
-    SELECT regexp_replace(repo_path_[2], '\.git$', '') into repo_name_;
-
     SELECT roles.id, roles.type
     INTO role_id_, role_type
     FROM users
         JOIN roles ON roles.user_id=users.id
         JOIN courses ON roles.course_id=courses.id
-    WHERE courses.name=course_name AND users.user_name=username
+    WHERE courses.name=course_name AND users.user_name=user_name_
         FETCH FIRST ROW ONLY;
 
     IF role_type IN ('Instructor', 'AdminRole') THEN

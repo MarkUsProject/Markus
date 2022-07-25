@@ -1,38 +1,28 @@
 describe 'Check Repo Permissions Standalone File' do
   let(:grouping) { create :grouping }
-  let(:repo_path) { "#{grouping.course.name}/#{grouping.group.repo_name}.git" }
+  let(:course_name) { grouping.course.name }
+  let(:repo_name) { grouping.group.repo_name }
   let(:section) { create :section }
 
-  context 'invalid args' do
-    it 'should report an error when there is a path missing' do
-      expect { exec_query('test', 'abc.git') }.to raise_exception(ActiveRecord::StatementInvalid)
-    end
-    context 'when the repo path does not include the course name' do
-      it 'should report an error' do
-        expect { exec_query('test', 'abc.git') }.to raise_exception(ActiveRecord::StatementInvalid)
-      end
-    end
-  end
   context 'role does not exist' do
+    let(:role) { build :instructor }
     it 'should fail' do
-      expect(script_success?('test', repo_path)).to be_falsy
-    end
-    it 'should report an error' do
-      expect { exec_query('test', 'abc.git') }.to raise_exception(ActiveRecord::StatementInvalid)
+      expect(script_success?).to be_falsy
     end
   end
   context 'role is an Instructor' do
     let(:role) { create :instructor }
     context 'when the grouping exists' do
       it 'should succeed' do
-        expect(script_success?(role.user_name, repo_path)).to be_truthy
+        expect(script_success?).to be_truthy
       end
     end
     context 'when the grouping does not exist' do
+      let(:course_name) { role.course.name }
+      let(:grouping) { build :grouping }
       it 'should succeed' do
         # This allows git to report that the repo doesn't exist (a more useful error message than "not allowed")
-        bad_repo_name = "#{grouping.course.name}/#{grouping.group.repo_name}123.git"
-        expect(script_success?(role.user_name, bad_repo_name)).to be_truthy
+        expect(script_success?).to be_truthy
       end
     end
     context 'when requested course is different' do
@@ -40,13 +30,13 @@ describe 'Check Repo Permissions Standalone File' do
       let(:assignment) { create :assignment, course: course }
       let(:grouping) { create :grouping, assignment: assignment }
       it 'should fail' do
-        expect(script_success?(role.user_name, repo_path)).to be_falsy
+        expect(script_success?).to be_falsy
       end
     end
     context 'when requested course does not exist' do
-      let(:repo_path) { "#{grouping.course.name}123/#{grouping.group.repo_name}.git" }
+      let(:course_name) { build(:course).name }
       it 'should fail' do
-        expect(script_success?(role.user_name, repo_path)).to be_falsy
+        expect(script_success?).to be_falsy
       end
     end
   end
@@ -54,14 +44,15 @@ describe 'Check Repo Permissions Standalone File' do
     let(:role) { create :admin_role }
     context 'when the grouping exists' do
       it 'should succeed' do
-        expect(script_success?(role.user_name, repo_path)).to be_truthy
+        expect(script_success?).to be_truthy
       end
     end
     context 'when the grouping does not exist' do
+      let(:course_name) { role.course.name }
+      let(:grouping) { build :grouping }
       it 'should succeed' do
         # This allows git to report that the repo doesn't exist (a more useful error message than "not allowed")
-        bad_repo_name = "#{grouping.course.name}/#{grouping.group.repo_name}123.git"
-        expect(script_success?(role.user_name, bad_repo_name)).to be_truthy
+        expect(script_success?).to be_truthy
       end
     end
   end
@@ -73,13 +64,13 @@ describe 'Check Repo Permissions Standalone File' do
         context 'when the groups are anonymized' do
           before { grouping.assignment.update! anonymize_groups: true }
           it 'should fail' do
-            expect(script_success?(role.user_name, repo_path)).to be_falsy
+            expect(script_success?).to be_falsy
           end
         end
         context 'when the groups are not anonymized' do
           before { grouping.assignment.update! anonymize_groups: false }
           it 'should succeed' do
-            expect(script_success?(role.user_name, repo_path)).to be_truthy
+            expect(script_success?).to be_truthy
           end
         end
       end
@@ -87,15 +78,16 @@ describe 'Check Repo Permissions Standalone File' do
         context 'when the groups are not anonymized' do
           before { grouping.assignment.update! anonymize_groups: false }
           it 'should fail' do
-            expect(script_success?(role.user_name, repo_path)).to be_falsy
+            expect(script_success?).to be_falsy
           end
         end
       end
     end
     context 'when the grouping does not exist' do
+      let(:course_name) { role.course.name }
+      let(:grouping) { build :grouping }
       it 'should fail' do
-        bad_repo_name = "#{grouping.course.name}/#{grouping.group.repo_name}123.git"
-        expect(script_success?(role.user_name, bad_repo_name)).to be_falsy
+        expect(script_success?).to be_falsy
       end
     end
   end
@@ -108,13 +100,13 @@ describe 'Check Repo Permissions Standalone File' do
           before { create :accepted_student_membership, role: role, grouping: grouping }
           context 'the assignment is not hidden for everyone' do
             it 'should succeed' do
-              expect(script_success?(role.user_name, repo_path)).to be_truthy
+              expect(script_success?).to be_truthy
             end
           end
           context 'the assignment is hidden for everyone' do
             before { grouping.assignment.update! is_hidden: true }
             it 'should fail' do
-              expect(script_success?(role.user_name, repo_path)).to be_falsy
+              expect(script_success?).to be_falsy
             end
           end
           context 'the assignment is hidden for the section' do
@@ -123,7 +115,7 @@ describe 'Check Repo Permissions Standalone File' do
               role.update! section_id: section.id
             end
             it 'should fail' do
-              expect(script_success?(role.user_name, repo_path)).to be_falsy
+              expect(script_success?).to be_falsy
             end
           end
           context 'the assignment is not hidden for the section' do
@@ -132,7 +124,7 @@ describe 'Check Repo Permissions Standalone File' do
               role.update! section_id: section.id
             end
             it 'should succeed' do
-              expect(script_success?(role.user_name, repo_path)).to be_truthy
+              expect(script_success?).to be_truthy
             end
           end
           context 'the assessment is timed' do
@@ -146,19 +138,19 @@ describe 'Check Repo Permissions Standalone File' do
             context 'the grouping has started the assessment' do
               before { grouping.update! start_time: 1.minute.ago }
               it 'should succeed' do
-                expect(script_success?(role.user_name, repo_path)).to be_truthy
+                expect(script_success?).to be_truthy
               end
             end
             context 'the grouping has not started the assessment' do
               context 'the due date has passed' do
                 let(:due_date) { 1.second.ago }
                 it 'should succeed' do
-                  expect(script_success?(role.user_name, repo_path)).to be_truthy
+                  expect(script_success?).to be_truthy
                 end
               end
               context 'the due date has not passed' do
                 it 'should fail' do
-                  expect(script_success?(role.user_name, repo_path)).to be_falsy
+                  expect(script_success?).to be_falsy
                 end
               end
             end
@@ -167,47 +159,50 @@ describe 'Check Repo Permissions Standalone File' do
         context 'the student is an inviter member of the group' do
           before { create :inviter_student_membership, role: role, grouping: grouping }
           it 'should succeed' do
-            expect(script_success?(role.user_name, repo_path)).to be_truthy
+            expect(script_success?).to be_truthy
           end
         end
         context 'the student is a pending member of the group' do
           before { create :student_membership, role: role, grouping: grouping }
           it 'should fail' do
-            expect(script_success?(role.user_name, repo_path)).to be_falsy
+            expect(script_success?).to be_falsy
           end
         end
         context 'the student is a rejected member of the group' do
           before { create :rejected_student_membership, role: role, grouping: grouping }
           it 'should fail' do
-            expect(script_success?(role.user_name, repo_path)).to be_falsy
+            expect(script_success?).to be_falsy
           end
         end
         context 'the student is not part of the group' do
           it 'should fail' do
-            expect(script_success?(role.user_name, repo_path)).to be_falsy
+            expect(script_success?).to be_falsy
           end
         end
       end
       context 'vcs submit is false' do
         before { grouping.assignment.update! vcs_submit: false }
         it 'should fail' do
-          expect(script_success?(role.user_name, repo_path)).to be_falsy
+          expect(script_success?).to be_falsy
         end
       end
     end
     context 'when the grouping does not exist' do
+      let(:course_name) { role.course.name }
+      let(:grouping) { build :grouping }
       it 'should fail' do
-        bad_repo_name = "#{grouping.course.name}/#{grouping.group.repo_name}123.git"
-        expect(script_success?(role.user_name, bad_repo_name)).to be_falsy
+        expect(script_success?).to be_falsy
       end
     end
   end
 end
 
-def exec_query(user_name, repo_path)
-  ActiveRecord::Base.connection.execute("SELECT check_repo_permissions('#{user_name}', '#{repo_path}')")
+def exec_query
+  ActiveRecord::Base.connection.execute(
+    "SELECT check_repo_permissions('#{role.user_name}', '#{course_name}', '#{repo_name}')"
+  )
 end
 
-def script_success?(user_name, repo_path)
-  exec_query(user_name, repo_path).first.[]('check_repo_permissions')
+def script_success?
+  exec_query.first.[]('check_repo_permissions')
 end
