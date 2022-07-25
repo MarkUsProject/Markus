@@ -1,4 +1,4 @@
-DROP FUNCTION IF EXISTS check_repo_permissions(varchar, varchar);
+DROP FUNCTION IF EXISTS check_repo_permissions(varchar, varchar, varchar);
 
 CREATE FUNCTION check_repo_permissions(user_name_ varchar, course_name varchar, repo_name_ varchar)
     RETURNS boolean
