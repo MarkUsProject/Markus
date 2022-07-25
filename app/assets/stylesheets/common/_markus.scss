@@ -1339,3 +1339,8 @@ canvas {
 .required-files-container {
   display: flex;
 }
+
+//Styling for the text on any error pages (for eg. 404, 403)
+.error-pages-container {
+  text-align: center;
+}
