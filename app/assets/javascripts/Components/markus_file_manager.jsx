@@ -250,7 +250,7 @@ class FileManagerHeader extends Headers.TableHeader {
       typeof this.props.browserProps.moveFile === "function" ||
       typeof this.props.browserProps.moveFolder === "function"
     ) {
-      return this.props.connectDropTarget(header)
+      return this.props.connectDropTarget(header);
     } else {
       return header;
     }
