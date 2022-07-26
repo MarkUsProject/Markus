@@ -88,8 +88,6 @@ jobs:
         run: chromedriver --whitelisted-ips &
       - name: Create LTI key
         run: bundle exec rails markus:lti_key
-      - name: Create database functions
-        run: RAILS_ENV=test bundle exec rails db:functions
       - name: Run rspec tests
         run: bundle exec rspec
       - name: Run rspec system tests

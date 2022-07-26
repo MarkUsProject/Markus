@@ -1,8 +1,9 @@
-DROP FUNCTION IF EXISTS check_repo_permissions(varchar, varchar, varchar);
-
+class AddRepoPermissionsFunction < ActiveRecord::Migration[7.0]
+  def up
+    execute %(
 CREATE FUNCTION check_repo_permissions(user_name_ varchar, course_name varchar, repo_name_ varchar)
-    RETURNS boolean
-    LANGUAGE plpgsql
+RETURNS boolean
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -59,3 +60,9 @@ BEGIN
     RETURN false;
 END
 $$;
+)
+  end
+  def down
+    execute "DROP FUNCTION IF EXISTS check_repo_permissions(varchar, varchar, varchar);"
+  end
+end
