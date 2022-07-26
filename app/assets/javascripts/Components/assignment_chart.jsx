@@ -27,16 +27,18 @@ export class AssignmentChart extends React.Component {
           scales: chartScales(),
         },
       },
-      ta_grade_distribution: {
+      column_ta_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
         },
-      },
-      column_grade_distribution: {
-        data: {
-          labels: [],
-          datasets: [],
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+            },
+          },
+          scales: chartScales(),
         },
       },
       criteria_grade_distribution: {
@@ -97,16 +99,16 @@ export class AssignmentChart extends React.Component {
         };
 
         if (this.props.assessment_type === "GradeEntryForm") {
-          set_graph_data(res.column_data, {
-            column_grade_distribution: {
-              ...this.state.column_grade_distribution,
-              data: res.column_data,
+          set_graph_data(res.column_breakdown_data, {
+            column_ta_grade_distribution: {
+              ...this.state.column_ta_grade_distribution,
+              data: res.column_breakdown_data,
             },
           });
         } else if (this.props.assessment_type === "Assignment") {
           set_graph_data(res.ta_data, {
-            ta_grade_distribution: {
-              ...this.state.ta_grade_distribution,
+            column_ta_grade_distribution: {
+              ...this.state.column_ta_grade_distribution,
               data: res.ta_data,
             },
           });
@@ -121,7 +123,6 @@ export class AssignmentChart extends React.Component {
             });
           }
         }
-
         if (typeof this.props.set_assessment_name === "function") {
           this.props.set_assessment_name(res.summary.name);
         }
@@ -135,14 +136,6 @@ export class AssignmentChart extends React.Component {
   }
 
   render() {
-    const legend_graph_options = {
-      plugins: {
-        legend: {
-          display: true,
-        },
-      },
-      scales: chartScales(),
-    };
     let outstanding_remark_request_link = "";
     if (this.props.assessment_type === "Assignment" && this.state.summary.remark_requests_enabled) {
       const remark_submissions_list_link = Routes.browse_course_assignment_submissions_path(
@@ -168,12 +161,40 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    let date = "";
-    if (this.state.summary.date) {
-      date = (
-        <p>
-          {this.state.summary.date && I18n.t("attributes.date") + ": " + this.state.summary.date}
-        </p>
+    let assessment_data = "";
+    if (this.props.assessment_type === "Assignment") {
+      assessment_data = (
+        <React.Fragment>
+          <span className="summary-stats-label">{I18n.t("num_groups")}</span>
+          <span>{this.state.summary.groupings_size}</span>
+          <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
+          <FractionStat
+            numerator={this.state.summary.num_students_in_group}
+            denominator={this.state.summary.num_active_students}
+          />
+          <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
+          <FractionStat
+            numerator={this.state.summary.num_submissions_collected}
+            denominator={this.state.summary.groupings_size}
+          />
+          <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
+          <FractionStat
+            numerator={this.state.summary.num_submissions_graded}
+            denominator={this.state.summary.groupings_size}
+          />
+        </React.Fragment>
+      );
+    } else if (this.props.assessment_type === "GradeEntryForm") {
+      assessment_data = (
+        <React.Fragment>
+          <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
+          <span>{this.state.summary.date}</span>
+          <span className="summary-stats-label">{I18n.t("num_entries")}</span>
+          <FractionStat
+            numerator={this.state.summary.num_entries}
+            denominator={this.state.summary.groupings_size}
+          />
+        </React.Fragment>
       );
     }
 
@@ -191,23 +212,7 @@ export class AssignmentChart extends React.Component {
           </div>
           <div className="flex-row-expand">
             <div className="grid-2-col">
-              <span className="summary-stats-label">{I18n.t("num_groups")}</span>
-              <span>{this.state.summary.groupings_size}</span>
-              <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_students_in_group}
-                denominator={this.state.summary.num_active_students}
-              />
-              <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_submissions_collected}
-                denominator={this.state.summary.groupings_size}
-              />
-              <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_submissions_graded}
-                denominator={this.state.summary.groupings_size}
-              />
+              {assessment_data}
               <CoreStatistics
                 average={this.state.summary.average}
                 median={this.state.summary.median}
@@ -300,7 +305,7 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
+    if (this.state.column_ta_grade_distribution.data.datasets.length !== 0) {
       return (
         <React.Fragment>
           {assessment_graph}
@@ -308,8 +313,8 @@ export class AssignmentChart extends React.Component {
           <div className="distribution-graph">
             <h3>{I18n.t("grader_distribution")}</h3>
             <Bar
-              data={this.state.ta_grade_distribution.data}
-              options={legend_graph_options}
+              data={this.state.column_ta_grade_distribution.data}
+              options={this.state.column_ta_grade_distribution.options}
               width="400"
               height="350"
             />
