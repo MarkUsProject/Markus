@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
-import {AssignmentChart} from "./assignment_chart";
 import {CourseSummaryChart} from "./course_summary_chart";
+import {AssessmentChart} from "./assessment_chart";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class Dashboard extends React.Component {
             {this.state.assessment_name}
           </a>
         </h2>
-        <AssignmentChart
+        <AssessmentChart
           course_id={this.props.course_id}
           assessment_id={this.state.assessment_id}
           set_assessment_name={this.setAssessmentName}
