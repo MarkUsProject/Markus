@@ -5,6 +5,8 @@ import React from "react";
 import ClassNames from "classnames";
 import {HTML5Backend, NativeTypes} from "react-dnd-html5-backend";
 import {DndProvider, DragSource, DropTarget} from "react-dnd";
+import PropTypes from 'prop-types'
+
 
 import {RawFileBrowser, Headers, FileRenderers, BaseFileConnectors} from "react-keyed-file-browser";
 
@@ -230,7 +232,7 @@ class RawFileManager extends RawFileBrowser {
   }
 }
 
-class FileManagerHeader extends FileRenderers.RawTableFile {
+class FileManagerHeader extends Headers.TableHeader {
   render() {
     const header = (
       <tr
@@ -250,7 +252,7 @@ class FileManagerHeader extends FileRenderers.RawTableFile {
       typeof this.props.browserProps.moveFile === "function" ||
       typeof this.props.browserProps.moveFolder === "function"
     ) {
-      return this.connectDND(header);
+      return this.props.connectDropTarget(header)
     } else {
       return header;
     }
