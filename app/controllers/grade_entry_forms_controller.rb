@@ -256,7 +256,7 @@ class GradeEntryFormsController < ApplicationController
       standard_deviation: grade_entry_form.results_standard_deviation || 0,
       max_mark: grade_entry_form.max_mark,
       num_entries: grade_entry_form.count_non_nil,
-      groupings_size: grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false),
+      groupings_size: grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count,
       num_fails: grade_entry_form.results_fails,
       num_zeros: grade_entry_form.results_zeros
     }

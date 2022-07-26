@@ -517,7 +517,7 @@ describe GradeEntryFormsController do
 
     it('should return grade distribution data') {
       expected_items = grade_entry_form_with_data.grade_distribution_array
-      expect(response.parsed_body['grade_dist_data']['datasets'][0]['data']).to eq expected_items
+      expect(response.parsed_body['assessment_data']['datasets'][0]['data']).to eq expected_items
     }
 
     it 'should retrieve the correct column data' do
@@ -531,7 +531,7 @@ describe GradeEntryFormsController do
 
     it('should return the correct grade distribution labels') {
       new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
-      expect(response.parsed_body['grade_dist_data']['labels']).to eq new_labels
+      expect(response.parsed_body['assessment_data']['labels']).to eq new_labels
     }
 
     it('should return the correct column data labels') {
@@ -548,10 +548,13 @@ describe GradeEntryFormsController do
                            date: I18n.l(grade_entry_form_with_data.due_date),
                            average: grade_entry_form_with_data.results_average,
                            median: grade_entry_form_with_data.results_median,
-                           num_entries: "#{grade_entry_form_with_data.count_non_nil}/#{total_students}",
+                           standard_deviation: grade_entry_form.results_standard_deviation || 0,
+                           max_mark: grade_entry_form.max_mark,
+                           num_entries: grade_entry_form_with_data.count_non_nil,
+                           groupings_size: total_students,
                            num_fails: grade_entry_form_with_data.results_fails,
                            num_zeros: grade_entry_form.results_zeros }
-      expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
+      expect(response.parsed_body['summary']).to eq expected_summary.as_json
     end
   end
 
