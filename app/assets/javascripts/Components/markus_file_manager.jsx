@@ -5,8 +5,7 @@ import React from "react";
 import ClassNames from "classnames";
 import {HTML5Backend, NativeTypes} from "react-dnd-html5-backend";
 import {DndProvider, DragSource, DropTarget} from "react-dnd";
-import PropTypes from 'prop-types'
-
+import PropTypes from "prop-types";
 
 import {RawFileBrowser, Headers, FileRenderers, BaseFileConnectors} from "react-keyed-file-browser";
 
@@ -252,7 +251,7 @@ class FileManagerHeader extends Headers.TableHeader {
       typeof this.props.browserProps.moveFile === "function" ||
       typeof this.props.browserProps.moveFolder === "function"
     ) {
-      return this.props.connectDropTarget(header)
+      return this.props.connectDropTarget(header);
     } else {
       return header;
     }
