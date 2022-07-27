@@ -27,6 +27,7 @@ export class AssessmentChart extends React.Component {
           scales: chartScales(),
         },
       },
+      // Grade distribution for either the TA or column grade distribution breakdown
       secondary_grade_distribution: {
         data: {
           labels: [],
