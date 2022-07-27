@@ -27,7 +27,7 @@ export class AssessmentChart extends React.Component {
           scales: chartScales(),
         },
       },
-      column_ta_grade_distribution: {
+      secondary_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
@@ -98,20 +98,11 @@ export class AssessmentChart extends React.Component {
           this.setState(distribution_state);
         };
 
+        let secondary_data = {};
         if (this.props.assessment_type === "GradeEntryForm") {
-          set_graph_data(res.column_breakdown_data, {
-            column_ta_grade_distribution: {
-              ...this.state.column_ta_grade_distribution,
-              data: res.column_breakdown_data,
-            },
-          });
+          secondary_data = res.column_breakdown_data;
         } else if (this.props.assessment_type === "Assignment") {
-          set_graph_data(res.ta_data, {
-            column_ta_grade_distribution: {
-              ...this.state.column_ta_grade_distribution,
-              data: res.ta_data,
-            },
-          });
+          secondary_data = res.ta_data;
 
           if (this.props.show_criteria_stats) {
             set_graph_data(res.criteria_data, {
@@ -123,6 +114,12 @@ export class AssessmentChart extends React.Component {
             });
           }
         }
+        set_graph_data(secondary_data, {
+          secondary_grade_distribution: {
+            ...this.state.secondary_grade_distribution,
+            data: secondary_data,
+          },
+        });
         if (typeof this.props.set_assessment_name === "function") {
           this.props.set_assessment_name(res.summary.name);
         }
@@ -305,16 +302,22 @@ export class AssessmentChart extends React.Component {
       );
     }
 
-    if (this.state.column_ta_grade_distribution.data.datasets.length !== 0) {
+    if (this.state.secondary_grade_distribution.data.datasets.length !== 0) {
+      let graph_title = "";
+      if (this.props.assessment_type === "Assignment") {
+        graph_title = I18n.t("grader_distribution");
+      } else if (this.props.assessment_type === "GradeEntryForm") {
+        graph_title = I18n.t("grade_entry_forms.grade_entry_item_distribution");
+      }
       return (
         <React.Fragment>
           {assessment_graph}
           {criteria_graph}
           <div className="distribution-graph">
-            <h3>{I18n.t("grader_distribution")}</h3>
+            <h3>{graph_title}</h3>
             <Bar
-              data={this.state.column_ta_grade_distribution.data}
-              options={this.state.column_ta_grade_distribution.options}
+              data={this.state.secondary_grade_distribution.data}
+              options={this.state.secondary_grade_distribution.options}
               width="400"
               height="350"
             />
