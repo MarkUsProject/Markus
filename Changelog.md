@@ -61,7 +61,6 @@
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
 - Fix bug where students could not submit files using drag and drop if no files or folders previously existed. (#6117)
 
-
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
 - Ensure tabs in result view do not reload when switching between them (#5910)
