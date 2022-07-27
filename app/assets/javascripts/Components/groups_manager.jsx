@@ -243,8 +243,8 @@ class GroupsManager extends React.Component {
           createAllGroups={this.createAllGroups}
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
-          hiddenStudentsCount={this.state.loading ? "" : this.state.hidden_students_count}
-          hiddenGroupsCount={this.state.loading ? "" : this.state.inactive_groups_count}
+          hiddenStudentsCount={this.state.loading ? null : this.state.hidden_students_count}
+          hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.updateShowHidden}
         />
@@ -376,11 +376,7 @@ class RawGroupsTable extends React.Component {
       },
       filterMethod: (filter, row) => {
         if (filter.value) {
-          return row._original.members.some(member =>
-            `${member[1]}${
-              member[2] ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
-            }`.includes(filter.value)
-          );
+          return row._original.members.some(member => member.display_label.includes(filter.value));
         } else {
           return true;
         }
@@ -639,8 +635,8 @@ const StudentsTable = withSelection(RawStudentsTable);
 
 class GroupsActionBox extends React.Component {
   render = () => {
-    var showHiddenTooltip = "";
-    if (this.props.hiddenStudentsCount && this.props.hiddenGroupsCount) {
+    var showHiddenTooltip = null;
+    if (this.props.hiddenStudentsCount !== null && this.props.hiddenGroupsCount !== null) {
       showHiddenTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_students", {
         count: this.props.hiddenStudentsCount,
       })}, ${I18n.t("activerecord.attributes.grouping.inactive_groups", {
