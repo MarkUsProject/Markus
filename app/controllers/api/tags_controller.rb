@@ -2,13 +2,11 @@ module Api
   # Api controller for tags
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class TagsController < MainApiController
-    DEFAULT_FIELDS = [:id, :name, :description, :creator, :use].freeze
-
     def index
-      @assignment = Assignment.find_by(id: params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
 
       respond_to do |format|
-        parent = @assignment || current_course
+        parent = assignment || current_course
         tags = parent.tags.includes(:role, :groupings).order(:name)
 
         tag_info = tags.map do |tag|
@@ -31,33 +29,26 @@ module Api
 
     # Creates a new instance of the tag.
     def create
-      params.permit(:name, :description)
-      begin
-        assignment = current_course.assignments.find_by(id: params[:assignment_id])
-        new_tag = Tag.new(course: current_course, role: current_role, assessment: assignment, **self.tag_params)
-        if new_tag.save && params[:grouping_id]
-          grouping = assignment.groupings.find(params[:grouping_id])
-          grouping.tags << new_tag
-        end
-      rescue StandardError => e
-        render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
-      else
-        render 'shared/http_status',
-               locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+      assignment = current_course.assignments.find_by(id: params[:assignment_id])
+      new_tag = Tag.create!(course: current_course, role: current_role, assessment: assignment, **self.tag_params)
+      if params[:grouping_id]
+        grouping = assignment.groupings.find(params[:grouping_id])
+        grouping.tags << new_tag
       end
+    rescue StandardError => e
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+    else
+      render 'shared/http_status',
+             locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
     end
 
     def update
-      tag = Tag.find(params[:id])
+      tag = Tag.find_by(id: params[:id])
       if tag.nil?
         render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
       else
         begin
-          name = params[:name]
-          desc = params[:description]
-
-          # not using tag_params so it can default to the previous name/description if nil
-          tag.update!(name: name || tag.name, description: desc || tag.description)
+          tag.update!(**self.tag_params)
         rescue StandardError => e
           render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
         else
@@ -81,7 +72,7 @@ module Api
     private
 
     def tag_params
-      { name: params[:name] || '', description: params[:description] || '' }
+      { name: params[:name], description: params[:description] }
     end
   end
 end

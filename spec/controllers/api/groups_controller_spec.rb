@@ -610,7 +610,7 @@ describe Api::GroupsController do
       it 'should let the user remove a tag' do
         put :remove_tag, params: { id: grouping.group.id, assignment_id: assignment.id,
                                    course_id: course.id, tag_id: tag.id }
-        expect(response.status).to be(200)
+        expect(response).to have_http_status(200)
         grouping.reload
         expect(grouping.tags.find_by(id: tag.id)).to be(nil)
       end
@@ -620,14 +620,14 @@ describe Api::GroupsController do
                                    course_id: course.id, tag_id: tag.id }
         grouping.reload
 
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
         expect(grouping.tags.first).to eq(tag)
       end
 
       it 'should throw a 404 if the tag id is not found' do
         put :remove_tag, params: { assignment_id: assignment.id, id: grouping.group.id,
                                    course_id: course.id, tag_id: tag.id + 1 }
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
         grouping.reload
         expect(grouping.tags.first).to eq(tag)
       end
@@ -644,7 +644,7 @@ describe Api::GroupsController do
       it 'should let the user add a tag' do
         put :add_tag, params: { assignment_id: assignment.id, id: grouping.group.id,
                                 course_id: course.id, tag_id: tag.id }
-        expect(response.status).to be(200)
+        expect(response).to have_http_status(200)
         grouping.reload
         expect(grouping.tags.first).to eq(tag)
       end
@@ -652,14 +652,14 @@ describe Api::GroupsController do
       it 'should throw a 404 if the grouping id is invalid not found' do
         put :add_tag, params: { assignment_id: assignment.id, id: grouping.group.id + 1,
                                 course_id: course.id, tag_id: tag.id }
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
         expect(grouping.tags.first).to be(nil)
       end
 
       it 'should throw a 404 if the tag id is not found' do
         put :add_tag, params: { assignment_id: assignment.id, id: grouping.group.id,
                                 course_id: course.id, tag_id: tag.id + 1 }
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
         expect(grouping.tags.first).to be(nil)
       end
     end

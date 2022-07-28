@@ -45,17 +45,11 @@ describe Api::TagsController do
         end
 
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
 
         it 'should return xml content' do
           expect(Hash.from_xml(response.body)['objects'][0]['id']).to eq(tag.id)
-        end
-
-        it 'should return all information in the default fields' do
-          get :index, params: { course_id: course.id }
-          info = Hash.from_xml(response.body)['objects'][0]
-          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::TagsController::DEFAULT_FIELDS)
         end
       end
       context 'expecting a json response' do
@@ -65,17 +59,11 @@ describe Api::TagsController do
         end
 
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
 
         it 'should return json content' do
           expect(JSON.parse(response.body)&.first&.dig('id')).to eq(tag.id)
-        end
-
-        it 'should return all information in the default fields' do
-          get :index, params: { course_id: course.id }
-          info = JSON.parse(response.body)[0]
-          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::TagsController::DEFAULT_FIELDS)
         end
       end
     end
@@ -87,26 +75,32 @@ describe Api::TagsController do
 
       it 'should create a new tag when given the correct params' do
         post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id }
-        expect(response.status).to be(201)
+        expect(response).to have_http_status(201)
         expect(Tag.find_by(name: 'new_tag').name).to eq('new_tag')
       end
 
       it 'should create a new tag when given the correct params with grouping_id' do
         post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id,
                                 grouping_id: grouping.id }
-        expect(response.status).to be(201)
+        expect(response).to have_http_status(201)
         expect(Tag.find_by(name: 'new_tag').groupings.first).to eq(grouping)
       end
 
       it 'should throw a 404 error if there is not a valid course_id' do
         post :create, params: { course_id: course.id + 1, name: 'new_tag' }
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
       end
 
       it 'should throw a 422 error if the grouping id is not valid' do
         post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id,
                                 grouping_id: grouping.id + 1 }
-        expect(response.status).to be(422)
+        expect(response).to have_http_status(422)
+      end
+
+      it 'should throw a 422 error if the assignment id is not valid' do
+        post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id + 1,
+                                grouping_id: grouping.id }
+        expect(response).to have_http_status(422)
       end
     end
     context 'PUT update' do
@@ -115,21 +109,19 @@ describe Api::TagsController do
       end
       it 'should update a tags name if given a name and a valid tag' do
         put :update, params: { course_id: course.id, id: tag.id, name: 'new_name' }
-        expect(response.status).to be(200)
+        expect(response).to have_http_status(200)
         tag.reload
         expect(tag.name).to eq('new_name')
       end
 
-      it 'should update a tags description if given a name and a valid tag' do
+      it 'should throw 422 if not given a name for the tag' do
         put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc' }
-        expect(response.status).to be(200)
-        tag.reload
-        expect(tag.description).to eq('new_desc')
+        expect(response).to have_http_status(422)
       end
 
       it 'should update a tags name and description if given a name and a valid tag' do
         put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc', name: 'new_name' }
-        expect(response.status).to be(200)
+        expect(response).to have_http_status(200)
         tag.reload
         expect(tag.description).to eq('new_desc')
         expect(tag.name).to eq('new_name')
@@ -137,7 +129,7 @@ describe Api::TagsController do
 
       it 'should throw 404 if tag does not exist' do
         put :update, params: { course_id: course.id, id: tag.id + 1, description: 'new_desc' }
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
       end
     end
     context 'DELETE destroy' do
@@ -146,7 +138,7 @@ describe Api::TagsController do
       end
       it 'should send 404 back if the tag does not exist' do
         delete :destroy, params: { course_id: course.id, id: tag.id + 1 }
-        expect(response.status).to be(404)
+        expect(response).to have_http_status(404)
       end
 
       it 'should delete a tag' do
