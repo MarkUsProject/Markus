@@ -2,6 +2,7 @@ shared_examples 'zip file download' do
   let(:dirs) { [] }
   let(:files) { {} }
   before :each do
+    FileUtils.rm_rf assignment.autotest_files_dir
     FileUtils.mkdir_p assignment.autotest_files_dir
     dirs.each { |dir_path| FileUtils.mkdir_p File.join(assignment.autotest_files_dir, dir_path) }
     files.each do |file_path, content|

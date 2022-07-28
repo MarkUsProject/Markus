@@ -145,7 +145,6 @@ describe Admin::CoursesController do
         {
           id: course.id,
           course: {
-            name: 'CSC104',
             display_name: 'Computational Thinking',
             is_hidden: true
           }
@@ -169,7 +168,7 @@ describe Admin::CoursesController do
         put_as admin, :update, params: params
         updated_course = Course.find(course.id)
         expected_course_data = {
-          name: 'CSC104',
+          name: course.name,
           display_name: 'Computational Thinking',
           is_hidden: true
         }
@@ -179,6 +178,11 @@ describe Admin::CoursesController do
           is_hidden: updated_course.is_hidden
         }
         expect(updated_course_data).to eq(expected_course_data)
+      end
+      it 'does not update the course name' do
+        put_as admin, :update, params: { id: course.id, course: { name: 'CSC2000' } }
+        updated_course = Course.find(course.id)
+        expect(updated_course.name).not_to eq('CSC2000')
       end
       it 'does not update when parameters are invalid' do
         expected_course_data = {

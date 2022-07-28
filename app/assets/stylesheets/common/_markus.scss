@@ -1334,3 +1334,13 @@ canvas {
   padding-bottom: 1vh;
   padding-top: 1vh;
 }
+
+// Styling for submission_file_manager.jsx
+.required-files-container {
+  display: flex;
+}
+
+//Styling for the text on any error pages (for eg. 404, 403)
+.error-pages-container {
+  text-align: center;
+}

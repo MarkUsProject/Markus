@@ -184,16 +184,16 @@ describe CoursesController do
       context 'as an authorized instructor' do
         it 'responds with success on update' do
           put_as instructor, :update,
-                 params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+                 params: { id: course.id, course: { display_name: 'Intro to CS', is_hidden: false } }
           expect(response).to have_http_status(302)
         end
-        it 'successfully toggles just the is_hidden attribute of a course' do
+        it 'updates the course' do
           put_as instructor, :update,
-                 params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: false } }
+                 params: { id: course.id, course: { display_name: 'Intro to CS', is_hidden: false } }
           updated_course = Course.find(course.id)
           expected_course_data = {
             name: course.name,
-            display_name: course.display_name,
+            display_name: 'Intro to CS',
             is_hidden: false
           }
           updated_course_data = {
@@ -203,7 +203,13 @@ describe CoursesController do
           }
           expect(updated_course_data).to eq(expected_course_data)
         end
-        it 'fails to update the is_hidden attribute when it is invalid' do
+        it 'does not update the course name' do
+          put_as instructor, :update,
+                 params: { id: course.id, course: { name: 'CS101' } }
+          updated_course = Course.find(course.id)
+          expect(updated_course.name).not_to eq('CS101')
+        end
+        it 'does not update when parameters are invalid' do
           expected_course_data = {
             name: course.name,
             display_name: course.display_name,
@@ -415,6 +421,45 @@ describe CoursesController do
       get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq 'assignments.yml'
+    end
+  end
+
+  describe 'visiting index page' do
+    let(:course1) { create :course, is_hidden: false }
+    let(:course2) { create :course, is_hidden: false }
+    let(:end_user) { create :end_user }
+
+    context 'Student' do
+      let!(:student2c1) { create :student, course: course1, user: end_user }
+      let!(:student2c2) { create :student, course: course2, user: end_user }
+      it 'responds with a list sorted by courses.name' do
+        get_as end_user, :index, params: { format: 'json' }
+        parsed_body = JSON.parse(response.body)['data']
+        sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
+        expect(parsed_body == sorted_body)
+      end
+    end
+
+    context 'TA' do
+      let!(:ta2c1) { create :ta, course: course1, user: end_user }
+      let!(:ta2c2) { create :ta, course: course2, user: end_user }
+      it 'responds with a list sorted by courses.name' do
+        get_as end_user, :index, params: { format: 'json' }
+        parsed_body = JSON.parse(response.body)['data']
+        sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
+        expect(parsed_body == sorted_body)
+      end
+    end
+
+    context 'Instructor' do
+      let!(:instructor2c1) { create :instructor, course: course1, user: end_user }
+      let!(:instructor2c2) { create :instructor, course: course2, user: end_user }
+      it 'responds with a list sorted by courses.name' do
+        get_as end_user, :index, params: { format: 'json' }
+        parsed_body = JSON.parse(response.body)['data']
+        sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
+        expect(parsed_body == sorted_body)
+      end
     end
   end
 end
