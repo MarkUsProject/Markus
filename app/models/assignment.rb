@@ -313,6 +313,7 @@ class Assignment < Assessment
                                    'groupings.instructor_approved',
                                    'groups.group_name',
                                    'users.user_name',
+                                   'roles.hidden',
                                    'memberships.membership_status',
                                    'sections.name',
                                    'extensions.id',
@@ -323,7 +324,8 @@ class Assignment < Assessment
     members = Hash.new { |h, k| h[k] = [] }
     grouping_data.each do |data|
       if data['users.user_name']
-        members[data['groupings.id']] << [data['users.user_name'], data['memberships.membership_status']]
+        members[data['groupings.id']] << [data['users.user_name'], data['memberships.membership_status'],
+                                          data['roles.hidden']]
         students[data['users.user_name']][:assigned] = true
       end
     end
