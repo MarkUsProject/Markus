@@ -136,6 +136,7 @@ describe AutomatedTestsController do
       end
       context 'non empty automated test files' do
         before :each do
+          FileUtils.rm_rf(assignment.autotest_files_dir)
           create_automated_test(assignment)
         end
         after :each do
@@ -167,7 +168,10 @@ describe AutomatedTestsController do
       end
     end
     context 'POST upload_files' do
-      before { post_as role, :upload_files, params: params }
+      before do
+        FileUtils.rm_r assignment.autotest_files_dir
+        post_as role, :upload_files, params: params
+      end
       after { FileUtils.rm_r assignment.autotest_files_dir }
       context 'uploading a zip file' do
         let(:params) do

@@ -57,6 +57,7 @@
 - Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
 - Pass group name and starter files to the autotester when running tests (#6104)
 - Disabled admin editing of course name and allowed instructors to edit display name (#6111)
+- Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
 
 ## [v2.0.10]
