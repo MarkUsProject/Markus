@@ -2,6 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import {CourseSummaryChart} from "./course_summary_chart";
 import {AssignmentChart} from "./assignment_chart";
+import {GradeEntryFormChart} from "./grade_entry_form_chart";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -24,7 +25,12 @@ class Dashboard extends React.Component {
         />
       );
     } else if (this.state.assessment_type === "GradeEntryForm") {
-      return "";
+      return (
+        <GradeEntryFormChart
+          course_id={this.props.course_id}
+          assessment_id={this.state.assessment_id}
+        />
+      );
     } else {
       return "";
     }

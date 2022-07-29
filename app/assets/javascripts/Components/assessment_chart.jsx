@@ -48,22 +48,21 @@ export class AssessmentChart extends React.Component {
   }
 
   fetchData = () => {
-    console.log(this.props);
-    this.props.fetch_data(res => {
+    this.props.fetch_data((summary, assessment_data, secondary_assessment_data) => {
       this.setState({
-        summary: res.summary,
+        summary: summary,
         assessment_grade_distribution: {
           ...this.state.assessment_grade_distribution,
-          data: res.assessment_data,
+          data: assessment_data,
         },
       });
-      for (const [index, element] of res.ta_data.datasets.entries()) {
+      for (const [index, element] of secondary_assessment_data.datasets.entries()) {
         element.backgroundColor = colours[index];
       }
       this.setState({
         secondary_grade_distribution: {
           ...this.state.secondary_grade_distribution,
-          data: res.ta_data,
+          data: secondary_assessment_data,
         },
       });
     });
@@ -110,6 +109,7 @@ export class AssessmentChart extends React.Component {
     if (this.state.secondary_grade_distribution.data.datasets.length !== 0) {
       return (
         <React.Fragment>
+          <h2>{this.props.assessment_header_content}</h2>
           {assessment_graph}
           {this.props.criteria_graph}
           <div className="distribution-graph">
@@ -136,6 +136,7 @@ export class AssessmentChart extends React.Component {
     } else {
       return (
         <React.Fragment>
+          <h2>{this.props.assessment_header_content}</h2>
           {assessment_graph}
           {this.props.criteria_graph}
           <div className="distribution-graph">
@@ -224,4 +225,15 @@ CoreStatistics.propTypes = {
   num_fails: PropTypes.number,
   num_zeros: PropTypes.number.isRequired,
   num_groupings: PropTypes.number.isRequired,
+};
+
+AssessmentChart.propTypes = {
+  assessment_header_content: PropTypes.element.isRequired,
+  fetch_data: PropTypes.func.isRequired,
+  secondary_grade_distribution_title: PropTypes.string.isRequired,
+  additional_assessment_data: PropTypes.element.isRequired,
+  course_id: PropTypes.number.isRequired,
+  assessment_id: PropTypes.number.isRequired,
+  criteria_graph: PropTypes.element,
+  outstanding_remark_request_link: PropTypes.element,
 };

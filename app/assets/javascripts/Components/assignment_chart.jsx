@@ -48,7 +48,7 @@ export class AssignmentChart extends React.Component {
       )
         .then(data => data.json())
         .then(res => {
-          setAssessmentState(res);
+          setAssessmentState(res.summary, res.assessment_data, res.ta_data);
           this.setState({summary: res.summary});
           if (this.props.show_criteria_stats) {
             for (const [index, element] of res.criteria_data.datasets.entries()) {
@@ -187,28 +187,28 @@ export class AssignmentChart extends React.Component {
       );
     }
 
+    const assessment_header_content = (
+      <a
+        href={Routes.browse_course_assignment_submissions_path(
+          this.props.course_id,
+          this.props.assessment_id
+        )}
+      >
+        {this.state.summary.name}
+      </a>
+    );
+
     return (
-      <React.Fragment>
-        <h2>
-          <a
-            href={Routes.browse_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assessment_id
-            )}
-          >
-            {this.state.summary.name}
-          </a>
-        </h2>
-        <AssessmentChart
-          fetch_data={fetch_data}
-          secondary_grade_distribution_title={I18n.t("grader_distribution")}
-          additional_assessment_data={additional_assessment_data}
-          criteria_graph={criteria_graph}
-          outstanding_remark_request_link={outstanding_remark_request_link}
-          course_id={this.props.course_id}
-          assessment_id={this.props.assessment_id}
-        />
-      </React.Fragment>
+      <AssessmentChart
+        assessment_header_content={assessment_header_content}
+        fetch_data={fetch_data}
+        secondary_grade_distribution_title={I18n.t("grader_distribution")}
+        additional_assessment_data={additional_assessment_data}
+        criteria_graph={criteria_graph}
+        outstanding_remark_request_link={outstanding_remark_request_link}
+        course_id={this.props.course_id}
+        assessment_id={this.props.assessment_id}
+      />
     );
   }
 }
