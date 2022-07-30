@@ -72,7 +72,7 @@ module Api
     private
 
     def tag_params
-      { name: params[:name], description: params[:description] }
+      params.permit(:name, :description)
     end
   end
 end

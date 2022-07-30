@@ -114,9 +114,11 @@ describe Api::TagsController do
         expect(tag.name).to eq('new_name')
       end
 
-      it 'should throw 422 if not given a name for the tag' do
+      it 'should update just the description' do
         put :update, params: { course_id: course.id, id: tag.id, description: 'new_desc' }
-        expect(response).to have_http_status(422)
+        expect(response).to have_http_status(200)
+        tag.reload
+        expect(tag.description).to eq('new_desc')
       end
 
       it 'should update a tags name and description if given a name and a valid tag' do
