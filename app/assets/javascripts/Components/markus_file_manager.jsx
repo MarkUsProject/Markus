@@ -6,7 +6,13 @@ import ClassNames from "classnames";
 import {HTML5Backend, NativeTypes} from "react-dnd-html5-backend";
 import {DndProvider, DragSource, DropTarget} from "react-dnd";
 
-import {RawFileBrowser, Headers, FileRenderers, BaseFileConnectors} from "react-keyed-file-browser";
+import {
+  RawFileBrowser,
+  Headers,
+  FileRenderers,
+  BaseFileConnectors,
+  FolderRenderers,
+} from "react-keyed-file-browser";
 
 class RawFileManager extends RawFileBrowser {
   handleActionBarAddFileClick = (event, selectedItem) => {
@@ -257,6 +263,18 @@ class FileManagerHeader extends Headers.TableHeader {
   }
 }
 
+class FileManagerFolder extends FolderRenderers.RawTableFolder {
+  componentDidUpdate(prevProps) {
+    if (prevProps.isOver !== this.props.isOver) {
+      if (this.props.isOver) {
+        this.props.onFolderHover(this.props.fileKey);
+      } else {
+        this.props.onFolderHover(undefined);
+      }
+    }
+  }
+}
+
 class FileManagerFile extends FileRenderers.RawTableFile {
   handleFileClick = event => {
     if (event) {
@@ -390,7 +408,26 @@ FileManagerHeader = DragSource(
   )(FileManagerHeader)
 );
 
+FileManagerFolder = DragSource(
+  "file",
+  BaseFileConnectors.dragSource,
+  BaseFileConnectors.dragCollect
+)(
+  DropTarget(
+    ["file", "folder", NativeTypes.FILE],
+    BaseFileConnectors.targetSource,
+    BaseFileConnectors.targetCollect
+  )(FileManagerFolder)
+);
+
 class FileManager extends React.Component {
+  constructor(props) {
+    super(props);
+    FileManagerFolder.defaultProps = {
+      onFolderHover: props.onFolderHover,
+    };
+  }
+
   render() {
     return (
       <DndProvider backend={HTML5Backend}>
@@ -403,6 +440,7 @@ class FileManager extends React.Component {
 FileManager.defaultProps = {
   headerRenderer: FileManagerHeader,
   fileRenderer: FileManagerFile,
+  folderRenderer: FileManagerFolder,
   icons: {
     File: <i className="fa fa-file-o" aria-hidden="true" />,
     Image: <i className="fa fa-file-image-o" aria-hidden="true" />,
@@ -417,4 +455,4 @@ FileManager.defaultProps = {
 };
 
 export default FileManager;
-export {FileManagerHeader, FileManagerFile};
+export {FileManagerHeader, FileManagerFile, FileManagerFolder};
