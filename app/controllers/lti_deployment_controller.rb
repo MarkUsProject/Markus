@@ -15,7 +15,7 @@ class LtiDeploymentController < ApplicationController
       description: I18n.t('markus'),
       oidc_initiation_url: lti_deployment_launch_url,
       target_link_uri: lti_deployment_redirect_login_url,
-      scopes: [],
+      scopes: ['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'],
       extensions: [
         {
           domain: request.domain(3),
@@ -116,13 +116,19 @@ class LtiDeploymentController < ApplicationController
     end
     session[:lti_course_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['course_id']
     session[:lti_user_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['user_id']
-    session[:lti_course_name] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['course_name']
+    session[:lti_course_name] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/context']['title']
+    session[:lti_course_label] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/context']['label']
     deployment_id = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/deployment_id']
     lti_host = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}"
     lti_client = LtiClient.find_or_create_by(client_id: session[:client_id], host: lti_host)
     lti_deployment = LtiDeployment.find_or_create_by(lti_client: lti_client, external_deployment_id: deployment_id)
     session[:lti_client_id] = lti_client.id
     session[:lti_deployment_id] = lti_deployment.id
+    if decoded_token[0].key?('https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice')
+      name_and_roles_endpoint = decoded_token[0]['https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice']['context_memberships_url']
+      names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
+      names_service.update!(url: name_and_roles_endpoint)
+    end
     redirect_to root_path
   end
 
@@ -159,6 +165,14 @@ class LtiDeploymentController < ApplicationController
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
       nil
     end
+  end
+
+  def create_course
+    new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
+    Instructor.create!(user: current_user, course: new_course)
+    lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+    lti_deployment.update!(course: new_course)
+    redirect_to edit_course_path(new_course)
   end
 
   # Define default URL options to not include locale

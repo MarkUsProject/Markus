@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Remove unmaintained locales (#5727)
+- Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Added the ability to submit URLs (#5822)
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
@@ -45,11 +46,21 @@
 - Separated peer review assignment upload/download from parent (#6048)
 - Expanded summary stats UI (#6050)
 - Fix bug for submission modal where students could submit files even if no file was chosen (#6052)
+- Added ability to have a non-uniform group distribution when assigning graders (#6055)
 - Added new "submit_file" API assignment route for students (#6057)
 - Removed searchbar used to filter files on submissions page (#6058)
 - Removed "outstanding_remark_request_count" attribute (#6059)
+- Added checklist for required files on submissions page (#6061)
 - Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
+- Sorted courses on the dashboard. (#6099)
+- Added summary statistics for criteria (#6100)
+- Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
+- Pass group name and starter files to the autotester when running tests (#6104)
+- Disabled admin editing of course name and allowed instructors to edit display name (#6111)
+- Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
+- Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
+- Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

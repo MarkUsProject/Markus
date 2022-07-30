@@ -1,9 +1,0 @@
-<p>
-  <%= t('student.submission.missing_files', file: missing_assignment_files.size) %>
-</p>
-
-<ul id="assignment_files" >
-  <% missing_assignment_files.each do |assignment_file| %>
-    <li><%= assignment_file.filename %></li>
-  <% end %>
-</ul>

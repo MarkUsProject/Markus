@@ -15,6 +15,7 @@ class CoursesController < ApplicationController
       format.html { render :index }
       format.json do
         courses = current_user.visible_courses
+                              .order('courses.name')
                               .pluck_to_hash('courses.id', 'courses.name',
                                              'courses.display_name', 'roles.type')
         render json: { data: courses }
@@ -25,7 +26,7 @@ class CoursesController < ApplicationController
   def edit; end
 
   def update
-    @current_course.update(params.require(:course).permit(:is_hidden))
+    @current_course.update(params.require(:course).permit(:is_hidden, :display_name))
     respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
 

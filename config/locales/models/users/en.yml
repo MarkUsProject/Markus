@@ -12,6 +12,7 @@ en:
         first_name: First Name
         full_name: Name
         grace_credits: Grace Credits
+        hidden: inactive
         id_number: ID number
         last_name: Last Name
         locale: Language

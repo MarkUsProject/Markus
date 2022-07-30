@@ -3,4 +3,12 @@ en:
   activerecord:
     attributes:
       grouping:
+        inactive_groups:
+          one: 1 inactive group
+          other: "%{count} inactive groups"
+          zero: 0 inactive groups
+        inactive_students:
+          one: 1 inactive student
+          other: "%{count} inactive students"
+          zero: 0 inactive students
         test_tokens: Tokens available
