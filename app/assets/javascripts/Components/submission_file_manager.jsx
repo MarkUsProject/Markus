@@ -37,6 +37,10 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
+  updateUploadTarget = target => {
+    this.setState({uploadTarget: target});
+  };
+
   fetchData = () => {
     let data = {course_id: this.props.course_id, assignment_id: this.props.assignment_id};
     if (typeof this.props.grouping_id !== "undefined") {
@@ -342,6 +346,7 @@ class SubmissionFileManager extends React.Component {
           enableUrlSubmit={this.props.enableUrlSubmit}
           onActionBarSubmitURLClick={this.props.readOnly ? undefined : this.openSubmitURLModal}
           isSubmittingItems={true}
+          onFolderHover={this.updateUploadTarget}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showUploadModal}
