@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
 
 export class SubmissionSelector extends React.Component {
   renderToggleMarkingStateButton = () => {
@@ -103,18 +104,21 @@ export class SubmissionSelector extends React.Component {
       <div className="submission-selector-container">
         <div className="submission-selector">
           <button
+            id="previous-button"
             className="button previous"
             onClick={this.props.previousSubmission}
             title={`${I18n.t("results.previous_submission")} (Shift + ⇦)`}
           />
           <h3 className="group-name">{this.props.group_name}</h3>
           <button
+            id="next-button"
             className="button next"
             onClick={this.props.nextSubmission}
             title={`${I18n.t("results.next_submission")} (Shift + ⇨)`}
           />
           <div className="progress">
             <meter
+              id="progress-meter"
               value={this.props.num_marked}
               min={0}
               max={this.props.num_collected}
@@ -140,3 +144,25 @@ export class SubmissionSelector extends React.Component {
     );
   }
 }
+
+SubmissionSelector.propTypes = {
+  assignment_max_mark: PropTypes.number,
+  can_release: PropTypes.bool,
+  course_id: PropTypes.number.isRequired,
+  fullscreen: PropTypes.bool,
+  group_name: PropTypes.string,
+  is_reviewer: PropTypes.bool,
+  marking_state: PropTypes.string,
+  marks: PropTypes.arrayOf(PropTypes.object),
+  nextSubmission: PropTypes.func,
+  num_collected: PropTypes.number,
+  num_marked: PropTypes.number,
+  previousSubmission: PropTypes.func,
+  released_to_students: PropTypes.bool,
+  result_id: PropTypes.number.isRequired,
+  role: PropTypes.string,
+  setReleasedToStudents: PropTypes.func,
+  toggleFullscreen: PropTypes.func,
+  toggleMarkingState: PropTypes.func,
+  total: PropTypes.number,
+};
