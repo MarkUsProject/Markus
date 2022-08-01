@@ -281,6 +281,34 @@ module Api
       end
     end
 
+    def add_tag
+      grouping = self.grouping
+      tag = self.assignment.tags.find_by(id: params[:tag_id])
+      if tag.nil? || grouping.nil?
+        raise 'tag or group not found'
+      else
+        grouping.tags << tag
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      end
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
+    end
+
+    def remove_tag
+      grouping = self.grouping
+      tag = grouping.tags.find_by(id: params[:tag_id])
+      if tag.nil? || grouping.nil?
+        raise 'tag or grouping not found'
+      else
+        grouping.tags.destroy(tag)
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      end
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
+    end
+
     private
 
     def assignment

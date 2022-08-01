@@ -58,6 +58,7 @@
 - Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
 - Pass group name and starter files to the autotester when running tests (#6104)
 - Handle multiple feedback files sent from the autotester (#6106)
+- Added API CRUD requests for tags (#6107)
 - Disabled admin editing of course name and allowed instructors to edit display name (#6111)
 - Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 - Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
