@@ -231,14 +231,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                     </label>
                   </TabPanel>
                   <TabPanel>
-                    <div
-                      id="annotation_preview"
-                      className="preview"
-                      style={{
-                        width: "600px",
-                        display: "block",
-                      }}
-                    ></div>
+                    <div id="annotation_preview" className="preview"></div>
                   </TabPanel>
 
                   <div className={this.state.show_autocomplete ? "" : "hidden"}>
