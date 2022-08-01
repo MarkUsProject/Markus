@@ -2,7 +2,7 @@
   "dependencies": {
     "@babel/runtime": "^7.18.6",
     "@rails/ujs": "^7.0.3",
-    "@rjsf/core": "^4.2.0",
+    "@rjsf/core": "^4.2.2",
     "chart.js": "^3.8.0",
     "core-js": "^3.23.3",
     "dompurify": "^2.3.8",
