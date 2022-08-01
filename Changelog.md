@@ -61,6 +61,7 @@
 - Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 - Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
+- Added text preview for latex in the create_modify_annotation_modal (#6138)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
