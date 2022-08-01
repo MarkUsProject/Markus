@@ -308,16 +308,16 @@ module AutomatedTestsHelper
       return if results['test_groups'].blank?
 
       results['test_groups'].each do |result|
-        next if result['feedback'].nil?
+        result['feedback']&.each do |feedback|
+          feedback_id = feedback['id']
+          next if feedback_id.nil?
 
-        feedback_id = result['feedback']['id']
-        next if feedback_id.nil?
-
-        uri = URI("#{autotest_setting.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
-        req = Net::HTTP::Get.new(uri)
-        set_headers(req, autotest_setting.api_key)
-        res = send_request!(req, uri)
-        result['feedback']['content'] = res.body
+          uri = URI("#{autotest_setting.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
+          req = Net::HTTP::Get.new(uri)
+          set_headers(req, autotest_setting.api_key)
+          res = send_request!(req, uri)
+          feedback['content'] = res.body
+        end
       end
     end
   end
