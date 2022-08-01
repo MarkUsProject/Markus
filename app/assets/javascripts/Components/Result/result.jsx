@@ -714,7 +714,7 @@ class Result extends React.Component {
           submission_id={this.state.submission_id}
           assignment_id={this.state.assignment_id}
           grouping_id={this.state.grouping_id}
-          assignment_max_mark={this.state.assignment_max_mark}
+          assignment_max_mark={parseFloat(this.state.assignment_max_mark)}
           fullscreen={this.state.fullscreen}
           group_name={this.state.group_name}
           is_reviewer={this.state.is_reviewer}
