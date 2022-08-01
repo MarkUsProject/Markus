@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 class CreateModifyAnnotationPanel extends React.Component {
   constructor(props) {
@@ -199,108 +200,121 @@ class CreateModifyAnnotationPanel extends React.Component {
         onRequestClose={this.props.onRequestClose}
         parentSelector={() => document.querySelector("#content")}
       >
-        <div
-          id="annotation-modal"
-          style={{
-            width: "600px",
-            display: "block",
-          }}
-        >
-          <h2>{this.props.title}</h2>
-          <form onSubmit={this.onSubmit}>
-            <div className={"modal-container-vertical"}>
-              <div>
-                <label>
-                  <textarea
-                    required={true}
-                    id="new_annotation_content"
-                    name="content"
-                    placeholder={I18n.t("results.annotation.placeholder")}
-                    value={this.state.content}
-                    onChange={this.handleChange}
-                    rows="8"
-                    autoFocus={true}
-                  />
-                </label>
+        <Tabs forceRenderTabPanel={true}>
+          <TabList>
+            <Tab>{I18n.t("write")}</Tab>
+            <Tab>{I18n.t("preview")}</Tab>
+          </TabList>
+          <div
+            id="annotation-modal"
+            style={{
+              width: "600px",
+              display: "block",
+            }}
+          >
+            <h2>{this.props.title}</h2>
+            <form onSubmit={this.onSubmit}>
+              <div className={"modal-container-vertical"}>
+                <div>
+                  <TabPanel>
+                    <label>
+                      <textarea
+                        required={true}
+                        id="new_annotation_content"
+                        name="content"
+                        placeholder={I18n.t("results.annotation.placeholder")}
+                        value={this.state.content}
+                        onChange={this.handleChange}
+                        rows="8"
+                        autoFocus={true}
+                      />
+                    </label>
+                  </TabPanel>
+                  <TabPanel>
+                    <div
+                      id="annotation_preview"
+                      className="preview"
+                      style={{
+                        width: "600px",
+                        display: "block",
+                      }}
+                    ></div>
+                  </TabPanel>
 
-                <div className={this.state.show_autocomplete ? "" : "hidden"}>
-                  <ul className="tags" key="annotation_completion" id="annotation_completion">
-                    <li className="annotation_category" id="annotation_completion_li">
-                      <p id="annotation_completion_text"></p>
-                      <div>
-                        <ul id="annotation_text_list"></ul>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-
-                <h3>{I18n.t("preview")}</h3>
-
-                <input
-                  type="hidden"
-                  id="annotation_text_id"
-                  name="annotation_text_id"
-                  value={this.state.annotation_text_id}
-                />
-
-                <div id="annotation_preview" className="preview"></div>
-                {this.props.is_reviewer ? (
+                  <div className={this.state.show_autocomplete ? "" : "hidden"}>
+                    <ul className="tags" key="annotation_completion" id="annotation_completion">
+                      <li className="annotation_category" id="annotation_completion_li">
+                        <p id="annotation_completion_text"></p>
+                        <div>
+                          <ul id="annotation_text_list"></ul>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                   <input
                     type="hidden"
-                    id="new_annotation_category"
-                    name="category_id"
-                    value={I18n.t("annotation_categories.one_time_only")}
+                    id="annotation_text_id"
+                    name="annotation_text_id"
+                    value={this.state.annotation_text_id}
                   />
-                ) : (
-                  <div className="inline-labels">
-                    <label htmlFor="new_annotation_category">
-                      {I18n.t("activerecord.models.annotation_category.one")}
-                    </label>
-
-                    <select
+                  {this.props.is_reviewer ? (
+                    <input
+                      type="hidden"
                       id="new_annotation_category"
                       name="category_id"
-                      onChange={this.checkCriterion}
-                      value={this.state.category_id}
-                      disabled={!this.props.isNew}
-                    >
-                      {options}
-                    </select>
-
-                    <p
-                      id="deduction_disclaimer"
-                      className={this.state.show_deduction_disclaimer ? "" : "hidden"}
-                    >
-                      {I18n.t("annotations.default_deduction")}
-                    </p>
-                  </div>
-                )}
-
-                {this.props.changeOneOption && (
-                  <p>
-                    <input
-                      type="checkbox"
-                      id="change_all"
-                      name="change_all"
-                      checked={this.state.change_all}
-                      onChange={this.handleCheckbox}
+                      value={I18n.t("annotation_categories.one_time_only")}
                     />
-                    <label htmlFor="change_all"> {I18n.t("annotations.update_all")}</label>{" "}
-                  </p>
-                )}
+                  ) : (
+                    <div className="inline-labels">
+                      <label htmlFor="new_annotation_category">
+                        {I18n.t("activerecord.models.annotation_category.one")}
+                      </label>
 
-                <section className="modal-container dialog-actions">
-                  <input
-                    id="annotation-submit-btn"
-                    type="submit"
-                    title="Ctrl/⌘ + Enter"
-                    value={I18n.t("save")}
-                  />
-                </section>
+                      <select
+                        id="new_annotation_category"
+                        name="category_id"
+                        onChange={this.checkCriterion}
+                        value={this.state.category_id}
+                        disabled={!this.props.isNew}
+                      >
+                        {options}
+                      </select>
+
+                      <p
+                        id="deduction_disclaimer"
+                        className={this.state.show_deduction_disclaimer ? "" : "hidden"}
+                      >
+                        {I18n.t("annotations.default_deduction")}
+                      </p>
+                    </div>
+                  )}
+
+                  {this.props.changeOneOption && (
+                    <p>
+                      <input
+                        type="checkbox"
+                        id="change_all"
+                        name="change_all"
+                        checked={this.state.change_all}
+                        onChange={this.handleCheckbox}
+                      />
+                      <label htmlFor="change_all"> {I18n.t("annotations.update_all")}</label>{" "}
+                    </p>
+                  )}
+
+                  <section className="modal-container dialog-actions">
+                    <input
+                      id="annotation-submit-btn"
+                      type="submit"
+                      title="Ctrl/⌘ + Enter"
+                      value={I18n.t("save")}
+                    />
+                  </section>
+                </div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        </Tabs>
       </Modal>
     );
   }
