@@ -63,6 +63,7 @@
 - Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 - Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
+- Ensure each file viewer has independent syntax highlighting (#6139)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

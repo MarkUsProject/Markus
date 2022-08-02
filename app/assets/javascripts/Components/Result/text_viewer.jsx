@@ -1,8 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
 
-const RAW_TEXT_DIV_ID = "code";
-
 export class TextViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -12,13 +10,12 @@ export class TextViewer extends React.Component {
     };
     this.highlight_root = null;
     this.annotation_manager = null;
+    this.raw_content = React.createRef();
   }
 
   componentDidMount() {
     if (this.props.content) {
-      this.ready_annotations(RAW_TEXT_DIV_ID);
-      this.props.annotations.forEach(this.display_annotation);
-      this.scrollToLine(this.props.focusLine);
+      this.ready_annotations();
     }
   }
 
@@ -27,9 +24,7 @@ export class TextViewer extends React.Component {
       this.props.content &&
       (this.props.content !== prevProps.content || this.props.annotations !== prevProps.annotations)
     ) {
-      this.ready_annotations(RAW_TEXT_DIV_ID);
-      this.props.annotations.forEach(this.display_annotation);
-      this.scrollToLine(this.props.focusLine);
+      this.ready_annotations();
       this.setState({copy_success: false});
     } else if (this.props.focusLine !== prevProps.focusLine) {
       this.scrollToLine(this.props.focusLine);
@@ -39,9 +34,14 @@ export class TextViewer extends React.Component {
     }
   }
 
-  // Generate text view with syntax highlighting and annotations.
-  ready_annotations = source_id => {
-    // Remove existing syntax highlighted code and displayed annotations.
+  /**
+   * Post-processes text contents and display in three ways:
+   *
+   * 1. Apply syntax highlighting
+   * 2. Display annotations
+   * 3. Scroll to line numbered this.props.focusLine
+   */
+  ready_annotations = () => {
     if (this.highlight_root !== null) {
       this.highlight_root.remove();
     }
@@ -49,8 +49,14 @@ export class TextViewer extends React.Component {
       this.annotation_manager.annotation_text_displayer.hide();
     }
 
-    dp.SyntaxHighlighter.HighlightAll(source_id, true /* showGutter */, false /* showControls */);
-    this.highlight_root = document.getElementsByClassName("dp-highlighter")[0];
+    const preElementName = this.raw_content.current.getAttribute("name");
+    dp.SyntaxHighlighter.HighlightAll(
+      preElementName,
+      true /* showGutter */,
+      false /* showControls */
+    );
+    this.highlight_root =
+      this.raw_content.current.parentNode.getElementsByClassName("dp-highlighter")[0];
     this.highlight_root.style.font_size = this.state.fontSize + "em";
 
     if (this.props.resultView) {
@@ -61,6 +67,9 @@ export class TextViewer extends React.Component {
       );
       this.annotation_manager = window.annotation_manager;
     }
+
+    this.props.annotations.forEach(this.display_annotation);
+    this.scrollToLine(this.props.focusLine);
   };
 
   change_font_size = delta => {
@@ -112,6 +121,8 @@ export class TextViewer extends React.Component {
   };
 
   render() {
+    const preElementName = `code-${this.props.submission_file_id}`;
+
     return (
       <React.Fragment>
         <div className="toolbar">
@@ -131,7 +142,7 @@ export class TextViewer extends React.Component {
             </a>
           </div>
         </div>
-        <pre id={RAW_TEXT_DIV_ID} name={RAW_TEXT_DIV_ID} className={this.props.type}>
+        <pre name={preElementName} ref={this.raw_content} className={this.props.type}>
           {this.props.content}
         </pre>
       </React.Fragment>
