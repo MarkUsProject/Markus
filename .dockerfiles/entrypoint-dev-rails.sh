@@ -16,7 +16,7 @@ until psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/postgres" -lq
   echo "waiting for database to start up"
   sleep 5
 done
-psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}" -lqt 2> /dev/null | cut -d \| -f 1 | grep -wq "${PGDATABASE}" || rails db:setup db:functions
+psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}" -lqt 2> /dev/null | cut -d \| -f 1 | grep -wq "${PGDATABASE}" || rails db:setup
 
 rm -f ./tmp/pids/server.pid
 
