@@ -56,7 +56,7 @@ source "${HOME}/.ssh/rc"
 [[ -z ${MARKUS_REPO_LOC_PATTERN} ]] && write_log 'ERROR: MARKUS_REPO_LOC_PATTERN not set' && exit 1
 
 REQUESTED_REPO_PATH=$(echo "${SSH_ORIGINAL_COMMAND}" | rev | cut -f1 -d' ' | rev) # ex: /2021-02/csc108/group_1.git'
-_REQUESTED_DIR_PATH=$(dirname "${REQUESTED_REPO_PATH}") # ex: /2021/csc108
+_REQUESTED_DIR_PATH=$(dirname "${REQUESTED_REPO_PATH}") # ex: /2021-02/csc108
 REQUESTED_COURSE=$(basename "${_REQUESTED_DIR_PATH}") # ex: csc108
 REQUESTED_INSTANCE=$(basename "$(dirname "${_REQUESTED_DIR_PATH}")") # ex: 2021-02
 REQUESTED_REPO_BASE=$(basename "${REQUESTED_REPO_PATH}") # ex: group_1.git
