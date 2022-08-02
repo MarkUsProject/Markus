@@ -32,11 +32,15 @@ export class AssignmentChart extends React.Component {
           scales: chartScales(),
         },
       },
+      show_grader_summary_link: false,
     };
   }
 
   configureComponent = res => {
-    this.setState({summary: res.summary});
+    this.setState({
+      summary: res.summary,
+      show_grader_summary_link: res.secondary_grade_distribution.data.datasets.length !== 0,
+    });
     if (this.props.show_criteria_stats) {
       for (const [index, element] of res.criteria_data.datasets.entries()) {
         element.backgroundColor = colours[index];
@@ -153,8 +157,39 @@ export class AssignmentChart extends React.Component {
       );
     }
 
+    let secondary_grade_distribution_link = (
+      <h4>
+        (
+        <a
+          href={Routes.course_assignment_graders_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
+        >
+          {I18n.t("graders.actions.assign_grader")}
+        </a>
+        )
+      </h4>
+    );
+    if (this.state.show_grader_summary_link) {
+      secondary_grade_distribution_link = (
+        <p>
+          <a
+            href={Routes.grader_summary_course_assignment_graders_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {I18n.t("activerecord.models.ta.other")}
+          </a>
+        </p>
+      );
+    }
+
     return (
       <AssessmentChart
+        course_id={this.props.course_id}
+        assessment_id={this.props.assessment_id}
         fetch_url={Routes.grade_distribution_course_assignment_path(
           this.props.course_id,
           this.props.assessment_id,
@@ -173,7 +208,6 @@ export class AssignmentChart extends React.Component {
             {this.state.summary.name}
           </a>
         }
-        secondary_grade_distribution_title={I18n.t("grader_distribution")}
         additional_assessment_data={
           <React.Fragment>
             <span className="summary-stats-label">{I18n.t("num_groups")}</span>
@@ -195,10 +229,10 @@ export class AssignmentChart extends React.Component {
             />
           </React.Fragment>
         }
-        criteria_graph={criteria_graph}
         outstanding_remark_request_link={outstanding_remark_request_link}
-        course_id={this.props.course_id}
-        assessment_id={this.props.assessment_id}
+        secondary_grade_distribution_title={I18n.t("grader_distribution")}
+        criteria_graph={criteria_graph}
+        secondary_grade_distribution_link={secondary_grade_distribution_link}
       />
     );
   }

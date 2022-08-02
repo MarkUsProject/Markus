@@ -123,16 +123,7 @@ export class AssessmentChart extends React.Component {
               width="400"
               height="350"
             />
-            <p>
-              <a
-                href={Routes.grader_summary_course_assignment_graders_path(
-                  this.props.course_id,
-                  this.props.assessment_id
-                )}
-              >
-                {I18n.t("activerecord.models.ta.other")}
-              </a>
-            </p>
+            {this.props.secondary_grade_distribution_link}
           </div>
         </React.Fragment>
       );
@@ -144,18 +135,7 @@ export class AssessmentChart extends React.Component {
           {this.props.criteria_graph}
           <div className="distribution-graph">
             <h3>{this.props.secondary_grade_distribution_title}</h3>
-            <h4>
-              (
-              <a
-                href={Routes.course_assignment_graders_path(
-                  this.props.course_id,
-                  this.props.assessment_id
-                )}
-              >
-                {I18n.t("graders.actions.assign_grader")}
-              </a>
-              )
-            </h4>
+            {this.props.secondary_grade_distribution_link}
           </div>
         </React.Fragment>
       );
@@ -231,13 +211,13 @@ CoreStatistics.propTypes = {
 };
 
 AssessmentChart.propTypes = {
-  assessment_header_content: PropTypes.element.isRequired,
-  fetch_url: PropTypes.string.isRequired,
-  configChart: PropTypes.func.isRequired,
-  secondary_grade_distribution_title: PropTypes.string.isRequired,
-  additional_assessment_data: PropTypes.element.isRequired,
   course_id: PropTypes.number.isRequired,
   assessment_id: PropTypes.number.isRequired,
-  criteria_graph: PropTypes.element,
+  fetch_url: PropTypes.string.isRequired,
+  configChart: PropTypes.func.isRequired,
+  assessment_header_content: PropTypes.element.isRequired,
+  additional_assessment_data: PropTypes.element.isRequired,
   outstanding_remark_request_link: PropTypes.element,
+  secondary_grade_distribution_title: PropTypes.string.isRequired,
+  criteria_graph: PropTypes.element,
 };

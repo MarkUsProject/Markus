@@ -12,6 +12,8 @@ export class GradeEntryFormChart extends React.Component {
   render() {
     return (
       <AssessmentChart
+        course_id={this.props.course_id}
+        assessment_id={this.props.assessment_id}
         fetch_url={Routes.grade_distribution_course_grade_entry_form_path(
           this.props.course_id,
           this.props.assessment_id
@@ -27,9 +29,6 @@ export class GradeEntryFormChart extends React.Component {
             {this.state.summary.name}
           </a>
         }
-        secondary_grade_distribution_title={I18n.t(
-          "grade_entry_forms.grade_entry_item_distribution"
-        )}
         additional_assessment_data={
           <React.Fragment>
             <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
@@ -41,8 +40,9 @@ export class GradeEntryFormChart extends React.Component {
             />
           </React.Fragment>
         }
-        course_id={this.props.course_id}
-        assessment_id={this.props.assessment_id}
+        secondary_grade_distribution_title={I18n.t(
+          "grade_entry_forms.grade_entry_item_distribution"
+        )}
       />
     );
   }
