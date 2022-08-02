@@ -267,7 +267,7 @@ class RawFileManagerFolder extends FolderRenderers.RawTableFolder {
   componentDidUpdate(prevProps) {
     if (prevProps.isOver !== this.props.isOver) {
       if (this.props.isOver) {
-        console.log(this.props.fileKey)
+        console.log(this.props.fileKey);
         this.props.onFolderHover(this.props.fileKey);
       } else {
         this.props.onFolderHover(undefined);
@@ -277,12 +277,11 @@ class RawFileManagerFolder extends FolderRenderers.RawTableFolder {
 }
 
 class FileManagerFile extends FileRenderers.RawTableFile {
-
   componentDidUpdate(prevProps) {
     if (prevProps.isOver !== this.props.isOver) {
       if (this.props.isOver) {
-        const fileKey = this.props.fileKey
-        this.props.onFileHover(fileKey.substring(0, fileKey.lastIndexOf('/')));
+        const fileKey = this.props.fileKey;
+        this.props.onFileHover(fileKey.substring(0, fileKey.lastIndexOf("/")));
       } else {
         this.props.onFileHover(undefined);
       }
@@ -441,7 +440,6 @@ class FileManager extends React.Component {
       </DndProvider>
     );
   }
-
 }
 
 FileManager.defaultProps = {

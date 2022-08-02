@@ -346,8 +346,8 @@ class SubmissionFileManager extends React.Component {
           enableUrlSubmit={this.props.enableUrlSubmit}
           onActionBarSubmitURLClick={this.props.readOnly ? undefined : this.openSubmitURLModal}
           isSubmittingItems={true}
-          folderRendererProps = {{onFolderHover: this.updateUploadTarget}}
-          fileRendererProps = {{onFileHover: this.updateUploadTarget}}
+          folderRendererProps={{onFolderHover: this.updateUploadTarget}}
+          fileRendererProps={{onFileHover: this.updateUploadTarget}}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showUploadModal}
