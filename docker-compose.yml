@@ -39,6 +39,7 @@ services:
       args:
         UBUNTU_VERSION: focal
         SSH_USER: git
+        PG_MAJOR: '12'
     image: markus-ssh:1.0.1
     volumes:
       - log:/home/git/log

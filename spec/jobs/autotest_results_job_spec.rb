@@ -106,6 +106,20 @@ describe AutotestResultsJob do
               end
               subject
             end
+            context 'when the result contains feedback file information' do
+              let(:body) { { test_groups: [{ feedback: [{ id: 992 }, { id: 882 }] }] }.to_json }
+              before do
+                allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
+              end
+              it 'should add feedback content for all feedback files' do
+                expect_any_instance_of(TestRun).to receive(:update_results!) do |_test_run, result|
+                  expect(
+                    result['test_groups'].map { |h| h['feedback'].map { |hh| hh['content'] } }.flatten.compact.length
+                  ).to eq 2
+                end
+                subject
+              end
+            end
           end
           context 'an unsuccessful request' do
             let(:dummy_return) { Net::HTTPServerError.new(1.0, '500', 'Server Error') }
