@@ -36,10 +36,10 @@ export class AssignmentChart extends React.Component {
     };
   }
 
-  configureComponent = res => {
+  setAssignmentState = res => {
     this.setState({
       summary: res.summary,
-      show_grader_summary_link: res.secondary_grade_distribution.data.datasets.length !== 0,
+      show_grader_summary_link: res.secondary_assessment_data.datasets.length !== 0,
     });
     if (this.props.show_criteria_stats) {
       for (const [index, element] of res.criteria_data.datasets.entries()) {
@@ -197,7 +197,7 @@ export class AssignmentChart extends React.Component {
             get_criteria_data: this.props.show_criteria_stats,
           }
         )}
-        configChart={this.configureComponent}
+        set_chart_type_state={this.setAssignmentState}
         assessment_header_content={
           <a
             href={Routes.browse_course_assignment_submissions_path(
@@ -205,7 +205,7 @@ export class AssignmentChart extends React.Component {
               this.props.assessment_id
             )}
           >
-            {this.state.summary.name}
+            {this.props.show_chart_header ? this.state.summary.name : ""}
           </a>
         }
         additional_assessment_data={

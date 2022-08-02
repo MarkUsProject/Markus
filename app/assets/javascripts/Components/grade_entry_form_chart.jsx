@@ -18,7 +18,7 @@ export class GradeEntryFormChart extends React.Component {
           this.props.course_id,
           this.props.assessment_id
         )}
-        configChart={res => this.setState({summary: res.summary})}
+        set_chart_type_state={res => this.setState({summary: res.summary})}
         assessment_header_content={
           <a
             href={Routes.edit_course_grade_entry_form_path(
@@ -26,7 +26,7 @@ export class GradeEntryFormChart extends React.Component {
               this.props.assessment_id
             )}
           >
-            {this.state.summary.name}
+            {this.props.show_chart_header ? this.state.summary.name : ""}
           </a>
         }
         additional_assessment_data={

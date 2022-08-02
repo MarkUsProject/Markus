@@ -38,6 +38,13 @@ class GradeEntryFormsController < ApplicationController
     GradeEntryStudent.refresh_total_grades(@grade_entry_form.grade_entry_students.ids)
   end
 
+  def summary
+    @grade_entry_form = record
+    respond_to do |format|
+      format.html { render layout: 'assignment_content' }
+    end
+  end
+
   # View/modify the grades for this grade entry form
   def grades
     @grade_entry_form = record

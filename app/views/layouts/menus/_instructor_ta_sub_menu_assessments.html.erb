@@ -39,6 +39,12 @@
                     course_grade_entry_form_marks_graders_path(@current_course, assessment) %>
       </li>
     <% end %>
+    <% if allowed_to?(:manage?, with: GradeEntryFormPolicy) %>
+      <li class='<%= "active" if controller.action_name == 'summary' %>'>
+        <%= link_to t('results.summary'),
+                    summary_course_grade_entry_form_path(@current_course, assessment) %>
+      </li>
+    <% end %>
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                                                      assessment.id %>

@@ -1,0 +1,16 @@
+<% content_for :title, t('assignment_summary', short_id: @grade_entry_form.short_identifier) %>
+<%= content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeGradeEntryFormSummary(
+        document.getElementById('statistics-react'),
+        {
+          course_id: <%= @current_course.id %>,
+          assessment_id: <%= @grade_entry_form.id %>,
+        }
+      );
+    });
+  <% end %>
+<% end %>
+
+<div id='statistics-react'></div>

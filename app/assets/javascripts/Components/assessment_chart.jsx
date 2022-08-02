@@ -67,7 +67,9 @@ export class AssessmentChart extends React.Component {
             data: res.secondary_assessment_data,
           },
         });
-        this.props.configChart(res);
+        if (typeof this.props.set_chart_type_state === "function") {
+          this.props.set_chart_type_state(res);
+        }
       });
   };
 
@@ -214,7 +216,7 @@ AssessmentChart.propTypes = {
   course_id: PropTypes.number.isRequired,
   assessment_id: PropTypes.number.isRequired,
   fetch_url: PropTypes.string.isRequired,
-  configChart: PropTypes.func.isRequired,
+  set_chart_type_state: PropTypes.func.isRequired,
   assessment_header_content: PropTypes.element.isRequired,
   additional_assessment_data: PropTypes.element.isRequired,
   outstanding_remark_request_link: PropTypes.element,

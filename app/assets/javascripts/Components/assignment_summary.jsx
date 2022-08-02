@@ -1,7 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
 import {AssignmentSummaryTable} from "./assignment_summary_table";
-import {AssessmentChart} from "./assessment_chart";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {AssignmentChart} from "./assignment_chart";
 

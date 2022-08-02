@@ -22,6 +22,7 @@ class Dashboard extends React.Component {
         <AssignmentChart
           course_id={this.props.course_id}
           assessment_id={this.state.assessment_id}
+          show_chart_header={true}
         />
       );
     } else if (this.state.assessment_type === "GradeEntryForm") {
@@ -29,6 +30,7 @@ class Dashboard extends React.Component {
         <GradeEntryFormChart
           course_id={this.props.course_id}
           assessment_id={this.state.assessment_id}
+          show_chart_header={true}
         />
       );
     } else {
