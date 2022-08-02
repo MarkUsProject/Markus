@@ -382,7 +382,7 @@ class AssignmentsController < ApplicationController
     json_data = {
       summary: summary,
       assessment_data: assignment_data,
-      ta_data: { labels: ta_labels, datasets: ta_datasets }
+      secondary_assessment_data: { labels: ta_labels, datasets: ta_datasets }
     }
     if params[:get_criteria_data] == 'true'
       criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }

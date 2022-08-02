@@ -35,35 +35,23 @@ export class AssignmentChart extends React.Component {
     };
   }
 
+  configureComponent = res => {
+    this.setState({summary: res.summary});
+    if (this.props.show_criteria_stats) {
+      for (const [index, element] of res.criteria_data.datasets.entries()) {
+        element.backgroundColor = colours[index];
+      }
+      this.setState({
+        criteria_summary: res.criteria_summary,
+        criteria_grade_distribution: {
+          ...this.state.criteria_grade_distribution,
+          data: res.criteria_data,
+        },
+      });
+    }
+  };
+
   render() {
-    const fetch_data = setAssessmentState => {
-      fetch(
-        Routes.grade_distribution_course_assignment_path(
-          this.props.course_id,
-          this.props.assessment_id,
-          {
-            get_criteria_data: this.props.show_criteria_stats,
-          }
-        )
-      )
-        .then(data => data.json())
-        .then(res => {
-          setAssessmentState(res.summary, res.assessment_data, res.ta_data);
-          this.setState({summary: res.summary});
-          if (this.props.show_criteria_stats) {
-            for (const [index, element] of res.criteria_data.datasets.entries()) {
-              element.backgroundColor = colours[index];
-            }
-            this.setState({
-              criteria_summary: res.criteria_summary,
-              criteria_grade_distribution: {
-                ...this.state.criteria_grade_distribution,
-                data: res.criteria_data,
-              },
-            });
-          }
-        });
-    };
     let outstanding_remark_request_link = "";
     if (this.state.summary.remark_requests_enabled) {
       const remark_submissions_list_link = Routes.browse_course_assignment_submissions_path(
@@ -88,28 +76,6 @@ export class AssignmentChart extends React.Component {
         </React.Fragment>
       );
     }
-
-    const additional_assessment_data = (
-      <React.Fragment>
-        <span className="summary-stats-label">{I18n.t("num_groups")}</span>
-        <span>{this.state.summary.groupings_size}</span>
-        <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
-        <FractionStat
-          numerator={this.state.summary.num_students_in_group}
-          denominator={this.state.summary.num_active_students}
-        />
-        <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
-        <FractionStat
-          numerator={this.state.summary.num_submissions_collected}
-          denominator={this.state.summary.groupings_size}
-        />
-        <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
-        <FractionStat
-          numerator={this.state.summary.num_submissions_graded}
-          denominator={this.state.summary.groupings_size}
-        />
-      </React.Fragment>
-    );
 
     let criteria_graph = "";
     if (this.props.show_criteria_stats && this.state.criteria_summary.length > 0) {
@@ -187,23 +153,48 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const assessment_header_content = (
-      <a
-        href={Routes.browse_course_assignment_submissions_path(
-          this.props.course_id,
-          this.props.assessment_id
-        )}
-      >
-        {this.state.summary.name}
-      </a>
-    );
-
     return (
       <AssessmentChart
-        assessment_header_content={assessment_header_content}
-        fetch_data={fetch_data}
+        fetch_url={Routes.grade_distribution_course_assignment_path(
+          this.props.course_id,
+          this.props.assessment_id,
+          {
+            get_criteria_data: this.props.show_criteria_stats,
+          }
+        )}
+        configChart={this.configureComponent}
+        assessment_header_content={
+          <a
+            href={Routes.browse_course_assignment_submissions_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {this.state.summary.name}
+          </a>
+        }
         secondary_grade_distribution_title={I18n.t("grader_distribution")}
-        additional_assessment_data={additional_assessment_data}
+        additional_assessment_data={
+          <React.Fragment>
+            <span className="summary-stats-label">{I18n.t("num_groups")}</span>
+            <span>{this.state.summary.groupings_size}</span>
+            <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
+            <FractionStat
+              numerator={this.state.summary.num_students_in_group}
+              denominator={this.state.summary.num_active_students}
+            />
+            <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
+            <FractionStat
+              numerator={this.state.summary.num_submissions_collected}
+              denominator={this.state.summary.groupings_size}
+            />
+            <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
+            <FractionStat
+              numerator={this.state.summary.num_submissions_graded}
+              denominator={this.state.summary.groupings_size}
+            />
+          </React.Fragment>
+        }
         criteria_graph={criteria_graph}
         outstanding_remark_request_link={outstanding_remark_request_link}
         course_id={this.props.course_id}

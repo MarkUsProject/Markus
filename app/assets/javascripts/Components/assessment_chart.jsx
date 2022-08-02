@@ -48,24 +48,27 @@ export class AssessmentChart extends React.Component {
   }
 
   fetchData = () => {
-    this.props.fetch_data((summary, assessment_data, secondary_assessment_data) => {
-      this.setState({
-        summary: summary,
-        assessment_grade_distribution: {
-          ...this.state.assessment_grade_distribution,
-          data: assessment_data,
-        },
+    fetch(this.props.fetch_url)
+      .then(data => data.json())
+      .then(res => {
+        this.setState({
+          summary: res.summary,
+          assessment_grade_distribution: {
+            ...this.state.assessment_grade_distribution,
+            data: res.assessment_data,
+          },
+        });
+        for (const [index, element] of res.secondary_assessment_data.datasets.entries()) {
+          element.backgroundColor = colours[index];
+        }
+        this.setState({
+          secondary_grade_distribution: {
+            ...this.state.secondary_grade_distribution,
+            data: res.secondary_assessment_data,
+          },
+        });
+        this.props.configChart(res);
       });
-      for (const [index, element] of secondary_assessment_data.datasets.entries()) {
-        element.backgroundColor = colours[index];
-      }
-      this.setState({
-        secondary_grade_distribution: {
-          ...this.state.secondary_grade_distribution,
-          data: secondary_assessment_data,
-        },
-      });
-    });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -229,7 +232,8 @@ CoreStatistics.propTypes = {
 
 AssessmentChart.propTypes = {
   assessment_header_content: PropTypes.element.isRequired,
-  fetch_data: PropTypes.func.isRequired,
+  fetch_url: PropTypes.string.isRequired,
+  configChart: PropTypes.func.isRequired,
   secondary_grade_distribution_title: PropTypes.string.isRequired,
   additional_assessment_data: PropTypes.element.isRequired,
   course_id: PropTypes.number.isRequired,

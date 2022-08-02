@@ -263,7 +263,7 @@ class GradeEntryFormsController < ApplicationController
 
     render json: {
       assessment_data: grade_dist_data,
-      column_breakdown_data: column_breakdown_data,
+      secondary_assessment_data: column_breakdown_data,
       summary: summary
     }
   end
