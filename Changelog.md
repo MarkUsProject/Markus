@@ -57,11 +57,14 @@
 - Added summary statistics for criteria (#6100)
 - Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
 - Pass group name and starter files to the autotester when running tests (#6104)
+- Handle multiple feedback files sent from the autotester (#6106)
+- Added API CRUD requests for tags (#6107)
 - Disabled admin editing of course name and allowed instructors to edit display name (#6111)
 - Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 - Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
 - Added text preview for latex in the create_modify_annotation_modal (#6138)
+- Ensure each file viewer has independent syntax highlighting (#6139)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
