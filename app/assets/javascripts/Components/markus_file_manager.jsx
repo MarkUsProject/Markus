@@ -236,7 +236,7 @@ class RawFileManager extends RawFileBrowser {
   }
 }
 
-class FileManagerHeader extends Headers.TableHeader {
+class RawFileManagerHeader extends Headers.TableHeader {
   render() {
     const header = (
       <tr
@@ -263,10 +263,11 @@ class FileManagerHeader extends Headers.TableHeader {
   }
 }
 
-class FileManagerFolder extends FolderRenderers.RawTableFolder {
+class RawFileManagerFolder extends FolderRenderers.RawTableFolder {
   componentDidUpdate(prevProps) {
     if (prevProps.isOver !== this.props.isOver) {
       if (this.props.isOver) {
+        console.log(this.props.fileKey)
         this.props.onFolderHover(this.props.fileKey);
       } else {
         this.props.onFolderHover(undefined);
@@ -276,6 +277,18 @@ class FileManagerFolder extends FolderRenderers.RawTableFolder {
 }
 
 class FileManagerFile extends FileRenderers.RawTableFile {
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.isOver !== this.props.isOver) {
+      if (this.props.isOver) {
+        const fileKey = this.props.fileKey
+        this.props.onFileHover(fileKey.substring(0, fileKey.lastIndexOf('/')));
+      } else {
+        this.props.onFileHover(undefined);
+      }
+    }
+  }
+
   handleFileClick = event => {
     if (event) {
       event.preventDefault();
@@ -396,7 +409,7 @@ FileManagerFile = DragSource(
   )(FileManagerFile)
 );
 
-FileManagerHeader = DragSource(
+const FileManagerHeader = DragSource(
   "file",
   BaseFileConnectors.dragSource,
   BaseFileConnectors.dragCollect
@@ -405,10 +418,10 @@ FileManagerHeader = DragSource(
     ["file", "folder", NativeTypes.FILE],
     BaseFileConnectors.targetSource,
     BaseFileConnectors.targetCollect
-  )(FileManagerHeader)
+  )(RawFileManagerHeader)
 );
 
-FileManagerFolder = DragSource(
+const FileManagerFolder = DragSource(
   "file",
   BaseFileConnectors.dragSource,
   BaseFileConnectors.dragCollect
@@ -417,17 +430,10 @@ FileManagerFolder = DragSource(
     ["file", "folder", NativeTypes.FILE],
     BaseFileConnectors.targetSource,
     BaseFileConnectors.targetCollect
-  )(FileManagerFolder)
+  )(RawFileManagerFolder)
 );
 
 class FileManager extends React.Component {
-  constructor(props) {
-    super(props);
-    FileManagerFolder.defaultProps = {
-      onFolderHover: props.onFolderHover,
-    };
-  }
-
   render() {
     return (
       <DndProvider backend={HTML5Backend}>
@@ -435,6 +441,7 @@ class FileManager extends React.Component {
       </DndProvider>
     );
   }
+
 }
 
 FileManager.defaultProps = {

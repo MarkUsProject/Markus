@@ -21,7 +21,7 @@ gem 'pluck_to_hash'
 gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'libv8'
+# gem 'libv8'
 gem 'sass-rails'
 gem 'uglifier'
 
