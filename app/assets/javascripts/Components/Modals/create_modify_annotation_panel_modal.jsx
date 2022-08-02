@@ -2,6 +2,8 @@ import React from "react";
 import Modal from "react-modal";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
+import MarkdownPreview from "../markdown_preview";
+
 class CreateModifyAnnotationPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -63,7 +65,6 @@ class CreateModifyAnnotationPanel extends React.Component {
               category_id: elem.annotation_category_id,
               annotation_text_id: elem.id,
             });
-            updatePreview("new_annotation_content", "annotation_preview");
           };
           annotation.innerText = elem.content;
           annotationTextList.appendChild(annotation);
@@ -101,8 +102,6 @@ class CreateModifyAnnotationPanel extends React.Component {
       e.preventDefault();
       submitBtn.click();
     });
-
-    updatePreview("new_annotation_content", "annotation_preview");
   };
 
   componentDidMount() {
@@ -121,12 +120,6 @@ class CreateModifyAnnotationPanel extends React.Component {
       });
     }
   }
-
-  updatePreview = () => {
-    const target_id = "annotation_preview";
-    document.getElementById(target_id).innerHTML = safe_marked(this.state.content);
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
-  };
 
   onSubmit = event => {
     event.preventDefault();
@@ -200,7 +193,7 @@ class CreateModifyAnnotationPanel extends React.Component {
         onRequestClose={this.props.onRequestClose}
         parentSelector={() => document.querySelector("#content")}
       >
-        <Tabs forceRenderTabPanel={true}>
+        <Tabs>
           <TabList>
             <Tab>{I18n.t("write")}</Tab>
             <Tab>{I18n.t("preview")}</Tab>
@@ -231,7 +224,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                     </label>
                   </TabPanel>
                   <TabPanel>
-                    <div id="annotation_preview" className="preview"></div>
+                    <MarkdownPreview content={this.state.content} />
                   </TabPanel>
 
                   <div className={this.state.show_autocomplete ? "" : "hidden"}>
