@@ -1137,7 +1137,7 @@ describe AssignmentsController do
     end
     context 'ta_data' do
       it 'should contain the right data' do
-        response.parsed_body['ta_data']['datasets'].each_with_index do |data_response, index|
+        response.parsed_body['secondary_assessment_data']['datasets'].each_with_index do |data_response, index|
           data = data_response['data']
           ta = assignment.tas[index]
           expect(ta.grade_distribution_array(assignment, 20)).to eq(data)

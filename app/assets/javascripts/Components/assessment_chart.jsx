@@ -222,4 +222,5 @@ AssessmentChart.propTypes = {
   outstanding_remark_request_link: PropTypes.element,
   secondary_grade_distribution_title: PropTypes.string.isRequired,
   criteria_graph: PropTypes.element,
+  secondary_grade_distribution_link: PropTypes.element,
 };

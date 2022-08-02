@@ -1,6 +1,6 @@
 import React from "react";
-import ReactTable from "react-table";
 import {Bar} from "react-chartjs-2";
+import ReactTable from "react-table";
 import {AssessmentChart, CoreStatistics, FractionStat} from "./assessment_chart";
 import {chartScales} from "./Helpers/chart_helpers";
 

@@ -1,8 +1,8 @@
 import React from "react";
 import {render} from "react-dom";
-import {CourseSummaryChart} from "./course_summary_chart";
 import {AssignmentChart} from "./assignment_chart";
 import {GradeEntryFormChart} from "./grade_entry_form_chart";
+import {CourseSummaryChart} from "./course_summary_chart";
 
 class Dashboard extends React.Component {
   constructor(props) {

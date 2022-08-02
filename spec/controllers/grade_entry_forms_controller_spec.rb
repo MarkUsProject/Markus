@@ -521,7 +521,7 @@ describe GradeEntryFormsController do
     }
 
     it 'should retrieve the correct column data' do
-      response_data = response.parsed_body['column_breakdown_data']
+      response_data = response.parsed_body['secondary_assessment_data']
 
       gef_dataset = grade_entry_form_with_data.grade_entry_items.map do |item|
         { label: item.name, data: item.grade_distribution_array(20) }
@@ -536,7 +536,7 @@ describe GradeEntryFormsController do
 
     it('should return the correct column data labels') {
       new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
-      expect(response.parsed_body['column_breakdown_data']['labels']).to eq new_labels
+      expect(response.parsed_body['secondary_assessment_data']['labels']).to eq new_labels
     }
 
     it('should respond with 200') { expect(response).to have_http_status 200 }
@@ -546,14 +546,14 @@ describe GradeEntryFormsController do
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:role).where('roles.hidden': false).count
       expected_summary = { name: name,
                            date: I18n.l(grade_entry_form_with_data.due_date),
-                           average: grade_entry_form_with_data.results_average,
-                           median: grade_entry_form_with_data.results_median,
-                           standard_deviation: grade_entry_form.results_standard_deviation || 0,
-                           max_mark: grade_entry_form.max_mark,
+                           average: grade_entry_form_with_data.results_average(points: true) || 0,
+                           median: grade_entry_form_with_data.results_median(points: true) || 0,
+                           standard_deviation: grade_entry_form_with_data.results_standard_deviation || 0,
+                           max_mark: grade_entry_form_with_data.max_mark,
                            num_entries: grade_entry_form_with_data.count_non_nil,
                            groupings_size: total_students,
                            num_fails: grade_entry_form_with_data.results_fails,
-                           num_zeros: grade_entry_form.results_zeros }
+                           num_zeros: grade_entry_form_with_data.results_zeros }
       expect(response.parsed_body['summary']).to eq expected_summary.as_json
     end
   end
@@ -674,6 +674,38 @@ describe GradeEntryFormsController do
                          .where(grade_entry_form: grade_entry_form_with_data)
                          .joins(role: :user).pluck('users.user_name')
           expect(response.parsed_body['data'].map { |stu| stu['user_name'] }).to match_array(students)
+        end
+      end
+    end
+  end
+
+  describe '#summary' do
+    shared_examples 'An authorized role viewing the summary for a grade entry form' do
+      context 'requests an HTML response' do
+        it 'responds with 200' do
+          post_as role, :summary, params: { course_id: course.id, id: grade_entry_form.id }, format: 'html'
+          expect(response).to have_http_status 200
+        end
+      end
+    end
+
+    describe 'When the role is instructor' do
+      let(:role) { create(:instructor) }
+      include_examples 'An authorized role viewing the summary for a grade entry form'
+    end
+
+    describe 'When the role is grader' do
+      context 'when the grader is allowed to manage grade entry forms' do
+        let(:role) { create(:ta, manage_assessments: true) }
+        include_examples 'An authorized role viewing the summary for a grade entry form'
+      end
+      context 'when the grader is not allowed to manage grade entry forms' do
+        let(:role) { create(:ta) }
+        context 'requests an HTML response' do
+          it 'responds with 403' do
+            post_as role, :summary, params: { course_id: course.id, id: grade_entry_form.id }, format: 'html'
+            expect(response).to have_http_status 403
+          end
         end
       end
     end
