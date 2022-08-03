@@ -68,7 +68,6 @@
 - Replace standalone ruby script to check for repository access with database function (#6116)
 - Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
 
-
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
 - Ensure tabs in result view do not reload when switching between them (#5910)
