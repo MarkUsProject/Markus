@@ -193,7 +193,7 @@ class CreateModifyAnnotationPanel extends React.Component {
         onRequestClose={this.props.onRequestClose}
         parentSelector={() => document.querySelector("#content")}
       >
-        <Tabs>
+        <Tabs disableUpDownKeys>
           <TabList>
             <Tab>{I18n.t("write")}</Tab>
             <Tab>{I18n.t("preview")}</Tab>
@@ -222,27 +222,29 @@ class CreateModifyAnnotationPanel extends React.Component {
                         autoFocus={true}
                       />
                     </label>
+                    <div className={this.state.show_autocomplete ? "" : "hidden"}>
+                      <ul className="tags" key="annotation_completion" id="annotation_completion">
+                        <li className="annotation_category" id="annotation_completion_li">
+                          <p id="annotation_completion_text"></p>
+                          <div>
+                            <ul id="annotation_text_list"></ul>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <input
+                      type="hidden"
+                      id="annotation_text_id"
+                      name="annotation_text_id"
+                      value={this.state.annotation_text_id}
+                    />
                   </TabPanel>
                   <TabPanel>
-                    <MarkdownPreview content={this.state.content} />
+                    <MarkdownPreview
+                      content={this.state.content}
+                      updateAnnotationCompletion={this.updateAnnotationCompletion}
+                    />
                   </TabPanel>
-
-                  <div className={this.state.show_autocomplete ? "" : "hidden"}>
-                    <ul className="tags" key="annotation_completion" id="annotation_completion">
-                      <li className="annotation_category" id="annotation_completion_li">
-                        <p id="annotation_completion_text"></p>
-                        <div>
-                          <ul id="annotation_text_list"></ul>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <input
-                    type="hidden"
-                    id="annotation_text_id"
-                    name="annotation_text_id"
-                    value={this.state.annotation_text_id}
-                  />
                   {this.props.is_reviewer ? (
                     <input
                       type="hidden"
