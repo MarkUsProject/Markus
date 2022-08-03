@@ -2,6 +2,7 @@ describe Api::GroupsController do
   let!(:course) { create :course }
   let(:assignment) { create :assignment }
   let(:group) { create :group }
+  let(:tag) { create :tag, course: course }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -20,6 +21,16 @@ describe Api::GroupsController do
 
     it 'should fail to authenticate a GET annotations request' do
       get :annotations, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
+      expect(response).to have_http_status(403)
+    end
+
+    it 'should fail to authenticate a PUT add_tag request' do
+      get :add_tag, params: { assignment_id: assignment.id, id: group.id, course_id: course.id, tag_id: tag.id }
+      expect(response).to have_http_status(403)
+    end
+
+    it 'should fail to authenticate a PUT remove_tag request' do
+      get :add_tag, params: { assignment_id: assignment.id, id: group.id, course_id: course.id, tag_id: tag.id }
       expect(response).to have_http_status(403)
     end
   end
@@ -585,6 +596,71 @@ describe Api::GroupsController do
 
         annotation_contents = submission.current_result.annotations.map { |a| a.annotation_text.content }
         expect(annotation_contents).to contain_exactly('Content 1', 'Content 2')
+      end
+    end
+    context 'PUT remove_tag' do
+      let(:response_type) { 'application/xml' }
+      let(:tag) { create :tag, assessment: assignment }
+      let(:grouping) { create :grouping, group: group, tags: [tag], assignment: assignment }
+
+      before do
+        request.env['HTTP_ACCEPT'] = response_type
+      end
+
+      it 'should let the user remove a tag' do
+        put :remove_tag, params: { id: grouping.group.id, assignment_id: assignment.id,
+                                   course_id: course.id, tag_id: tag.id }
+        expect(response).to have_http_status(200)
+        grouping.reload
+        expect(grouping.tags.find_by(id: tag.id)).to be(nil)
+      end
+
+      it 'should throw a 404 if the grouping id is invalid not found' do
+        put :remove_tag, params: { assignment_id: assignment.id, id: grouping.group.id + 1,
+                                   course_id: course.id, tag_id: tag.id }
+        grouping.reload
+
+        expect(response).to have_http_status(404)
+        expect(grouping.tags.first).to eq(tag)
+      end
+
+      it 'should throw a 404 if the tag id is not found' do
+        put :remove_tag, params: { assignment_id: assignment.id, id: grouping.group.id,
+                                   course_id: course.id, tag_id: tag.id + 1 }
+        expect(response).to have_http_status(404)
+        grouping.reload
+        expect(grouping.tags.first).to eq(tag)
+      end
+    end
+
+    context 'PUT add_tag' do
+      let(:response_type) { 'application/xml' }
+      let!(:tag) { create :tag, assessment: assignment }
+      let(:grouping) { create :grouping, group: group, tags: [], assignment: assignment }
+      before do
+        request.env['HTTP_ACCEPT'] = response_type
+      end
+
+      it 'should let the user add a tag' do
+        put :add_tag, params: { assignment_id: assignment.id, id: grouping.group.id,
+                                course_id: course.id, tag_id: tag.id }
+        expect(response).to have_http_status(200)
+        grouping.reload
+        expect(grouping.tags.first).to eq(tag)
+      end
+
+      it 'should throw a 404 if the grouping id is invalid not found' do
+        put :add_tag, params: { assignment_id: assignment.id, id: grouping.group.id + 1,
+                                course_id: course.id, tag_id: tag.id }
+        expect(response).to have_http_status(404)
+        expect(grouping.tags.first).to be(nil)
+      end
+
+      it 'should throw a 404 if the tag id is not found' do
+        put :add_tag, params: { assignment_id: assignment.id, id: grouping.group.id,
+                                course_id: course.id, tag_id: tag.id + 1 }
+        expect(response).to have_http_status(404)
+        expect(grouping.tags.first).to be(nil)
       end
     end
   end
