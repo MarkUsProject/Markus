@@ -66,6 +66,7 @@
 - Ensure each file viewer has independent syntax highlighting (#6139)
 - Replace standalone ruby script to check for repository access with database function (#6116)
 - Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
+- Remove support for sqlite and mysql database types (#6143)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
