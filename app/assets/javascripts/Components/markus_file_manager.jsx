@@ -267,7 +267,6 @@ class RawFileManagerFolder extends FolderRenderers.RawTableFolder {
   componentDidUpdate(prevProps) {
     if (prevProps.isOver !== this.props.isOver) {
       if (this.props.isOver) {
-        console.log(this.props.fileKey);
         this.props.onFolderHover(this.props.fileKey);
       } else {
         this.props.onFolderHover(undefined);
