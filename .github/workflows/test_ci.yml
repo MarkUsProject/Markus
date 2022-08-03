@@ -31,7 +31,7 @@ jobs:
           --health-retries 5
           --entrypoint redis-server
     env:
-      BUNDLE_WITHOUT: development:production:console:mysql:sqlite:unicorn
+      BUNDLE_WITHOUT: development:production:console:unicorn
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
