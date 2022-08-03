@@ -265,7 +265,8 @@ class Assignment < Assessment
     short_identifier
   end
 
-  # Returns the maximum possible mark for a particular assignment
+  # Returns the maximum possible mark for a particular assignment as a float
+  # The sum is converted from a BigDecimal to a float so that when it is passed to the frontend it is not a string
   def max_mark(user_visibility = :ta_visible)
     Float(criteria.where(user_visibility => true, bonus: false).sum(:max_mark).round(2))
   end
