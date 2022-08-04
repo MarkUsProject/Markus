@@ -246,7 +246,6 @@ GEM
     multi_json (1.15.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
-    mysql2 (0.5.4)
     net-imap (0.2.3)
       digest
       net-protocol
@@ -450,7 +449,6 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.4)
     stringio (3.0.1)
     strscan (3.0.3)
     terminal-table (3.0.2)
@@ -520,7 +518,6 @@ DEPENDENCIES
   libv8
   machinist (< 3)
   mini_mime
-  mysql2
   pg
   pluck_to_hash
   prawn
@@ -553,7 +550,6 @@ DEPENDENCIES
   simplecov-lcov
   sprockets
   sprockets-rails
-  sqlite3
   time-warp
   uglifier
   unicorn

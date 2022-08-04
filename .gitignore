@@ -39,10 +39,6 @@
 *.diff
 *.patch
 
-# Sqlite databases
-*.db
-*.sqlite3
-
 # Vim swap files
 *.swp
 
