@@ -27,7 +27,7 @@ describe("For the StudentsActionBox component's non-conditional rendering", () =
     it("has option elements equal to the specified value and displayed text", () => {
       [
         I18n.t("students.instructor_actions.give_grace_credits"),
-        I18n.t("students.instructor_actions.add_section"),
+        I18n.t("students.instructor_actions.update_section"),
         I18n.t("students.instructor_actions.mark_inactive"),
         I18n.t("students.instructor_actions.mark_active"),
       ].forEach(text => {
@@ -66,10 +66,11 @@ describe("For the StudentsActionBox component's conditional rendering", () => {
         });
       });
 
-      it("renders a select field with all the sections as individual options", () => {
+      it("renders a select field with an empty string value for no section, followed by all the existing sections", () => {
         let options = screen.getByTestId("student_action_box_update_section");
-        expect(options[0].value).toEqual("LEC0101");
-        expect(options[1].value).toEqual("LEC0102");
+        expect(options[0].value).toEqual("");
+        expect(options[1].value).toEqual("LEC0101");
+        expect(options[2].value).toEqual("LEC0102");
       });
     });
 
