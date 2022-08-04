@@ -36,24 +36,34 @@ export class AssignmentChart extends React.Component {
     };
   }
 
-  setAssignmentState = res => {
-    this.setState({
-      summary: res.summary,
-      show_grader_summary_link: res.secondary_assessment_data.datasets.length !== 0,
-    });
-    if (this.props.show_criteria_stats) {
-      for (const [index, element] of res.criteria_data.datasets.entries()) {
-        element.backgroundColor = colours[index];
-      }
-      this.setState({
-        criteria_summary: res.criteria_summary,
-        criteria_grade_distribution: {
-          ...this.state.criteria_grade_distribution,
-          data: res.criteria_data,
-        },
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
+    fetch(this.props.fetch_url)
+      .then(data => data.json())
+      .then(res => {
+        if (this.props.show_criteria_stats) {
+          for (const [index, element] of res.criteria_data.datasets.entries()) {
+            element.backgroundColor = colours[index];
+          }
+          this.setState({
+            criteria_summary: res.criteria_summary,
+            criteria_grade_distribution: {
+              ...this.state.criteria_grade_distribution,
+              data: res.criteria_data,
+            },
+          });
+        }
       });
-    }
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.assessment_id !== this.props.assessment_id) {
+      this.fetchData();
+    }
+  }
 
   render() {
     let outstanding_remark_request_link = "";
