@@ -1,4 +1,4 @@
-describe 'Check Repo Permissions Standalone File' do
+describe 'Check Repo Permissions Function' do
   let(:grouping) { create :grouping }
   let(:course_name) { grouping.course.name }
   let(:repo_name) { grouping.group.repo_name }
