@@ -14,13 +14,13 @@ export class GradeEntryFormChart extends React.Component {
         num_zeros: null,
         groupings_size: null,
       },
-      assessment_grade_distribution: {
+      grade_entry_form_distribution: {
         data: {
           labels: [],
           datasets: [],
         },
       },
-      secondary_grade_distribution: {
+      column_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
@@ -43,15 +43,15 @@ export class GradeEntryFormChart extends React.Component {
       .then(data => data.json())
       .then(res => {
         this.setState({
-          summary: res.summary,
-          assessment_grade_distribution: {
-            data: res.assessment_data,
+          summary: res.info_summary,
+          grade_entry_form_distribution: {
+            data: res.grade_dist_data,
           },
-          secondary_grade_distribution: {
-            data: res.secondary_assessment_data,
+          column_grade_distribution: {
+            data: res.column_breakdown_data,
           },
         });
-        for (const [index, element] of res.secondary_assessment_data.datasets.entries()) {
+        for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
       });
@@ -79,7 +79,7 @@ export class GradeEntryFormChart extends React.Component {
           </a>
         }
         summary={this.state.summary}
-        assessment_data={this.state.assessment_grade_distribution.data}
+        assessment_data={this.state.grade_entry_form_distribution.data}
         additional_assessment_data={
           <React.Fragment>
             <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
@@ -94,7 +94,7 @@ export class GradeEntryFormChart extends React.Component {
         secondary_grade_distribution_title={I18n.t(
           "grade_entry_forms.grade_entry_item_distribution"
         )}
-        secondary_grade_distribution_data={this.state.secondary_grade_distribution.data}
+        secondary_grade_distribution_data={this.state.column_grade_distribution.data}
       />
     );
   }

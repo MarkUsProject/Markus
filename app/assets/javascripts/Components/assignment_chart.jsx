@@ -17,13 +17,13 @@ export class AssignmentChart extends React.Component {
         num_zeros: null,
         groupings_size: null,
       },
-      assessment_grade_distribution: {
+      assignment_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
         },
       },
-      secondary_grade_distribution: {
+      ta_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
@@ -55,14 +55,14 @@ export class AssignmentChart extends React.Component {
       .then(res => {
         this.setState({
           summary: res.summary,
-          assessment_grade_distribution: {
-            data: res.assessment_data,
+          assignment_grade_distribution: {
+            data: res.assignment_data,
           },
-          secondary_grade_distribution: {
-            data: res.secondary_assessment_data,
+          ta_grade_distribution: {
+            data: res.ta_data,
           },
         });
-        for (const [index, element] of res.secondary_assessment_data.datasets.entries()) {
+        for (const [index, element] of res.ta_data.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
         if (this.props.show_criteria_stats) {
@@ -203,7 +203,7 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    let secondary_grade_distribution_link = (
+    let ta_grade_distribution_link = (
       <h4>
         (
         <a
@@ -217,8 +217,8 @@ export class AssignmentChart extends React.Component {
         )
       </h4>
     );
-    if (this.state.secondary_grade_distribution.data.datasets.length !== 0) {
-      secondary_grade_distribution_link = (
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
+      ta_grade_distribution_link = (
         <p>
           <a
             href={Routes.grader_summary_course_assignment_graders_path(
@@ -247,7 +247,7 @@ export class AssignmentChart extends React.Component {
           </a>
         }
         summary={this.state.summary}
-        assessment_data={this.state.assessment_grade_distribution.data}
+        assessment_data={this.state.assignment_grade_distribution.data}
         additional_assessment_stats={
           <React.Fragment>
             <span className="summary-stats-label">{I18n.t("num_groups")}</span>
@@ -271,9 +271,9 @@ export class AssignmentChart extends React.Component {
         }
         outstanding_remark_request_link={outstanding_remark_request_link}
         secondary_grade_distribution_title={I18n.t("grader_distribution")}
-        secondary_grade_distribution_data={this.state.secondary_grade_distribution.data}
+        secondary_grade_distribution_data={this.state.ta_grade_distribution.data}
         criteria_graph={criteria_graph}
-        secondary_grade_distribution_link={secondary_grade_distribution_link}
+        secondary_grade_distribution_link={ta_grade_distribution_link}
       />
     );
   }
