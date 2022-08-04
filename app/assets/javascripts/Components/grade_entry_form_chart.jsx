@@ -80,7 +80,7 @@ export class GradeEntryFormChart extends React.Component {
         }
         summary={this.state.summary}
         assessment_data={this.state.grade_entry_form_distribution.data}
-        additional_assessment_data={
+        additional_assessment_stats={
           <React.Fragment>
             <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
             <span>{this.state.summary.date}</span>

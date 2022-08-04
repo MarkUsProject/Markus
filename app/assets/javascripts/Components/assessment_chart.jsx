@@ -3,7 +3,7 @@ import {Bar} from "react-chartjs-2";
 import PropTypes from "prop-types";
 import {chartScales} from "./Helpers/chart_helpers";
 
-export class AssessmentChart extends React.Component {
+class AssessmentChart extends React.Component {
   render() {
     const assessment_graph = (
       <React.Fragment>
@@ -172,3 +172,5 @@ AssessmentChart.propTypes = {
   criteria_graph: PropTypes.element,
   secondary_grade_distribution_link: PropTypes.element,
 };
+
+export {AssessmentChart, CoreStatistics, FractionStat};
