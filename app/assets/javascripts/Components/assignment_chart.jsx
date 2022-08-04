@@ -17,6 +17,7 @@ export class AssignmentChart extends React.Component {
         num_zeros: null,
         groupings_size: null,
       },
+      criteria_summary: [],
       assignment_grade_distribution: {
         data: {
           labels: [],
@@ -29,7 +30,6 @@ export class AssignmentChart extends React.Component {
           datasets: [],
         },
       },
-      criteria_summary: [],
       criteria_grade_distribution: {
         data: {
           labels: [],
@@ -53,6 +53,11 @@ export class AssignmentChart extends React.Component {
     )
       .then(data => data.json())
       .then(res => {
+        // Load in background colours
+        for (const [index, element] of res.ta_data.datasets.entries()) {
+          element.backgroundColor = colours[index];
+        }
+
         this.setState({
           summary: res.summary,
           assignment_grade_distribution: {
@@ -62,9 +67,7 @@ export class AssignmentChart extends React.Component {
             data: res.ta_data,
           },
         });
-        for (const [index, element] of res.ta_data.datasets.entries()) {
-          element.backgroundColor = colours[index];
-        }
+
         if (this.props.show_criteria_stats) {
           for (const [index, element] of res.criteria_data.datasets.entries()) {
             element.backgroundColor = colours[index];
