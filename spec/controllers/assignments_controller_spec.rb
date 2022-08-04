@@ -1113,23 +1113,23 @@ describe AssignmentsController do
         expect(summary).to eq expected.as_json
       end
     end
-    context 'assessment_data' do
+    context 'assignment_data' do
       context 'data' do
         it 'should contain the right keys' do
-          data = response.parsed_body['assessment_data']
+          data = response.parsed_body['assignment_data']
           expect(data.keys).to contain_exactly('labels', 'datasets')
         end
       end
       context 'labels' do
         it 'should contain the right values' do
-          labels = response.parsed_body['assessment_data']['labels']
+          labels = response.parsed_body['assignment_data']['labels']
           expected = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
           expect(labels).to eq(expected)
         end
       end
       context 'datasets' do
         it 'should contain the right data' do
-          data = response.parsed_body['assessment_data']['datasets'].first['data']
+          data = response.parsed_body['assignment_data']['datasets'].first['data']
           expected = assignment.grade_distribution_array
           expect(data).to contain_exactly(*expected)
         end
@@ -1137,7 +1137,7 @@ describe AssignmentsController do
     end
     context 'ta_data' do
       it 'should contain the right data' do
-        response.parsed_body['secondary_assessment_data']['datasets'].each_with_index do |data_response, index|
+        response.parsed_body['ta_data']['datasets'].each_with_index do |data_response, index|
           data = data_response['data']
           ta = assignment.tas[index]
           expect(ta.grade_distribution_array(assignment, 20)).to eq(data)

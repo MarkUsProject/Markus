@@ -255,7 +255,7 @@ class GradeEntryFormsController < ApplicationController
       datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }]
     }
 
-    summary = {
+    info_summary = {
       name: "#{grade_entry_form.short_identifier}: #{grade_entry_form.description}",
       date: I18n.l(grade_entry_form.due_date),
       average: grade_entry_form.results_average(points: true) || 0,
@@ -269,9 +269,9 @@ class GradeEntryFormsController < ApplicationController
     }
 
     render json: {
-      assessment_data: grade_dist_data,
-      secondary_assessment_data: column_breakdown_data,
-      summary: summary
+      grade_dist_data: grade_dist_data,
+      column_breakdown_data: column_breakdown_data,
+      info_summary: info_summary
     }
   end
 
