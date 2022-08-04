@@ -44,6 +44,10 @@ class AutotestManager extends React.Component {
     this.fetchData();
   }
 
+  updateUploadTarget = target => {
+    this.setState({uploadTarget: target});
+  };
+
   fetchData = () => {
     fetch(
       Routes.populate_autotest_manager_course_assignment_automated_tests_path(
@@ -371,6 +375,8 @@ class AutotestManager extends React.Component {
             onActionBarAddFileClick={this.openUploadModal}
             downloadAllURL={this.getDownloadAllURL()}
             disableActions={{rename: true}}
+            folderRendererProps={{onFolderHover: this.updateUploadTarget}}
+            fileRendererProps={{onFileHover: this.updateUploadTarget}}
           />
         </fieldset>
         <fieldset>
