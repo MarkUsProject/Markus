@@ -8,52 +8,82 @@ export class AssignmentChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      summary: [],
+      summary: {
+        average: null,
+        median: null,
+        num_submissions_collected: null,
+        num_submissions_graded: null,
+        num_fails: null,
+        num_zeros: null,
+        groupings_size: null,
+      },
+      assessment_grade_distribution: {
+        data: {
+          labels: [],
+          datasets: [],
+        },
+      },
+      secondary_grade_distribution: {
+        data: {
+          labels: [],
+          datasets: [],
+        },
+      },
       criteria_summary: [],
       criteria_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
         },
-        options: {
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                // Ensure criteria labels are sorted in position order
-                sort: (a, b) => {
-                  const itemA = this.state.criteria_summary.find(item => item.name === a.text);
-                  const itemB = this.state.criteria_summary.find(item => item.name === b.text);
-                  return itemA.position - itemB.position;
-                },
-              },
-            },
-          },
-          scales: chartScales(),
-        },
       },
-      show_grader_summary_link: false,
     };
   }
 
-  setAssignmentState = res => {
-    this.setState({
-      summary: res.summary,
-      show_grader_summary_link: res.secondary_assessment_data.datasets.length !== 0,
-    });
-    if (this.props.show_criteria_stats) {
-      for (const [index, element] of res.criteria_data.datasets.entries()) {
-        element.backgroundColor = colours[index];
-      }
-      this.setState({
-        criteria_summary: res.criteria_summary,
-        criteria_grade_distribution: {
-          ...this.state.criteria_grade_distribution,
-          data: res.criteria_data,
-        },
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
+    fetch(
+      Routes.grade_distribution_course_assignment_path(
+        this.props.course_id,
+        this.props.assessment_id,
+        {get_criteria_data: this.props.show_criteria_stats}
+      )
+    )
+      .then(data => data.json())
+      .then(res => {
+        this.setState({
+          summary: res.summary,
+          assessment_grade_distribution: {
+            data: res.assessment_data,
+          },
+          secondary_grade_distribution: {
+            data: res.secondary_assessment_data,
+          },
+        });
+        for (const [index, element] of res.secondary_assessment_data.datasets.entries()) {
+          element.backgroundColor = colours[index];
+        }
+        if (this.props.show_criteria_stats) {
+          for (const [index, element] of res.criteria_data.datasets.entries()) {
+            element.backgroundColor = colours[index];
+          }
+          this.setState({
+            criteria_summary: res.criteria_summary,
+            criteria_grade_distribution: {
+              data: res.criteria_data,
+            },
+          });
+        }
       });
-    }
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.assessment_id !== this.props.assessment_id) {
+      this.fetchData();
+    }
+  }
 
   render() {
     let outstanding_remark_request_link = "";
@@ -83,13 +113,29 @@ export class AssignmentChart extends React.Component {
 
     let criteria_graph = "";
     if (this.props.show_criteria_stats && this.state.criteria_summary.length > 0) {
+      const criteria_graph_options = {
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              // Ensure criteria labels are sorted in position order
+              sort: (a, b) => {
+                const itemA = this.state.criteria_summary.find(item => item.name === a.text);
+                const itemB = this.state.criteria_summary.find(item => item.name === b.text);
+                return itemA.position - itemB.position;
+              },
+            },
+          },
+        },
+        scales: chartScales(),
+      };
       criteria_graph = (
         <div className="flex-row">
           <div className="distribution-graph">
             <h3>{I18n.t("criteria_grade_distribution")}</h3>
             <Bar
               data={this.state.criteria_grade_distribution.data}
-              options={this.state.criteria_grade_distribution.options}
+              options={criteria_graph_options}
               width="400"
               height="350"
             />
@@ -171,7 +217,7 @@ export class AssignmentChart extends React.Component {
         )
       </h4>
     );
-    if (this.state.show_grader_summary_link) {
+    if (this.state.secondary_grade_distribution.data.datasets.length !== 0) {
       secondary_grade_distribution_link = (
         <p>
           <a
@@ -190,14 +236,6 @@ export class AssignmentChart extends React.Component {
       <AssessmentChart
         course_id={this.props.course_id}
         assessment_id={this.props.assessment_id}
-        fetch_url={Routes.grade_distribution_course_assignment_path(
-          this.props.course_id,
-          this.props.assessment_id,
-          {
-            get_criteria_data: this.props.show_criteria_stats,
-          }
-        )}
-        set_chart_type_state={this.setAssignmentState}
         assessment_header_content={
           <a
             href={Routes.browse_course_assignment_submissions_path(
@@ -208,7 +246,9 @@ export class AssignmentChart extends React.Component {
             {this.props.show_chart_header ? this.state.summary.name : ""}
           </a>
         }
-        additional_assessment_data={
+        summary={this.state.summary}
+        assessment_data={this.state.assessment_grade_distribution.data}
+        additional_assessment_stats={
           <React.Fragment>
             <span className="summary-stats-label">{I18n.t("num_groups")}</span>
             <span>{this.state.summary.groupings_size}</span>
@@ -231,6 +271,7 @@ export class AssignmentChart extends React.Component {
         }
         outstanding_remark_request_link={outstanding_remark_request_link}
         secondary_grade_distribution_title={I18n.t("grader_distribution")}
+        secondary_grade_distribution_data={this.state.secondary_grade_distribution.data}
         criteria_graph={criteria_graph}
         secondary_grade_distribution_link={secondary_grade_distribution_link}
       />

@@ -4,81 +4,6 @@ import PropTypes from "prop-types";
 import {chartScales} from "./Helpers/chart_helpers";
 
 export class AssessmentChart extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      summary: {
-        average: null,
-        median: null,
-        num_submissions_collected: null,
-        num_submissions_graded: null,
-        num_fails: null,
-        num_zeros: null,
-        groupings_size: null,
-      },
-      assessment_grade_distribution: {
-        data: {
-          labels: [],
-          datasets: [],
-        },
-        options: {
-          scales: chartScales(),
-        },
-      },
-      // Grade distribution for either the TA or column grade distribution breakdown
-      secondary_grade_distribution: {
-        data: {
-          labels: [],
-          datasets: [],
-        },
-        options: {
-          plugins: {
-            legend: {
-              display: true,
-            },
-          },
-          scales: chartScales(),
-        },
-      },
-    };
-  }
-
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData = () => {
-    fetch(this.props.fetch_url)
-      .then(data => data.json())
-      .then(res => {
-        this.setState({
-          summary: res.summary,
-          assessment_grade_distribution: {
-            ...this.state.assessment_grade_distribution,
-            data: res.assessment_data,
-          },
-        });
-        for (const [index, element] of res.secondary_assessment_data.datasets.entries()) {
-          element.backgroundColor = colours[index];
-        }
-        this.setState({
-          secondary_grade_distribution: {
-            ...this.state.secondary_grade_distribution,
-            data: res.secondary_assessment_data,
-          },
-        });
-        if (typeof this.props.set_chart_type_state === "function") {
-          this.props.set_chart_type_state(res);
-        }
-      });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.assessment_id !== this.props.assessment_id) {
-      this.fetchData();
-    }
-  }
-
   render() {
     const assessment_graph = (
       <React.Fragment>
@@ -86,23 +11,23 @@ export class AssessmentChart extends React.Component {
           <div className="distribution-graph">
             <h3>{I18n.t("grade_distribution")}</h3>
             <Bar
-              data={this.state.assessment_grade_distribution.data}
-              options={this.state.assessment_grade_distribution.options}
+              data={this.props.assessment_data}
+              options={{scales: chartScales()}}
               width="500"
               height="450"
             />
           </div>
           <div className="flex-row-expand">
             <div className="grid-2-col">
-              {this.props.additional_assessment_data}
+              {this.props.additional_assessment_stats}
               <CoreStatistics
-                average={this.state.summary.average}
-                median={this.state.summary.median}
-                standard_deviation={this.state.summary.standard_deviation}
-                max_mark={this.state.summary.max_mark}
-                num_fails={this.state.summary.num_fails}
-                num_zeros={this.state.summary.num_zeros}
-                num_groupings={this.state.summary.groupings_size}
+                average={this.props.summary.average}
+                median={this.props.summary.median}
+                standard_deviation={this.props.summary.standard_deviation}
+                max_mark={this.props.summary.max_mark}
+                num_fails={this.props.summary.num_fails}
+                num_zeros={this.props.summary.num_zeros}
+                num_groupings={this.props.summary.groupings_size}
               />
               {this.props.outstanding_remark_request_link}
             </div>
@@ -111,7 +36,15 @@ export class AssessmentChart extends React.Component {
       </React.Fragment>
     );
 
-    if (this.state.secondary_grade_distribution.data.datasets.length !== 0) {
+    if (this.props.secondary_grade_distribution_data.datasets.length !== 0) {
+      const secondary_grade_chart_options = {
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+        scales: chartScales(),
+      };
       return (
         <React.Fragment>
           <h2>{this.props.assessment_header_content}</h2>
@@ -120,8 +53,8 @@ export class AssessmentChart extends React.Component {
           <div className="distribution-graph">
             <h3>{this.props.secondary_grade_distribution_title}</h3>
             <Bar
-              data={this.state.secondary_grade_distribution.data}
-              options={this.state.secondary_grade_distribution.options}
+              data={this.props.secondary_grade_distribution_data}
+              options={secondary_grade_chart_options}
               width="400"
               height="350"
             />
@@ -215,12 +148,27 @@ CoreStatistics.propTypes = {
 AssessmentChart.propTypes = {
   course_id: PropTypes.number.isRequired,
   assessment_id: PropTypes.number.isRequired,
-  fetch_url: PropTypes.string.isRequired,
-  set_chart_type_state: PropTypes.func.isRequired,
   assessment_header_content: PropTypes.element.isRequired,
-  additional_assessment_data: PropTypes.element.isRequired,
+  summary: PropTypes.shape({
+    average: PropTypes.number.isRequired,
+    median: PropTypes.number.isRequired,
+    num_submissions_collected: PropTypes.number.isRequired,
+    num_submissions_graded: PropTypes.number.isRequired,
+    num_fails: PropTypes.number.isRequired,
+    num_zeros: PropTypes.number.isRequired,
+    groupings_size: PropTypes.number.isRequired,
+  }),
+  assessment_data: PropTypes.exact({
+    labels: PropTypes.array.isRequired,
+    datasets: PropTypes.array.isRequired,
+  }),
+  additional_assessment_stats: PropTypes.element.isRequired,
   outstanding_remark_request_link: PropTypes.element,
   secondary_grade_distribution_title: PropTypes.string.isRequired,
+  secondary_grade_distribution_data: PropTypes.exact({
+    labels: PropTypes.array.isRequired,
+    datasets: PropTypes.array.isRequired,
+  }),
   criteria_graph: PropTypes.element,
   secondary_grade_distribution_link: PropTypes.element,
 };
