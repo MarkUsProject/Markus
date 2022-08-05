@@ -5,6 +5,6 @@ class LtiDeploymentPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    !Rails.env.production? # This feature is not ready for production yet
+    true
   end
 end
