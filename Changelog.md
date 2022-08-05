@@ -66,8 +66,10 @@
 - Ensure each file viewer has independent syntax highlighting (#6139)
 - Replace standalone ruby script to check for repository access with database function (#6116)
 - Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
-- Remove support for sqlite and mysql database types (#6143)
 - Update git over ssh scripts to use the database function to check for authorized keys (#6142)
+- Remove support for sqlite and mysql database types (#6143)
+- Replace uglifier gem with terser gem to support ES6 syntax (#6146)
+- Reorganize rake tasks to simplify steps required for asset precompilation in production (#6146)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
