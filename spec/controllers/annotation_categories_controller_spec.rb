@@ -202,8 +202,8 @@ describe AnnotationCategoriesController do
         expect(category.reload.flexible_criterion_id).to eq(nil)
       end
 
-      it 'fails to update the AnnotationCategory\'s associated flexible_criterion to an id '\
-       'of a criterion for another assignment' do
+      it 'fails to update the AnnotationCategory\'s associated flexible_criterion to an id ' \
+         'of a criterion for another assignment' do
         assignment = annotation_category.assignment
         flexible_criterion = create(:flexible_criterion)
 
@@ -216,8 +216,8 @@ describe AnnotationCategoriesController do
         expect(annotation_category.flexible_criterion_id).to eq(nil)
       end
 
-      it 'fails to update the AnnotationCategory\'s associated flexible_criterion'\
-       'after results have been released' do
+      it 'fails to update the AnnotationCategory\'s associated flexible_criterion' \
+         'after results have been released' do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
         flexible_criterion = create(:flexible_criterion, assignment: assignment)
@@ -389,8 +389,8 @@ describe AnnotationCategoriesController do
         expect(category.annotation_texts.first.deduction).to eq 0.5
       end
 
-      it 'does not allow creation of an annotation text associated with an annotation category with a deduction '\
-       'with a nil deduction' do
+      it 'does not allow creation of an annotation text associated with an annotation category with a deduction ' \
+         'with a nil deduction' do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         category.annotation_texts.destroy_all
@@ -449,8 +449,8 @@ describe AnnotationCategoriesController do
         expect(text.reload.deduction).to eq 0.1
       end
 
-      it 'correctly responds when updating an annotation text\'s (associated with an annotation category) '\
-       'deduction with nil value when its category belongs to a flexible criterion' do
+      it 'correctly responds when updating an annotation text\'s (associated with an annotation category) ' \
+         'deduction with nil value when its category belongs to a flexible criterion' do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         text = category.annotation_texts.first
@@ -466,8 +466,8 @@ describe AnnotationCategoriesController do
         expect(text.reload.deduction).to_not be nil
       end
 
-      it 'fails to update an annotation text\'s (associated with an annotation category) '\
-       'content when it is a deductive annotation that has been applied to released results' do
+      it 'fails to update an annotation text\'s (associated with an annotation category) ' \
+         'content when it is a deductive annotation that has been applied to released results' do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         text = category.annotation_texts.first
@@ -741,8 +741,8 @@ describe AnnotationCategoriesController do
         index = 0
         while index < annotation_category_list.size
           curr_cat = annotation_category_list[index]
-          expect(curr_cat.annotation_category_name).to be_eql(('Problem ' + (index + 1).to_s))
-          expect(curr_cat.annotation_texts.all[0].content).to be_eql(('Test on question ' + (index + 1).to_s))
+          expect(curr_cat.annotation_category_name).to be_eql(("Problem #{index + 1}"))
+          expect(curr_cat.annotation_texts.all[0].content).to be_eql(("Test on question #{index + 1}"))
           index += 1
         end
         expect(annotation_category_list.size).to eq(4)
@@ -808,9 +808,9 @@ describe AnnotationCategoriesController do
       it 'expects a call to send_data with editor' do
         text_annotation = create(:text_annotation, annotation_text: text, result: assignment_result)
         csv_data = "#{assignment.groupings.first.group.group_name}," \
-                    "#{text_annotation.annotation_text.last_editor.user_name}," \
-                    "#{text_annotation.annotation_text.creator.user_name}," \
-                     "#{text_annotation.annotation_text.content}\n"
+                   "#{text_annotation.annotation_text.last_editor.user_name}," \
+                   "#{text_annotation.annotation_text.creator.user_name}," \
+                   "#{text_annotation.annotation_text.content}\n"
 
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
@@ -824,9 +824,9 @@ describe AnnotationCategoriesController do
       it 'expects a call to send_data without editor' do
         text_annotation = create(:text_annotation, annotation_text: different_text, result: assignment_result)
         csv_data = "#{assignment.groupings.first.group.group_name}," \
-                    ',' \
-                    "#{text_annotation.annotation_text.creator.user_name}," \
-                     "#{text_annotation.annotation_text.content}\n"
+                   ',' \
+                   "#{text_annotation.annotation_text.creator.user_name}," \
+                   "#{text_annotation.annotation_text.content}\n"
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
           @controller.head :ok
@@ -869,7 +869,7 @@ describe AnnotationCategoriesController do
       end
       let(:csv_data) do
         "#{annotation_category.annotation_category_name},," \
-      "#{annotation_text.content}\n"
+          "#{annotation_text.content}\n"
       end
       let(:csv_options) do
         { filename: "#{assignment.short_identifier}_annotations.csv",
@@ -921,7 +921,7 @@ describe AnnotationCategoriesController do
         criterion_name = category.flexible_criterion.name
         annotation_text = category.annotation_texts.first
         csv_data = "#{category.annotation_category_name},#{criterion_name}," \
-        "#{annotation_text.content},#{annotation_text.deduction}\n"
+                   "#{annotation_text.content},#{annotation_text.deduction}\n"
         csv_options = { filename: "#{assignment.short_identifier}_annotations.csv",
                         disposition: 'attachment' }
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {

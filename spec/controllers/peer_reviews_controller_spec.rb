@@ -5,8 +5,8 @@ describe PeerReviewsController do
   before :each do
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
     @pr_id = @assignment_with_pr.pr_assignment.id
-    @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.pluck(:id)
-    @selected_reviewee_group_ids = @assignment_with_pr.groupings.pluck(:id)
+    @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.ids
+    @selected_reviewee_group_ids = @assignment_with_pr.groupings.ids
   end
   context '#peer_review_mapping & #upload' do
     let(:instructor) { create :instructor }
@@ -81,9 +81,7 @@ describe PeerReviewsController do
           @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
           # Now allow uploading by placing the data in a temporary file and reading
           # the data back through 'uploading' (requires a clean database)
-          File.open(@path, 'w') do |f|
-            f.write(@downloaded_text)
-          end
+          File.write(@path, @downloaded_text)
           csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
 
           post_as instructor, :upload,
@@ -233,8 +231,8 @@ describe PeerReviewsController do
 
       context 'selected reviewer for selected reviewees' do
         before :each do
-          @reviewer = Grouping.find_by_id(@selected_reviewer_group_ids[0])
-          @reviewee = Grouping.find_by_id(@selected_reviewee_group_ids[1])
+          @reviewer = Grouping.find_by(id: @selected_reviewer_group_ids[0])
+          @reviewee = Grouping.find_by(id: @selected_reviewee_group_ids[1])
           selected_group = {}
           selected_group[@reviewer.id] = true
           selected = {}

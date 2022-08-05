@@ -1,0 +1,7 @@
+<li id='exam_template_<%= exam_template.id %>'>
+  <span>
+    <%= link_to truncate(exam_template.name, length: 30),
+                edit_course_exam_template_path(@current_course, exam_template),
+                remote: true %>
+  </span>
+</li>

@@ -83,6 +83,18 @@ describe Mark do
     let(:result) { assignment.groupings.first.current_result }
     let(:annotation_text) { annotation_category_with_criteria.annotation_texts.first }
     let(:mark) { result.marks.first }
+    let(:deductive_annotation_text) do
+      create(:annotation_text_with_deduction,
+             deduction: 1.5,
+             annotation_category: annotation_category_with_criteria)
+    end
+    let(:result_with_deduction) do
+      result = assignment.groupings.first.current_result
+      create(:text_annotation,
+             annotation_text: deductive_annotation_text,
+             result: result)
+      result.reload
+    end
 
     it 'calculates the correct deduction when one annotation is applied' do
       deducted = mark.calculate_deduction
@@ -107,6 +119,35 @@ describe Mark do
       non_flex_mark = create(:rubric_mark)
       deducted = non_flex_mark.calculate_deduction
       expect(deducted).to eq(0)
+    end
+
+    context 'when there is a remark request' do
+      let(:criterion) { deductive_annotation_text.annotation_category.flexible_criterion }
+      let(:remark_result) do
+        result_with_deduction.update(marking_state: Result::MARKING_STATES[:complete])
+        submission = result_with_deduction.submission
+        submission.make_remark_result
+        submission.update(remark_request_timestamp: Time.current)
+        submission.remark_result
+      end
+
+      context 'with no deductive annotations' do
+        it 'returns the mark value calculated from annotation deductions of the original result' do
+          mark = remark_result.marks.find_by(criterion: criterion)
+          expect(mark.calculate_deduction).to eq(2.5)
+        end
+      end
+
+      context 'with a deductive annotation' do
+        it 'returns the mark value calculated from annotation deductions of the remark result' do
+          create(:text_annotation,
+                 annotation_text: deductive_annotation_text,
+                 result: remark_result,
+                 is_remark: true)
+          mark = remark_result.marks.find_by(criterion: criterion)
+          expect(mark.calculate_deduction).to eq(1.5)
+        end
+      end
     end
   end
 
@@ -191,7 +232,7 @@ describe Mark do
       expect(mark.reload.mark).to eq(nil)
     end
 
-    it 'updates the override of a mark to false when last deductive annotation deleted if the override '\
+    it 'updates the override of a mark to false when last deductive annotation deleted if the override ' \
        'was true before and the mark was nil' do
       mark.update!(mark: nil, override: true)
       result.annotations.joins(annotation_text: :annotation_category)

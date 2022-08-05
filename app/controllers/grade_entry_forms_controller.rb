@@ -71,7 +71,7 @@ class GradeEntryFormsController < ApplicationController
                code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
-             status: 404,
+             status: :not_found,
              layout: false
       return
     end
@@ -135,7 +135,7 @@ class GradeEntryFormsController < ApplicationController
 
     if current_role.instructor?
       students = grade_entry_form.grade_entry_students
-                                 .joins(role: :end_user)
+                                 .joins(role: :user)
                                  .pluck_to_hash(*student_pluck_attrs)
       grades = grade_entry_form.grade_entry_students
                                .joins(:grades)
@@ -144,7 +144,7 @@ class GradeEntryFormsController < ApplicationController
     elsif current_role.ta?
       students = current_role.grade_entry_students
                              .where(grade_entry_form: grade_entry_form)
-                             .joins(role: :end_user)
+                             .joins(role: :user)
                              .pluck_to_hash(*student_pluck_attrs)
       grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)
@@ -163,7 +163,7 @@ class GradeEntryFormsController < ApplicationController
       s
     end
     render json: { data: student_grades,
-                   sections: Hash[current_course.sections.pluck(:id, :name)] }
+                   sections: current_course.sections.pluck(:id, :name).to_h }
   end
 
   # Release/unrelease the marks for all the students or for a subset of students
@@ -204,7 +204,7 @@ class GradeEntryFormsController < ApplicationController
   # Download the grades for this grade entry form as a CSV file
   def download
     grade_entry_form = record
-    send_data grade_entry_form.export_as_csv,
+    send_data grade_entry_form.export_as_csv(current_role),
               disposition: 'attachment',
               type: 'text/csv',
               filename: "#{grade_entry_form.short_identifier}_grades_report.csv"
@@ -248,11 +248,12 @@ class GradeEntryFormsController < ApplicationController
       datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }]
     }
 
-    num_entries = grade_entry_form.count_non_nil.to_s +
-      '/' + grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count.to_s
+    num_non_nil = grade_entry_form.count_non_nil
+    num_students = grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count
+    num_entries = "#{num_non_nil}/#{num_students}"
 
     info_summary = {
-      name: grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
+      name: "#{grade_entry_form.short_identifier}: #{grade_entry_form.description}",
       date: I18n.l(grade_entry_form.due_date),
       average: grade_entry_form.results_average || 0,
       median: grade_entry_form.results_median || 0,

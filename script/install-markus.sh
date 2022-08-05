@@ -67,7 +67,7 @@ echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
 bundle config libv8 -- --with-system-v8
 bundle config github.https true
 echo "- - - Installing Project-specific Dependencies, Step 2 - - -"
-bundle install --without mysql sqlite unicorn --path vendor/bundle
+bundle install --without unicorn --path vendor/bundle
 
 echo "- - - Install JavaScript dependencies - - -"
 yarn install

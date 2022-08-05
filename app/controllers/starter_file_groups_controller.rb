@@ -9,9 +9,7 @@ class StarterFileGroupsController < ApplicationController
     assignment.starter_file_groups.create(update_params)
   end
 
-  def destroy
-    record.destroy
-  end
+  delegate :destroy, to: :record
 
   def download_file
     starter_file_group = record

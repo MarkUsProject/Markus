@@ -1,5 +1,5 @@
 <ul>
-  <% errors.each do |field, message| %>
-    <li><%= field %> <%= message %></li>
+  <% errors.each do |error| %>
+    <li><%= error.attribute %> <%= error.message %></li>
   <% end %>
 </ul>

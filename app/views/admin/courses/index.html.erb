@@ -1,0 +1,16 @@
+<% content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeAdminCourseList(document.getElementById('admin_courses_list'));
+    });
+  <% end %>
+<% end %>
+
+<% content_for :title, Course.model_name.human.pluralize %>
+
+<% @heading_buttons = [
+  { link_text: t('helpers.submit.create', model: Course.model_name.human),
+    link_path: new_admin_course_path }
+] %>
+
+<div id='admin_courses_list'></div>

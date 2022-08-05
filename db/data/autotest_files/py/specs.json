@@ -14,7 +14,7 @@
           "tester": "unittest",
           "output_verbosity": 2,
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "Python Test Group 1"
           }
         },
@@ -25,7 +25,7 @@
           "tester": "pytest",
           "output_verbosity": "short",
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion",
+            "criterion": "criterion",
             "name": "Python Test Group 2"
           }
         }

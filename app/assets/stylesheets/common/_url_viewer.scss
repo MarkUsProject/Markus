@@ -1,0 +1,30 @@
+.url-container {
+  display: flex;
+  flex-flow: column wrap;
+  height: 595px;
+  width: inherit;
+}
+
+.url-display {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.display-area {
+  flex-grow: 2;
+}
+
+.link-display {
+  border: thin solid $primary-three;
+  box-sizing: border-box;
+  padding: 5px;
+  width: inherit;
+  word-wrap: break-word;
+}
+
+.url-message-display {
+  box-sizing: border-box;
+  font: 14px/20px $mono-fonts;
+  padding: 10px;
+}

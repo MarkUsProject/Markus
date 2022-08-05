@@ -58,7 +58,7 @@ describe KeyPairsController do
     before { delete_as instructor, :destroy, params: { id: key_pair_id } }
     context 'a key_pair exists' do
       context 'owned by the current user' do
-        let(:key_pair_id) { create(:key_pair, user: instructor.end_user).id }
+        let(:key_pair_id) { create(:key_pair, user: instructor.user).id }
         it 'should delete the key_pair' do
           expect(KeyPair.where(id: key_pair_id)).to be_empty
         end

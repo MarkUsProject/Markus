@@ -1,7 +1,6 @@
 # Prepares submission files from a list of groupings for download
 # by zipping them up into a single zipfile
 class DownloadSubmissionsJob < ApplicationJob
-
   def self.show_status(status)
     if status[:progress] == status[:total]
       I18n.t('poll_job.download_submissions_finalizing')
@@ -21,7 +20,7 @@ class DownloadSubmissionsJob < ApplicationJob
 
   def perform(grouping_ids, zip_path, _assignment_id, _course_id)
     ## delete the old file if it exists
-    File.delete(zip_path) if File.exist?(zip_path)
+    FileUtils.rm_f(zip_path)
 
     progress.total = grouping_ids.length
     Zip::File.open(zip_path, create: true) do |zip_file|

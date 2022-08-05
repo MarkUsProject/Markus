@@ -1,1 +1,304 @@
-config/.rubocop.yml
+require:
+  - rubocop-rails
+
+AllCops:
+  Exclude:
+    - 'db/migrate/.*'
+    - 'db/schema.rb'
+    - 'lib/repo/test/.*'
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 2.7
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: true
+
+Layout/ExtraSpacing:
+  AllowBeforeTrailingComments: true
+  AllowForAlignment: false
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/LineLength:
+  Max: 120
+
+# Disable to allow method chaining aligned at the '.'
+Layout/MultilineOperationIndentation:
+  Enabled: false
+
+Layout/SpaceAroundOperators:
+  AllowForAlignment: false
+  EnforcedStyleForExponentOperator: space
+
+Layout/SpaceBeforeBrackets:
+  Enabled: true
+
+Lint/AmbiguousAssignment:
+  Enabled: true
+
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
+Lint/AmbiguousRange:
+  Enabled: true
+
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+
+Lint/DeprecatedConstants:
+  Enabled: true
+
+Lint/DuplicateBranch:
+  Enabled: true
+  IgnoreConstantBranches: false
+  IgnoreLiteralBranches: false
+
+Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: true
+
+Lint/EmptyBlock:
+  Enabled: true
+
+Lint/EmptyClass:
+  AllowComments: true
+  Enabled: true
+
+Lint/EmptyInPattern:
+  Enabled: true
+
+Lint/IncompatibleIoSelectWithFiberScheduler:
+  Enabled: false
+
+Lint/LambdaWithoutLiteralBlock:
+  Enabled: true
+
+Lint/MissingSuper:
+  Exclude:
+    - 'app/lib/*_repository.rb'
+
+Lint/NoReturnInBeginEndBlocks:
+  Enabled: true
+
+Lint/NonLocalExitFromIterator:
+  Enabled: false
+
+Lint/NumberedParameterAssignment:
+  Enabled: true
+
+Lint/OrAssignmentToConstant:
+  Enabled: true
+
+# Enable this when we upgrade to Ruby version 3.0+
+Lint/RedundantDirGlobSort:
+  Enabled: false
+
+Lint/RequireRelativeSelfPath:
+  Enabled: false
+
+Lint/SymbolConversion:
+  Enabled: true
+
+Lint/ToEnumArguments:
+  Enabled: true
+
+Lint/TripleQuotes:
+  Enabled: true
+
+Lint/UnexpectedBlockArity:
+  Enabled: true
+
+Lint/UnmodifiedReduceAccumulator:
+  Enabled: true
+
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+  IgnoreNotImplementedMethods: true
+
+# Disable all Metrics checks
+Metrics:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/MethodParameterName:
+  MinNameLength: 1
+
+Naming/PredicateName:
+  Enabled: false
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/HelperInstanceVariable:
+  Enabled: false
+
+Rails/OrderById:
+  Enabled: false
+
+Rails/PluckId:
+  Enabled: true
+
+Rails/RequireDependency:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/UniqueValidationWithoutIndex:
+  Enabled: false
+
+Security/IoMethods:
+  Enabled: true
+
+Style/AndOr:
+  EnforcedStyle: always
+
+Style/ArgumentsForwarding:
+  Enabled: true
+
+Style/CaseLikeIf:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/CollectionCompact:
+  Enabled: true
+
+Style/CollectionMethods:
+  PreferredMethods:
+    find:
+    detect: find
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+# Enable this when we upgrade to Ruby version 3.0+
+Style/EndlessMethod:
+  EnforcedStyle: disallow
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/HashConversion:
+  Enabled: true
+
+# Enable this when we upgrade to Ruby version 3.0+
+Style/HashExcept:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/IfWithBooleanLiteralBranches:
+  Enabled: true
+
+Style/InPatternThen:
+  Enabled: true
+
+Style/Lambda:
+  EnforcedStyle: literal
+
+# Enable when we commit to supporting only Ruby 2.6+
+Style/MapToHash:
+  Enabled: false
+
+Style/MultilineInPatternThen:
+  Enabled: true
+
+Style/NegatedIfElseCondition:
+  Enabled: false
+
+Style/Next:
+  Enabled: false
+
+Style/NilLambda:
+  Enabled: true
+
+Style/NumberedParameters:
+  Enabled: false
+
+Style/NumberedParametersLimit:
+  Enabled: true
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/OpenStructUse:
+  Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Style/QuotedSymbols:
+  Enabled: true
+
+Style/RedundantArgument:
+  Enabled: true
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/RedundantSelfAssignmentBranch:
+  Enabled: true
+
+Style/ReturnNil:
+  Enabled: true
+
+Style/SelectByRegexp:
+  Enabled: true
+
+Style/Send:
+  Enabled: true
+
+# Enable when we commit to supporting only Ruby 2.6+
+Style/SlicingWithRange:
+  Enabled: false
+
+Style/SpecialGlobalVars:
+  Enabled: true
+
+Style/StringChars:
+  Enabled: true
+
+Style/StringConcatenation:
+  Mode: conservative
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/StringMethods:
+  Enabled: true
+
+Style/SwapValues:
+  Enabled: true
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/TrailingUnderscoreVariable:
+  Enabled: false
+
+Style/ZeroLengthPredicate:
+  Enabled: false

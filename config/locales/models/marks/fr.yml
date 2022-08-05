@@ -1,6 +1,0 @@
----
-fr:
-  activerecord:
-    models:
-      mark:
-        one: Notes

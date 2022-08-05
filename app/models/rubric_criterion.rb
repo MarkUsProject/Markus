@@ -1,13 +1,32 @@
 class RubricCriterion < Criterion
+  before_validation :scale_marks_if_max_mark_changed
   before_save :round_max_mark
 
-  before_validation :scale_marks_if_max_mark_changed
-  validates_presence_of :levels
+  validates :levels, presence: true
 
   DEFAULT_MAX_MARK = 4
+  # Checks whether the passed in param's level_attributes have unique name and marks.
+  # Skips the uniqueness validation if true.
+  def update_levels(levels_attributes)
+    s1, s2 = Set[], Set[]
+    should_skip = true
 
-  def self.symbol
-    :rubric
+    # Check if there's a dup in marks or names
+    levels_attributes.each do |_key, val|
+      if s1.include?(val[:mark]) || s2.include?(val[:name])
+        should_skip = false
+        break
+      end
+      s1.add(val[:mark])
+      s2.add(val[:name])
+    end
+
+    if should_skip
+      levels_attributes.each do |_key, val|
+        val[:skip_uniqueness_validation] = true
+      end
+    end
+    self.update(levels_attributes: levels_attributes)
   end
 
   def level_with_mark_closest_to(mark)
@@ -93,7 +112,9 @@ class RubricCriterion < Criterion
     end
 
     # Delete all the existing levels that were not updated
-    criterion.levels.destroy(criterion.levels.where.not(id: levels_attributes.pluck(:id)))
+    criterion.levels.destroy(
+      criterion.levels.where.not(id: levels_attributes.pluck(:id)) # rubocop:disable Rails/PluckId
+    )
 
     max_mark = levels_attributes.pluck(:mark).max
 

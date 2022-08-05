@@ -15,6 +15,9 @@ describe Course do
     it { is_expected.to have_many(:grade_entry_forms) }
     it { is_expected.to have_many(:sections) }
     it { is_expected.to have_many(:groups) }
+    it { is_expected.to allow_value(true).for(:is_hidden) }
+    it { is_expected.to allow_value(false).for(:is_hidden) }
+    it { is_expected.not_to allow_value(nil).for(:is_hidden) }
   end
 
   describe '#get_assignment_list' # TODO
@@ -37,11 +40,12 @@ describe Course do
       end
       context 'when assignments exist for the course' do
         before do
-          create_list :assignment, 3, course: course, assignment_properties_attributes: { autotest_settings_id: 1 }
+          create_list :assignment, 3, course: course,
+                                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
         end
-        it 'should reset the autotest_settings_id for all assignments' do
+        it 'should reset the remote_autotest_settings_id for all assignments' do
           course.update_autotest_url(url)
-          expect(course.assignments.pluck(:autotest_settings_id).compact).to be_empty
+          expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
         end
       end
     end
@@ -56,11 +60,12 @@ describe Course do
       end
       context 'when assignments exist for the course' do
         before do
-          create_list :assignment, 3, course: course, assignment_properties_attributes: { autotest_settings_id: 1 }
+          create_list :assignment, 3, course: course,
+                                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
         end
-        it 'should not reset the autotest_settings_id for all assignments' do
+        it 'should not reset the remote_autotest_settings_id for all assignments' do
           course.update_autotest_url(url)
-          expect(course.assignments.pluck(:autotest_settings_id).to_set).to contain_exactly(1)
+          expect(course.assignments.pluck(:remote_autotest_settings_id).to_set).to contain_exactly(1)
         end
       end
       context 'when the autotest setting is changed' do
@@ -70,11 +75,12 @@ describe Course do
         end
         context 'when assignments exist for the course' do
           before do
-            create_list :assignment, 3, course: course, assignment_properties_attributes: { autotest_settings_id: 1 }
+            create_list :assignment, 3, course: course,
+                                        assignment_properties_attributes: { remote_autotest_settings_id: 1 }
           end
-          it 'should reset the autotest_settings_id for all assignments' do
+          it 'should reset the remote_autotest_settings_id for all assignments' do
             course.update_autotest_url('http://example.com/other')
-            expect(course.assignments.pluck(:autotest_settings_id).compact).to be_empty
+            expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
           end
         end
       end
@@ -144,6 +150,105 @@ describe Course do
           # should return assignment 1
           expect(result).to eq(assignment1)
         end
+      end
+    end
+  end
+
+  describe '#export_student_data_csv' do
+    context 'when there are no students in the course' do
+      it 'returns empty string' do
+        result = course.export_student_data_csv
+        expect(result).to eq('')
+      end
+    end
+
+    context 'when there is a student in the course' do
+      let!(:user1) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      it 'returns the data of the student' do
+        result = course.export_student_data_csv
+        expect(result).to eq("#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n")
+      end
+    end
+
+    context 'where there are multiple students in the course' do
+      let!(:user1) { create :end_user }
+      let!(:user2) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      let!(:student2) { create :student, user: user2, course: course }
+      it 'returns the data of the students' do
+        result = course.export_student_data_csv
+
+        student1_data = "#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n"
+        student2_data = "#{user2.user_name},#{user2.last_name},#{user2.first_name},,,#{user2.email}\n"
+        if user1.user_name <= user2.user_name
+          expected = student1_data + student2_data
+        else
+          expected = student2_data + student1_data
+        end
+        expect(result).to eq(expected)
+      end
+    end
+  end
+
+  describe '#export_student_data_yml' do
+    context 'where there are no students in the course' do
+      it 'returns empty yaml object' do
+        result = course.export_student_data_yml
+        expect(result).to eq([].to_yaml)
+      end
+    end
+
+    context 'where there is a student in the course' do
+      let!(:user1) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      it 'returns the data of the student' do
+        result = course.export_student_data_yml
+        expected = [{ user_name: user1.user_name,
+                      last_name: user1.last_name,
+                      first_name: user1.first_name,
+                      email: user1.email,
+                      id_number: nil,
+                      section_name: nil }]
+        expect(result).to eq(expected.to_yaml)
+      end
+    end
+
+    context 'when there are multiple students in the course' do
+      let!(:user1) { create :end_user }
+      let!(:user2) { create :end_user }
+      let!(:student1) { create :student, user: user1, course: course }
+      let!(:student2) { create :student, user: user2, course: course }
+      it 'returns the data of the students' do
+        result = course.export_student_data_yml
+        expected = []
+
+        student1_data = {
+          user_name: user1.user_name,
+          last_name: user1.last_name,
+          first_name: user1.first_name,
+          email: user1.email,
+          id_number: nil,
+          section_name: nil
+        }
+
+        student2_data = {
+          user_name: user2.user_name,
+          last_name: user2.last_name,
+          first_name: user2.first_name,
+          email: user2.email,
+          id_number: nil,
+          section_name: nil
+        }
+
+        if user1.user_name <= user2.user_name
+          expected.push(student1_data)
+          expected.push(student2_data)
+        else
+          expected.push(student2_data)
+          expected.push(student1_data)
+        end
+        expect(result).to eq(expected.to_yaml)
       end
     end
   end

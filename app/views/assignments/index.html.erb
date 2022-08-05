@@ -29,6 +29,11 @@
   <%= link_to t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one')),
               new_course_assignment_path(@current_course, timed: true),
               class: 'button' %>
+  <% if @current_course.assignments.exists? %>
+    <%= link_to t('helpers.submit.create', model: t('activerecord.models.peer_review_assignment.one')),
+                new_course_assignment_path(@current_course, is_peer_review: true),
+                class: 'button' %>
+  <% end %>
   <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
               new_course_grade_entry_form_path(@current_course),
               class: 'button' %>

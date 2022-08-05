@@ -1,5 +1,4 @@
 describe Group do
-
   describe 'validations' do
     subject { build :group }
 
@@ -26,7 +25,7 @@ describe Group do
 
     context 'fails when group_name is one of the reserved locations' do
       Repository.get_class.reserved_locations.each do |loc|
-        it "#{loc}" do
+        it loc.to_s do
           assignment = build(:group, group_name: loc)
           expect(assignment).not_to be_valid
         end

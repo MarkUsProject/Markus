@@ -7,7 +7,7 @@ FactoryBot.define do
 
     after(:create) do |group|
       if group.repo_name.nil?
-        group.repo_name = 'group_' + group.id.to_s.rjust(4, '0')
+        group.repo_name = "group_#{group.id.to_s.rjust(4, '0')}"
         group.save
       end
     end

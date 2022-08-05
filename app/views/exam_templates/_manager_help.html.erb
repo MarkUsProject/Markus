@@ -1,0 +1,7 @@
+<div id='exam_template_help'>
+  <h2><%= t(:help) %></h2>
+  <%= t('exam_templates.help_manual_html',
+        markus_version: @markus_version,
+        template_division_title: ExamTemplate.human_attribute_name('template_divisions'),
+        automatic_parsing_title: t('exam_templates.parsing.title')) %>
+</div>

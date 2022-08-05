@@ -2,7 +2,7 @@ require 'set'
 
 class PeerReview < ApplicationRecord
   belongs_to :result, dependent: :destroy
-  belongs_to :reviewer, class_name: 'Grouping'
+  belongs_to :reviewer, class_name: 'Grouping', inverse_of: :peer_reviews_to_others
   has_one :reviewee, class_name: 'Grouping', through: :result, source: :grouping
   validates_associated :reviewer
   validates_associated :result
@@ -11,7 +11,7 @@ class PeerReview < ApplicationRecord
   validate :assignments_should_match
 
   def no_students_should_be_reviewer_and_reviewee
-    if result and reviewer
+    if result && reviewer
       student_id_set = Set.new
       reviewer.students.each { |student| student_id_set.add(student.id) }
       result.submission.grouping.students.each do |student|
@@ -40,7 +40,7 @@ class PeerReview < ApplicationRecord
       peer_review = PeerReview.create!(reviewer: reviewer, result: result)
       result.peer_review_id = peer_review.id
       result.save!
-      return peer_review
+      peer_review
     end
   end
 
@@ -72,9 +72,9 @@ class PeerReview < ApplicationRecord
   def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
-      reviewer_id_to_bool.each do |reviewer_id, dummy_value|
-        reviewee_group = Grouping.find_by_id(reviewee_id)
-        reviewer_group = Grouping.find_by_id(reviewer_id)
+      reviewer_id_to_bool.each do |reviewer_id, _|
+        reviewee_group = Grouping.find_by(id: reviewee_id)
+        reviewer_group = Grouping.find_by(id: reviewer_id)
         self.delete_peer_review_between(reviewer_group, reviewee_group)
       end
     end
@@ -83,14 +83,14 @@ class PeerReview < ApplicationRecord
   end
 
   def self.get_num_collected(reviewer_group)
-    Grouping.joins(:peer_reviews)
-            .where('peer_reviews.reviewer_id': reviewer_group)
-            .where(is_collected: true).count
+    Grouping.joins(peer_reviews: :reviewee)
+            .where('peer_reviews.reviewer_id': reviewer_group,
+                   'reviewees_peer_reviews.is_collected': true) # "groupings" aliased to "reviewees_peer_reviews"
+            .count
   end
 
   def self.get_num_marked(reviewer_group)
-    self.includes(:result, :reviewer).where(reviewer_id: reviewer_group)
-        .where('groupings.is_collected': true).count do |pr|
+    self.includes(:result, :reviewer).where(reviewer_id: reviewer_group).count do |pr|
       pr.result.marking_state == Result::MARKING_STATES[:complete]
     end
   end
@@ -107,12 +107,8 @@ class PeerReview < ApplicationRecord
   end
 
   def self.from_csv(assignment, data)
-    reviewer_map = Hash[
-      assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }
-    ]
-    reviewee_map = Hash[
-      assignment.parent_assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }
-    ]
+    reviewer_map = assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
+    reviewee_map = assignment.parent_assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
     MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.size < 2
       reviewee = reviewee_map[row.first]

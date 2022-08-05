@@ -1,3 +1,6 @@
+require 'resque/server'
+require 'rails_performance'
+
 Rails.application.routes.draw do
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
@@ -14,6 +17,7 @@ Rails.application.routes.draw do
       member do
         put 'update_autotest_url'
       end
+      resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
           post 'create_or_unhide'
@@ -31,6 +35,10 @@ Rails.application.routes.draw do
             get 'annotations'
             get 'group_ids_by_name'
           end
+          member do
+            put 'add_tag'
+            put 'remove_tag'
+          end
           resources :submission_files, only: [:index, :create] do
             collection do
               delete 'remove_file'
@@ -38,7 +46,7 @@ Rails.application.routes.draw do
               post 'create_folders'
             end
           end
-          resources :feedback_files, only: [:index, :create]
+          resources :feedback_files, only: [:index, :show, :create, :update, :destroy]
           member do
             get 'annotations'
             post 'add_annotations'
@@ -55,6 +63,7 @@ Rails.application.routes.draw do
           get 'grades_summary'
           get 'test_specs'
           post 'update_test_specs'
+          post 'submit_file'
         end
       end
       resources :feedback_files, only: [:show, :update, :destroy]
@@ -74,7 +83,20 @@ Rails.application.routes.draw do
     match '*path', controller: 'main_api', action: 'page_not_found', via: :all
   end
 
-  resources :courses, only: [:show, :index] do
+  namespace :admin do
+    resources :users, only: [:index, :new, :create, :edit, :update] do
+      collection do
+        post 'upload'
+      end
+    end
+    resources :courses, only: [:index, :new, :create, :edit, :update]
+    get '/', controller: 'main_admin', action: 'index'
+
+    mount Resque::Server.new, at: '/resque', as: 'resque'
+    mount RailsPerformance::Engine, at: '/rails/performance', as: 'performance'
+  end
+
+  resources :courses, only: [:show, :index, :edit, :update] do
     member do
       get 'clear_role_switch_session'
       get 'role_switch'
@@ -116,7 +138,6 @@ Rails.application.routes.draw do
         get 'error_pages'
         patch 'add_fields'
         patch 'generate'
-        patch 'split'
         post 'fix_error'
       end
     end
@@ -210,7 +231,7 @@ Rails.application.routes.draw do
         collection do
           post 'update_positions'
           post 'upload'
-          get  'download'
+          get 'download'
         end
       end
 
@@ -237,6 +258,7 @@ Rails.application.routes.draw do
       resources :exam_templates, only: [:index, :create] do
         collection do
           get 'view_logs'
+          patch 'split'
         end
       end
 
@@ -273,7 +295,6 @@ Rails.application.routes.draw do
 
       resources :submissions, only: [:index] do
         collection do
-          get 'populate_submissions_table'
           get 'file_manager'
           get 'browse'
           get 'populate_file_manager'
@@ -310,6 +331,7 @@ Rails.application.routes.draw do
           post 'upload'
           get 'list_reviews'
           get 'show_reviews'
+          get 'populate_table'
         end
       end
 
@@ -421,7 +443,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tas, only: [:create, :new, :index, :edit, :update]  do
+    resources :tas, only: [:create, :new, :index, :edit, :update] do
       collection do
         get 'download'
         post 'upload'
@@ -460,9 +482,21 @@ Rails.application.routes.draw do
     end
   end
 
-  match 'main', controller: 'courses', action: 'index', via: :post
-  match 'main/about', controller: 'main', action: 'about', via: :post
-  match 'main/logout', controller: 'main', action: 'logout', via: :post
+  unless Rails.env.production?
+    namespace :lti_deployment do
+      get 'get_canvas_config'
+      post 'launch'
+      get 'public_jwk'
+      post 'redirect_login'
+      get 'choose_course'
+      post 'choose_course'
+      post 'create_course'
+    end
+  end
+
+  post 'main', controller: 'courses', action: 'index'
+  post 'main/about', controller: 'main', action: 'about'
+  post 'main/logout', controller: 'main', action: 'logout'
 
   match '*path', controller: 'main', action: 'page_not_found', via: :all
 end

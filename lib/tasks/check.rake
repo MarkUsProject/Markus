@@ -66,12 +66,12 @@ namespace :markus do
   def ensure_logout_redirect_link_valid
     logout_redirect = Settings.logout_redirect
     if %w[DEFAULT NONE].include?(logout_redirect)
-      return
+      nil
       # We got a URI, ensure its of proper format <>
     elsif logout_redirect.match('^http://|^https://').nil?
-      raise "Settings.logout_redirect value #{logout_redirect} is invalid. Only 'DEFAULT', "\
-          "'NONE' or addresses beginning with http:// or https:// are valid values. "\
-          "Please double check configuration in config/environments/#{Rails.env}.rb"
+      raise "Settings.logout_redirect value #{logout_redirect} is invalid. Only 'DEFAULT', " \
+            "'NONE' or addresses beginning with http:// or https:// are valid values. " \
+            "Please double check configuration in config/environments/#{Rails.env}.rb"
     end
   end
 

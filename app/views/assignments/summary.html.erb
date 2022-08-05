@@ -1,11 +1,12 @@
+<% content_for :title, t('assignment_summary', short_id: @assignment.short_identifier) %>
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeAssignmentSummaryTable(
-        document.getElementById('assignment_summary_table'),
+      makeAssignmentSummary(
+        document.getElementById('statistics-react'),
         {
           course_id: <%= @current_course.id %>,
-          assignment_id: <%= @assignment.id %>,
+          assessment_id: <%= @assignment.id %>,
           is_instructor: <%= @current_role.instructor? %>
         }
       );
@@ -13,4 +14,4 @@
   <% end %>
 <% end %>
 
-<div id='assignment_summary_table'></div>
+<div id='statistics-react'></div>

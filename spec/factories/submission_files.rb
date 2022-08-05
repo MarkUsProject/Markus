@@ -11,5 +11,9 @@ FactoryBot.define do
     factory :pdf_submission_file do
       filename { "#{Faker::Lorem.word}.pdf" }
     end
+
+    factory :notebook_submission_file do
+      filename { "#{Faker::Lorem.word}.ipynb" }
+    end
   end
 end

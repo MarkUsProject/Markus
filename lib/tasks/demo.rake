@@ -1,5 +1,5 @@
 namespace :markus do
-  desc "Markus demo"
+  desc 'Markus demo'
 
   def submit_files(group, a)
     grouping = group.grouping_for_assignment(a.id)
@@ -37,13 +37,13 @@ namespace :markus do
       grouping.invite(
         [students[0].user_name],
         StudentMembership::STATUSES[:inviter],
-        invoked_by_instructor = true
+        invoked_by_instructor: true
       )
       students[1..-1].each do |student|
         grouping.invite(
           [student.user_name],
           StudentMembership::STATUSES[:accepted],
-          invoked_by_instructor = true
+          invoked_by_instructor: true
         )
       end
       group
@@ -51,7 +51,7 @@ namespace :markus do
   end
 
   def request_remark(submission)
-    original_result = Result.find_by_submission_id(submission.id)
+    original_result = Result.find_by(submission_id: submission.id)
     original_result.released_to_students = false
     original_result.save
 
@@ -59,37 +59,39 @@ namespace :markus do
     remark = Result.new(
       marking_state: Result::MARKING_STATES[:incomplete],
       submission_id: submission.id,
-      remark_request_submitted_at: Time.current)
+      remark_request_submitted_at: Time.current
+    )
     remark.save
 
     # Update subission
     submission.update(
       remark_request: 'Please remark my assignment.',
-      remark_request_timestamp: Time.current)
+      remark_request_timestamp: Time.current
+    )
 
     submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
   end
 
   def create_criteria(a)
     CheckboxCriterion.create(
-      name:                    'Mark1',
-      assessment_id:           a.id,
-      description:             '',
-      position:                0,
-      max_mark:                10,
-      created_at:              nil,
-      updated_at:              nil,
-      assigned_groups_count:   nil
+      name: 'Mark1',
+      assessment_id: a.id,
+      description: '',
+      position: 0,
+      max_mark: 10,
+      created_at: nil,
+      updated_at: nil,
+      assigned_groups_count: nil
     )
     FlexibleCriterion.create(
-      name:                    'Mark2',
-      assessment_id:           a.id,
-      description:             '',
-      position:                1,
-      max_mark:                10,
-      created_at:              nil,
-      updated_at:              nil,
-      assigned_groups_count:   nil
+      name: 'Mark2',
+      assessment_id: a.id,
+      description: '',
+      position: 1,
+      max_mark: 10,
+      created_at: nil,
+      updated_at: nil,
+      assigned_groups_count: nil
     )
 
     attributes = []
@@ -108,7 +110,7 @@ namespace :markus do
     Student.find_each.each_with_index do |student, i|
       student.create_group_for_working_alone_student(a.id)
       group = Group.find_by group_name: student.user_name
-      if i == (Student.count/2).ceil
+      if i == (Student.count / 2).ceil
         a.update(due_date: Time.current, token_start_date: Time.current)
         a.save
       end
@@ -121,9 +123,9 @@ namespace :markus do
     result = submission.results.last
     result.marks.each do |mark|
       criterion = mark.criterion
-      if criterion.class == RubricCriterion
+      if criterion.instance_of?(RubricCriterion)
         random_mark = criterion.max_mark / 4 * rand(0..4)
-      elsif criterion.class == FlexibleCriterion
+      elsif criterion.instance_of?(FlexibleCriterion)
         random_mark = rand(0..criterion.max_mark.to_i)
       else
         random_mark = rand(0..1)
@@ -138,14 +140,12 @@ namespace :markus do
   end
 
   task demo: :environment do
-
     puts 'RESET DATABASE'
 
     Rake::Task['db:drop'].invoke
     Rake::Task['markus:repos:drop'].invoke
     Rake::Task['db:create'].invoke
     Rake::Task['db:schema:load'].invoke
-
 
     puts 'CREATE USERS'
 
@@ -166,7 +166,7 @@ namespace :markus do
     students.each do |student|
       i += rand(10 ** 7)
       stu = Student.create(user_name: student[0], first_name: student[1], last_name: student[2])
-      stu.update_attribute(:id_number, sprintf('%010d', i))
+      stu.update_attribute(:id_number, format('%010d', i))
       stu.update_attribute(:grace_credits, 5)
     end
 
@@ -193,7 +193,7 @@ namespace :markus do
       remark_due_date: 1.week.from_now,
       enable_test: true,
       token_start_date: 24.hours.from_now,
-      token_period: 1,
+      token_period: 1
     )
 
     create_criteria(a)
@@ -214,7 +214,7 @@ namespace :markus do
       enable_test: true,
       tokens_per_period: 1,
       token_start_date: 24.hours.from_now,
-      token_period: 1,
+      token_period: 1
     )
     a.submission_rule.periods << Period.new(hours: 0.001) # remove 1 token every hour
     create_criteria(a)
@@ -234,7 +234,7 @@ namespace :markus do
       remark_due_date: 1.week.from_now,
       enable_test: true,
       token_start_date: 24.hours.from_now,
-      token_period: 1,
+      token_period: 1
     )
 
     a.submission_rule.periods << Period.new(hours: 1, deduction: 10, interval: 0.01)
@@ -243,8 +243,7 @@ namespace :markus do
     submit_half_on_time(a)
 
     a.submission_rule.periods = []
-    a.submission_rule.periods << Period.new(hours: 0.001, deduction: 10, interval: 1) # remove 10% every hour for 3 hours
-
+    a.submission_rule.periods << Period.new(hours: 0.001, deduction: 10, interval: 1) # remove 10%/hour for 3 hours
 
     puts '4: Students work in groups'
     a = Assignment.create(
@@ -261,12 +260,12 @@ namespace :markus do
       remark_due_date: 2.months.from_now,
       enable_test: true,
       token_start_date: 1.month.from_now,
-      token_period: 1,
+      token_period: 1
     )
 
-    create_group(a, [students[0]].map { |s| Student.find_by_user_name(s) })
-    create_group(a, students[1...3].map { |s| Student.find_by_user_name(s) })
-    create_group(a, students[3..-1].map { |s| Student.find_by_user_name(s) })
+    create_group(a, [students[0]].map { |s| Student.find_by(user_name: s) })
+    create_group(a, students[1...3].map { |s| Student.find_by(user_name: s) })
+    create_group(a, students[3..-1].map { |s| Student.find_by(user_name: s) })
     create_criteria(a)
 
     puts '5: Nothing collected'
@@ -282,7 +281,7 @@ namespace :markus do
       remark_due_date: 2.months.from_now,
       enable_test: true,
       token_start_date: 1.month.from_now,
-      token_period: 1,
+      token_period: 1
     )
     create_criteria(a)
 
@@ -308,7 +307,7 @@ namespace :markus do
       remark_due_date: 2.months.from_now,
       enable_test: true,
       token_start_date: 1.month.from_now,
-      token_period: 1,
+      token_period: 1
     )
 
     remark_submission = nil

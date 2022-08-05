@@ -1,16 +1,15 @@
 # Responsible for maintaining sessions and querying session status
 # All controllers are expected to extend this module (already by default)
 module SessionHandler
-
   protected
 
   # Sets current user for this session
   def current_user=(user)
-    session[:user_name] = user&.is_a?(User) ? user.user_name : nil
+    session[:user_name] = user.is_a?(User) ? user.user_name : nil
   end
 
   def real_user=(user)
-    session[:real_user_name] = user&.is_a?(User) ? user.user_name : nil
+    session[:real_user_name] = user.is_a?(User) ? user.user_name : nil
   end
 
   # Retrieve current user for this session, or nil if none exists
@@ -18,21 +17,29 @@ module SessionHandler
     # retrieve from database on every request instead of
     # storing it as global variable when current_user=
     # is called to prevent user information becoming stale.
-    @current_user ||= (session[:user_name] && User.find_by_user_name(session[:user_name])) || real_user
+    @current_user ||= (session[:user_name] && User.find_by(user_name: session[:user_name])) || real_user
   end
 
   def real_user
     return @real_user if defined? @real_user
     real_user_name = remote_auth? ? remote_user_name : session[:real_user_name]
-    @real_user = User.find_by_user_name(real_user_name) if real_user_name
+    @real_user = User.find_by(user_name: real_user_name) if real_user_name
   end
 
   def current_role
-    @current_role ||= Role.find_by(end_user: current_user, course: current_course)
+    if current_user&.admin_user?
+      @current_role ||= AdminRole.find_or_create_by(user: current_user, course: current_course)
+    else
+      @current_role ||= Role.find_by(user: current_user, course: current_course)
+    end
   end
 
   def real_role
-    @real_role ||= Role.find_by(end_user: real_user, course: current_course)
+    if real_user&.admin_user?
+      @real_role ||= AdminRole.find_or_create_by(user: real_user, course: current_course)
+    else
+      @real_role ||= Role.find_by(user: real_user, course: current_course)
+    end
   end
 
   def current_course
@@ -113,7 +120,7 @@ module SessionHandler
         head :forbidden # 403
       else
         session[:redirect_uri] = request.fullpath
-        redirect_to controller: 'main', action: 'login'
+        redirect_to root_path
       end
     end
   end

@@ -57,6 +57,7 @@ Daryn Lam
 David Das
 David Liu
 Derek Dowling
+Dhairya Khara
 Diane Tam
 Dina Sabie
 Dmitry Khabarov
@@ -80,6 +81,7 @@ Hanson Wu
 Haohan David Jiang
 Heyu Wang
 Horatiu Halmaghi
+Huiyu Sun
 Ian Smith
 Ibrahim Shahin
 Ignas Panero Armoska
@@ -162,6 +164,7 @@ Robert Burke
 Robert Tan
 Ryan Spring
 Samuel Gougeon
+Samuel Weiss
 Sean Budning
 Seung Hoon Lee
 Severin Gehwolf
@@ -175,6 +178,7 @@ Tanveer Gill
 Tara Clark
 Tiago Chedraoui Silva
 Tianhai Hu
+Tianji Zhang
 Thomas Hayes
 Tudor Brindus
 Tyler Han
@@ -194,3 +198,4 @@ Yiqi Zhu
 Yujin Cho
 Yusi Fan
 Zachary Munro-Cape
+Ziyuan (Jerry) Zhang

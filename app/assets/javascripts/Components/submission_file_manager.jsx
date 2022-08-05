@@ -2,19 +2,25 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
+import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
-import {lookup} from "mime-types";
+import {getType} from "mime/lite";
 
 class SubmissionFileManager extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       files: [],
-      showModal: false,
+      showUploadModal: false,
+      showURLModal: false,
       uploadTarget: undefined,
       viewFile: null,
       viewFileType: null,
       viewFileURL: null,
+      onlyRequiredFiles: false,
+      requiredFiles: [],
+      maxFileSize: 0,
+      numberOfMissingFiles: 0,
     };
   }
 
@@ -49,10 +55,14 @@ class SubmissionFileManager extends React.Component {
       .then(data => data.json())
       .then(data =>
         this.setState({
-          files: data,
+          files: data.entries,
           viewFile: null,
           viewFileType: null,
           viewFileURL: null,
+          onlyRequiredFiles: data.only_required_files,
+          requiredFiles: data.required_files,
+          maxFileSize: data.max_file_size,
+          numberOfMissingFiles: data.number_of_missing_files,
         })
       );
   };
@@ -64,15 +74,40 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
-  handleCreateFiles = (files, unzip) => {
+  handleCreateUrl = (url, url_text) => {
+    this.setState({showURLModal: false});
+    const data_to_upload = {
+      new_url: url,
+      url_text: url_text,
+      path: "/" + (this.state.uploadTarget || ""),
+    };
+    if (this.props.grouping_id) {
+      data_to_upload.grouping_id = this.props.grouping_id;
+    }
+    $.post({
+      url: Routes.update_files_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: data_to_upload,
+    })
+      .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
+  handleCreateFiles = (files, unzip, renameTo = "") => {
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
       const prefix = this.state.uploadTarget || "";
-      this.setState({showModal: false, uploadTarget: undefined});
+      this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
-      Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
+      if (!!renameTo && files.length === 1) {
+        Array.from(files).forEach(f => data.append("new_files[]", f, renameTo));
+      } else {
+        Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
+      }
       data.append("path", "/" + prefix); // Server expects path with leading slash (TODO: fix that)
       if (this.props.grouping_id) {
         data.append("grouping_id", this.props.grouping_id);
@@ -174,7 +209,11 @@ class SubmissionFileManager extends React.Component {
   };
 
   openUploadModal = uploadTarget => {
-    this.setState({showModal: true, uploadTarget: uploadTarget});
+    this.setState({showUploadModal: true, uploadTarget: uploadTarget});
+  };
+
+  openSubmitURLModal = uploadTarget => {
+    this.setState({showURLModal: true, uploadTarget: uploadTarget});
   };
 
   updateViewFile = item => {
@@ -201,7 +240,7 @@ class SubmissionFileManager extends React.Component {
             selectedFile={this.state.viewFile}
             selectedFileType={this.state.viewFileType}
             selectedFileURL={this.state.viewFileURL}
-            mime_type={lookup(this.state.viewFile)}
+            mime_type={getType(this.state.viewFile)}
           />
         </div>
       );
@@ -219,9 +258,66 @@ class SubmissionFileManager extends React.Component {
     );
   };
 
+  renderRequiredFiles = () => {
+    let requiredFilesBox;
+
+    if (this.state.requiredFiles.length > 0) {
+      requiredFilesBox = (
+        <div>
+          <h2>{I18n.t("activerecord.attributes.assignment.assignment_files")}</h2>
+          <p>
+            {this.state.numberOfMissingFiles === 0
+              ? I18n.t("student.submission.all_files_submitted")
+              : I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})}
+          </p>
+          {this.state.requiredFiles.map(filename => {
+            return (
+              <p key={filename} className={"required-files-container"}>
+                <input
+                  className={"required-files-checkbox"}
+                  type={"checkbox"}
+                  disabled={true}
+                  checked={this.state.files.some(element => element.key === filename)}
+                  name={`required-file-${filename}`}
+                  id={`required-file-${filename}`}
+                />
+                <label htmlFor={`required-file-${filename}`}>
+                  &nbsp; {filename}
+                  {this.state.files.some(element => element.key === filename) ? (
+                    ""
+                  ) : (
+                    <strong>&nbsp; {I18n.t("submissions.student.missing")}</strong>
+                  )}
+                </label>
+              </p>
+            );
+          })}
+        </div>
+      );
+    } else {
+      requiredFilesBox = "";
+    }
+    return (
+      <div className={"pane-wrapper small-bottom-margin"}>
+        <div className={"pane"}>
+          {requiredFilesBox}
+          {this.state.onlyRequiredFiles ? (
+            <p>{I18n.t("submissions.student.only_required_files")}</p>
+          ) : (
+            ""
+          )}
+          <p>
+            {I18n.t("submissions.student.maximum_file_size", {file_size: this.state.maxFileSize})}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   render() {
     return (
       <div>
+        {this.renderRequiredFiles()}
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t("submissions.no_files_available")}
@@ -243,11 +339,22 @@ class SubmissionFileManager extends React.Component {
             deleteFolder: !this.props.enableSubdirs,
           }}
           onSelectFile={this.updateViewFile}
+          enableUrlSubmit={this.props.enableUrlSubmit}
+          onActionBarSubmitURLClick={this.props.readOnly ? undefined : this.openSubmitURLModal}
+          isSubmittingItems={true}
         />
         <SubmissionFileUploadModal
-          isOpen={this.state.showModal}
-          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          isOpen={this.state.showUploadModal}
+          onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+          onlyRequiredFiles={this.state.onlyRequiredFiles}
+          requiredFiles={this.state.requiredFiles}
+          uploadTarget={this.state.uploadTarget}
+        />
+        <SubmitUrlUploadModal
+          isOpen={this.state.showURLModal}
+          onRequestClose={() => this.setState({showURLModal: false})}
+          onSubmit={this.handleCreateUrl}
         />
         {this.renderFileViewer()}
       </div>

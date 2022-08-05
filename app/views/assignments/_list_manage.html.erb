@@ -16,32 +16,17 @@
         </tr>
       </thead>
       <tbody>
-        <% assignments.select { |a| !a.is_peer_review? }.each do |assignment| %>
+        <% assignments.each do |assignment| %>
           <% route = { controller: 'assignments', action: action, id: assignment.id } %>
           <% assignment_text = "#{h(assignment.short_identifier)}: #{h(assignment.description)}" %>
           <% assignment_text = t('assignments.hidden', assignment_text: assignment_text) if assignment.is_hidden %>
           <tr>
             <td>
               <%= link_to assignment_text, route %>
-
-              <% if assignment.has_peer_review? %>
-                <!--temporary conditional until submissions_controller.browse() is updated to handle pr_assignments-->
-                <% if allowed_to?(:view?) %>
-                  <% pr_route = { controller: 'assignments', action: action, id: assignment.pr_assignment.id } %>
-                <% else %>
-                  <% pr_route = {} %>
-                <% end %>
-                <% pr_text = "#{assignment.short_identifier} #{PeerReview.model_name.human}" %>
-                <% pr_text = t('assignments.hidden', assignment_text: pr_text) if assignment.pr_assignment.is_hidden %>
-                <p class="indent"><%= link_to pr_text, pr_route %></p>
-              <% end %>
             </td>
 
             <td>
-              <div><%= l(assignment.due_date) %></div>
-              <% if assignment.has_peer_review? %>
-                <p><%= l(assignment.pr_assignment.due_date) %></p>
-              <% end %>
+              <%= l(assignment.due_date) %>
             </td>
 
             <td>

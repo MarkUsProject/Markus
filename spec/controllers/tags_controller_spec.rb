@@ -36,7 +36,7 @@ describe TagsController do
 
     it 'creates a new tag' do
       post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
-                                        assignment_id: assignment.id, course_id: course.id }
+                                             assignment_id: assignment.id, course_id: course.id }
       expect(Tag.find_by(name: 'tag', description: 'tag description')).to_not be_nil
     end
 
@@ -82,7 +82,7 @@ describe TagsController do
     end
 
     before :each do
-      create(:instructor, end_user: create(:end_user, user_name: 'a'))
+      create(:instructor, user: create(:end_user, user_name: 'a'))
 
       @file_good_csv = fixture_file_upload('tags/form_good.csv', 'text/csv')
       @file_good_yml = fixture_file_upload('tags/form_good.yml', 'text/yaml')

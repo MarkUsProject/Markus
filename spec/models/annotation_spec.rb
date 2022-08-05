@@ -20,6 +20,7 @@ describe Annotation do
     it { is_expected.to allow_value('ImageAnnotation').for(:type) }
     it { is_expected.to allow_value('TextAnnotation').for(:type) }
     it { is_expected.to allow_value('PdfAnnotation').for(:type) }
+    it { is_expected.to allow_value('HtmlAnnotation').for(:type) }
     it { is_expected.to_not allow_value('OtherAnnotation').for(:type) }
   end
 
@@ -108,7 +109,7 @@ describe Annotation do
       expect(mark.mark).to eq 2.0
     end
 
-    it 'creates a mark when associated with its category\'s flexible criterion '\
+    it 'creates a mark when associated with its category\'s flexible criterion ' \
        'was made after annotations were made ' do
       annotation_text.annotations.destroy_all
       new_flex = create(:flexible_criterion, assignment: assignment)
@@ -124,7 +125,8 @@ describe Annotation do
         grouping = assignment.groupings.first
         grouping.current_result.update!(released_to_students: true)
         grouping.current_submission_used.make_remark_result
-        grouping.current_submission_used.update!(remark_request: 'remark request', remark_request_timestamp: Time.now)
+        grouping.current_submission_used.update!(remark_request: 'remark request',
+                                                 remark_request_timestamp: Time.current)
         grouping.current_submission_used.get_original_result.update!(released_to_students: false)
         annotation = create(:text_annotation, annotation_text: annotation_text, result: grouping.current_result,
                                               is_remark: true)

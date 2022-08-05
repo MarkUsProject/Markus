@@ -25,10 +25,6 @@ lib/repo/test/svn_repos/svn_authz
 *.diff
 *.patch
 
-# Sqlite databases
-*.db
-*.sqlite3
-
 # Vim swap files
 *.swp
 

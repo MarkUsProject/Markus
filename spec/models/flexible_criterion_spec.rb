@@ -39,12 +39,12 @@ describe FlexibleCriterion do
     end
 
     it 'raises an error message on a 1 element row' do
-      expect { FlexibleCriterion.create_or_update_from_csv_row(%w(name), @assignment) }
+      expect { FlexibleCriterion.create_or_update_from_csv_row(%w[name], @assignment) }
         .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
 
     it 'raises an error message on an invalid maximum value' do
-      expect { FlexibleCriterion.create_or_update_from_csv_row(%w(name max_value), @assignment) }
+      expect { FlexibleCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
         .to raise_error(CsvInvalidLineError)
     end
   end
@@ -62,8 +62,8 @@ describe FlexibleCriterion do
       let(:flexible_criterion) { annotation_category.flexible_criterion }
 
       context 'when being destroyed' do
-        it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark '\
-         ' through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
+        it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark ' \
+           'through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
           result = assignment.groupings.first.current_result
           new_criterion = create(:flexible_criterion, assignment: assignment)
           create(:flexible_mark, result: result, criterion: new_criterion, mark: 1)

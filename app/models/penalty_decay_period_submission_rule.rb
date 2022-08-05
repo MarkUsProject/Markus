@@ -1,5 +1,4 @@
 class PenaltyDecayPeriodSubmissionRule < SubmissionRule
-
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
@@ -45,7 +44,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
       end
 
       num_intervals =
-        (([overtime_hours, period.hours].min) / period.interval).ceil.to_f
+        ([overtime_hours, period.hours].min / period.interval).ceil.to_f
       total_penalty += num_intervals * deduction
       overtime_hours -= period.hours
     end

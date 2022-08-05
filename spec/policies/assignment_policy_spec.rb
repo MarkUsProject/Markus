@@ -1,5 +1,5 @@
 describe AssignmentPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   let(:record) { assignment }
   let(:role) { create :instructor }
   let(:assignment) { create :assignment }
@@ -281,19 +281,18 @@ describe AssignmentPolicy do
 
       succeed 'role is an instructor' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: instructor_role, real_user: instructor_role.end_user } }
+        let(:context) { { role: instructor_role, real_user: instructor_role.user } }
       end
     end
     context 'when the role is a TA' do
       let(:ta_role) { create(:ta) }
       succeed 'user is an instructor' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: ta_role, real_user: ta_role.end_user } }
+        let(:context) { { role: ta_role, real_user: ta_role.user } }
       end
     end
     context 'when there are no section due dates' do
-      succeed 'when the assignment is not hidden' do
-      end
+      succeed 'when the assignment is not hidden'
       failed 'when the assignment is hidden' do
         before { assignment.update(is_hidden: true) }
       end
@@ -303,8 +302,7 @@ describe AssignmentPolicy do
         assignment.assignment_properties.update(section_due_dates_type: true)
         assessment_section_properties
       end
-      succeed 'when visible with section due date and assignment' do
-      end
+      succeed 'when visible with section due date and assignment'
       succeed 'when assignment hidden but section do date ' do
         before { assignment.update(is_hidden: true) }
       end

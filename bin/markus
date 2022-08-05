@@ -19,5 +19,5 @@ if ! pgrep -f resque > /dev/null ; then
 fi
 
 echo "[MARKUS] Starting MarkUs"
-bin/webpack-dev-server &
+yarn build-dev &
 RAILS_RELATIVE_URL_ROOT=/csc108 bundle exec rails s

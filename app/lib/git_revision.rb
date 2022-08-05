@@ -1,7 +1,6 @@
 # Convenience class, so that we can work on Revisions rather
 # than repositories
 class GitRevision < Repository::AbstractRevision
-
   # Constructor; checks if +revision_hash+ is actually present in +repo+.
   def initialize(revision_hash, repo)
     super(revision_hash)
@@ -23,12 +22,12 @@ class GitRevision < Repository::AbstractRevision
 
   # Gets a file or directory at +path+ from a +commit+ as a Rugged Hash.
   # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
-  def get_entry_hash(path, commit=@commit)
+  def get_entry_hash(path, commit = @commit)
     if path.start_with?(File::SEPARATOR) # transform from absolute to relative
       path = path[1..-1]
     end
     if path == '' # root Tree
-      entry_hash = {name: path, oid: commit.tree_id, type: :tree, filemode: 0} # mimic Tree#path output
+      entry_hash = { name: path, oid: commit.tree_id, type: :tree, filemode: 0 } # mimic Tree#path output
     else # Tree or Blob
       begin
         entry_hash = commit.tree.path(path)
@@ -41,7 +40,7 @@ class GitRevision < Repository::AbstractRevision
 
   # Gets a file or directory at +path+ from a +commit+ as a Rugged::Blob or Rugged::Tree respectively.
   # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
-  def get_entry(path, commit=@commit)
+  def get_entry(path, commit = @commit)
     entry_hash = get_entry_hash(path, commit)
     if entry_hash.nil?
       entry = nil
@@ -58,25 +57,25 @@ class GitRevision < Repository::AbstractRevision
   # Checks if a file or directory at +path+ (relative to the repo root) was changed by +commit+.
   # The +commit+ can be omitted to default to this revision.
   # (optimizations based on Rugged bug #343)
-  def entry_changed?(path, commit=@commit)
+  def entry_changed?(path, commit = @commit)
     entry = get_entry_hash(path, commit)
     # if at a root commit, consider it changed if we have this file;
     # i.e. if we added it in the initial commit
     parents = commit.parents
     if parents.empty?
-      return entry != nil
+      return !entry.nil?
     end
     # check each parent commit (a merge has 2+ parents)
     parents.each do |parent|
       parent_entry = get_entry_hash(path, parent)
       # neither exists, no change
-      if not entry and not parent_entry
+      if !entry && !parent_entry
         next
         # only in one of them, change
-      elsif not entry or not parent_entry then
+      elsif !entry || !parent_entry
         return true
         # otherwise it's changed if their ids aren't the same
-      elsif entry[:oid] != parent_entry[:oid]
+      elsif entry[:oid] != parent_entry[:oid]  # rubocop:disable Lint/DuplicateBranch
         return true
       end
     end
@@ -109,7 +108,7 @@ class GitRevision < Repository::AbstractRevision
           mime_type = mime_type.content_type
         end
         entries[entry_name] = Repository::RevisionFile.new(@revision_identifier, name: entry_name, path: path,
-                                                           mime_type: mime_type)
+                                                                                 mime_type: mime_type)
       elsif entry_type == :tree
         entries[entry_name] = Repository::RevisionDirectory.new(@revision_identifier, name: entry_name, path: path)
         if recursive

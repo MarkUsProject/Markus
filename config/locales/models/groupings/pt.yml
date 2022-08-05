@@ -1,6 +1,0 @@
----
-pt:
-  activerecord:
-    attributes:
-      grouping:
-        test_tokens: Tokens disponíveis

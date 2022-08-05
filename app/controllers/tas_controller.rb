@@ -8,9 +8,9 @@ class TasController < ApplicationController
   def index
     respond_to do |format|
       format.html
-      format.json {
-        render json: current_course.tas.joins(:end_user).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
-      }
+      format.json do
+        render json: current_course.tas.joins(:user).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+      end
     end
   end
 
@@ -20,8 +20,8 @@ class TasController < ApplicationController
   end
 
   def create
-    end_user = EndUser.find_by_user_name(end_user_params[:user_name])
-    @role = current_course.tas.create(end_user: end_user, **permission_params)
+    user = EndUser.find_by(user_name: end_user_params[:user_name])
+    @role = current_course.tas.create(user: user, **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -31,13 +31,13 @@ class TasController < ApplicationController
 
   def update
     @role = record
-    @role.update(end_user: EndUser.find_by_user_name(end_user_params[:user_name]), **permission_params)
+    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), **permission_params)
     respond_with @role, location: course_tas_path(current_course)
   end
 
   def download
     keys = [:user_name, :last_name, :first_name, :email]
-    tas = current_course.tas.joins(:end_user).pluck_to_hash(*keys)
+    tas = current_course.tas.joins(:user).pluck_to_hash(*keys)
     case params[:format]
     when 'csv'
       output = MarkusCsv.generate(tas, &:values)
@@ -79,7 +79,7 @@ class TasController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @role.end_user&.user_name.blank? ? @role.model_name.human : @role.user_name,
+    { resource_name: @role.user&.user_name.blank? ? @role.model_name.human : @role.user_name,
       errors: @role.errors.full_messages.join('; ') }
   end
 end

@@ -19,8 +19,8 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
-  # Only users that are instructors in at least one course
+  # Any standard user can reset their API key
   def reset_api_key?
-    user.roles.pluck(:type).include?('Instructor')
+    user.end_user?
   end
 end

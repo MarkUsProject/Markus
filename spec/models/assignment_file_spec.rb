@@ -1,4 +1,3 @@
-# encoding: utf-8
 describe AssignmentFile do
   it { is_expected.to belong_to(:assignment) }
   it { is_expected.to validate_presence_of(:filename) }

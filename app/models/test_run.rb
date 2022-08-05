@@ -33,14 +33,15 @@ class TestRun < ApplicationRecord
         test_group_result = nil
         ApplicationRecord.transaction do
           test_group_result = create_test_group_result(result)
-          result['tests'].each do |test|
+          result['tests'].each_with_index do |test, i|
             test_group_result.test_results.create!(
               name: test['name'],
               status: test['status'],
               marks_earned: test['marks_earned'],
               output: test['output'].gsub("\x00", '\\u0000'),
               marks_total: test['marks_total'],
-              time: test['time']
+              time: test['time'],
+              position: i + 1
             )
           end
         rescue StandardError => e
@@ -49,7 +50,7 @@ class TestRun < ApplicationRecord
         end
         test_group_result = create_test_group_result(result, error: error) unless error.nil?
         create_annotations(result['annotations'])
-        create_feedback_file(result['feedback'], test_group_result)
+        result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
       self.submission&.set_autotest_marks
     end
@@ -62,18 +63,18 @@ class TestRun < ApplicationRecord
   private
 
   def extra_info_string(result)
-    return nil if result['stderr'].blank? && result['malformed'].blank?
+    return if result['stderr'].blank? && result['malformed'].blank?
 
     extra = ''
-    extra += I18n.t('automated_tests.results.extra_stderr', extra: result['stderr']) unless result['stderr'].blank?
-    unless result['malformed'].blank?
+    extra += I18n.t('automated_tests.results.extra_stderr', extra: result['stderr']) if result['stderr'].present?
+    if result['malformed'].present?
       extra += I18n.t('automated_tests.results.extra_malformed', extra: result['malformed'])
     end
     extra
   end
 
   def error_type(result)
-    return nil unless result['tests'].blank?
+    return if result['tests'].present?
     return TestGroupResult::ERROR_TYPE[:timeout] if result['timeout']
 
     TestGroupResult::ERROR_TYPE[:no_results]
@@ -85,8 +86,8 @@ class TestRun < ApplicationRecord
     test_group.test_group_results.create(
       test_run_id: self.id,
       extra_info: error.nil? ? extra_info_string(result) : error.message,
-      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.sum || 0 : 0,
-      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.sum || 0 : 0,
+      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.compact&.sum || 0 : 0,
+      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.compact&.sum || 0 : 0,
       time: result['time'] || 0,
       error_type: error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
     )

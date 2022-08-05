@@ -1,5 +1,4 @@
 module CourseSummariesHelper
-
   # Get JSON data for the table
   def get_table_json_data(current_role)
     course = current_role.course
@@ -13,7 +12,7 @@ module CourseSummariesHelper
       released = [true, false]
     end
 
-    student_data = Hash[students.map do |student|
+    student_data = students.map do |student|
       [student.id,
        {
          id: student.id,
@@ -21,10 +20,12 @@ module CourseSummariesHelper
          user_name: student.user_name,
          first_name: student.first_name,
          last_name: student.last_name,
+         section_name: student.section_name,
+         email: student.email,
          hidden: student.hidden,
          assessment_marks: {}
        }]
-    end]
+    end.to_h
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
                                 .order(:'results.created_at')
@@ -57,13 +58,11 @@ module CourseSummariesHelper
   end
 
   def course_information(course)
-    @max_marks = Hash[
-      course.assignments
-            .joins(:criteria)
-            .where('criteria.bonus': false)
-            .group('assessments.id')
-            .sum('criteria.max_mark')
-    ]
+    @max_marks = course.assignments
+                       .joins(:criteria)
+                       .where('criteria.bonus': false)
+                       .group('assessments.id')
+                       .sum('criteria.max_mark').to_h
 
     @gef_max_marks = course.grade_entry_forms
                            .unscoped

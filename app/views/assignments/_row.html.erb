@@ -3,19 +3,10 @@
 <tr>
   <td>
     <%= link_to assignment_text, route %>
-    <% if assignment.has_peer_review? && allowed_to?(:see_hidden?, assignment.pr_assignment) %>
-      <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
-                  peer_review_course_assignment_path(@current_course, assignment.pr_assignment) %>
-    <% end %>
   </td>
   <td>
     <%= render partial: 'assignments/assignment_date',
                locals: { assignment: assignment } %>
-
-    <% if assignment.has_peer_review? && allowed_to?(:see_hidden?, assignment.pr_assignment) %>
-      <%= render partial: 'assignments/assignment_date',
-                 locals: { assignment: assignment.pr_assignment } %>
-    <% end %>
   </td>
   <% unless upcoming %>
     <td>

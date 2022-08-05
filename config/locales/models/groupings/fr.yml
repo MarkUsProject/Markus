@@ -1,6 +1,0 @@
----
-fr:
-  activerecord:
-    attributes:
-      grouping:
-        test_tokens: Jetons disponibles

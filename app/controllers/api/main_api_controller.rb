@@ -1,10 +1,10 @@
 # Scripting API handlers for MarkUs
 module Api
-
   # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
-  class MainApiController < ActionController::Base
-    include ActionPolicy::Controller, SessionHandler
+  class MainApiController < ActionController::Base # rubocop:disable Rails/ApplicationController
+    include SessionHandler
+    include ActionPolicy::Controller
 
     before_action :check_format, :check_record, :authenticate
     skip_before_action :verify_authenticity_token
@@ -21,11 +21,12 @@ module Api
     def page_not_found(message = HttpStatusHelper::ERROR_CODE['message']['404'])
       render 'shared/http_status',
              locals: { code: '404', message: message },
-             status: 404,
+             status: :not_found,
              formats: request.format.symbol
     end
 
     private
+
     # Auth handler for the MarkUs API. It uses the Authorization HTTP header to
     # determine the user who issued the request. With the Authorization
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
@@ -33,7 +34,7 @@ module Api
     def authenticate
       api_key = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
       return user_not_authorized if api_key.nil?
-      @real_user = User.find_by_api_key(parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
+      @real_user = User.find_by(api_key: parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
       user_not_authorized if @real_user.nil?
     end
 
@@ -54,11 +55,9 @@ module Api
 
     # Helper method for parsing the authentication token
     def parse_auth_token(token)
-      return nil if token.nil?
+      return if token.nil?
       if token =~ /#{AUTHTYPE} ([^\s,]+)/
-        $1 # return matched part
-      else
-        nil
+        Regexp.last_match(1) # return matched part
       end
     end
 
@@ -68,9 +67,9 @@ module Api
     # Renders an error message and returns false if the filters are malformed
     def get_collection(collection)
       filter_params = params[:filter] ? params[:filter].permit(self.class::DEFAULT_FIELDS) : {}
-      if !params[:filter].nil? && !params[:filter].empty? && filter_params.empty?
+      if params[:filter].present? && filter_params.empty?
         render 'shared/http_status', locals: { code: '422', message:
-          'Invalid or malformed parameter values' }, status: 422
+          'Invalid or malformed parameter values' }, status: :unprocessable_entity
         false
       else
         collection.order('id').where(filter_params)
@@ -88,7 +87,7 @@ module Api
     def user_not_authorized
       render 'shared/http_status',
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-             status: 403,
+             status: :forbidden,
              formats: request.format.symbol
     end
 
@@ -98,4 +97,4 @@ module Api
       OpenStruct.new policy_class: MainApiPolicy
     end
   end
-end # end Api module
+end

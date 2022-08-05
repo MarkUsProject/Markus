@@ -73,7 +73,7 @@ $(document).ready(function () {
     if (filename) {
       getFile(filename, pdfViewer);
     } else {
-      window.location = '<%= view_logs_course_assignment_exam_templates_path(@current_course, @assignment) %>';
+      window.location = '<%= course_assignment_exam_templates_path(@current_course, @assignment) %>';
     }
   });
 

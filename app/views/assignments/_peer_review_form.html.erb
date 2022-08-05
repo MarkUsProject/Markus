@@ -32,10 +32,11 @@
                     Assignment.human_attribute_name(:short_identifier),
                     class: 'required' %>
         <%= f.text_field :short_identifier,
+                         pattern: '[a-zA-Z0-9\-_]+',
                          size: 35,
                          maxlength: 30,
                          required: true,
-                         readonly: true %>
+                         readonly: !@assignment.new_record? %>
 
         <%= f.label :description,
                     Assignment.human_attribute_name(:description),
@@ -43,6 +44,20 @@
         <%= f.text_field :description,
                          size: 35,
                          required: true %>
+
+        <%= f.label :parent_assessment_id, Assignment.human_attribute_name(:parent_assignment), class: 'required' %>
+        <% if @assignment.new_record? %>
+          <%= f.select :parent_assessment_id,
+                       options_from_collection_for_select(
+                         @assignments.where(parent_assignment: nil),
+                         'id',
+                         'short_identifier'
+                       ),
+                       { include_blank: false } %>
+        <% else %>
+          <span><%= @assignment.parent_assignment.short_identifier %></span>
+          <%= f.hidden_field :parent_assessment_id %>
+        <% end %>
 
         <%= f.label :message %>
         <%= f.text_area :message,

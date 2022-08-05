@@ -13,9 +13,9 @@ describe TextAnnotation do
       it_behaves_like 'gets annotation data'
     end
 
-    #TODO Change Model.
-    #We should not allow negative values vor lines
-    #should_not allow_value(-1).for(:line_start)
-    #should_not allow_value(-1).for(:line_end)
+    # TODO: Change Model.
+    # We should not allow negative values vor lines
+    # should_not allow_value(-1).for(:line_start)
+    # should_not allow_value(-1).for(:line_end)
   end
 end

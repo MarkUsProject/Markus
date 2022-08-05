@@ -73,8 +73,7 @@
                          @current_course, @assignment, annotation_text_id: annotation_text[:id]
                        ),
                   method: 'put',
-                  id: "annotation-text-edit-#{annotation_text[:id]}",
-                  remote: true do |f| %>
+                  id: "annotation-text-edit-#{annotation_text[:id]}" do |f| %>
       <p>
         <%= f.text_area :content, cols: 50, rows: 5, value: annotation_text[:content], id: "annotation_text_content" %>
       </p>

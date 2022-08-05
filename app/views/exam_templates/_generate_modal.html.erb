@@ -1,0 +1,30 @@
+<%= content_for :modal_id, 'generate_exam_dialog' %>
+<%= content_for :modal_title, t('exam_templates.generate.title') %>
+<%= content_for :modal_open_link, '#generateExamModal' %>
+
+<%= content_for :modal_content do %>
+  <%= form_for [@current_course, @exam_template],
+               url: generate_course_exam_template_path(@current_course, @exam_template),
+               namespace: @exam_template.id,
+               remote: true do |f| %>
+    <div class="inline-labels">
+      <%= f.label :num_copies, t('exam_templates.generate.copies_label'), class: 'required' %>
+      <%= f.number_field :num_copies,
+                         value: 1,
+                         size: 4,
+                         min: 1,
+                         required: true %>
+      <%= f.label :start_index, t('exam_templates.generate.index_label'), class: 'required' %>
+      <%= f.number_field :start_index,
+                         value: 1,
+                         size: 4,
+                         min: 1,
+                         required: true%>
+    </div>
+    <section class='dialog-actions'>
+      <%= f.submit t('exam_templates.generate.generate'),
+                   id: 'generate_exam_modal_submit' %>
+      <input type='reset' value='<%= t(:cancel) %>'/>
+    </section>
+  <% end %>
+<% end %>

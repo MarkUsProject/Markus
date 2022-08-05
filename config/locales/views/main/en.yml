@@ -1,6 +1,8 @@
 ---
 en:
   main:
+    cannot_role_switch_to_instructor: You cannot role switch to another instructor account.
+    cannot_role_switch_to_self: You cannot role switch to your own account.
     create_marking_scheme: Create a Marking Scheme to display course summary graph.
     external_authentication_default_name: remote authentication
     external_authentication_not_supported: External authentication not supported on your platform!

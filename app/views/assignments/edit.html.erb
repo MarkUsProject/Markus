@@ -4,13 +4,13 @@
                    "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
                  "#{t(:edit)} #{Assignment.model_name.human}: #{@assignment.short_identifier}" %>
 
+<% @heading_buttons = [
+  { link_text: t('download'),
+    link_path: download_config_files_course_assignment_path(@current_course, format: 'zip') }
+] %>
+
 <% if @assignment.is_peer_review? %>
   <%= render partial: 'peer_review_form' %>
 <% else %>
-  <% @heading_buttons = [
-    { link_text: t('download'),
-      link_path: download_config_files_course_assignment_path(@current_course, format: 'zip') }
-  ] %>
-
   <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
 <% end %>

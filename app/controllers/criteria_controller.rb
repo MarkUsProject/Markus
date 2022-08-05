@@ -76,19 +76,24 @@ class CriteriaController < ApplicationController
       return
     end
     if @criterion.is_a? RubricCriterion
-      properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
+      # update everything except levels and assignments
+      properly_updated = @criterion.update(rubric_criterion_params.except(:levels_attributes, :assignment_files))
+      # update levels
+      if rubric_criterion_params[:levels_attributes]
+        properly_updated &&= @criterion.update_levels(rubric_criterion_params[:levels_attributes])
+      end
       unless rubric_criterion_params[:assignment_files].nil?
-        assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].select { |id| !id.empty? })
+        assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].reject(&:empty?))
       end
     elsif @criterion.is_a? FlexibleCriterion
       properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
       unless flexible_criterion_params[:assignment_files].nil?
-        assignment_files = AssignmentFile.find(flexible_criterion_params[:assignment_files].select { |id| !id.empty? })
+        assignment_files = AssignmentFile.find(flexible_criterion_params[:assignment_files].reject(&:empty?))
       end
     else
       properly_updated = @criterion.update(checkbox_criterion_params.except(:assignment_files))
       unless checkbox_criterion_params[:assignment_files].nil?
-        assignment_files = AssignmentFile.find(checkbox_criterion_params[:assignment_files].select { |id| !id.empty? })
+        assignment_files = AssignmentFile.find(checkbox_criterion_params[:assignment_files].reject(&:empty?))
       end
     end
     # delete old associated criteria_assignment_files_join
@@ -115,10 +120,14 @@ class CriteriaController < ApplicationController
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
 
-    ApplicationRecord.transaction do
+    Criterion.transaction do
       params[:criterion].each_with_index do |id, index|
-        Criterion.update(id, position: index + 1) unless id.blank?
+        found_criterion = @assignment.criteria.find(id)
+        found_criterion.update(position: index + 1)
       end
+    rescue StandardError
+      flash_message(:error, t('criteria.errors.criteria_not_found'))
+      raise ActiveRecord::Rollback
     end
     head :ok
   end

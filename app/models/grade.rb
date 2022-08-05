@@ -6,7 +6,7 @@ class Grade < ApplicationRecord
   has_one :course, through: :grade_entry_student
 
   validate :courses_should_match
-  validates_numericality_of :grade,
-                            greater_than_or_equal_to: 0,
-                            allow_nil: true
+  validates :grade,
+            numericality: { greater_than_or_equal_to: 0,
+                            allow_nil: true }
 end

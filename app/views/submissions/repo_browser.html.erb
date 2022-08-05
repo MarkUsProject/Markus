@@ -1,11 +1,11 @@
 <% content_for :head do %>
-  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= stylesheet_link_tag 'result_main' %>
-  <%= stylesheet_pack_tag 'result' %>
+  <%= stylesheet_link_tag 'result' %>
 
   <%= javascript_tag nonce: true do %>
-    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
       makeRepoBrowser(document.getElementById('file_manager'),
@@ -16,6 +16,7 @@
           grouping_id: <%= @grouping.id %>,
           collected_revision_id: '<%= @collected_revision&.revision_identifier %>',
           enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
+          enableUrlSubmit: <%= @grouping.assignment.url_submit %>,
           collection_date: '<%= l(@grouping.collection_date) %>',
           due_date: '<%= l(@grouping.due_date) %>',
           is_timed: <%= @grouping.assignment.is_timed %>,

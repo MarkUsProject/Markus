@@ -38,7 +38,7 @@ describe Grouping do
       let(:hidden) { create(:student, hidden: true) }
 
       it 'cannot be invited' do
-        grouping.invite(hidden.end_user.user_name)
+        grouping.invite(hidden.user.user_name)
         expect(grouping.memberships.count).to eq(0)
       end
 
@@ -69,27 +69,28 @@ describe Grouping do
     let!(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping) }
     let(:groupings) do
-      Array.new(2) { create(:grouping, assignment: assignment) }
+      Array.new(4) { create(:grouping, assignment: assignment) }
     end
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:grouping_ids) { groupings.map(&:id) }
     let(:ta_ids) { tas.map(&:id) }
+    let(:weightings) { Array.new(tas.size) { 1 } }
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no groupings' do
-        Grouping.randomly_assign_tas([], [], assignment)
+        Grouping.randomly_assign_tas([], [], [], assignment)
       end
 
       it 'can randomly bulk assign TAs to no groupings' do
-        Grouping.randomly_assign_tas([], ta_ids, assignment)
+        Grouping.randomly_assign_tas([], ta_ids, [1], assignment)
       end
 
       it 'can randomly bulk assign no TAs to all groupings' do
-        Grouping.randomly_assign_tas(grouping_ids, [], assignment)
+        Grouping.randomly_assign_tas(grouping_ids, [], [], assignment)
       end
 
       it 'can randomly bulk assign TAs to all groupings' do
-        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
 
         groupings.each do |grouping|
           grouping.reload
@@ -97,12 +98,26 @@ describe Grouping do
           expect(tas).to include grouping.tas.first
         end
       end
+      it 'can randomly bulk assign TAs with weighting' do
+        weightings = [3, 1]
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
+
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas.size).to eq 1
+          expect(tas).to include grouping.tas.first
+        end
+        grouping1 = groupings.select { |grouping| grouping.tas.first == tas.first }
+        grouping2 = groupings.select { |grouping| grouping.tas.first == tas.last }
+        print(grouping2.length, grouping1.length)
+        expect(grouping1.length > grouping2.length).to be(true)
+      end
 
       it 'can randomly bulk assign duplicated TAs to groupings' do
         # The probability of assigning no duplicated TAs after (tas.size + 1)
         # trials is 0.
         (tas.size + 1).times do
-          Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+          Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
         end
 
         ta_set = tas.to_set
@@ -116,13 +131,13 @@ describe Grouping do
       it 'updates criteria coverage counts after randomly bulk assign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
           .with(assignment, match_array(grouping_ids))
-        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
       end
 
       it 'updates assigned groups counts after randomly bulk assign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts)
           .with(assignment)
-        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
       end
     end
 
@@ -158,9 +173,9 @@ describe Grouping do
         expect(grouping.tas).to match_array(tas)
 
         # The rest of the groupings gets only the first TA.
-        groupings.each do |grouping|
-          grouping.reload
-          expect(grouping.tas).to eq [tas.first]
+        groupings.each do |other_grouping|
+          other_grouping.reload
+          expect(other_grouping.tas).to eq [tas.first]
         end
       end
 
@@ -206,8 +221,8 @@ describe Grouping do
       it 'can bulk unassign TAs' do
         Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
         ta_membership_ids = groupings
-          .map { |grouping| grouping.memberships.pluck(:id) }
-          .reduce(:+)
+                            .map { |grouping| grouping.memberships.ids }
+                            .reduce(:+)
         Grouping.unassign_tas(ta_membership_ids, grouping_ids, assignment)
 
         groupings.each do |grouping|
@@ -690,15 +705,15 @@ describe Grouping do
         before :each do
           # Dont use machinist in order to bypass validation
           @submission1 = @grouping.submissions.build(submission_version_used: false,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     revision_identifier: 1, revision_timestamp: 1.day.ago,
                                                      submission_version: 1)
           @submission1.save(validate: false)
           @submission2 = @grouping.submissions.build(submission_version_used: true,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     revision_identifier: 1, revision_timestamp: 1.day.ago,
                                                      submission_version: 2)
           @submission2.save(validate: false)
           @submission3 = @grouping.submissions.build(submission_version_used: true,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     revision_identifier: 1, revision_timestamp: 1.day.ago,
                                                      submission_version: 3)
           @submission3.save(validate: false)
           @grouping.reload
@@ -737,7 +752,7 @@ describe Grouping do
       describe '#invite' do
         it 'adds students in any scenario possible when invoked by instructor' do
           members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
+          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
       end
@@ -756,7 +771,7 @@ describe Grouping do
       describe '#invite' do
         it 'adds students to groups without checking their sections' do
           members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
+          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
       end
@@ -765,7 +780,7 @@ describe Grouping do
     context 'with students in sections' do
       before :each do
         @section = create(:section)
-        student  = create(:student, section: @section)
+        student = create(:student, section: @section)
         @student_can_invite = create(:student, section: @section)
         @student_cannot_invite = create(:student)
 
@@ -1182,28 +1197,28 @@ describe Grouping do
       end
 
       it 'should return data for the test result' do
-        test_result_data = data[0]['test_data']
+        test_result_data = data[0]['test_results']
         expect(test_result_data.length).to eq 1
-        expect(test_result_data[0]['test_runs.id']).to eq test_run.id
+        expect(data[0]['test_runs.id']).to eq test_run.id
       end
 
       if show_extra
         it 'should show extra info' do
-          expect(data[0]['test_data'][0]['test_group_results.extra_info']).not_to be_nil
+          expect(data[0]['test_results'][0]['test_group_results.extra_info']).not_to be_nil
         end
       else
         it 'should not show extra info' do
-          expect(data[0]['test_data'][0]['test_group_results.extra_info']).to be_nil
+          expect(data[0]['test_results'][0]['test_group_results.extra_info']).to be_nil
         end
       end
 
       if show_output
         it 'should show output data' do
-          expect(data[0]['test_data'][0]['test_results.output']).not_to be_nil
+          expect(data[0]['test_results'][0]['test_results.output']).not_to be_nil
         end
       else
         it 'should not show output data' do
-          expect(data[0]['test_data'][0]['test_results.output']).to be_nil
+          expect(data[0]['test_results'][0]['test_results.output']).to be_nil
         end
       end
 
@@ -1220,7 +1235,7 @@ describe Grouping do
           }
         ]
 
-        expect(data[0]['test_data'][0]['feedback_files']).to eq expected
+        expect(data[0]['test_results'][0]['feedback_files']).to eq expected
       end
     else
       it 'should not return data' do
@@ -1259,7 +1274,7 @@ describe Grouping do
             end
             it 'should only return data from the latest test run' do
               test_group_result2.update(created_at: 1.hour.ago)
-              expect(data.first['test_runs.created_at']).to be_within(0.1).of(test_run.created_at)
+              expect(Time.zone.parse(data.first['test_runs.created_at'])).to be_within(1).of(test_run.created_at)
             end
           end
         end
@@ -1514,6 +1529,86 @@ describe Grouping do
       grouping.group.access_repo { |repo| repo.get_latest_revision.files.clear }
       grouping.access_repo do |repo|
         expect(repo.get_latest_revision.files[0].name).to eq grouping.assignment.repository_folder
+      end
+    end
+  end
+  describe '#get_next_group as instructor' do
+    let(:role) { create :instructor }
+    let(:assignment) { create :assignment }
+    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    it 'should let one navigate right if there is a result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, false)
+      expect(new_grouping.group_id).to be(groupings.last.group_id)
+    end
+    it 'should let one navigate left if there is a result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, true)
+      expect(new_grouping.group_id).to be(groupings.first.group_id)
+    end
+    it 'should not one navigate right if there is no result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, false)
+      expect(new_grouping).to be(nil)
+    end
+    it 'should not let one navigate left if there is no result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, true)
+      expect(new_grouping).to be(nil)
+    end
+    describe 'with collected results separated by an uncollected results' do
+      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
+      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      it 'should let me navigate to the right if any result exists towards the right' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.first.get_next_grouping(role, false)
+        expect(new_grouping.group_id).to be(groupings.last.group_id)
+      end
+      it 'should let one navigate left if there is a result directly to the left' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.last.get_next_grouping(role, true)
+        expect(new_grouping.group_id).to be(groupings.first.group_id)
+      end
+    end
+  end
+  describe '#get_next_group as ta' do
+    let(:assignment) { create :assignment }
+    let(:role) { create :ta, groupings: assignment.groupings }
+    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    it 'should let one navigate right if there is a result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, false)
+      expect(new_grouping.group_id).to be(groupings.last.group_id)
+    end
+    it 'should let one navigate left if there is a result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, true)
+      expect(new_grouping.group_id).to be(groupings.first.group_id)
+    end
+    it 'should not one navigate right if there is no result directly to the right' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.last.get_next_grouping(role, false)
+      expect(new_grouping).to be(nil)
+    end
+    it 'should not let one navigate left if there is no result directly to the left' do
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      new_grouping = groupings.first.get_next_grouping(role, true)
+      expect(new_grouping).to be(nil)
+    end
+    describe 'with collected results separated by an uncollected results' do
+      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
+      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      it 'should let me navigate to the right if any result exists towards the right' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.first.get_next_grouping(role, false)
+        expect(new_grouping.group_id).to be(groupings.last.group_id)
+      end
+      it 'should let one navigate left if there is a result directly to the left' do
+        groupings = assignment.groupings.joins(:group).order('group_name')
+        new_grouping = groupings.last.get_next_grouping(role, true)
+        expect(new_grouping.group_id).to be(groupings.first.group_id)
       end
     end
   end

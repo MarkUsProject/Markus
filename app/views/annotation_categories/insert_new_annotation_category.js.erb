@@ -1,4 +1,3 @@
-$('#add_annotation_category').remove();
 $('#annotation_category_pane_list').append(
   "<%= escape_javascript(render partial: 'annotation_category',
                                 locals: { annotation_category: @annotation_category }).html_safe %>");

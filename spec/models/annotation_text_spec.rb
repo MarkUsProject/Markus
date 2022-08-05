@@ -111,8 +111,8 @@ describe AnnotationText do
   end
 
   describe '#update_mark_deductions' do
-    it 'updates the mark associated with its annotation category\'s flexible criterion' \
-       ' for every grouping if its deduction changed' do
+    it 'updates the mark associated with its annotation category\'s flexible criterion ' \
+       'for every grouping if its deduction changed' do
       deductive_text.update!(deduction: 2.0)
       assignment.reload
       marks = assignment.groupings.includes(:current_result).map do |grouping|

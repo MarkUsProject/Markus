@@ -15,17 +15,17 @@ describe MarksGradersController do
       grade_entry_form_with_data
       @student_user_names = %w[c8shosta c5bennet]
       @student_user_names.each do |name|
-        create(:student, end_user: create(:end_user, user_name: name))
+        create(:student, user: create(:end_user, user_name: name))
       end
-      @ta = create(:ta, end_user: create(:end_user, user_name: 'c6conley'))
+      @ta = create(:ta, user: create(:end_user, user_name: 'c6conley'))
 
       @file_good = fixture_file_upload('marks_graders/form_good.csv', 'text/csv')
     end
 
     it 'accepts a valid file and can preserve existing TA mappings' do
-      create(:student, end_user: create(:end_user, user_name: 'c5granad'))
+      create(:student, user: create(:end_user, user_name: 'c5granad'))
       ges = grade_entry_form_with_data.grade_entry_students
-                                      .joins(role: :end_user)
+                                      .joins(role: :user)
                                       .find_by('users.user_name': 'c5granad')
       create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
       post_as instructor,
@@ -45,18 +45,17 @@ describe MarksGradersController do
       # check that the ta was assigned to each student
       @student_user_names.each do |name|
         expect(
-          GradeEntryStudentTa.joins(grade_entry_student: [role: :end_user])
-                             .where('users.user_name': name)
-                             .exists?
+          GradeEntryStudentTa.joins(grade_entry_student: [role: :user])
+                             .exists?('users.user_name': name)
         ).to be true
       end
       expect(ges.tas.count).to eq 1
     end
 
     it 'accepts a valid file and can remove existing TA mappings' do
-      create(:student, end_user: create(:end_user, user_name: 'c5granad'))
+      create(:student, user: create(:end_user, user_name: 'c5granad'))
       ges = grade_entry_form_with_data.grade_entry_students
-                                      .joins(role: :end_user)
+                                      .joins(role: :user)
                                       .find_by('users.user_name': 'c5granad')
       create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
       post_as instructor,
@@ -77,9 +76,8 @@ describe MarksGradersController do
       # check that the ta was assigned to each student
       @student_user_names.each do |name|
         expect(
-          GradeEntryStudentTa.joins(grade_entry_student: [role: :end_user])
-            .where(grade_entry_student: { users: { user_name: name } })
-            .exists?
+          GradeEntryStudentTa.joins(grade_entry_student: [role: :user])
+            .exists?(grade_entry_student: { users: { user_name: name } })
         ).to be true
       end
       expect(ges.tas.count).to eq 0

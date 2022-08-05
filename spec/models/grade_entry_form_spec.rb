@@ -1,5 +1,4 @@
 describe GradeEntryForm do
-
   # Basic validation tests
   it { is_expected.to have_many(:grade_entry_items) }
   it { is_expected.to have_many(:grade_entry_students) }
@@ -292,6 +291,6 @@ describe GradeEntryForm do
       grade_entry_items << create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, position: i)
     end
     grade_entry_form.grade_entry_items = grade_entry_items
-    return grade_entry_form
+    grade_entry_form
   end
 end

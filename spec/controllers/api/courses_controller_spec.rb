@@ -39,7 +39,7 @@ describe Api::CoursesController do
     end
     context 'with multiple courses as instructor' do
       before :each do
-        build_list(:instructor, 4, end_user: end_user) { |instructor| instructor.update(course_id: create(:course).id) }
+        build_list(:instructor, 4, user: end_user) { |instructor| instructor.update(course_id: create(:course).id) }
         get :index
       end
       it 'should be successful' do

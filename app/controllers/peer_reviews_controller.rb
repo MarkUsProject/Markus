@@ -34,11 +34,9 @@ class PeerReviewsController < ApplicationController
     reviewee_to_reviewers_map.transform_values! { |rows| rows.map { |row| row[1] } }
 
     # A map of grouping_id => group_name (both assignment and parent assignment groupings).
-    id_to_group_names_map = Hash[
-      assignment.groupings.or(assignment.parent_assignment.groupings)
-                .joins(:group)
-                .pluck('groupings.id', 'groups.group_name')
-    ]
+    id_to_group_names_map = assignment.groupings.or(assignment.parent_assignment.groupings)
+                                      .joins(:group)
+                                      .pluck('groupings.id', 'groups.group_name').to_h
 
     render json: {
       reviewer_groups: assignment.all_grouping_data,
@@ -46,8 +44,31 @@ class PeerReviewsController < ApplicationController
       reviewee_to_reviewers_map: reviewee_to_reviewers_map,
       id_to_group_names_map: id_to_group_names_map,
       num_reviews_map: peer_reviews.group(:reviewer_id).count,
-      sections: Hash[current_course.sections.pluck(:id, :name)]
+      sections: current_course.sections.pluck(:id, :name).to_h
     }
+  end
+
+  def populate_table
+    assignment = Assignment.find(params[:assignment_id])
+    peer_review_data = assignment.pr_peer_reviews
+                                 .joins(reviewer: :group,
+                                        result: { grouping: :group })
+                                 .pluck_to_hash(
+                                   'peer_reviews.id as _id',
+                                   'results.id as result_id',
+                                   'results.marking_state',
+                                   'results.released_to_students',
+                                   'results.total_mark as final_grade',
+                                   'groups.group_name as reviewer_name',
+                                   'groups_groupings.group_name as reviewee_name'
+                                 )
+
+    peer_review_data.each do |data|
+      data[:marking_state] = data['results.released_to_students'] ? 'released' : data['results.marking_state']
+      data[:max_mark] = assignment.peer_criteria.sum(&:max_mark)
+    end
+
+    render json: peer_review_data
   end
 
   # Get data for all reviews for a given reviewer.
@@ -58,9 +79,9 @@ class PeerReviewsController < ApplicationController
       # is responsible for
       grouping = current_role.grouping_for(assignment.id)
       groupings = grouping.peer_reviews_to_others
-                          .joins(result: { grouping: :group })
-                          .pluck('results.id', 'groups.group_name', 'results.marking_state')
-                          .map { |id, name, state| { id: id, group_name: name, state: state } }
+                          .joins(:result)
+                          .order('peer_reviews.id')
+                          .pluck_to_hash('peer_reviews.id', 'results.id', 'results.marking_state as marking_state')
     else
       groupings = []
     end
@@ -79,7 +100,7 @@ class PeerReviewsController < ApplicationController
       render 'shared/http_status',
              formats: [:html],
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404,
+             status: :not_found,
              layout: false
     end
   end
@@ -96,49 +117,49 @@ class PeerReviewsController < ApplicationController
     action_string = params[:actionString]
     num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
-    if action_string == 'assign' || action_string == 'random_assign'
+    if %w[assign random_assign].include?(action_string)
       if selected_reviewer_group_ids.empty?
         flash_now(:error, t('peer_reviews.errors.select_a_reviewer'))
-        head 400
+        head :bad_request
         return
       elsif selected_reviewee_group_ids.empty?
         flash_now(:error, t('peer_reviews.errors.select_a_reviewee'))
-        head 400
+        head :bad_request
         return
       end
     end
 
     case action_string
-      when 'random_assign'
-        begin
-          perform_random_assignment(@assignment, num_groups_for_reviewers,
-                                    selected_reviewer_group_ids, selected_reviewee_group_ids)
-        rescue UnableToRandomlyAssignGroupException
-          flash_now(:error, t('peer_reviews.errors.random_assign_failure'))
-          head 400
-          return
-        end
-      when 'assign'
-        reviewer_groups = Grouping.joins(:assignment).where(id: selected_reviewer_group_ids,
-                                                            'assessments.course_id': current_course.id)
-        reviewee_groups = Grouping.joins(:assignment).where(id: selected_reviewee_group_ids,
-                                                            'assessments.course_id': current_course.id)
-        begin
-          PeerReview.assign(reviewer_groups, reviewee_groups)
-        rescue ActiveRecord::RecordInvalid => e
-          flash_now(:error, e.message)
-          head 400
-          return
-        rescue SubmissionsNotCollectedException
-          flash_now(:error, t('peer_reviews.errors.collect_submissions_first'))
-          head 400
-          return
-        end
-      when 'unassign'
-        PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
-      else
-        head 400
+    when 'random_assign'
+      begin
+        perform_random_assignment(@assignment, num_groups_for_reviewers,
+                                  selected_reviewer_group_ids, selected_reviewee_group_ids)
+      rescue UnableToRandomlyAssignGroupException
+        flash_now(:error, t('peer_reviews.errors.random_assign_failure'))
+        head :bad_request
         return
+      end
+    when 'assign'
+      reviewer_groups = Grouping.joins(:assignment).where(id: selected_reviewer_group_ids,
+                                                          'assessments.course_id': current_course.id)
+      reviewee_groups = Grouping.joins(:assignment).where(id: selected_reviewee_group_ids,
+                                                          'assessments.course_id': current_course.id)
+      begin
+        PeerReview.assign(reviewer_groups, reviewee_groups)
+      rescue ActiveRecord::RecordInvalid => e
+        flash_now(:error, e.message)
+        head :bad_request
+        return
+      rescue SubmissionsNotCollectedException
+        flash_now(:error, t('peer_reviews.errors.collect_submissions_first'))
+        head :bad_request
+        return
+      end
+    when 'unassign'
+      PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    else
+      head :bad_request
+      return
     end
 
     head :ok

@@ -3,7 +3,7 @@
 # The "main" locale.
 base_locale: en
 ## All available locales are inferred from the data by default. Alternatively, specify them explicitly:
-locales: [en]
+# locales: [en]
 ## Reporting locale, default: en. Available: en, ru.
 # internal_locale: en
 
@@ -54,8 +54,9 @@ data:
 # Find translate calls
 search:
   ## Paths or `File.find` patterns to search in:
-  # paths:
-  #   - app/
+  paths:
+    - app/
+    - config/initializers/
 
   ## Root directories for relative keys resolution.
   # relative_roots:
@@ -68,6 +69,7 @@ search:
   ## Files or `File.fnmatch` patterns to exclude from search. Some files are always excluded regardless of this setting:
   ##   %w(*.jpg *.png *.gif *.svg *.ico *.eot *.otf *.ttf *.woff *.woff2 *.pdf *.css *.sass *.scss *.less *.yml *.json)
   exclude:
+    - app/assets/builds
     - app/assets/images
     - app/assets/fonts
     - app/assets/videos
@@ -82,6 +84,13 @@ search:
   ## Multiple scanners can be used. Their results are merged.
   ## The options specified above are passed down to each scanner. Per-scanner options can be specified as well.
   ## See this example of a custom scanner: https://github.com/glebm/i18n-tasks/wiki/A-custom-scanner-example
+
+  # Override default scanner settings to handle non-HTML .erb files using the PatternWithScopeScanner
+  # https://github.com/davidwessman/i18n-tasks/blob/main/lib/i18n/tasks/used_keys.rb
+  scanners:
+    - ['::I18n::Tasks::Scanners::RubyAstScanner', { only: ['*.rb'] }]
+    - ['::I18n::Tasks::Scanners::ErbAstScanner', { only: ['*.html.erb'] }]
+    - ['::I18n::Tasks::Scanners::PatternWithScopeScanner', { exclude: ['*.html.erb', '*.rb'] }]
 
 ## Translation Services
 # translation:
@@ -111,6 +120,8 @@ ignore_unused:
   - '*.*.default'
   - 'exam_templates.*'  # TODO: review these ones
   - 'notification_mailer.*'
+  - 'durations.hours.*'  # TODO: review this
+  - 'durations.minutes.*'  # TODO: review this
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:

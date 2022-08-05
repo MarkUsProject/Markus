@@ -4,7 +4,7 @@
   </div>
   <hr class="divider">
   <p class="to_text dark-scheme">
-    <%= t('.greeting', first_name: @user.first_name, last_name: @user.last_name) %>
+    <%= t('.greeting', display_name: @user.display_name) %>
   </p>
   <p class="body_text dark-scheme">
     <%= t('.text_body', assignment: @grouping.assignment.short_identifier) %>

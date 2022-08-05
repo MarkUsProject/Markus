@@ -5,6 +5,7 @@ describe Role do
   it { is_expected.to allow_value('Student').for(:type) }
   it { is_expected.to allow_value('Instructor').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
+  it { is_expected.to allow_value('AdminRole').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
@@ -109,9 +110,9 @@ describe Role do
         assessment_section_properties_visible
       end
       context 'when section_due_dates_type disabled' do
-        let(:new_user_2) { create :student, course: course }
+        let(:new_user2) { create :student, course: course }
         it 'does return all unhiddden assignments' do
-          expect(new_user_2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
+          expect(new_user2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
       end
       context 'when user has one visible assignment' do
@@ -122,16 +123,16 @@ describe Role do
         end
       end
       context 'when user has no section' do
-        let(:new_user_2) { create :student, course: course }
+        let(:new_user2) { create :student, course: course }
         it 'does return all section-hidden assignments' do
-          expect(new_user_2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
+          expect(new_user2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
       end
       context 'when a user is from a different section' do
         let(:section2) { create :section }
-        let(:new_user_2) { create :student, section_id: section2, course: course }
+        let(:new_user2) { create :student, section_id: section2, course: course }
         it 'does return all visible assignments' do
-          expect(new_user_2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
+          expect(new_user2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
       end
       context 'when an assignment is hidden' do
@@ -285,9 +286,9 @@ describe Role do
           grade_entry_section_hidden
         end
         context 'when section_due_date_type disabled' do
-          let(:new_user_2) { create :student, course: course }
+          let(:new_user2) { create :student, course: course }
           it 'does return all unhiddden assignments' do
-            expect(new_user_2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
+            expect(new_user2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
         end
         context 'when user has one visible assignment' do
@@ -298,16 +299,16 @@ describe Role do
           end
         end
         context 'when user has no section' do
-          let(:new_user_2) { create :student, course: course }
+          let(:new_user2) { create :student, course: course }
           it 'does return all section-hidden assignments' do
-            expect(new_user_2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
+            expect(new_user2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
         end
         context 'when a user is from a different section' do
           let(:section2) { create :section, course: course }
-          let(:new_user_2) { create :student, section_id: section2, course: course }
+          let(:new_user2) { create :student, section_id: section2, course: course }
           it 'does return all visible assignments' do
-            expect(new_user_2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
+            expect(new_user2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
         end
         context 'when an assignment is hidden' do

@@ -1,5 +1,4 @@
 // Overrides styling from pdfjs-dist/web/pdf_viewer.css to handle relative_url_root.
-// Seems like webpacker doesn't handle the relative_url_root for the imported css, at least in development.
 .pdfViewer .page .loadingIcon {
   background: asset-url('loading-icon.gif') center no-repeat !important;
 }

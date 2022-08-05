@@ -1,14 +1,10 @@
 class CheckboxCriterion < Criterion
   DEFAULT_MAX_MARK = 1
 
-  def self.symbol
-    :checkbox
-  end
-
   def update_assigned_groups_count
     result = []
     tas.each do |ta|
-      result = result.concat(ta.get_groupings_by_assignment(assignment))
+      result.concat(ta.get_groupings_by_assignment(assignment))
     end
     self.assigned_groups_count = result.uniq.length
   end
@@ -45,7 +41,7 @@ class CheckboxCriterion < Criterion
     end
 
     # Check that the maximum mark given is a valid number.
-    if criterion.max_mark.nil? or criterion.max_mark.zero?
+    if criterion.max_mark.nil? || criterion.max_mark.zero?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
@@ -94,12 +90,11 @@ class CheckboxCriterion < Criterion
   # Returns a hash containing the information of a single checkbox criterion.
   def to_yml
     { self.name =>
-      { 'type'         => 'checkbox',
-        'max_mark'     => self.max_mark.to_f,
-        'description'  => self.description.blank? ? '' : self.description,
-        'ta_visible'   => self.ta_visible,
+      { 'type' => 'checkbox',
+        'max_mark' => self.max_mark.to_f,
+        'description' => self.description.presence || '',
+        'ta_visible' => self.ta_visible,
         'peer_visible' => self.peer_visible,
-        'bonus'        => self.bonus }
-    }
+        'bonus' => self.bonus } }
   end
 end

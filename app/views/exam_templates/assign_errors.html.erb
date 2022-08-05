@@ -2,9 +2,9 @@
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('context_menu') %>
 
-  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_tag nonce: true do -%>
-    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
   <% end -%>
 <% end %>
 
@@ -24,8 +24,8 @@
 <% end %>
 
 <% @heading_buttons = [
-    { link_text: t('exam_templates.back_to_log_page'),
-      link_path: view_logs_course_assignment_exam_templates_path(@current_course, @assignment) },
+    { link_text: t('exam_templates.back_to_exam_templates_page'),
+      link_path: course_assignment_exam_templates_path(@current_course, @assignment) },
 ] %>
 
 <div class='pane-wrapper mid-height'>

@@ -1,9 +1,8 @@
 class Result < ApplicationRecord
-
   MARKING_STATES = {
     complete: 'complete',
     incomplete: 'incomplete'
-  }
+  }.freeze
 
   belongs_to :submission
   has_one :grouping, through: :submission
@@ -14,16 +13,16 @@ class Result < ApplicationRecord
 
   has_one :course, through: :submission
 
+  before_save :check_for_nil_marks
   after_create :create_marks
-  validates_presence_of :marking_state
-  validates_inclusion_of :marking_state, in: MARKING_STATES.values
+  validates :marking_state, presence: true
+  validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
-  validates_numericality_of :total_mark, greater_than_or_equal_to: 0
+  validates :total_mark, numericality: { greater_than_or_equal_to: 0 }
 
-  validates_inclusion_of :released_to_students, in: [true, false]
+  validates :released_to_students, inclusion: { in: [true, false] }
 
   before_update :check_for_released
-  before_save :check_for_nil_marks
 
   # Update the total mark attribute
   def update_total_mark
@@ -36,6 +35,44 @@ class Result < ApplicationRecord
     unless total_marks.empty?
       Result.upsert_all(total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark } })
     end
+  end
+
+  # Release or unrelease the submissions of a set of groupings.
+  def self.set_release_on_results(grouping_ids, release)
+    groupings = Grouping.where(id: grouping_ids)
+    without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
+
+    if without_submissions.present?
+      group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
+      raise StandardError, I18n.t('submissions.errors.no_submission', group_name: group_names)
+    end
+
+    without_complete_result = groupings.joins(:current_result)
+                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
+
+    if without_complete_result.present?
+      group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
+      if release
+        raise StandardError, I18n.t('submissions.errors.not_complete', group_name: group_names)
+      else
+        raise StandardError, I18n.t('submissions.errors.not_complete_unrelease', group_name: group_names)
+      end
+    end
+
+    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
+                   .update_all(released_to_students: release)
+
+    if release
+      groupings.includes(:accepted_students).find_each do |grouping|
+        grouping.accepted_students.each do |student|
+          if student.receives_results_emails?
+            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later
+          end
+        end
+      end
+    end
+
+    result
   end
 
   # Calculate the total mark for this submission
@@ -67,21 +104,7 @@ class Result < ApplicationRecord
                 .where("criteria.#{user_visibility}": true)
                 .group(:result_id)
                 .sum(:mark)
-    result_ids.map { |r_id| [r_id, marks[r_id] || 0] }.to_h
-  end
-
-  # The sum of the bonuses deductions and late penalties
-  #
-  # If the +max_mark+ value is nil, its value will be determined dynamically
-  # based on the max_mark value of the associated assignment.
-  # However, passing the +max_mark+ value explicitly is more efficient if we are
-  # repeatedly calling this method where the max_mark doesn't change, such as when
-  # all the results are associated with the same assignment.
-  #
-  # +user_visibility+ is passed to the Assignment.max_mark method to determine the
-  # max_mark value only if the +max_mark+ argument is nil.
-  def get_total_extra_marks(max_mark: nil, user_visibility: :ta_visible)
-    Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
+    result_ids.index_with { |r_id| marks[r_id] || 0 }
   end
 
   # The sum of the bonuses deductions and late penalties for multiple results.
@@ -101,7 +124,7 @@ class Result < ApplicationRecord
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
     extra_marks_hash = Hash.new { |h, k| h[k] = nil }
-    max_mark_hash = Hash.new
+    max_mark_hash = {}
     result_data.each do |id, extra_mark, unit, assessment_id|
       if extra_marks_hash[id].nil?
         extra_marks_hash[id] = 0
@@ -120,21 +143,6 @@ class Result < ApplicationRecord
       end
     end
     extra_marks_hash
-  end
-
-  # The sum of the bonuses and deductions, other than late penalty
-  def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # Percentage deduction for late penalty
-  def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # Point deduction for late penalty
-  def get_total_extra_percentage_as_points(user_visibility = :ta_visible)
-    (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(2)
   end
 
   # un-releases the result
@@ -170,11 +178,7 @@ class Result < ApplicationRecord
   # Returns a hash of all marks for this result.
   # TODO: make it include extra marks as well.
   def mark_hash
-    Hash[
-      marks.map do |mark|
-        [mark.criterion_id, mark.mark]
-      end
-    ]
+    marks.pluck_to_hash(:criterion_id, :mark, :override).index_by { |x| x[:criterion_id] }
   end
 
   private
@@ -196,9 +200,15 @@ class Result < ApplicationRecord
     # we can't pass in a parameter to the before_save filter, so we need
     # to manually determine the visibility. If it's a pr result, we know we
     # want the peer-visible criteria
-    visibility = is_a_review? ? :peer_visible : user_visibility
+    if is_a_review?
+      visibility = :peer_visible
+      assignment = submission.assignment.pr_assignment
+    else
+      visibility = user_visibility
+      assignment = submission.assignment
+    end
 
-    criteria = submission.assignment.criteria.where(visibility => true).ids
+    criteria = assignment.criteria.where(visibility => true).ids
     nil_marks = false
     num_marks = 0
     marks.each do |mark|

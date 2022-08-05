@@ -1,0 +1,2 @@
+class AdminRolePolicy < InstructorPolicy
+end

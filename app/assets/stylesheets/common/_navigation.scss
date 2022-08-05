@@ -1,31 +1,39 @@
 /**
- * Header, main menu, sub menu, sub_sub menu, and footer.
+ * Header, main menu, sub menu, and sub_sub menu.
  */
 @import 'constants';
 
 /* Header */
 
 header#header {
+  align-items: center;
   border-bottom: 1px solid $primary-three;
-  display: table;
+  display: flex;
   padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
-  #course,
-  #user_info {
-    display: table-cell;
+  @include breakpoint(mobile) {
+    border-bottom: 0;
+    display: block;
+  }
 
+  #course,
+  #user-info {
     @include breakpoint(mobile) {
       display: block;
     }
   }
 
-  #user-info {
-    text-align: right;
+  #course {
+    flex: 1;
+  }
 
-    @include breakpoint(mobile) {
-      text-align: left;
-    }
+  #user-info {
+    margin-left: auto;
+  }
+
+  h1 {
+    font-size: 1.5em;
   }
 }
 
@@ -47,19 +55,6 @@ nav {
   .sub_sub {
     padding: 0 $dimen-horizontal;
   }
-
-  footer {
-    display: none;
-    text-align: left;
-
-    @include breakpoint(mobile) {
-      display: block;
-    }
-
-    span {
-      margin-left: 0 !important;
-    }
-  }
 }
 
 #logo-img {
@@ -80,57 +75,6 @@ nav {
 
   #mobile_menu {
     background-image: asset-url('markus_logo_dark.svg');
-  }
-}
-
-/* Footer */
-
-footer {
-  background-color: $background-support;
-  border-top: 1px solid $primary-three;
-  color: $line;
-  font-size: 0.95em;
-  padding: 2em $dimen-horizontal;
-  text-align: center;
-
-  @include breakpoint(mobile) {
-    display: none;
-  }
-
-  a {
-    color: $line;
-
-    &:hover {
-      color: $primary-two;
-    }
-  }
-
-  .lang_chooser {
-    margin: 0 0 0 1em;
-
-    select {
-      border: 0;
-      color: $line;
-      font-family: $fonts;
-      margin: 0;
-    }
-  }
-
-  .issues {
-    margin: 0 1em;
-  }
-
-  .lang_chooser,
-  .issues {
-    border-left: 1px solid $primary-two;
-    padding-left: 1em;
-
-    @include breakpoint(mobile) {
-      border: 0;
-      display: block;
-      margin: 1em 1em 0;
-      padding: 0;
-    }
   }
 }
 
@@ -245,18 +189,6 @@ footer {
     width: 75%;
     z-index: 0;
   }
-
-  footer {
-    background: $background-main;
-    border-bottom: 1px solid $primary-three;
-    border-top: 1px solid $primary-three;
-    display: none;
-    padding: 1em;
-
-    @include breakpoint(mobile) {
-      display: block;
-    }
-  }
 }
 
 #menus_child {
@@ -308,7 +240,6 @@ footer {
     border-bottom: 1px solid $primary-three;
     border-top: 1px solid $primary-three;
     display: block;
-    margin: 0 0 1em;
     padding: 0 !important;
     width: 100%;
   }
@@ -359,8 +290,7 @@ footer {
     text-align: left !important;
   }
 
-  #course,
-  #user_info {
+  #course {
     @include breakpoint(mobile) {
       display: block;
       float: none !important;
@@ -374,17 +304,15 @@ footer {
     }
   }
 
-  #user-info {
-    @include breakpoint(mobile) {
-      padding: 1em;
-    }
-  }
+  #user-info .dropdown {
+    background: $background-support;
 
-  #user-id {
-    font-weight: 300;
+    ul {
+      background: $background-support;
 
-    @include breakpoint(mobile) {
-      display: block;
+      li {
+        text-align: left;
+      }
     }
   }
 }

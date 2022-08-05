@@ -1,23 +1,14 @@
 describe UsersController do
   let(:role) { create(:instructor) }
-  let(:user) { role.end_user }
+  let(:user) { role.user }
 
   shared_examples 'settings' do
     describe '#update_settings' do
-      it 'updates locale' do
-        I18n.locale = :en
-        locale = 'es'
-        patch_as user, 'update_settings', params: { 'user': { 'locale': locale } }
-
-        expect(user.reload.locale).to eq locale
-        expect(I18n.locale).to eq locale.to_sym
-      end
-
       it 'updates display_name' do
         display_name = 'First Last'
         patch_as user,
                  'update_settings',
-                 params: { 'user': { 'display_name': display_name } }
+                 params: { user: { display_name: display_name } }
         expect(user.reload.display_name).to eq display_name
       end
 
@@ -25,7 +16,7 @@ describe UsersController do
         time_zone = 'Pacific Time (US & Canada)'
         patch_as user,
                  'update_settings',
-                 params: { 'user': { 'time_zone': time_zone } }
+                 params: { user: { time_zone: time_zone } }
         expect(user.reload.time_zone).to eq time_zone
       end
 
@@ -33,7 +24,7 @@ describe UsersController do
         display_name = 'First Last'
         patch_as user,
                  'update_settings',
-                 params: { 'user': { 'display_name': display_name } }
+                 params: { user: { display_name: display_name } }
         expect(user.reload.display_name).to eq display_name
       end
     end
@@ -47,9 +38,7 @@ describe UsersController do
         expect(response).to render_template(:settings)
       end
     end
-  end
 
-  describe 'User is an instructor in at least one course' do
     describe '#reset_api_key' do
       it 'responds with a success' do
         post_as user, :reset_api_key
@@ -62,18 +51,14 @@ describe UsersController do
         expect(user.api_key).not_to eq(old_key)
       end
     end
+  end
 
+  describe 'User is an instructor in at least one course' do
     include_examples 'settings'
   end
 
   describe 'User is not an instructor in at least one course' do
     let(:role) { create :ta }
-    describe '#reset_api_key' do
-      it 'cannot reset their api key' do
-        post_as user, :reset_api_key
-        expect(response).to have_http_status(:forbidden)
-      end
-    end
     include_examples 'settings'
   end
 end

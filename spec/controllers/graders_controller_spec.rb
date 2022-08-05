@@ -31,7 +31,7 @@ describe GradersController do
       post_as @student, :global_actions, params: { course_id: course.id, assignment_id: assignment.id }
       expect(response).to have_http_status(403)
     end
-  end # student context
+  end
 
   context 'An authenticated and authorized instructor' do
     let(:course) { @assignment.course }
@@ -43,8 +43,8 @@ describe GradersController do
     it 'doing a GET on :index(graders_controller)' do
       get_as @instructor, :index, params: { course_id: course.id, assignment_id: @assignment.id }
       expect(response.status).to eq(200)
-      expect(assigns :assignment).not_to be_nil
-    end #manage
+      expect(assigns(:assignment)).not_to be_nil
+    end
 
     context 'doing a POST on :upload' do
       include_examples 'a controller supporting upload' do
@@ -59,9 +59,9 @@ describe GradersController do
       end
 
       it 'and all graders and groups are valid' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'test_group'))
@@ -100,9 +100,9 @@ describe GradersController do
       end
 
       it 'and some graders are invalid' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c0curtis'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c0curtis'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'test_group'))
@@ -127,9 +127,9 @@ describe GradersController do
       end
 
       it 'and some groupings are invalid' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'Group of 7'))
@@ -153,9 +153,9 @@ describe GradersController do
       end
 
       it 'and the request removes existing mappings' do
-        @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
         @grouping1 = create(:grouping,
                             assignment: @assignment,
                             group: create(:group, course: @assignment.course, group_name: 'test_group'))
@@ -177,7 +177,7 @@ describe GradersController do
         expect(response).to be_redirect
         expect(@grouping4.tas.count).to eq 0
       end
-    end #groups csv upload
+    end
 
     context 'doing a POST on :upload' do
       include_examples 'a controller supporting upload' do
@@ -197,9 +197,9 @@ describe GradersController do
         end
 
         it 'and all graders and criteria are valid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
@@ -219,9 +219,9 @@ describe GradersController do
         end
 
         it 'and some graders are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'reid'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'reid'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
@@ -239,9 +239,9 @@ describe GradersController do
         end
 
         it 'and some criteria are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
@@ -257,7 +257,7 @@ describe GradersController do
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
         end
-      end # rubric criteria
+      end
 
       context 'with flexible criteria' do
         before :each do
@@ -265,9 +265,9 @@ describe GradersController do
         end
 
         it 'and all graders and criteria are valid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
@@ -290,9 +290,9 @@ describe GradersController do
         end
 
         it 'and some graders are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'reid'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'reid'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
@@ -313,9 +313,9 @@ describe GradersController do
         end
 
         it 'and some criteria are invalid' do
-          @ta1 = create(:ta, end_user: create(:end_user, user_name: 'g9browni'))
-          @ta2 = create(:ta, end_user: create(:end_user, user_name: 'g9younas'))
-          @ta3 = create(:ta, end_user: create(:end_user, user_name: 'c7benjam'))
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
           @criterion1 = create(:flexible_criterion, assignment: @assignment, name: 'correctness')
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
@@ -334,8 +334,8 @@ describe GradersController do
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
         end
-      end # flexible criteria
-    end # criteria csv upload
+      end
+    end
 
     context 'with groups table selected doing a' do
       context 'POST on :global_actions on random_assign' do
@@ -385,7 +385,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
-                            global_actions: 'random_assign', groupings: [@grouping1],
+                            global_actions: 'random_assign', groupings: [@grouping1], weightings: [1],
                             graders: [@ta1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
@@ -397,7 +397,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1], current_table: 'groups_table' }
+                            groupings: [@grouping1, @grouping2], graders: [@ta1],
+                            weightings: [1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas[0].id).to eq @ta1.id
@@ -408,7 +409,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1], graders: [@ta1, @ta2], current_table: 'groups_table' }
+                            groupings: [@grouping1], graders: [@ta1, @ta2],
+                            weightings: [1, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas).to eq []
@@ -419,12 +421,38 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2], current_table: 'groups_table' }
+                            groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
+                            weightings: [1, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping1.tas[0].id).not_to eq @grouping2.tas[0].id
           expect(@grouping3.tas).to eq []
+        end
+
+        it 'and two graders and two groupings are selected with one having a weight of 0' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
+                            weightings: [1, 0], current_table: 'groups_table' }
+          expect(response.status).to eq(200)
+          expect(@grouping1.tas[0].id).to eq(@ta1.id)
+          expect(@grouping2.tas[0].id).to eq(@ta1.id)
+          expect(@grouping3.tas).to eq []
+        end
+
+        it 'and two graders and three groupings are selected with one having a weight of 2' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [2, 1], current_table: 'groups_table' }
+          expect(response.status).to eq(200)
+          expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
+          expect(@grouping2.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
+          expect(@grouping3.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
+          expect(@ta1.groupings.length > @ta2.groupings.length)
         end
 
         it 'and multiple graders and multiple groupings are selected' do
@@ -433,13 +461,49 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
-                            current_table: 'groups_table' }
+                            weightings: [1, 1, 1], current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas.size).to eq 1
           expect(@grouping2.tas.size).to eq 1
           expect(@grouping3.tas.size).to eq 1
         end
-      end #random assign
+        it 'and weights all being 0 results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [0, 0], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
+        it 'and any weight being negative results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [-1, 1], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
+        it 'and weights being invalid results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: [[], 0], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
+        it 'and weights being an invalid string results in nothing being assigned' do
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            weightings: ['weight', 0], current_table: 'groups_table' }
+          expect(@grouping1.tas.size).to eq 0
+          expect(@grouping2.tas.size).to eq 0
+        end
+      end
 
       context 'POST on :global_actions on assign' do
         before :each do
@@ -597,7 +661,7 @@ describe GradersController do
             end
           end
         end
-      end #assign
+      end
 
       context 'POST on :global_actions on unassign' do
         before :each do
@@ -642,11 +706,9 @@ describe GradersController do
         it 'and all groupings from one grader are selected' do
           create(:ta_membership, role: @ta1, grouping: @grouping1)
           create(:ta_membership, role: @ta2, grouping: @grouping1)
-          ta_memberships = [
-            create(:ta_membership, role: @ta3, grouping: @grouping1),
-            create(:ta_membership, role: @ta3, grouping: @grouping2),
-            create(:ta_membership, role: @ta3, grouping: @grouping3)
-          ]
+          create(:ta_membership, role: @ta3, grouping: @grouping1)
+          create(:ta_membership, role: @ta3, grouping: @grouping2)
+          create(:ta_membership, role: @ta3, grouping: @grouping3)
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
@@ -710,9 +772,8 @@ describe GradersController do
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
         end
-      end #unassign
-
-    end #groupings table
+      end
+    end
 
     context 'With criteria table selected' do
       context 'with rubric marking scheme doing a' do
@@ -822,7 +883,7 @@ describe GradersController do
             expect(@criterion2.tas.size).to eq(1)
             expect(@criterion3.tas.size).to eq(1)
           end
-        end #random assign
+        end
 
         context 'POST on :global_actions on assign' do
           before :each do
@@ -966,7 +1027,7 @@ describe GradersController do
             expect(@criterion2.tas).to include(@ta2)
             expect(@criterion3.tas).to eq []
           end
-        end #assign
+        end
 
         context 'POST on :global_actions on unassign' do
           before :each do
@@ -1093,9 +1154,8 @@ describe GradersController do
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
           end
-        end #unassign
-
-      end #rubric scheme
+        end
+      end
 
       context 'with flexible marking scheme doing a' do
         before :each do
@@ -1226,7 +1286,7 @@ describe GradersController do
             expect(@criterion2.tas.size).to eq 1
             expect(@criterion3.tas.size).to eq 1
           end
-        end #random assign
+        end
 
         context 'POST on :global_actions on assign' do
           before :each do
@@ -1384,7 +1444,7 @@ describe GradersController do
             expect(@criterion2.tas).to include(@ta2)
             expect(@criterion3.tas).to eq []
           end
-        end #assign
+        end
 
         context 'POST on :global_actions on unassign' do
           before :each do
@@ -1460,7 +1520,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
-            criterion_ta = CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
@@ -1508,10 +1568,8 @@ describe GradersController do
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
           end
-        end #unassign
-
-      end #flexible scheme
-    end #criteria table
-
+        end
+      end
+    end
   end
 end

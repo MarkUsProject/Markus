@@ -18,7 +18,7 @@ export class CourseSummaryChart extends React.Component {
             display: true,
           },
         },
-        scales: chartScales,
+        scales: chartScales(),
       },
       loading: true,
     };

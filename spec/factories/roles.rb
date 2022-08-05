@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :role do
-    association :end_user
+    association :user, factory: :end_user
     course { Course.order(:id).first || association(:course) }
   end
 end

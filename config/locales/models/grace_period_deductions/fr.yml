@@ -1,6 +1,0 @@
----
-fr:
-  activerecord:
-    models:
-      grace_period_deduction:
-        one: Déduction des périodes de grâce

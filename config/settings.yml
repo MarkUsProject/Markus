@@ -23,6 +23,9 @@ rails:
     asset_host: 'http://localhost:3000'
     perform_deliveries: false
     deliver_later_queue_name: ~
+  action_controller:
+    default_url_options:
+      host: 'localhost:3000'
 
 queues:
   default: DEFAULT_QUEUE
@@ -37,7 +40,6 @@ logout_redirect: DEFAULT
 
 repository:
   type: git
-  markus_git_shell: <%= File.join(::Rails.root, 'lib', 'repo', 'markus-git-shell.sh') %>
   url: 'http://www.example.com/markus/git'
   ssh_url: 'git@example.com/csc108'
   is_repository_admin: true
@@ -56,6 +58,13 @@ student_csv_order:
   - id_number
   - email
 
+end_user_csv_order:
+  - user_name
+  - last_name
+  - first_name
+  - id_number
+  - email
+
 logging:
   enabled: true
   rotate_by_interval: false
@@ -63,6 +72,19 @@ logging:
   size_threshold: 1024000000
   old_files: 10
 
+# resque-scheduler configuration: https://github.com/resque/resque-scheduler#static-schedules
+# See also: https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
+# Warning: this setting only works if you are using resque to manage background jobs.
+resque_scheduler:
+  CleanTmpJob:
+    class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+    queue: DEFAULT_QUEUE
+    every: 2d
+    # never: "* * * * * *"  # replace every: with never: if you want to run the job manually
+    args:
+      job_class:  CleanTmpJob
+      arguments:
+        - 5184000  # 60 days, in seconds
 autotest:
   student_test_buffer_minutes: 60
 
@@ -72,4 +94,14 @@ scanned_exams:
 python:
   bin: <%= ::Rails.root %>/venv/bin
 
-pandoc: /usr/bin/pandoc
+exception_notification:
+  enabled: false
+  sender: markus-exception-notification@example.com
+  sender_display_name: MarkUs Exception Notifier
+  email_prefix: '[MarkUs Exception Notification] '
+  recipients:
+    - markus-admin@example.com
+
+rails_performance:
+  enabled: true
+  duration: 180

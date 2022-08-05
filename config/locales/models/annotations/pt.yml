@@ -1,9 +1,0 @@
----
-pt:
-  activerecord:
-    attributes:
-      annotation:
-        creator: 'Criado por:'
-    models:
-      annotation:
-        one: Anotação

@@ -9,7 +9,7 @@ describe SubmissionFile do
   context 'A .java Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.java',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return java' do
@@ -23,7 +23,7 @@ describe SubmissionFile do
   context 'A .rb Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.rb',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return ruby' do
@@ -37,7 +37,7 @@ describe SubmissionFile do
   context 'A .py Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.py',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return python' do
@@ -51,7 +51,7 @@ describe SubmissionFile do
   context 'A .js Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.js',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return javascript' do
@@ -65,7 +65,7 @@ describe SubmissionFile do
   context 'A .html Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.html',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return html' do
@@ -79,7 +79,7 @@ describe SubmissionFile do
   context 'A .css Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.css',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return css' do
@@ -93,7 +93,7 @@ describe SubmissionFile do
   context 'A .c Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.c',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return c' do
@@ -107,7 +107,7 @@ describe SubmissionFile do
   context 'A .tex Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.tex',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return tex' do
@@ -118,7 +118,7 @@ describe SubmissionFile do
   context 'A no extension Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
@@ -132,7 +132,7 @@ describe SubmissionFile do
   context 'An unknown Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.toto',
-                                               path:     'path',
+                                               path: 'path',
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
@@ -147,25 +147,25 @@ describe SubmissionFile do
     before(:each) do
       # currently supported formats: ['.jpeg', '.jpg', '.gif', '.png']
       @jpeg_file = SubmissionFile.create(filename: 'filename.jpeg',
-                                        path:     'path',
-                                        submission_id: 1)
+                                         path: 'path',
+                                         submission_id: 1)
       @jpg_file = SubmissionFile.create(filename: 'filename.jpg',
-                                        path:     'path',
+                                        path: 'path',
                                         submission_id: 2)
       @gif_file = SubmissionFile.create(filename: 'filename.gif',
-                                        path:     'path',
+                                        path: 'path',
                                         submission_id: 3)
       @png_file = SubmissionFile.create(filename: 'filename.png',
-                                        path:     'path',
+                                        path: 'path',
                                         submission_id: 4)
       @heic_file = SubmissionFile.create(filename: 'filename.heic',
-                                         path:     'path',
+                                         path: 'path',
                                          submission_id: 5)
       @heif_file = SubmissionFile.create(filename: 'filename.heif',
-                                         path:     'path',
+                                         path: 'path',
                                          submission_id: 6)
       @unsupported_file = SubmissionFile.create(filename: 'filename.bmp',
-                                                path:     'path',
+                                                path: 'path',
                                                 submission_id: 7)
     end
     it 'return true' do
@@ -191,7 +191,7 @@ describe SubmissionFile do
     context 'from a text file' do
       before(:each) do
         @submission_file = SubmissionFile.create(filename: 'filename',
-                                                path: 'path')
+                                                 path: 'path')
       end
       it 'return nil' do
         expect(@submission_file.get_annotation_grid).to be nil
@@ -201,7 +201,7 @@ describe SubmissionFile do
     context 'from an image file' do
       before(:each) do
         @submission_file = SubmissionFile.create(filename: 'filename.jpeg',
-                                                path: 'path')
+                                                 path: 'path')
       end
       context 'with no annotations' do
         it 'return []' do
@@ -210,26 +210,27 @@ describe SubmissionFile do
       end
       context 'with valid annotations' do
         before(:each) do
-          @ta = Ta.new(end_user_attributes: { user_name: 'exist_user',
-                                              first_name: 'Nelle',
-                                              last_name: 'Varoquaux' })
-          @annot1 = ImageAnnotation.new({submission_file: @submission_file,
+          @ta = Ta.new(user_attributes: { user_name: 'exist_user',
+                                          first_name: 'Nelle',
+                                          last_name: 'Varoquaux',
+                                          type: 'EndUser' })
+          @annot1 = ImageAnnotation.new({ submission_file: @submission_file,
                                           x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
-                                          annotation_text: AnnotationText.new({id: 1}),
-                                          creator: @ta})
-          @annot2 = ImageAnnotation.new({submission_file: @submission_file,
+                                          annotation_text: AnnotationText.new({ id: 1 }),
+                                          creator: @ta })
+          @annot2 = ImageAnnotation.new({ submission_file: @submission_file,
                                           x1: 57, x2: 73, y1: 2, y2: 100, id: 4,
-                                          annotation_text: AnnotationText.new({id: 2}),
-                                          creator: @ta})
+                                          annotation_text: AnnotationText.new({ id: 2 }),
+                                          creator: @ta })
         end
         it 'return a corresponding array' do
           @submission_file.annotations.push(@annot1)
           @submission_file.annotations.push(@annot2)
-          expect(@submission_file.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]})
-            .to eq([{id: 1, annot_id: 3, x_range: {start: 0, end: 10},
-                     y_range: {start: 0, end: 10}},
-                    {id: 2, annot_id: 4, x_range: {start: 57, end: 73},
-                     y_range: {start: 2, end: 100}}])
+          expect(@submission_file.get_annotation_grid.sort { |x, y| x[:id] <=> y[:id] })
+            .to eq([{ id: 1, annot_id: 3, x_range: { start: 0, end: 10 },
+                      y_range: { start: 0, end: 10 } },
+                    { id: 2, annot_id: 4, x_range: { start: 57, end: 73 },
+                      y_range: { start: 2, end: 100 } }])
         end
       end
     end
@@ -237,7 +238,7 @@ describe SubmissionFile do
     context 'from a pdf file' do
       before(:each) do
         @submission_file = SubmissionFile.create(filename: 'filename.pdf',
-                                                path: 'path')
+                                                 path: 'path')
       end
       context 'with no annotations' do
         it 'return []' do
@@ -246,26 +247,27 @@ describe SubmissionFile do
       end
       context 'with valid annotations' do
         before(:each) do
-          @ta = Ta.new(end_user_attributes: { user_name: 'exist_user',
-                                              first_name: 'Nelle',
-                                              last_name: 'Varoquaux' })
-          @annot1 = ImageAnnotation.new({submission_file: @submission_file,
+          @ta = Ta.new(user_attributes: { user_name: 'exist_user',
+                                          first_name: 'Nelle',
+                                          last_name: 'Varoquaux',
+                                          type: 'EndUser' })
+          @annot1 = ImageAnnotation.new({ submission_file: @submission_file,
                                           x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
-                                          annotation_text: AnnotationText.new({id: 1}),
-                                          creator: @ta})
-          @annot2 = ImageAnnotation.new({submission_file: @submission_file,
+                                          annotation_text: AnnotationText.new({ id: 1 }),
+                                          creator: @ta })
+          @annot2 = ImageAnnotation.new({ submission_file: @submission_file,
                                           x1: 57, x2: 73, y1: 2, y2: 100, id: 4,
-                                          annotation_text: AnnotationText.new({id: 2}),
-                                          creator: @ta})
+                                          annotation_text: AnnotationText.new({ id: 2 }),
+                                          creator: @ta })
         end
         it 'return a corresponding array' do
           @submission_file.annotations.push(@annot1)
           @submission_file.annotations.push(@annot2)
-          expect(@submission_file.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]})
-            .to eq([{id: 1, annot_id: 3, x_range: {start: 0, end: 10},
-                     y_range: {start: 0, end: 10}},
-                    {id: 2, annot_id: 4, x_range: {start: 57, end: 73},
-                     y_range: {start: 2, end: 100}}])
+          expect(@submission_file.get_annotation_grid.sort { |x, y| x[:id] <=> y[:id] })
+            .to eq([{ id: 1, annot_id: 3, x_range: { start: 0, end: 10 },
+                      y_range: { start: 0, end: 10 } },
+                    { id: 2, annot_id: 4, x_range: { start: 57, end: 73 },
+                      y_range: { start: 2, end: 100 } }])
         end
       end
       context 'when checking the file type' do

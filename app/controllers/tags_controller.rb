@@ -18,7 +18,7 @@ class TagsController < ApplicationController
             id: tag.id,
             name: tag.name,
             description: tag.description,
-            creator: "#{tag.role.first_name} #{tag.role.last_name}",
+            creator: tag.role.display_name,
             use: tag.groupings.size
           }
         end
@@ -37,11 +37,9 @@ class TagsController < ApplicationController
     tag_params = params.require(:tag).permit(:name, :description)
     new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find_by(id: params[:assignment_id])))
 
-    if new_tag.save
-      if params[:grouping_id]
-        grouping = Grouping.find(params[:grouping_id])
-        grouping.tags << new_tag
-      end
+    if new_tag.save && params[:grouping_id]
+      grouping = Grouping.find(params[:grouping_id])
+      grouping.tags << new_tag
     end
 
     respond_with new_tag, location: -> { request.headers['Referer'] || root_path }
@@ -70,7 +68,7 @@ class TagsController < ApplicationController
 
   def download
     parent = Assignment.find_by(id: params[:assignment_id]) || current_course
-    tags = parent.tags.includes(role: :end_user).order(:name).pluck(:name, :description, 'users.user_name')
+    tags = parent.tags.includes(role: :user).order(:name).pluck(:name, :description, 'users.user_name')
 
     case params[:format]
     when 'csv'

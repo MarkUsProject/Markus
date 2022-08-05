@@ -1,28 +1,27 @@
 # Gemfile
 #
-# For production mode PostgreSQL option :
-#   bundle install --without development test mysql sqlite
-# For production mode MySQL option :
-#   bundle install --without development test postgresql sqlite
+# For production mode:
+#   bundle install --without development test
 #
 # Make sure to declare at least one 'source'
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.1.4.1'
+gem 'rails', '~> 7.0.3'
 gem 'sprockets'
+gem 'sprockets-rails'
 
 # Models and database interactions
 gem 'pluck_to_hash'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
+gem 'jsbundling-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
-gem 'uglifier'
-gem 'webpacker'
+gem 'terser'
 
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
@@ -39,7 +38,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 6.0.0'
+gem 'rails-i18n', '~> 7.0.0'
 
 # Exam template requirements
 gem 'combine_pdf'
@@ -51,42 +50,25 @@ gem 'zxing_cpp', require: 'zxing'
 # Ruby miscellany
 gem 'json'
 gem 'mini_mime'
-gem 'net-ssh'
 gem 'redcarpet'
 gem 'rubyzip', require: 'zip'
 gem 'rugged'
 
 # Rails miscellany
-gem 'activerecord-session_store'
-gem 'cookies_eu'
-gem 'rails-html-sanitizer'
-gem 'responders'
 gem 'activemodel-serializers-xml'
+gem 'activerecord-session_store'
 gem 'config'
+gem 'cookies_eu'
+gem 'exception_notification'
+gem 'rails-html-sanitizer'
+gem 'rails_performance'
+gem 'responders'
 
-# If you are a MarkUs developer and use PostgreSQL, make sure you have
-# PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
-# Then install your bundle by:
-#   bundle install --without mysql sqlite
-group :postgresql do
-  gem 'pg'
-end
+# LTI and OAuth
+gem 'jwt'
 
-# If you are a MarkUs developer and use MySQL, make sure you have
-# MySQL header files installed (e.g. libmysqlclient-dev on Debian/Ubuntu).
-# Then install your bundle by:
-#   bundle install --without postgresql sqlite
-group :mysql do
-  gem 'mysql2'
-end
-
-# If you are a MarkUs developer and use SQLite, make sure you have
-# SQLite header files installed (e.g. libsqlite3-dev on Debian/Ubuntu).
-# Then install your bundle by:
-#   bundle install --without postgresql mysql
-group :sqlite do
-  gem 'sqlite3'
-end
+# Postgres
+gem 'pg'
 
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
@@ -104,20 +86,23 @@ group :test do
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'machinist', '< 3'
+  gem 'rails-controller-testing'
   gem 'shoulda'
+  gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'time-warp'
-  gem 'shoulda-callback-matchers', '~> 1.1.1'
-  gem 'rails-controller-testing'
+  gem 'webmock'
 end
 
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
   gem 'byebug'
+  gem 'capybara'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 5.0.2'
+  gem 'rspec-rails', '~> 5.1.2'
+  gem 'selenium-webdriver'
 end
 
 # Gems needed (wanted) for development, test and production_test
@@ -140,7 +125,7 @@ end
 
 # If you  plan to use unicorn servers for production
 # make sure that this group is included. You don't need this
-# group if you are using Phusion Passenger.
+# group if you are using Phusion Passenger or Puma.
 group :unicorn do
   gem 'unicorn'
 end

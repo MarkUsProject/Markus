@@ -14,8 +14,8 @@ describe GroupsController do
       context 'when no group name is specified' do
         it 'adds a new group to assignment' do
           expect(assignment).to receive(:add_group)
-                                  .with(nil)
-                                  .and_return(grouping)
+            .with(nil)
+            .and_return(grouping)
           get_as instructor, :new, params: { course_id: course.id, assignment_id: assignment }
         end
       end
@@ -26,8 +26,8 @@ describe GroupsController do
         context 'when group creation successful' do
           it 'creates a new group with specified name' do
             expect(assignment).to receive(:add_group)
-                                    .with(group_name)
-                                    .and_return(grouping)
+              .with(group_name)
+              .and_return(grouping)
             get_as instructor, :new,
                    params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
           end
@@ -36,15 +36,15 @@ describe GroupsController do
         context 'when group creation unsuccessful' do
           before :each do
             allow(assignment).to receive(:add_group)
-                                   .with(group_name)
-                                   .and_raise('Group #{group_name} already exists')
+              .with(group_name)
+              .and_raise("Group #{group_name} already exists")
 
             get_as instructor, :new,
                    params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
           end
 
           it 'assigns the error message to flash[:error]' do
-            expect(flash[:error]).to eq('Group #{group_name} already exists')
+            expect(flash[:error]).to eq("Group #{group_name} already exists")
           end
         end
       end
@@ -135,8 +135,41 @@ describe GroupsController do
     end
 
     describe '#rename_group'
-    describe '#valid_grouping'
-    describe '#invalid_grouping'
+
+    describe '#valid_grouping' do
+      let(:unapproved_grouping) { create :grouping_with_inviter, instructor_approved: false }
+      let(:approved_grouping) { create :grouping_with_inviter, instructor_approved: true }
+      it 'validates a previously invalid grouping' do
+        post_as instructor, :valid_grouping, params: { course_id: unapproved_grouping.course.id,
+                                                       assignment_id: unapproved_grouping.assignment.id,
+                                                       grouping_id: unapproved_grouping.id }
+        expect(unapproved_grouping.reload.instructor_approved).to be true
+      end
+      it 'keeps a valid grouping valid' do
+        post_as instructor, :valid_grouping, params: { course_id: approved_grouping.course.id,
+                                                       assignment_id: approved_grouping.assignment.id,
+                                                       grouping_id: approved_grouping.id }
+        expect(approved_grouping.reload.instructor_approved).to be true
+      end
+    end
+
+    describe '#invalid_grouping' do
+      let(:approved_grouping) { create :grouping_with_inviter, instructor_approved: true }
+      let(:unapproved_grouping) { create :grouping_with_inviter, instructor_approved: false }
+      it 'invalidates a previously valid grouping' do
+        post_as instructor, :invalid_grouping, params: { course_id: approved_grouping.course.id,
+                                                         assignment_id: approved_grouping.assignment.id,
+                                                         grouping_id: approved_grouping.id }
+        expect(approved_grouping.reload.instructor_approved).to be false
+      end
+      it 'keeps a invalid grouping invalid' do
+        post_as instructor, :invalid_grouping, params: { course_id: unapproved_grouping.course.id,
+                                                         assignment_id: unapproved_grouping.assignment.id,
+                                                         grouping_id: unapproved_grouping.id }
+        expect(unapproved_grouping.reload.instructor_approved).to be false
+      end
+    end
+
     describe '#populate'
     describe '#populate_students'
 
@@ -160,7 +193,8 @@ describe GroupsController do
         # remove a generated repo so repeated test runs function properly
         FileUtils.rm_r(
           File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
-          force: true)
+          force: true
+        )
       end
 
       before :each do
@@ -173,9 +207,9 @@ describe GroupsController do
         @assignment = create(:assignment)
 
         # Create students corresponding to the file_good
-        @student_user_names = %w(c8shosta c5bennet)
+        @student_user_names = %w[c8shosta c5bennet]
         @student_user_names.each do |name|
-          create(:student, end_user: create(:end_user, user_name: name))
+          create(:student, user: create(:end_user, user_name: name))
         end
       end
 
@@ -187,9 +221,8 @@ describe GroupsController do
         ActiveJob::Base.queue_adapter = :test
         expect do
           post_as instructor, :upload, params: { course_id: course.id,
-            assignment_id: @assignment.id,
-            upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
-          }
+                                                 assignment_id: @assignment.id,
+                                                 upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv') }
         end.to have_enqueued_job(CreateGroupsJob)
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_blank
@@ -198,9 +231,9 @@ describe GroupsController do
 
       it 'does not accept files with invalid columns' do
         post_as instructor, :upload, params: { course_id: course.id,
-          assignment_id: @assignment.id,
-          upload_file: fixture_file_upload('groups/form_invalid_column.csv', 'text/csv')
-        }
+                                               assignment_id: @assignment.id,
+                                               upload_file: fixture_file_upload('groups/form_invalid_column.csv',
+                                                                                'text/csv') }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_blank
@@ -222,8 +255,8 @@ describe GroupsController do
 
         @group = FactoryBot.create(:group, course: @assignment.course)
 
-        @student1 = create(:student, end_user: create(:end_user, user_name: 'c8shosta'))
-        @student2 = create(:student, end_user: create(:end_user, user_name: 'c5bennet'))
+        @student1 = create(:student, user: create(:end_user, user_name: 'c8shosta'))
+        @student2 = create(:student, user: create(:end_user, user_name: 'c5bennet'))
 
         grouping = Grouping.new(assignment: @assignment, group: @group)
         grouping.save
@@ -287,17 +320,17 @@ describe GroupsController do
 
         it 'should remove an accepted membership' do
           post_as instructor, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
-                                          groupings: [grouping.id],
-                                          students_to_remove: [accepted_student.id],
-                                          global_actions: 'unassign' }
+                                                         groupings: [grouping.id],
+                                                         students_to_remove: [accepted_student.id],
+                                                         global_actions: 'unassign' }
           expect(grouping.memberships).not_to include(accepted_student)
         end
 
         it 'should remove a pending membership' do
           post_as instructor, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
-                                          groupings: [grouping.id],
-                                          students_to_remove: [pending_student.id],
-                                          global_actions: 'unassign' }
+                                                         groupings: [grouping.id],
+                                                         students_to_remove: [pending_student.id],
+                                                         global_actions: 'unassign' }
           expect(grouping.memberships).not_to include(pending_student)
         end
       end
@@ -308,10 +341,9 @@ describe GroupsController do
 
       it 'should validate groupings' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping.assignment.id,
-          groupings: [grouping.id],
-          global_actions: 'valid'
-        }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping.id],
+                                                       global_actions: 'valid' }
         expect(grouping.reload.instructor_approved).to be true
       end
     end
@@ -321,10 +353,9 @@ describe GroupsController do
 
       it 'should invalidate groupings' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping.assignment.id,
-          groupings: [grouping.id],
-          global_actions: 'invalid'
-        }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping.id],
+                                                       global_actions: 'invalid' }
 
         expect(grouping.reload.instructor_approved).to be false
       end
@@ -336,20 +367,18 @@ describe GroupsController do
 
       it 'should delete groupings without submissions' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping.assignment.id,
-          groupings: [grouping.id],
-          global_actions: 'delete'
-        }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping.id],
+                                                       global_actions: 'delete' }
 
         expect(Grouping.all.size).to eq 1
       end
 
       it 'should not delete groupings with submissions' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping_with_submission.assignment.id,
-          groupings: [grouping_with_submission.id],
-          global_actions: 'delete'
-        }
+                                                       assignment_id: grouping_with_submission.assignment.id,
+                                                       groupings: [grouping_with_submission.id],
+                                                       global_actions: 'delete' }
 
         expect(Grouping.all.size).to eq 2
       end
@@ -362,11 +391,10 @@ describe GroupsController do
 
       it 'adds multiple students to group' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping.assignment.id,
-          groupings: [grouping],
-          students: [student1.id, student2.id],
-          global_actions: 'assign'
-        }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id, student2.id],
+                                                       global_actions: 'assign' }
 
         expect(grouping.students.size).to eq 3
       end
@@ -379,18 +407,16 @@ describe GroupsController do
 
       it 'should remove multiple students from group' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping.assignment.id,
-          groupings: [grouping],
-          students: [student1.id, student2.id],
-          global_actions: 'assign'
-        }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id, student2.id],
+                                                       global_actions: 'assign' }
 
         post_as instructor, :global_actions, params: { course_id: course.id,
-          assignment_id: grouping.assignment.id,
-          groupings: [grouping],
-          students_to_remove: [student1.user_name, student2.user_name],
-          global_actions: 'unassign'
-        }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students_to_remove: [student1.user_name, student2.user_name],
+                                                       global_actions: 'unassign' }
 
         expect(grouping.reload.students.size).to eq 1
       end
@@ -400,17 +426,17 @@ describe GroupsController do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
       let!(:student1) do
         create(:student,
-               end_user: create(:end_user, user_name: 'c9test1', first_name: 'first', last_name: 'last',
-                                           id_number: '12345'))
+               user: create(:end_user, user_name: 'c9test1', first_name: 'first', last_name: 'last',
+                                       id_number: '12345'))
       end
       let!(:student2) do
         create(:student,
-               end_user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
+               user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
       end
       let!(:student3) do
         create(:student,
-               end_user: create(:end_user, user_name: 'zz396', first_name: 'zzfirst', last_name: 'zzlast',
-                                           id_number: '781034'))
+               user: create(:end_user, user_name: 'zz396', first_name: 'zzfirst', last_name: 'zzlast',
+                                       id_number: '781034'))
       end
       let(:expected) do
         [{ 'id' => student1.id,
@@ -421,44 +447,40 @@ describe GroupsController do
 
       it 'returns matches for user_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
-          assignment_id: assignment.id,
-          assignment: assignment.id,
-          term: 'c9',
-          format: :json
-        }
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'c9',
+                                                  format: :json }
 
         expect(response.parsed_body).to eq expected
       end
 
       it 'returns matches for first_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
-          assignment_id: assignment.id,
-          assignment: assignment.id,
-          term: 'fir',
-          format: :json
-        }
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'fir',
+                                                  format: :json }
 
         expect(response.parsed_body).to eq expected
       end
 
       it 'returns matches for last_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
-          assignment_id: assignment.id,
-          assignment: assignment.id,
-          term: 'la',
-          format: :json
-        }
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'la',
+                                                  format: :json }
 
         expect(response.parsed_body).to eq expected
       end
 
       it 'returns matches for id_number' do
         post_as instructor, :get_names, params: { course_id: course.id,
-          assignment_id: assignment.id,
-          assignment: assignment.id,
-          term: '123',
-          format: :json
-        }
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: '123',
+                                                  format: :json }
 
         expect(response.parsed_body).to eq expected
       end
@@ -514,12 +536,12 @@ describe GroupsController do
         let!(:assignment) { create(:assignment_for_scanned_exam) }
         let!(:student1) do
           create(:student,
-                 end_user: create(:end_user,
-                                  user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
+                 user: create(:end_user,
+                              user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
         end
         let!(:student2) do
           create(:student,
-                 end_user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
+                 user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
         end
         let!(:grouping1) { create :grouping, assignment: assignment }
         let!(:grouping2) { create :grouping, assignment: assignment }
@@ -568,8 +590,8 @@ describe GroupsController do
 
   describe 'student access' do
     before :each do
-      @current_student = create(:student, end_user: create(:end_user, user_name: 'c9test2'))
-      @student = create(:student, end_user: create(:end_user, user_name: 'c9test1'))
+      @current_student = create(:student, user: create(:end_user, user_name: 'c9test2'))
+      @student = create(:student, user: create(:end_user, user_name: 'c9test1'))
       @assignment = create(:assignment,
                            due_date: 1.day.from_now,
                            assignment_properties_attributes: { student_form_groups: true, group_max: 4 })
@@ -611,7 +633,7 @@ describe GroupsController do
       end
 
       it 'should send an email to every student invited to a grouping if more than one are' do
-        @another_student = create(:student, end_user: create(:end_user, user_name: 'c9test3'))
+        @another_student = create(:student, user: create(:end_user, user_name: 'c9test3'))
         expect do
           post_as @current_student, :invite_member,
                   params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
@@ -620,7 +642,7 @@ describe GroupsController do
       end
       it 'should not send an email to every student invited to a grouping if some have emails disabled' do
         @another_student = create(:student,
-                                  end_user: create(:end_user, user_name: 'c9test3'), receives_invite_emails: false)
+                                  user: create(:end_user, user_name: 'c9test3'), receives_invite_emails: false)
         expect do
           post_as @current_student, :invite_member,
                   params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
@@ -804,6 +826,7 @@ describe GroupsController do
       end
     end
   end
+
   describe '#download_starter_file' do
     subject { get_as role, :download_starter_file, params: { course_id: course.id, assignment_id: assignment.id } }
     context 'an instructor' do
@@ -880,6 +903,109 @@ describe GroupsController do
             assignment.update!(due_date: 1.minute.ago)
           end
           include_examples 'download starter files properly'
+        end
+        context 'the grouping has not started yet' do
+          before do
+            starter_file_group
+            grouping
+          end
+          it 'should respond with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+        end
+      end
+    end
+  end
+
+  describe '#populate_repo_with_starter_files' do
+    subject do
+      get_as role, :populate_repo_with_starter_files,
+             params: { course_id: course.id, assignment_id: assignment.id }
+    end
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      let(:role) { create :ta }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a student' do
+      let(:role) { create :student }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
+
+      shared_examples 'populate starter files properly' do
+        it 'populates the grouping repository with the correct content' do
+          subject
+          grouping.access_repo do |repo|
+            rev = repo.get_latest_revision
+            expect(rev.path_exists?(File.join(assignment.short_identifier, 'q1', 'q1.txt'))).to be true
+            expect(rev.path_exists?(File.join(assignment.short_identifier, 'q2.txt'))).to be true
+          end
+        end
+      end
+      context 'when the grouping was created after any starter file groups' do
+        before do
+          starter_file_group
+          grouping
+        end
+        include_examples 'populate starter files properly'
+      end
+
+      context 'when the grouping was created before any starter file groups' do
+        before do
+          grouping
+          starter_file_group
+        end
+        include_examples 'populate starter files properly'
+      end
+
+      context 'when the assignment is hidden' do
+        let(:assignment) { create :assignment, is_hidden: true }
+        it 'should respond with 403' do
+          grouping
+          starter_file_group
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context 'when the assignment does not allow version control submissions' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+        it 'should respond with 403' do
+          grouping
+          starter_file_group
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context 'when the assignment is timed' do
+        let(:assignment) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+        context 'the grouping has started' do
+          before do
+            starter_file_group
+            grouping.update!(start_time: 1.minute.ago)
+          end
+          include_examples 'populate starter files properly'
+        end
+        context 'when the deadline has already passed' do
+          before do
+            starter_file_group
+            grouping
+            grouping.update!(start_time: 1.minute.ago)
+            assignment.update!(due_date: 1.minute.ago)
+          end
+          include_examples 'populate starter files properly'
         end
         context 'the grouping has not started yet' do
           before do

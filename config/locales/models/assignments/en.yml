@@ -6,6 +6,7 @@ en:
         allow_groups: Students can work in groups
         allow_remarks: Allow remark requests
         allow_web_submits: Allow students to submit through the web interface
+        api_submit: Allow students to submit through the MarkUs API
         assignment_files: Required files
         collection_date: Due date including maximum late penalty (if any)
         description: Assignment description
@@ -22,6 +23,7 @@ en:
         is_hidden: Hide assignment from students
         non_regenerating_tokens: Tokens do not regenerate
         only_required_files: Only allow students to submit the required files (this also restricts the file extensions)
+        parent_assignment: Source assignment
         remark_due_date: Remark Due Date
         remark_message: Remark Request Instructions
         repository_folder: Repository Folder
@@ -33,6 +35,7 @@ en:
         token_start_date: Tokens available on
         tokens_per_period: Tokens per group
         unlimited_tokens: Unlimited tokens
+        url_submit: Allow students to submit URLs
         vcs_submit: Allow students to submit through a version control system
     errors:
       models:
@@ -45,6 +48,8 @@ en:
     models:
       assignment:
         one: Assignment
+      peer_review_assignment:
+        one: Peer Review Assignment
       scanned_assignment:
         one: Scanned Assignment
       timed_assignment:

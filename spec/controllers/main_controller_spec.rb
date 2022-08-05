@@ -4,6 +4,7 @@ describe MainController do
   let(:ta) { create :ta }
   let(:instructor) { create :instructor }
   let(:instructor2) { create :instructor }
+  let(:admin_user) { create :admin_user }
   context 'A non-authenticated user' do
     it 'should not be able to login with a blank username' do
       post :login, params: { user_login: '', user_password: 'a' }
@@ -97,6 +98,31 @@ describe MainController do
         expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.login_failed'))
       end
     end
+    context 'logging in after an LTI launch' do
+      let(:lti) { create :lti_deployment }
+      before :each do
+        session[:lti_deployment_id] = lti.id
+        session[:lti_client_id] = lti.lti_client.id
+        session[:lti_course_id] = 1
+        session[:lti_user_id] = 1
+      end
+      context 'when there is no course association' do
+        it 'redirects to choose_course' do
+          sign_in instructor
+          expect(response).to redirect_to action: 'choose_course', controller: 'lti_deployment'
+        end
+      end
+      context 'when there is a course association' do
+        let(:course) { create :course }
+        before :each do
+          lti.update(course: course)
+        end
+        it 'redirects to the course page' do
+          sign_in instructor
+          expect(response).to redirect_to course_path(course)
+        end
+      end
+    end
     context 'after logging out' do
       before(:each) do
         post :login, params: { user_login: instructor.user_name, user_password: 'a' }
@@ -128,7 +154,7 @@ describe MainController do
     end
     context 'after logging in with remote user auth' do
       before :each do
-        env_hash = { 'HTTP_X_FORWARDED_USER': student.user_name }
+        env_hash = { HTTP_X_FORWARDED_USER: student.user_name }
         request.headers.merge! env_hash
         sign_in student
       end
@@ -149,11 +175,32 @@ describe MainController do
     end
     context 'after logging in with remote user auth' do
       before :each do
-        env_hash = { 'HTTP_X_FORWARDED_USER': ta.user_name }
+        env_hash = { HTTP_X_FORWARDED_USER: ta.user_name }
         request.headers.merge! env_hash
         sign_in ta
       end
       include_examples 'ta tests'
+    end
+  end
+  context 'An Admin User' do
+    shared_examples 'admin tests' do
+      it 'redirects to the main_admin controller' do
+        expect(response).to redirect_to(admin_path)
+      end
+    end
+    context 'after logging in without remote user auth' do
+      before(:each) do
+        sign_in admin_user
+      end
+      include_examples 'admin tests'
+    end
+    context 'after logging in with remote user auth' do
+      before :each do
+        env_hash = { HTTP_X_FORWARDED_USER: admin_user.user_name }
+        request.headers.merge! env_hash
+        sign_in admin_user
+      end
+      include_examples 'admin tests'
     end
   end
   context 'when role switched' do

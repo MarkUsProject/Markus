@@ -13,9 +13,6 @@ rails:
 i18n:
   available_locales:
     - en
-    - fr
-    - es
-    - pt
   default_locale: en
 
 validate_user_not_allowed_message: ~
@@ -41,3 +38,10 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/test" %>/starter_files
+
+# The settings below are for an experimental feature that is not available
+# in production yet. Please disregard for now.
+lti:
+  domains: <%= %w[test.host] %>
+  token_endpoint: "http://test.host.com/login/oauth2/token"
+  key_path: <%= "#{::Rails.root.to_s}/data/test" %>/lti/key.pem

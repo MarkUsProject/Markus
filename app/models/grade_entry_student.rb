@@ -4,10 +4,10 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :role
   validates_associated :role, on: :create
 
-  belongs_to :grade_entry_form, foreign_key: :assessment_id
+  belongs_to :grade_entry_form, foreign_key: :assessment_id, inverse_of: :grade_entry_students
   validates_associated :grade_entry_form, on: :create
 
-  validates_uniqueness_of :role_id, scope: :assessment_id
+  validates :role_id, uniqueness: { scope: :assessment_id }
 
   has_one :course, through: :grade_entry_form
 
@@ -18,7 +18,7 @@ class GradeEntryStudent < ApplicationRecord
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
 
-  validates_inclusion_of :released_to_student, in: [true, false]
+  validates :released_to_student, inclusion: { in: [true, false] }
 
   before_save :refresh_total_grade
 
@@ -30,8 +30,8 @@ class GradeEntryStudent < ApplicationRecord
   # pair that represents the grade entry students.
   def self.merge_non_existing(student_ids, form_ids)
     # Only use IDs that identify existing model instances.
-    student_ids = Student.where(id: Array(student_ids)).pluck(:id)
-    form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
+    student_ids = Student.where(id: Array(student_ids)).ids
+    form_ids = GradeEntryForm.where(id: Array(form_ids)).ids
 
     existing_values = GradeEntryStudent.where(role_id: student_ids, assessment_id: form_ids)
                                        .pluck(:role_id, :assessment_id)
@@ -40,7 +40,7 @@ class GradeEntryStudent < ApplicationRecord
     values = yield(student_ids, form_ids) - existing_values
 
     data = values.map { |sid, aid| { role_id: sid, assessment_id: aid } }
-    insert_all data unless data.blank?
+    insert_all data if data.present?
   end
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each student
@@ -88,7 +88,7 @@ class GradeEntryStudent < ApplicationRecord
     end
 
     # Create non-existing grade entry student TA associations.
-    ges_ids = form.grade_entry_students.where(role_id: student_ids).pluck(:id)
+    ges_ids = form.grade_entry_students.where(role_id: student_ids).ids
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
   end
 
@@ -125,37 +125,32 @@ class GradeEntryStudent < ApplicationRecord
 
       # Don't add empty grades and remove grades that did exist but are now empty
       old_grade = grade_entry_student.grades
-                  .where(grade_entry_item_id: grade_entry_item.id)
-                  .first
+                                     .where(grade_entry_item_id: grade_entry_item.id)
+                                     .first
 
       if overwrite
-        if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
+        if grade_for_grade_entry_item.blank?
 
-          unless old_grade.nil?
-            old_grade.destroy
-          end
+          old_grade&.destroy
         else
           grade = grade_entry_student.grades
-                  .find_or_create_by(grade_entry_item: grade_entry_item)
+                                     .find_or_create_by(grade_entry_item: grade_entry_item)
           grade.grade = grade_for_grade_entry_item
 
           unless grade.save
-            raise RuntimeError.new(grade.errors)
+            raise grade.errors
           end
         end
 
-      else
-        if old_grade.nil? &&
-           (grade_for_grade_entry_item && !grade_for_grade_entry_item.empty?)
+      elsif old_grade.nil? && grade_for_grade_entry_item.present?
+        grade = grade_entry_student.grades
+                                   .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
+        grade.grade = grade_for_grade_entry_item
 
-          grade = grade_entry_student.grades
-                  .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
-          grade.grade = grade_for_grade_entry_item
-
-          unless grade.save
-            raise RuntimeError.new(grade.errors)
-          end
+        unless grade.save
+          raise grade.errors
         end
+
       end
     end
 
@@ -168,8 +163,8 @@ class GradeEntryStudent < ApplicationRecord
   #  between a total mark of 0 and a blank mark.)
   def all_blank_grades?
     grades = self.grades
-    grades_without_nils = grades.select do |grade|
-      !grade.grade.nil?
+    grades_without_nils = grades.reject do |grade|
+      grade.grade.nil?
     end
     grades_without_nils.blank?
   end

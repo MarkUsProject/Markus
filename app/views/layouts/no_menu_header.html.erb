@@ -3,7 +3,7 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
-  <%= javascript_pack_tag 'application', nonce: true %>
+  <%= javascript_include_tag 'application_webpack', nonce: true %>
   <%= javascript_include_tag 'application', nonce: true %>
   <%= javascript_include_tag 'menu', nonce: true %>
   <% unless session[:auth_type] == 'remote' %>

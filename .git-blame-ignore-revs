@@ -1,2 +1,5 @@
 # Initial pre-commit hooks, stylelint and prettier
 89b187b43c8df9cd728057c1a901fb90b82c8712
+
+# Rubocop
+b19ebdeea0257db95528aec2c9ff08e4ef339ecc

@@ -95,9 +95,9 @@ shared_examples 'a criterion' do
         expect(criterion.tas).to match_array(tas)
 
         # The rest of the criteria gets only the first TA.
-        criteria.each do |criterion|
-          criterion.reload
-          expect(criterion.tas).to eq [tas.first]
+        criteria.each do |other_criterion|
+          other_criterion.reload
+          expect(other_criterion.tas).to eq [tas.first]
         end
       end
 
@@ -120,11 +120,11 @@ shared_examples 'a criterion' do
 
       it 'can bulk unassign TAs' do
         Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
-        criteria.each { |criterion| criterion.reload }
+        criteria.each(&:reload)
 
         criterion_ta_ids = criteria
-          .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
-          .reduce(:+)
+                           .map { |criterion| criterion.criterion_ta_associations.ids }
+                           .reduce(:+)
 
         Criterion.unassign_tas(criterion_ta_ids, assignment)
 
@@ -150,7 +150,6 @@ shared_examples 'a criterion' do
   describe '.update_assigned_groups_counts' do
     let(:assignment) { FactoryBot.create(:assignment) }
     let(:criterion) { create(criterion_factory_name, assignment: assignment) }
-
 
     context 'when no criterion IDs are specified' do
       # Verifies the assigned groups count of +criterion+ is equal to
@@ -229,7 +228,7 @@ shared_examples 'a criterion' do
               expect_updated_assigned_groups_count_to_eq tas.size
             end
 
-            context 'when TAs are also assigned to groups of another ' +
+            context 'when TAs are also assigned to groups of another ' \
                     'assignment' do
               before :each do
                 # Creating a new criterion also creates a new assignment.
@@ -358,6 +357,90 @@ shared_examples 'a criterion' do
         criterion2.destroy
         expect(result.reload.total_mark).to eq new_total
       end
+    end
+  end
+
+  describe '#grades_array' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    let(:criterion) { create(criterion_factory_name, assignment: assignment) }
+    let(:grades) { assignment.groupings.map { rand(criterion.max_mark + 1) } }
+
+    before :each do
+      assignment.groupings.each_with_index do |grouping, index|
+        result = grouping.current_result
+        result.marks.create(criterion: criterion, mark: grades[index])
+        result.update_total_mark
+        result.update(marking_state: Result::MARKING_STATES[:complete])
+      end
+    end
+
+    it 'returns the correct grades' do
+      expect(criterion.grades_array).to match_array(grades)
+    end
+
+    it 'does not include marks for incomplete submissions' do
+      assignment.groupings.first.current_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+      expect(criterion.grades_array).to match_array(grades[1..-1])
+    end
+  end
+
+  describe '#average' do
+    let(:criterion) { create(criterion_factory_name, max_mark: 10) }
+
+    it 'returns 0 when there are no results' do
+      allow(criterion).to receive(:grades_array).and_return([])
+      expect(criterion.average).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.average).to eq 2
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      criterion.update(max_mark: 0)
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.average).to eq 0
+    end
+  end
+
+  describe '#median' do
+    let(:criterion) { create(criterion_factory_name, max_mark: 10) }
+
+    it 'returns 0 when there are no results' do
+      allow(criterion).to receive(:grades_array).and_return([])
+      expect(criterion.median).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.median).to eq 2
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      criterion.update(max_mark: 0)
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.median).to eq 0
+    end
+  end
+
+  describe '#standard_deviation' do
+    let(:criterion) { create(criterion_factory_name, max_mark: 10) }
+
+    it 'returns 0 when there are no results' do
+      allow(criterion).to receive(:grades_array).and_return([])
+      expect(criterion.standard_deviation).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.standard_deviation.round(9)).to eq 1.414213562
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      criterion.update(max_mark: 0)
+      allow(criterion).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
+      expect(criterion.standard_deviation).to eq 0
     end
   end
 end

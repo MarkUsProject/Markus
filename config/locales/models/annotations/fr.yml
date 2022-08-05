@@ -1,9 +1,0 @@
----
-fr:
-  activerecord:
-    attributes:
-      annotation:
-        creator: 'Créée par :'
-    models:
-      annotation:
-        one: Annotation

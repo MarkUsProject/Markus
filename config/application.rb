@@ -12,12 +12,13 @@ Bundler.require(*Rails.groups)
 # the framework and any gems in your application.
 module Markus
   class Application < Rails::Application
-
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 6.0
+    config.load_defaults 7.0
 
     # Sensitive parameters which will be filtered from the log file
-    config.filter_parameters += [:password]
+    config.filter_parameters += [
+      :passw, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn
+    ]
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
@@ -37,6 +38,9 @@ module Markus
     config.assets.quiet = true
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
+
+    # Ensure form_with calls generate remote forms by
+    config.action_view.form_with_generates_remote_forms = true
 
     # Settings below are configurable
 
@@ -87,12 +91,26 @@ module Markus
     end
 
     config.action_controller.perform_caching = Settings.rails.action_controller&.perform_caching
+    config.action_controller.default_url_options = Settings.rails.action_controller&.default_url_options.to_h
 
     config.hosts.push(*Settings.rails.hosts)
 
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
-    # TODO review initializers 01 and 02
+    config.active_record.schema_format = :sql
+
+    if Settings.exception_notification.enabled
+      config.middleware.use ExceptionNotification::Rack,
+                            email: {
+                              email_prefix: Settings.exception_notification.email_prefix,
+                              sender_address: %("#{Settings.exception_notification.sender_display_name}"
+                                              <#{Settings.exception_notification.sender}>),
+                              exception_recipients: Settings.exception_notification.recipients
+                            },
+                            error_grouping: true
+    end
+
+    # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib
     # TODO migrate all javascript to webpack

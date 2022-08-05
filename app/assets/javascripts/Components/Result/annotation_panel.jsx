@@ -43,23 +43,25 @@ export class AnnotationPanel extends React.Component {
         />
       );
     }
-    return [
-      <h3 key="h3-overall-comment">{I18n.t("activerecord.attributes.result.overall_comment")}</h3>,
-      overallCommentElement,
-      <h3 key="h3-annotations">{I18n.t("activerecord.models.annotation.other")}</h3>,
-      <p key="annotations-desription">
-        {I18n.t("results.annotation.across_all_submission_files")}
-      </p>,
-      <AnnotationTable
-        key="annotations-table"
-        detailed={this.props.detailed}
-        released_to_students={this.props.released_to_students}
-        remark_submitted={this.props.remarkSubmitted}
-        annotations={this.props.annotations}
-        editAnnotation={this.props.editAnnotation}
-        removeAnnotation={this.props.removeAnnotation}
-        selectFile={this.props.selectFile}
-      />,
-    ];
+    return (
+      <React.Fragment>
+        <h3 key="h3-overall-comment">{I18n.t("activerecord.attributes.result.overall_comment")}</h3>
+        {overallCommentElement}
+        <h3 key="h3-annotations">{I18n.t("activerecord.models.annotation.other")}</h3>
+        <p key="annotations-desription">
+          {I18n.t("results.annotation.across_all_submission_files")}
+        </p>
+        <AnnotationTable
+          key="annotations-table"
+          detailed={this.props.detailed}
+          released_to_students={this.props.released_to_students}
+          remark_submitted={this.props.remarkSubmitted}
+          annotations={this.props.annotations}
+          editAnnotation={this.props.editAnnotation}
+          removeAnnotation={this.props.removeAnnotation}
+          selectFile={this.props.selectFile}
+        />
+      </React.Fragment>
+    );
   }
 }

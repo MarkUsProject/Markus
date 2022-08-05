@@ -9,6 +9,7 @@ en:
   download_the: Download %{item}
   download_yml: Download in YML Format
   rename: Rename
+  submit_the: Submit %{item}
   upload: Upload
   upload_errors:
     blank: Uploaded file is blank.

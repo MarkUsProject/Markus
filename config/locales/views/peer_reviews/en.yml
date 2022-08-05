@@ -10,6 +10,7 @@ en:
     errors:
       cannot_allow_reviewer_to_be_reviewee: A student cannot be a reviewer and reviewee
       collect_submissions_first: Submissions for original assignment need to be collected before you can assign reviewers.
+      no_source_assignment: Cannot find the source assignment %{source_assignment}.
       random_assign_failure: Unable to randomly assign, too many reviews requested per selected reviewer/reviewees
       select_a_reviewee: Please select at least one group to be reviewed.
       select_a_reviewer: Please select at least one reviewer to assign.
@@ -21,5 +22,5 @@ en:
     reviewers_reviews: 'This reviewer''s reviews: '
     reviews_made_on_submission: 'Reviews for your submission: '
     view_ta_result: View TA Grading
-    your_results: Peer Reviews of Your Submission
+    your_results: Peer reviews of your submission
     your_results_none: No reviews are available.

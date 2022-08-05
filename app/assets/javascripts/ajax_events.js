@@ -1,10 +1,5 @@
 const FLASH_KEYS = ["notice", "warning", "success", "error"];
 
-export function setUpCallbacks(elem) {
-  elem.addEventListener("ajax:complete", renderFlash);
-  elem.addEventListener("ajax:beforeSend", hideFlash);
-}
-
 /*
  * Display flash messages sent in response to an AJAX request.
  * If a message key is in the X-Message-Discard header, hide

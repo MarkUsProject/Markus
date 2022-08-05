@@ -21,11 +21,11 @@ class AnnotationCategoriesController < ApplicationController
                                                .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
-      format.json {
+      format.json do
         data = @annotation_categories.map do |cat|
           {
             id: cat.id,
-            annotation_category_name: "#{cat.annotation_category_name}"\
+            annotation_category_name: "#{cat.annotation_category_name}" \
                                       "#{cat.flexible_criterion_id.nil? ? '' : " [#{cat.flexible_criterion.name}]"}",
             texts: cat.annotation_texts.map do |text|
               {
@@ -37,7 +37,7 @@ class AnnotationCategoriesController < ApplicationController
           }
         end
         render json: data
-      }
+      end
     end
   end
 
@@ -82,7 +82,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = @annotation_category.assignment
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
-      render 'show', assignment_id: @assignment.id, id: @annotation_category.id
+      @annotation_texts = annotation_text_data(record)
     else
       respond_with @annotation_category, render: { body: nil, status: :bad_request }
     end
@@ -177,26 +177,27 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
-      when 'csv'
-        ac = prepare_for_conversion(@annotation_categories)
-        file_out = MarkusCsv.generate(
-          ac) do |annotation_category_name, annotation_texts|
-          # csv format is annotation_category.name, annotation_category.flexible_criterion,
-          # annotation_text.content[, optional: annotation_text.deduction ]
-          annotation_texts.unshift(annotation_category_name)
-        end
-        send_data file_out,
-                  filename: "#{@assignment.short_identifier}_annotations.csv",
-                  disposition: 'attachment'
-      when 'yml'
-        send_data annotation_categories_to_yml(@annotation_categories),
-                  filename: "#{@assignment.short_identifier}_annotations.yml",
-                  disposition: 'attachment'
-      else
-        flash[:error] = t('download_errors.unrecognized_format',
-                          format: params[:format])
-        redirect_to action: 'index',
-                    id: params[:id]
+    when 'csv'
+      ac = prepare_for_conversion(@annotation_categories)
+      file_out = MarkusCsv.generate(
+        ac
+      ) do |annotation_category_name, annotation_texts|
+        # csv format is annotation_category.name, annotation_category.flexible_criterion,
+        # annotation_text.content[, optional: annotation_text.deduction ]
+        annotation_texts.unshift(annotation_category_name)
+      end
+      send_data file_out,
+                filename: "#{@assignment.short_identifier}_annotations.csv",
+                disposition: 'attachment'
+    when 'yml'
+      send_data annotation_categories_to_yml(@annotation_categories),
+                filename: "#{@assignment.short_identifier}_annotations.yml",
+                disposition: 'attachment'
+    else
+      flash[:error] = t('download_errors.unrecognized_format',
+                        format: params[:format])
+      redirect_to action: 'index',
+                  id: params[:id]
     end
   end
 
@@ -240,12 +241,12 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_data(category, course: nil)
     shared_values = ['annotation_texts.id AS id',
-                     'end_users_roles.user_name AS last_editor',
+                     'users_roles.user_name AS last_editor',
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     course ||= category&.course
-    base_query = AnnotationText.joins(creator: :end_user)
-                               .left_outer_joins(last_editor: :end_user)
+    base_query = AnnotationText.joins(creator: :user)
+                               .left_outer_joins(last_editor: :user)
                                .where('annotation_texts.annotation_category_id': category)
                                .where('roles.course_id': course)
                                .order('users.user_name')
@@ -289,7 +290,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @texts = annotation_text_data(nil, course: @assignment.course)
     respond_to do |format|
-      format.js {}
+      format.js
       format.json { render json: @texts }
       format.csv do
         data = MarkusCsv.generate(

@@ -1,7 +1,7 @@
 (function () {
   annotation_details = {
     id: <%= @annotation.id %>,
-    creator: '<%= "#{@annotation.creator.first_name} #{@annotation.creator.last_name}" %>',
+    creator: '<%= "#{@annotation.creator.display_name}" %>',
     filename: '<%= @annotation.submission_file.filename %>',
     path: '<%= @annotation.submission_file.path.split('/', 2)[1] %>',
     submission_file_id: <%= @annotation.submission_file_id %>,
@@ -46,7 +46,4 @@
       <%= @annotation.result.grouping.assignment.get_num_marked(@current_role.instructor? ? nil : @current_role.id) %>
     );
   <% end %>
-
-  hide_all_annotation_content_editors();
-  reloadDOM();
 })();

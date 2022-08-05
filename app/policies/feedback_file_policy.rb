@@ -19,7 +19,7 @@ class FeedbackFilePolicy < ApplicationPolicy
         feedback_file.submission.current_result.released_to_students
       end
     elsif role.ta?
-      grouping.tas.pluck(:id).include? role.id
+      grouping.tas.ids.include? role.id
     else # role.instructor?
       true
     end

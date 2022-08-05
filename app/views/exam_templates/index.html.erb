@@ -1,8 +1,8 @@
-<% content_for :title, ExamTemplate.model_name.human.pluralize %>
+<% content_for :title, "#{ExamTemplate.model_name.human.pluralize}: #{@assignment.short_identifier}" %>
 
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
-    <%= render partial: 'boot.js' %>
+    <%= render partial: 'boot', formats: [:js] %>
     $(function() {
       $('#add-exam-template').click(function(e) {
         modal_create_new.open();
@@ -16,38 +16,25 @@
     { link_text: t('exam_templates.create.add_new'),
       link_path: '#',
       html_options: { id: 'add-exam-template' } },
-    { link_text: t('exam_templates.split_pdf_log.view_logs'),
-      link_path: view_logs_course_assignment_exam_templates_path(@current_course, @assignment) },
 ] %>
 
 <!-- Modals -->
 <%= render partial: 'create_new_template',
            layout: 'layouts/modal_dialog'  %>
 
-<% @exam_templates.each do |exam_template| %>
-  <fieldset>
-    <legend><span><%= exam_template.name %></span></legend>
-    <%= render partial: 'form',
-               locals: { exam_template: exam_template } %>
-    <hr>
-    <div class="student-info">
-      <h3><%= t('exam_templates.parsing.title') %></h3>
-      <p>
-        <%= render partial: 'student_info',
-                   locals: { exam_template: exam_template } %>
-      </p>
+<div class='pane-wrapper'>
+  <div id='exam_template_pane' class="exam-template-pane-wrapper">
+    <%= render partial: 'exam_templates_pane' %>
+  </div>
+
+  <div class='pane'>
+    <div id='editing_pane_menu'>
+      <% if @exam_template.nil? %>
+        <%= render partial: 'manager_help' %>
+      <% else %>
+        <%= render partial: "exam_template_edit",
+                   locals: { exam_template: @exam_template } %>
+      <% end %>
     </div>
-    <hr>
-    <div class="generate-section">
-      <h3><%= t('exam_templates.generate.title') %></h3>
-      <%= render partial: 'generate_form',
-                 locals: { exam_template: exam_template } %>
-    </div>
-    <hr>
-    <div class="split-section">
-      <h3><%= t('exam_templates.split.title') %></h3>
-      <%= render partial: 'split_form',
-                 locals: { exam_template: exam_template } %>
-    </div>
-  </fieldset>
-<% end %>
+  </div>
+</div>

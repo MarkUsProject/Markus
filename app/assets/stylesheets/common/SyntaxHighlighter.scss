@@ -17,12 +17,6 @@
     padding: 0;
   }
 
-  .bar {
-    background: $primary-two;
-    margin: 0 0 10px;
-    padding: 2px;
-  }
-
   /* Actual styling */
   ol {
     flex-grow: 1;
@@ -33,27 +27,6 @@
       border-left: 1px solid $primary-two;
       line-height: 1.25em;
       padding-left: 10px;
-    }
-  }
-
-  .tools {
-    background-color: $background-main;
-    font: 0.825em $fonts;
-    padding: 5px 0;
-    text-align: right;
-
-    a {
-      background-color: inherit;
-      color: $link;
-      font-size: 1.1em;
-      margin-right: 10px;
-      text-decoration: none;
-    }
-
-    a:hover {
-      background-color: inherit;
-      color: $darker-orange;
-      text-decoration: none;
     }
   }
 
@@ -93,52 +66,32 @@
   }
 }
 
-/* About dialog styles */
-
-.dp-about {
-  background-color: $background-main;
-  color: $line;
-  margin: 0;
-  padding: 0;
-
-  table {
-    font: 1em $fonts !important;
-    height: 100%;
-    width: 100%;
+/* codeviewer toolbar */
+#codeviewer {
+  .toolbar {
+    background: $primary-two;
+    margin: 0 0 10px;
+    padding: 2px;
   }
 
-  td {
-    padding: 10px;
-    vertical-align: top;
-  }
-
-  .copy {
-    border-bottom: 1px solid $primary-two;
-    height: 95%;
-  }
-
-  .title {
-    background-color: inherit;
-    color: $severe-error;
-    font-weight: bold;
-  }
-
-  .para {
-    margin: 0 0 4px;
-  }
-
-  .footer {
-    background-color: $background-support;
-    border-top: 1px solid $background-support;
-    color: $line;
+  .tools {
+    background-color: $background-main;
+    font: 0.825em $fonts;
+    padding: 5px 0;
     text-align: right;
-  }
 
-  .close {
-    background-color: $background-support;
-    color: $line;
-    font: 1em $fonts !important;
-    height: 22px;
-    width: 60px;
+    a {
+      background-color: inherit;
+      color: $link;
+      font-size: 1.1em;
+      margin-right: 10px;
+      text-decoration: none;
+    }
+
+    a:hover {
+      background-color: inherit;
+      color: $darker-orange;
+      text-decoration: none;
+    }
   }
 }

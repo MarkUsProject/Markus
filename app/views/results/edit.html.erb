@@ -1,11 +1,11 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'result_main' %>
-  <%= stylesheet_pack_tag 'result' %>
+  <%= stylesheet_link_tag 'result' %>
   <%= javascript_include_tag 'mathjax', nonce: true %>
-  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= javascript_tag nonce: true do %>
-    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
@@ -36,13 +36,6 @@
     }
   <% end %>
 <% end %>
-
-<%= render partial: 'results/common/annotations',
-           formats: [:js],
-           locals: {
-             result_id: @result.id,
-             assignment_id: @result.submission.grouping.assignment.id
-           } %>
 
 <!-- Dialogs -->
 <aside class='dialog no-display' id='notes_dialog'></aside>

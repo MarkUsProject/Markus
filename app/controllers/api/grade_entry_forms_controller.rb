@@ -1,20 +1,18 @@
 module Api
-
   class GradeEntryFormsController < MainApiController
-
     DEFAULT_FIELDS = [:id, :short_identifier, :description, :due_date, :is_hidden, :show_total].freeze
 
     # Sends the contents of the specified grade entry form
     # Requires: id
     def show
       grade_entry_form = record
-      send_data grade_entry_form.export_as_csv,
+      send_data grade_entry_form.export_as_csv(current_role),
                 type: 'text/csv',
                 filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
                 disposition: 'inline'
     rescue ActiveRecord::RecordNotFound => e
       # could not find grade entry form
-      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+      render 'shared/http_status', locals: { code: '404', message: e }, status: :not_found
     end
 
     def index
@@ -42,7 +40,7 @@ module Api
       if has_missing_params?([:short_identifier])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -50,7 +48,7 @@ module Api
       form = current_course.grade_entry_forms.find_by(short_identifier: params[:short_identifier])
       unless form.nil?
         render 'shared/http_status', locals: { code: '409', message:
-          'Grade Entry Form already exists' }, status: 409
+          'Grade Entry Form already exists' }, status: :conflict
         return
       end
 
@@ -62,7 +60,7 @@ module Api
         new_form = GradeEntryForm.new(create_params)
         unless new_form.save
           render 'shared/http_status', locals: { code: '422', message:
-            new_form.errors.full_messages.first }, status: 422
+            new_form.errors.full_messages.first }, status: :unprocessable_entity
           raise ActiveRecord::Rollback
         end
 
@@ -71,12 +69,12 @@ module Api
           grade_item = new_form.grade_entry_items.build(**column_params, position: i + 1)
           unless grade_item.save
             render 'shared/http_status', locals: { code: '422', message:
-              grade_item.errors.full_messages.first }, status: 422
+              grade_item.errors.full_messages.first }, status: :unprocessable_entity
             raise ActiveRecord::Rollback
           end
         end
         render 'shared/http_status', locals: { code: '201', message:
-          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
+          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       end
     end
 
@@ -93,7 +91,7 @@ module Api
       form = record
       if form.nil?
         render 'shared/http_status', locals: { code: '404', message:
-          'Grade Entry Form not found' }, status: 404
+          'Grade Entry Form not found' }, status: :not_found
         return
       end
 
@@ -101,7 +99,7 @@ module Api
         update_params = params.permit(*DEFAULT_FIELDS)
         unless form.update(update_params)
           render 'shared/http_status', locals: { code: '500', message:
-            form.errors.full_messages.first }, status: 500
+            form.errors.full_messages.first }, status: :internal_server_error
           raise ActiveRecord::Rollback
         end
 
@@ -112,7 +110,7 @@ module Api
             grade_item = form.grade_entry_items.build(**column_params, position: position += 1)
             unless grade_item.save
               render 'shared/http_status', locals: { code: '500', message:
-                grade_item.errors.full_messages.first }, status: 500
+                grade_item.errors.full_messages.first }, status: :internal_server_error
               raise ActiveRecord::Rollback
             end
           else
@@ -120,18 +118,18 @@ module Api
             grade_item = form.grade_entry_items.where(id: column_params[:id]).first
             if grade_item.nil?
               render 'shared/http_status', locals: { code: '404', message:
-                "Grade Entry Item with id=#{column_params[:id]} not found" }, status: 404
+                "Grade Entry Item with id=#{column_params[:id]} not found" }, status: :not_found
               raise ActiveRecord::Rollback
             end
             unless grade_item.update(column_params)
               render 'shared/http_status', locals: { code: '500', message:
-                grade_item.errors.full_messages.first }, status: 500
+                grade_item.errors.full_messages.first }, status: :internal_server_error
               raise ActiveRecord::Rollback
             end
           end
         end
         render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       end
     end
 
@@ -139,7 +137,7 @@ module Api
       if has_missing_params?([:user_name, :grade_entry_items])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -153,7 +151,7 @@ module Api
       if grade_entry_student.nil?
         # There is no student with that user_name
         render 'shared/http_status', locals: { code: '422', message:
-          'There is no student with that user_name' }, status: 422
+          'There is no student with that user_name' }, status: :unprocessable_entity
         return
       end
 
@@ -164,7 +162,7 @@ module Api
           if grade_entry_item.nil?
             # There is no such grade entry item
             render 'shared/http_status', locals: { code: '422', message:
-              "There is no grade entry item named #{item}" }, status: 422
+              "There is no grade entry item named #{item}" }, status: :unprocessable_entity
             raise ActiveRecord::Rollback
           end
           grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id: grade_entry_item.id)
@@ -172,11 +170,11 @@ module Api
         end
         if grade_entry_student.save
           render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
         else
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
-            grade_entry_student.errors.full_messages.first }, status: 500
+            grade_entry_student.errors.full_messages.first }, status: :internal_server_error
           raise ActiveRecord::Rollback
         end
       end

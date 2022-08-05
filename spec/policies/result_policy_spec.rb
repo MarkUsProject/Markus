@@ -1,5 +1,5 @@
 describe ResultPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
 
   describe_rule :view? do
     succeed 'role is an instructor' do
@@ -193,10 +193,10 @@ describe ResultPolicy do
         let(:role) { reviewer_grouping.accepted_students.first }
         before { create :peer_review, reviewer: reviewer_grouping, result: record }
         succeed 'from_codeviewer is true' do
-          let(:context) { { role: role, real_user: role.end_user, from_codeviewer: true } }
+          let(:context) { { role: role, real_user: role.user, from_codeviewer: true } }
         end
         failed 'from_codeviewer is false' do
-          let(:context) { { role: role, real_user: role.end_user, from_codeviewer: false } }
+          let(:context) { { role: role, real_user: role.user, from_codeviewer: false } }
         end
       end
       context 'role is not a reviewer for the current result' do
@@ -205,11 +205,11 @@ describe ResultPolicy do
           succeed 'and there is no file selected'
           succeed 'and the selected file is associated with the current submission' do
             let(:select_file) { create(:submission_file, submission: record.submission) }
-            let(:context) { { role: role, real_user: role.end_user, select_file: select_file } }
+            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
           end
           failed 'and the selected file is associated with a different submission' do
             let(:select_file) { create(:submission_file) }
-            let(:context) { { role: role, real_user: role.end_user, select_file: select_file } }
+            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
           end
         end
         failed 'role is not an accepted member of the results grouping' do

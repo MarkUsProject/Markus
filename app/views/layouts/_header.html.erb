@@ -1,44 +1,69 @@
+<% is_not_admin_route = controller.class.module_parent.to_s != 'Admin' %>
 <header id='header'>
+  <% if allowed_to?(:role_is_switched?) %>
+    <span id='logo-img'></span>
+  <% else %>
+    <a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.home') %>'></a>
+  <% end %>
   <div id='course'>
-    <% if @current_course %>
-      <strong><%= @current_course.display_name %></strong>
+    <% if is_not_admin_route && @current_course %>
+      <h1><%= @current_course.display_name %></h1>
     <% end %>
   </div>
   <div id='user-info'>
-    <span id='logout_area'>
-      <span id='instructor_logged_in_as'>
+    <ul>
+      <li id="user-info-dropdown">
+        <div class="dropdown">
         <% if allowed_to?(:role_is_switched?) %>
-          <strong><%= @real_user.display_name %></strong>
+          <strong>(<%= @real_user.display_name %>)</strong>
         <% end %>
-      </span>
-      <span id='user-id'>
-        <%= @current_user.display_name %>
-        ( <strong><%= @current_user.user_name %></strong> )
-      </span>
-      <% unless allowed_to?(:role_is_switched?) %>
-        <%= link_to t('menu.settings'),
-                    settings_users_path,
-                    class: 'button inline-button settings' %>
-      <% end %>
-      <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
-        <%= link_to t('main.role_switch.switch_role'),
-                    role_switch_course_path(@current_course.id),
-                    remote: true,
-                    class: 'button inline-button switch-role' %>
-      <% end %>
+          <span id='user-id'>
+           <%= @current_user.display_name %> <%= "\u25bc" %>
+        </span>
 
-      <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
-        <%= link_to t('main.role_switch.clear_role_switch_session'),
-                    clear_role_switch_session_course_path(@current_course),
-                    class: 'button inline-button switch-role' %>
-      <% end %>
-
-      <%= link_to(t('main.log_out'),
-                  logout_main_index_path,
-                  id: 'logout_link',
-                  method: :post,
-                  class: 'button inline-button') %>
-    </span>
+          <ul>
+            <% unless allowed_to?(:role_is_switched?) %>
+              <li>
+                <%= link_to t('menu.settings'),
+                            settings_users_path,
+                            class: 'settings' %>
+              </li>
+            <% end %>
+            <% if is_not_admin_route && @current_course && allowed_to?(:role_switch?, @current_course) %>
+              <li>
+                <%= link_to t('main.role_switch.switch_role'),
+                            role_switch_course_path(@current_course.id),
+                            remote: true,
+                            class: 'switch-role' %>
+              </li>
+            <% end %>
+            <% if is_not_admin_route && @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
+              <li>
+                <%= link_to t('main.role_switch.clear_role_switch_session'),
+                            clear_role_switch_session_course_path(@current_course),
+                            class: 'switch-role' %>
+              </li>
+            <% end %>
+            <li>
+              <%= link_to t(:about_markus),
+                          about_main_index_path,
+                          remote: true,
+                          class: 'about-markus' %>
+            </li>
+            <li>
+              <a class='github' href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
+            </li>
+            <li>
+              <%= link_to(t('main.log_out'),
+                          logout_main_index_path,
+                          id: 'logout_link',
+                          class: 'logout',
+                          method: :post) %>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
   </div>
 
   <div id='working' class="no-display">

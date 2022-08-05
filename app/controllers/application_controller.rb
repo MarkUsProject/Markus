@@ -1,7 +1,8 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
-  include ApplicationHelper, SessionHandler
+  include SessionHandler
+  include ApplicationHelper
   include UploadHelper
   include DownloadHelper
 
@@ -32,7 +33,7 @@ class ApplicationController < ActionController::Base
   after_action :flash_to_headers
 
   # Define default URL options to include the locale if the user is not logged in
-  def default_url_options(options={})
+  def default_url_options(_options = {})
     if current_user
       {}
     else
@@ -41,11 +42,15 @@ class ApplicationController < ActionController::Base
   end
 
   def page_not_found
-    render 'shared/http_status',
-           formats: [:html],
-           locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-           status: 404,
-           layout: false
+    if current_user
+      current_role unless current_course.nil?
+      render 'shared/error_page',
+             locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: :not_found,
+             layout: 'content'
+    else
+      redirect_to root_path
+    end
   end
 
   protected
@@ -57,15 +62,15 @@ class ApplicationController < ActionController::Base
   # Set version for MarkUs to be available in
   # any view
   def set_markus_version
-    version_file=File.expand_path(File.join(::Rails.root.to_s, 'app', 'MARKUS_VERSION'))
+    version_file = File.expand_path(File.join(::Rails.root.to_s, 'app', 'MARKUS_VERSION'))
     unless File.exist?(version_file)
       @markus_version = 'unknown'
       return
     end
     content = File.new(version_file).read
-    version_info = Hash.new
+    version_info = {}
     content.split(',').each do |token|
-      k,v = token.split('=')
+      k, v = token.split('=')
       version_info[k.downcase] = v
     end
     @markus_version = version_info['version']
@@ -88,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def get_file_encodings
-    @encodings = [%w(Unicode UTF-8), %w(ISO-8859-1 ISO-8859-1)]
+    @encodings = [%w[Unicode UTF-8], %w[ISO-8859-1 ISO-8859-1]]
   end
 
   # add flash message to AJAX response headers
@@ -120,9 +125,14 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    render 'shared/http_status',
-           formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-           status: 403, layout: false
+    if current_user
+      render 'shared/error_page',
+             locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
+             status: :forbidden,
+             layout: 'content'
+    else
+      redirect_to root_path
+    end
   end
 
   # Render 403 if the current user is switching roles and they try to view a route for a different course

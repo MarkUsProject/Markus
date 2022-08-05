@@ -1,5 +1,4 @@
 class SubmissionFile < ApplicationRecord
-
   belongs_to :submission
   validates_associated :submission
 
@@ -7,14 +6,14 @@ class SubmissionFile < ApplicationRecord
 
   has_one :course, through: :submission
 
-  validates_presence_of :filename
+  validates :filename, presence: true
 
-  validates_presence_of :path
+  validates :path, presence: true
 
-  validates_inclusion_of :is_converted, in: [true, false]
+  validates :is_converted, inclusion: { in: [true, false] }
 
   def is_supported_image?
-    #Here you can add more image types to support
+    # Here you can add more image types to support
     supported_formats = %w[.jpeg .jpg .gif .png .heic .heif]
     supported_formats.include?(File.extname(filename).downcase)
   end
@@ -27,13 +26,9 @@ class SubmissionFile < ApplicationRecord
     File.extname(filename).casecmp('.ipynb')&.zero?
   end
 
-  def is_rmd?
-    File.extname(filename).casecmp('.rmd')&.zero?
-  end
-
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
-    return file_contents.size == 0 ||
+    file_contents.size == 0 ||
           file_contents.count('^ -~', "^\r\n") / file_contents.size > 0.3 ||
           file_contents.count("\x00") > 0
   end
@@ -62,12 +57,12 @@ class SubmissionFile < ApplicationRecord
 
   # Return the contents of this SubmissionFile. Include annotations in the
   # file if include_annotations is true.
-  def retrieve_file(include_annotations = false, repo = nil)
+  def retrieve_file(include_annotations: false, repo: nil)
     student_grouping = self.submission.grouping
     student_group = student_grouping.group
     revision_identifier = self.submission.revision_identifier
 
-    get_retrieved_file = lambda do |open_repo|
+    get_retrieved_file = ->(open_repo) do
       revision = open_repo.get_revision(revision_identifier)
       revision_file = revision.files_at_path(self.path, with_attrs: false)[self.filename]
       if revision_file.nil?
@@ -104,19 +99,19 @@ class SubmissionFile < ApplicationRecord
           unless annotation_text.deduction.nil? || annotation_text.deduction == 0
             text += " [#{annotation_text.annotation_category.flexible_criterion.name}: -#{annotation_text.deduction}]"
           end
-          result = result.concat(I18n.t('annotations.download_submission_file.begin_annotation',
-                                        id: annot.annotation_number.to_s,
-                                        text: text,
-                                        comment_start: comment_syntax[0],
-                                        comment_end: comment_syntax[1]) + "\n")
+          result.concat(I18n.t('annotations.download_submission_file.begin_annotation',
+                               id: annot.annotation_number.to_s,
+                               text: text,
+                               comment_start: comment_syntax[0],
+                               comment_end: comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
-          result = result.concat(I18n.t('annotations.download_submission_file.end_annotation',
-               id: annot.annotation_number.to_s,
-               comment_start: comment_syntax[0],
-               comment_end: comment_syntax[1]) + "\n")
+          result.concat(I18n.t('annotations.download_submission_file.end_annotation',
+                               id: annot.annotation_number.to_s,
+                               comment_start: comment_syntax[0],
+                               comment_end: comment_syntax[1]) + "\n")
         end
       end
-    result = result.concat(contents + "\n")
+      result.concat(contents + "\n")
     end
     result
   end

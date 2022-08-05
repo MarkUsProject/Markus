@@ -74,12 +74,8 @@ class AutomatedTestsController < ApplicationController
   end
 
   def get_test_runs_students
-    @grouping = current_role.accepted_grouping_for(params[:assignment_id])
-    test_runs = @grouping.test_runs_students
-    test_runs.each do |test_run|
-      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
-    end
-    render json: test_runs.group_by { |t| t['test_runs.id'] }
+    grouping = current_role.accepted_grouping_for(params[:assignment_id])
+    render json: grouping.test_runs_students
   end
 
   def populate_autotest_manager
@@ -103,8 +99,7 @@ class AutomatedTestsController < ApplicationController
     schema_data = JSON.parse(assignment.course.autotest_setting.schema)
     fill_in_schema_data!(schema_data, file_keys, assignment)
 
-    test_specs_path = assignment.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    test_specs = autotest_settings_for(assignment)
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
     assignment_data['token_start_date'] ||= Time.current
     assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')
@@ -172,18 +167,13 @@ class AutomatedTestsController < ApplicationController
 
   def download_specs
     assignment = Assignment.find(params[:assignment_id])
-    file_path = assignment.autotest_settings_file
-    if File.exist?(file_path)
-      specs = JSON.parse File.read(file_path)
-      specs['testers']&.each do |tester_info|
-        tester_info['test_data']&.each do |test_info|
-          test_info['extra_info']&.delete('test_group_id')
-        end
+    specs = autotest_settings_for(assignment)
+    specs['testers']&.each do |tester_info|
+      tester_info['test_data']&.each do |test_info|
+        test_info['extra_info']&.delete('test_group_id')
       end
-      send_data specs.to_json, filename: TestRun::SPECS_FILE
-    else
-      send_data '{}', filename: TestRun::SPECS_FILE
     end
+    send_data specs.to_json, filename: TestRun::SPECS_FILE
   end
 
   def upload_specs
@@ -202,7 +192,7 @@ class AutomatedTestsController < ApplicationController
       else
         @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
         session[:job_id] = @current_job.job_id
-        render 'shared/_poll_job.js.erb'
+        render 'shared/_poll_job'
       end
     else
       head :unprocessable_entity

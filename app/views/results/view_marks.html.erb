@@ -1,11 +1,11 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'result_main' %>
-  <%= stylesheet_pack_tag 'result' %>
+  <%= stylesheet_link_tag 'result' %>
   <%= javascript_include_tag 'mathjax', nonce: true %>
-  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= javascript_tag nonce: true do %>
-    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
@@ -29,13 +29,6 @@
 <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
 <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
 
-<%= render partial: 'results/common/annotations',
-           formats: [:js],
-           locals: {
-             result_id: @result.id,
-             assignment_id: @result.submission.grouping.assignment.id
-           } %>
-
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 
@@ -43,10 +36,10 @@
   <h1>
     <% if @result.is_a_review? %>
       <% if @current_role.student? %>
-        <%= "#{t('results.results_for')} #{sanitize(@assignment.short_identifier)}" %>
+        <%= "#{t('results.results_for')} #{sanitize(@assignment.pr_assignment.short_identifier)}" %>
       <% else %>
         <%= t('peer_reviews.review_title',
-              assignment_name: @assignment.short_identifier,
+              assignment_name: @assignment.pr_assignment.short_identifier,
               group_name: @current_group_name,
               reviewer_name: @reviewer.group.group_name) %>
       <% end %>

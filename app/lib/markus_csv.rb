@@ -2,12 +2,12 @@ require 'csv'
 
 class MarkusCsv
   MAX_INVALID_LINES = 10
-  INVALID_LINE_SEP = ' - '
+  INVALID_LINE_SEP = ' - '.freeze
 
   # Returns a CSV string representation of an array of data.
   # 'objects' is an array of data, and gen_csv is a block which
   # takes an object and returns an array of strings.
-  def self.generate(objects, headers=[], &gen_csv)
+  def self.generate(objects, headers = [], &gen_csv)
     CSV.generate do |csv|
       headers.each { |obj| csv << obj }
       objects.each { |obj| csv << gen_csv.call(obj) }
@@ -32,17 +32,15 @@ class MarkusCsv
         input = input.encode(Encoding::UTF_8, options[:encoding])
       end
       CSV.parse(input, options) do |row|
-        begin
-          parse_obj.call(row)
-          valid_line_count += 1
-        rescue CsvInvalidLineError => e
-          # append individual error messages to each entry
-          line = row.join(',')
-          unless e.message.blank? || e.message == 'CsvInvalidLineError'
-            line.concat(" (#{e.message})")
-          end
-          invalid_lines << line
+        parse_obj.call(row)
+        valid_line_count += 1
+      rescue CsvInvalidLineError => e
+        # append individual error messages to each entry
+        line = row.join(',')
+        unless e.message.blank? || e.message == 'CsvInvalidLineError'
+          line.concat(" (#{e.message})")
         end
+        invalid_lines << line
       end
       # Return string representation of the erroneous lines.
       unless invalid_lines.empty?
@@ -54,7 +52,7 @@ class MarkusCsv
       end
     rescue CSV::MalformedCSVError
       result[:invalid_lines] = I18n.t('upload_errors.malformed_csv')
-    rescue ArgumentError => e
+    rescue ArgumentError
       result[:invalid_lines] = I18n.t('upload_errors.unparseable_csv')
     end
     result

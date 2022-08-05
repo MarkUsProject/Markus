@@ -20,8 +20,8 @@ namespace :markus do
         end_user.email = data[:email]
       end
       course = Course.find_by(name: data[:course_name])
-      course.roles.find_or_create_by!(end_user: user, type: data[:role_type].capitalize) do |role|
-        puts "Creating #{data[:role_type]} role in course with name = #{course.name} "\
+      course.roles.find_or_create_by!(user: user, type: data[:role_type].capitalize) do |role|
+        puts "Creating #{data[:role_type]} role in course with name = #{course.name} " \
              "for user with username = #{data[:user_name]}"
         if data[:section_name]
           section = course.sections.find_by(name: data[:section_name])

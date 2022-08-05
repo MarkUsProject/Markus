@@ -1,5 +1,4 @@
 class PenaltyPeriodSubmissionRule < SubmissionRule
-
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
@@ -45,11 +44,10 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
       if deduction < 0
         deduction = -deduction
       end
-      total_penalty = total_penalty + deduction
-      overtime_hours = overtime_hours - period.hours
+      total_penalty += deduction
+      overtime_hours -= period.hours
       break if overtime_hours <= 0
     end
     total_penalty
   end
-
 end

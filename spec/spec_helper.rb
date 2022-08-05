@@ -1,6 +1,8 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'simplecov'
 require 'simplecov-lcov'
+require 'webmock/rspec'
+WebMock.disable_net_connect!(allow_localhost: true)
 
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true
@@ -22,17 +24,18 @@ end
 
 ENV['RAILS_ENV'] ||= 'test'
 ENV['NODE_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
 require 'rspec/rails'
 require 'action_policy/rspec'
 require 'action_policy/rspec/dsl'
-require 'net/ssh'
+require 'capybara/rspec'
+require 'selenium/webdriver'
 # Loads lib repo stuff.
 require 'time-warp'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 begin
@@ -40,6 +43,21 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
+end
+
+Capybara.register_driver :selenium_remote_chrome do |app|
+  chrome_options = Selenium::WebDriver::Chrome::Options.new(args: ['--no-sandbox', '--disable-gpu',
+                                                                   '--window-size=1400,1400'])
+  chrome_options.add_argument('--headless') unless ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true'
+  Capybara::Selenium::Driver.new(app, browser: :remote, url: 'http://localhost:9515', capabilities: [chrome_options])
+end
+
+Capybara.configure do |config|
+  config.app_host = "http://localhost:#{ENV.fetch('CAPYBARA_SERVER_PORT', '3434')}"
+  config.server_host = ENV.fetch('CAPYBARA_SERVER_HOST', '0.0.0.0')
+  config.server_port = ENV.fetch('CAPYBARA_SERVER_PORT', '3434')
+  config.default_max_wait_time = 30
+  config.server = :puma
 end
 
 RSpec.configure do |config|
@@ -56,6 +74,9 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # Ignore system tests by default unless they are explicitly run
+  config.exclude_pattern = 'system/**/*_spec.rb'
 
   # Automatically infer an example group's spec type from the file location.
   config.infer_spec_type_from_file_location!
@@ -81,6 +102,11 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  config.before type: :system do
+    # Override the default driver used by rspec system tests
+    driven_by :selenium_remote_chrome
+  end
+
   config.after :each do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
     FactoryBot.rewind_sequences
@@ -91,7 +117,7 @@ RSpec.configure do |config|
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
 
-  config.render_views if ENV['RSPEC_RENDER_VIEWS'] == 'true'
+  config.render_views if ENV.fetch('RSPEC_RENDER_VIEWS', nil) == 'true'
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -101,12 +127,12 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
+    FileUtils.rm_rf(Dir[Rails.root.join('data/test/exam_templates/*')])
   end
 
-  RSpec::Matchers.define :same_time_within_ms do |e|
-    match do |a|
-      e.to_i == a.to_i
+  RSpec::Matchers.define :same_time_within_ms do |t1|
+    match do |t2|
+      t1.to_i == t2.to_i
     end
   end
 

@@ -1,16 +1,16 @@
 class AnnotationText < ApplicationRecord
-
-  belongs_to :creator, class_name: 'Role', foreign_key: :creator_id
-  belongs_to :last_editor, class_name: 'Role', foreign_key: :last_editor_id, optional: true
+  belongs_to :creator, class_name: 'Role'
+  belongs_to :last_editor, class_name: 'Role', optional: true
 
   has_one :course, through: :creator
 
+  before_update :check_if_released
   after_update :update_mark_deductions,
                unless: ->(t) {
                          t.annotation_category.nil? ||
                          t.annotation_category.changes_to_save.key?('flexible_criterion_id')
                        }
-  before_update :check_if_released
+
   before_destroy :check_if_released
 
   # An AnnotationText has many Annotations that are destroyed when an
@@ -20,12 +20,12 @@ class AnnotationText < ApplicationRecord
   belongs_to :annotation_category, optional: true
   validates_associated :annotation_category, on: :create
 
-  validates_numericality_of :deduction,
-                            if: :should_have_deduction?,
+  validates :deduction,
+            numericality: { if: :should_have_deduction?,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark }
+                            less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark } }
 
-  validates_absence_of :deduction, unless: :should_have_deduction?
+  validates :deduction, absence: { unless: :should_have_deduction? }
 
   validate :courses_should_match
 
@@ -45,7 +45,7 @@ class AnnotationText < ApplicationRecord
 
     return if annotation_results.where('results.released_to_students': true).empty? &&
               Result.where(submission_id: annotation_results.pluck('submissions.id'))
-                    .where.not('remark_request_submitted_at': nil)
+                    .where.not(remark_request_submitted_at: nil)
                     .empty?
     errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
     throw(:abort)

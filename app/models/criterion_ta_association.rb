@@ -1,14 +1,13 @@
 class CriterionTaAssociation < ApplicationRecord
+  belongs_to :ta
+  validates_associated :ta
 
-  belongs_to              :ta
-  validates_associated    :ta
+  belongs_to :criterion
+  validates_associated :criterion
 
-  belongs_to              :criterion
-  validates_associated    :criterion
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criterion_ta_associations
 
-  belongs_to              :assignment, foreign_key: :assessment_id
-
-  before_validation       :add_assignment_reference, on: :create
+  before_validation :add_assignment_reference, on: :create
 
   has_one :course, through: :assignment
 
@@ -31,12 +30,12 @@ class CriterionTaAssociation < ApplicationRecord
       raise CsvInvalidLineError if criterion.nil?
 
       course_tas = assignment.course.tas
-      unless ta_user_names.all? { |g| course_tas.joins(:end_user).exists?('users.user_name': g) }
+      unless ta_user_names.all? { |g| course_tas.joins(:user).exists?('users.user_name': g) }
         raise CsvInvalidLineError
       end
 
       ta_user_names.each do |user_name|
-        ta_id = course_tas.joins(:end_user).find_by('users.user_name': user_name).id
+        ta_id = course_tas.joins(:user).find_by('users.user_name': user_name).id
         new_ta_mappings << {
           criterion_id: criterion.id,
           ta_id: ta_id,

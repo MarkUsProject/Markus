@@ -40,13 +40,13 @@ describe AssignmentProperties do
     it 'should check that the start_time is before the due_date if this is a timed assignment' do
       extension = build(:timed_assignment,
                         due_date: Time.current,
-                        assignment_properties_attributes: { start_time: Time.current + 1.hour })
+                        assignment_properties_attributes: { start_time: 1.hour.from_now })
       expect(extension.valid?).to be(false)
     end
     it 'should not check that the start_time is before the due_date if this is a timed assignment' do
       extension = build(:assignment,
                         due_date: Time.current,
-                        assignment_properties_attributes: { start_time: Time.current + 1.hour })
+                        assignment_properties_attributes: { start_time: 1.hour.from_now })
       expect(extension.valid?).to be(true)
     end
     it 'should not permit an assignment to be both scanned and timed' do
@@ -58,7 +58,7 @@ describe AssignmentProperties do
     let(:assignment) { create(:timed_assignment) }
     let(:parts) { assignment.duration_parts }
     it 'should return the duration attribute calculated as DURATION_PARTS' do
-      duration_from_parts = AssignmentProperties::DURATION_PARTS.map { |part| parts[part].to_i.send(part) }.sum
+      duration_from_parts = AssignmentProperties::DURATION_PARTS.map { |part| parts[part].to_i.public_send(part) }.sum
       expect(assignment.duration).to eq(duration_from_parts)
     end
     it 'should return only the parts in DURATION_PARTS' do

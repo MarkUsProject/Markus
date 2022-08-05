@@ -1,4 +1,6 @@
 describe Api::AssignmentsController do
+  include AutomatedTestsHelper
+
   let(:course) { create :course }
   let(:assignment) { create :assignment, course: course }
   context 'An unauthenticated request' do
@@ -65,7 +67,7 @@ describe Api::AssignmentsController do
             expect(response.status).to eq(200)
           end
           it 'should return empty content' do
-            expect(Hash.from_xml(response.body).dig('assignments')).to be_nil
+            expect(Hash.from_xml(response.body)['assignments']).to be_nil
           end
         end
         context 'with multiple assignments' do
@@ -90,7 +92,7 @@ describe Api::AssignmentsController do
             expect(response.status).to eq(200)
           end
           it 'should return empty content' do
-            expect(Hash.from_xml(response.body).dig('assignments')).to be_nil
+            expect(Hash.from_xml(response.body)['assignments']).to be_nil
           end
         end
       end
@@ -166,7 +168,7 @@ describe Api::AssignmentsController do
           expect(Hash.from_xml(response.body).dig('assignment', 'id')).to eq(assignment.id.to_s)
         end
         it 'should return all default fields' do
-          keys = Hash.from_xml(response.body).dig('assignment').keys.map(&:to_sym).sort
+          keys = Hash.from_xml(response.body)['assignment'].keys.map(&:to_sym).sort
           expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
         end
       end
@@ -227,9 +229,9 @@ describe Api::AssignmentsController do
           expect(response.status).to eq(201)
         end
         it 'should create an assignment' do
-          expect(Assignment.find_by_short_identifier(params[:short_identifier])).to be_nil
+          expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
           post :create, params: params
-          expect(Assignment.find_by_short_identifier(params[:short_identifier])).not_to be_nil
+          expect(Assignment.find_by(short_identifier: params[:short_identifier])).not_to be_nil
         end
         context 'for a different course' do
           it 'should response with 403' do
@@ -244,9 +246,9 @@ describe Api::AssignmentsController do
           expect(response.status).to eq(201)
         end
         it 'should create an assignment' do
-          expect(Assignment.find_by_short_identifier(params[:short_identifier])).to be_nil
+          expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
           post :create, params: params
-          expect(Assignment.find_by_short_identifier(params[:short_identifier])).not_to be_nil
+          expect(Assignment.find_by(short_identifier: params[:short_identifier])).not_to be_nil
         end
       end
       context 'with missing params' do
@@ -257,7 +259,7 @@ describe Api::AssignmentsController do
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(Assignment.find_by_description(params[:description])).to be_nil
+            expect(Assignment.find_by(description: params[:description])).to be_nil
           end
         end
         context 'missing description' do
@@ -267,7 +269,7 @@ describe Api::AssignmentsController do
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(Assignment.find_by_short_identifier(params[:short_identifier])).to be_nil
+            expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
           end
         end
         context 'missing due_date' do
@@ -277,7 +279,7 @@ describe Api::AssignmentsController do
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :description, :course_id)
-            expect(Assignment.find_by_short_identifier(params[:short_identifier])).to be_nil
+            expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
           end
         end
       end
@@ -343,22 +345,20 @@ describe Api::AssignmentsController do
     end
     context 'GET test_specs' do
       let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/json' }
-      context 'when a spec file exists' do
-        let(:content) { '{"a":1}' }
+      context 'when the assignment has test settings' do
+        let(:content) { { 'a' => 1 } }
         before :each do
-          FileUtils.mkdir_p assignment.autotest_path
-          File.write(assignment.autotest_settings_file, content)
+          assignment.update!(autotest_settings: content)
           set_env
           get :test_specs, params: { id: assignment.id, course_id: course.id }
         end
         it 'should get the content of the test spec file' do
-          expect(response.body).to eq content
+          expect(response.body).to eq content.to_json
         end
         it('should be successful') { expect(response.status).to eq 200 }
       end
-      context 'when a spec file does not exists' do
+      context 'when the assignment has no test settings' do
         before :each do
-          FileUtils.rm_f(assignment.autotest_settings_file)
           set_env
           get :test_specs, params: { id: assignment.id, course_id: course.id }
         end
@@ -380,29 +380,27 @@ describe Api::AssignmentsController do
       end
     end
     context 'POST update_test_specs' do
-      before :each do
-        FileUtils.mkdir_p assignment.autotest_path
-        File.write(assignment.autotest_settings_file, '')
-      end
       context 'when the content is nested parameters' do
-        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
+        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys.to_json }
         before :each do
           allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
+          assignment.reload
         end
-        it 'should write the content to the specs file' do
-          expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
+        it 'should update the assignment autotest settings' do
+          expect(autotest_settings_for(assignment)).to eq JSON.parse(content)
         end
         it('should be successful') { expect(response.status).to eq 204 }
       end
       context 'when the content is a json string' do
-        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
+        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys.to_json }
         before :each do
           allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: JSON.dump(content) }
+          assignment.reload
         end
-        it 'should write the content to the specs file' do
-          expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
+        it 'should update the assignment autotest settings' do
+          expect(autotest_settings_for(assignment)).to eq content
         end
         it('should be successful') { expect(response.status).to eq 204 }
       end
@@ -411,8 +409,8 @@ describe Api::AssignmentsController do
         before :each do
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
         end
-        it 'should write the content to the specs file' do
-          expect(File.read(assignment.autotest_settings_file)).to eq ''
+        it 'should not update the assignment autotest settings' do
+          expect(autotest_settings_for(assignment)).to eq({})
         end
         it('should not be successful') { expect(response.status).to eq 422 }
       end
@@ -425,6 +423,156 @@ describe Api::AssignmentsController do
         it 'should response with 403' do
           post :update_test_specs, params: { id: assignment.id, course_id: assignment.course.id, specs: '{}' }
           expect(response.status).to eq(403)
+        end
+      end
+    end
+    context 'POST submit_file' do
+      it 'responds with 403' do
+        post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+                                     file_content: 'This is a test file', course_id: course.id }
+        expect(response).to have_http_status(403)
+      end
+    end
+  end
+  context 'An authenticated student request' do
+    let(:student) { create(:grouping_with_inviter, assignment: assignment).inviter }
+    before :each do
+      student.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
+      assignment.update(api_submit: true)
+    end
+
+    context 'POST submit_file' do
+      subject do
+        post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+                                     file_content: 'This is a test file', course_id: course.id }
+      end
+
+      describe 'group creation' do
+        context 'when the student is not yet in a group' do
+          let(:student) { create :student, course: course }
+
+          it 'creates a new group for the student' do
+            subject
+            expect(student.accepted_groupings.where(assessment_id: assignment.id).first).not_to be_nil
+          end
+
+          it 'creates a working alone group' do
+            subject
+            student_group = student.accepted_groupings.where(assessment_id: assignment.id).first
+            expect(student_group.group.group_name).to eq(student.user_name)
+          end
+        end
+
+        context 'when student is already in a group' do
+          it 'does not create a new group for the student' do
+            subject
+            expect(student.accepted_groupings.where(assessment_id: assignment.id).count).to eq(1)
+          end
+        end
+      end
+
+      describe 'file submission' do
+        shared_examples 'submits successfully' do
+          it 'responds with 201' do
+            subject
+            expect(response).to have_http_status(201)
+          end
+
+          it 'submits a file' do
+            subject
+            path = Pathname.new('v1/x/y')
+            submitted_file = nil
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              submitted_file = files.keys.first
+            end
+            expect(submitted_file).to eq('test.txt')
+          end
+        end
+
+        shared_examples 'does not submit' do
+          it 'does not submit a file' do
+            subject
+            path = Pathname.new('v1/x/y')
+            submitted_file = nil
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              submitted_file = files.keys.first
+            end
+            expect(submitted_file).to be_nil
+          end
+        end
+
+        context 'when the file does not exist yet' do
+          include_examples 'submits successfully'
+        end
+
+        context 'when the file already exists' do
+          it 'replaces the file' do
+            subject
+            expected_content = 'Updated Content'
+            post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+                                         file_content: expected_content, course_id: course.id }
+            received_file_content = nil
+            path = Pathname.new('v1/x/y')
+            student.accepted_grouping_for(assignment.id).group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              file = repo.get_latest_revision.files_at_path(file_path.to_s)['test.txt']
+              received_file_content = repo.download_as_string(file)
+            end
+            expect(received_file_content).to eq(expected_content)
+          end
+        end
+
+        context 'when the instructor has disabled API submission' do
+          before :each do
+            assignment.update(api_submit: false)
+          end
+
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+
+          include_examples 'does not submit'
+        end
+
+        context 'when the assignment is hidden' do
+          before :each do
+            assignment.update(is_hidden: true)
+          end
+
+          it 'responds with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
+
+          include_examples 'does not submit'
+        end
+
+        context 'when the assignment requires submission of only required files' do
+          before :each do
+            assignment.update(only_required_files: true)
+          end
+
+          context 'the file is not required' do
+            let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
+
+            it 'responds with 422' do
+              subject
+              expect(response).to have_http_status(422)
+            end
+
+            include_examples 'does not submit'
+          end
+
+          context 'the file is required' do
+            let!(:test_file) { create :assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id }
+            include_examples 'submits successfully'
+          end
         end
       end
     end

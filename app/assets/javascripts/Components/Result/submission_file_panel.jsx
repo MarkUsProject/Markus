@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import {AnnotationManager} from "./annotation_manager";
 import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
-import {lookup} from "mime-types";
+import {getType} from "mime/lite";
 
 export class SubmissionFilePanel extends React.Component {
   constructor(props) {
@@ -13,6 +13,7 @@ export class SubmissionFilePanel extends React.Component {
       selectedFile: null,
       focusLine: null,
       annotationFocus: undefined,
+      selectedFileType: null,
     };
     this.submissionFileViewer = React.createRef();
   }
@@ -33,6 +34,12 @@ export class SubmissionFilePanel extends React.Component {
       this.refreshSelectedFile();
     }
   }
+
+  handleFileTypeUpdate = newType => {
+    this.setState({
+      selectedFileType: newType,
+    });
+  };
 
   refreshSelectedFile = () => {
     if (localStorage.getItem("assignment_id") !== String(this.props.assignment_id)) {
@@ -129,47 +136,50 @@ export class SubmissionFilePanel extends React.Component {
       visibleAnnotations = [];
     } else {
       submission_file_id = this.state.selectedFile[1];
-      submission_file_mime_type = lookup(this.state.selectedFile[0]);
+      submission_file_mime_type = getType(this.state.selectedFile[0]);
       visibleAnnotations = this.props.annotations.filter(
         a => a.submission_file_id === submission_file_id
       );
     }
-    return [
-      <div key="annotation_menu" className="react-tabs-panel-action-bar">
-        <FileSelector
-          fileData={this.props.fileData}
-          onSelectFile={this.selectFile}
-          selectedFile={this.state.selectedFile}
-          course_id={this.props.course_id}
-        />
-        {this.props.canDownload && (
-          <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
-        )}
-        {this.props.show_annotation_manager && (
-          <AnnotationManager
-            categories={this.props.annotation_categories}
-            newAnnotation={this.props.newAnnotation}
-            addExistingAnnotation={this.props.addExistingAnnotation}
+    return (
+      <React.Fragment>
+        <div key="annotation_menu" className="react-tabs-panel-action-bar">
+          <FileSelector
+            fileData={this.props.fileData}
+            onSelectFile={this.selectFile}
+            selectedFile={this.state.selectedFile}
             course_id={this.props.course_id}
           />
-        )}
-      </div>,
-      <div key="codeviewer" id="codeviewer">
-        <FileViewer
-          ref={this.submissionFileViewer}
-          assignment_id={this.props.assignment_id}
-          submission_id={this.props.submission_id}
-          mime_type={submission_file_mime_type}
-          result_id={this.props.result_id}
-          selectedFile={submission_file_id}
-          annotations={visibleAnnotations}
-          focusLine={this.state.focusLine}
-          annotationFocus={this.state.annotationFocus}
-          released_to_students={this.props.released_to_students}
-          course_id={this.props.course_id}
-        />
-      </div>,
-    ];
+          {this.props.canDownload && (
+            <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
+          )}
+          {this.props.show_annotation_manager && this.state.selectedFileType !== "markusurl" && (
+            <AnnotationManager
+              categories={this.props.annotation_categories}
+              newAnnotation={this.props.newAnnotation}
+              addExistingAnnotation={this.props.addExistingAnnotation}
+              course_id={this.props.course_id}
+            />
+          )}
+        </div>
+        <div key="codeviewer" id="codeviewer">
+          <FileViewer
+            ref={this.submissionFileViewer}
+            handleFileTypeUpdate={this.handleFileTypeUpdate}
+            assignment_id={this.props.assignment_id}
+            submission_id={this.props.submission_id}
+            mime_type={submission_file_mime_type}
+            result_id={this.props.result_id}
+            selectedFile={submission_file_id}
+            annotations={visibleAnnotations}
+            focusLine={this.state.focusLine}
+            annotationFocus={this.state.annotationFocus}
+            released_to_students={this.props.released_to_students}
+            course_id={this.props.course_id}
+          />
+        </div>
+      </React.Fragment>
+    );
   }
 }
 

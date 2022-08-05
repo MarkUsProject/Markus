@@ -5,19 +5,19 @@ class ExtraMark < ApplicationRecord
   before_update :ensure_not_released_to_students
 
   # When you want to avoid allocating strings...
-  PERCENTAGE = 'percentage'
-  POINTS     = 'points'
+  PERCENTAGE = 'percentage'.freeze
+  POINTS = 'points'.freeze
 
   scope :percentage, -> { where(unit: ExtraMark::PERCENTAGE) }
-  scope :points,     -> { where(unit: ExtraMark::POINTS)     }
+  scope :points, -> { where(unit: ExtraMark::POINTS) }
 
-  validates_presence_of :unit
-  validates_format_of   :unit, with: /\Apercentage|points\z/
+  validates :unit, presence: true
+  validates :unit, format: { with: /\Apercentage|points\z/ }
 
   scope :positive, -> { where('extra_mark > 0') }
   scope :negative, -> { where('extra_mark < 0') }
 
-  validates_numericality_of :extra_mark
+  validates :extra_mark, numericality: true
 
   belongs_to :result
 

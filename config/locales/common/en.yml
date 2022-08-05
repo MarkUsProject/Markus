@@ -13,15 +13,26 @@ en:
   encoding: Encoding
   file: File
   filter_by: Filter by %{name}
+  forbidden: Forbidden
   help: Help
+  lti:
+    config_error: Error configuring LTI.
+    course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
+    course_link_success: Success. %{markus_course_name} is now linked with your LMS.
+    course_select_instructions: Match your course with a MarkUs course.
+    create_course: Create New Course
+    launch: Launch MarkUs
+    no_courses: No courses available for matching.
+    select_course: Select the course that matches %{course_name}
   markus: MarkUs
   not_applicable: N/A
   or: Or
   other_info: Other Info
   please_wait: Please wait…
   preview: Preview
-  refresh: Refresh
   save: Save
   search: Search
+  select_filename: Select Filename
   skip: Skip
+  this: This
   working: Loading
