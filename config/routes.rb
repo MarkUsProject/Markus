@@ -379,7 +379,6 @@ Rails.application.routes.draw do
         get 'student_interface'
         get 'grade_distribution'
         get 'switch'
-        get 'summary'
       end
 
       resources :marks_graders, only: [:index] do

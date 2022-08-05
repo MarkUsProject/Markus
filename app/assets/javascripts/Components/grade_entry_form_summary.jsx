@@ -5,7 +5,7 @@ import {MarksSpreadsheet} from "./marks_spreadsheet";
 
 class GradeEntryFormSummary extends React.Component {
   render() {
-    if (this.props.can_release) {
+    if (this.props.can_manage) {
       return (
         <Tabs>
           <TabList>
@@ -19,7 +19,7 @@ class GradeEntryFormSummary extends React.Component {
               show_total={this.props.show_total}
               max_mark={this.props.max_mark}
               show_sections={this.props.show_sections}
-              can_release={this.props.can_release}
+              can_release={this.props.can_manage}
             />
           </TabPanel>
           <TabPanel>
@@ -40,7 +40,7 @@ class GradeEntryFormSummary extends React.Component {
           show_total={this.props.show_total}
           max_mark={this.props.max_mark}
           show_sections={this.props.show_sections}
-          can_release={this.props.can_release}
+          can_release={this.props.can_manage}
         />
       );
     }
