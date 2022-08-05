@@ -59,6 +59,13 @@ REQUESTED_REPO_PATH=$(echo "${SSH_ORIGINAL_COMMAND}" | rev | cut -f1 -d' ' | rev
 _REQUESTED_DIR_PATH=$(dirname "${REQUESTED_REPO_PATH}") # ex: /2021-02/csc108
 REQUESTED_COURSE=$(basename "${_REQUESTED_DIR_PATH}") # ex: csc108
 REQUESTED_INSTANCE=$(basename "$(dirname "${_REQUESTED_DIR_PATH}")") # ex: 2021-02
+
+if [ -n "${INSTANCE}" ] && [ "$(basename "${INSTANCE}")" != "${REQUESTED_INSTANCE}" ]; then
+  # Exit if the INSTANCE environment variable does not match the requested instance in the path
+  # This prevents users with the same username in a different instance from accessing each other's repositories
+  exit 1
+fi
+
 REQUESTED_REPO_BASE=$(basename "${REQUESTED_REPO_PATH}") # ex: group_1.git
 REQUESTED_REPO_DIR="${REQUESTED_COURSE}/${REQUESTED_REPO_BASE}" # ex: csc108/group_1.git'
 UPDATED_REPO_PATH="$(updated_repo_path)" # ex: /some/path/csc108/repos/group_123.git
