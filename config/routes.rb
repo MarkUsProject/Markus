@@ -483,14 +483,16 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :lti_deployment do
-    get 'get_canvas_config'
-    post 'launch'
-    get 'public_jwk'
-    post 'redirect_login'
-    get 'choose_course'
-    post 'choose_course'
-    post 'create_course'
+  unless Rails.env.production?
+    namespace :lti_deployment do
+      get 'get_canvas_config'
+      post 'launch'
+      get 'public_jwk'
+      post 'redirect_login'
+      get 'choose_course'
+      post 'choose_course'
+      post 'create_course'
+    end
   end
 
   post 'main', controller: 'courses', action: 'index'

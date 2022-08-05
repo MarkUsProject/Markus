@@ -1,6 +1,8 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.1.0]
 - Remove unmaintained locales (#5727)
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Added the ability to submit URLs (#5822)
