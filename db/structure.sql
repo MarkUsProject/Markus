@@ -72,6 +72,38 @@ END
 $$;
 
 
+--
+-- Name: get_authorized_keys(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_authorized_keys() RETURNS TABLE(authorized_keys text)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  instance text;
+BEGIN
+  SELECT INTO instance relative_url_root();
+  RETURN QUERY SELECT CONCAT(
+                'command="LOGIN_USER=',
+                users.user_name,
+                ' INSTANCE=',
+                instance,
+                ' markus-git-shell.sh",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ',
+                key_pairs.public_key)
+  FROM key_pairs JOIN users ON key_pairs.user_id = users.id;
+END
+$$;
+
+
+--
+-- Name: relative_url_root(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.relative_url_root() RETURNS text
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$SELECT text '/'$$;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -4544,4 +4576,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220624220107'),
 ('20220629225622'),
 ('20220707182822'),
-('20220726142501');
+('20220726142501'),
+('20220726201403');
