@@ -257,7 +257,7 @@ class GradeEntryFormsController < ApplicationController
 
     info_summary = {
       name: "#{grade_entry_form.short_identifier}: #{grade_entry_form.description}",
-      date: I18n.l(grade_entry_form.due_date),
+      date: I18n.l(grade_entry_form.due_date, default: ''),
       average: grade_entry_form.results_average(points: true) || 0,
       median: grade_entry_form.results_median(points: true) || 0,
       standard_deviation: grade_entry_form.results_standard_deviation || 0,
