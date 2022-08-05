@@ -86,8 +86,6 @@ import {makeOneTimeAnnotationsTable} from "javascripts/Components/one_time_annot
 window.makeOneTimeAnnotationsTable = makeOneTimeAnnotationsTable;
 import {makeExamScanLogTable} from "javascripts/Components/exam_scan_log_table";
 window.makeExamScanLogTable = makeExamScanLogTable;
-import {makeMarksSpreadsheet} from "javascripts/Components/marks_spreadsheet";
-window.makeMarksSpreadsheet = makeMarksSpreadsheet;
 import {makeSubmissionFileManager} from "javascripts/Components/submission_file_manager";
 window.makeSubmissionFileManager = makeSubmissionFileManager;
 import {makeRepoBrowser} from "javascripts/Components/repo_browser";

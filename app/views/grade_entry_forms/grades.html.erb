@@ -3,7 +3,7 @@
 
   <%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
-    makeMarksSpreadsheet(
+    makeGradeEntryFormSummary(
       document.getElementById('react_grades_table'),
       {
         course_id: <%= @current_course.id %>,
