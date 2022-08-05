@@ -35,9 +35,7 @@ class GradeEntryItem < ApplicationRecord
 
   # Returns grade distribution for a grade entry item for each student
   def grade_distribution_array(intervals = 20)
-    data = grades.where.not(grade: nil)
-                 .pluck(:grade)
-                 .map { |g| calculate_total_percent(g) }
+    data = grades_array.map { |g| calculate_total_percent(g) }
     data.extend(Histogram)
     histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
     distribution = histogram.fetch(1)
@@ -45,5 +43,33 @@ class GradeEntryItem < ApplicationRecord
     distribution[-1] = distribution.last + data.count { |x| x > 100 }
 
     distribution
+  end
+
+  # Returns the raw average grade of marks given for this grade item based on the marks given by self.grades_array
+  def average
+    return 0 if self.out_of.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.mean(marks)
+  end
+
+  # Returns the raw median grade of marks given for this grade item based on the marks given by self.grades_array
+  def median
+    return 0 if self.out_of.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.median(marks)
+  end
+
+  # Returns the raw standard deviation of marks given for this grade item based on the marks given by self.grades_array
+  def standard_deviation
+    return 0 if self.out_of.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.standard_deviation(marks)
+  end
+
+  def grades_array
+    self.grades.where.not(grade: nil).pluck(:grade)
   end
 end

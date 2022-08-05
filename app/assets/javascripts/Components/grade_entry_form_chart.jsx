@@ -20,6 +20,7 @@ export class GradeEntryFormChart extends React.Component {
           datasets: [],
         },
       },
+      column_summary: [],
       column_grade_distribution: {
         data: {
           labels: [],
@@ -37,7 +38,8 @@ export class GradeEntryFormChart extends React.Component {
     fetch(
       Routes.grade_distribution_course_grade_entry_form_path(
         this.props.course_id,
-        this.props.assessment_id
+        this.props.assessment_id,
+        {get_column_summary: this.props.show_column_stats}
       )
     )
       .then(data => data.json())
@@ -53,6 +55,9 @@ export class GradeEntryFormChart extends React.Component {
         });
         for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
           element.backgroundColor = colours[index];
+        }
+        if (this.props.show_column_stats) {
+          this.setState({column_summary: column_summary});
         }
       });
   };
