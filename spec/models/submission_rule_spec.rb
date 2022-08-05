@@ -75,7 +75,7 @@ describe SubmissionRule do
   end
 
   context '#calculate_grouping_collection_time' do
-    let(:assignment)            { create(:assignment) }
+    let(:assignment) { create(:assignment) }
     let(:grouping_with_inviter) { create(:grouping_with_inviter) }
 
     it 'should return a TimeWithZone object if called with a grouping argument' do
@@ -194,7 +194,7 @@ describe SubmissionRule do
     end
 
     it 'should sort in ascending order' do
-      expect(@submission_rule.periods.pluck(:id)).to satisfy { |ids| ids == ids.sort }
+      expect(@submission_rule.periods.ids).to(satisfy { |ids| ids == ids.sort })
     end
   end
 
@@ -209,7 +209,7 @@ describe SubmissionRule do
     end
 
     it 'should sort in ascending order' do
-      expect(@submission_rule.periods.pluck(:id)).to satisfy { |ids| ids == ids.sort }
+      expect(@submission_rule.periods.ids).to(satisfy { |ids| ids == ids.sort })
     end
   end
 
@@ -242,7 +242,7 @@ describe SubmissionRule do
       @student = create(:student, section: @section)
       @grouping = create(:grouping, assignment: @assignment)
       @student_membership = create(:student_membership, role: @student, grouping: @grouping,
-                                                       membership_status: StudentMembership::STATUSES[:inviter])
+                                                        membership_status: StudentMembership::STATUSES[:inviter])
     end
 
     it 'will be able to collect the submissions from groups of this section' do

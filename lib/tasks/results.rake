@@ -2,19 +2,18 @@ namespace :markus do
   namespace :load do
     desc "Loads 'faked' results into database"
     task(results: :environment) do
-
       if ENV['short_id'].nil?
-        $stderr.puts "Usage: rake load:results short_id=string\n\nNOTE: Assignment must not exist."
+        warn "Usage: rake load:results short_id=string\n\nNOTE: Assignment must not exist."
         exit(1)
       end
 
-      puts "Loading results into database (this might take a long time)... "
+      puts 'Loading results into database (this might take a long time)... '
       # set up assignments
       a1 = Assignment.new
       rule = PenaltyPeriodSubmissionRule.new
-      a1.short_identifier = ENV['short_id']
-      a1.description = "Conditionals and Loops"
-      a1.message = "Learn to use conditional statements, and loops."
+      a1.short_identifier = ENV.fetch('short_id', nil)
+      a1.description = 'Conditionals and Loops'
+      a1.message = 'Learn to use conditional statements, and loops.'
       a1.due_date = Time.current
       a1.repository_folder = a1.short_identifier
       a1.submission_rule = rule
@@ -30,13 +29,11 @@ namespace :markus do
       # create groupings for each student in A1
       students = Student.all
       students.each do |student|
-        begin
-          student.create_group_for_working_alone_student(a1.id)
-          grouping = student.accepted_grouping_for(a1.id)
-          grouping.create_starter_files
-        rescue Exception => e
-          puts "Caught exception on #{student.user_name}: #{e.message}" # ignore exceptions
-        end
+        student.create_group_for_working_alone_student(a1.id)
+        grouping = student.accepted_grouping_for(a1.id)
+        grouping.create_starter_files
+      rescue StandardError => e
+        puts "Caught exception on #{student.user_name}: #{e.message}" # ignore exceptions
       end
 
       # create rubric criteria for a1
@@ -61,8 +58,7 @@ namespace :markus do
       students.each do |student|
         if student.has_accepted_grouping_for?(a1.id)
           grouping = student.accepted_grouping_for(a1.id)
-          group = grouping.group
-          #commit some files into the group repository
+          # commit some files into the group repository
           file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'submission_files')
           Dir.foreach(file_dir) do |filename|
             unless File.directory?(File.join(file_dir, filename))
@@ -88,13 +84,14 @@ namespace :markus do
             m.mark = rand(5) # assign some random mark
             m.save
           end
-          result.overall_comment = "Assignment goals pretty much met, but some things would need improvement. Other things are absolutely fantastic! Seriously, this is just some random text."
+          result.overall_comment = "Assignment goals pretty much met, but some things would need improvement. \
+            Other things are absolutely fantastic! Seriously, this is just some random text."
           result.marking_state = Result::MARKING_STATES[:complete]
           result.released_to_students = true
           result.save
         end
       end
-      puts "Done!"
+      puts 'Done!'
     end
   end
 end

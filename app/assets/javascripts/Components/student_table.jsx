@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import PropTypes from "prop-types";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
@@ -59,7 +60,7 @@ class RawStudentTable extends React.Component {
     const {data, loading} = this.state;
 
     return (
-      <div>
+      <div data-testid={"raw_student_table"}>
         <StudentsActionBox
           ref={r => (this.actionBox = r)}
           sections={data.sections}
@@ -234,8 +235,12 @@ class StudentsActionBox extends React.Component {
           </option>
         ));
         optionalInputBox = (
-          <select name="section" value={this.state.section} onChange={this.inputChanged}>
-            <option value=""></option>
+          <select
+            name="section"
+            value={this.state.section}
+            onChange={this.inputChanged}
+            data-testid={"student_action_box_update_section"}
+          >
             {section_options}
           </select>
         );
@@ -245,8 +250,12 @@ class StudentsActionBox extends React.Component {
     }
 
     return (
-      <form onSubmit={this.props.onSubmit}>
-        <select value={this.state.action} onChange={this.actionChanged}>
+      <form onSubmit={this.props.onSubmit} data-testid={"student_action_box"}>
+        <select
+          value={this.state.action}
+          onChange={this.actionChanged}
+          data-testid={"student_action_box_select"}
+        >
           <option value="give_grace_credits">
             {I18n.t("students.instructor_actions.give_grace_credits")}
           </option>
@@ -257,15 +266,28 @@ class StudentsActionBox extends React.Component {
           <option value="unhide">{I18n.t("students.instructor_actions.mark_active")}</option>
         </select>
         {optionalInputBox}
-        <input type="submit" disabled={this.props.disabled} value={I18n.t("apply")}></input>
+        <input type="submit" disabled={this.props.disabled} value={I18n.t("apply")} />
         <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
       </form>
     );
   };
 }
+StudentsActionBox.propTypes = {
+  onSubmit: PropTypes.func,
+  disabled: PropTypes.bool,
+  authenticity_token: PropTypes.string,
+  sections: PropTypes.object,
+};
+
+RawStudentTable.propTypes = {
+  course_id: PropTypes.number,
+  selection: PropTypes.array.isRequired,
+  authenticity_token: PropTypes.string,
+  getCheckboxProps: PropTypes.func.isRequired,
+};
 
 let StudentTable = withSelection(RawStudentTable);
-
-export function makeStudentTable(elem, props) {
+function makeStudentTable(elem, props) {
   render(<StudentTable {...props} />, elem);
 }
+export {StudentTable, StudentsActionBox, makeStudentTable};

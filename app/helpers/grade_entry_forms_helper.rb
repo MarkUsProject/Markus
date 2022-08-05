@@ -1,7 +1,6 @@
 # Helper methods for grade entry forms
 
 module GradeEntryFormsHelper
-
   # Removes items that have empty names (so they don't get updated)
   def update_grade_entry_form_params(attributes)
     grade_entry_items =

@@ -5,8 +5,7 @@ class CourseSummariesController < ApplicationController
 
   layout 'assignment_content'
 
-  def index
-  end
+  def index; end
 
   def populate
     table_data = get_table_json_data(current_role)
@@ -14,7 +13,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_role.student? ? MarkingScheme.none : current_course.marking_schemes
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
-    single = current_role.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
+    single = current_role.student? ? table_data.first[:assessment_marks].transform_values { |v| v[:percentage] } : {}
 
     assessments.order(id: :asc).each do |a|
       info = assessment_overview(a)
@@ -68,20 +67,19 @@ class CourseSummariesController < ApplicationController
     }
   end
 
-  def view_summary
-  end
+  def view_summary; end
 
   def get_marking_scheme_details
     redirect_to url_for(controller: 'marking_schemes', action: 'populate')
   end
 
   def download_csv_grades_report
-    assessments = current_course.assessments.order(id: :asc).pluck(:id)
-    marking_schemes = current_course.marking_schemes.pluck(:id)
+    assessments = current_course.assessments.order(id: :asc).ids
+    marking_schemes = current_course.marking_schemes.ids
     grades_data = get_table_json_data(current_role)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|
-      row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
+      row = Student::CSV_ORDER.map { |field| student[field] }
       row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
       row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id][:mark] })
       row
@@ -96,7 +94,7 @@ class CourseSummariesController < ApplicationController
     # Given that each assessment has a maximum possible mark achievable, this row represents this data.
     assessments = current_course.assessments.order(id: :asc)
     marking_schemes = current_course.marking_schemes.order(id: :asc)
-    out_of_row = [Assessment.human_attribute_name(:max_mark), '', '', '']
+    out_of_row = [Assessment.human_attribute_name(:max_mark)] + [' '] * (Student::CSV_ORDER.length - 1)
     out_of_row.concat(assessments.collect(&:max_mark))
     out_of_row.concat([''] * marking_schemes.size)
 
@@ -107,10 +105,7 @@ class CourseSummariesController < ApplicationController
     assessments = current_course.assessments.order(id: :asc)
     marking_schemes = current_course.marking_schemes
 
-    header = [User.human_attribute_name(:user_name),
-              User.human_attribute_name(:first_name),
-              User.human_attribute_name(:last_name),
-              User.human_attribute_name(:id_number)]
+    header = Student::CSV_ORDER.map { |field| User.human_attribute_name(field) }
     header.concat(assessments.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))
 
@@ -132,8 +127,6 @@ class CourseSummariesController < ApplicationController
       assessment.results_average&.round(2)
     when :total
       assessment.max_mark
-    else
-      nil
     end
   end
 

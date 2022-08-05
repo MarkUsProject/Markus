@@ -32,6 +32,8 @@ class ExamTemplatesController < ApplicationController
                                                     name: name)
       if exam_template&.valid?
         flash_message(:success, t('exam_templates.create.success'))
+        redirect_to edit_course_exam_template_path(current_course, exam_template)
+        return
       else
         flash_message(:error, t('exam_templates.create.failure'))
       end
@@ -39,12 +41,24 @@ class ExamTemplatesController < ApplicationController
     redirect_to course_assignment_exam_templates_path(current_course, assignment)
   end
 
+  def edit
+    @exam_template = record
+    @assignment = @exam_template.assignment
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
+    respond_to do |format|
+      format.html do
+        render 'exam_templates/index'
+      end
+      format.js
+    end
+  end
+
   def download
     exam_template = record
     filename = exam_template.filename
     send_file(File.join(exam_template.base_path, filename),
-              filename: "#{filename}",
-              type: "application/pdf")
+              filename: filename.to_s,
+              type: 'application/pdf')
   end
 
   def update
@@ -52,7 +66,14 @@ class ExamTemplatesController < ApplicationController
     assignment = record.assignment
     # updating exam template file
     new_uploaded_io = params[:exam_template][:new_template]
-    unless new_uploaded_io.nil?
+    if new_uploaded_io.nil?
+      # updating template division
+      if old_exam_template.update(exam_template_params)
+        flash_message(:success, t('exam_templates.update.success'))
+      else
+        flash_message(:error, t('exam_templates.update.failure'))
+      end
+    else
       new_template_filename = new_uploaded_io.original_filename
       # error checking when new_uploaded_io is not pdf
       if new_uploaded_io.content_type != 'application/pdf'
@@ -65,15 +86,8 @@ class ExamTemplatesController < ApplicationController
                      location: course_assignment_exam_templates_url(assignment.course, assignment, old_exam_template))
         return
       end
-    else
-      # updating template division
-      if old_exam_template.update(exam_template_params)
-        flash_message(:success, t('exam_templates.update.success'))
-      else
-        flash_message(:error, t('exam_templates.update.failure'))
-      end
     end
-    redirect_to course_assignment_exam_templates_path(current_course, assignment)
+    redirect_to edit_course_exam_template_path(current_course, old_exam_template)
   end
 
   def generate
@@ -89,7 +103,7 @@ class ExamTemplatesController < ApplicationController
     session[:job_id] = current_job.job_id
 
     respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job.js.erb' }
+      format.js { render 'exam_templates/_poll_generate_job' }
     end
   end
 
@@ -97,7 +111,7 @@ class ExamTemplatesController < ApplicationController
     exam_template = record
     send_file(File.join(exam_template.base_path, params[:file_name]),
               filename: params[:file_name],
-              type: "application/pdf")
+              type: 'application/pdf')
   end
 
   def show_cover
@@ -125,24 +139,31 @@ class ExamTemplatesController < ApplicationController
       )
     end
     exam_template.save
-    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+    redirect_to edit_course_exam_template_path(current_course, exam_template)
   end
 
   def split
-    exam_template = record
-    split_exam = params[:exam_template]&.fetch(:pdf_to_split) { nil }
-    unless split_exam.nil?
-      if split_exam.content_type != 'application/pdf'
-        flash_message(:error, t('exam_templates.split.invalid'))
-        redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
-      else
-        current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
-        session[:job_id] = current_job.job_id
-        redirect_to view_logs_course_assignment_exam_templates_path(current_course, exam_template.assignment)
-      end
+    exam_template = @current_course.exam_templates.find_by(id: params[:exam_template_id])
+    if exam_template.nil?
+      flash_message(:error, t('exam_templates.upload_scans.search_failure'))
+      head :bad_request
+      return
+    end
+    split_exam = params[:pdf_to_split]
+    if split_exam.nil?
+      flash_message(:error, t('exam_templates.upload_scans.missing'))
+      head :bad_request
+      return
+    elsif split_exam.content_type != 'application/pdf'
+      flash_message(:error, t('exam_templates.upload_scans.invalid'))
+      head :bad_request
+      return
     else
-      flash_message(:error, t('exam_templates.split.missing'))
-      redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment)
+      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
+      session[:job_id] = current_job.job_id
+    end
+    respond_to do |format|
+      format.js { render 'exam_templates/_poll_generate_job' }
     end
   end
 
@@ -158,9 +179,10 @@ class ExamTemplatesController < ApplicationController
 
   def view_logs
     @assignment = Assignment.find(params[:assignment_id])
+    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
 
     respond_to do |format|
-      format.html
+      format.js
       format.json do
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
                                     .where(assessments: { id: @assignment.id })
@@ -193,7 +215,7 @@ class ExamTemplatesController < ApplicationController
             num_groups_in_incomplete: log.num_groups_in_incomplete,
             original_num_pages: log.original_num_pages,
             num_pages_qr_scan_error: log.num_pages_qr_scan_error,
-            #number_of_pages_fixed: log.split_pages.where(status: 'FIXED').length
+            # number_of_pages_fixed: log.split_pages.where(status: 'FIXED').length
             page_data: page_data
           }
         end
@@ -209,14 +231,14 @@ class ExamTemplatesController < ApplicationController
     @split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])
     if params[:split_page_id]
       @next_error = @split_pdf_log.split_pages
-                      .find(params[:split_page_id])
+                                  .find(params[:split_page_id])
       unless @next_error.status.start_with? 'ERROR'
         @next_error = @split_pdf_log.split_pages.order(:id)
-                        .find_by('status LIKE ?', 'ERROR%')
+                                    .find_by('status LIKE ?', 'ERROR%')
       end
     else
       @next_error = @split_pdf_log.split_pages.order(:id)
-                      .find_by('status LIKE ?', 'ERROR%')
+                                  .find_by('status LIKE ?', 'ERROR%')
     end
     if @next_error.nil?
       flash_message(:success, t('exam_templates.assign_scans.done'))
@@ -266,13 +288,13 @@ class ExamTemplatesController < ApplicationController
 
     split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])
     next_error = split_pdf_log.split_pages.order(:id)
-                   .where('id > ?', split_page_id)
-                   .find_by('status LIKE ?', 'ERROR%')
+                              .where('id > ?', split_page_id)
+                              .find_by('status LIKE ?', 'ERROR%')
 
     # Try looping back to the first split page error.
     if next_error.nil?
       next_error = split_pdf_log.split_pages.order(:id)
-                     .find_by('status LIKE ?', 'ERROR%')
+                                .find_by('status LIKE ?', 'ERROR%')
     end
 
     if next_error.nil?
@@ -281,15 +303,14 @@ class ExamTemplatesController < ApplicationController
     else
       render plain: "#{next_error.id}.pdf"
     end
-
   end
 
   def exam_template_params
     params.require(:exam_template)
-       .permit(
-         :name,
-         template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
-       )
+          .permit(
+            :name,
+            template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
+          )
   end
 
   def exam_template_crop_fields_params

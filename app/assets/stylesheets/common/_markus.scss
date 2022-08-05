@@ -13,6 +13,8 @@
 @import 'react_json_schema_form';
 @import 'react_tabs';
 @import 'courses';
+@import 'url_viewer';
+@import 'statistics';
 
 /** Main */
 
@@ -527,6 +529,10 @@ kbd {
     width: 37%;
   }
 
+  .exam-template-pane-wrapper {
+    width: 25%;
+  }
+
   &.mid-height {
     height: calc(70vh);
   }
@@ -697,8 +703,14 @@ kbd {
   margin-top: 20px;
 
   li {
+    border-bottom: 1px solid $line;
     list-style: none;
     padding: 0.5em 1em;
+
+    &:last-child {
+      border-bottom: 0;
+      border-radius: 0 0 $radius $radius;
+    }
   }
 
   a {
@@ -979,7 +991,7 @@ nav {
   border: 1px solid $primary-one;
   cursor: pointer;
   display: inline-block;
-  min-width: 200px;
+  min-width: $dropdown-horizontal;
   padding: 0.5em;
   position: relative;
 
@@ -998,11 +1010,13 @@ nav {
     display: none;
     left: -1px;
     margin: 0;
-    min-width: 16ch;
+    min-width: $dropdown-horizontal;
     padding: 0;
     position: absolute;
     text-align: left;
-    top: 1.95em;
+    top: 2.2em;
+    width: calc(100% + 2px);
+    word-wrap: anywhere;
     z-index: 100000;
 
     li {
@@ -1094,9 +1108,14 @@ nav {
 .annotation-holder-active {
   background: $annotation-holder;
   border: 3px solid $severe-error;
+  cursor: crosshair;
   opacity: 0.5;
   position: absolute;
   z-index: 1;
+}
+
+.enable-annotations {
+  cursor: crosshair;
 }
 
 #image_container {
@@ -1308,4 +1327,20 @@ canvas {
 .summary-stats {
   column-gap: 40px;
   display: flex;
+}
+
+// Styling for admin/main_admin/_monitoring_dashboard_list.html
+.dashboard-item {
+  padding-bottom: 1vh;
+  padding-top: 1vh;
+}
+
+// Styling for submission_file_manager.jsx
+.required-files-container {
+  display: flex;
+}
+
+//Styling for the text on any error pages (for eg. 404, 403)
+.error-pages-container {
+  text-align: center;
 }

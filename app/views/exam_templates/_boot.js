@@ -1,5 +1,8 @@
 $(document).ready(function () {
   window.modal_create_new = new ModalMarkus("#create_new_template");
+  $("#generate_exam_modal_submit").click(() => {
+    $("#generate_exam_dialog").trigger("closeModal");
+  });
   $(".add-template-division").click(e => {
     add_template_division(e.target);
     e.preventDefault();
@@ -16,10 +19,10 @@ function add_template_division(target) {
         <input type="text" required="required" name="${nested_form_path}[label]">
       </td>
       <td>
-        <input type="number" required="required" name="${nested_form_path}[start]">
+        <input type="number" min="2" required="required" name="${nested_form_path}[start]">
       </td>
       <td>
-        <input type="number" required="required" name="${nested_form_path}[end]">
+        <input type="number" min="2" required="required" name="${nested_form_path}[end]">
       </td>
       <td>
         <a href="#" class="delete-exam-template-row">

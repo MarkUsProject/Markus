@@ -9,13 +9,13 @@ class Tag < ApplicationRecord
   # Constants
   NUM_CSV_FIELDS = 3
 
-  def ==(another_tag)
-    description == another_tag.description &&
-        name == another_tag.name
+  def ==(other)
+    description == other.description &&
+        name == other.name
   end
 
   def self.from_csv(data, course, assignment_id)
-    instructors = Hash[course.instructors.joins(:end_user).pluck(:user_name, 'roles.id')]
+    instructors = course.instructors.joins(:user).pluck(:user_name, 'roles.id').to_h
     tag_data = []
     result = MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
@@ -35,15 +35,15 @@ class Tag < ApplicationRecord
     result
   end
 
-  def self.from_yml(data, course, assignment_id, allow_ta_upload = false)
-    instructors = Hash[course.instructors.joins(:end_user).pluck(:user_name, 'roles.id')]
+  def self.from_yml(data, course, assignment_id, allow_ta_upload: false)
+    instructors = course.instructors.joins(:user).pluck(:user_name, 'roles.id').to_h
     begin
       tag_data = data.map do |row|
         row = row.symbolize_keys
         author = instructors[row[:user]]
         # Allow TAs with proper permissions to upload yml tag data
         if allow_ta_upload && author.nil? && !row[:user].nil?
-          ta_author = course.tas.joins(:end_user).find_by('users.user_name': row[:user])
+          ta_author = course.tas.joins(:user).find_by('users.user_name': row[:user])
           author = ta_author.id unless ta_author.nil? || !ta_author.grader_permission.manage_assessments
         end
         name, description, role_id = row[:name], row[:description], author

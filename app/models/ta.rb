@@ -1,9 +1,9 @@
 # TA user for a given course.
 class Ta < Role
-
   has_one :grader_permission, dependent: :destroy, foreign_key: :role_id, inverse_of: :ta
   before_create :create_grader_permission
-  validates_presence_of :grader_permission, unless: -> { self.new_record? }
+  validates :grader_permission, presence: { unless: -> { self.new_record? } }
+  validate :associated_user_is_an_end_user
   accepts_nested_attributes_for :grader_permission
   has_many :criterion_ta_associations, dependent: :delete_all
   has_many :criteria, through: :criterion_ta_associations
@@ -11,7 +11,7 @@ class Ta < Role
   has_many :grade_entry_student_tas, dependent: :delete_all
   has_many :grade_entry_students, through: :grade_entry_student_tas, dependent: :delete_all
 
-  BLANK_MARK = ''
+  BLANK_MARK = ''.freeze
 
   def get_groupings_by_assignment(assignment)
     groupings.where(assessment_id: assignment.id)
@@ -50,7 +50,7 @@ class Ta < Role
                            .where.not('marks.mark': nil)
                            .pluck('results.id', 'marks.mark')
                            .group_by { |x| x[0] }
-      mark_data.values.each do |marks|
+      mark_data.each_value do |marks|
         next if marks.empty?
 
         subtotal = 0
@@ -80,12 +80,12 @@ class Ta < Role
   def grade_distribution_array(assignment, intervals = 20)
     data = percentage_grades_array(assignment)
     data.extend(Histogram)
-    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
     distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 1 }
-    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+    distribution[0] = distribution.first + data.count { |x| x < 1 }
+    distribution[-1] = distribution.last + data.count { |x| x > 100 }
 
-    return distribution
+    distribution
   end
 
   private

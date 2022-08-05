@@ -64,7 +64,7 @@ describe Assignment do
     end
 
     it 'should catch an invalid date' do
-      assignment = create(:assignment, due_date:'2020/02/31')  # 31st day of february
+      assignment = create(:assignment, due_date: '2020/02/31')  # 31st day of february
       expect(assignment.due_date).not_to eq '2020/02/31'
     end
     it 'should be a peer review if it has a parent_assessment_id' do
@@ -103,6 +103,13 @@ describe Assignment do
       a = build(:assignment, course: courses.first, parent_assignment: build(:assignment, course: courses.second))
       expect(a).not_to be_valid
     end
+
+    it 'updates its parent assignment\'s has_peer_review attribute when created' do
+      assignment = create(:assignment)
+      create(:assignment, course: assignment.course, parent_assignment: assignment)
+
+      expect(assignment.has_peer_review).to eq true
+    end
   end
 
   describe 'nested attributes' do
@@ -112,7 +119,7 @@ describe Assignment do
         course_id: course.id,
         short_identifier: 't',
         description: 't',
-        due_date: Time.current + 1.hour,
+        due_date: 1.hour.from_now,
         assignment_files_attributes: [
           { filename: 't.py' }
         ]
@@ -182,15 +189,17 @@ describe Assignment do
         context 'when rubric criteria are found' do
           before do
             @ta_criteria = Array.new(2) { create(:rubric_criterion, assignment: @assignment) }
-            @peer_criteria = Array.new(2) { create(:rubric_criterion,
-                                                   assignment: @assignment,
-                                                   ta_visible: false,
-                                                   peer_visible: true)
-            }
-            @ta_and_peer_criteria = Array.new(2) { create(:rubric_criterion,
-                                                          assignment: @assignment,
-                                                          peer_visible: true)
-            }
+            @peer_criteria = Array.new(2) do
+              create(:rubric_criterion,
+                     assignment: @assignment,
+                     ta_visible: false,
+                     peer_visible: true)
+            end
+            @ta_and_peer_criteria = Array.new(2) do
+              create(:rubric_criterion,
+                     assignment: @assignment,
+                     peer_visible: true)
+            end
           end
 
           it 'shows the criteria visible to tas only' do
@@ -585,7 +594,7 @@ describe Assignment do
 
   describe '#past_remark_due_date?' do
     context 'before the remark due date' do
-      let(:assignment) { build(:assignment, assignment_properties_attributes: { remark_due_date: 1.days.from_now }) }
+      let(:assignment) { build(:assignment, assignment_properties_attributes: { remark_due_date: 1.day.from_now }) }
 
       it 'returns false' do
         expect(assignment.past_remark_due_date?).to be false
@@ -593,7 +602,7 @@ describe Assignment do
     end
 
     context 'after the remark due date' do
-      let(:assignment) { build(:assignment, assignment_properties_attributes: { remark_due_date: 1.days.ago }) }
+      let(:assignment) { build(:assignment, assignment_properties_attributes: { remark_due_date: 1.day.ago }) }
 
       it 'returns true' do
         expect(assignment.past_remark_due_date?).to be true
@@ -684,7 +693,7 @@ describe Assignment do
                                grouping: @grouping)
         end
         @source = @assignment
-        @group =  @grouping.group
+        @group = @grouping.group
       end
       context 'with another fresh assignment' do
         before :each do
@@ -697,7 +706,7 @@ describe Assignment do
             expect @members[index].role.has_accepted_grouping_for?(@target.id)
           end
           @group.groupings.reload
-          expect(@group.groupings.find_by_assessment_id(@target.id)).not_to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).not_to be_nil
         end
 
         it 'ignore a blocked student during cloning' do
@@ -713,7 +722,7 @@ describe Assignment do
           # and let's make sure that the other memberships were cloned
           expect(@members[1].role.has_accepted_grouping_for?(@target.id)).to be_truthy
           expect(@members[2].role.has_accepted_grouping_for?(@target.id)).to be_truthy
-          expect(@group.groupings.find_by_assessment_id(@target.id)).not_to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).not_to be_nil
         end
 
         it 'ignore two blocked students during cloning' do
@@ -730,7 +739,7 @@ describe Assignment do
           # and let's make sure that the other membership was cloned
           expect @members[2].role.has_accepted_grouping_for?(@target.id)
           # and that the proper grouping was created
-          expect(@group.groupings.find_by_assessment_id(@target.id)).not_to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).not_to be_nil
         end
 
         it 'ignore grouping if all students hidden' do
@@ -749,7 +758,7 @@ describe Assignment do
             expect(@members[index].role.has_accepted_grouping_for?(@target.id)).to be_falsey
           end
           # and let's make sure that the grouping wasn't cloned
-          expect(@group.groupings.find_by_assessment_id(@target.id)).to be_nil
+          expect(@group.groupings.find_by(assessment_id: @target.id)).to be_nil
         end
       end
 
@@ -838,6 +847,7 @@ describe Assignment do
               r.marking_state = Result::MARKING_STATES[:complete]
               r.save
             end
+            @assignment.groupings.reload
           end
 
           it 'be able to get_repo_checkout_commands' do
@@ -873,6 +883,7 @@ describe Assignment do
               g.save
             end
             create(:version_used_submission, grouping: @assignment.groupings.first)
+            @assignment.groupings.reload
           end
 
           it 'be able to get_repo_checkout_commands' do
@@ -1073,13 +1084,13 @@ describe Assignment do
     context 'with AssessmentSectionProperties enabled' do
       before :each do
         @assignment = create(:assignment,
-                             due_date: 1.days.ago,
+                             due_date: 1.day.ago,
                              assignment_properties_attributes: { section_due_dates_type: true })
       end
 
       context 'when no section is specified' do
         it 'returns the due date of the assignment' do
-          expect(@assignment.section_due_date(nil).day).to eq 1.days.ago.day
+          expect(@assignment.section_due_date(nil).day).to eq 1.day.ago.day
         end
       end
 
@@ -1091,7 +1102,7 @@ describe Assignment do
         context 'that does not have a AssessmentSectionProperties' do
           it 'returns the due date of the assignment' do
             assessment_section_properties = @assignment.section_due_date(@section)
-            expect(assessment_section_properties.day).to eq 1.days.ago.day
+            expect(assessment_section_properties.day).to eq 1.day.ago.day
           end
         end
 
@@ -1102,7 +1113,7 @@ describe Assignment do
 
           it 'returns the due date of the assignment' do
             assessment_section_properties = @assignment.section_due_date(@section)
-            expect(assessment_section_properties.day).to eq 1.days.ago.day
+            expect(assessment_section_properties.day).to eq 1.day.ago.day
           end
         end
 
@@ -1148,7 +1159,7 @@ describe Assignment do
         before :each do
           @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
                                                                               assessment: @assignment,
-                                                                              due_date: 1.days.from_now)
+                                                                              due_date: 1.day.from_now)
         end
 
         it 'returns the due date of that AssessmentSectionProperties' do
@@ -1162,7 +1173,7 @@ describe Assignment do
         before :each do
           @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
                                                                               assessment: @assignment,
-                                                                              due_date: 1.days.ago)
+                                                                              due_date: 1.day.ago)
         end
 
         it 'returns the due date of the assignment' do
@@ -1175,7 +1186,7 @@ describe Assignment do
   describe '#past_all_due_dates?' do
     context 'when the assignment is not past due' do
       before :each do
-        @assignment = create(:assignment, due_date: 1.days.from_now)
+        @assignment = create(:assignment, due_date: 1.day.from_now)
       end
 
       context 'and AssessmentSectionProperties are disabled' do
@@ -1193,7 +1204,7 @@ describe Assignment do
           @assignment.assignment_properties.update(section_due_dates_type: true)
           @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
                                                                               assessment: @assignment,
-                                                                              due_date: 1.days.ago)
+                                                                              due_date: 1.day.ago)
         end
 
         it 'returns false' do
@@ -1204,7 +1215,7 @@ describe Assignment do
 
     context 'when the assignment is past due' do
       before :each do
-        @assignment = create(:assignment, due_date: 1.days.ago)
+        @assignment = create(:assignment, due_date: 1.day.ago)
       end
 
       context 'and AssessmentSectionProperties are disabled' do
@@ -1221,7 +1232,7 @@ describe Assignment do
         before :each do
           @assignment.assignment_properties.update(section_due_dates_type: true)
           AssessmentSectionProperties.create(section: create(:section), assessment: @assignment,
-                                             due_date: 1.days.from_now)
+                                             due_date: 1.day.from_now)
         end
 
         it 'returns false' do
@@ -1234,8 +1245,8 @@ describe Assignment do
   describe '#grouping_past_due_date?' do
     context 'with AssessmentSectionProperties disabled' do
       before :each do
-        @due_assignment = create(:assignment, due_date: 1.days.ago)
-        @not_due_assignment = create(:assignment, due_date: 1.days.from_now)
+        @due_assignment = create(:assignment, due_date: 1.day.ago)
+        @not_due_assignment = create(:assignment, due_date: 1.day.from_now)
       end
 
       context 'when no grouping is specified' do
@@ -1263,9 +1274,9 @@ describe Assignment do
 
       context 'when no grouping is specified' do
         it 'returns based on due date of the assignment' do
-          @assignment.update(due_date: 1.days.ago)
+          @assignment.update(due_date: 1.day.ago)
           expect(@assignment.grouping_past_due_date?(nil)).to be true
-          @assignment.update(due_date: 1.days.from_now)
+          @assignment.update(due_date: 1.day.from_now)
           expect(@assignment.grouping_past_due_date?(nil)).to be false
         end
       end
@@ -1280,9 +1291,9 @@ describe Assignment do
 
         context 'that does not have an associated AssessmentSectionProperties' do
           it 'returns based on due date of the assignment' do
-            @assignment.update(due_date: 1.days.ago)
+            @assignment.update(due_date: 1.day.ago)
             expect(@assignment.grouping_past_due_date?(@grouping.reload)).to be true
-            @assignment.update(due_date: 1.days.from_now)
+            @assignment.update(due_date: 1.day.from_now)
             expect(@assignment.grouping_past_due_date?(@grouping.reload)).to be false
           end
         end
@@ -1293,12 +1304,12 @@ describe Assignment do
                                                                                 assessment: @assignment)
           end
           it 'returns based on the AssessmentSectionProperties of the grouping' do
-            @assessment_section_properties.update(due_date: 1.days.from_now)
-            @assignment.update(due_date: 1.days.ago)
+            @assessment_section_properties.update(due_date: 1.day.from_now)
+            @assignment.update(due_date: 1.day.ago)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be false
 
-            @assessment_section_properties.update(due_date: 1.days.ago)
-            @assignment.update(due_date: 1.days.from_now)
+            @assessment_section_properties.update(due_date: 1.day.ago)
+            @assignment.update(due_date: 1.day.from_now)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be true
           end
         end
@@ -1314,7 +1325,7 @@ describe Assignment do
 
       context 'when the assignment is past due' do
         it 'returns one name for the assignment' do
-          @assignment.update(due_date: 1.days.ago)
+          @assignment.update(due_date: 1.day.ago)
 
           expect(@assignment.section_names_past_due_date).to eq []
         end
@@ -1322,7 +1333,7 @@ describe Assignment do
 
       context 'when the assignment is not past due' do
         it 'returns an empty array' do
-          @assignment.update(due_date: 1.days.from_now)
+          @assignment.update(due_date: 1.day.from_now)
 
           expect(@assignment.section_names_past_due_date).to eq []
         end
@@ -1343,7 +1354,7 @@ describe Assignment do
 
         context 'that is past due' do
           it 'returns an array with the name of the section' do
-            @assessment_section_properties.update(due_date: 1.days.ago)
+            @assessment_section_properties.update(due_date: 1.day.ago)
 
             expect(@assignment.section_names_past_due_date)
               .to eq [@section.name]
@@ -1352,7 +1363,7 @@ describe Assignment do
 
         context 'that is not past due' do
           it 'returns an empty array' do
-            @assessment_section_properties.update(due_date: 1.days.from_now)
+            @assessment_section_properties.update(due_date: 1.day.from_now)
 
             expect(@assignment.section_names_past_due_date).to eq []
           end
@@ -1365,13 +1376,13 @@ describe Assignment do
           @assessment_section_properties = @sections.map do |section|
             AssessmentSectionProperties.create(section: section, assessment: @assignment)
           end
-          @section_names = @sections.map { |section| section.name }
+          @section_names = @sections.map(&:name)
         end
 
         context 'where both are past due' do
           it 'returns an array with both section names' do
             @assessment_section_properties.each do |section_due_date|
-              section_due_date.update(due_date: 1.days.ago)
+              section_due_date.update(due_date: 1.day.ago)
             end
 
             expect(@assignment.section_names_past_due_date)
@@ -1381,8 +1392,8 @@ describe Assignment do
 
         context 'where one is past due' do
           it 'returns an array with the name of that section' do
-            @assessment_section_properties.first.update(due_date: 1.days.ago)
-            @assessment_section_properties.last.update(due_date: 1.days.from_now)
+            @assessment_section_properties.first.update(due_date: 1.day.ago)
+            @assessment_section_properties.last.update(due_date: 1.day.from_now)
 
             expect(@assignment.section_names_past_due_date)
               .to eq [@section_names.first]
@@ -1392,7 +1403,7 @@ describe Assignment do
         context 'where neither is past due' do
           it 'returns an empty array' do
             @assessment_section_properties.each do |section_due_date|
-              section_due_date.update(due_date: 1.days.from_now)
+              section_due_date.update(due_date: 1.day.from_now)
             end
 
             expect(@assignment.section_names_past_due_date).to eq []
@@ -1596,6 +1607,11 @@ describe Assignment do
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_average).to eq 0
     end
+
+    it 'returns the correct number when viewing raw point value' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_average(points: true)).to eq(3.0)
+    end
   end
 
   describe '#results_median' do
@@ -1618,6 +1634,11 @@ describe Assignment do
       allow(assignment).to receive(:max_mark).and_return(0)
       allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
       expect(assignment.results_median).to eq 0
+    end
+
+    it 'returns the correct number when viewing raw point value' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_median(points: true)).to eq(2.5)
     end
   end
 
@@ -1667,6 +1688,29 @@ describe Assignment do
     end
   end
 
+  describe '#standard_deviation' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(11)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_standard_deviation).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([1, 10, 6, 5])
+      expect(assignment.results_standard_deviation.round(9)).to eq 3.201562119
+    end
+
+    it 'returns the correct number when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_standard_deviation).to eq 0
+    end
+  end
+
   describe '#current_submission_data' do
     let(:assignment) { create :assignment }
     let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment }
@@ -1701,7 +1745,7 @@ describe Assignment do
         end
         it 'should include grace credit deductions' do
           data = assignment.current_submission_data(ta)
-          expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
+          expect(data.pluck(:grace_credits_used).compact).to contain_exactly(1)
         end
       end
 
@@ -1712,14 +1756,14 @@ describe Assignment do
         it 'should include the extra mark in the total' do
           final_grade = submission.current_result.total_mark + extra_mark.extra_mark
           data = assignment.current_submission_data(ta)
-          expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+          expect(data.pluck(:final_grade)).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
         end
         context 'when the extra mark has a negative value' do
           let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
           it 'should not reduce the total mark below zero' do
             data = assignment.current_submission_data(ta)
-            expect(data.map { |h| h[:final_grade] }).to include(0)
+            expect(data.pluck(:final_grade)).to include(0)
             expect(data.select { |h| h.key? :final_grade }.count).to eq 1
           end
         end
@@ -1743,59 +1787,59 @@ describe Assignment do
 
       it 'should return results for all assignment groupings' do
         expect(data.size).to eq groupings.size
-        expect(data.map { |h| h[:_id] }).to contain_exactly(*groupings.map(&:id))
+        expect(data.pluck(:_id)).to contain_exactly(*groupings.map(&:id))
       end
 
       it 'should include the group name' do
-        expect(data.map { |h| h[:group_name] }).to contain_exactly(*groupings.map(&:group).map(&:group_name))
+        expect(data.pluck(:group_name)).to contain_exactly(*groupings.map(&:group).map(&:group_name))
       end
 
       it 'should include tags' do
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
-        expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+        expect(data.pluck(:tags)).to contain_exactly(*tags_names)
       end
 
       it 'should report the marking state as remark when a remark is requested' do
         submission.make_remark_result
-        expect(data.map { |h| h[:marking_state] }).to contain_exactly('remark', 'before_due_date', 'before_due_date')
+        expect(data.pluck(:marking_state)).to contain_exactly('remark', 'before_due_date', 'before_due_date')
       end
 
       it 'should report the marking state as released when a result is released' do
         released_result
-        expect(data.map { |h| h[:marking_state] }).to contain_exactly('released', 'before_due_date', 'before_due_date')
+        expect(data.pluck(:marking_state)).to contain_exactly('released', 'before_due_date', 'before_due_date')
       end
 
       it 'should report the marking state as incomplete if collected' do
         submission
-        expect(data.map { |h| h[:marking_state] }).to contain_exactly(Result::MARKING_STATES[:incomplete],
-                                                                      'before_due_date',
-                                                                      'before_due_date')
+        expect(data.pluck(:marking_state)).to contain_exactly(Result::MARKING_STATES[:incomplete],
+                                                              'before_due_date',
+                                                              'before_due_date')
       end
 
       it 'should report the marking state as complete if collected and complete' do
         submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
-        expect(data.map { |h| h[:marking_state] }).to contain_exactly(Result::MARKING_STATES[:complete],
-                                                                      'before_due_date',
-                                                                      'before_due_date')
+        expect(data.pluck(:marking_state)).to contain_exactly(Result::MARKING_STATES[:complete],
+                                                              'before_due_date',
+                                                              'before_due_date')
       end
 
       it 'should report the marking state as before the due date if it is before the due date' do
-        expect(data.map { |h| h[:marking_state] }).to contain_exactly('before_due_date',
-                                                                      'before_due_date',
-                                                                      'before_due_date')
+        expect(data.pluck(:marking_state)).to contain_exactly('before_due_date',
+                                                              'before_due_date',
+                                                              'before_due_date')
       end
 
       it 'should report the marking state as not collected if it is after the due date but not collected' do
-        assignment.update(due_date: Time.current - 1.day)
-        expect(data.map { |h| h[:marking_state] }).to contain_exactly('not_collected',
-                                                                      'not_collected',
-                                                                      'not_collected')
+        assignment.update(due_date: 1.day.ago)
+        expect(data.pluck(:marking_state)).to contain_exactly('not_collected',
+                                                              'not_collected',
+                                                              'not_collected')
       end
 
       it 'should include a submission time if a non-empty submission exists' do
         time_stamp = I18n.l(submission.revision_timestamp.in_time_zone)
         expect(data.select { |h| h.key? :submission_time }.count).to eq 1
-        expect(data.map { |h| h[:submission_time] }).to include(time_stamp)
+        expect(data.pluck(:submission_time)).to include(time_stamp)
       end
 
       it 'should not include a submission time if an empty submission exists' do
@@ -1809,7 +1853,7 @@ describe Assignment do
 
       it 'should include the result id if a result exists' do
         result_id = submission.current_result.id
-        expect(data.map { |h| h[:result_id] }).to include(result_id)
+        expect(data.pluck(:result_id)).to include(result_id)
         expect(data.select { |h| h.key? :result_id }.count).to eq 1
       end
 
@@ -1819,7 +1863,7 @@ describe Assignment do
 
       it 'should include the total mark if a result exists' do
         final_grade = submission.current_result.total_mark
-        expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+        expect(data.pluck(:final_grade)).to include(final_grade)
         expect(data.select { |h| h.key? :final_grade }.count).to eq 1
       end
 
@@ -1828,13 +1872,13 @@ describe Assignment do
         let!(:extra_mark) { create :extra_mark_points, result: result }
         it 'should include the extra mark in the total' do
           final_grade = submission.current_result.total_mark + extra_mark.extra_mark
-          expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+          expect(data.pluck(:final_grade)).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
         end
         context 'when the extra mark has a negative value' do
           let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
           it 'should not reduce the total mark below zero' do
-            expect(data.map { |h| h[:final_grade] }).to include(0)
+            expect(data.pluck(:final_grade)).to include(0)
             expect(data.select { |h| h.key? :final_grade }.count).to eq 1
           end
         end
@@ -1849,8 +1893,8 @@ describe Assignment do
         end
 
         it 'should include member information for groups with members' do
-          members = groupings.map { |g| g.accepted_students.joins(:end_user).pluck('users.user_name') }
-          expect(data.map { |h| h[:members] }.compact).to contain_exactly(*members)
+          members = groupings.map { |g| g.accepted_students.joins(:user).pluck('users.user_name') }
+          expect(data.pluck(:members).compact).to contain_exactly(*members)
         end
       end
 
@@ -1860,7 +1904,7 @@ describe Assignment do
 
         it 'should include section information for groups in a section' do
           section_names = sections.map(&:name)
-          expect(data.map { |h| h[:section] }.compact).to contain_exactly(*section_names)
+          expect(data.pluck(:section).compact).to contain_exactly(*section_names)
         end
 
         it 'should not include section information for groups not in a section' do
@@ -1882,11 +1926,11 @@ describe Assignment do
         end
 
         it 'should include grace credit deduction information for one grouping' do
-          expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
+          expect(data.pluck(:grace_credits_used).compact).to contain_exactly(1)
         end
 
         it 'should include null values for groupings without a penalty' do
-          expect(data.map { |h| h[:grace_credits_used] }.count(nil)).to be 2
+          expect(data.pluck(:grace_credits_used).count(nil)).to be 2
         end
       end
       context '#zip_automated_test_files' do
@@ -1984,7 +2028,7 @@ describe Assignment do
         Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
         data = assignment_tag.reload.summary_json(ta)[:data]
-        expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+        expect(data.pluck(:tags)).to contain_exactly(*tags_names)
       end
     end
 
@@ -2013,7 +2057,7 @@ describe Assignment do
         it 'has tags correct info' do
           tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
           data = assignment_tag.reload.summary_json(instructor)[:data]
-          expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+          expect(data.pluck(:tags)).to contain_exactly(*tags_names)
         end
 
         it 'has group data' do
@@ -2124,7 +2168,13 @@ describe Assignment do
 
           expect(summary).to_not be_empty
           expect(summary[0]).to_not be_empty
-          expect(summary[0]).to include('User name', 'Group', 'Final grade')
+          expect(summary[0]).to include(User.human_attribute_name(:group_name),
+                                        User.human_attribute_name(:user_name),
+                                        User.human_attribute_name(:last_name),
+                                        User.human_attribute_name(:first_name),
+                                        User.human_attribute_name(:section_name),
+                                        User.human_attribute_name(:id_number),
+                                        User.human_attribute_name(:email))
         end
       end
     end
@@ -2173,12 +2223,12 @@ describe Assignment do
       let!(:starter_file_groups) { create_list :starter_file_group, 3, assignment: assignment }
       context 'default_starter_file_group_id is nil' do
         it 'should return the first starter file group' do
-          expect(assignment.default_starter_file_group).to eq starter_file_groups.sort_by(&:id).first
+          expect(assignment.default_starter_file_group).to eq starter_file_groups.min_by(&:id)
         end
       end
       context 'default_starter_file_group_id refers to an existing object' do
         it 'should return the specified starter file group' do
-          target = starter_file_groups.sort_by(&:id).last
+          target = starter_file_groups.max_by(&:id)
           assignment.update!(default_starter_file_group_id: target.id)
           expect(assignment.default_starter_file_group).to eq target
         end
@@ -2463,7 +2513,7 @@ describe Assignment do
       let(:ta) { create :ta }
       it 'returns correct graders' do
         Grouping.assign_all_tas([grouping], [ta.id], assignment)
-        expect(assignment.current_grader_data[:graders][0][:_id]). to eq(ta.id)
+        expect(assignment.current_grader_data[:graders][0][:_id]).to eq(ta.id)
       end
     end
   end

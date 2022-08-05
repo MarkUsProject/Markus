@@ -1,15 +1,15 @@
 class Note < ApplicationRecord
   belongs_to :noteable, polymorphic: true
 
-  validates_presence_of :notes_message
+  validates :notes_message, presence: true
 
-  belongs_to :role, foreign_key: :creator_id
+  belongs_to :role, foreign_key: :creator_id # rubocop:disable Rails/InverseOf
   validates_associated :role
 
   has_one :course, through: :role
   validate :courses_should_match
 
-  NOTEABLES = %w(Grouping Student Assignment)
+  NOTEABLES = %w[Grouping Student Assignment].freeze
 
   def format_date
     I18n.l(created_at)

@@ -13,10 +13,7 @@ describe CourseSummariesController do
         csv_rows = get_as(instructor, :download_csv_grades_report,
                           params: { course_id: course.id }, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 2) # one header row, one out of row, plus one row per student
-        header = [User.human_attribute_name(:user_name),
-                  User.human_attribute_name(:first_name),
-                  User.human_attribute_name(:last_name),
-                  User.human_attribute_name(:id_number)]
+        header = Student::CSV_ORDER.map { |field| User.human_attribute_name(field) }
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
@@ -26,9 +23,9 @@ describe CourseSummariesController do
             next
           end
           student_name = csv_row.shift
-          # Skipping first/last name and id_number fields
-          3.times { |_| csv_row.shift }
-          student = Student.joins(:end_user).where('users.user_name': student_name).first
+          # Skipping first/last name, id_number, section and email fields
+          (Student::CSV_ORDER.length - 1).times { |_| csv_row.shift }
+          student = Student.joins(:user).where('users.user_name': student_name).first
           expect(student).to be_truthy
           expect(assignments.size).to eq(csv_row.size)
 
@@ -62,9 +59,9 @@ describe CourseSummariesController do
                             params: { course_id: course.id }, format: :csv).parsed_body
           header = csv_rows[0]
           out_of_row = csv_rows[1]
-          expect(out_of_row.size).to eq(4 + assignments.size + grade_forms.size)
+          expect(out_of_row.size).to eq(Student::CSV_ORDER.length + assignments.size + grade_forms.size)
           expect(out_of_row.size).to eq(header.size)
-          zipped_info = Assessment.all.order(:id).zip(out_of_row[4, out_of_row.size])
+          zipped_info = Assessment.all.order(:id).zip(out_of_row[Student::CSV_ORDER.length, out_of_row.size])
           zipped_info.each do |model, out_of_element|
             expect(out_of_element).to eq(model.max_mark.to_s)
           end
@@ -112,8 +109,10 @@ describe CourseSummariesController do
               user_name: student.user_name,
               first_name: student.first_name,
               last_name: student.last_name,
+              section_name: student.section_name,
+              email: student.email,
               hidden: student.hidden,
-              assessment_marks: Hash[GradeEntryForm.all.map do |ges|
+              assessment_marks: GradeEntryForm.all.map do |ges|
                 total_grade = ges.grade_entry_students.find_by(role: student).total_grade
                 out_of = ges.grade_entry_items.sum(:out_of)
                 percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
@@ -121,8 +120,7 @@ describe CourseSummariesController do
                   mark: total_grade,
                   percentage: percent
                 }]
-              end
-              ]
+              end.to_h
             }
             student.accepted_groupings.each do |g|
               expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
@@ -214,7 +212,6 @@ describe CourseSummariesController do
           student = grouping.inviter
           gef = GradeEntryForm.all.first
           gef.update(is_hidden: false)
-          averages = [nil, assignment.results_average&.round(2)]
           expected_assessment_marks = {}
           expected_assessment_marks[assignment.id.to_s] = {
             'mark' => grouping.current_result.total_mark,
@@ -240,6 +237,8 @@ describe CourseSummariesController do
             user_name: @student2.user_name,
             first_name: @student2.first_name,
             last_name: @student2.last_name,
+            section_name: @student2.section_name,
+            email: @student2.email,
             hidden: @student2.hidden,
             assessment_marks: {}
           }

@@ -1,6 +1,6 @@
 require 'set'
 
-class UnableToRandomlyAssignGroupException < Exception
+class UnableToRandomlyAssignGroupException < RuntimeError
 end
 
 module RandomAssignHelper
@@ -46,22 +46,22 @@ module RandomAssignHelper
     end
 
     # Remove reviewer ids if there are existing peer reviews already assigned
-    process_existing_peer_reviews(reviewer_ids)
+    process_existing_peer_reviews(reviewer_ids, reviewee_ids)
 
     # Shuffle the reviewees to emulate randomness.
-    @reviewees = @reviewees.shuffle
+    @reviewees = @reviewees.shuffle.take(@reviewers.size)
   end
 
-  # Remove reviewer id occurrences from @reviewers
-  # by how many times they already have existing peer reviews.
+  # Remove reviewer id occurrences from @reviewers by how many times they
+  # already have existing peer reviews for the given reviewee_ids.
   # If a group already has more than the number of reviews requested,
   # then they won't appear in @reviewers at all.
   #
   # Also add existing peer reviews to @reviewer_to_reviewee_sets.
-  def process_existing_peer_reviews(reviewer_ids)
+  def process_existing_peer_reviews(reviewer_ids, reviewee_ids)
     PeerReview.includes(:reviewer,
                         { result: { submission: :grouping } })
-              .where(reviewer_id: reviewer_ids)
+              .where(reviewer_id: reviewer_ids, 'groupings.id': reviewee_ids)
               .each do |peer_review|
       reviewer_id = peer_review.reviewer_id
       reviewee_id = peer_review.reviewee.id
@@ -71,6 +71,10 @@ module RandomAssignHelper
       index = @reviewers.find_index(reviewer_id)
       unless index.nil?
         @reviewers.delete_at(index)
+      end
+      index = @reviewees.find_index(reviewee_id)
+      unless index.nil?
+        @reviewees.delete_at(index)
       end
     end
   end
@@ -160,9 +164,9 @@ module RandomAssignHelper
     groupings = Grouping.includes(:current_submission_used)
                         .where(id: @reviewees)
 
-    submission_map = Hash[groupings.map do |g|
+    submission_map = groupings.map do |g|
       [g.id, g.current_submission_used.id]
-    end]
+    end.to_h
 
     now = Time.current
     results = Result.insert_all(

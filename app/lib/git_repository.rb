@@ -5,7 +5,6 @@ require 'csv'
 #   1. Repositories are created by using ???
 #   2. Existing repositories are opened by using either ???
 class GitRepository < Repository::AbstractRepository
-
   DUMMY_FILE_NAME = '.gitkeep'.freeze
 
   # Constructor: Connects to an existing Git
@@ -23,12 +22,12 @@ class GitRepository < Repository::AbstractRepository
     index.write
     commit_author = { email: 'markus@markus.com', name: author, time: Time.current.to_time }
     commit_options = {
-        author: commit_author,
-        committer: commit_author,
-        message: message,
-        tree: commit_tree,
-        parents: repo.empty? ? [] : [repo.head.target].compact, # compact if target returns nil (suggested upstream)
-        update_ref: 'HEAD'
+      author: commit_author,
+      committer: commit_author,
+      message: message,
+      tree: commit_tree,
+      parents: repo.empty? ? [] : [repo.head.target].compact, # compact if target returns nil (suggested upstream)
+      update_ref: 'HEAD'
     }
     Rugged::Commit.create(repo, commit_options)
     repo.push('origin', ['refs/heads/master'])
@@ -47,11 +46,11 @@ class GitRepository < Repository::AbstractRepository
   # location 'connect_string'
   def self.create(connect_string, course)
     if GitRepository.repository_exists?(connect_string)
-      raise RepositoryCollision.new("There is already a repository at #{connect_string}")
+      raise RepositoryCollision, "There is already a repository at #{connect_string}"
     end
-    if File.exists?(connect_string)
-      raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists
-                         already")
+    if File.exist?(connect_string)
+      raise IOError, "Could not create a repository at #{connect_string}: some directory with same name exists
+                         already"
     end
     # Repo is created bare, then clone it in the repository storage location
     barepath = bare_path(connect_string)
@@ -67,9 +66,7 @@ class GitRepository < Repository::AbstractRepository
       # Do an initial commit with the .required_files.json
       required = course.get_required_files
       required_path = File.join(tmp_repo_path, '.required.json')
-      File.open(required_path, 'w') do |req|
-        req.write(required.to_json)
-      end
+      File.write(required_path, required.to_json)
       repo.index.add('.required.json')
 
       # Add client-side hooks
@@ -79,8 +76,8 @@ class GitRepository < Repository::AbstractRepository
       content = File.open(too_large_hook) do |f|
         f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{course.max_file_size_settings}")
       end
-      File.open(too_large_hook, 'w') { |f| f.write(content) }
-      FileUtils.chmod 0755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
+      File.write(too_large_hook, content)
+      FileUtils.chmod 0o755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
       repo.index.add_all('markus-hooks')
 
       # Set up server-side hooks
@@ -121,11 +118,11 @@ class GitRepository < Repository::AbstractRepository
     FileUtils.rm_rf(repo_path)
   end
 
-  def self.get_checkout_command(external_repo_url, revision_hash, group_name, repo_folder=nil)
-    "git clone \"#{external_repo_url}\" \"#{group_name}\" && "\
-    "cd \"#{group_name}\" && "\
-    "git reset --hard #{revision_hash} && "\
-    "cd .."
+  def self.get_checkout_command(external_repo_url, revision_hash, group_name, _repo_folder = nil)
+    "git clone \"#{external_repo_url}\" \"#{group_name}\" && " \
+      "cd \"#{group_name}\" && " \
+      "git reset --hard #{revision_hash} && " \
+      'cd ..'
   end
 
   def get_revision(revision_hash)
@@ -180,7 +177,7 @@ class GitRepository < Repository::AbstractRepository
         break
       end
     end
-    return nil if current_reflog_entry.empty?
+    return if current_reflog_entry.empty?
     # find first commit that changes path, topologically equal or before the push
     reflog_entries = {}
     reflog_entries[current_reflog_entry[:id]] = current_reflog_entry
@@ -232,11 +229,10 @@ class GitRepository < Repository::AbstractRepository
   # all the repository on that path need to exist, or the export will fail.
   # if export means exporting repo as zip/tgz git-ruby library should be used
   def export(repo_dest_dir, filepath = nil)
-
     # Case 1: clone all the repo to repo_dest_dir
-    if(filepath.nil?)
+    if filepath.nil?
       # Raise an error if the destination repository already exists
-      if (File.exists?(repo_dest_dir))
+      if File.exist?(repo_dest_dir)
         raise(ExportRepositoryAlreadyExists,
               'Exported repository already exists')
       end
@@ -245,21 +241,20 @@ class GitRepository < Repository::AbstractRepository
     else
       # Case 2: clone a file to a folder
       # Raise an error if the destination file already exists
-      if (File.exists?(repo_dest_dir))
+      if File.exist?(repo_dest_dir)
         raise(ExportRepositoryAlreadyExists,
               'Exported file already exists')
       end
       FileUtils.cp(get_repos_workdir + filepath, repo_dest_dir)
-      return true
+      true
     end
-
   end
 
   #  Converts a pathname to an absolute pathname
   def expand_path(file_name, dir_string = '/')
     expanded = File.expand_path(file_name, dir_string)
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ #only if the platform is Windows
-      expanded = expanded[2..-1]#remove the drive letter
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # only if the platform is Windows
+      expanded = expanded[2..-1] # remove the drive letter
     end
     expanded
   end
@@ -277,7 +272,7 @@ class GitRepository < Repository::AbstractRepository
 
   def closed?
     # checks if the repo is closed
-    return @closed
+    @closed
   end
 
   def get_repos
@@ -288,13 +283,13 @@ class GitRepository < Repository::AbstractRepository
   def get_repos_workdir
     # Get working directory of the repository
     # workdir = path/to/my/repository/
-    return @repos.workdir
+    @repos.workdir
   end
 
   def get_repos_path
     # Get the repository's .git folder
     # path = path/to/my/repository/.git
-    return @repos.path
+    @repos.path
   end
 
   # Gets the repository name
@@ -319,19 +314,17 @@ class GitRepository < Repository::AbstractRepository
   # TODO - find a better way to do this.
   def self.repository_exists?(repos_path)
     repos_meta_files_exist = false
-    if File.exist?(File.join(repos_path, '.git/config'))
-      if File.exist?(File.join(repos_path, '.git/description'))
-        if File.exist?(File.join(repos_path, '.git/HEAD'))
-          repos_meta_files_exist = true
-        end
-      end
+    if File.exist?(File.join(repos_path, '.git/config')) &&
+        File.exist?(File.join(repos_path, '.git/description')) &&
+        File.exist?(File.join(repos_path, '.git/HEAD'))
+      repos_meta_files_exist = true
     end
-    return repos_meta_files_exist
+    repos_meta_files_exist
   end
 
   # Returns a Repository::TransAction object, to work with. Do operations,
   # like 'add', 'remove', etc. on the transaction instead of the repository
-  def get_transaction(user_id, comment=I18n.t('repo.commits.default'))
+  def get_transaction(user_id, comment = I18n.t('repo.commits.default'))
     if user_id.nil?
       raise 'Expected a user_id (Repository.get_transaction(user_id))'
     end
@@ -342,7 +335,11 @@ class GitRepository < Repository::AbstractRepository
   # 'transaction'. In case of certain conflicts corresponding
   # Repositor::Conflict(s) are added to the transaction object
   def commit(transaction)
+    return true unless transaction.has_jobs?
+
     self.class.redis_exclusive_lock(@connect_string, namespace: :repo_lock) do
+      non_bare_repo  # Ensure non-bare repo exists
+
       transaction.jobs.each do |job|
         case job[:action]
         when :add_path
@@ -411,15 +408,13 @@ class GitRepository < Repository::AbstractRepository
   ##  Private method definitions
   ####################################################################
 
-
   # Helper method to generate all the permissions for students for all groupings in all assignments.
   # This is done as a single operation to mirror the SVN repo code. We found
   # a substantial performance improvement by writing the auth file only once in the SVN case.
   def self.update_permissions_file(permissions)
     # If we're not in authoritative mode, bail out
     unless Settings.repository.is_repository_admin
-      raise NotAuthorityError.new(
-        'Unable to set bulk permissions: Not in authoritative mode!')
+      raise NotAuthorityError, 'Unable to set bulk permissions: Not in authoritative mode!'
     end
 
     # Create auth csv file
@@ -449,7 +444,8 @@ class GitRepository < Repository::AbstractRepository
         begin
           # TODO: this shouldn't be necessary, but something is messing up the repo.
           @non_bare_repo.reset('master', :hard)
-        rescue Rugged::ReferenceError # It seems the master branch might not be correctly setup at first.
+        rescue Rugged::ReferenceError
+          # It seems the master branch might not be correctly setup at first.
         end
         @non_bare_repo.reset('origin/master', :hard) # align to whatever is in origin/master
       rescue Rugged::Error, Rugged::OSError => e
@@ -490,7 +486,7 @@ class GitRepository < Repository::AbstractRepository
   # Creates a file into the repository.
   def add_file(path, file_data)
     if get_latest_revision.path_exists?(path)
-      raise Repository::FileExistsConflict.new(path)
+      raise Repository::FileExistsConflict, path
     end
     write_file(path, file_data)
   end
@@ -511,7 +507,7 @@ class GitRepository < Repository::AbstractRepository
   # If +keep_folder+ is false, all the files will be deleted and .gitkeep file will not be added.
   def remove_file(path, expected_revision_identifier, keep_folder: true)
     if non_bare_repo.last_commit.oid != expected_revision_identifier
-      raise Repository::FileOutOfSyncConflict.new(path)
+      raise Repository::FileOutOfSyncConflict, path
     end
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExistConflict, path
@@ -545,10 +541,10 @@ class GitRepository < Repository::AbstractRepository
   # Replaces a file in the repository with new content.
   def replace_file(path, file_data, expected_revision_identifier)
     if non_bare_repo.last_commit.oid != expected_revision_identifier
-      raise Repository::FileOutOfSyncConflict.new(path)
+      raise Repository::FileOutOfSyncConflict, path
     end
     unless get_latest_revision.path_exists?(path)
-      raise Repository::FileDoesNotExist.new(path)
+      raise Repository::FileDoesNotExist, path
     end
     write_file(path, file_data)
   end
@@ -565,9 +561,7 @@ class GitRepository < Repository::AbstractRepository
     # file on disk if it already exists, but will only make a
     # new commit if the file contents have changed.
     abs_path = File.join(tmp_repo, path)
-    File.open(abs_path, 'w') do |file|
-      file.write file_data.force_encoding('UTF-8')
-    end
+    File.write(abs_path, file_data.force_encoding('UTF-8'))
     non_bare_repo.index.add(path)
   end
 end

@@ -1,0 +1,20 @@
+<div class='listings sortable'>
+  <header>
+    <span><%= ExamTemplate.model_name.human %></span>
+  </header>
+
+  <ul id='exam_template_pane_list'>
+    <%= render partial: 'exam_template', collection: @exam_templates %>
+  </ul>
+</div>
+<div class="listings separate-listing">
+  <li>
+    <%= link_to t('exam_templates.upload_scans.title'),
+                view_logs_course_assignment_exam_templates_path(@current_course, @assignment),
+                remote: true %>
+  </li>
+  <li>
+    <%= link_to t('exam_templates.assign_scans.title'),
+                assign_scans_course_assignment_groups_path(@current_course, @assignment) %>
+  </li>
+</div>

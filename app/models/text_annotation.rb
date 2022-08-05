@@ -1,11 +1,10 @@
 class TextAnnotation < Annotation
+  validates :line_start, presence: true
+  validates :line_end, presence: true
+  validates :column_start, presence: true
+  validates :column_end, presence: true
 
-  validates_presence_of :line_start
-  validates_presence_of :line_end
-  validates_presence_of :column_start
-  validates_presence_of :column_end
-
-  def get_data(include_creator=false)
+  def get_data(include_creator: false)
     data = super
     data.merge({
       line_start: line_start,

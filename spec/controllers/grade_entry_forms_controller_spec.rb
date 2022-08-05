@@ -2,7 +2,7 @@ describe GradeEntryFormsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   before :each do
     # initialize student DB entries
-    @student = create(:student, end_user: create(:end_user, user_name: 'c8shosta'))
+    @student = create(:student, user: create(:end_user, user_name: 'c8shosta'))
   end
   let(:role) { create :instructor }
   let(:grade_entry_form) { create(:grade_entry_form) }
@@ -31,7 +31,7 @@ describe GradeEntryFormsController do
       @file_total_included = fixture_file_upload('grade_entry_forms/total_column_included.csv', 'text/csv')
 
       @student = grade_entry_form_with_data.grade_entry_students
-                                           .joins(role: :end_user)
+                                           .joins(role: :user)
                                            .find_by('users.user_name': 'c8shosta')
       @original_item = grade_entry_form_with_data.grade_entry_items.first
       @student.grades.find_or_create_by(grade_entry_item: @original_item).update(
@@ -178,7 +178,7 @@ describe GradeEntryFormsController do
     end
 
     before :each do
-      @user = @student.end_user
+      @user = @student.user
     end
 
     it 'returns a 200 status code' do
@@ -194,9 +194,12 @@ describe GradeEntryFormsController do
                                                 .find_by(grade_entry_item: grade_entry_item)
                                                 .grade
       csv_array = [
-        ['', grade_entry_item.name],
-        [GradeEntryItem.human_attribute_name(:out_of), grade_entry_item.out_of],
-        [@user.user_name, student_grade]
+        Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+          [grade_entry_item.name],
+        [''] * (Student::CSV_ORDER.length - 1) +
+          [GradeEntryItem.human_attribute_name(:out_of),
+           grade_entry_item.out_of],
+        [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, student_grade]
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
@@ -226,14 +229,16 @@ describe GradeEntryFormsController do
 
     it 'shows Total column when show_total is true' do
       csv_array = [
-        ['',
-         grade_entry_form_with_data_and_total.grade_entry_items[0].name,
-         GradeEntryForm.human_attribute_name(:total)],
-        [GradeEntryItem.human_attribute_name(:out_of),
-         String(grade_entry_form_with_data_and_total.grade_entry_items[0].out_of),
-         grade_entry_form_with_data_and_total.max_mark],
-        [@user.user_name, '', '']
+        Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+          [grade_entry_form_with_data_and_total.grade_entry_items[0].name,
+           GradeEntryForm.human_attribute_name(:total)],
+        [''] * (Student::CSV_ORDER.length - 1) + [GradeEntryItem.human_attribute_name(:out_of),
+                                                  String(grade_entry_form_with_data_and_total
+                                                           .grade_entry_items[0].out_of),
+                                                  grade_entry_form_with_data_and_total.max_mark],
+        [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, '', '']
       ]
+
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
       end
@@ -255,17 +260,17 @@ describe GradeEntryFormsController do
       ges.save
 
       csv_array = [
-        ['',
-         gef.grade_entry_items[0].name,
-         gef.grade_entry_items[1].name,
-         gef.grade_entry_items[2].name,
-         GradeEntryForm.human_attribute_name(:total)],
-        [GradeEntryItem.human_attribute_name(:out_of),
-         gef.grade_entry_items[0].out_of.to_s,
-         gef.grade_entry_items[1].out_of.to_s,
-         gef.grade_entry_items[2].out_of.to_s,
-         gef.max_mark],
-        [ges.role.user_name, '', '50.0', '', '50.0']
+        Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+          [gef.grade_entry_items[0].name, gef.grade_entry_items[1].name,
+           gef.grade_entry_items[2].name, GradeEntryForm.human_attribute_name(:total)],
+        [''] * (Student::CSV_ORDER.length - 1) +
+          [GradeEntryItem.human_attribute_name(:out_of),
+           gef.grade_entry_items[0].out_of.to_s,
+           gef.grade_entry_items[1].out_of.to_s,
+           gef.grade_entry_items[2].out_of.to_s,
+           gef.max_mark],
+        [ges.role.user_name, ges.role.last_name, ges.role.first_name, ges.role.section, ges.role.id_number,
+         ges.role.email, '', '50.0', '', '50.0']
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
@@ -278,15 +283,65 @@ describe GradeEntryFormsController do
       ) { @controller.head :ok }
       get_as role, :download, params: { course_id: course.id, id: gef }
     end
+    context 'when the user is a TA' do
+      let(:role) { create :ta }
+      let(:gef) { create :grade_entry_form_with_data }
+      it 'returns no users when the ta is not assigned a user' do
+        csv_array = [
+          Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+            [gef.grade_entry_items[0].name],
+          [''] * (Student::CSV_ORDER.length - 1) +
+            [GradeEntryItem.human_attribute_name(:out_of),
+             gef.grade_entry_items[0].out_of.to_s]
+        ]
+        csv_data = MarkusCsv.generate(csv_array, &:itself)
+        expect(@controller).to receive(:send_data).with(
+          csv_data,
+          filename: "#{gef.short_identifier}_grades_report.csv",
+          **csv_options
+        ) { @controller.head :ok }
+        get_as role, :download, params: { course_id: course.id, id: gef }
+      end
+      context 'when the ta has been assigned to a student' do
+        let(:student) do
+          gef.grade_entry_students.joins(role: :user).find_by('users.user_name': 'c8shosta')
+        end
+        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+        it 'returns data for only the assigned student' do
+          student.grades.first.update(grade: 50.0)
+          csv_array = [
+            Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+              [gef.grade_entry_items[0].name],
+            [''] * (Student::CSV_ORDER.length - 1) +
+              [GradeEntryItem.human_attribute_name(:out_of),
+               gef.grade_entry_items[0].out_of.to_s],
+            [student.role.user_name,
+             student.role.last_name,
+             student.role.first_name,
+             nil,
+             nil,
+             student.role.email,
+             '50.0']
+          ]
+          csv_data = MarkusCsv.generate(csv_array, &:itself)
+          expect(@controller).to receive(:send_data).with(
+            csv_data,
+            filename: "#{gef.short_identifier}_grades_report.csv",
+            **csv_options
+          ) { @controller.head :ok }
+          get_as role, :download, params: { course_id: course.id, id: gef }
+        end
+      end
+    end
   end
 
   shared_examples '#update_grade_entry_students' do
     before :each do
-      create(:student, end_user: create(:end_user, user_name: 'paneroar'))
+      create(:student, user: create(:end_user, user_name: 'paneroar'))
       @student = grade_entry_form_with_data.grade_entry_students
-                                           .joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+                                           .joins(role: :user).find_by('users.user_name': 'c8shosta')
       @another = grade_entry_form_with_data.grade_entry_students
-                                           .joins(role: :end_user).find_by('users.user_name': 'paneroar')
+                                           .joins(role: :user).find_by('users.user_name': 'paneroar')
       @this_form = grade_entry_form_with_data
     end
 
@@ -404,7 +459,7 @@ describe GradeEntryFormsController do
     end
     describe 'When the grader is not allowed to release and unrelease the grades' do
       let(:student) do
-        grade_entry_form_with_data.grade_entry_students.joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+        grade_entry_form_with_data.grade_entry_students.joins(role: :user).find_by('users.user_name': 'c8shosta')
       end
       it 'should respond with 403' do
         post_as user, :update_grade_entry_students,
@@ -487,14 +542,13 @@ describe GradeEntryFormsController do
     it('should respond with 200') { expect(response).to have_http_status 200 }
 
     it 'should return the expected info summary' do
-      name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
+      name = "#{grade_entry_form_with_data.short_identifier}: #{grade_entry_form_with_data.description}"
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:role).where('roles.hidden': false).count
       expected_summary = { name: name,
                            date: I18n.l(grade_entry_form_with_data.due_date),
                            average: grade_entry_form_with_data.results_average,
                            median: grade_entry_form_with_data.results_median,
-                           num_entries: grade_entry_form_with_data.count_non_nil.to_s +
-                             '/' + total_students.to_s,
+                           num_entries: "#{grade_entry_form_with_data.count_non_nil}/#{total_students}",
                            num_fails: grade_entry_form_with_data.results_fails,
                            num_zeros: grade_entry_form.results_zeros }
       expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
@@ -506,7 +560,7 @@ describe GradeEntryFormsController do
     let(:gef2) { create :grade_entry_form }
 
     shared_examples 'switch assignment tests' do
-      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      before { controller.request.headers.merge(HTTP_REFERER: referer) }
       subject { expect get_as user, 'switch', params: { course_id: course.id, id: gef2.id } }
       context 'referred from a grade entry form url' do
         let(:referer) { course_grade_entry_form_url(course_id: course.id, id: gef.id) }
@@ -600,7 +654,7 @@ describe GradeEntryFormsController do
       end
       context 'who has been assigned a student' do
         let(:student) do
-          grade_entry_form_with_data.grade_entry_students.joins(role: :end_user).find_by('users.user_name': 'c8shosta')
+          grade_entry_form_with_data.grade_entry_students.joins(role: :user).find_by('users.user_name': 'c8shosta')
         end
         let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
         it 'returns data' do
@@ -615,7 +669,7 @@ describe GradeEntryFormsController do
           get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
           students = role.grade_entry_students
                          .where(grade_entry_form: grade_entry_form_with_data)
-                         .joins(role: :end_user).pluck('users.user_name')
+                         .joins(role: :user).pluck('users.user_name')
           expect(response.parsed_body['data'].map { |stu| stu['user_name'] }).to match_array(students)
         end
       end

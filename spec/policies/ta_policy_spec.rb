@@ -1,5 +1,5 @@
 describe TaPolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   let(:record) { role }
 
   describe_rule :run_tests? do
@@ -9,7 +9,7 @@ describe TaPolicy do
     succeed 'with run_tests permissions' do
       let(:role) { create :ta, run_tests: true }
       context 'authorized with an assignment' do
-        let(:context) { { role: role, real_user: role.end_user, assignment: assignment } }
+        let(:context) { { role: role, real_user: role.user, assignment: assignment } }
         failed 'without tests enabled' do
           let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
         end
@@ -22,7 +22,7 @@ describe TaPolicy do
         end
       end
       context 'authorized with a submission' do
-        let(:context) { { role: role, real_user: role.end_user, submission: result.submission } }
+        let(:context) { { role: role, real_user: role.user, submission: result.submission } }
         failed 'with a released result' do
           let(:result) { create :released_result }
         end

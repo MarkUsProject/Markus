@@ -16,3 +16,8 @@ $(document).ready(function() {
     }
   });
 });
+
+document.getElementById('new_criterion').addEventListener('ajax:success', event => {
+  ajax_events.renderFlash(event, event.detail[2]);
+  $('#new_criterion').remove();
+})

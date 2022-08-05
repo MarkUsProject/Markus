@@ -1,0 +1,2 @@
+<% content_for :title, t('helpers.submit.create', model: User.model_name.human) %>
+<%= render partial: 'form', locals: { form_url: admin_users_path } %>

@@ -2,7 +2,7 @@ module Api
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionFilesController < MainApiController
-    include RepositoryHelper
+    include SubmissionsHelper
     # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
     # Requires: assignment_id, group_id
@@ -11,13 +11,13 @@ module Api
     #               latest revision will be sent instead
     #  - file_name: Name of the file, if absent all files will be downloaded
     def index
-      assignment = Assignment.find_by_id(params[:assignment_id])
-      group = Group.find_by_id(params[:group_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
+      group = Group.find_by(id: params[:group_id])
       grouping = group&.grouping_for_assignment(assignment.id)
       if group.nil? || grouping.nil?
         # No group exists with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No group exists with that id'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id' }, status: :not_found
         return
       end
 
@@ -29,7 +29,7 @@ module Api
       if params[:filename].present?
         path = File.dirname(params[:filename])
         file_name = File.basename(params[:filename])
-        path = path == '.' ? '/' : path
+        path = '/' if path == '.'
         grouping.access_repo do |repo|
           if params[:collected].present?
             revision_id = submission.revision_identifier
@@ -40,7 +40,7 @@ module Api
           file = revision.files_at_path(File.join(assignment.repository_folder, path))[file_name]
           if file.nil?
             render 'shared/http_status', locals: { code: '422', message:
-              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
             return
           end
           file_contents = repo.download_as_string(file)
@@ -56,7 +56,7 @@ module Api
         zip_path = Pathname.new('tmp') + zip_name
 
         ## delete the old file if it exists
-        File.delete(zip_path) if File.exist?(zip_path)
+        FileUtils.rm_f(zip_path)
 
         Zip::File.open(zip_path, create: true) do |zip_file|
           grouping.access_repo do |repo|
@@ -78,43 +78,7 @@ module Api
       grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       return page_not_found('No group with that id exists for the given assignment') if grouping.nil?
 
-      if has_missing_params?([:filename, :mime_type, :file_content])
-        # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
-        return
-      end
-
-      if params[:file_content].respond_to? :read # binary data
-        content = params[:file_content].read
-      else
-        content = params[:file_content]
-      end
-
-      tmpfile = Tempfile.new
-      begin
-        tmpfile.write(content)
-        tmpfile.rewind
-        file = ActionDispatch::Http::UploadedFile.new(tempfile: tmpfile,
-                                                      filename: params[:filename],
-                                                      type: params[:mime_type])
-        success, messages = grouping.access_repo do |repo|
-          path = Pathname.new(grouping.assignment.repository_folder)
-          add_file(file, current_role, repo, path: path)
-        end
-      ensure
-        tmpfile.close!
-      end
-      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
-      if success
-        # It worked, render success
-        message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '201', message: message }, status: 201
-      else
-        # Some other error occurred
-        message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
-      end
+      upload_file(grouping)
     end
 
     def create_folders
@@ -124,7 +88,7 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
       success, messages = grouping.access_repo do |repo|
@@ -136,11 +100,11 @@ module Api
       if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '201', message: message }, status: 201
+        render 'shared/http_status', locals: { code: '201', message: message }, status: :created
       else
         # Some other error occurred
         message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+        render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
       end
     end
 
@@ -151,7 +115,7 @@ module Api
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
 
@@ -164,11 +128,11 @@ module Api
       if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '200', message: message }, status: 200
+        render 'shared/http_status', locals: { code: '200', message: message }, status: :ok
       else
         # Some other error occurred
         message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+        render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
       end
     end
 
@@ -179,7 +143,7 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
       success, messages = grouping.access_repo do |repo|
@@ -191,11 +155,11 @@ module Api
       if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '200', message: message }, status: 200
+        render 'shared/http_status', locals: { code: '200', message: message }, status: :ok
       else
         # Some other error occurred
         message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+        render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
       end
     end
 

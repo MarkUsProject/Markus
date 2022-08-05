@@ -34,27 +34,23 @@ class ApplicationPolicy < ActionPolicy::Base
     role&.student?
   end
 
+  def view_admin_subtabs?
+    user&.admin_user?
+  end
+
   def view_sub_sub_tabs?
     role&.instructor? || role&.ta?
   end
 
   # checks usable for all policies
 
-  def admin_user?
-    real_user.admin_user?
-  end
+  delegate :admin_user?, to: :real_user
 
-  def instructor?
-    role.instructor?
-  end
+  delegate :instructor?, to: :role
 
-  def ta?
-    role.ta?
-  end
+  delegate :ta?, to: :role
 
-  def student?
-    role.student?
-  end
+  delegate :student?, to: :role
 
   def role_is_switched?
     real_user != user

@@ -1,6 +1,5 @@
 describe MemoryRepository do
   context 'writes to repository permissions file' do
-
     before :all do
       @repo_loc = 'mock_repo'
       @students = [:student1, :student2]

@@ -45,7 +45,7 @@ Config.setup do |config|
   config.env_parse_values = true
 
   # Validate presence and type of specific config values. Check https://github.com/dry-rb/dry-validation for details.
-  unless ENV.fetch('NO_SCHEMA_VALIDATE') { false }
+  unless ENV.fetch('NO_SCHEMA_VALIDATE', false)
     config.schema do
       required(:rails).hash do
         required(:time_zone).value(included_in?: ActiveSupport::TimeZone::MAPPING.keys)
@@ -104,13 +104,13 @@ Config.setup do |config|
         optional(:split_pdf_job).filled(:string)
         optional(:submissions_job).filled(:string)
         optional(:uncollect_submissions_job).filled(:string)
-        optional(:update_keys_job).filled(:string)
         optional(:update_repo_required_files_job).filled(:string)
         optional(:update_repo_permissions_job).filled(:string)
       end
       required(:redis).hash do
         required(:url).filled(:string)
       end
+      optional(:resque_scheduler).hash
       optional(:validate_file).filled(:string)
       optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
@@ -123,11 +123,13 @@ Config.setup do |config|
       optional(:student_csv_order).array(
         included_in?: %w[user_name last_name first_name section_name id_number email]
       )
+      optional(:end_user_csv_order).array(
+        included_in?: %w[user_name last_name first_name id_number email]
+      )
       required(:repository).hash do
         required(:storage).filled(:string)
         required(:type).value(included_in?: %w[git svn mem])
         required(:url).filled(:string)
-        optional(:markus_git_shell).filled(:string)
         optional(:ssh_url).filled(:string)
         required(:is_repository_admin).filled(:bool)
       end
@@ -162,7 +164,17 @@ Config.setup do |config|
       required(:python).hash do
         required(:bin).filled(:string)
       end
-      required(:pandoc).filled(:string)
+      required(:rails_performance).hash do
+        required(:enabled).filled(:bool)
+        optional(:duration).value(:integer, gt?: 0)
+      end
+      required(:exception_notification).hash do
+        required(:enabled).filled(:bool)
+        optional(:sender).filled(:string)
+        optional(:sender_display_name).filled(:string)
+        optional(:email_prefix).filled(:string)
+        optional(:recipients).array(:str?)
+      end
     end
   end
 end

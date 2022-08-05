@@ -1,6 +1,5 @@
 # Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
-
   has_many :annotation_categories
 
   before_destroy :reassign_annotation_category, prepend: true
@@ -13,14 +12,10 @@ class FlexibleCriterion < Criterion
     end
   end
 
-  def self.symbol
-    :flexible
-  end
-
   def update_assigned_groups_count
     result = []
     tas.each do |ta|
-      result = result.concat(ta.get_groupings_by_assignment(assignment))
+      result.concat(ta.get_groupings_by_assignment(assignment))
     end
     self.assigned_groups_count = result.uniq.length
   end
@@ -55,7 +50,7 @@ class FlexibleCriterion < Criterion
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     # Check that the maximum mark given is a valid number.
-    if criterion.max_mark.nil? or criterion.max_mark.zero?
+    if criterion.max_mark.nil? || criterion.max_mark.zero?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     # Only set the position if this is a new record.
@@ -101,13 +96,12 @@ class FlexibleCriterion < Criterion
   # Returns a hash containing the information of a single flexible criterion.
   def to_yml
     { self.name =>
-      { 'type'         => 'flexible',
-        'max_mark'     => self.max_mark.to_f,
-        'description'  => self.description.blank? ? '' : self.description,
-        'ta_visible'   => self.ta_visible,
+      { 'type' => 'flexible',
+        'max_mark' => self.max_mark.to_f,
+        'description' => self.description.presence || '',
+        'ta_visible' => self.ta_visible,
         'peer_visible' => self.peer_visible,
-        'bonus'        => self.bonus }
-    }
+        'bonus' => self.bonus } }
   end
 
   def weight

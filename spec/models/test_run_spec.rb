@@ -249,6 +249,7 @@ describe TestRun do
           expect { test_run.update_results!(results) }.to(change { criterion.reload.marks })
         end
         it 'should set criteria marks' do
+          criterion && assignment.ta_criteria.reload # Force ta_criterion to not be empty
           test_run.update_results!(results)
           expect(submission.results.first.total_mark).to eq 1
         end

@@ -40,12 +40,12 @@ describe AssessmentSectionProperties do
           @section = create(:section)
           AssessmentSectionProperties.create(section: @section,
                                              assessment: @assignment,
-                                             due_date: 1.days.from_now)
+                                             due_date: 1.day.from_now)
         end
 
         it 'returns the due date for the section of the assignment' do
           due_date = AssessmentSectionProperties.due_date_for(@section, @assignment)
-          expect(due_date.day).to eq 1.days.from_now.day
+          expect(due_date.day).to eq 1.day.from_now.day
         end
       end
     end

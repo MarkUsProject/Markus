@@ -1,13 +1,12 @@
 class SplitPdfJob < ApplicationJob
-
-  def self.on_complete_js(status)
+  def self.on_complete_js(_status)
     'window.location.reload.bind(window.location)'
   end
 
   def self.show_status(status)
     I18n.t('poll_job.split_pdf_job', progress: status[:progress],
-                            total: status[:total],
-                            exam_name: status[:exam_name])
+                                     total: status[:total],
+                                     exam_name: status[:exam_name])
   end
 
   before_enqueue do |job|
@@ -20,10 +19,8 @@ class SplitPdfJob < ApplicationJob
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
-      complete_dir = File.join(exam_template.base_path, 'complete')
-      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
-      FileUtils.mkdir_p error_dir unless Dir.exists? error_dir
-      FileUtils.mkdir_p raw_dir unless Dir.exists? raw_dir
+      FileUtils.mkdir_p error_dir
+      FileUtils.mkdir_p raw_dir
 
       filename = split_pdf_log.filename
 
@@ -42,7 +39,7 @@ class SplitPdfJob < ApplicationJob
         new_page = CombinePDF.new
         new_page << page
         new_page.save File.join(raw_dir, "#{split_page.id}.pdf")
-        original_pdf = File.open(File.join(raw_dir, "#{split_page.id}.pdf"), 'rb').read
+        original_pdf = File.binread(File.join(raw_dir, "#{split_page.id}.pdf"))
 
         # convert PDF to an image
         imglist = Magick::Image.from_blob(original_pdf) do
@@ -57,7 +54,7 @@ class SplitPdfJob < ApplicationJob
         qrcode_regex = /\A(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)\Z/
         left_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
         left_m = qrcode_regex.match left_qr_code_string
-        unless left_m.nil?
+        if !left_m.nil?
           m = left_m
         else # if parsing fails, try the top right corner of the PDF
           imglist.each do |img|
@@ -106,7 +103,7 @@ class SplitPdfJob < ApplicationJob
       )
 
       m_logger.log('Split pdf process done')
-      return split_pdf_log
+      split_pdf_log
     rescue StandardError => e
       # Clean tmp folder
       Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
@@ -115,7 +112,7 @@ class SplitPdfJob < ApplicationJob
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, filename=nil, split_pdf_log=nil)
+  def save_pages(exam_template, partial_exams, filename = nil, split_pdf_log = nil)
     return unless exam_template.course.instructors.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -142,10 +139,10 @@ class SplitPdfJob < ApplicationJob
 
       # Save raw pages
       if pages.length == exam_template.num_pages
-        destination = File.join complete_dir, "#{exam_num}"
+        destination = File.join complete_dir, exam_num.to_s
         num_complete += 1
       else
-        destination = File.join incomplete_dir, "#{exam_num}"
+        destination = File.join incomplete_dir, exam_num.to_s
       end
       FileUtils.mkdir_p destination
       pages.each do |page_num, page, raw_page_num|
@@ -159,13 +156,17 @@ class SplitPdfJob < ApplicationJob
           split_pdf_log: split_pdf_log
         )
         # if a page already exists, move the page to error directory instead of overwriting it
-        if File.exists?(File.join(destination, "#{page_num}.pdf"))
+        if File.exist?(File.join(destination, "#{page_num}.pdf"))
           new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
           # set status depending on whether parent directory of destination is complete or incomplete
-          status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
+          if File.dirname(destination) == complete_dir
+            status = 'Saved to complete directory'
+          else
+            status = 'Saved to incomplete directory'
+          end
         end
         # update status of page
         split_page.update(status: status)
@@ -183,7 +184,7 @@ class SplitPdfJob < ApplicationJob
               new_pdf << page
             end
           end
-          if File.exists? File.join(assignment_folder, "#{division.label}.pdf")
+          if File.exist? File.join(assignment_folder, "#{division.label}.pdf")
             txn.replace(File.join(assignment_folder,
                                   "#{division.label}.pdf"),
                         new_pdf.to_pdf,
@@ -212,28 +213,28 @@ class SplitPdfJob < ApplicationJob
         end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
 
-        if File.exists? File.join(assignment_folder, "EXTRA.pdf")
+        if File.exist? File.join(assignment_folder, 'EXTRA.pdf')
           txn.replace(File.join(assignment_folder,
-                                "EXTRA.pdf"),
+                                'EXTRA.pdf'),
                       extra_pdf.to_pdf,
                       'application/pdf')
         else
           txn.add(File.join(assignment_folder,
-                            "EXTRA.pdf"),
+                            'EXTRA.pdf'),
                   extra_pdf.to_pdf,
                   'application/pdf')
         end
 
-        if File.exists? File.join(assignment_folder, "COVER.pdf")
+        if File.exist? File.join(assignment_folder, 'COVER.pdf')
           txn.replace(File.join(assignment_folder,
-                                "COVER.pdf"),
+                                'COVER.pdf'),
                       cover_pdf.to_pdf,
                       'application/pdf')
         else
           txn.add(File.join(assignment_folder,
-                          "COVER.pdf"),
-                cover_pdf.to_pdf,
-                'application/pdf')
+                            'COVER.pdf'),
+                  cover_pdf.to_pdf,
+                  'application/pdf')
         end
         repo.commit(txn)
 
@@ -244,7 +245,7 @@ class SplitPdfJob < ApplicationJob
             self.quality = 100
             self.density = '300'
           end
-        rescue Exception
+        rescue StandardError
           next
         end
 
@@ -277,15 +278,13 @@ class SplitPdfJob < ApplicationJob
   # the first is the result of attempting to parse alphabetic characters, and the second is the result of
   # attempting to parse numeric digits.
   def match_student(parsed, exam_template)
-    return nil if parsed.size < 2
+    return if parsed.size < 2
 
     case exam_template.cover_fields
     when 'id_number'
-      Student.joins(:end_user).find_by('end_user.id_number': parsed[1])
+      Student.joins(:user).find_by('user.id_number': parsed[1])
     when 'user_name'
-      Student.joins(:end_user).find_by(EndUser.arel_table[:user_name].matches(parsed[0]))
-    else
-      nil
+      Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed[0]))
     end
   end
 
@@ -295,7 +294,7 @@ class SplitPdfJob < ApplicationJob
 
   def get_num_groups_in_dir(dir)
     num_groups_in_dir = 0
-    if Dir.exists?(dir)
+    if Dir.exist?(dir)
       Dir.foreach(dir) do |filename|
         if File.directory?(File.join(dir, filename)) && !filename.start_with?('.')
           num_groups_in_dir += 1

@@ -26,6 +26,17 @@ class CollectSubmissionsModal extends React.Component {
     this.setState({override: event.target.checked});
   };
 
+  warningText = () => {
+    let label_text = I18n.t("submissions.collect.results_loss_warning");
+    if (this.props.isScannedExam) {
+      label_text = label_text.concat(
+        " ",
+        I18n.t("submissions.collect.scanned_exam_latest_warning")
+      );
+    }
+    return label_text;
+  };
+
   render() {
     return (
       <Modal
@@ -36,7 +47,7 @@ class CollectSubmissionsModal extends React.Component {
         <h2>{I18n.t("submissions.collect.submit")}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
-            <p>{I18n.t("submissions.collect.results_loss_warning")}</p>
+            <p>{this.warningText()}</p>
             <p>
               <label>
                 <input type="checkbox" name="override" onChange={this.handleOverrideChange} />

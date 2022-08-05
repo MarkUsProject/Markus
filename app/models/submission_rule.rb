@@ -1,6 +1,5 @@
 class SubmissionRule < ApplicationRecord
-
-  class InvalidRuleType < Exception
+  class InvalidRuleType < RuntimeError
     def initialize(rule_name)
       super I18n.t('submission_rules.errors.not_valid_submission_rule', type: rule_name)
     end
@@ -11,7 +10,7 @@ class SubmissionRule < ApplicationRecord
   has_many :periods, dependent: :destroy, inverse_of: :submission_rule
   accepts_nested_attributes_for :periods, allow_destroy: true
   validates_associated :periods
-  validates_uniqueness_of :assignment
+  validates :assignment, uniqueness: true
 
   def self.descendants
     [NoLateSubmissionRule,
@@ -30,7 +29,7 @@ class SubmissionRule < ApplicationRecord
   end
 
   # Cache that allows us to quickly get collection time
-  def get_collection_time(section=nil)
+  def get_collection_time(section = nil)
     if section.nil?
       return @get_global_collection_time unless @get_global_collection_time.nil?
       @get_global_collection_time = calculate_collection_time
@@ -43,7 +42,7 @@ class SubmissionRule < ApplicationRecord
     end
   end
 
-  def calculate_collection_time(section=nil)
+  def calculate_collection_time(section = nil)
     assignment.section_due_date(section) + hours_sum.hours
   end
 
@@ -65,18 +64,18 @@ class SubmissionRule < ApplicationRecord
   # When we're past the due date, the File Manager for the students will display
   # a message to tell them that they're currently past the due date.
   def overtime_message(grouping)
-    raise NotImplementedError.new('SubmissionRule: overtime_message not implemented')
+    raise NotImplementedError
   end
 
   # Takes a Submission (with an attached Result), and based on the properties of
   # this SubmissionRule, applies penalties to the Result - for example, will
   # add an ExtraMark of a negative value, or perhaps add the use of a Grace Day.
   def apply_submission_rule(submission)
-    raise NotImplementedError.new('SubmissionRule:  apply_submission_rule not implemented')
+    raise NotImplementedError
   end
 
   def reset_collection_time
-    @get_collection_time = Array.new
+    @get_collection_time = []
     @get_global_collection_time = nil
     @can_collect_all_now = nil
   end
@@ -94,5 +93,4 @@ class SubmissionRule < ApplicationRecord
   def hours_sum
     0
   end
-
 end

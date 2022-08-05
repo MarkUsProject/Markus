@@ -6,7 +6,7 @@ en:
         cover_fields: Field to match by
         filename: Filename
         name: Name
-        num_pages: Number of pages
+        num_pages: pages
         template_divisions: Template Divisions
     models:
       exam_template:

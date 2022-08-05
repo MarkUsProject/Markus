@@ -1,6 +1,5 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-
   # A more robust flash method. Easier to add multiple messages of each type:
   # :error, :success, :warning and :notice
   def flash_message(type, text = '', flash_type = flash, **kwargs)
@@ -41,7 +40,7 @@ module ApplicationHelper
     extensions = { autolink: true }
     renderer = Redcarpet::Render::HTML.new(options)
     markdown = Redcarpet::Markdown.new(renderer, extensions)
-    return markdown.render(text).html_safe unless text.nil?
+    return sanitize markdown.render(text) unless text.nil?
   end
 
   def yield_content!(content_key)

@@ -27,8 +27,8 @@ describe AutotestSpecsJob do
       end
       it 'should set the body of the request' do
         rel_url_root = Rails.configuration.action_controller.relative_url_root
-        file_url = "http://localhost:3000#{rel_url_root}/api/courses/#{assignment.course.id}/"\
-                 "assignments/#{assignment.id}/test_files"
+        file_url = "http://localhost:3000#{rel_url_root}/api/courses/#{assignment.course.id}/" \
+                   "assignments/#{assignment.id}/test_files"
         expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj|
           expect(JSON.parse(net_obj.body).symbolize_keys).to eq(settings: {},
                                                                 file_url: file_url,
@@ -37,10 +37,10 @@ describe AutotestSpecsJob do
         end
         subject
       end
-      it 'should update the autotest_settings_id' do
+      it 'should update the remote_autotest_settings_id' do
         allow_any_instance_of(AutotestSpecsJob).to receive(:send_request!).and_return(dummy_return)
         subject
-        expect(assignment.autotest_settings_id).to eq 43
+        expect(assignment.remote_autotest_settings_id).to eq 43
       end
     end
 
@@ -48,10 +48,9 @@ describe AutotestSpecsJob do
       subject { described_class.perform_now(host_with_port, assignment) }
       before do
         allow(File).to receive(:read).and_return("123456789\n")
-        allow(File).to receive(:read).with(assignment.autotest_settings_file).and_return('{}')
       end
       context 'tests are set up for an assignment' do
-        let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
+        let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
         it 'should send an api request to the autotester' do
           expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj, uri|
             expect(net_obj.instance_of?(Net::HTTP::Put)).to be true

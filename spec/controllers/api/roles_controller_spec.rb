@@ -29,24 +29,17 @@ describe Api::RolesController do
     end
   end
   context 'An authenticated request' do
+    let!(:admin) { create :admin_role, course: course }
     let(:students) { create_list :student, 3, course: course }
-    before :each do
-      instructor.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
-    end
-    context 'GET index' do
-      context 'for a different course' do
-        it 'should return a 403 error' do
-          get :index, params: { course_id: create(:course).id }
-          expect(response.status).to eq(403)
-        end
-      end
-      context 'for a non-existant course' do
+
+    shared_examples 'get all users' do
+      context 'for a non-existent course' do
         it 'should return a 404 error' do
           get :index, params: { course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
+
       context 'expecting an xml response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/xml'
@@ -55,11 +48,6 @@ describe Api::RolesController do
         it 'should be successful' do
           get :index, params: { course_id: course.id }
           expect(response.status).to eq(200)
-        end
-        it 'should return info about all the users' do
-          get :index, params: { course_id: course.id }
-          user_names = Hash.from_xml(response.body).dig('roles', 'role').map { |h| h['user_name'] }
-          expect(user_names).to contain_exactly(*User.all.pluck(:user_name))
         end
         it 'should return info about a single user if a filter is used' do
           get :index, params: { filter: { user_name: students[0].user_name }, course_id: course.id }
@@ -72,6 +60,7 @@ describe Api::RolesController do
           expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::RolesController::DEFAULT_FIELDS)
         end
       end
+
       context 'expecting an json response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/json'
@@ -80,10 +69,6 @@ describe Api::RolesController do
         it 'should be successful' do
           get :index, params: { course_id: course.id }
           expect(response.status).to eq(200)
-        end
-        it 'should return info about all the users' do
-          get :index, params: { course_id: course.id }
-          expect(JSON.parse(response.body).map { |h| h['user_name'] }).to contain_exactly(*User.all.pluck(:user_name))
         end
         it 'should return info about a single user if a filter is used' do
           get :index, params: { filter: { user_name: students[0].user_name }, course_id: course.id }
@@ -96,20 +81,15 @@ describe Api::RolesController do
         end
       end
     end
-    context 'GET show' do
-      context 'for a different course' do
-        let(:student) { create :student, course: create(:course) }
-        it 'should return a 403 error' do
-          get :index, params: { course_id: student.course_id }
-          expect(response.status).to eq(403)
-        end
-      end
+
+    shared_examples 'finding a user' do
       context 'for a non-existant course' do
         it 'should return a 404 error' do
-          get :index, params: { id: students[0].id, course_id: Course.ids.max + 1 }
+          get :show, params: { id: students[0].id, course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
+
       context 'expecting an xml response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/xml'
@@ -121,14 +101,15 @@ describe Api::RolesController do
         end
         it 'should return info about the user' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          expect(Hash.from_xml(response.body).dig('role')['user_name']).to eq(students[0].user_name)
+          expect(Hash.from_xml(response.body)['role']['user_name']).to eq(students[0].user_name)
         end
         it 'should return all information in the default fields' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          info = Hash.from_xml(response.body).dig('role')
+          info = Hash.from_xml(response.body)['role']
           expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::RolesController::DEFAULT_FIELDS)
         end
       end
+
       context 'expecting an json response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/json'
@@ -148,32 +129,30 @@ describe Api::RolesController do
         end
       end
     end
+
     shared_examples 'creating' do |method|
       let(:end_user) { create :end_user }
-      let(:student) { build :student, end_user: end_user, course: course }
+      let(:student) { build :student, user: end_user, course: course }
       let(:user_name) { student.user_name }
       let(:type) { student.type }
       let(:first_name) { student.first_name }
       let(:last_name) { student.last_name }
-      context 'for a different course' do
-        it 'should return a 403 error' do
-          post method, params: { user_name: user_name, type: type, course_id: create(:course).id }
-          expect(response.status).to eq(403)
-        end
-      end
+
       context 'for a non-existant course' do
         it 'should return a 404 error' do
           post method, params: { user_name: user_name, type: type, course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
+
       context 'for the same course' do
         let(:other_params) { {} }
         before :each do
           post method, params: { user_name: user_name, type: type, course_id: course.id, **other_params }
         end
-        context 'when creating a new user' do
-          let(:created_student) { Student.joins(:end_user).where('users.user_name': student.user_name).first }
+
+        context 'when creating a new student' do
+          let(:created_student) { Student.joins(:user).where('users.user_name': student.user_name).first }
           it 'should be successful' do
             expect(response.status).to eq(201)
           end
@@ -194,12 +173,14 @@ describe Api::RolesController do
             end
           end
         end
+
         context 'when creating a student with an invalid user_name' do
           let(:user_name) { 'a!!' }
           it 'should raise a 422 error' do
             expect(response.status).to eq(422)
           end
         end
+
         context 'when creating a student with an invalid type' do
           let(:type) { 'Dragon' }
           it 'should raise a 422 error' do
@@ -208,42 +189,18 @@ describe Api::RolesController do
         end
       end
     end
-    context 'PUT create_or_unhide' do
-      it_behaves_like 'creating', :create_or_unhide
-      context 'when trying to create a user who already exists' do
-        it 'should unhide the user' do
-          student = create :student, course: course, hidden: true
-          post :create_or_unhide, params: { user_name: student.user_name, type: :student, course_id: course.id }
-          expect(student.reload.hidden).to be false
-        end
-      end
-    end
-    context 'POST create' do
-      it_behaves_like 'creating', :create
-      context 'when trying to create a user who already exists' do
-        it 'should raise a 422 error' do
-          student = create :student, course: course
-          post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
-          expect(response.status).to eq(422)
-        end
-      end
-    end
-    context 'PUT update' do
+
+    shared_examples 'updating' do
       let(:student) { create :student, course: course, hidden: false }
       let(:tmp_student) { build :student, course: course }
-      context 'for a different course' do
-        let(:student) { create :student, course: create(:course) }
-        it 'should return a 403 error' do
-          put :update, params: { id: student.id, course_id: student.course_id }
-          expect(response.status).to eq(403)
-        end
-      end
+
       context 'for a non-existant course' do
         it 'should return a 404 error' do
           put :update, params: { id: student.id, course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
+
       context 'when updating an existing user' do
         it 'should not update a user name' do
           put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
@@ -284,10 +241,313 @@ describe Api::RolesController do
           expect(student.hidden).to eq(true)
         end
       end
+
       context 'when updating a user that does not exist' do
         it 'should raise a 404 error' do
           put :update, params: { id: student.id + 1, user_name: tmp_student.user_name, course_id: course.id }
           expect(response.status).to eq(404)
+        end
+      end
+    end
+
+    context 'As an instructor' do
+      before :each do
+        instructor.reset_api_key
+        request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
+      end
+
+      context 'GET index' do
+        include_examples 'get all users'
+
+        context 'for a different course' do
+          it 'should return a 403 error' do
+            get :index, params: { course_id: create(:course).id }
+            expect(response.status).to eq(403)
+          end
+        end
+
+        it 'xml response returns info about all users except admins' do
+          students
+          request.env['HTTP_ACCEPT'] = 'application/xml'
+          get :index, params: { course_id: course.id }
+          user_names = Hash.from_xml(response.body).dig('roles', 'role').map { |h| h['user_name'] }
+          expect(user_names).to contain_exactly(*User.where.not(type: AdminUser.name).pluck(:user_name))
+        end
+        it 'json response returns info about all users except admins' do
+          students
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :index, params: { course_id: course.id }
+          expect(JSON.parse(response.body).map { |h| h['user_name'] }).to contain_exactly(
+            *User.where
+                 .not(type: AdminUser.name)
+                 .pluck(:user_name)
+          )
+        end
+      end
+
+      context 'GET show' do
+        include_examples 'finding a user'
+
+        context 'for a different course' do
+          let(:student) { create :student, course: create(:course) }
+          it 'should return a 403 error' do
+            get :show, params: { id: student.id, course_id: student.course_id }
+            expect(response.status).to eq(403)
+          end
+        end
+
+        context 'an admin' do
+          it 'xml response is not successful' do
+            get :show, format: 'xml', params: { id: admin.id, course_id: course.id }
+            expect(response).to have_http_status(403)
+          end
+          it 'json response is not successful' do
+            get :show, format: 'json', params: { id: admin.id, course_id: course.id }
+            expect(response).to have_http_status(403)
+          end
+        end
+      end
+
+      context 'PUT create_or_unhide' do
+        it_behaves_like 'creating', :create_or_unhide
+        context 'for a different course' do
+          it 'should return a 403 error' do
+            student = build :student, course: course
+            post :create_or_unhide, params: { user_name: student.user_name,
+                                              type: student.type,
+                                              course_id: create(:course).id }
+            expect(response.status).to eq(403)
+          end
+        end
+
+        context 'when trying to create a user who already exists' do
+          it 'should unhide the user' do
+            student = create :student, course: course, hidden: true
+            post :create_or_unhide, params: { user_name: student.user_name, type: :student, course_id: course.id }
+            expect(student.reload.hidden).to be false
+          end
+        end
+
+        context 'when trying to create an admin who already exists' do
+          it 'returns a 403 error' do
+            admin = create :admin_role, course: course, hidden: true
+            post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
+            expect(response).to have_http_status(403)
+          end
+          it 'does not unhide the admin' do
+            admin = create :admin_role, course: course, hidden: true
+            post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
+            expect(admin.reload.hidden).to be true
+          end
+        end
+
+        context 'when trying to create a new admin' do
+          it 'returns a 403 error' do
+            admin_user = create :admin_user
+            post :create_or_unhide, params: { user_name: admin_user.user_name,
+                                              last_name: admin_user.last_name,
+                                              first_name: admin_user.first_name,
+                                              type: AdminRole.name,
+                                              course_id: course.id }
+            expect(response).to have_http_status(403)
+          end
+        end
+      end
+
+      context 'POST create' do
+        it_behaves_like 'creating', :create
+
+        context 'for a different course' do
+          it 'should return a 403 error' do
+            student = build :student, course: course
+            post :create, params: { user_name: student.user_name,
+                                    type: student.type,
+                                    course_id: create(:course).id }
+            expect(response.status).to eq(403)
+          end
+        end
+
+        context 'when trying to create a user who already exists' do
+          it 'should raise a 422 error' do
+            student = create :student, course: course
+            post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
+            expect(response.status).to eq(422)
+          end
+        end
+
+        context 'when trying to create a new admin' do
+          it 'returns a 403 error' do
+            admin_user = create :admin_user
+            post :create, params: { user_name: admin_user.user_name,
+                                    last_name: admin_user.last_name,
+                                    first_name: admin_user.first_name,
+                                    type: AdminRole.name,
+                                    course_id: course.id }
+            expect(response).to have_http_status(403)
+          end
+        end
+      end
+
+      context 'PUT update' do
+        include_examples 'updating'
+
+        context 'for a different course' do
+          let(:student) { create :student, course: create(:course) }
+          it 'should return a 403 error' do
+            put :update, params: { id: student.id, course_id: student.course_id }
+            expect(response.status).to eq(403)
+          end
+        end
+
+        context 'updating an admin' do
+          let(:admin) { create :admin_role, hidden: false, course: course }
+          it 'returns a 403 error' do
+            put :update, params: { id: admin.id, hidden: true, course_id: course.id }
+            expect(response).to have_http_status(403)
+          end
+          it 'does not update the admin' do
+            put :update, params: { id: admin.id, hidden: true, course_id: course.id }
+            admin.reload
+            expect(admin.hidden).to eq(false)
+          end
+        end
+      end
+    end
+
+    context 'As an admin' do
+      before :each do
+        admin.reset_api_key
+        request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
+      end
+
+      context 'GET index' do
+        include_examples 'get all users'
+
+        it 'xml response returns info about all users' do
+          students
+          request.env['HTTP_ACCEPT'] = 'application/xml'
+          get :index, params: { course_id: course.id }
+          user_names = Hash.from_xml(response.body).dig('roles', 'role').map { |h| h['user_name'] }
+          expect(user_names).to contain_exactly(*User.all.pluck(:user_name))
+        end
+        it 'json response returns info about all users' do
+          students
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :index, params: { course_id: course.id }
+          expect(JSON.parse(response.body).map { |h| h['user_name'] }).to contain_exactly(*User.all.pluck(:user_name))
+        end
+      end
+
+      context 'GET show' do
+        include_examples 'finding a user'
+
+        context 'an admin' do
+          it 'xml response is successful' do
+            get :show, format: 'xml', params: { id: admin.id, course_id: course.id }
+            expect(response).to have_http_status(200)
+          end
+          it 'json response is successful' do
+            get :show, format: 'json', params: { id: admin.id, course_id: course.id }
+            expect(response).to have_http_status(200)
+          end
+        end
+      end
+
+      context 'PUT create_or_unhide' do
+        it_behaves_like 'creating', :create_or_unhide
+
+        context 'when trying to create a user who already exists' do
+          it 'should unhide the user' do
+            student = create :student, course: course, hidden: true
+            post :create_or_unhide, params: { user_name: student.user_name, type: :student, course_id: course.id }
+            expect(student.reload.hidden).to be false
+          end
+        end
+
+        context 'when trying to create an admin who already exists' do
+          it 'is successful' do
+            admin = create :admin_role, course: course, hidden: true
+            post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
+            expect(response).to have_http_status(200)
+          end
+          it 'unhides the admin' do
+            admin = create :admin_role, course: course, hidden: true
+            post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
+            expect(admin.reload.hidden).to be false
+          end
+        end
+
+        context 'when trying to create a new admin' do
+          it 'is successful' do
+            admin_user = create :admin_user
+            post :create_or_unhide, params: { user_name: admin_user.user_name,
+                                              last_name: admin_user.last_name,
+                                              first_name: admin_user.first_name,
+                                              type: AdminRole.name,
+                                              course_id: course.id }
+            expect(response).to have_http_status(201)
+          end
+          it 'creates a new admin role' do
+            admin_user = create :admin_user
+            post :create_or_unhide, params: { user_name: admin_user.user_name,
+                                              last_name: admin_user.last_name,
+                                              first_name: admin_user.first_name,
+                                              type: AdminRole.name,
+                                              course_id: course.id }
+            admin_role = Role.find_by(user: admin_user, course: course)
+            expect(admin_role).not_to be_nil
+          end
+        end
+      end
+
+      context 'POST create' do
+        it_behaves_like 'creating', :create
+
+        context 'when trying to create a user who already exists' do
+          it 'should raise a 422 error' do
+            student = create :student, course: course
+            post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
+            expect(response.status).to eq(422)
+          end
+        end
+
+        context 'when trying to create a new admin' do
+          it 'is successful' do
+            admin_user = create :admin_user
+            post :create, params: { user_name: admin_user.user_name,
+                                    last_name: admin_user.last_name,
+                                    first_name: admin_user.first_name,
+                                    type: AdminRole.name,
+                                    course_id: course.id }
+            expect(response).to have_http_status(201)
+          end
+          it 'creates a new admin role' do
+            admin_user = create :admin_user
+            post :create, params: { user_name: admin_user.user_name,
+                                    last_name: admin_user.last_name,
+                                    first_name: admin_user.first_name,
+                                    type: AdminRole.name,
+                                    course_id: course.id }
+            admin_role = Role.find_by(user: admin_user, course: course)
+            expect(admin_role).not_to be_nil
+          end
+        end
+      end
+
+      context 'PUT update' do
+        include_examples 'updating'
+
+        context 'updating an admin' do
+          let(:admin) { create :admin_role, hidden: false, course: course }
+          it 'is successful' do
+            put :update, params: { id: admin.id, hidden: true, course_id: course.id }
+            expect(response).to have_http_status(200)
+          end
+          it 'updates the admin' do
+            put :update, params: { id: admin.id, hidden: true, course_id: course.id }
+            admin.reload
+            expect(admin.hidden).to eq(true)
+          end
         end
       end
     end

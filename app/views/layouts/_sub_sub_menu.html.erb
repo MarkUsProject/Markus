@@ -22,6 +22,14 @@
               <%= link_to t('menu.properties'), edit_course_assignment_path(@current_course, @assignment) %>
             </li>
           <% end %>
+          <% if @assignment.scanned_exam? %>
+            <% if allowed_to?(:manage?, with: ExamTemplatePolicy) %>
+              <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
+                <%= link_to ExamTemplate.model_name.human.pluralize,
+                            course_assignment_exam_templates_path(@current_course, @assignment) %>
+              </li>
+            <% end %>
+          <% end %>
           <% if allowed_to?(:manage?, with: TagPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'tags' %>'>
               <%= link_to Tag.model_name.human.pluralize,
@@ -55,14 +63,6 @@
               <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
                 <%= link_to t('automated_tests.title'),
                             manage_course_assignment_automated_tests_path(@current_course, @assignment) %>
-              </li>
-            <% end %>
-          <% end %>
-          <% if @assignment.scanned_exam? %>
-            <% if allowed_to?(:manage?, with: ExamTemplatePolicy) %>
-              <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
-                <%= link_to ExamTemplate.model_name.human.pluralize,
-                            course_assignment_exam_templates_path(@current_course, @assignment) %>
               </li>
             <% end %>
           <% end %>

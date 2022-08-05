@@ -5,36 +5,24 @@
   <%# TODO: show this through flash messages properly. %>
   <%= exam_template.errors.full_messages.empty? ? '' : exam_template.errors.full_messages.empty? %>
 
-  <div class='float-right'>
-    <%= link_to t('exam_templates.download'), download_course_exam_template_path(@current_course, exam_template),
-                class: 'button' %>
-    <%= link_to t('exam_templates.delete.general'),
-                [@current_course, exam_template],
-                method: :delete,
-                class: 'button',
-                data: { confirm: t('exam_templates.delete.confirm', name: exam_template.name) } %>
-  </div>
-
-  <div class='inline-labels'>
-    <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
-    <%= f.text_field :name %>
-    <span class="label">
-      <%= t('key_pairs.file') %>
-    </span>
-    <span>
-      <%= link_to exam_template.filename, download_course_exam_template_path(@current_course, exam_template) %>
-    </span>
-
-    <%= f.label :new_template, t('exam_templates.update.instruction') %>
-    <%= f.file_field :new_template %>
-
-    <span class="label"><%= ExamTemplate.human_attribute_name('num_pages') %></span>
-    <span><%= exam_template.num_pages %></span>
-  </div>
-
-  <hr>
-
   <div class='exam-template-section'>
+    <div class='inline-labels'>
+      <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
+      <%= f.text_field :name %>
+      <span class="label">
+        <%= t('key_pairs.file') %>
+      </span>
+      <span>
+        <%= link_to exam_template.filename, download_course_exam_template_path(@current_course, exam_template) %>
+        <%= " (#{exam_template.num_pages} #{ExamTemplate.human_attribute_name('num_pages')})" %>
+      </span>
+
+      <%= f.label :new_template, t('exam_templates.update.instruction') %>
+      <%= f.file_field :new_template %>
+    </div>
+
+    <br>
+
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
     <p><%= t('grade_entry_forms.required_fields_html') %></p>
     <%= render partial: 'template_division_pane',

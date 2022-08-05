@@ -1,6 +1,6 @@
 import React from "react";
 import {FileViewer} from "./file_viewer";
-import {lookup} from "mime-types";
+import {getType} from "mime/lite";
 
 export class FeedbackFilePanel extends React.Component {
   constructor(props) {
@@ -64,20 +64,22 @@ export class FeedbackFilePanel extends React.Component {
       file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
     }
 
-    return [
-      <div className="react-tabs-panel-action-bar" key={"feedback-file-actionbar"}>
-        <div>{feedbackSelector}</div>
-      </div>,
-      <div id="feedback_file_content" key={"feedback-file-view"}>
-        <FileViewer
-          assignment_id={this.props.assignment_id}
-          submission_id={this.props.submission_id}
-          selectedFile={file_obj.filename}
-          selectedFileURL={url}
-          mime_type={lookup(file_obj.filename)}
-          selectedFileType={file_obj.type}
-        />
-      </div>,
-    ];
+    return (
+      <React.Fragment>
+        <div className="react-tabs-panel-action-bar" key={"feedback-file-actionbar"}>
+          <div>{feedbackSelector}</div>
+        </div>
+        <div id="feedback_file_content" key={"feedback-file-view"}>
+          <FileViewer
+            assignment_id={this.props.assignment_id}
+            submission_id={this.props.submission_id}
+            selectedFile={file_obj.filename}
+            selectedFileURL={url}
+            mime_type={getType(file_obj.filename)}
+            selectedFileType={file_obj.type}
+          />
+        </div>
+      </React.Fragment>
+    );
   }
 }

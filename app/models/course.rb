@@ -11,16 +11,18 @@ class Course < ApplicationRecord
   has_many :students
   has_many :marking_schemes
   has_many :tags, through: :roles
+  has_many :exam_templates, through: :assignments
   belongs_to :autotest_setting, optional: true
 
-  validates_presence_of :name
-  validates_uniqueness_of :name
+  validates :name, presence: true
+  validates :name, uniqueness: true
   validates :name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                             message: 'name must only contain alphanumeric, hyphen, or '\
+                             message: 'name must only contain alphanumeric, hyphen, or ' \
                                       'underscore' }
 
   # Note rails provides built-in sanitization via active record.
-  validates_presence_of :display_name
+  validates :display_name, presence: true
+  validates :is_hidden, inclusion: { in: [true, false] }
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
@@ -31,7 +33,7 @@ class Course < ApplicationRecord
       map[:assignments] = assignments.map do |assignment|
         m = {}
         Assignment::DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
+          m[f] = assignment.public_send(f)
         end
         m
       end
@@ -39,7 +41,7 @@ class Course < ApplicationRecord
     when 'csv'
       MarkusCsv.generate(assignments) do |assignment|
         Assignment::DEFAULT_FIELDS.map do |f|
-          assignment.send(f)
+          assignment.public_send(f)
         end
       end
     end
@@ -48,9 +50,9 @@ class Course < ApplicationRecord
   def upload_assignment_list(file_format, assignment_data)
     case file_format
     when 'csv'
-      result = MarkusCsv.parse(assignment_data) do |row|
+      MarkusCsv.parse(assignment_data) do |row|
         assignment = self.assignments.find_or_create_by(short_identifier: row[0])
-        attrs = Hash[Assignment::DEFAULT_FIELDS.zip(row)]
+        attrs = Assignment::DEFAULT_FIELDS.zip(row).to_h
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
           assignment.assignment_properties.repository_folder = row[0]
@@ -60,7 +62,7 @@ class Course < ApplicationRecord
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
       end
-      result
+
     when 'yml'
       begin
         map = assignment_data.deep_symbolize_keys
@@ -115,7 +117,34 @@ class Course < ApplicationRecord
     autotest_setting = AutotestSetting.find_or_create_by!(url: url)
     if autotest_setting.id != self.autotest_setting&.id
       self.update!(autotest_setting_id: autotest_setting.id)
-      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(autotest_settings_id: nil)
+      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
     end
+  end
+
+  def export_student_data_csv
+    students = self.students.joins(:user).order('users.user_name').includes(:section)
+    MarkusCsv.generate(students) do |student|
+      Student::CSV_ORDER.map do |field|
+        if field == :section_name
+          student.section&.name
+        else
+          student.public_send(field)
+        end
+      end
+    end
+  end
+
+  def export_student_data_yml
+    output = []
+    students = self.students.joins(:user).order('users.user_name').includes(:section)
+    students.each do |student|
+      output.push(user_name: student.user_name,
+                  last_name: student.last_name,
+                  first_name: student.first_name,
+                  email: student.email,
+                  id_number: student.id_number,
+                  section_name: student.section&.name)
+    end
+    output.to_yaml
   end
 end

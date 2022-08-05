@@ -8,7 +8,7 @@ class StudentsController < ApplicationController
   def index
     respond_to do |format|
       format.html
-      format.json {
+      format.json do
         student_data = current_course.students.includes(:grace_period_deductions, :section).map do |s|
           {
             _id: s.id,
@@ -23,7 +23,7 @@ class StudentsController < ApplicationController
             remaining_grace_credits: s.remaining_grace_credits
           }
         end
-        sections = Hash[current_course.sections.pluck(:id, :name)]
+        sections = current_course.sections.pluck(:id, :name).to_h
         render json: {
           students: student_data,
           sections: sections,
@@ -33,7 +33,7 @@ class StudentsController < ApplicationController
             inactive: current_course.students.inactive.size
           }
         }
-      }
+      end
     end
   end
 
@@ -52,7 +52,7 @@ class StudentsController < ApplicationController
   def bulk_modify
     student_ids = params[:student_ids].map(&:to_i)&.intersection(current_course.students.ids)
     begin
-      if student_ids.nil? || student_ids.empty?
+      if student_ids.blank?
         raise I18n.t('students.no_students_selected')
       end
       case params[:bulk_action]
@@ -69,7 +69,7 @@ class StudentsController < ApplicationController
       head :ok
     rescue RuntimeError => e
       flash_now(:error, e.message)
-      head 500
+      head :internal_server_error
     end
   end
 
@@ -79,8 +79,8 @@ class StudentsController < ApplicationController
   end
 
   def create
-    end_user = EndUser.find_by_user_name(params[:role][:end_user][:user_name])
-    @role = current_course.students.create(end_user: end_user, **role_params)
+    user = EndUser.find_by(user_name: params[:role][:end_user][:user_name])
+    @role = current_course.students.create(user: user, **role_params)
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(current_course)
   end
@@ -89,40 +89,19 @@ class StudentsController < ApplicationController
   # triggered by clicking on the "add a new section" link in the new student page
   # please keep.
   def add_new_section
-     @section = Section.new
+    @section = Section.new
   end
 
   def download
-    students = current_course.students.joins(:end_user).order('users.user_name').includes(:section)
     case params[:format]
-      when 'csv'
-        output = MarkusCsv.generate(students) do |student|
-          Student::CSV_ORDER.map do |field|
-            if field == :section_name
-              student.section&.name
-            else
-              student.send(field)
-            end
-          end
-        end
-        format = 'text/csv'
-      else
-        output = []
-        students.each do |student|
-          output.push(user_name: student.user_name,
-                      last_name: student.last_name,
-                      first_name: student.first_name,
-                      email: student.email,
-                      id_number: student.id_number,
-                      section_name: student.section&.name)
-        end
-        output = output.to_yaml
-        format = 'text/yaml'
+    when 'csv'
+      output = current_course.export_student_data_csv
+      format = 'text/csv'
+    else
+      output = current_course.export_student_data_yml
+      format = 'text/yaml'
     end
-    send_data(output,
-              type: format,
-              filename: "student_list.#{params[:format]}",
-              disposition: 'attachment')
+    send_data(output, type: format, filename: "student_list.#{params[:format]}", disposition: 'attachment')
   end
 
   def upload
@@ -171,7 +150,7 @@ class StudentsController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @role.end_user&.user_name.blank? ? @role.model_name.human : @role.user_name,
+    { resource_name: @role.user&.user_name.blank? ? @role.model_name.human : @role.user_name,
       errors: @role.errors.full_messages.join('; ') }
   end
 end

@@ -82,10 +82,12 @@
                     PeerReview.model_name.human.pluralize : Submission.model_name.human.pluralize,
                   browse_course_assignment_submissions_path(@current_course, target_id) %>
     </li>
-    <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
-      <%= link_to t('results.summary'),
-                  summary_course_assignment_path(@current_course, target_id) %>
-    </li>
+    <% if assessment.is_a?(Assignment) && !assessment.is_peer_review? %>
+      <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
+        <%= link_to t('results.summary'),
+                    summary_course_assignment_path(@current_course, target_id) %>
+      </li>
+    <% end %>
     <% if allowed_to?(:view_test_options?, assessment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
         <%= link_to t('automated_tests.test_runs_status'),

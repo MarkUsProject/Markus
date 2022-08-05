@@ -1,7 +1,6 @@
 namespace :db do
-
   desc 'Create Rubric for assignments'
-  task :rubric => :environment do
+  task rubric: :environment do
     puts 'Add Rubric To Assignments'
     require 'faker'
     I18n.reload!
@@ -25,7 +24,7 @@ namespace :db do
                                        position: index + 1,
                                        annotation_category_name: random_words(3))
 
-        (rand(10) + 3).times do
+        rand(3..12).times do
           AnnotationText.create(annotation_category: ac,
                                 content: random_sentences(3),
                                 creator: Instructor.first,
@@ -48,11 +47,11 @@ namespace :db do
 
       3.times do |index|
         FlexibleCriterion.create(
-          name:                    names[3 + index],
-          assessment_id:           assignment.id,
-          description:             random_sentences(5),
-          position:                index + 4,
-          max_mark:                pos_rand(3)
+          name: names[3 + index],
+          assessment_id: assignment.id,
+          description: random_sentences(5),
+          position: index + 4,
+          max_mark: pos_rand(3)
         )
       end
       criterion = assignment.criteria.where(type: 'FlexibleCriterion').first
@@ -83,11 +82,11 @@ namespace :db do
 
       3.times do |index|
         CheckboxCriterion.create(
-          name:                    names[6 + index],
-          assessment_id:           assignment.id,
-          description:             random_sentences(5),
-          position:                index + 7,
-          max_mark:                1
+          name: names[6 + index],
+          assessment_id: assignment.id,
+          description: random_sentences(5),
+          position: index + 7,
+          max_mark: 1
         )
       end
     end

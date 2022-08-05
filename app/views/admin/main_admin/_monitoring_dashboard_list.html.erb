@@ -1,0 +1,20 @@
+<div class='table'>
+  <table>
+    <thead>
+    <tr>
+      <th><%= t('menu.dashboard') %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @dashboards.each do |dashboard| %>
+      <tr>
+        <td>
+          <div class="dashboard-item">
+            <%= link_to dashboard[:name], dashboard[:path], target: :_blank, rel: 'noopener' %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

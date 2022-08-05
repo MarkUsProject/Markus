@@ -1,8 +1,6 @@
-
 # Controller responsible for providing login and logout processes
 # as well as displaying main page
 class MainController < ApplicationController
-
   include ApplicationHelper
 
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
@@ -23,10 +21,16 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      if allowed_to?(:role_is_switched?)
+      if session[:lti_deployment_id].present?
+        redirect_to set_lti_user_association
+        return
+      end
+      if @real_user.admin_user?
+        redirect_to(admin_path)
+      elsif allowed_to?(:role_is_switched?)
         redirect_to course_assignments_path(session[:role_switch_course_id])
       else
-        redirect_to controller: 'courses', action: 'index'
+        redirect_to(courses_path)
       end
       return
     end
@@ -50,24 +54,35 @@ class MainController < ApplicationController
 
     session[:auth_type] = 'local'
 
-    found_user = EndUser.find_by_user_name(params[:user_login])
-    if found_user.nil?
+    found_user = User.find_by(user_name: params[:user_login])
+    if found_user.nil? || !(found_user.admin_user? || found_user.end_user?)
       flash_now(:error, Settings.validate_user_not_allowed_message || I18n.t('main.login_failed'))
       render :login, locals: { user_login: params[:user_login] }
       return
     end
 
     self.real_user = found_user
+
     uri = session[:redirect_uri]
     session[:redirect_uri] = nil
     refresh_timeout
+    if session[:lti_deployment_id].present?
+      redirect_to set_lti_user_association
+      return
+    end
     # redirect to last visited page or to main page
-    redirect_to(uri || { controller: 'courses', action: 'index' })
+    if uri.present?
+      redirect_to(uri)
+    elsif found_user.admin_user?
+      redirect_to(admin_path)
+    else
+      redirect_to(courses_path)
+    end
   end
 
   def login_remote_auth
     session[:auth_type] = 'remote'
-    redirect_to Settings.remote_auth_login_url
+    redirect_to Settings.remote_auth_login_url, allow_other_host: true
   end
 
   # Clear the sesssion for current user and redirect to login page
@@ -93,7 +108,7 @@ class MainController < ApplicationController
 
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
-  def page_not_found
+  def page_not_found # rubocop:disable Lint/UselessMethodDefinition
     super
   end
 
@@ -104,6 +119,20 @@ class MainController < ApplicationController
   def refresh_session
     refresh_timeout
     head :ok
+  end
+
+  def set_lti_user_association
+    if session[:lti_user_id].present?
+      LtiUser.find_or_create_by(user: @real_user, lti_client: LtiClient.find(session[:lti_client_id]),
+                                lti_user_id: session[:lti_user_id])
+    end
+    lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+    if lti_deployment.course.nil?
+      # Redirect to course picker page
+      lti_deployment_choose_course_path
+    else
+      course_path(lti_deployment.course)
+    end
   end
 
   private

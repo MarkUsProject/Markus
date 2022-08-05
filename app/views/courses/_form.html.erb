@@ -1,0 +1,31 @@
+<%= form_with model: @current_course,
+              url: form_url,
+              local: true do |f| %>
+  <div class="inline-labels">
+    <%= f.label :name,
+                Course.human_attribute_name(:name),
+                class: 'required' %>
+    <%= f.text_field :name,
+                     size: 35,
+                     required: true,
+                     readonly: !@current_course.new_record? %>
+    <%= f.label :display_name,
+                Course.human_attribute_name(:display_name),
+                class: 'required' %>
+    <%= f.text_field :display_name,
+                     size: 35,
+                     required: true,
+                     readonly: !allowed_to?(:edit?) %>
+    <%= f.label :is_hidden, Course.human_attribute_name(:is_hidden) %>
+    <span>
+      <%= f.label :is_hidden, I18n.t('courses.hidden'), value: 'true' %>
+      <%= f.radio_button :is_hidden, true %>
+      <%= f.label :is_hidden, I18n.t('courses.visible'),  value: 'false' %>
+      <%= f.radio_button :is_hidden, false %>
+    </span>
+  </div>
+  <p>
+    <%= f.submit t(:save),
+                 data: { disable_with: t('working') } %>
+  </p>
+<% end %>

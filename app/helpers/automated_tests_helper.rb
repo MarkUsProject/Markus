@@ -1,8 +1,8 @@
+require 'net/http'
+
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_identifiers = assignment.ta_criteria.map do |c|
-      [c.name, "#{c.type}:#{c.name}"]
-    end.transpose
+    criterion_names = assignment.ta_criteria.order(:name).pluck(:name)
     { type: :object,
       properties: {
         name: {
@@ -19,8 +19,8 @@ module AutomatedTestsHelper
         },
         criterion: {
           type: :string,
-          enum: criterion_identifiers || [],
-          enumNames: criterion_names || [],
+          enum: criterion_names,
+          enumNames: criterion_names,
           title: Criterion.model_name.human
         }
       },
@@ -34,52 +34,60 @@ module AutomatedTestsHelper
     schema_data
   end
 
+  def autotest_settings_for(assignment)
+    test_specs = assignment.autotest_settings&.deep_dup || {}
+    test_specs['testers']&.each do |tester_specs|
+      test_group_ids = tester_specs['test_data'] || []
+      tester_specs['test_data'] = assignment.test_groups.where(id: test_group_ids).order(:position).map(&:to_json)
+    end
+    test_specs
+  end
+
+  # Create/Modify test groups based on the autotest specs
   def update_test_groups_from_specs(assignment, test_specs)
-    test_specs_path = assignment.autotest_settings_file
-    # create/modify test groups based on the autotest specs
     test_group_ids = []
-    criteria_map = assignment.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
-      ["#{type}:#{name}", id_]
-    end.to_h
     ApplicationRecord.transaction do
+      test_group_position = 1
       test_specs['testers']&.each do |tester_specs|
+        current_test_group_ids = []
         tester_specs['test_data']&.each do |test_group_specs|
           test_group_specs['extra_info'] ||= {}
           extra_data_specs = test_group_specs['extra_info']
           test_group_id = extra_data_specs['test_group_id']
           display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
           test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
-          criterion_id = nil
-          unless extra_data_specs['criterion'].nil?
-            criterion_id = criteria_map[extra_data_specs['criterion']]
-            if criterion_id.nil?
-              type, name = extra_data_specs['criterion'].split(':')
-              flash_message(:warning, I18n.t('automated_tests.no_criteria', type: type, name: name))
-            end
+          criterion_name = extra_data_specs['criterion']
+          criterion = assignment.ta_criteria.find_by(name: criterion_name)
+          if criterion_name.present? && criterion.nil?
+            flash_message(:warning, I18n.t('automated_tests.no_criteria', name: criterion_name))
           end
-          fields = { assignment: assignment, name: test_group_name, display_output: display_output,
-                     criterion_id: criterion_id }
+          fields = { name: test_group_name, display_output: display_output,
+                     criterion_id: criterion&.id, autotest_settings: test_group_specs,
+                     position: test_group_position }
+          test_group_position += 1
           if test_group_id.nil?
-            test_group = TestGroup.create!(fields)
+            test_group = assignment.test_groups.create!(fields)
             test_group_id = test_group.id
             extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
           else
-            test_group = TestGroup.find(test_group_id)
+            test_group = assignment.test_groups.find(test_group_id)
             test_group.update!(fields)
           end
           test_group_ids << test_group_id
+          current_test_group_ids << test_group_id
         end
+        tester_specs['test_data'] = current_test_group_ids
       end
       # delete test groups that are not in the autotest specs
-      deleted_test_groups = TestGroup.where(assignment: assignment)
+      deleted_test_groups = assignment.test_groups
       unless test_group_ids.empty?
         deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
       end
       deleted_test_groups.delete_all
+
+      # Save test specs
+      assignment.update!(autotest_settings: test_specs)
     end
-  ensure
-    # save modified specs
-    File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }
   end
 
   def server_params(markus_address, assignment_id)
@@ -107,33 +115,9 @@ module AutomatedTestsHelper
     end
   end
 
-  def run_autotester_command(command, server_kwargs)
-    server_username = Settings.autotest.server_username
-    server_command = Settings.autotest.server_command
-    output = ''
-    if server_username.nil?
-      # local cancellation with no authentication
-      args = [server_command, command, '-j', JSON.generate(server_kwargs)]
-      output, status = Open3.capture2e(*args)
-      if status.exitstatus != 0
-        raise output
-      end
-    else
-      # local or remote cancellation with authentication
-      server_host = Settings.autotest.server_host
-      Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
-        args = "#{server_command} #{command} -j '#{JSON.generate(server_kwargs)}'"
-        output = ssh.exec!(args)
-        if output.exitstatus != 0
-          raise output
-        end
-      end
-    end
-    output
-  end
-
   # Sends RESTful api requests to the autotester
   module AutotestApi
+    include AutomatedTestsHelper
     AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
 
     class LimitExceededException < StandardError; end
@@ -176,8 +160,9 @@ module AutomatedTestsHelper
     # Send settings (result of filling out the schema form and uploading files) to the autotester.
     # Each assignment can have one or zero settings associated with it on the autotester.
     def update_settings(assignment, host_with_port)
-      if assignment.autotest_settings_id
-        uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}")
+      assignment.reload && assignment.assignment_properties.reload
+      if assignment.remote_autotest_settings_id
+        uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.remote_autotest_settings_id}")
         req = Net::HTTP::Put.new(uri)
       else
         uri = URI("#{assignment.course.autotest_setting.url}/settings")
@@ -186,29 +171,32 @@ module AutomatedTestsHelper
       set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
       req.body = {
-        settings: JSON.parse(File.read(assignment.autotest_settings_file)),
+        settings: autotest_settings_for(assignment),
         file_url: "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/test_files",
         files: assignment.autotest_files
       }.to_json
       res = send_request!(req, uri)
-      autotest_settings_id = JSON.parse(res.body)['settings_id']
-      assignment.update!(autotest_settings_id: autotest_settings_id)
+      remote_autotest_settings_id = JSON.parse(res.body)['settings_id']
+      assignment.update!(remote_autotest_settings_id: remote_autotest_settings_id)
     end
 
     # Send tests to the autotester to be run.
     def run_tests(assignment, host_with_port, group_ids, role, collected: true, batch: nil)
-      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.remote_autotest_settings_id
 
-      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}/test")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.remote_autotest_settings_id}/test")
       req = Net::HTTP::Put.new(uri)
       set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
-      file_urls = group_ids.map do |id_|
+      test_data = group_info_for_tests(assignment, group_ids).map do |id_, name, starter_files|
         param = collected ? 'collected=true' : ''
-        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/groups/#{id_}/submission_files?#{param}"
+        file_url = "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
+                   "groups/#{id_}/submission_files?#{param}"
+        # TODO: add other relevant info to env_vars as needed and make the environment variable customizable
+        { file_url: file_url, env_vars: { MARKUS_GROUP: name, MARKUS_STARTER_FILES: starter_files.to_json } }
       end
       req.body = {
-        file_urls: file_urls,
+        test_data: test_data,
         categories: role.student? ? ['student'] : ['instructor'],
         request_high_priority: batch.nil? && role.student?
       }.to_json
@@ -232,9 +220,10 @@ module AutomatedTestsHelper
 
     # Send a request to the autotester to cancel enqueued tests (will not cancel running tests)
     def cancel_tests(assignment, test_runs)
-      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.remote_autotest_settings_id
 
-      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}/tests/cancel")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/" \
+                "#{assignment.remote_autotest_settings_id}/tests/cancel")
       req = Net::HTTP::Delete.new(uri)
       req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
       set_headers(req, assignment.course.autotest_setting.api_key)
@@ -244,9 +233,10 @@ module AutomatedTestsHelper
 
     # Get the status of tests from the autotester
     def statuses(assignment, test_runs)
-      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.remote_autotest_settings_id
 
-      uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.autotest_settings_id}/tests/status")
+      uri = URI("#{assignment.course.autotest_setting.url}/settings/" \
+                "#{assignment.remote_autotest_settings_id}/tests/status")
       req = Net::HTTP::Get.new(uri)
       req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
       set_headers(req, assignment.course.autotest_setting.api_key)
@@ -257,10 +247,10 @@ module AutomatedTestsHelper
     # Get the results of a test from the autotester. If this is successful, the autotester will discard
     # the results of the test so all data must be saved.
     def results(assignment, test_run)
-      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.remote_autotest_settings_id
 
       test_id = test_run.autotest_test_id
-      settings_id = assignment.autotest_settings_id
+      settings_id = assignment.remote_autotest_settings_id
       uri = URI("#{assignment.course.autotest_setting.url}/settings/#{settings_id}/test/#{test_id}")
       req = Net::HTTP::Get.new(uri)
       set_headers(req, assignment.course.autotest_setting.api_key)
@@ -318,21 +308,36 @@ module AutomatedTestsHelper
       return if results['test_groups'].blank?
 
       results['test_groups'].each do |result|
-        next if result['feedback'].nil?
+        result['feedback']&.each do |feedback|
+          feedback_id = feedback['id']
+          next if feedback_id.nil?
 
-        feedback_id = result['feedback']['id']
-        next if feedback_id.nil?
-
-        uri = URI("#{autotest_setting.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
-        req = Net::HTTP::Get.new(uri)
-        set_headers(req, autotest_setting.api_key)
-        res = send_request!(req, uri)
-        result['feedback']['content'] = res.body
+          uri = URI("#{autotest_setting.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
+          req = Net::HTTP::Get.new(uri)
+          set_headers(req, autotest_setting.api_key)
+          res = send_request!(req, uri)
+          feedback['content'] = res.body
+        end
       end
     end
   end
 
-  private
+  # Returns an array of arrays containing a group id, group name, and an array of
+  # starter file entry paths assigned to the grouping associated with the +assignment+
+  # and the given group.
+  #
+  # Only groups with id in +group_ids+ are included in the list.
+  def group_info_for_tests(assignment, group_ids)
+    assignment.groupings
+              .left_outer_joins(:group, starter_file_entries: :starter_file_group)
+              .where('groups.id': group_ids)
+              .pluck('groups.id', 'groups.group_name', 'starter_file_groups.name', 'starter_file_entries.path')
+              .group_by { |val| val[...2] }
+              .map do |key, val|
+                [*key,
+                 val.map { |v| { starter_file_group: v[2], starter_file_path: v[3] } if v[2] }.compact]
+              end
+  end
 
   def server_api_key
     AutotestUser.find_or_create.api_key

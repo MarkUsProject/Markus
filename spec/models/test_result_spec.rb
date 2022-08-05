@@ -1,5 +1,4 @@
 describe TestResult do
-
   it { is_expected.to belong_to(:test_group_result) }
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:status) }
@@ -17,36 +16,13 @@ describe TestResult do
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
       @role = create(:instructor)
-      @test_group = TestGroup.create(
-        assessment_id: @asst.id,
-        name: 'test_group'
-      )
-      @test_run = TestRun.create(
-        grouping: @grouping,
-        submission: @sub,
-        role: @role,
-        revision_identifier: '1',
-        status: :complete
-      )
-      @test_group_result = TestGroupResult.create(
-        test_group: @test_group,
-        test_run: @test_run,
-        marks_earned: 1,
-        marks_total: 1,
-        time: 0
-      )
-      @test_result = TestResult.create(
-        test_group_result: @test_group_result,
-        name: 'Unit test 1',
-        status: 'pass',
-        output: 'Output',
-        marks_earned: 1,
-        marks_total: 1
-      )
+      @test_group = create(:test_group, assignment: @asst)
+      @test_run = create(:test_run, grouping: @grouping, submission: @sub, role: @role)
+      @test_group_result = create(:test_group_result, test_group: @test_group, test_run: @test_run)
+      @test_result = create(:test_result, test_group_result: @test_group_result)
     end
 
     context 'A valid test result' do
-
       it 'can be saved' do
         expect(@test_group_result).to be_valid
         expect(@test_group_result.save).to be true
@@ -103,12 +79,11 @@ describe TestResult do
 
       it 'can be deleted' do
         expect(@test_result).to be_valid
-        expect{@test_result.destroy}.to change {TestResult.count}.by(-1)
+        expect { @test_result.destroy }.to change { TestResult.count }.by(-1)
       end
     end
 
     context 'An invalid test result' do
-
       it 'has a nil output' do
         @test_result.output = nil
         expect(@test_result).not_to be_valid

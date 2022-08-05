@@ -12,12 +12,19 @@ en:
         first_name: First Name
         full_name: Name
         grace_credits: Grace Credits
+        hidden: inactive
         id_number: ID number
         last_name: Last Name
         locale: Language
+        section_name: Section
         theme: Color Theme
         user_name: User Name
+        user_type: User Type
     models:
+      admin_user:
+        one: Admin User
+      end_user:
+        one: End User
       instructor:
         one: Instructor
       student:

@@ -8,30 +8,29 @@ require 'singleton'
 require 'logger'
 
 class MarkusLogger
-
   # This class must use the singleton pattern since
   # we only want one instance of this class through the whole
   # program.
   include Singleton
 
   # DEBUG: low-level information for developers
-  if !defined?(DEBUG)
+  unless defined?(DEBUG)
     DEBUG = 1
   end
   # INFO:  generic (useful) information about system operation
-  if !defined?(INFO)
+  unless defined?(INFO)
     INFO = 2
   end
   # WARN:  a warning
-  if !defined?(WARN)
+  unless defined?(WARN)
     WARN = 3
   end
   # ERROR: a handleable error condition
-  if !defined?(ERROR)
+  unless defined?(ERROR)
     ERROR = 4
   end
   # FATAL: an unhandleable error that results in a program crash
-  if !defined?(FATAL)
+  unless defined?(FATAL)
     FATAL = 5
   end
 
@@ -53,36 +52,33 @@ class MarkusLogger
     log_file = "#{Settings.logging.log_file}.#{my_pid}"
     interval = Settings.logging.rotate_interval
     old_files = Settings.logging.old_files
-    if !(valid_file?(error_log_file) && valid_file?(log_file))
-      raise MarkusLoggerConfigurationError.new('The log files are not valid')
+    unless valid_file?(error_log_file) && valid_file?(log_file)
+      raise MarkusLoggerConfigurationError, 'The log files are not valid'
     end
     if Settings.logging.rotate_by_interval
-      if !['daily', 'weekly', 'monthly'].include?(interval)
-        raise MarkusLoggerConfigurationError.new('The rotation interval is not valid')
+      unless %w[daily weekly monthly].include?(interval)
+        raise MarkusLoggerConfigurationError, 'The rotation interval is not valid'
       end
       @__logger__ = Logger.new(log_file, interval)
       @__logger__.formatter = Logger::Formatter.new
-      @__logger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
-      @__errorLogger__ = Logger.new(error_log_file, interval)
-      @__errorLogger__.formatter = Logger::Formatter.new
-      @__errorLogger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
-    else
-      if size > 0
-        if old_files <= 0
-          raise MarkusLoggerConfigurationError.new('The number of old logfiles to keep has to be bigger than 0')
-        end
-        @__logger__ = Logger.new(log_file, old_files, size)
-        @__logger__.formatter = Logger::Formatter.new
-        @__logger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
-        @__errorLogger__ = Logger.new(error_log_file, old_files, size)
-        @__errorLogger__.formatter = Logger::Formatter.new
-        @__errorLogger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
-      else
-        raise MarkusLoggerConfigurationError.new('The threshold size for the logger has to be bigger than 0')
+      @__logger__.datetime_format = '%Y-%m-%d %H:%M:%S  '
+      @__error_logger__ = Logger.new(error_log_file, interval)
+      @__error_logger__.formatter = Logger::Formatter.new
+      @__error_logger__.datetime_format = '%Y-%m-%d %H:%M:%S  '
+    elsif size > 0
+      if old_files <= 0
+        raise MarkusLoggerConfigurationError, 'The number of old logfiles to keep has to be bigger than 0'
       end
+      @__logger__ = Logger.new(log_file, old_files, size)
+      @__logger__.formatter = Logger::Formatter.new
+      @__logger__.datetime_format = '%Y-%m-%d %H:%M:%S  '
+      @__error_logger__ = Logger.new(error_log_file, old_files, size)
+      @__error_logger__.formatter = Logger::Formatter.new
+      @__error_logger__.datetime_format = '%Y-%m-%d %H:%M:%S  '
+    else
+      raise MarkusLoggerConfigurationError, 'The threshold size for the logger has to be bigger than 0'
     end
   end
-
 
   #=== Description
   # Logs a message with the given log level severity. The default log level value is INFO.
@@ -92,7 +88,7 @@ class MarkusLogger
   # true if successful, false otherwise.
   #=== Exceptions
   # When the log level is not known then an exception of type ArgumentError is raised
-  def log(msg, level=INFO)
+  def log(msg, level = INFO)
     return unless Settings.logging.enabled
 
     case level
@@ -103,9 +99,9 @@ class MarkusLogger
     when WARN
       @__logger__.warn(msg)
     when ERROR
-      @__errorLogger__.error(msg)
+      @__error_logger__.error(msg)
     when FATAL
-      @__errorLogger__.fatal(msg)
+      @__error_logger__.fatal(msg)
     else
       raise ArgumentError, 'Logger: Unknown loglevel'
     end
@@ -118,19 +114,14 @@ class MarkusLogger
   # directory of the file is writable and it exists, false otherwise.
   def valid_file?(f)
     dir = File.dirname(f)
-    if(File.file?(f) && File.writable?(f))
-      return true
-    elsif (File.exist?(dir) && File.writable?(dir) && !File.directory?(f) && !File.file?(f) )
-      return true
-    else
-      return false
-    end
+
+    (File.file?(f) && File.writable?(f)) ||
+      (File.exist?(dir) && File.writable?(dir) && !File.directory?(f) && !File.file?(f))
   end
 
   private :valid_file?
-
 end
 
 # Exception type called by MarkusLogger
-class MarkusLoggerConfigurationError < Exception
+class MarkusLoggerConfigurationError < RuntimeError
 end

@@ -7,4 +7,8 @@
                  t('helpers.submit.create', model: Assignment.model_name.human)
                end %>
 
-<%= render partial: 'form', formats: [:html], handlers: [:erb] %>
+<% if @assignment.is_peer_review? %>
+  <%= render partial: 'peer_review_form' %>
+<% else %>
+  <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
+<% end %>

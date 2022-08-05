@@ -1,7 +1,8 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
 class Criterion < ApplicationRecord
-  belongs_to :assignment, foreign_key: :assessment_id
+  belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criteria
+  before_validation :update_assigned_groups_count
   after_update :update_results_with_change
   after_destroy :update_results
 
@@ -10,21 +11,20 @@ class Criterion < ApplicationRecord
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
 
-  validates_presence_of :assigned_groups_count
-  validates_numericality_of :assigned_groups_count
-  before_validation :update_assigned_groups_count
+  validates :assigned_groups_count, presence: true
+  validates :assigned_groups_count, numericality: true
 
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
   has_many :test_groups
 
-  validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assessment_id
+  validates :name, presence: true
+  validates :name, uniqueness: { scope: :assessment_id }
 
-  validates_inclusion_of :bonus, in: [true, false]
+  validates :bonus, inclusion: { in: [true, false] }
 
-  validates_presence_of :max_mark
-  validates_numericality_of :max_mark, greater_than: 0
+  validates :max_mark, presence: true
+  validates :max_mark, numericality: { greater_than: 0 }
 
   has_many :criteria_assignment_files_joins,
            dependent: :destroy
@@ -80,7 +80,7 @@ class Criterion < ApplicationRecord
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
-    ta_ids = Ta.where(id: ta_ids).pluck(:id)
+    ta_ids = Ta.where(id: ta_ids).ids
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
@@ -171,6 +171,49 @@ class Criterion < ApplicationRecord
 
     errors.add(:base, 'Cannot update criterion once results are released.')
     false
+  end
+
+  # Returns an array of all marks for this criteria that are not nil and are for a completed submission
+  def grades_array
+    return @grades_array if defined? @grades_array
+    results = self.assignment.current_results
+                  .where(marking_state: Result::MARKING_STATES[:complete])
+    @grades_array = self.marks.where.not(mark: nil).where(result_id: results.ids).pluck(:mark)
+  end
+
+  def grade_distribution_array(intervals = 20)
+    data = grades_array.map { |mark| mark / self.max_mark * 100 }
+    data.extend(Histogram)
+    histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count { |x| x < 1 }
+    distribution[-1] = distribution.last + data.count { |x| x > 100 }
+
+    distribution
+  end
+
+  # Returns the raw average grade of marks given for this criteria based on the marks given by self.grades_array
+  def average
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.mean(marks)
+  end
+
+  # Returns the raw median grade of marks given for this criteria based on the marks given by self.grades_array
+  def median
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.median(marks)
+  end
+
+  # Returns the raw standard deviation of marks given for this criteria based on the marks given by self.grades_array
+  def standard_deviation
+    return 0 if self.max_mark.zero?
+
+    marks = grades_array
+    marks.empty? ? 0 : DescriptiveStatistics.standard_deviation(marks)
   end
 
   private

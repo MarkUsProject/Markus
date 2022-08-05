@@ -1,6 +1,7 @@
 ---
 en:
   submissions:
+    api_submission_disabled: The instructor has disabled submission via the API
     cannot_display: Cannot display this file. Please download it to view.
     collect:
       apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)
@@ -11,6 +12,7 @@ en:
       overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
       progress: "%{count}/%{size} submissions collected"
       results_loss_warning: This action identifies the file version for each selected group that meets the assignment due date and/or late penalty, and creates the views for grading each selected group.
+      scanned_exam_latest_warning: For scanned exams, the latest submitted file version for each selected group is used regardless of the due date.
       submit: Collect Submissions
       this_revision: Collect and Grade This Revision
       undo_results_loss_warning: 'This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error. WARNING: All grading work done since the previous Collect All Submissions operation will be lost.'
@@ -34,11 +36,13 @@ en:
         tas: 'Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven''t been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks.'
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
+    invalid_url: "%{item} is not a valid HTTP/HTTPS URL"
     marking_incomplete_warning: |-
       Note: This will only download the submissions that have been collected.
 
       Are you sure you want to proceed?
     no_files_available: No files available
+    no_url_name: The URL %{url} has not been given a name
     past_collection_time: Any changes you make to your submitted files will be recorded, but not graded.
     release_marks: Release Marks
     repo_browser:
@@ -70,15 +74,23 @@ en:
         zero: No files submitted
       invalid_group_cannot_submit: Your group does not have enough members, and so you cannot submit any work.
       last_revision_date: Last revised
+      link: Link
       maximum_file_size: 'Maximum file upload size: %{file_size} MB'
+      missing: "(missing)"
       missing_required_files:
         one: One missing required file
         other: "%{count} missing required files"
       no_revision_available: No revision available.
       no_submission: You have not submitted any work yet.
+      one_file_allowed: File renaming is only supported when one file is selected.
       only_required_files: You may only submit the required files listed above.
+      rename_file_to: "(optional) Rename file to"
       select_file: Select a file to view
+      url: URL
+      url_text: Display URL as
       version_control_warning: Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting.
     submission_summary: Submission Report
     successfully_changed: Successfully updated %{changed} results.
     unrelease_marks: Unrelease Marks
+    url_preview_error: Unable to display a preview for this URL
+    urls_disabled: Unable to submit URL. URL submissions are disabled for this assignment.

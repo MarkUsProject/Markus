@@ -53,7 +53,7 @@ en:
       invitations: Group invitations
       invite: Invite student(s)
       invite_instructions: Enter one or more student user names, separated by commas.
-      invited_by: You have been invited to a group by %{inviter_first_name} %{inviter_last_name}.
+      invited_by: You have been invited to a group by %{inviter_display_name}.
       join: Join Group
       member_disinvited: Member disinvited.
       statuses:
@@ -68,7 +68,6 @@ en:
     student_interface:
       confirm_create_group: This action will decline your pending invitations. Are you sure?
       confirm_delete_group: 'WARNING: You will lose access to your submitted files after deleting your group. Make sure you have a local copy of your files before clicking OK.'
-      create_individual_group_on_start: Your individual group will be created when you start this assessment.
       form_group: Create a group
       group_information: Group information
       group_options: Group options
@@ -84,7 +83,7 @@ en:
       not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
       section_groups_only: You can only form a group with students in your section.
       students_work_alone: Students work individually.
-      url_group_repository: Group repository URL
+      url_repository: Repository URL
       work_alone: Work alone
       working_alone: You have indicated you are working individually on this assignment. If you change your mind and want to create or join a group, first delete your group using the button below.
       your_group: Your group

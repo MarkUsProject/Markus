@@ -1,26 +1,25 @@
 module Repository
-
   # Configuration for the repository library,
   # which is set via Repository.get_class
   # TODO: Get rid of Repository.conf
- # @CONF = {}
-#  def Repository.conf
- #   return @CONF
-#  end
+  # @CONF = {}
+  #  def Repository.conf
+  #   return @CONF
+  #  end
 
   # Permission constants for repositories
   class Permission
-    if !defined? WRITE  # avoid constant already defined warnings
-      WRITE      = 2
+    unless defined? WRITE  # avoid constant already defined warnings
+      WRITE = 2
     end
-    if !defined? READ
-      READ       = 4
+    unless defined? READ
+      READ = 4
     end
-    if !defined? READ_WRITE
+    unless defined? READ_WRITE
       READ_WRITE = READ + WRITE
     end
-    if !defined? ANY
-      ANY        = READ # any permission means at least read permission
+    unless defined? ANY
+      ANY = READ # any permission means at least read permission
     end
   end
 
@@ -31,26 +30,30 @@ module Repository
 
   class Conflict < StandardError
     attr_reader :path
+
     def initialize(path)
       super()
       @path = path
     end
+
     def to_s
-      return 'There was an unspecified conflict with file ' + @path
+      "There was an unspecified conflict with file #{@path}"
     end
   end
 
   class FileExistsConflict < Conflict
     def to_s
-      return "#{@path} could not be added - it already exists in the folder.  If you'd like to overwrite, try replacing the file instead."
+      "#{@path} could not be added - it already exists in the folder. \
+        If you'd like to overwrite, try replacing the file instead."
     end
   end
 
   class FileDoesNotExistConflict < Conflict
     def to_s
-      return "#{@path} could not be changed - it was deleted since you last saw it"
+      "#{@path} could not be changed - it was deleted since you last saw it"
     end
   end
+
   # Exception for folders
   class FolderExistsConflict < Conflict
     def to_s
@@ -63,6 +66,7 @@ module Repository
       "#{@path} could not be removed - it is not exist"
     end
   end
+
   # Exception for folders
   class FolderIsNotEmptyConflict < Conflict
     def to_s
@@ -72,7 +76,7 @@ module Repository
 
   class FileOutOfSyncConflict < Conflict
     def to_s
-      return "#{@path} has been updated since you last saw it, and could not be changed"
+      "#{@path} has been updated since you last saw it, and could not be changed"
     end
   end
 
@@ -81,97 +85,95 @@ module Repository
   class RepositoryCollision < StandardError; end
 
   class AbstractRepository
-
     # Initializes Object, and verifies connection to the repository back end.
     # This should throw a ConnectionError if we're unable to connect.
     def initialize(connect_string)
-      raise NotImplementedError, "Repository.initialize(connect_string): Not yet implemented"
+      raise NotImplementedError
     end
 
     # Static method: Should report if a repository exists at given location
     def self.repository_exists?(path)
-      raise NotImplementedError, "Repository::repository_exists? Not yet implemented"
+      raise NotImplementedError
     end
 
     # Static method: Opens a repository at given location; returns an
     # AbstractRepository instance
     def self.open(connect_string)
-      raise NotImplementedError, "Repository::open Not yet implemented"
+      raise NotImplementedError
     end
 
     # Static method: Creates a new repository at given location; returns
     # an AbstractRepository instance, with the repository opened.
     def self.create(connect_string, course)
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError
     end
 
-    #Static method: Yields an existing Repository and closes it afterwards
+    # Static method: Yields an existing Repository and closes it afterwards
     def self.access(connect_string)
-      raise NotImplementedError, "Repository::access Not yet implemented"
+      raise NotImplementedError
     end
 
-    #Static method: Deletes an existing Subversion repository
+    # Static method: Deletes an existing Subversion repository
     def self.delete(connect_string)
-      raise NotImplementedError, "Repository::delete Not yet implemented"
+      raise NotImplementedError
     end
 
-    #Closes the repository
+    # Closes the repository
     def close
-      raise NotImplementedError, "Repository::close Not yet implemented"
+      raise NotImplementedError
     end
 
-    #Tests if the repository is closed
+    # Tests if the repository is closed
     def closed?
-      raise NotImplementedError, "Repository::closed Not yet implemented"
+      raise NotImplementedError
     end
 
     # Static method: returns the shell command to check out a repository or one of its folders
-    def self.get_checkout_command(external_repo_url, revision_identifier, group_name, repo_folder=nil)
-      raise NotImplementedError, "Repository::get_checkout_command Not yet implemented"
+    def self.get_checkout_command(external_repo_url, revision_identifier, group_name, repo_folder = nil)
+      raise NotImplementedError
     end
 
     # Given either an array of, or a single object of class RevisionFile,
     # return a stream of data for the user to download as the file(s).
     def stringify_files(files)
-      raise NotImplementedError,  "Repository.download: Not yet implemented"
+      raise NotImplementedError
     end
     alias download_as_string stringify_files
 
     # Returns a transaction for the provided user and uses comment as the commit message
     def get_transaction(user_id, comment)
-      raise NotImplementedError,  "Repository.get_transaction: Not yet implemented"
+      raise NotImplementedError
     end
 
     # Commits a transaction associated with a repository
     def commit(transaction)
-      raise NotImplementedError,  "Repository.commit: Not yet implemented"
+      raise NotImplementedError
     end
 
     # Returns the latest Repository::AbstractRevision
     def get_latest_revision
-      raise NotImplementedError, "Repository.get_latest_revision: Not yet implemented"
+      raise NotImplementedError
     end
 
     # Returns all revisions
     def get_all_revisions
-      raise NotImplementedError,
-            'Repository.get_all_revisions: Not yet implemented'
+      raise NotImplementedError
     end
 
     # Return a Repository::AbstractRevision for a given revision_identifier
     # if it exists
     def get_revision(revision_identifier)
-      raise NotImplementedError,  'Repository.get_revision: Not yet implemented'
+      raise NotImplementedError
     end
 
     # Return a RepositoryRevision for a given timestamp
     def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
-      raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
+      raise NotImplementedError
     end
 
     # Converts a pathname to an absolute pathname
     def expand_path(file_name, dir_string)
-      raise NotImplementedError, "Repository.expand_path: Not yet implemented"
+      raise NotImplementedError
     end
 
     # Updates permissions file unless it is being called from within a
@@ -197,7 +199,7 @@ module Repository
     #
     # This allows us to ensure that the permissions file will only be
     # updated a single time once all relevant changes have been made.
-    def self.update_permissions_after(only_on_request: false)
+    def self.update_permissions_after(only_on_request: false, &block)
       if Thread.current[:permissions_lock].nil?
         Thread.current[:permissions_lock] = Mutex.new
         Thread.current[:requested?] = false
@@ -207,7 +209,7 @@ module Repository
         # trying to lock again (which would raise a ThreadError)
         yield
       else
-        Thread.current[:permissions_lock].synchronize { yield }
+        Thread.current[:permissions_lock].synchronize(&block)
       end
       if !only_on_request || Thread.current[:requested?]
         self.update_permissions
@@ -229,12 +231,12 @@ module Repository
     # some students from it)
     def self.get_repo_auth_records
       records = Assignment.joins(:assignment_properties)
-                          .includes(groupings: [:group, accepted_students: :section])
+                          .includes(groupings: [:group, { accepted_students: :section }])
                           .where(assignment_properties: { vcs_submit: true })
                           .order(due_date: :desc)
       records.where(assignment_properties: { is_timed: false })
              .or(records.where.not(groupings: { start_time: nil }))
-             .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+             .or(records.where(groupings: { start_time: nil }, due_date: Time.utc(0)..Time.current))
     end
 
     # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
@@ -260,7 +262,7 @@ module Repository
     def self.get_all_permissions
       visibility = self.visibility_hash
       permissions = Hash.new { |h, k| h[k] = [] }
-      instructors = Instructor.joins(:course, :end_user)
+      instructors = Instructor.joins(:course, :user)
                               .pluck('courses.name', 'users.user_name')
                               .group_by(&:first)
                               .transform_values { |val| val.map(&:second) }
@@ -277,7 +279,7 @@ module Repository
       end
       # NOTE: this will allow graders to access the files in the entire repository
       # even if they are the grader for only a single assignment
-      graders_info = TaMembership.joins(role: [:end_user, :course],
+      graders_info = TaMembership.joins(role: [:user, :course],
                                         grouping: [:group, { assignment: :assignment_properties }])
                                  .where('assignment_properties.anonymize_groups': false)
                                  .pluck(:repo_name, :user_name, 'courses.name')
@@ -317,7 +319,7 @@ module Repository
     # as separate resources as long as the +namespace+ value is distinct. By default the +namespace+ is the relative
     # root of the current MarkUs instance.
     def self.redis_exclusive_lock(resource_id, namespace: Rails.root.to_s, timeout: 5000, interval: 100)
-      redis = Redis::Namespace.new(namespace)
+      redis = Redis::Namespace.new(namespace, redis: Redis.new(url: Settings.redis.url))
       return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
 
       # clear any threads that are no longer alive from the queue
@@ -368,7 +370,6 @@ module Repository
     end
   end
 
-
   # Exceptions for Revisions
   class RevisionDoesNotExist < StandardError; end
   class RevisionOutOfSyncConflict < Conflict; end
@@ -386,29 +387,29 @@ module Repository
 
     # Checks if +path+ is a file or directory in this revision of the repository.
     def path_exists?(path)
-      raise NotImplementedError, "Revision.path_exists? not yet implemented"
+      raise NotImplementedError
     end
 
     # Checks if there are changes under +path+ (subdirectories included) due to this revision.
     def changes_at_path?(path)
-      raise NotImplementedError, "Revision.changes_at_path? not yet implemented"
+      raise NotImplementedError
     end
 
     # Returns all the files under +path+ (but not in subdirectories) in this revision of the repository.
     def files_at_path(_path, with_attrs: true)
-      raise NotImplementedError, "Revision.files_at_path not yet implemented"
+      raise NotImplementedError
     end
 
     # Returns all the directories under +path+ (but not in subdirectories) in this revision of the repository.
     def directories_at_path(_path, with_attrs: true)
-      raise NotImplementedError, "Revision.directories_at_path not yet implemented"
+      raise NotImplementedError
     end
 
     # Walks all files and subdirectories starting at +path+ and
     # returns an array of tuples containing [path, revision_object]
     # for every file and directory discovered in this way
     def tree_at_path(_path, with_attrs: true)
-      raise NotImplementedError, 'Revision.tree_at_path not yet implemented'
+      raise NotImplementedError
     end
   end
 
@@ -425,13 +426,11 @@ module Repository
   # raised when configuration is wrong
   class ConfigurationError < StandardError; end
 
-
   #################################################
   #  Class File:
   #        Files stored in a Revision
   #################################################
   class RevisionFile
-
     def initialize(from_revision, args)
       @name = args[:name]
       @path = args[:path]
@@ -444,13 +443,11 @@ module Repository
       @from_revision = from_revision
     end
 
-    attr_accessor :name, :path, :last_modified_revision, :changed, :submitted_date
-    attr_accessor :from_revision, :user_id, :mime_type, :last_modified_date
-
-  end # end class File
+    attr_accessor :name, :path, :last_modified_revision, :changed, :submitted_date, :from_revision, :user_id,
+                  :mime_type, :last_modified_date
+  end
 
   class RevisionDirectory
-
     def initialize(from_revision, args)
       @name = args[:name]
       @path = args[:path]
@@ -462,14 +459,11 @@ module Repository
       @from_revision = from_revision
     end
 
-    attr_accessor :name, :path, :last_modified_revision, :changed, :submitted_date
-    attr_accessor :from_revision, :user_id, :last_modified_date
-
-  end # end class File
-
+    attr_accessor :name, :path, :last_modified_revision, :changed, :submitted_date, :from_revision, :user_id,
+                  :last_modified_date
+  end
 
   class Transaction
-
     attr_reader :user_id, :comment, :jobs, :conflicts
 
     def initialize(user_id, comment)
@@ -483,7 +477,7 @@ module Repository
       @jobs.push(action: :add_path, path: path)
     end
 
-    def add(path, file_data=nil, mime_type=nil)
+    def add(path, file_data = nil, mime_type = nil)
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
@@ -498,7 +492,8 @@ module Repository
     end
 
     def replace(path, file_data, mime_type, expected_revision_identifier)
-      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_identifier: expected_revision_identifier)
+      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type,
+                 expected_revision_identifier: expected_revision_identifier)
     end
 
     def add_conflict(conflict)
@@ -512,7 +507,6 @@ module Repository
     def has_jobs?
       @jobs.size > 0
     end
-
   end
 
   # Gets the configured repository implementation
@@ -520,14 +514,13 @@ module Repository
     repo_type = Settings.repository.type
     case repo_type
     when 'git'
-      return GitRepository
+      GitRepository
     when 'mem'
-      return MemoryRepository
+      MemoryRepository
     when 'svn'
-      return SubversionRepository
+      SubversionRepository
     else
       raise "Repository implementation not found: #{repo_type}"
     end
   end
-
-end # end module Repository
+end

@@ -1,8 +1,8 @@
 class TaMembership < Membership
   validate :must_be_a_ta
 
-  after_create   { Repository.get_class.update_permissions }
-  after_destroy  { Repository.get_class.update_permissions }
+  after_create { Repository.get_class.update_permissions }
+  after_destroy { Repository.get_class.update_permissions }
 
   def must_be_a_ta
     if role && !role.is_a?(Ta)
@@ -20,10 +20,8 @@ class TaMembership < Membership
       end
     end
     new_ta_memberships = []
-    groupings = Hash[
-      assignment.groupings.joins(:group).pluck('groups.group_name', :id)
-    ]
-    graders = Hash[assignment.course.tas.joins(:end_user).pluck('users.user_name', :id)]
+    groupings = assignment.groupings.joins(:group).pluck('groups.group_name', :id).to_h
+    graders = assignment.course.tas.joins(:user).pluck('users.user_name', :id).to_h
     result = MarkusCsv.parse(csv_data.read) do |row|
       raise CsvInvalidLineError if row.empty?
       raise CsvInvalidLineError if groupings[row[0]].nil?
@@ -49,7 +47,7 @@ class TaMembership < Membership
     if assignment.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
-        new_ta_memberships.map { |row| row[:grouping_id] }
+        new_ta_memberships.pluck(:grouping_id)
       )
     end
 

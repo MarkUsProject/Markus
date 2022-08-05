@@ -2,9 +2,6 @@
 en:
   date_validator:
     invalid_date: is not a valid date
-  job_poller:
-    processing_message: 'Processing:'
-    processing_message_error: 'Processing Failed:'
   poll_job:
     autotest_run_job_enqueuing: Enqueuing tests
     autotest_specs_job: Setting up automated tests.
@@ -32,6 +29,7 @@ en:
     timeout: Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.
   student:
     submission:
+      all_files_submitted: Good job! All required files have been submitted.
       conflicts: Conflicts
       empty_file_warning: "%{file_name} is empty"
       external_submit_only: MarkUs is only accepting external submits

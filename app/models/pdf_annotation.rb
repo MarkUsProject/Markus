@@ -1,8 +1,8 @@
 class PdfAnnotation < Annotation
   # (x1, y1) is the top left corner and (x2, y2) is the bottom right corner
   # of the rectangle containing the annotation.
-  validates_presence_of :x1, :x2, :y1, :y2, :page
-  validates_numericality_of :x1, :x2, :y1, :y2, :page
+  validates :x1, :x2, :y1, :y2, :page, presence: true
+  validates :x1, :x2, :y1, :y2, :page, numericality: true
 
   # Return a hash containing the coordinates of the rectangle containing the
   # annotation and the page.
@@ -25,7 +25,7 @@ class PdfAnnotation < Annotation
     }
   end
 
-  def get_data(include_creator=false)
+  def get_data(include_creator: false)
     horiz_range = { start: [x1, x2].min, end: [x1, x2].max }
     vert_range = { start: [y1, y2].min, end: [y1, y2].max }
 

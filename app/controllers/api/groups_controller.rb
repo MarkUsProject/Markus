@@ -1,5 +1,4 @@
 module Api
-
   # Allows for listing Markus groups for a particular assignment.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class GroupsController < MainApiController
@@ -39,9 +38,9 @@ module Api
 
     # Include student_memberships and user info
     def include_memberships(groups)
-      groups.joins(groupings: [:assignment, student_memberships: [role: :end_user]])
+      groups.joins(groupings: [:assignment, { student_memberships: [:role] }])
             .where('assessments.id': params[:assignment_id])
-            .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
+            .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :role_id)
             .group_by { |h| h.slice(*DEFAULT_FIELDS) }
             .map { |k, v| k.merge(members: v.map { |h| h.except(*DEFAULT_FIELDS) }) }
     end
@@ -49,22 +48,24 @@ module Api
     def add_members
       if self.grouping.nil?
         # The group doesn't have a grouping associated with that assignment
-        render 'shared/http_status', locals: {code: '422', message:
-          'The group is not involved with that assignment'}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          'The group is not involved with that assignment' }, status: :unprocessable_entity
         return
       end
 
-      students = current_course.students.joins(:end_user).where('users.user_name': params[:members])
+      students = current_course.students.joins(:user).where('users.user_name': params[:members])
       students.each do |student|
-        set_membership_status = grouping.student_memberships.empty? ?
-          StudentMembership::STATUSES[:inviter] :
-          StudentMembership::STATUSES[:accepted]
-        grouping.invite(student.user_name, set_membership_status, true)
+        set_membership_status = if grouping.student_memberships.empty?
+                                  StudentMembership::STATUSES[:inviter]
+                                else
+                                  StudentMembership::STATUSES[:accepted]
+                                end
+        grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
         grouping.reload
       end
 
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     # Update the group's marks for the given assignment.
@@ -75,13 +76,13 @@ module Api
       # We shouldn't be able to update marks if marking is already complete.
       if result.marking_state == Result::MARKING_STATES[:complete]
         render 'shared/http_status', locals: { code: '404', message:
-          'Marking for that submission is already completed' }, status: 404
+          'Marking for that submission is already completed' }, status: :not_found
         return
       end
       matched_criteria = assignment.criteria.where(name: params.keys)
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
-          'No criteria were found that match that request.' }, status: 404
+          'No criteria were found that match that request.' }, status: :not_found
         return
       end
 
@@ -91,7 +92,7 @@ module Api
         unless mark_to_change.save
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
-            mark_to_change.errors.full_messages.first }, status: 500
+            mark_to_change.errors.full_messages.first }, status: :internal_server_error
           return
         end
       end
@@ -99,7 +100,7 @@ module Api
       result.update_total_mark
       result.save
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     def create_extra_marks
@@ -112,12 +113,12 @@ module Api
       rescue ActiveRecord::RecordInvalid => e
         # Some error occurred
         render 'shared/http_status', locals: { code: '500', message:
-            e.message }, status: 500
+            e.message }, status: :internal_server_error
         return
       end
       result.update_total_mark
       render 'shared/http_status', locals: { code: '200', message:
-          'Extra mark created successfully' }, status: 200
+          'Extra mark created successfully' }, status: :ok
     end
 
     def remove_extra_marks
@@ -128,7 +129,7 @@ module Api
                                      extra_mark: params[:extra_marks])
       if extra_mark.nil?
         render 'shared/http_status', locals: { code: '404', message:
-            'No such Extra Mark exist for that result' }, status: 404
+            'No such Extra Mark exist for that result' }, status: :not_found
         return
       end
       begin
@@ -136,13 +137,13 @@ module Api
       rescue ActiveRecord::RecordNotDestroyed => e
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-            e.message }, status: 500
+            e.message }, status: :internal_server_error
         return
       end
       result.update_total_mark
       # Successfully deleted the Extra Mark; render success
       render 'shared/http_status', locals: { code: '200', message:
-          'Extra mark removed successfully' }, status: 200
+          'Extra mark removed successfully' }, status: :ok
     end
 
     def annotations
@@ -174,7 +175,7 @@ module Api
                                               [submission_files:
                                                  [annotations:
                                                     [annotation_text: :annotation_category]]])
-                                     .where('assessment_id': params[:assignment_id])
+                                     .where(assessment_id: params[:assignment_id])
                                      .where.not('annotations.id': nil)
                                      .pluck_to_hash(*pluck_keys)
       respond_to do |format|
@@ -206,9 +207,10 @@ module Api
         if annot_params[:annotation_category_name].nil?
           annotation_category_id = nil
         else
-          if annotation_category.nil? || annotation_category.annotation_category_name != annot_params[:annotation_category_name]
+          name = annot_params[:annotation_category_name]
+          if annotation_category.nil? || annotation_category.annotation_category_name != name
             annotation_category = assignment.annotation_categories.find_or_create_by(
-              annotation_category_name: annot_params[:annotation_category_name]
+              annotation_category_name: name
             )
           end
           annotation_category_id = annotation_category.id
@@ -243,7 +245,7 @@ module Api
       end
       TextAnnotation.insert_all! annotations
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     # Return key:value pairs of group_name:group_id
@@ -263,8 +265,8 @@ module Api
     def update_marking_state
       if has_missing_params?([:marking_state])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
       result = self.grouping&.current_submission_used&.get_latest_result
@@ -272,17 +274,45 @@ module Api
       result.marking_state = params[:marking_state]
       if result.save
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         render 'shared/http_status', locals: { code: '500', message:
-            result.errors.full_messages.first }, status: 500
+            result.errors.full_messages.first }, status: :internal_server_error
       end
+    end
+
+    def add_tag
+      grouping = self.grouping
+      tag = self.assignment.tags.find_by(id: params[:tag_id])
+      if tag.nil? || grouping.nil?
+        raise 'tag or group not found'
+      else
+        grouping.tags << tag
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      end
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
+    end
+
+    def remove_tag
+      grouping = self.grouping
+      tag = grouping.tags.find_by(id: params[:tag_id])
+      if tag.nil? || grouping.nil?
+        raise 'tag or grouping not found'
+      else
+        grouping.tags.destroy(tag)
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      end
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
     end
 
     private
 
     def assignment
-      @assignment ||= Assignment.find_by_id(params[:assignment_id])
+      @assignment ||= Assignment.find_by(id: params[:assignment_id])
     end
 
     def grouping
@@ -300,5 +330,5 @@ module Api
         :line_start
       ])
     end
-  end # end GroupsController
+  end
 end

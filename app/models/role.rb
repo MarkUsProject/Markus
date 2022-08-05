@@ -1,9 +1,9 @@
 # Model representing a user's role in a given course.
 class Role < ApplicationRecord
-  belongs_to :end_user, foreign_key: 'user_id', inverse_of: :roles
+  belongs_to :user, inverse_of: :roles
   belongs_to :course, inverse_of: :roles
-  accepts_nested_attributes_for :end_user
-  delegate_missing_to :end_user
+  accepts_nested_attributes_for :user
+  delegate_missing_to :user
 
   # Group relationships
   has_many :memberships, dependent: :delete_all
@@ -15,21 +15,25 @@ class Role < ApplicationRecord
   has_many :assessments, through: :course
   has_many :tags
 
-  validates_format_of :type, with: /\AStudent|Instructor|Ta\z/
-  validates_uniqueness_of :user_id, scope: :course_id
+  validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
+  validates :user_id, uniqueness: { scope: :course_id }
 
   # Helper methods -----------------------------------------------------
 
   def instructor?
-    instance_of?(Instructor)
+    is_a?(Instructor)
   end
 
   def ta?
-    instance_of?(Ta)
+    is_a?(Ta)
   end
 
   def student?
-    instance_of?(Student)
+    is_a?(Student)
+  end
+
+  def admin_role?
+    is_a?(AdminRole)
   end
 
   # Submission helper methods -------------------------------------------------
@@ -68,5 +72,15 @@ class Role < ApplicationRecord
     visible = self.assessments.where(type: assessment_type || Assessment.type)
     return visible.where(id: assessment_id) if assessment_id
     visible
+  end
+
+  private
+
+  # Helper for TA and Student subclasses that validate if the user associated with the role
+  # is an end user
+  def associated_user_is_an_end_user
+    unless self.user.nil? || self.user.end_user?
+      errors.add(:base, "non end users cannot be assigned the #{self.model_name.human} role")
+    end
   end
 end

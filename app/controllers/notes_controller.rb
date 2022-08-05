@@ -12,7 +12,7 @@ class NotesController < ApplicationController
     @notes = Note.where(noteable_id: noteable.id, noteable_type: noteable.class.name)
 
     render partial: 'notes/modal_dialogs/notes_dialog_script',
-      formats: [:js], handlers: [:erb]
+           formats: [:js], handlers: [:erb]
   end
 
   def add_note
@@ -21,16 +21,16 @@ class NotesController < ApplicationController
     @note.creator_id = current_role.id
     @note.notes_message = params[:new_notes]
     @note.noteable = noteable
-    unless @note.save
-      render 'notes/modal_dialogs/notes_dialog_error',
-        formats: [:js], handlers: [:erb]
-    else
+    if @note.save
       @note.reload
       @number_of_notes_field = params[:number_of_notes_field]
       @highlight_field = params[:highlight_field]
       @number_of_notes = @note.noteable.notes.size
       render 'notes/modal_dialogs/notes_dialog_success',
-        formats: [:js], handlers: [:erb]
+             formats: [:js], handlers: [:erb]
+    else
+      render 'notes/modal_dialogs/notes_dialog_error',
+             formats: [:js], handlers: [:erb]
     end
   end
 
@@ -64,7 +64,7 @@ class NotesController < ApplicationController
   def new
     new_retrieve
     @note = Note.new
-		render 'new', formats: [:html], handlers: [:erb]
+    render 'new', formats: [:html], handlers: [:erb]
   end
 
   def create
@@ -89,24 +89,24 @@ class NotesController < ApplicationController
   # used for RJS call
   def noteable_object_selector
     case params[:noteable_type]
-      when 'Student'
-        @students = current_course.students.joins(:end_user).order(:user_name)
-      when 'Assignment'
-        @assignments = current_course.assignments
-      when 'Grouping'
-        new_retrieve
-      else
-        # default to groupings if all else fails.
-        params[:noteable_type] = 'Grouping'
-        flash_message(:error, I18n.t('notes.new.invalid_selector'))
-        new_retrieve
+    when 'Student'
+      @students = current_course.students.joins(:user).order(:user_name)
+    when 'Assignment'
+      @assignments = current_course.assignments
+    when 'Grouping'
+      new_retrieve
+    else
+      # default to groupings if all else fails.
+      params[:noteable_type] = 'Grouping'
+      flash_message(:error, I18n.t('notes.new.invalid_selector'))
+      new_retrieve
     end
-		render 'noteable_object_selector', formats: [:js], handlers: [:erb]
+    render 'noteable_object_selector', formats: [:js], handlers: [:erb]
   end
 
   def edit
     @note = record
-		render 'edit', formats: [:html], handlers: [:erb]
+    render 'edit', formats: [:html], handlers: [:erb]
   end
 
   def update
@@ -130,18 +130,18 @@ class NotesController < ApplicationController
 
   private
 
-    def retrieve_groupings(assignment)
-      if assignment.nil?
-        @groupings = Array.new
-        return
-      end
-      @groupings = assignment.groupings.includes(:group, student_memberships: :role)
+  def retrieve_groupings(assignment)
+    if assignment.nil?
+      @groupings = []
+      return
     end
+    @groupings = assignment.groupings.includes(:group, student_memberships: :role)
+  end
 
-    def new_retrieve
-      @assignments = current_course.assignments
-      retrieve_groupings(@assignments.first)
-    end
+  def new_retrieve
+    @assignments = current_course.assignments
+    retrieve_groupings(@assignments.first)
+  end
 
   def notes_params
     params.require(:note).permit(:notes_message, :noteable_id)

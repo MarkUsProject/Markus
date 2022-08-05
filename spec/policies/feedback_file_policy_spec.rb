@@ -1,5 +1,5 @@
 describe FeedbackFilePolicy do
-  let(:context) { { role: role, real_user: role.end_user } }
+  let(:context) { { role: role, real_user: role.user } }
   let(:grouping) { create :grouping_with_inviter }
   let(:test_run) { create :test_run, grouping: grouping, role: grouping.inviter }
   let(:test_group_result) { create :test_group_result, test_run: test_run }

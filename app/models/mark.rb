@@ -3,35 +3,41 @@ class Mark < ApplicationRecord
   # Result has not been released to students
   before_save :ensure_not_released_to_students
 
-  after_save :update_result
-  after_update :update_deduction, if: lambda { |m|
+  after_update :update_deduction, if: ->(m) {
     m.previous_changes.key?('override') && !m.override && m.criterion.type == 'FlexibleCriterion'
   }
+  after_save :update_result
 
   belongs_to :result
 
-  validates_numericality_of :mark,
-                            allow_nil: true,
+  validates :mark,
+            numericality: { allow_nil: true,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(m) { m.criterion.max_mark }
+                            less_than_or_equal_to: ->(m) { m.criterion.max_mark } }
 
   belongs_to :criterion
-  validates_uniqueness_of :criterion_id, scope: :result_id
+  validates :criterion_id, uniqueness: { scope: :result_id }
 
-  validates_inclusion_of :override, in: [true, false]
+  validates :override, inclusion: { in: [true, false] }
 
   has_one :course, through: :criterion
 
   validate :assignments_should_match
 
+  # Calculate the deduction for this mark. If the mark belongs to a remark result and no deductive
+  # annotations for this mark have been applied to the result, then the deductive annotations of
+  # the original result are used to calculate the mark.
   def calculate_deduction
     return 0 if self.override? || self.criterion.type != 'FlexibleCriterion'
 
-    self.result
-        .annotations
-        .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
-        .where('criteria.id': self.criterion_id)
-        .sum(:deduction)
+    result = self.result
+    if result.id == result.submission.remark_result&.id && self.deductive_annotations_absent?
+      result = result.submission.get_original_result
+    end
+    result.annotations
+          .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+          .where('criteria.id': self.criterion_id)
+          .sum(:deduction)
   end
 
   def deductive_annotations_absent?
@@ -49,11 +55,11 @@ class Mark < ApplicationRecord
     return if self.override?
     deduction = calculate_deduction
     if deduction == 0
-      return self.update!(mark: nil)
+      self.update!(mark: nil)
     elsif deduction > self.criterion.max_mark
-      return self.update!(mark: 0.0)
+      self.update!(mark: 0.0)
     else
-      return self.update!(mark: self.criterion.max_mark - deduction)
+      self.update!(mark: self.criterion.max_mark - deduction)
     end
   end
 
@@ -89,7 +95,13 @@ class Mark < ApplicationRecord
 
   def assignments_should_match
     return if result.nil? || criterion.nil?
-    unless result.submission.grouping.assignment == criterion.assignment
+
+    if result.is_a_review?
+      assignment = result.submission.grouping.assignment.pr_assignment
+    else
+      assignment = result.submission.grouping.assignment
+    end
+    unless assignment == criterion.assignment
       errors.add(:base, 'result and criterion must all belong to the same assignment')
     end
   end

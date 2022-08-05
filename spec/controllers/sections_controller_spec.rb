@@ -1,5 +1,4 @@
 describe SectionsController do
-
   context 'A logged in Student' do
     before do
       @student = create(:student)
@@ -55,20 +54,24 @@ describe SectionsController do
       expect(response).to be_redirect
       i18t_string = [I18n.t('sections.create.success', name: 'section_01')].map { |f| extract_text f }
       expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
-      expect(Section.find_by_name('section_01')).to be_truthy
+      expect(Section.find_by(name: 'section_01')).to be_truthy
     end
 
     it 'not be able to create a section with the same name as a existing one' do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: section.name } }
       expect(response.status).to eq(200)
-      expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map { |f| extract_text f })
+      expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map do |f|
+                                                               extract_text f
+                                                             end)
     end
 
     it 'not be able to create a section with a blank name' do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: '' } }
-      expect(Section.find_by_name('')).to be_nil
+      expect(Section.find_by(name: '')).to be_nil
       expect(response.status).to eq(200)
-      expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map { |f| extract_text f })
+      expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map do |f|
+                                                               extract_text f
+                                                             end)
     end
 
     it 'on edit section' do
@@ -82,7 +85,7 @@ describe SectionsController do
       expect(response).to be_redirect
       i18t_string = [I18n.t('sections.update.success', name: 'no section')].map { |f| extract_text f }
       expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
-      expect(Section.find_by_name('no section')).to be_truthy
+      expect(Section.find_by(name: 'no section')).to be_truthy
     end
 
     it 'not see a table if no students in this section' do
@@ -93,7 +96,9 @@ describe SectionsController do
     it 'not be able to edit a section name to an existing name' do
       put_as @instructor, :update, params: { course_id: course.id, id: section.id, section: { name: section2.name } }
       expect(response.status).to eq(200)
-      expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.update.error')].map { |f| extract_text f })
+      expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.update.error')].map do |f|
+                                                               extract_text f
+                                                             end)
     end
 
     context 'with an already created section' do

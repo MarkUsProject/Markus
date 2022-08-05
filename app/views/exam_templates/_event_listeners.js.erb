@@ -1,0 +1,18 @@
+// Reload dialog event listeners
+$(".dialog").each((_, dialog) => {
+  let open_link = dialog.getAttribute("data-open-link") || undefined;
+  new ModalMarkus("#" + dialog.id, open_link);
+  $("#" + dialog.id + "-close").click(function () {
+    dialog.close();
+  });
+});
+
+// Close generate exam modal after submitting
+$('#generate_exam_modal_submit').click(() => {
+  $('#generate_exam_dialog').trigger('closeModal');
+});
+
+$(".add-template-division").click(e => {
+  add_template_division(e.target);
+  e.preventDefault();
+});

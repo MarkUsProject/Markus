@@ -10,12 +10,12 @@ services:
         UBUNTU_VERSION: focal
         RUBY_VERSION: '2.7'
         PG_MAJOR: '12'
-        NODE_MAJOR: '12'
-        YARN_VERSION: '1.22.5'
-        BUNDLER_VERSION: '1.17.3'
+        NODE_MAJOR: '18'
+        YARN_VERSION: '3.2.1'
+        BUNDLER_VERSION: '2.3.17'
         PYTHON_VERSION: '3.9'
         USER: 'markus'
-    image: markus-dev:1.0.0
+    image: markus-dev:1.0.1
     tmpfs:
       - /tmp
     stdin_open: true
@@ -32,23 +32,6 @@ services:
       - postgres
       - redis
 
-  ssh:
-    build:
-      context: .
-      dockerfile: ./.dockerfiles/Dockerfile-ssh
-      args:
-        UBUNTU_VERSION: focal
-        SSH_USER: git
-    image: markus-ssh:1.0.0
-    volumes:
-      - log:/home/git/log
-      - repos:/home/git/csc108
-    environment:
-      - TZ=America/Toronto
-    command: /usr/sbin/sshd -D -e
-    ports:
-      - '2222:22'
-
   rails: &rails
     <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
@@ -57,8 +40,11 @@ services:
       - RAILS_RELATIVE_URL_ROOT=/csc108
       - PGDATABASE=markus_development
       - PGDATABASETEST=markus_test
-      - MARKUS__REPOSITORY__SSH_URL=ssh://git@localhost:2222/~/csc108
-      - MARKUS__REPOSITORY__MARKUS_GIT_SHELL=/markus-git-shell.sh
+      - MARKUS__REPOSITORY__SSH_URL=ssh://markus@localhost:2222/~/csc108
+      - CAPYBARA_SERVER_PORT=${CAPYBARA_SERVER_PORT:-3434}
+      - CAPYBARA_SERVER_HOST=${CAPYBARA_SERVER_HOST:-0.0.0.0}
+    extra_hosts:
+      - localhost:host-gateway
     ports:
       - '3000:3000'
     volumes:
@@ -67,9 +53,6 @@ services:
       - bundle:/bundle
       - tmp:/app/tmp
       - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - packs_test:/app/public/packs-test
-      - ssh_pub_key:/ssh_pub_key
       - log:/app/log
       - python:/app/venv
       - .:/app:cached
@@ -80,6 +63,23 @@ services:
       - webpacker
       - ssh
 
+  ssh:
+    <<: *rails
+    volumes:
+      - log:/home/markus/log
+      - repos:/home/markus/csc108
+      - .dockerfiles/:/app/.dockerfiles
+      - ./lib/repo:/app/lib/repo
+    environment:
+      - TZ=America/Toronto
+    command: /usr/sbin/sshd -D -e
+    user: root
+    extra_hosts: []
+    ports:
+      - '2222:22'
+    entrypoint: .dockerfiles/entrypoint-dev-ssh.sh
+    depends_on: []
+
   resque:
     <<: *rails
     entrypoint: .dockerfiles/entrypoint-dev-resque.sh
@@ -89,7 +89,7 @@ services:
     ports: []
 
   postgres:
-    image: postgres:10
+    image: postgres:12.11
     volumes:
       - postgres:/var/lib/postgresql/data
       - log:/root/log:cached
@@ -101,7 +101,7 @@ services:
       - '35432:5432'
 
   redis:
-    image: redis:3.2-alpine
+    image: redis:5.0.14-alpine
     volumes:
       - redis:/data
     ports:
@@ -110,19 +110,14 @@ services:
   webpacker:
     <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
-    command: ./bin/webpack-dev-server
-    ports:
-      - '3035:3035'
+    command: yarn build-dev
     volumes:
       - bundle:/bundle
       - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - packs_test:/app/public/packs-test
       - .:/app:cached
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - RAILS_ENV=${RAILS_ENV:-development}
-      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
       - PGDATABASE=markus_development
       - PGDATABASETEST=markus_test
 
@@ -133,13 +128,9 @@ volumes:
   redis:
   bundle:
   node_modules:
-  packs:
-  packs_test:
   tmp:
   log:
   python:
-  ssh_pub_key:
-    name: ssh_pub_key
 
 networks:
   markus_dev:

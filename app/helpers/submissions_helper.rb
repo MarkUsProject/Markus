@@ -1,4 +1,5 @@
 module SubmissionsHelper
+  include RepositoryHelper
 
   def find_appropriate_grouping(assignment_id, params)
     if current_role.instructor? || current_role.ta?
@@ -8,53 +9,27 @@ module SubmissionsHelper
     end
   end
 
-  def set_pr_release_on_results(groupings, release)
+  def set_pr_release_on_results(peer_review_ids, release)
     Result.transaction do
-      Result.where(id: groupings.joins(peer_reviews_to_others: :result).pluck('results.id'))
-            .update_all(released_to_students: release)
-    end
-  end
+      results = Result.joins(:peer_reviews).where('peer_reviews.id': peer_review_ids)
 
-  # Release or unrelease the submissions of a set of groupings.
-  def set_release_on_results(groupings, release)
-    without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
-
-    if without_submissions.present?
-      group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
-      flash_now(:error, I18n.t('submissions.errors.no_submission', group_name: group_names))
-      groupings = groupings.where.not(id: without_submissions.ids)
-    end
-
-    without_complete_result = groupings.joins(:current_result)
-                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
-
-    if without_complete_result.present?
-      group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
-      if release
-        flash_now(:error, t('submissions.errors.not_complete', group_name: group_names))
-      else
-        flash_now(:error, t('submissions.errors.not_complete_unrelease', group_name: group_names))
-      end
-      groupings = groupings.where.not(id: without_complete_result.ids)
-    end
-
-    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
-                   .update_all(released_to_students: release)
-
-    if release
-      groupings.includes(:accepted_students).each do |grouping|
-        grouping.accepted_students.each do |student|
-          if student.receives_results_emails?
-            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later
-          end
+      without_complete_result = results.where.not(marking_state: Result::MARKING_STATES[:complete])
+      if without_complete_result.present?
+        group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
+        if release
+          flash_now(:error, t('submissions.errors.not_complete', group_name: group_names))
+        else
+          flash_now(:error, t('submissions.errors.not_complete_unrelease', group_name: group_names))
         end
       end
-    end
 
-    result
+      results.where(marking_state: Result::MARKING_STATES[:complete])
+             .update_all(released_to_students: release)
+    end
   end
 
-  def get_file_info(file_name, file, course_id, assignment_id, revision_identifier, path, grouping_id)
+  def get_file_info(file_name, file, course_id, assignment_id, revision_identifier,
+                    path, grouping_id, url_submit: false)
     return if Repository.get_class.internal_file_names.include? file_name
     f = {}
     f[:id] = file.object_id
@@ -81,7 +56,59 @@ module SubmissionsHelper
     f[:last_modified_revision] = revision_identifier
     f[:revision_by] = file.user_id
     f[:submitted_date] = I18n.l(file.submitted_date)
-    f[:type] = FileHelper.get_file_type(file_name)
+    file_type = FileHelper.get_file_type(file_name)
+    f[:type] = file_type == 'markusurl' && !url_submit ? 'unknown' : file_type
     f
+  end
+
+  # Helper for the API that uploads a file to this particular +grouping+'s assignment repository.
+  # If +only_required_files+ is true, only required files for this grouping's assignment can be uploaded.
+  def upload_file(grouping, only_required_files: false)
+    if has_missing_params?([:filename, :mime_type, :file_content])
+      # incomplete/invalid HTTP params
+      render 'shared/http_status', locals: { code: '422', message:
+        HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+      return
+    end
+
+    # Only allow required files to be uploaded if +only_required_files+ is true
+    required_files = grouping.assignment.assignment_files.pluck(:filename)
+    if only_required_files && required_files.exclude?(params[:filename])
+      message = t('assignments.upload_file_requirement') +
+        "\n#{Assignment.human_attribute_name(:assignment_files)}: #{required_files.join(', ')}"
+      render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_entity
+      return
+    end
+
+    if params[:file_content].respond_to? :read # binary data
+      content = params[:file_content].read
+    else
+      content = params[:file_content]
+    end
+
+    tmpfile = Tempfile.new
+    begin
+      tmpfile.write(content)
+      tmpfile.rewind
+      file = ActionDispatch::Http::UploadedFile.new(tempfile: tmpfile,
+                                                    filename: params[:filename],
+                                                    type: params[:mime_type])
+      success, messages = grouping.access_repo do |repo|
+        path = Pathname.new(grouping.assignment.repository_folder)
+        add_file(file, current_role, repo, path: path)
+      end
+    ensure
+      tmpfile.close!
+    end
+    message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+    if success
+      # It worked, render success
+      message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
+      render 'shared/http_status', locals: { code: '201', message: message }, status: :created
+    else
+      # Some other error occurred
+      message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+      render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
+    end
   end
 end

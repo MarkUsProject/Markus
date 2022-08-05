@@ -3,12 +3,14 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  PERMITTED_IFRAME_SRC = ([:self] + %w[https://www.youtube.com https://drive.google.com https://docs.google.com]).freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
+    p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
   content_security_policy_report_only only: :notebook_content
@@ -19,7 +21,7 @@ class SubmissionsController < ApplicationController
         assignment = Assignment.find(params[:assignment_id])
         render json: {
           groupings: assignment.current_submission_data(current_role),
-          sections: Hash[current_course.sections.pluck(:id, :name)]
+          sections: current_course.sections.pluck(:id, :name).to_h
         }
       end
     end
@@ -47,13 +49,11 @@ class SubmissionsController < ApplicationController
           @collected_revision = revision
         end
         # store the displayed revision
-        if @revision.nil?
-          if (params[:revision_identifier] &&
+        if @revision.nil? && ((params[:revision_identifier] &&
             params[:revision_identifier] == revision.revision_identifier.to_s) ||
             (params[:revision_timestamp] &&
-              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
-            @revision = revision
-          end
+              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp))
+          @revision = revision
         end
       end
       # find another relevant revision to display if @revision.nil?
@@ -92,7 +92,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
-      head 400
+      head :bad_request
       return
     end
 
@@ -124,15 +124,27 @@ class SubmissionsController < ApplicationController
       end
       entries = get_all_file_data(revision, grouping, '')
     end
-    render json: entries
+
+    response = {
+      entries: entries,
+      only_required_files: assignment.only_required_files,
+      required_files: assignment.assignment_files.pluck(:filename).sort,
+      max_file_size: assignment.course.max_file_size_settings / 1_000_000,
+      number_of_missing_files: grouping.missing_assignment_files(@revision).length
+    }
+
+    render json: response
   end
 
   def manually_collect_and_begin_grading
     assignment = Assignment.find_by(id: params[:assignment_id])
     @grouping = assignment.groupings.find(params[:grouping_id])
     @revision_identifier = params[:current_revision_identifier]
-    apply_late_penalty = params[:apply_late_penalty].nil? ?
-                         false : params[:apply_late_penalty]
+    apply_late_penalty = if params[:apply_late_penalty].nil?
+                           false
+                         else
+                           params[:apply_late_penalty]
+                         end
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
@@ -147,14 +159,14 @@ class SubmissionsController < ApplicationController
     session[:job_id] = @current_job.job_id
 
     respond_to do |format|
-      format.js { render 'shared/_poll_job.js.erb' }
+      format.js { render 'shared/_poll_job' }
     end
   end
 
   def collect_submissions
-    if !params.has_key?(:groupings) || params[:groupings].empty?
+    if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -164,7 +176,7 @@ class SubmissionsController < ApplicationController
     some_released = Grouping.joins(current_submission_used: :results)
                             .where('results.released_to_students': true)
                             .where(id: groupings)
-                            .pluck(:id).to_set
+                            .ids.to_set
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
@@ -193,13 +205,13 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    render 'shared/_poll_job.js.erb'
+    render 'shared/_poll_job'
   end
 
   def run_tests
-    if !params.has_key?(:groupings) || params[:groupings].empty?
+    if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
@@ -208,7 +220,7 @@ class SubmissionsController < ApplicationController
     group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
-        head 400
+        head :bad_request
         return
       end
       g.group_id
@@ -231,10 +243,10 @@ class SubmissionsController < ApplicationController
     rescue StandardError => e
       error = e.message
     end
-    unless success.blank?
+    if success.present?
       flash_message(:success, success)
     end
-    unless error.blank?
+    if error.present?
       flash_message(:error, error)
     end
     render json: { success: success, error: error }
@@ -254,14 +266,14 @@ class SubmissionsController < ApplicationController
     end
 
     if @assignment.section_due_dates_type
-      section_due_dates = Hash.new
+      section_due_dates = {}
       now = Time.current
       current_course.sections.find_each do |section|
         collection_time = @assignment.submission_rule
                                      .calculate_collection_time(section)
         collection_time = now if now >= collection_time
         if section_due_dates[collection_time].nil?
-          section_due_dates[collection_time] = Array.new
+          section_due_dates[collection_time] = []
         end
         section_due_dates[collection_time].push(section.name)
       end
@@ -290,7 +302,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(assignment_id)
     raise t('student.submission.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
 
-    @path = params[:path].blank? ? '/' : params[:path]
+    @path = params[:path].presence || '/'
 
     if current_role.student?
       @grouping = current_role.accepted_grouping_for(assignment_id)
@@ -316,11 +328,14 @@ class SubmissionsController < ApplicationController
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
 
+    # The new url that will be added
+    new_url = params[:new_url] || ''
+
     unless delete_folders.empty? && new_folders.empty?
       authorize! to: :manage_subdirectories?
     end
 
-    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty? && new_url.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
       messages = []
@@ -337,18 +352,34 @@ class SubmissionsController < ApplicationController
           required_files = nil
         end
 
+        if new_url.present?
+          url_filename = params[:url_text]
+          raise I18n.t('submissions.urls_disabled') unless @assignment.url_submit
+          raise I18n.t('submissions.invalid_url', item: new_url) unless is_valid_url?(new_url)
+          raise I18n.t('submissions.no_url_name', url: new_url) if url_filename.blank?
+          url_file = Tempfile.new
+          url_file.write(new_url)
+          url_file.rewind
+          url_filename = FileHelper.sanitize_file_name(url_filename)
+          new_url_file = ActionDispatch::Http::UploadedFile.new(filename: "#{url_filename}.markusurl",
+                                                                tempfile: url_file,
+                                                                type: 'text/url')
+          success, msgs = add_file(new_url_file, current_role, repo,
+                                   path: path, txn: txn, check_size: true, required_files: required_files)
+          should_commit &&= success
+          messages.concat msgs
+        end
+
         upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
           if f.is_a?(String) # is a directory
             authorize! to: :manage_subdirectories? # ensure user is authorized for directories in zip files
             success, msgs = add_folder(f, current_role, repo, path: path, txn: txn, required_files: required_files)
-            should_commit &&= success
-            messages = messages.concat msgs
           else
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
-            should_commit &&= success
-            messages.concat msgs
           end
+          should_commit &&= success
+          messages.concat msgs
         end
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_role, repo, path: path, txn: txn)
@@ -358,7 +389,7 @@ class SubmissionsController < ApplicationController
         if delete_folders.present?
           success, msgs = remove_folders(delete_folders, current_role, repo, path: path, txn: txn)
           should_commit &&= success
-          messages = messages.concat msgs
+          messages.concat msgs
         end
         if should_commit
           commit_success, commit_msg = commit_transaction(repo, txn)
@@ -386,7 +417,7 @@ class SubmissionsController < ApplicationController
       current_role.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
                     t('submission_file.error.no_access',
-                          submission_file_id: params[:submission_file_id]))
+                      submission_file_id: params[:submission_file_id]))
       redirect_back(fallback_location: root_path)
       return
     end
@@ -398,8 +429,6 @@ class SubmissionsController < ApplicationController
       render json: { type: 'pdf' }
     elsif file.is_pynb?
       render json: { type: 'jupyter-notebook' }
-    elsif file.is_rmd?
-      render json: { type: 'rmarkdown' }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -411,6 +440,8 @@ class SubmissionsController < ApplicationController
         else
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+
+          file_type = 'unknown' unless file_type != 'markusurl' || assignment.url_submit
 
           if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
@@ -426,7 +457,7 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
 
-    if %(jupyter-notebook rmarkdown).include?(FileHelper.get_file_type(params[:file_name])) && preview
+    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview
       redirect_to action: :notebook_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -462,10 +493,10 @@ class SubmissionsController < ApplicationController
         else
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
         end
-      rescue Exception => e
+      rescue StandardError => e
         flash_message(:error, e.message)
         render plain: I18n.t('student.submission.missing_file',
-                            file_name: params[:file_name], message: e.message)
+                             file_name: params[:file_name], message: e.message)
         return
       end
 
@@ -560,7 +591,7 @@ class SubmissionsController < ApplicationController
     @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id)
     session[:job_id] = @current_job.job_id
 
-    render 'shared/_poll_job.js.erb'
+    render 'shared/_poll_job'
   end
 
   # download a zip file previously prepared by calling the
@@ -609,7 +640,7 @@ class SubmissionsController < ApplicationController
         return
       end
 
-      zip_path = "tmp/#{assignment.short_identifier}_#{grouping.group.group_name}_"\
+      zip_path = "tmp/#{assignment.short_identifier}_#{grouping.group.group_name}_" \
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, create: true) do |zip_file|
@@ -622,36 +653,43 @@ class SubmissionsController < ApplicationController
 
   # Release or unrelease submissions
   def update_submissions
-    if !params.has_key?(:groupings) || params[:groupings].empty?
+    assignment = Assignment.find(params[:assignment_id])
+    is_review = assignment.is_peer_review?
+
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
-    assignment = Assignment.find(params[:assignment_id])
-    groupings = assignment.groupings.where(id: params[:groupings])
     release = params[:release_results] == 'true'
 
     begin
-      changed = assignment.is_peer_review? ?
-          set_pr_release_on_results(groupings, release) :
-          set_release_on_results(groupings, release)
-
+      changed = if is_review
+                  set_pr_release_on_results(params[:peer_reviews], release)
+                else
+                  begin
+                    Result.set_release_on_results(params[:groupings], release)
+                  rescue StandardError => e
+                    flash_now(:error, e.message)
+                    0
+                  end
+                end
       if changed > 0
-        assignment.update_remark_request_count
-
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('submissions.successfully_changed',
                                    changed: changed))
         if release
           MarkusLogger.instance.log(
-            'Marks released for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' for #{changed} group(s).")
+            'Marks released for assignment ' \
+            "'#{assignment.short_identifier}', ID: '" \
+            "#{assignment.id}' for #{changed} group(s)."
+          )
         else
           MarkusLogger.instance.log(
-            'Marks unreleased for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' for #{changed} group(s).")
+            'Marks unreleased for assignment ' \
+            "'#{assignment.short_identifier}', ID: '" \
+            "#{assignment.id}' for #{changed} group(s)."
+          )
         end
       end
 
@@ -679,12 +717,21 @@ class SubmissionsController < ApplicationController
   end
 
   def set_result_marking_state
-    if !params.key?(:groupings) || params[:groupings].empty?
+    assignment = Assignment.find(params[:assignment_id])
+    is_review = assignment.is_peer_review?
+
+    if (!is_review && params[:groupings].blank?) || (is_review && params[:peer_reviews].blank?)
       flash_now(:error, t('groups.select_a_group'))
-      head 400
+      head :bad_request
       return
     end
-    results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+
+    if is_review
+      results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
+    else
+      results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+    end
+
     errors = Hash.new { |h, k| h[k] = [] }
     results.each do |result|
       unless result.update(marking_state: params[:marking_state])
@@ -700,6 +747,8 @@ class SubmissionsController < ApplicationController
   private
 
   def notebook_to_html(file_contents, unique_path, type)
+    return file_contents unless type == 'jupyter-notebook'
+
     cache_file = Pathname.new('tmp/notebook_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
@@ -707,15 +756,13 @@ class SubmissionsController < ApplicationController
         args = [
           File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
         ]
-      else
-        args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
 
       # add unique ids to all elements in the DOM
       html = Nokogiri::HTML.parse(File.read(cache_file))
-      current_ids = html.xpath('//*[@id]').map { |elem| elem[:id] }.to_set
+      current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
       html.xpath('//*[not(@id)]').map do |elem|
         unique_id = elem.path
         unique_id += '-next' while current_ids.include? unique_id
@@ -731,7 +778,7 @@ class SubmissionsController < ApplicationController
   def zipped_grouping_file_name(assignment)
     # create the zip name with the user name so that we avoid downloading files created by another user
     short_id = assignment.short_identifier
-    Pathname.new('tmp') + Pathname.new(short_id + '_' + current_role.user_name + '.zip')
+    Pathname.new('tmp') + Pathname.new("#{short_id}_#{current_role.user_name}.zip")
   end
 
   # Used in update_files and file_manager actions
@@ -739,33 +786,28 @@ class SubmissionsController < ApplicationController
     grouping.access_repo do |repo|
       @revision = repo.get_latest_revision
       @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
-      @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
   end
 
   # Generate flash messages to show the status of a group's submitted files.
   # Used in update_files and file_manager actions.
-  # Requires @grouping, @assignment, and @missing_assignment_files variables to be set.
+  # Requires @grouping and @assignment variables to be set.
   def flash_file_manager_messages
     if @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
       flash_message(:warning,
-                    I18n.t('assignments.timed.past_end_time') + ' ' + I18n.t('submissions.past_collection_time'))
+                    "#{I18n.t('assignments.timed.past_end_time')} #{I18n.t('submissions.past_collection_time')}")
     elsif @assignment.is_timed && !@grouping.start_time.nil? && !@assignment.grouping_past_due_date?(@grouping)
       flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
     elsif @grouping.past_collection_date?
       flash_message(:warning,
-                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message) + ' ' +
-                      I18n.t('submissions.past_collection_time'))
+                    "#{@assignment.submission_rule.class.human_attribute_name(:after_collection_message)} " \
+                    "#{I18n.t('submissions.past_collection_time')}")
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end
 
-    if !@grouping.is_valid?
+    unless @grouping.is_valid?
       flash_message(:error, t('groups.invalid_group_warning'))
-    elsif !@missing_assignment_files.blank?
-      flash_message(:warning,
-                    partial: 'submissions/missing_assignment_file_toggle_list',
-                    locals: { missing_assignment_files: @missing_assignment_files })
     end
 
     if @assignment.allow_web_submits && @assignment.vcs_submit
@@ -780,6 +822,7 @@ class SubmissionsController < ApplicationController
     return [] unless revision.path_exists?(full_path)
 
     anonymize = current_role.ta? && grouping.assignment.anonymize_groups
+    url_submit = grouping.assignment.url_submit
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
@@ -789,7 +832,7 @@ class SubmissionsController < ApplicationController
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
         data = get_file_info(basename, file_obj, grouping.course.id, grouping.assignment.id,
-                             revision.revision_identifier, dirname, grouping.id)
+                             revision.revision_identifier, dirname, grouping.id, url_submit: url_submit)
         next if data.nil?
         data[:key] = file_name
         data[:modified] = file_obj.last_modified_date.to_i
@@ -805,5 +848,14 @@ class SubmissionsController < ApplicationController
   # the grouping is in the same course as the current course
   def parent_params
     params[:grouping_id].nil? ? super : [*super, :grouping_id]
+  end
+
+  # Returns a boolean on whether the given +url+ is valid.
+  # Taken from https://stackoverflow.com/questions/7167895/rails-whats-a-good-way-to-validate-links-urls
+  def is_valid_url?(url)
+    uri = URI.parse(url)
+    uri.is_a?(URI::HTTP) && uri.host.present?
+  rescue URI::InvalidURIError
+    false
   end
 end

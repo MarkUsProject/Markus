@@ -21,6 +21,11 @@ class RawFileManager extends RawFileBrowser {
     this.handleActionBarAddFolderClick(event);
   };
 
+  handleActionBarSubmitURLClick = (event, selectedItem) => {
+    event.preventDefault();
+    this.props.onActionBarSubmitURLClick(this.folderTarget(selectedItem));
+  };
+
   folderTarget = selectedItem => {
     // treat multiple selections as not targeting a folder
     const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith("/");
@@ -33,21 +38,15 @@ class RawFileManager extends RawFileBrowser {
     }
   };
 
+  upload_or_submit_file_label = () => {
+    const locale = this.props.isSubmittingItems ? "submit_the" : "upload_the";
+    return I18n.t(locale, {item: I18n.t("file")});
+  };
+
   renderActionBar(selectedItems) {
     // treat multiple selections the same as not targeting
     let selectedItem = selectedItems.length === 1 ? selectedItems[0] : null;
     const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith("/");
-    let filter;
-    if (this.props.canFilter) {
-      filter = (
-        <this.props.filterRenderer
-          value={this.state.nameFilter}
-          updateFilter={this.updateFilter}
-          {...this.props.filterRendererProps}
-        />
-      );
-    }
-
     let actions = [];
 
     if (!this.props.readOnly && selectedItem) {
@@ -129,6 +128,20 @@ class RawFileManager extends RawFileBrowser {
             </li>
           );
         }
+        if (this.props.enableUrlSubmit) {
+          actions.unshift(
+            <li key="action-add-link">
+              <a
+                onClick={event => this.handleActionBarSubmitURLClick(event, selectedItem)}
+                href="#"
+                role="button"
+              >
+                <i className="fa fa-submit-link-o" aria-hidden="true" />
+                &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
+              </a>
+            </li>
+          );
+        }
         // NEW
         actions.unshift(
           <li key="action-add-file>">
@@ -138,7 +151,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-add-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("upload_the", {item: I18n.t("file")})}
+              &nbsp;{this.upload_or_submit_file_label()}
             </a>
           </li>
         );
@@ -159,6 +172,20 @@ class RawFileManager extends RawFileBrowser {
           </li>
         );
       }
+      if (this.props.enableUrlSubmit) {
+        actions.unshift(
+          <li key="action-add-link">
+            <a
+              onClick={event => this.handleActionBarSubmitURLClick(event, selectedItem)}
+              href="#"
+              role="button"
+            >
+              <i className="fa fa-submit-link-o" aria-hidden="true" />
+              &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
+            </a>
+          </li>
+        );
+      }
       // NEW
       actions.unshift(
         <li key="action-add-file>">
@@ -168,7 +195,7 @@ class RawFileManager extends RawFileBrowser {
             role="button"
           >
             <i className="fa fa-add-file-o" aria-hidden="true" />
-            &nbsp;{I18n.t("upload_the", {item: I18n.t("file")})}
+            &nbsp;{this.upload_or_submit_file_label()}
           </a>
         </li>
       );
@@ -199,12 +226,7 @@ class RawFileManager extends RawFileBrowser {
       actionList = <div className="item-actions">&nbsp;</div>;
     }
 
-    return (
-      <div className="action-bar">
-        {filter}
-        {actionList}
-      </div>
-    );
+    return <div className="action-bar">{actionList}</div>;
   }
 }
 
@@ -261,6 +283,20 @@ class FileManagerFile extends FileRenderers.RawTableFile {
       icon = <i className="fa fa-file-o" aria-hidden="true" />;
     }
 
+    // SVG path generated from https://fontawesome.com/icons/download?s=solid
+    let download_icon = (
+      <svg
+        className="file-download"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24px"
+        height="24px"
+        viewBox="0 0 512 512"
+        preserveAspectRatio="xMaxYMax meet"
+      >
+        <title>{I18n.t("download")}</title>
+        <path d="M480 352h-133.5l-45.25 45.25C289.2 409.3 273.1 416 256 416s-33.16-6.656-45.25-18.75L165.5 352H32c-17.67 0-32 14.33-32 32v96c0 17.67 14.33 32 32 32h448c17.67 0 32-14.33 32-32v-96C512 366.3 497.7 352 480 352zM432 456c-13.2 0-24-10.8-24-24c0-13.2 10.8-24 24-24s24 10.8 24 24C456 445.2 445.2 456 432 456zM233.4 374.6C239.6 380.9 247.8 384 256 384s16.38-3.125 22.62-9.375l128-128c12.49-12.5 12.49-32.75 0-45.25c-12.5-12.5-32.76-12.5-45.25 0L288 274.8V32c0-17.67-14.33-32-32-32C238.3 0 224 14.33 224 32v242.8L150.6 201.4c-12.49-12.5-32.75-12.5-45.25 0c-12.49 12.5-12.49 32.75 0 45.25L233.4 374.6z" />
+      </svg>
+    );
     const inAction = this.props.isDragging || this.props.action;
 
     let name;
@@ -292,10 +328,13 @@ class FileManagerFile extends FileRenderers.RawTableFile {
       );
     } else {
       name = (
-        <a href={this.props.url || "#"} download={this.getName()}>
+        <React.Fragment>
           {icon}
-          {this.getName()}
-        </a>
+          <span>{this.getName()}</span>
+          <a href={this.props.url || "#"} download={this.getName()}>
+            {download_icon}
+          </a>
+        </React.Fragment>
       );
     }
 

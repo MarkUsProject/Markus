@@ -1,3 +1,3 @@
-export MARKUS_LOG_FILE=/home/git/log/ssh.log
-export MARKUS_REPO_LOC_PATTERN='/home/git/(instance)'
+export MARKUS_LOG_FILE=/home/markus/log/ssh.log
+export MARKUS_REPO_LOC_PATTERN='/home/markus/(instance)'
 export GIT_SHELL=/usr/bin/git-shell

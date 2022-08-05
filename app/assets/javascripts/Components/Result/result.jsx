@@ -236,11 +236,7 @@ class Result extends React.Component {
 
   extend_with_selection_data = annotation_data => {
     let box;
-    if (annotation_type === ANNOTATION_TYPES.IMAGE) {
-      box = get_image_annotation_data();
-    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
-      box = get_pdf_annotation_data();
-    } else if (annotation_type === ANNOTATION_TYPES.NOTEBOOK) {
+    if (annotation_type === ANNOTATION_TYPES.NOTEBOOK) {
       const range = get_notebook_annotation_range();
       box = {
         start_node: pathToNode(range.startContainer),
@@ -249,7 +245,7 @@ class Result extends React.Component {
         end_offset: range.endOffset,
       };
     } else {
-      box = get_text_annotation_data();
+      box = window.annotation_manager.getSelection();
     }
     if (box) {
       return Object.assign(annotation_data, box);
@@ -284,6 +280,11 @@ class Result extends React.Component {
     if (annotation.annotation_category) {
       this.refreshAnnotationCategories();
     }
+
+    if (typeof window.annotation_manager.hide_selection_box === "function") {
+      window.annotation_manager.hide_selection_box();
+    }
+    reloadDOM();
   };
 
   addExistingAnnotation = annotation_text_id => {
@@ -308,11 +309,31 @@ class Result extends React.Component {
     }
   };
 
+  addQuickAnnotation = content => {
+    const submission_file_id =
+      this.leftPane.current.submissionFilePanel.current.state.selectedFile[1];
+    if (submission_file_id === null) {
+      return;
+    }
+
+    let data = {
+      submission_file_id: submission_file_id,
+      result_id: this.state.result_id,
+      content: content,
+      category_id: "",
+    };
+
+    data = this.extend_with_selection_data(data);
+    if (data) {
+      $.post(Routes.course_annotations_path(this.props.course_id), data, undefined, "script");
+    }
+  };
+
   refreshAnnotationCategories = () => {
     $.get({
       url: Routes.course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.state.assignment_id
+        this.state.parent_assignment_id || this.state.assignment_id
       ),
       dataType: "json",
     }).then(res => {
@@ -390,17 +411,46 @@ class Result extends React.Component {
         this.setState({annotations: newAnnotations});
       }
     }
-    update_annotation_text(annotation.annotation_text_id, annotation.content, annotation.id);
+    this.update_annotation_text(annotation.annotation_text_id, annotation.content, annotation.id);
+
+    if (typeof window.annotation_manager.hide_selection_box === "function") {
+      window.annotation_manager.hide_selection_box();
+    }
+    reloadDOM();
   };
 
+  /**
+   * Update the text in an annotation.
+   */
+  update_annotation_text(annotation_text_id, new_content, annotation_id = "") {
+    let annotation_text_manager = window.annotation_manager.annotation_text_manager;
+    if (annotation_text_manager.annotationTextExists(annotation_text_id)) {
+      let annotation_text = annotation_text_manager.getAnnotationText(annotation_text_id);
+      annotation_text.content = new_content;
+    } else {
+      let annotation_text = new AnnotationText(annotation_text_id, 0, new_content);
+      annotation_text_manager.addAnnotationText(annotation_text);
+      window.annotation_manager.updateRelationships(annotation_id, annotation_text_id);
+    }
+  }
+
   destroyAnnotation(annotation_id, range, annotation_text_id) {
-    remove_annotation(annotation_id, range, annotation_text_id);
+    if (annotation_manager.annotation_text_manager.annotationTextExists(annotation_text_id)) {
+      annotation_manager.removeAnnotation(annotation_id);
+    }
     let newAnnotations = [...this.state.annotations];
     const i = newAnnotations.findIndex(a => a.id === annotation_id);
     if (i >= 0) {
       newAnnotations.splice(i, 1);
       this.setState({annotations: newAnnotations});
     }
+
+    if (typeof annotation_manager.hide_selection_box === "function") {
+      annotation_manager.hide_selection_box();
+    }
+    reloadDOM();
+    // Need to remove data attribute from highlight elements - must be last.
+    $("span").removeAttr(`data-annotationid${annotation_id}`);
   }
 
   removeAnnotation = annot_id => {
@@ -642,129 +692,131 @@ class Result extends React.Component {
   };
 
   render() {
-    return [
-      <CreateModifyAnnotationPanel
-        categories={this.state.annotation_categories}
-        onRequestClose={() =>
-          this.setState({
-            annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
-          })
-        }
-        is_reviewer={this.state.is_reviewer}
-        assignment_id={this.state.assignment_id}
-        course_id={this.props.course_id}
-        {...this.state.annotationModal}
-      />,
-      <SubmissionSelector
-        key="submission-selector"
-        role={this.props.role}
-        can_release={this.state.can_release}
-        result_id={this.state.result_id}
-        submission_id={this.state.submission_id}
-        assignment_id={this.state.assignment_id}
-        grouping_id={this.state.grouping_id}
-        assignment_max_mark={this.state.assignment_max_mark}
-        fullscreen={this.state.fullscreen}
-        group_name={this.state.group_name}
-        is_reviewer={this.state.is_reviewer}
-        marks={this.state.marks || []}
-        marking_state={this.state.marking_state}
-        num_marked={this.state.num_marked}
-        num_collected={this.state.num_collected}
-        released_to_students={this.state.released_to_students}
-        total={this.state.total}
-        toggleFullscreen={this.toggleFullscreen}
-        toggleMarkingState={this.toggleMarkingState}
-        setReleasedToStudents={this.setReleasedToStudents}
-        nextSubmission={this.nextSubmission(1)}
-        previousSubmission={this.nextSubmission(-1)}
-        course_id={this.props.course_id}
-      />,
-      <div key="panes-content" id="panes-content">
-        <div id="panes">
-          <div id="left-pane">
-            <LeftPane
-              ref={this.leftPane}
-              loading={this.state.loading}
-              result_id={this.state.result_id}
-              submission_id={this.state.submission_id}
-              assignment_id={this.state.assignment_id}
-              grouping_id={this.state.grouping_id}
-              is_reviewer={this.state.is_reviewer}
-              allow_remarks={this.state.allow_remarks}
-              annotation_categories={this.state.annotation_categories || []}
-              annotations={this.state.annotations || []}
-              assignment_remark_message={this.state.assignment_remark_message}
-              update_overall_comment={this.updateOverallComment}
-              can_run_tests={this.state.can_run_tests}
-              detailed_annotations={this.state.detailed_annotations}
-              enable_test={this.state.enable_test}
-              feedback_files={this.state.feedback_files}
-              instructor_run={this.state.instructor_run}
-              overall_comment={this.state.overall_comment}
-              past_remark_due_date={this.state.past_remark_due_date}
-              released_to_students={this.state.released_to_students}
-              remark_due_date={this.state.remark_due_date}
-              remark_overall_comment={this.state.remark_overall_comment}
-              remark_request_text={this.state.remark_request_text}
-              remark_request_timestamp={this.state.remark_request_timestamp}
-              remark_submitted={this.state.remark_submitted}
-              revision_identifier={this.state.revision_identifier}
-              submission_files={this.state.submission_files}
-              student_view={this.props.role === "Student"}
-              newAnnotation={this.newAnnotation}
-              addAnnotation={this.addAnnotation}
-              addExistingAnnotation={this.addExistingAnnotation}
-              editAnnotation={this.editAnnotation}
-              updateAnnotation={this.updateAnnotation}
-              removeAnnotation={this.removeAnnotation}
-              destroyAnnotation={this.destroyAnnotation}
-              course_id={this.props.course_id}
-            />
-          </div>
-          <div id="drag" />
-          <div id="right-pane">
-            <RightPane
-              assignment_id={this.state.assignment_id}
-              submission_id={this.state.submission_id}
-              result_id={this.state.result_id}
-              grouping_id={this.state.grouping_id}
-              members={this.state.members || []}
-              role={this.props.role}
-              annotations={this.state.annotations}
-              assigned_criteria={this.state.assigned_criteria}
-              assignment_max_mark={this.state.assignment_max_mark}
-              available_tags={this.state.available_tags}
-              criterionSummaryData={this.state.criterionSummaryData}
-              current_tags={this.state.current_tags}
-              extra_marks={this.state.extra_marks}
-              extraMarkSubtotal={this.state.extraMarkSubtotal}
-              grace_token_deductions={this.state.grace_token_deductions}
-              is_reviewer={this.state.is_reviewer}
-              marks={this.state.marks}
-              notes_count={this.state.notes_count}
-              old_marks={this.state.old_marks}
-              old_total={this.state.old_total}
-              released_to_students={this.state.released_to_students}
-              remark_submitted={this.state.remark_submitted}
-              revertToAutomaticDeductions={this.revertToAutomaticDeductions}
-              subtotal={this.state.subtotal}
-              total={this.state.total}
-              updateMark={this.updateMark}
-              destroyMark={this.destroyMark}
-              createExtraMark={this.createExtraMark}
-              destroyExtraMark={this.destroyExtraMark}
-              deleteGraceTokenDeduction={this.deleteGraceTokenDeduction}
-              addTag={this.addTag}
-              removeTag={this.removeTag}
-              newNote={this.newNote}
-              findDeductiveAnnotation={this.findDeductiveAnnotation}
-              course_id={this.props.course_id}
-            />
+    return (
+      <React.Fragment>
+        <CreateModifyAnnotationPanel
+          categories={this.state.annotation_categories}
+          onRequestClose={() =>
+            this.setState({
+              annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
+            })
+          }
+          is_reviewer={this.state.is_reviewer}
+          assignment_id={this.state.assignment_id}
+          course_id={this.props.course_id}
+          {...this.state.annotationModal}
+        />
+        <SubmissionSelector
+          key="submission-selector"
+          role={this.props.role}
+          can_release={this.state.can_release}
+          result_id={this.state.result_id}
+          submission_id={this.state.submission_id}
+          assignment_id={this.state.assignment_id}
+          grouping_id={this.state.grouping_id}
+          assignment_max_mark={this.state.assignment_max_mark}
+          fullscreen={this.state.fullscreen}
+          group_name={this.state.group_name}
+          is_reviewer={this.state.is_reviewer}
+          marks={this.state.marks || []}
+          marking_state={this.state.marking_state}
+          num_marked={this.state.num_marked}
+          num_collected={this.state.num_collected}
+          released_to_students={this.state.released_to_students}
+          total={this.state.total}
+          toggleFullscreen={this.toggleFullscreen}
+          toggleMarkingState={this.toggleMarkingState}
+          setReleasedToStudents={this.setReleasedToStudents}
+          nextSubmission={this.nextSubmission(1)}
+          previousSubmission={this.nextSubmission(-1)}
+          course_id={this.props.course_id}
+        />
+        <div key="panes-content" id="panes-content">
+          <div id="panes">
+            <div id="left-pane">
+              <LeftPane
+                ref={this.leftPane}
+                loading={this.state.loading}
+                result_id={this.state.result_id}
+                submission_id={this.state.submission_id}
+                assignment_id={this.state.assignment_id}
+                grouping_id={this.state.grouping_id}
+                is_reviewer={this.state.is_reviewer}
+                allow_remarks={this.state.allow_remarks}
+                annotation_categories={this.state.annotation_categories || []}
+                annotations={this.state.annotations || []}
+                assignment_remark_message={this.state.assignment_remark_message}
+                update_overall_comment={this.updateOverallComment}
+                can_run_tests={this.state.can_run_tests}
+                detailed_annotations={this.state.detailed_annotations}
+                enable_test={this.state.enable_test}
+                feedback_files={this.state.feedback_files}
+                instructor_run={this.state.instructor_run}
+                overall_comment={this.state.overall_comment}
+                past_remark_due_date={this.state.past_remark_due_date}
+                released_to_students={this.state.released_to_students}
+                remark_due_date={this.state.remark_due_date}
+                remark_overall_comment={this.state.remark_overall_comment}
+                remark_request_text={this.state.remark_request_text}
+                remark_request_timestamp={this.state.remark_request_timestamp}
+                remark_submitted={this.state.remark_submitted}
+                revision_identifier={this.state.revision_identifier}
+                submission_files={this.state.submission_files}
+                student_view={this.props.role === "Student"}
+                newAnnotation={this.newAnnotation}
+                addAnnotation={this.addAnnotation}
+                addExistingAnnotation={this.addExistingAnnotation}
+                editAnnotation={this.editAnnotation}
+                updateAnnotation={this.updateAnnotation}
+                removeAnnotation={this.removeAnnotation}
+                destroyAnnotation={this.destroyAnnotation}
+                course_id={this.props.course_id}
+              />
+            </div>
+            <div id="drag" />
+            <div id="right-pane">
+              <RightPane
+                assignment_id={this.state.assignment_id}
+                submission_id={this.state.submission_id}
+                result_id={this.state.result_id}
+                grouping_id={this.state.grouping_id}
+                members={this.state.members || []}
+                role={this.props.role}
+                annotations={this.state.annotations}
+                assigned_criteria={this.state.assigned_criteria}
+                assignment_max_mark={this.state.assignment_max_mark}
+                available_tags={this.state.available_tags}
+                criterionSummaryData={this.state.criterionSummaryData}
+                current_tags={this.state.current_tags}
+                extra_marks={this.state.extra_marks}
+                extraMarkSubtotal={this.state.extraMarkSubtotal}
+                grace_token_deductions={this.state.grace_token_deductions}
+                is_reviewer={this.state.is_reviewer}
+                marks={this.state.marks}
+                notes_count={this.state.notes_count}
+                old_marks={this.state.old_marks}
+                old_total={this.state.old_total}
+                released_to_students={this.state.released_to_students}
+                remark_submitted={this.state.remark_submitted}
+                revertToAutomaticDeductions={this.revertToAutomaticDeductions}
+                subtotal={this.state.subtotal}
+                total={this.state.total}
+                updateMark={this.updateMark}
+                destroyMark={this.destroyMark}
+                createExtraMark={this.createExtraMark}
+                destroyExtraMark={this.destroyExtraMark}
+                deleteGraceTokenDeduction={this.deleteGraceTokenDeduction}
+                addTag={this.addTag}
+                removeTag={this.removeTag}
+                newNote={this.newNote}
+                findDeductiveAnnotation={this.findDeductiveAnnotation}
+                course_id={this.props.course_id}
+              />
+            </div>
           </div>
         </div>
-      </div>,
-    ];
+      </React.Fragment>
+    );
   }
 }
 

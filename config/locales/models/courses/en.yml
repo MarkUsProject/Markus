@@ -1,0 +1,11 @@
+---
+en:
+  activerecord:
+    attributes:
+      course:
+        display_name: Display Name
+        is_hidden: Course Visibility
+        name: Name
+    models:
+      course:
+        one: Course

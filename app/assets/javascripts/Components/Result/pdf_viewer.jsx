@@ -45,13 +45,9 @@ export class PDFViewer extends React.Component {
     annotation_type = ANNOTATION_TYPES.PDF;
 
     this.pdfViewer.currentScaleValue = "page-width";
-    window.annotation_manager = new PdfAnnotationManager(
-      this.pdfViewer,
-      "viewer",
-      !this.props.released_to_students,
-      this.props.course_id
-    );
+    window.annotation_manager = new PdfAnnotationManager(!this.props.released_to_students);
     window.annotation_manager.resetAngle();
+    this.annotation_manager = window.annotation_manager;
   };
 
   componentWillUnmount() {
@@ -86,23 +82,21 @@ export class PDFViewer extends React.Component {
         annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
     }
 
-    add_annotation_text(annotation.annotation_text_id, content);
-    annotation_manager.addAnnotation(
+    this.annotation_manager.addAnnotation(
       annotation.annotation_text_id,
-      safe_marked(annotation.content),
+      safe_marked(content),
       {
         x1: annotation.x_range.start,
         x2: annotation.x_range.end,
         y1: annotation.y_range.start,
         y2: annotation.y_range.end,
         page: annotation.page,
-        annot_id: annotation.id,
-      }
+      },
+      annotation.id
     );
   };
 
   rotate = () => {
-    annotation_manager.hideSelectionBox();
     annotation_manager.rotateClockwise90();
     this.pdfViewer.rotatePages(90);
   };
@@ -114,6 +108,12 @@ export class PDFViewer extends React.Component {
       <div>
         <div id="pdfContainer" style={{cursor, userSelect}} ref={this.pdfContainer}>
           <div id="viewer" className="pdfViewer" />
+          <div
+            key="sel_box"
+            id="sel_box"
+            className="annotation-holder-active"
+            style={{display: "none"}}
+          />
         </div>
       </div>
     );

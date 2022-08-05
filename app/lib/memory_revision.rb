@@ -1,7 +1,6 @@
 # Class responsible for storing files in and retrieving files
 # from memory
 class MemoryRevision < Repository::AbstractRevision
-
   # getter/setters for instance variables
   attr_accessor :files, :changed_files, :files_content, :user_id, :comment, :timestamp, :server_timestamp
 
@@ -10,8 +9,8 @@ class MemoryRevision < Repository::AbstractRevision
     super(revision_number)
     @files = []           # files in this revision (<filename> <RevisionDirectory/RevisionFile>)
     @files_content = {}   # hash: keys => RevisionFile object, value => content
-    @user_id = "dummy_user_id"     # user_id, who created this revision
-    @comment = "commit_message" # commit-message for this revision
+    @user_id = 'dummy_user_id'     # user_id, who created this revision
+    @comment = 'commit_message' # commit-message for this revision
     timestamp = Time.current
     @timestamp = timestamp
     @server_timestamp = timestamp
@@ -19,7 +18,7 @@ class MemoryRevision < Repository::AbstractRevision
 
   # Returns true if and only if path exists in files and path is a directory
   def path_exists?(path)
-    if path == "/"
+    if path == '/'
       return true # the root in a repository always exists
     end
     @files.each do |object|
@@ -28,13 +27,13 @@ class MemoryRevision < Repository::AbstractRevision
         return true
       end
     end
-    return false
+    false
   end
 
   # Return all of the files in this repository at the root directory
-  def files_at_path(path="/", with_attrs: true)
-    return Hash.new if @files.empty?
-    files_at_path_helper(path, false)
+  def files_at_path(path = '/', with_attrs: true)
+    return {} if @files.empty?
+    files_at_path_helper(path, only_changed: false)
   end
 
   # Return true if there was files submitted at the desired path for the revision
@@ -44,8 +43,8 @@ class MemoryRevision < Repository::AbstractRevision
   end
 
   def directories_at_path(path = '/', with_attrs: true)
-    return Hash.new if @files.empty?
-    return files_at_path_helper(path, false, Repository::RevisionDirectory)
+    return {} if @files.empty?
+    files_at_path_helper(path, only_changed: false, type: Repository::RevisionDirectory)
   end
 
   def tree_at_path(path, with_attrs: true)
@@ -60,7 +59,7 @@ class MemoryRevision < Repository::AbstractRevision
   end
 
   def changes_at_path?(path)
-    !files_at_path_helper(path, true).empty?
+    !files_at_path_helper(path, only_changed: true).empty?
   end
 
   # Not (!) part of the AbstractRepository API:
@@ -99,7 +98,7 @@ class MemoryRevision < Repository::AbstractRevision
 
   private
 
-  def files_at_path_helper(path = '/', only_changed = false, type = Repository::RevisionFile)
+  def files_at_path_helper(path = '/', only_changed: false, type: Repository::RevisionFile)
     # Automatically append a root slash if not supplied
     result = Hash.new(nil)
     @files.each do |object|
@@ -107,18 +106,14 @@ class MemoryRevision < Repository::AbstractRevision
       if object.path == '.'
         alt_path = '/'
       elsif object.path != '/'
-        alt_path = '/' + object.path
+        alt_path = "/#{object.path}"
       end
       git_path = object.path + '/'
-      if object.instance_of?(type) && (object.path == path ||
-          alt_path == path || git_path == path)
-        if !only_changed
-          object.from_revision = @revision_identifier # set revision number
-          result[object.name] = object
-        elsif object.changed
-          object.from_revision = @revision_identifier # reset revision number
-          result[object.name] = object
-        end
+      if object.instance_of?(type) &&
+          (object.path == path || alt_path == path || git_path == path) &&
+          (!only_changed || object.changed)
+        object.from_revision = @revision_identifier # set/reset revision number
+        result[object.name] = object
       end
     end
     result
@@ -132,10 +127,8 @@ class MemoryRevision < Repository::AbstractRevision
       if object.path != '/'
         alt_path = object.path + '/'
       end
-      if object.path == path || alt_path == path
-        if (object.from_revision.to_i + 1) == @revision_identifier
-          return true
-        end
+      if (object.path == path || alt_path == path) && ((object.from_revision.to_i + 1) == @revision_identifier)
+        return true
       end
     end
     false

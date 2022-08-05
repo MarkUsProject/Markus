@@ -1,0 +1,5 @@
+document.getElementById('editing_pane_menu').innerHTML =
+  "<%= escape_javascript(render partial: "exam_template_edit",
+                                locals: { exam_template: @exam_template }) %>";
+
+<%= render partial: 'event_listeners' %>

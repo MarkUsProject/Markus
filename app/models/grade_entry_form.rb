@@ -3,18 +3,18 @@
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < Assessment
-  has_many                  :grade_entry_items,
-                            -> { order(:position) },
-                            dependent: :destroy,
-                            inverse_of: :grade_entry_form,
-                            foreign_key: :assessment_id
+  has_many :grade_entry_items,
+           -> { order(:position) },
+           dependent: :destroy,
+           inverse_of: :grade_entry_form,
+           foreign_key: :assessment_id
 
-  has_many                  :grade_entry_students,
-                            dependent: :destroy,
-                            inverse_of: :grade_entry_form,
-                            foreign_key: :assessment_id
+  has_many :grade_entry_students,
+           dependent: :destroy,
+           inverse_of: :grade_entry_form,
+           foreign_key: :assessment_id
 
-  has_many                  :grades, through: :grade_entry_items
+  has_many :grades, through: :grade_entry_items
 
   accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 
@@ -24,7 +24,7 @@ class GradeEntryForm < Assessment
   default_scope { order('id ASC') }
 
   # Constants
-  BLANK_MARK = ''
+  BLANK_MARK = ''.freeze
 
   # The total number of marks for this grade entry form
   def max_mark
@@ -60,7 +60,7 @@ class GradeEntryForm < Assessment
 
     # Check for NA mark f or division by 0
     unless ges_total_grade.nil? || out_of == 0
-        percent = (ges_total_grade / out_of) * 100
+      percent = (ges_total_grade / out_of) * 100
     end
 
     percent
@@ -72,9 +72,7 @@ class GradeEntryForm < Assessment
       return @ges_total_grades
     end
 
-    total_grades = Hash[
-      grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade)
-    ]
+    total_grades = grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade).to_h
     @ges_total_grades = total_grades
     total_grades
   end
@@ -93,32 +91,61 @@ class GradeEntryForm < Assessment
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
 
-  def export_as_csv
-    students = Student.left_outer_joins(:grade_entry_students, :end_user)
-                      .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
-                      .order(:user_name)
-                      .pluck(:user_name, 'grade_entry_students.total_grade')
+  def export_as_csv(role)
+    if role.instructor?
+      students = Student.left_outer_joins(:grade_entry_students, :user, :section)
+                        .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
+                        .order(:user_name)
+                        .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
+                                       :id_number, :email, 'grade_entry_students.total_grade')
+    elsif role.ta?
+
+      students = role.grade_entry_students
+                     .joins(role: :user)
+                     .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
+                     .where(grade_entry_form: self, 'roles.hidden': false,
+                            'grade_entry_students.assessment_id': self.id)
+                     .order(:user_name)
+                     .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
+                                    :id_number, :email, 'grade_entry_students.total_grade')
+
+    end
     headers = []
-    # The first row in the CSV file will contain the column names
-    titles = [''] + self.grade_entry_items.pluck(:name)
+    titles = Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
+      self.grade_entry_items.pluck(:name)
+
     titles << GradeEntryForm.human_attribute_name(:total) if self.show_total
     headers << titles
 
     # The second row in the CSV file will contain the column totals
-    totals = [GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
+    totals = [''] * (Student::CSV_ORDER.length - 1) +
+      [GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
     totals << self.max_mark if self.show_total
     headers << totals
 
-    grade_data = self.grades
-                     .joins(:grade_entry_item, grade_entry_student: [role: :end_user])
-                     .pluck('users.user_name', 'grade_entry_items.position', :grade)
-                     .group_by { |x| x[0] }
-    num_items = self.grade_entry_items.count
-    MarkusCsv.generate(students, headers) do |user_name, total_grade|
-      row = [user_name]
-      if grade_data.key? user_name
+    if role.instructor?
+      grade_data = self.grades
+                       .joins(:grade_entry_item, grade_entry_student: [role: :user])
+                       .pluck('users.user_name', 'grade_entry_items.position', :grade)
+                       .group_by { |x| x[0] }
+      num_items = self.grade_entry_items.count
+    elsif role.ta?
+      grade_data = role.grade_entry_students
+                       .joins(role: :user)
+                       .joins(:grades)
+                       .joins(:grade_entry_items)
+                       .where(grade_entry_form: self)
+                       .pluck('users.user_name', 'grade_entry_items.position', 'grades.grade')
+                       .group_by { |x| x[0] }
+      num_items = self.grade_entry_items.count
+    end
+
+    MarkusCsv.generate(students, headers) do |student|
+      total_grade = student['grade_entry_students.total_grade']
+      row = Student::CSV_ORDER.map { |field| student[field] }
+      if grade_data.key? student[:user_name]
         student_grades = Array.new(num_items, '')
-        grade_data[user_name].each do |g|
+        grade_data[student[:user_name]].each do |g|
           grade_index = g[1] - 1
           student_grades[grade_index] = g[2].nil? ? '' : g[2]
         end
@@ -133,9 +160,7 @@ class GradeEntryForm < Assessment
   end
 
   def from_csv(grades_data, overwrite)
-    grade_entry_students = Hash[
-      self.grade_entry_students.joins(role: :end_user).pluck('users.user_name', :id)
-    ]
+    grade_entry_students = self.grade_entry_students.joins(role: :user).pluck('users.user_name', :id).to_h
     all_grades = Set.new(
       self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)
     )
@@ -159,7 +184,7 @@ class GradeEntryForm < Assessment
         else
           self.update_grade_entry_items(names, totals, overwrite)
         end
-        updated_columns = self.grade_entry_items.reload.pluck(:id)
+        updated_columns = self.grade_entry_items.reload.ids
         next
       end
 
@@ -184,7 +209,7 @@ class GradeEntryForm < Assessment
     unless updated_grades.empty?
       Grade.upsert_all(updated_grades, unique_by: [:grade_entry_item_id, :grade_entry_student_id])
     end
-    GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
+    GradeEntryStudent.refresh_total_grades(updated_grades.pluck(:grade_entry_student_id))
     result
   end
 

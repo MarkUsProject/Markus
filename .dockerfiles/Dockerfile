@@ -24,25 +24,23 @@ RUN apt-get update -qq && \
     imagemagick \
     libmagickwand-dev \
     cmake \
-    libssh2-1-dev \
-    openssh-client \
     libaprutil1-dev \
     libssl-dev \
     swig \
     graphviz \
-    rsync \
     git \
     python3-venv \
     python3-dev \
     pandoc \
-    libgl1
+    libgl1 \
+    openssh-server
 
 # Install node
 ADD https://deb.nodesource.com/setup_$NODE_MAJOR.x /tmp/setup_node.sh
 RUN bash /tmp/setup_node.sh && DEBIAN_FRONTEND=noninteractive apt-get install -yq nodejs && rm /tmp/setup_node.sh
 
-# Install yarn
-RUN npm install --global yarn@${YARN_VERSION}
+# Install yarn (see https://yarnpkg.com/getting-started/install)
+RUN corepack enable && yarn set version $YARN_VERSION && yarn config set --home enableTelemetry 0
 
 # Add ppa so that we can select different ruby versions and install ruby
 RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
@@ -66,6 +64,15 @@ RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/p
 
 RUN useradd -m -s /bin/bash $USER
 
+# Setup ssh configuration
+RUN mkdir -p /home/${USER}/.ssh && \
+    chmod 700 /home/${USER}/.ssh && \
+    chown "${USER}:${USER}" /home/${USER}/.ssh
+
+# Make temporary dir for ssh server (should not be necessary)
+RUN mkdir -p -m0755 /var/run/sshd
+
+RUN ln -s /app/lib/repo/markus-git-shell.sh /usr/local/bin/markus-git-shell.sh
 RUN ln -fs $(which python${PYTHON_VERSION}) /usr/bin/python3
 
 ENV GEM_HOME="/bundle"
@@ -81,7 +88,6 @@ ARG RUBY_VERSION
 
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
-             /ssh_pub_key \
              /app/data/dev/repos \
              /app/tmp \
              /app/node_modules \
@@ -89,16 +95,23 @@ RUN mkdir -p /bundle \
              /app/public/packs-test \
              /app/log \
              /app/venv && \
-             chown -R $USER /bundle /ssh_pub_key /app
+             chown -R $USER /bundle /app
+
+RUN printf "Match User ${USER}\n\
+ PermitRootLogin no\n\
+ AuthorizedKeysFile none\n\
+ AuthorizedKeysCommand /usr/local/bin/authorized_key_command.sh %%h\n\
+ AuthorizedKeysCommandUser ${USER}\n"\
+>> /etc/ssh/sshd_config
 
 USER $USER
 
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
-# Create key for ssh-ing to the autotester
-RUN ssh-keygen -q -N "" -f /home/$USER/.ssh/id_rsa && \
-    cp /home/$USER/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
+# symlink files for git-over-ssh
+RUN ln -s /app/.dockerfiles/git-ssh.rc /home/${USER}/.ssh/rc && \
+    ln -s /app/.dockerfiles/ssh.pg_service.conf /home/${USER}/.pg_service.conf
 
 FROM base AS prod
 
@@ -108,10 +121,14 @@ ARG RUBY_VERSION
 
 RUN mkdir -p /bundle /app /app/public && chown -R $USER /bundle /app
 
+COPY --chown=root:root ./lib/repo/authorized_key_command.sh /usr/local/bin/authorized_key_command.sh
+
 USER $USER
 
 COPY --chown=${USER}:${USER} . /app
 COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/database.yml
+COPY --chown=${USER}:${USER} .dockerfiles/git-ssh.rc /home/${USER}/.ssh/rc
+COPY --chown=${USER}:${USER} .dockerfiles/ssh.pg_service.conf /home/${USER}/.pg_service.conf
 
 # install python packages
 RUN python${PYTHON_VERSION} -m venv /app/venv && \
@@ -123,7 +140,7 @@ ENV NODE_ENV=production
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
-RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline
 
 RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails i18n:js:export && \
     SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails assets:precompile

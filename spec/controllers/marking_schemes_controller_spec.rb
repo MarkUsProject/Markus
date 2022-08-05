@@ -63,11 +63,11 @@ describe MarkingSchemesController do
       it 'creates a marking scheme with marking weights' do
         params = {
           course_id: course.id,
-          'marking_scheme': {
-            'name': 'Test Marking Scheme',
-            'marking_weights_attributes': {
-              '0': { 'id': assignment, 'weight': 1 },
-              '1': { 'id': assignment_with_criteria_and_results, 'weight': 2 }
+          marking_scheme: {
+            name: 'Test Marking Scheme',
+            marking_weights_attributes: {
+              '0': { id: assignment, weight: 1 },
+              '1': { id: assignment_with_criteria_and_results, weight: 2 }
             }
           }
         }
@@ -83,7 +83,7 @@ describe MarkingSchemesController do
       end
 
       it 'creates a marking scheme when there are no assessments' do
-        params = { course_id: course.id, 'marking_scheme': { 'name': 'Test Marking Scheme' } }
+        params = { course_id: course.id, marking_scheme: { name: 'Test Marking Scheme' } }
 
         post_as instructor, :create, params: params
         marking_scheme = MarkingScheme.first
@@ -102,14 +102,14 @@ describe MarkingSchemesController do
                              assignment_with_criteria_and_results])
         params = {
           course_id: course.id,
-          'id': MarkingScheme.first.id,
-          'marking_scheme': {
-            'name': 'Test Marking Scheme 2',
-            'marking_weights_attributes': {
-              '0': { 'id': assignment, 'weight': 2.5 },
-              '1': { 'id': assignment_with_criteria_and_results, 'weight': 3.5 },
-              '2': { 'id': grade_entry_form, 'weight': 1.5 },
-              '3': { 'id': grade_entry_form_with_data, 'weight': 0 }
+          id: MarkingScheme.first.id,
+          marking_scheme: {
+            name: 'Test Marking Scheme 2',
+            marking_weights_attributes: {
+              '0': { id: assignment, weight: 2.5 },
+              '1': { id: assignment_with_criteria_and_results, weight: 3.5 },
+              '2': { id: grade_entry_form, weight: 1.5 },
+              '3': { id: grade_entry_form_with_data, weight: 0 }
             }
           }
         }
@@ -127,8 +127,8 @@ describe MarkingSchemesController do
         create(:marking_scheme)
         params = {
           course_id: course.id,
-          'id': MarkingScheme.first.id,
-          'marking_scheme': { 'name': 'Test Marking Scheme 2' }
+          id: MarkingScheme.first.id,
+          marking_scheme: { name: 'Test Marking Scheme 2' }
         }
 
         post_as instructor, :update, params: params

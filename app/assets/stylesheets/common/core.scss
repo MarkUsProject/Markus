@@ -107,7 +107,7 @@ th.required::after {
 
 #wrapper {
   background: $background-main;
-  min-height: 90%;
+  min-height: 100%;
 }
 
 /* Title Bar */
@@ -450,7 +450,7 @@ th.required::after {
 }
 
 .fa-download-file-o::before {
-  content: asset-url('icons/disk.png');
+  content: asset-url('icons/download-file.png');
   vertical-align: middle;
 }
 
@@ -469,8 +469,34 @@ th.required::after {
   vertical-align: middle;
 }
 
+.fa-submit-link-o::before {
+  content: asset-url('icons/link_add.png');
+  vertical-align: middle;
+}
+
+div.rendered-react-keyed-file-browser div.action-bar ul.item-actions {
+  overflow: auto;
+}
+
 div.rendered-react-keyed-file-browser div.action-bar input[type='search'] {
   width: 100%;
+}
+
+div.rendered-react-keyed-file-browser div.files table td.name div * {
+  padding-right: 0.5rem;
+}
+
+div.rendered-react-keyed-file-browser div.files tbody tr:hover {
+  background-color: $file-row-hover;
+}
+
+.file-download {
+  fill: $file-download-icon-fill;
+  vertical-align: bottom;
+}
+
+.file-download:hover {
+  fill: $file-download-icon-hover;
 }
 
 select.collected-checked,

@@ -4,15 +4,15 @@
   </p>
   <div id='peer_review_selector' class='dropdown'>
     <% if @current_role.student? %>
-      <a><%= "#{PeerReview.model_name.human} #{prs.index(current_pr) + 1}" %></a>
+      <a><%= "#{PeerReview.model_name.human} #{current_pr.id}" %></a>
     <% else %>
       <a><%= current_group_name %></a>
     <% end %>
     <ul>
-      <% prs.each_with_index do |pr, i| %>
+      <% prs.each do |pr, i| %>
         <% if @current_role.student? %>
-          <li> <%= link_to("#{PeerReview.model_name.human} #{i + 1}",
-                        view_marks_course_result_path(@current_course.id, pr.result_id)) %> </li>
+          <li> <%= link_to "#{PeerReview.model_name.human} #{pr.id}",
+                           view_marks_course_result_path(@current_course.id, pr.result_id) %> </li>
         <% else %>
             <% pr_result = pr.result %>
             <% group_name = pr_result.submission.grouping.group.group_name %>
@@ -24,7 +24,7 @@
     <div class='arrow-down'></div>
   </div>
 
-  <% if @current_role.student? %>
+  <% if @current_role.student? && submission.current_result.released_to_students? %>
     <%= link_to t('peer_reviews.view_ta_result'),
                 view_marks_course_result_path(@current_course.id, submission.get_latest_result.id),
                 id: 'original_result_link' %>

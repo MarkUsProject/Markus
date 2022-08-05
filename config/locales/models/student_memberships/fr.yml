@@ -1,7 +1,0 @@
----
-fr:
-  activerecord:
-    errors:
-      models:
-        student_membership:
-          memberships_not_unique: UPDATE ME

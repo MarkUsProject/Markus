@@ -1,18 +1,29 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      window.submissionTable = makeSubmissionTable(document.getElementById('submission-table'),
-        {
-          assignment_id: <%= @assignment.id %>,
-          course_id: <%= @current_course.id %>,
-          show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
-          show_sections: <%= @current_course.sections.exists? %>,
-          is_timed: <%= @assignment.is_timed %>,
-          can_collect: <%= allowed_to? :manage? %>,
-          can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,
-          defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
-        }
-      );
+      <% if @assignment.is_peer_review? %>
+        window.submissionTable = makePeerReviewTable(document.getElementById('submission-table'),
+          {
+            assignment_id: <%= @assignment.id %>,
+            course_id: <%= @current_course.id %>,
+            can_manage: <%= allowed_to? :manage? %>,
+          }
+        );
+      <% else %>
+        window.submissionTable = makeSubmissionTable(document.getElementById('submission-table'),
+          {
+            assignment_id: <%= @assignment.id %>,
+            course_id: <%= @current_course.id %>,
+            show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
+            show_sections: <%= @current_course.sections.exists? %>,
+            is_timed: <%= @assignment.is_timed %>,
+            is_scanned_exam: <%= @assignment.scanned_exam? %>,
+            can_collect: <%= allowed_to? :manage? %>,
+            can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,
+            defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
+          }
+        );
+      <% end %>
     });
   <% end %>
 <% end %>

@@ -36,7 +36,7 @@ describe SubmissionsJob do
       end
     end
     context 'when a submission exists before the given collection date' do
-      let(:collection_dates) { groupings.map { |g| [g.id, Time.current - 1.hour] }.to_h }
+      let(:collection_dates) { groupings.map { |g| [g.id, 1.hour.ago] }.to_h }
       let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.current] }.to_h } }
       it 'collects the latest revision' do
         groupings.each do |g|
@@ -47,7 +47,7 @@ describe SubmissionsJob do
       end
     end
     context 'when a submission does not exist before the given collection date' do
-      let(:collection_dates) { groupings.map { |g| [g.id, Time.current + 1.hour] }.to_h }
+      let(:collection_dates) { groupings.map { |g| [g.id, 1.hour.from_now] }.to_h }
       let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.current] }.to_h } }
       it 'collects a nil revision' do
         groupings.each do |g|
@@ -88,6 +88,34 @@ describe SubmissionsJob do
       end
     end
   end
+
+  context 'when creating a submission for a scanned exam' do
+    let(:assignment) { create :assignment_for_scanned_exam }
+    before :each do
+      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', submission_date, 'test.txt', 'aaa') }
+      SubmissionsJob.perform_now(groupings)
+    end
+    context 'when submitted before collecting' do
+      let(:submission_date) { Time.current.to_s }
+      it 'collects the latest revision' do
+        groupings.each do |g|
+          g.reload
+          latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+          expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
+        end
+      end
+    end
+
+    context 'when submitted after collecting' do
+      let(:submission_date) { 1.hour.from_now.to_s }
+      it 'collects a nil revision' do
+        groupings.each do |g|
+          expect(g.reload.current_submission_used.revision_identifier).to be_nil
+        end
+      end
+    end
+  end
+
   xcontext 'when applying a late penalty' do
     # TODO: the following tests are failing on travis occasionally. Figure out why and re-enable them.
     let!(:period) { create :period, submission_rule: submission_rule, hours: 2 }

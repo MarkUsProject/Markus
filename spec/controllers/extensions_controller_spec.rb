@@ -39,7 +39,7 @@ describe ExtensionsController do
           extension.reload
         end
         it 'time_delta' do
-          expected_duration = Extension::PARTS.map { |part| params[part].to_i.send(part) }.sum
+          expected_duration = Extension::PARTS.map { |part| params[part].to_i.public_send(part) }.sum
           expect(extension.time_delta).to eq(expected_duration)
         end
         it 'note' do
@@ -51,7 +51,7 @@ describe ExtensionsController do
       end
     end
     describe '#create' do
-      let(:extension) { Extension.find_by_grouping_id(grouping.id) }
+      let(:extension) { Extension.find_by(grouping_id: grouping.id) }
       let(:params) do
         {
           grouping_id: grouping.id,
@@ -81,7 +81,7 @@ describe ExtensionsController do
           extension.reload
         end
         it 'time_delta' do
-          expected_duration = Extension::PARTS.map { |part| params[part].to_i.send(part) }.sum
+          expected_duration = Extension::PARTS.map { |part| params[part].to_i.public_send(part) }.sum
           expect(extension.time_delta.to_i).to eq(expected_duration)
         end
         it 'note' do

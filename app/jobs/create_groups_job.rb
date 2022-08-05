@@ -1,6 +1,5 @@
 # create groups job
 class CreateGroupsJob < ApplicationJob
-
   def self.on_complete_js(_status)
     '() => {window.groupsManager && window.groupsManager.fetchData()}'
   end
@@ -14,7 +13,7 @@ class CreateGroupsJob < ApplicationJob
     Repository.get_class.update_permissions_after(only_on_request: true) do
       data.each do |group_name, *members|
         ApplicationRecord.transaction do
-          students = assignment.course.students.joins(:end_user).where('users.user_name': members)
+          students = assignment.course.students.joins(:user).where('users.user_name': members)
           if students.length != members.length
             # A member in the members list is not a User in the database
             all_users = Set.new students.pluck('users.user_name')
@@ -32,8 +31,10 @@ class CreateGroupsJob < ApplicationJob
             group = Group.find_or_create_by(group_name: group_name, course: assignment.course) do |gr|
               gr.repo_name = group_name if assignment.group_max == 1 && group_name == inviter.user_name
             end
+            errors += group.errors.full_messages if group.errors.present?
             grouping = Grouping.find_or_create_by(group: group, assignment: assignment)
-            errors += grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter], true)
+            errors += grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter],
+                                      invoked_by_instructor: true)
           end
           errors += grouping.invite(others.map(&:user_name), StudentMembership::STATUSES[:accepted])
           unless errors.empty?

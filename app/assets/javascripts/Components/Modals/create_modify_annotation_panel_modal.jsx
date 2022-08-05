@@ -87,12 +87,14 @@ class CreateModifyAnnotationPanel extends React.Component {
       }
     });
 
-    textArea.keyup(e => {
-      if (typing_timer) {
-        clearTimeout(typing_timer);
-      }
-      typing_timer = setTimeout(() => this.updateAnnotationCompletion(), 300);
-    });
+    if (!this.props.is_reviewer) {
+      textArea.keyup(e => {
+        if (typing_timer) {
+          clearTimeout(typing_timer);
+        }
+        typing_timer = setTimeout(() => this.updateAnnotationCompletion(), 300);
+      });
+    }
 
     Mousetrap(document.getElementById("annotation-modal")).bind("mod+enter", function (e) {
       e.preventDefault();

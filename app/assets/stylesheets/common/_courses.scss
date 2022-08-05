@@ -71,3 +71,39 @@
     text-decoration: underline;
   }
 }
+
+.course-selector {
+  height: auto;
+  left: 50%;
+  margin-left: -250px;
+  margin-top: -250px;
+  position: absolute;
+  top: 50%;
+  width: 500px;
+
+  .button {
+    margin: 0.5em 0;
+    padding: 10px;
+    white-space: pre-line;
+    width: 100%;
+  }
+
+  #selector-or {
+    display: flex;
+    flex-direction: row;
+  }
+  #selector-or::before,
+  #selector-or::after {
+    border-bottom: 1px solid;
+    border-color: $gridline;
+    content: '';
+    flex: 1 1;
+    margin: auto;
+  }
+  #selector-or::before {
+    margin-right: 10px;
+  }
+  #selector-or::after {
+    margin-left: 10px;
+  }
+}

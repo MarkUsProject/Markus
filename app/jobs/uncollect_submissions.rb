@@ -1,10 +1,9 @@
 class UncollectSubmissions < ApplicationJob
-
-  def self.on_complete_js(status)
+  def self.on_complete_js(_status)
     'window.submissionTable.wrapped.fetchData'
   end
 
-  def self.show_status(status)
+  def self.show_status(_status)
     I18n.t('poll_job.uncollect_submissions_job')
   end
 

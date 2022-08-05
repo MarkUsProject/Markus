@@ -30,6 +30,7 @@ describe AnnotationsController do
   let(:submission_file) { create(:submission_file, submission: submission) }
   let(:image_submission_file) { create(:image_submission_file, submission: submission) }
   let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
+  let(:notebook_submission_file) { create(:notebook_submission_file, submission: submission) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
   let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil) }
@@ -57,7 +58,17 @@ describe AnnotationsController do
         assert_response :success
         expect(result.annotations.reload.size).to eq 1
       end
+      it 'successfully creates an html annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: notebook_submission_file.id,
+                          start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
+                          course_id: course.id },
+                format: :js
 
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
       it 'successfully creates a PDF annotation' do
         post_as user,
                 :add_existing_annotation,
@@ -202,7 +213,18 @@ describe AnnotationsController do
         expect(response.status).to eq(200)
         expect(result.annotations.reload.size).to eq 1
       end
+      it 'successfully creates an html annotation' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: notebook_submission_file.id, start_node: 'a', start_offset: 1,
+                          end_node: 'b', end_offset: 0, result_id: result.id, assignment_id: assignment.id,
+                          course_id: course.id },
+                format: :js
 
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
       it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first

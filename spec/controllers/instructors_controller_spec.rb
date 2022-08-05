@@ -36,7 +36,7 @@ describe InstructorsController do
         post_as instructor,
                 :create,
                 params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
-        expect(course.instructors.joins(:end_user).where('users.user_name': end_user.user_name)).to exist
+        expect(course.instructors.joins(:user).where('users.user_name': end_user.user_name)).to exist
         expect(response).to redirect_to action: 'index'
       end
       context 'when a end_user does not exist' do
@@ -46,6 +46,21 @@ describe InstructorsController do
                   params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
         it 'should not create a Ta' do
+          instructor
+          expect { subject }.not_to(change { Instructor.count })
+        end
+        it 'should display an error message' do
+          subject
+          expect(flash[:error]).not_to be_empty
+        end
+      end
+      context 'when trying to assign to a non end user' do
+        let(:admin_user) { create :admin_user }
+        subject do
+          post_as instructor, :create,
+                  params: { course_id: course.id, role: { end_user: { user_name: admin_user.user_name } } }
+        end
+        it 'should not create an instructor' do
           instructor
           expect { subject }.not_to(change { Instructor.count })
         end
@@ -70,15 +85,27 @@ describe InstructorsController do
         let(:new_end_user) { create :end_user }
         it 'should change the user' do
           subject
-          expect(role.reload.end_user).to eq(new_end_user)
+          expect(role.reload.user).to eq(new_end_user)
         end
       end
       context 'when the user does not exist' do
         let(:new_end_user) { build :end_user }
         it 'should not change the user' do
-          old_user = role.end_user
+          old_user = role.user
           subject
-          expect(role.reload.end_user).to eq(old_user)
+          expect(role.reload.user).to eq(old_user)
+        end
+        it 'should display an error message' do
+          subject
+          expect(flash[:error]).not_to be_empty
+        end
+      end
+      context 'when trying to assign to a non end user' do
+        let(:new_end_user) { create :admin_user }
+        it 'should not change the user' do
+          old_user = role.user
+          subject
+          expect(role.reload.user).to eq(old_user)
         end
         it 'should display an error message' do
           subject

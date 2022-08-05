@@ -27,10 +27,8 @@ module UploadHelper
 
   # Unzip the file at +zip_file_path+ and yield the name of each directory and an
   # UploadedFile object for each file.
-  def upload_files_helper(new_folders, new_files, unzip: false)
-    new_folders.each do |f|
-      yield f
-    end
+  def upload_files_helper(new_folders, new_files, unzip: false, &block)
+    new_folders.each(&block)
     new_files.each do |f|
       if unzip && File.extname(f.path).casecmp?('.zip')
         Zip::File.open(f.path) do |zipfile|
@@ -54,9 +52,10 @@ module UploadHelper
   # Parse the +yaml_string+ and return the data as a hash.
   def parse_yaml_content(yaml_string)
     YAML.safe_load(yaml_string,
-                   [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-                    ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
-                   [],
-                   true)
+                   permitted_classes: [
+                     Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+                     ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess
+                   ],
+                   aliases: true)
   end
 end

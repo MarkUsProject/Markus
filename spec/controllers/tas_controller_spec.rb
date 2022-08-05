@@ -1,5 +1,5 @@
 describe TasController do
-  let(:instructor) { create :instructor, end_user: create(:end_user, user_name: :instructor) }
+  let(:instructor) { create :instructor, user: create(:end_user, user_name: :instructor) }
   let(:course) { instructor.course }
 
   context '#upload' do
@@ -43,14 +43,14 @@ describe TasController do
       end
 
       it 'expects a call to send_data' do
-        csv_data = course.tas.joins(:end_user).pluck(:user_name, :last_name, :first_name, :email).map do |data|
+        csv_data = course.tas.joins(:user).pluck(:user_name, :last_name, :first_name, :email).map do |data|
           data.join(',')
         end.join("\n") + "\n"
         expect(@controller).to receive(:send_data)
-                                 .with(csv_data, csv_options) {
-          # to prevent a 'missing template' error
-          @controller.head :ok
-        }
+          .with(csv_data, csv_options) {
+                                 # to prevent a 'missing template' error
+                                 @controller.head :ok
+                               }
         subject
       end
 
@@ -81,7 +81,7 @@ describe TasController do
       end
 
       it 'expects a call to send_data' do
-        output = course.tas.joins(:end_user).pluck_to_hash(:user_name, :last_name, :first_name, :email).to_yaml
+        output = course.tas.joins(:user).pluck_to_hash(:user_name, :last_name, :first_name, :email).to_yaml
         expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
         subject
       end
@@ -122,11 +122,11 @@ describe TasController do
             expect(response).to redirect_to action: 'index'
           end
           it 'should create associated grader permissions' do
-            ta = course.tas.where(end_user: end_user).first
+            ta = course.tas.where(user: end_user).first
             expect(GraderPermission.exists?(ta.grader_permission.id)).to be true
           end
           it 'should create the permissions with corresponding values' do
-            ta = course.tas.where(end_user: end_user).first
+            ta = course.tas.where(user: end_user).first
             expect(ta.grader_permission.manage_assessments).to be false
             expect(ta.grader_permission.manage_submissions).to be true
             expect(ta.grader_permission.run_tests).to be true
@@ -140,7 +140,7 @@ describe TasController do
               role: { end_user: { user_name: end_user.user_name }, grader_permission_attributes: { a: 1 } } }
           end
           it 'default value for all permissions should be false' do
-            ta = course.tas.where(end_user: end_user).first
+            ta = course.tas.where(user: end_user).first
             expect(ta.grader_permission.manage_assessments).to be false
             expect(ta.grader_permission.manage_submissions).to be false
             expect(ta.grader_permission.run_tests).to be false

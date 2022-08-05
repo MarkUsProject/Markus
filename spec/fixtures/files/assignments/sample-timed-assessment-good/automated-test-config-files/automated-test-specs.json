@@ -18,7 +18,7 @@
           "tester": "unittest",
           "output_verbosity": 2,
           "extra_info": {
-            "criterion": "CheckboxCriterion:Optimal",
+            "criterion": "Optimal",
             "name": "Python Test Group 1"
           }
         }

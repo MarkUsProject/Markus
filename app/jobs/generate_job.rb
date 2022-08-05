@@ -1,5 +1,4 @@
 class GenerateJob < ApplicationJob
-
   def self.on_complete_js(status)
     path = Rails.application.routes.url_helpers.download_generate_course_exam_template_path(
       course_id: status[:course_id],

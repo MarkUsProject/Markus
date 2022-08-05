@@ -3,7 +3,7 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
-  <%= javascript_pack_tag 'application', nonce: true %>
+  <%= javascript_include_tag 'application_webpack', nonce: true %>
   <%= javascript_include_tag 'application', nonce: true %>
   <% unless session[:auth_type] == 'remote'%>
     <%= javascript_include_tag 'check_timeout', nonce: true %>
@@ -25,7 +25,6 @@
         <%= render partial: 'layouts/header' %>
         <%= render partial: 'layouts/menu' %>
         <%= render partial: 'layouts/sub_menu' %>
-        <%= render partial: 'layouts/footer' %>
       </div>
       <%= render partial: 'layouts/modals' %>
     </nav>
@@ -40,9 +39,7 @@
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
-    <%= render partial: 'layouts/footer' %>
   </div>
-
 </div>
 </body>
 </html>

@@ -15,9 +15,6 @@ rails:
 i18n:
   available_locales:
     - en
-    - fr
-    - es
-    - pt
   default_locale: en
 
 validate_user_not_allowed_message: 'That is your correct University of Foo user name and password, but you have not been added to this particular MarkUs database.  Please contact your instructor or check your course web page.'
@@ -42,3 +39,10 @@ scanned_exams:
 
 starter_file:
   storage: <%= "#{::Rails.root.to_s}/data/dev" %>/starter_files
+
+# The settings below are for an experimental feature that is not available
+# in production yet. Please disregard for now.
+lti:
+  domains: <%= %w[host.docker.internal] %>
+  token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
+  key_path: <%= "#{::Rails.root.to_s}/data/dev" %>/lti/key.pem

@@ -40,12 +40,8 @@ export class ImageViewer extends React.Component {
     window.annotation_type = ANNOTATION_TYPES.IMAGE;
 
     $(".annotation_holder").remove();
-    annotation_manager = new ImageAnnotationGrid(
-      new ImageEventHandler(),
-      new AnnotationTextManager(),
-      new AnnotationTextDisplayer(),
-      !this.props.released_to_students
-    );
+    window.annotation_manager = new ImageAnnotationManager(!this.props.released_to_students);
+    this.annotation_manager = window.annotation_manager;
   };
 
   display_annotation = annotation => {
@@ -56,7 +52,6 @@ export class ImageViewer extends React.Component {
       content +=
         annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
     }
-    add_annotation_text(annotation.annotation_text_id, content);
 
     let originalImgH = document.getElementById("image_preview").height;
     let originalImgW = document.getElementById("image_preview").width;
@@ -115,19 +110,21 @@ export class ImageViewer extends React.Component {
         corners = [rotatedBL, rotatedTL, rotatedTR];
     }
 
-    annotation_manager.add_to_grid({
-      x_range: {
-        start: Math.floor(midWidthRotated + corners[1][0]),
-        end: Math.floor(midWidthRotated + corners[2][0]),
+    this.annotation_manager.addAnnotation(
+      annotation.annotation_text_id,
+      content,
+      {
+        x_range: {
+          start: Math.floor(midWidthRotated + corners[1][0]),
+          end: Math.floor(midWidthRotated + corners[2][0]),
+        },
+        y_range: {
+          start: Math.floor(midHeightRotated + corners[1][1]),
+          end: Math.floor(midHeightRotated + corners[0][1]),
+        },
       },
-      y_range: {
-        start: Math.floor(midHeightRotated + corners[1][1]),
-        end: Math.floor(midHeightRotated + corners[0][1]),
-      },
-      annot_id: annotation.id,
-      // TODO: rename the following
-      id: annotation.annotation_text_id,
-    });
+      annotation.id
+    );
   };
 
   rotatedCoordinate = (coordinate, rotation) => {
@@ -175,37 +172,40 @@ export class ImageViewer extends React.Component {
   };
 
   render() {
-    return [
-      <p key={"image_toolbar"}>
-        {I18n.t("results.current_rotation", {rotation: this.state.rotation})}
-        <button onClick={this.addRotation} className={"inline-button"}>
-          {I18n.t("results.rotate_image")}
-        </button>
-        {I18n.t("results.current_zoom_level", {
-          level: Math.floor(this.state.zoom * 100),
-        })}
-        <button onClick={this.zoomIn} className={"inline-button"}>
-          {I18n.t("results.zoom_in_image")}+
-        </button>
-        <button onClick={this.zoomOut} className={"inline-button"}>
-          {I18n.t("results.zoom_out_image")}-
-        </button>
-      </p>,
-      <div id="image_container" key={"image_container"}>
-        <div
-          key="sel_box"
-          id="sel_box"
-          className="annotation-holder-active"
-          style={{display: "none"}}
-        />
-        <img
-          id="image_preview"
-          src={this.props.url}
-          data-zoom={this.state.zoom}
-          onLoad={this.display_annotations}
-          alt={I18n.t("results.cant_display_image")}
-        />
-      </div>,
-    ];
+    return (
+      <React.Fragment>
+        <p key={"image_toolbar"}>
+          {I18n.t("results.current_rotation", {rotation: this.state.rotation})}
+          <button onClick={this.addRotation} className={"inline-button"}>
+            {I18n.t("results.rotate_image")}
+          </button>
+          {I18n.t("results.current_zoom_level", {
+            level: Math.floor(this.state.zoom * 100),
+          })}
+          <button onClick={this.zoomIn} className={"inline-button"}>
+            {I18n.t("results.zoom_in_image")}+
+          </button>
+          <button onClick={this.zoomOut} className={"inline-button"}>
+            {I18n.t("results.zoom_out_image")}-
+          </button>
+        </p>
+        <div id="image_container" key={"image_container"}>
+          <div
+            key="sel_box"
+            id="sel_box"
+            className="annotation-holder-active"
+            style={{display: "none"}}
+          />
+          <img
+            id="image_preview"
+            src={this.props.url}
+            data-zoom={this.state.zoom}
+            className={this.props.released_to_students ? "" : "enable-annotations"}
+            onLoad={this.display_annotations}
+            alt={I18n.t("results.cant_display_image")}
+          />
+        </div>
+      </React.Fragment>
+    );
   }
 }

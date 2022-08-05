@@ -1,10 +1,14 @@
-<%= form_for [@current_course, exam_template], url: split_course_exam_template_path(@current_course, exam_template),
-             namespace: exam_template.id,
-             html: { multipart: true },
-             authenticity_token: true do |f| %>
+<%= form_with url: split_course_assignment_exam_templates_path(@current_course),
+              method: :patch,
+              authenticity_token: true,
+              multipart: true do |f| %>
   <div class="inline-labels">
-    <%= f.label :pdf_to_split, t('exam_templates.split.instruction') %>
-    <%= f.file_field :pdf_to_split %>
+    <%= f.label :exam_template_id, ExamTemplate.model_name.human %>
+    <%= f.select :exam_template_id,
+                 options_from_collection_for_select(@exam_templates, 'id', 'name'),
+                 required: true %>
+    <%= f.label :pdf_to_split, t('exam_templates.upload_scans.instruction') %>
+    <%= f.file_field :pdf_to_split, required: true, accept: 'application/pdf' %>
   </div>
-  <p><%= f.submit t('exam_templates.split.split') %></p>
+  <p><%= f.submit t('upload'), id: 'split_exam' %></p>
 <% end %>

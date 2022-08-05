@@ -92,9 +92,9 @@
             <p><%= t('peer_reviews.your_results_none') %></p>
         <% else %>
           <ul>
-            <% @prs.each_with_index do |pr, i| %>
-                <li><%= link_to("#{PeerReview.model_name.human} #{i + 1}",
-                            view_marks_course_result_path(@current_course.id, pr.result_id)) %> </li>
+            <% @prs.each do |pr| %>
+                <li><%= link_to "#{PeerReview.model_name.human} #{pr.id}",
+                                view_marks_course_result_path(@current_course.id, pr.result_id) %> </li>
             <% end %>
           </ul>
         <% end %>

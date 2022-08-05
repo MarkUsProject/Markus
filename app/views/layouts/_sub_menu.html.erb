@@ -1,4 +1,6 @@
-<% if allowed_to?(:view_instructor_subtabs?) %>
+<% if allowed_to?(:view_admin_subtabs?) && controller.class.module_parent.to_s == 'Admin' %>
+  <%= render partial: 'layouts/menus/admin_sub_menu' %>
+<% elsif allowed_to?(:view_instructor_subtabs?) %>
   <% if controller.controller_name == 'assignments' ||
         controller.controller_name == 'criteria' ||
         controller.controller_name == 'submissions' ||

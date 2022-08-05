@@ -2,8 +2,7 @@
 # time is on the due date of the assignment + allow_submit_until
 
 class NoLateSubmissionRule < SubmissionRule
-
-  def overtime_message(grouping)
+  def overtime_message(_grouping)
     NoLateSubmissionRule.human_attribute_name(:after_collection_message)
   end
 

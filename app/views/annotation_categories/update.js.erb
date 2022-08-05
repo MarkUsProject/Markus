@@ -2,6 +2,5 @@ $('#annotation_category_' + <%= @annotation_category.id %>).replaceWith(
   "<%= escape_javascript(render partial: 'annotation_category',
                                 locals: { annotation_category: @annotation_category }).html_safe %>");
 
-document.getElementById('current_annotation_category').innerHTML =
-  "<%= escape_javascript(render partial: 'annotation_category_edit',
-                                locals: { annotation_category: @annotation_category }).html_safe %>";
+document.getElementById('annotation_list').innerHTML =
+  "<%= escape_javascript(render partial: 'annotation_text', collection: @annotation_texts).html_safe %>";

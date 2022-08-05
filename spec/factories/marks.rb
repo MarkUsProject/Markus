@@ -13,11 +13,11 @@ FactoryBot.define do
     end
 
     factory :flexible_mark do
-      criterion { create :flexible_criterion, assignment: assignment  }
+      criterion { create :flexible_criterion, assignment: assignment }
     end
 
     factory :checkbox_mark do
-      criterion { create :checkbox_criterion, assignment: assignment  }
+      criterion { create :checkbox_criterion, assignment: assignment }
     end
   end
 end

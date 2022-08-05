@@ -28,7 +28,7 @@ describe AutotestRunJob do
       described_class.perform_now(host_with_port, user.id, assignment.id, groups.map(&:id), collected: collected)
     end
     context 'tests are set up for an assignment' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
       let(:dummy_return) { OpenStruct.new(body: { 'test_ids' => (1..n_groups).to_a }.to_json) }
       before do
         allow_any_instance_of(AutotestRunJob).to receive(:send_request!).and_return(dummy_return)
@@ -81,14 +81,43 @@ describe AutotestRunJob do
         subject
       end
       include_examples 'autotest jobs'
-      context 'when collected is true' do
-        it 'should send the correct url' do
-          file_urls = groups.map do |group|
-            "http://localhost:3000#{Rails.configuration.action_controller.relative_url_root}/api/courses"\
-            "/#{assignment.course.id}/assignments/#{assignment.id}/groups/#{group.id}/submission_files?collected=true"
+      let(:test_data) do
+        url_root = Rails.configuration.action_controller.relative_url_root
+        groups.map do |group|
+          file_url = "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/" \
+                     "#{assignment.id}/groups/#{group.id}/submission_files?#{collected ? 'collected=true' : ''}"
+          starter_files = assignment.groupings
+                                    .joins(starter_file_entries: :starter_file_group)
+                                    .where(group_id: group.id)
+                                    .pluck('starter_file_entries.path', 'starter_file_groups.name')
+                                    .map { |v| { starter_file_group: v.second, starter_file_path: v.first } if v.first }
+                                    .compact
+          {
+            file_url: file_url,
+            env_vars: { MARKUS_GROUP: group.group_name, MARKUS_STARTER_FILES: starter_files.to_json }
+          }.deep_stringify_keys
+        end
+      end
+      context 'where there is a starter file associated with the group' do
+        let(:starter_file_group) { create :starter_file_group, assignment: assignment }
+        let(:starter_file_entries) { create_list :starter_file_entry, 3, starter_file_group: starter_file_group }
+        before do
+          groupings.each do |g|
+            starter_file_entries.each { |s| create :grouping_starter_file_entry, grouping: g, starter_file_entry: s }
           end
+        end
+        it 'should send the correct data' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
-            expect(JSON.parse(net_obj.body)['file_urls']).to contain_exactly(*file_urls)
+            expect(JSON.parse(net_obj.body)['test_data']).to contain_exactly(*test_data)
+            dummy_return
+          end
+          subject
+        end
+      end
+      context 'when collected is true' do
+        it 'should send the correct data' do
+          expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
+            expect(JSON.parse(net_obj.body)['test_data']).to contain_exactly(*test_data)
             dummy_return
           end
           subject
@@ -104,14 +133,9 @@ describe AutotestRunJob do
       end
       context 'when collected is false' do
         let(:collected) { false }
-        it 'should send the correct url' do
-          url_root = Rails.configuration.action_controller.relative_url_root
-          file_urls = groups.map do |group|
-            "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/"\
-            "groups/#{group.id}/submission_files?"
-          end
+        it 'should send the correct data' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
-            expect(JSON.parse(net_obj.body)['file_urls']).to contain_exactly(*file_urls)
+            expect(JSON.parse(net_obj.body)['test_data']).to contain_exactly(*test_data)
             dummy_return
           end
           subject

@@ -39,12 +39,12 @@
 ## Checklist
 
 - [ ] I have performed a self-review of my own code.
-- [ ] I have fixed any Hound bot comments. <!-- (check after opening pull request) -->
+- [ ] I have verified that the pre-commit.ci checks have passed. <!-- (check after opening pull request) -->
 - [ ] I have verified that the CI tests have passed. <!-- (check after opening pull request) -->
 - [ ] I have reviewed the test coverage changes reported on Coveralls. <!-- (check after opening pull request) -->
 - [ ] I have added tests for my changes. <!-- (delete this checklist item if not applicable) -->
 - [ ] I have updated the Changelog.md file. <!-- (delete this checklist item if not applicable) -->
-- [ ] I have described any required documentation changes below. <!-- (delete this checklist item if not applicable) -->
+- [ ] I have made changes to the documentation and linked to that pull request below. <!-- (delete this checklist item if not applicable) -->
 
-
-### Required documentation changes (if applicable)
+### Pull request to make documentation changes (if applicable)
+<!--- Add a link to a pull request on the MarkUsProject/Wiki repo -->

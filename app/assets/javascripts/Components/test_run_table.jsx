@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
-import {lookup} from "mime-types";
+import {getType} from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
 
@@ -60,28 +60,10 @@ export class TestRunTable extends React.Component {
       };
     }
     $.ajax(ajaxDetails).then(res => {
-      let rows = [];
-      for (let test_run_id in res) {
-        if (res.hasOwnProperty(test_run_id)) {
-          let test_data = res[test_run_id];
-          let row = {
-            id_: test_run_id,
-            "test_runs.created_at": test_data[0]["test_runs.created_at"],
-            "users.user_name": test_data[0]["users.user_name"],
-            "test_runs.status": test_data[0]["test_runs.status"],
-            "test_runs.problems": test_data[0]["test_runs.problems"],
-            test_results: [],
-          };
-          test_data.forEach(data => {
-            Array.prototype.push.apply(row["test_results"], data["test_data"]);
-          });
-          rows.push(row);
-        }
-      }
       this.setState({
-        data: rows,
+        data: res,
         loading: false,
-        expanded: rows.length > 0 ? {0: true} : {},
+        expanded: res.length > 0 ? {0: true} : {},
       });
     });
   };
@@ -367,7 +349,7 @@ class TestGroupFeedbackFileTable extends React.Component {
               this.props.course_id,
               row.original.id
             )}
-            mime_type={lookup(row["filename"])}
+            mime_type={getType(row["filename"])}
             selectedFileType={row.original.type}
           />
         )}

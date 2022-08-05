@@ -27,7 +27,7 @@ describe ResultsController do
 
   def self.test_assigns_not_nil(key)
     it "should assign #{key}" do
-      expect(assigns key).not_to be_nil
+      expect(assigns(key)).not_to be_nil
     end
   end
 
@@ -115,12 +115,10 @@ describe ResultsController do
       end
       context 'file is a rmarkdown file' do
         let(:filename) { 'example.Rmd' }
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to(
-            redirect_to(notebook_content_course_assignment_submissions_path(course,
-                                                                            assignment,
-                                                                            select_file_id: submission_file.id))
-          )
+        it 'should show the file content in the response body' do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          subject
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
         end
       end
     end
@@ -166,17 +164,17 @@ describe ResultsController do
           repo.commit(txn)
           @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
         end
-        file = SubmissionFile.find_by_submission_id(@submission.id)
-        @annotation = TextAnnotation.create  line_start: 1,
-                                             line_end: 2,
-                                             column_start: 1,
-                                             column_end: 2,
-                                             submission_file_id: file.id,
-                                             is_remark: false,
-                                             annotation_number: @submission.annotations.count + 1,
-                                             annotation_text: create(:annotation_text, creator: instructor),
-                                             result: complete_result,
-                                             creator: instructor
+        file = SubmissionFile.find_by(submission_id: @submission.id)
+        @annotation = TextAnnotation.create line_start: 1,
+                                            line_end: 2,
+                                            column_start: 1,
+                                            column_end: 2,
+                                            submission_file_id: file.id,
+                                            is_remark: false,
+                                            annotation_number: @submission.annotations.count + 1,
+                                            annotation_text: create(:annotation_text, creator: instructor),
+                                            result: complete_result,
+                                            creator: instructor
         file_name_snippet = grouping.group.access_repo do |repo|
           "#{assignment.short_identifier}_#{grouping.group.group_name}_r#{repo.get_latest_revision.revision_identifier}"
         end
@@ -883,6 +881,56 @@ describe ResultsController do
         end
       end
     end
+
+    context 'when a remark request exists' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:complete_result) do
+        result = assignment.groupings.first.current_result
+        result.update!(marking_state: Result::MARKING_STATES[:complete])
+        result
+      end
+      let(:remarked_result) do
+        complete_result.submission.make_remark_result
+        complete_result.submission.update(remark_request_timestamp: Time.current)
+        complete_result.submission.remark_result
+      end
+      let(:params) { { course_id: course.id, id: remarked_result.id, format: :json } }
+
+      it 'includes the original result\'s mark data for every assignment criterion' do
+        get :show, params: params, xhr: true
+
+        old_marks = response.parsed_body['old_marks']
+        expect(old_marks.keys).to match_array assignment.ta_criteria.ids.map(&:to_s)
+
+        expect(old_marks.transform_values { |v| v['mark'] })
+          .to eq(complete_result.marks.to_h { |m| [m.criterion_id.to_s, m.mark] })
+      end
+
+      context 'when no marks have been overridden' do
+        it 'includes the override values for each mark of the original result' do
+          get :show, params: params, xhr: true
+
+          old_marks = response.parsed_body['old_marks']
+          expect(old_marks.values.pluck('override')).to match_array([false])
+        end
+      end
+
+      context 'when a mark has been overridden' do
+        let(:complete_result) do
+          result = assignment.groupings.first.current_result
+          result.marks.first.update!(mark: 0, override: true)
+          result.update!(marking_state: Result::MARKING_STATES[:complete])
+          result
+        end
+
+        it 'includes the override values for each mark of the original result' do
+          get :show, params: params, xhr: true
+
+          old_marks = response.parsed_body['old_marks']
+          expect(old_marks.values.pluck('override')).to match_array([true])
+        end
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
@@ -951,7 +999,7 @@ describe ResultsController do
 
       context 'when accessing an assignment with deductive annotations' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
-        it 'receives limited annotation category data when assigned '\
+        it 'receives limited annotation category data when assigned ' \
            'to a subset of criteria that have associated categories' do
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|

@@ -19,12 +19,12 @@ describe TestGroup do
 
   # create
   context 'A valid test group' do
-    before(:each)  do
+    before(:each) do
       @asst = create(:assignment,
                      due_date: 2.days.from_now,
                      assignment_properties_attributes: { section_due_dates_type: false })
 
-      @test_group = TestGroup.create(assessment_id: @asst.id, name: 'test_group')
+      @test_group = create(:test_group, assignment: @asst)
     end
 
     it 'return true when a valid test group is created' do
@@ -39,13 +39,8 @@ describe TestGroup do
                      due_date: 2.days.from_now,
                      assignment_properties_attributes: { section_due_dates_type: false })
 
-      @valid_test_group = TestGroup.create(assessment_id:        @asst.id,
-                                           name:                 'valid_test_group',
-                                           display_output:       :instructors_and_students)
-
-      @invalid_test_group = TestGroup.create(assessment_id:      @asst.id,
-                                             name:               'invalid_test_group',
-                                             display_output:     :instructors)
+      @valid_test_group = create(:test_group, assignment: @asst, display_output: :instructors_and_students)
+      @invalid_test_group = create(:test_group, assignment: @asst, display_output: :instructors)
     end
 
     context 'test group expected to be invalid when assignment is nil' do

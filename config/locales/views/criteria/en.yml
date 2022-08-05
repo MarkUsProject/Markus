@@ -8,6 +8,7 @@ en:
     description_hint: You may use Markdown in this field. Save changes to see a preview.
     editing_criteria: Editing criteria
     errors:
+      criteria_not_found: Could not find criteria for this assignment with the given ids
       invalid_format: 'The following criteria had invalid format:'
       released_marks: Cannot update criteria for an assignment with released marks.
     flexible: Flexible

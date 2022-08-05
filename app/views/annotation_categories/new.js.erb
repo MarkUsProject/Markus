@@ -5,5 +5,8 @@
   let new_category_form = document.getElementById('add_annotation_category');
   new_category_form.getElementsByTagName('input')[0].focus();
 
-  ajax_events.setUpCallbacks(new_category_form);
+  new_category_form.addEventListener('ajax:success', (event) => {
+    ajax_events.renderFlash(event, event.detail[2]);
+    $('#add_annotation_category').remove()
+  });
 })();

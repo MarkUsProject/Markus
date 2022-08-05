@@ -16,7 +16,6 @@ en:
       student_not_found: Student with name %{name} does not exist.
       title: Assign Scans
     back_to_exam_templates_page: Back to Exam Templates page
-    back_to_log_page: Back to Log page
     create:
       add_division: Add Template Division
       add_new: Add Exam Template
@@ -36,26 +35,64 @@ en:
       index_label: Start Index
       success: Successfully generated %{copies} exam copies
       title: Generate Exam Copies
+    help_manual_html: |
+      <p>
+        For more details on any of these steps and more, please visit the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md>MarkUs wiki</a>.
+      </p> <h3>Editing Exam Templates</h3> <p>
+        Select an Exam Template on the left to edit it. In addition to changing the name and template file you may also
+        make changes to the following:
+      </p> <ul>
+        <li>
+          <h4>%{template_division_title}</h4>
+          <p>
+            A template division specifies a mapping of test page number to question (e.g., Question 1 appears on
+            page 2, and Question 2 appears on pages 2-3). When processing scanned test papers, MarkUs will groups
+            pages by template divisions. The first page is assumed to be a cover page and therefore cannot be included
+            into a template division. Any additional pages that are not included in any template divisions will be
+            grouped into a special file called "EXTRA.pdf".
+          </p>
+        </li>
+        <li>
+          <h4>%{automatic_parsing_title}</h4>
+          <p>
+            If enabled, MarkUs will attempt to scan a portion of the test cover page and parse handwriting corresponding
+            to either a student's user name or ID number. MarkUs will then attempt to match the test paper to a student
+            in the course. This feature is not designed to replace the manual matching process. For more details please
+            consult the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md#automatic-parsing-of-student-information>wiki</a>.
+          </p>
+        </li>
+      </ul> <h3>Uploading Completed Test Papers</h3> <p>
+        Select "Upload Scans" on the left. After selecting an Exam Template, you can then upload a pdf of the completed
+        test papers. MarkUs will then use the selected Exam Template as a reference to split and format the pdf into
+        individual submissions. Any errors with the upload process will be displayed in the Uploaded Scans Log.
+      </p> <h3>Finalizing Submissions</h3> <p>
+        After you have ensured all scanned files have been uploaded and all QR code parsing errors have been fixed,
+        you must collect submissions in order to begin grading. To do this, go to the "Submissions" tab and select all
+        rows. Finally, press "Collect Submissions". Grading can then begin as normal.
+      </p> <h3>Matching test papers to students</h3> <p>
+        After submissions have been finalized, to match test papers to students, click on the "Assign Scans" link on
+        the left. Alternatively, navigate to the "groups" tab of this assignment. Click on the "Assign Scans" link
+        beside the first group and begin matching each test paper to a student.
+      </p>
     parsing:
       cover_page_for: Cover page for exam template %{id}
-      general: Automatically parse student information
+      general: Automatically match students to uploaded scanned exams
       save: Save
-      title: Automatic Parsing Selection
-    split:
-      failure: Exam Template is not successfully split
-      instruction: Upload PDF Exam
-      invalid: Invalid file type
-      missing: Missing File
-      split: Split
-      success: Exam Template is successfully split
-      title: Split Exam
+      title: Automatic Student Matching
     split_pdf_log:
       scan_error: Some files have not been scanned properly.
-      view_logs: View Logs
     update:
       failure: Exam Template has not been successfully updated
       instruction: Replace template file
       success: Exam Template has been successfully updated
+    upload_scans:
+      failure: Scans failed to upload
+      instruction: Papers to upload (.pdf)
+      invalid: Invalid file type
+      missing: Missing File
+      search_failure: Exam Template to format upload not found
+      success: Scans successfully uploaded
+      title: Upload Scans
   flash:
     exam_templates:
       assign_errors:

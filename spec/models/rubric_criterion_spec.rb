@@ -4,6 +4,121 @@ describe RubricCriterion do
   context 'A rubric criterion model passes criterion tests' do
     it_behaves_like 'a criterion'
   end
+
+  describe '#update_levels' do
+    # At creation, rubric already has 5 levels
+    let(:rubric) { create :rubric_criterion }
+
+    context 'when the properties with uniqueness validations are changed in a way
+that two properties A and B have switched values' do
+      context 'when the names are changed and the marks are not changed' do
+        it 'updates the associated levels if all the levels after update will have unique names' do
+          level0_mark, level0_name, level0_id = rubric.levels[0].mark, rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { mark: level0_mark, name: level1_name, id: level0_id },
+            '1' => { mark: level1_mark, name: level0_name, id: level1_id }
+          }
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by(id: level0_id).name).to eq(level1_name)
+          expect(rubric.levels.find_by(id: level1_id).name).to eq(level0_name)
+        end
+      end
+
+      context 'when the marks are changed and the names are not changed' do
+        it 'updates the associated levels if all the levels after update will have unique marks' do
+          level0_mark, level0_name, level0_id = rubric.levels[0].mark, rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { mark: level1_mark, name: level0_name, id: level0_id },
+            '1' => { mark: level0_mark, name: level1_name, id: level1_id }
+          }
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by(id: level0_id).mark).to eq(level1_mark)
+          expect(rubric.levels.find_by(id: level1_id).mark).to eq(level0_mark)
+        end
+      end
+
+      context 'when both the marks and the names are changed' do
+        it 'updates the associated levels if all the levels after update will have unique marks' do
+          level0_mark, level0_name, level0_id = rubric.levels[0].mark, rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { mark: level1_mark, name: level1_name, id: level0_id },
+            '1' => { mark: level0_mark, name: level0_name, id: level1_id }
+          }
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by(id: level0_id).mark).to eq(level1_mark)
+          expect(rubric.levels.find_by(id: level1_id).mark).to eq(level0_mark)
+          expect(rubric.levels.find_by(id: level0_id).name).to eq(level1_name)
+          expect(rubric.levels.find_by(id: level1_id).name).to eq(level0_name)
+        end
+      end
+    end
+
+    context 'when the properties with uniqueness validations are changed in a way that the validation is be violated' do
+      context 'when the names are changed and the marks are not changed' do
+        it 'does not update associated levels' do
+          level0_mark, level0_id = rubric.levels[0].mark, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { name: level1_name, mark: level0_mark, id: level0_id },
+            '1' => { name: level1_name, mark: level1_mark, id: level1_id }
+          }
+          level0_before = rubric.levels.find_by(id: level0_id)
+          level1_before = rubric.levels.find_by(id: level1_id)
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by(id: level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by(id: level1_id)).to eq(level1_before)
+        end
+      end
+
+      context 'when the marks are changed and the names are not changed' do
+        it 'does not update associated levels' do
+          level0_name, level0_id = rubric.levels[0].name, rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { name: level0_name, mark: level1_mark, id: level0_id },
+            '1' => { name: level1_name, mark: level1_mark, id: level1_id }
+          }
+          level0_before = rubric.levels.find_by(id: level0_id)
+          level1_before = rubric.levels.find_by(id: level1_id)
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by(id: level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by(id: level1_id)).to eq(level1_before)
+        end
+      end
+
+      context 'when both the marks and the names are changed' do
+        it 'does not update associated levels' do
+          level0_id = rubric.levels[0].id
+          level1_mark, level1_name, level1_id = rubric.levels[1].mark, rubric.levels[1].name, rubric.levels[1].id
+
+          params = {
+            '0' => { name: level1_name, mark: level1_mark, id: level0_id },
+            '1' => { name: level1_name, mark: level1_mark, id: level1_id }
+          }
+          level0_before = rubric.levels.find_by(id: level0_id)
+          level1_before = rubric.levels.find_by(id: level1_id)
+          rubric.update_levels(params)
+
+          expect(rubric.levels.find_by(id: level0_id)).to eq(level0_before)
+          expect(rubric.levels.find_by(id: level1_id)).to eq(level1_before)
+        end
+      end
+    end
+  end
+
   context 'A good rubric criterion model' do
     before(:each) do
       @rubric = create(:rubric_criterion)
@@ -95,7 +210,7 @@ describe RubricCriterion do
         row = %w[name 1.0]
         levels = 5
         (0..levels).each do |i|
-          row << 'name' + i.to_s
+          row << "name#{i}"
           it 'raises' do
             expect do
               RubricCriterion.create_or_update_from_csv_row(row, @assignment)
@@ -130,9 +245,9 @@ describe RubricCriterion do
         rubric_levels = 5
         # order is name, number, description, mark
         (0..rubric_levels - 1).each do |i|
-          row << 'name' + i.to_s
+          row << "name#{i}"
           # ...containing commas and quotes in the descriptions
-          row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
+          row << "description#{i} with comma (,) and \"\"quotes\"\""
           row << i + 10
         end
         @csv_base_row = row
@@ -162,7 +277,7 @@ describe RubricCriterion do
             @criterion.levels.size.times do |i|
               row << names[i]
               # ...containing commas and quotes in the descriptions
-              row << 'new description number ' + i.to_s
+              row << "new description number #{i}"
               row << i + 0.5
             end
 
@@ -172,7 +287,7 @@ describe RubricCriterion do
             expect(levels.length).to eq(5)
             levels.size.times do |i|
               expect(names[i]).to eq(levels[i].name)
-              expect('new description number ' + i.to_s).to eq(levels[i].description)
+              expect("new description number #{i}").to eq(levels[i].description)
               expect(i + 0.5).to eq(levels[i].mark)
             end
           end

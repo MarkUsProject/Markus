@@ -5,10 +5,10 @@
                url: course_assignment_exam_templates_path(@current_course, @assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div class="inline-labels">
+      <%= f.label :file_io, t('exam_templates.create.upload'), class: "required" %>
+      <%= f.file_field :file_io, required: true, accept: 'application/pdf' %>
       <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
       <%= f.text_field :name %>
-      <%= f.label :file_io, t('exam_templates.create.upload'), class: "required" %>
-      <%= f.file_field :file_io %>
     </div>
     <section class='dialog-actions'>
       <%= f.submit t(:save),

@@ -28,37 +28,37 @@ module Api
     def create
       Course.create!(params.permit(:name, :is_hidden, :display_name))
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     else
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     def update
       current_course.update!(params.permit(:name, :is_hidden, :display_name))
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     else
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     def update_autotest_url
       current_course.update_autotest_url(params[:url])
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
-        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
     else
       render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     private
