@@ -1,6 +1,9 @@
 # Changelog
 
 ## [unreleased]
+- Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
+- Enable bulk removal of students from section in student table (#6145)
+- Enable updating student active/inactive status in student edit form (#6145)
 
 ## [v2.1.0]
 - Remove unmaintained locales (#5727)
@@ -70,7 +73,6 @@
 - Ensure each file viewer has independent syntax highlighting (#6139)
 - Update git over ssh scripts to use the database function to check for authorized keys (#6142)
 - Remove support for sqlite and mysql database types (#6143)
-- Allowed bulk update section to no section in student table, and updating student status in student edit modal (#6145)
 - Replace uglifier gem with terser gem to support ES6 syntax (#6146)
 - Reorganize rake tasks to simplify steps required for asset precompilation in production (#6146)
 
