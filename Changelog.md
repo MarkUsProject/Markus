@@ -1,7 +1,10 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.1.0]
 - Remove unmaintained locales (#5727)
+- Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Added the ability to submit URLs (#5822)
 - Switch Javascript bundling to jsbundling-rails gem, and update to webpack v5 (#5833)
 - Remove group name displayed attribute from assignment properties table (#5834)
@@ -53,12 +56,23 @@
 - Changed flash message that is displayed when students upload a file with an incorrect name. (#6062)
 - Added emoji annotations for graders and removed `control+click` quick annotations. (#6093)
 - Sorted courses on the dashboard. (#6099)
-- Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
+- Added summary statistics for criteria (#6100)
 - Improved UI on 404 and 403 pages to match the style on MarkUs' dashboard. (#6101)
 - Pass group name and starter files to the autotester when running tests (#6104)
+- Handle multiple feedback files sent from the autotester (#6106)
+- Added API CRUD requests for tags (#6107)
 - Disabled admin editing of course name and allowed instructors to edit display name (#6111)
+- Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
+- Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
+- Replace standalone ruby script to check for repository access with database function (#6116)
+- Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
+- Ensure each file viewer has independent syntax highlighting (#6139)
+- Update git over ssh scripts to use the database function to check for authorized keys (#6142)
+- Remove support for sqlite and mysql database types (#6143)
 - Allowed bulk update section to no section in student table, and updating student status in student edit modal (#6145)
+- Replace uglifier gem with terser gem to support ES6 syntax (#6146)
+- Reorganize rake tasks to simplify steps required for asset precompilation in production (#6146)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
