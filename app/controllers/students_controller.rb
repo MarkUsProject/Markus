@@ -142,7 +142,7 @@ class StudentsController < ApplicationController
   private
 
   def role_params
-    params.require(:role).permit(:grace_credits, :section_id)
+    params.require(:role).permit(:hidden, :grace_credits, :section_id)
   end
 
   def settings_params
