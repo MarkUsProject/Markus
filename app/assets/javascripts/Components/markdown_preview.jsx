@@ -7,18 +7,11 @@ export default class MarkdownPreview extends React.Component {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
   };
 
-  componentWillUnmount = () => {
-    setTimeout(this.props.updateAnnotationCompletion(), 300);
-  };
-
   render() {
     return (
       <div
         id="annotation-preview"
-        style={{
-          minHeight: "10.3rem",
-          padding: "10px",
-        }}
+        className="preview"
         dangerouslySetInnerHTML={{__html: safe_marked(this.props.content)}}
       ></div>
     );
