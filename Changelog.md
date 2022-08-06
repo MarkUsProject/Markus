@@ -58,6 +58,7 @@
 - Pass group name and starter files to the autotester when running tests (#6104)
 - Disabled admin editing of course name and allowed instructors to edit display name (#6111)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
+- Allowed bulk update section to no section in student table, and updating student status in student edit modal (#6145)
 
 ## [v2.0.10]
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)

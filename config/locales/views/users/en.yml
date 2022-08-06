@@ -25,7 +25,7 @@ en:
     not_successfully_added_message_3: Student names are alphanumeric.
     not_successfully_added_message_4: Each field is separated by a comma (no spaces).
     not_successfully_added_message_5: Each line has the required fields specified near the upload form.
-    update_status: Update Status
+    status: Status
   tas:
     edit: Edit a Grader
     help:
