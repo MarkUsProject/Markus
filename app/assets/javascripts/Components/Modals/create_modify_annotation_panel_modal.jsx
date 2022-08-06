@@ -203,104 +203,102 @@ class CreateModifyAnnotationPanel extends React.Component {
           <h2>{this.props.title}</h2>
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container-vertical"}>
-              <div>
-                <Tabs disableUpDownKeys>
-                  <TabList>
-                    <Tab>{I18n.t("write")}</Tab>
-                    <Tab>{I18n.t("preview")}</Tab>
-                  </TabList>
-                  <TabPanel forceRender>
-                    <label>
-                      <textarea
-                        required={true}
-                        id="new_annotation_content"
-                        name="content"
-                        placeholder={I18n.t("results.annotation.placeholder")}
-                        value={this.state.content}
-                        onChange={this.handleChange}
-                        rows="8"
-                        autoFocus={true}
-                      />
-                    </label>
+              <Tabs disableUpDownKeys>
+                <TabList>
+                  <Tab>{I18n.t("write")}</Tab>
+                  <Tab>{I18n.t("preview")}</Tab>
+                </TabList>
+                <TabPanel forceRender>
+                  <label>
+                    <textarea
+                      required={true}
+                      id="new_annotation_content"
+                      name="content"
+                      placeholder={I18n.t("results.annotation.placeholder")}
+                      value={this.state.content}
+                      onChange={this.handleChange}
+                      rows="8"
+                      autoFocus={true}
+                    />
+                  </label>
 
-                    <div className={this.state.show_autocomplete ? "" : "hidden"}>
-                      <ul className="tags" key="annotation_completion" id="annotation_completion">
-                        <li className="annotation_category" id="annotation_completion_li">
-                          <p id="annotation_completion_text"></p>
-                          <div>
-                            <ul id="annotation_text_list"></ul>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                    <input
-                      type="hidden"
-                      id="annotation_text_id"
-                      name="annotation_text_id"
-                      value={this.state.annotation_text_id}
-                    />
-                  </TabPanel>
-                  <TabPanel>
-                    <MarkdownPreview
-                      content={this.state.content}
-                      updateAnnotationCompletion={this.updateAnnotationCompletion}
-                    />
-                  </TabPanel>
-                </Tabs>
-                {this.props.is_reviewer ? (
+                  <div className={this.state.show_autocomplete ? "" : "hidden"}>
+                    <ul className="tags" key="annotation_completion" id="annotation_completion">
+                      <li className="annotation_category" id="annotation_completion_li">
+                        <p id="annotation_completion_text"></p>
+                        <div>
+                          <ul id="annotation_text_list"></ul>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                   <input
                     type="hidden"
+                    id="annotation_text_id"
+                    name="annotation_text_id"
+                    value={this.state.annotation_text_id}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <MarkdownPreview
+                    content={this.state.content}
+                    updateAnnotationCompletion={this.updateAnnotationCompletion}
+                  />
+                </TabPanel>
+              </Tabs>
+              {this.props.is_reviewer ? (
+                <input
+                  type="hidden"
+                  id="new_annotation_category"
+                  name="category_id"
+                  value={I18n.t("annotation_categories.one_time_only")}
+                />
+              ) : (
+                <div className="inline-labels">
+                  <label htmlFor="new_annotation_category">
+                    {I18n.t("activerecord.models.annotation_category.one")}
+                  </label>
+
+                  <select
                     id="new_annotation_category"
                     name="category_id"
-                    value={I18n.t("annotation_categories.one_time_only")}
-                  />
-                ) : (
-                  <div className="inline-labels">
-                    <label htmlFor="new_annotation_category">
-                      {I18n.t("activerecord.models.annotation_category.one")}
-                    </label>
+                    onChange={this.checkCriterion}
+                    value={this.state.category_id}
+                    disabled={!this.props.isNew}
+                  >
+                    {options}
+                  </select>
 
-                    <select
-                      id="new_annotation_category"
-                      name="category_id"
-                      onChange={this.checkCriterion}
-                      value={this.state.category_id}
-                      disabled={!this.props.isNew}
-                    >
-                      {options}
-                    </select>
-
-                    <p
-                      id="deduction_disclaimer"
-                      className={this.state.show_deduction_disclaimer ? "" : "hidden"}
-                    >
-                      {I18n.t("annotations.default_deduction")}
-                    </p>
-                  </div>
-                )}
-
-                {this.props.changeOneOption && (
-                  <p>
-                    <input
-                      type="checkbox"
-                      id="change_all"
-                      name="change_all"
-                      checked={this.state.change_all}
-                      onChange={this.handleCheckbox}
-                    />
-                    <label htmlFor="change_all"> {I18n.t("annotations.update_all")}</label>{" "}
+                  <p
+                    id="deduction_disclaimer"
+                    className={this.state.show_deduction_disclaimer ? "" : "hidden"}
+                  >
+                    {I18n.t("annotations.default_deduction")}
                   </p>
-                )}
+                </div>
+              )}
 
-                <section className="modal-container dialog-actions">
+              {this.props.changeOneOption && (
+                <p>
                   <input
-                    id="annotation-submit-btn"
-                    type="submit"
-                    title="Ctrl/⌘ + Enter"
-                    value={I18n.t("save")}
+                    type="checkbox"
+                    id="change_all"
+                    name="change_all"
+                    checked={this.state.change_all}
+                    onChange={this.handleCheckbox}
                   />
-                </section>
-              </div>
+                  <label htmlFor="change_all"> {I18n.t("annotations.update_all")}</label>{" "}
+                </p>
+              )}
+
+              <section className="modal-container dialog-actions">
+                <input
+                  id="annotation-submit-btn"
+                  type="submit"
+                  title="Ctrl/⌘ + Enter"
+                  value={I18n.t("save")}
+                />
+              </section>
             </div>
           </form>
         </div>

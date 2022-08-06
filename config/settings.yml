@@ -40,7 +40,6 @@ logout_redirect: DEFAULT
 
 repository:
   type: git
-  markus_git_shell: <%= File.join(::Rails.root, 'lib', 'repo', 'markus-git-shell.sh') %>
   url: 'http://www.example.com/markus/git'
   ssh_url: 'git@example.com/csc108'
   is_repository_admin: true
