@@ -1,9 +1,7 @@
 # Gemfile
 #
-# For production mode PostgreSQL option :
-#   bundle install --without development test mysql sqlite
-# For production mode MySQL option :
-#   bundle install --without development test postgresql sqlite
+# For production mode:
+#   bundle install --without development test
 #
 # Make sure to declare at least one 'source'
 source 'https://rubygems.org'
@@ -23,7 +21,7 @@ gem 'jsbundling-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
-gem 'uglifier'
+gem 'terser'
 
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
@@ -69,29 +67,8 @@ gem 'responders'
 # LTI and OAuth
 gem 'jwt'
 
-# If you are a MarkUs developer and use PostgreSQL, make sure you have
-# PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
-# Then install your bundle by:
-#   bundle install --without mysql sqlite
-group :postgresql do
-  gem 'pg'
-end
-
-# If you are a MarkUs developer and use MySQL, make sure you have
-# MySQL header files installed (e.g. libmysqlclient-dev on Debian/Ubuntu).
-# Then install your bundle by:
-#   bundle install --without postgresql sqlite
-group :mysql do
-  gem 'mysql2'
-end
-
-# If you are a MarkUs developer and use SQLite, make sure you have
-# SQLite header files installed (e.g. libsqlite3-dev on Debian/Ubuntu).
-# Then install your bundle by:
-#   bundle install --without postgresql mysql
-group :sqlite do
-  gem 'sqlite3'
-end
+# Postgres
+gem 'pg'
 
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
@@ -148,7 +125,7 @@ end
 
 # If you  plan to use unicorn servers for production
 # make sure that this group is included. You don't need this
-# group if you are using Phusion Passenger.
+# group if you are using Phusion Passenger or Puma.
 group :unicorn do
   gem 'unicorn'
 end

@@ -8,3 +8,9 @@ require 'rdoc/task'
 require 'resque/scheduler/tasks'
 
 Markus::Application.load_tasks
+
+# Run js:routes:typscript and i18n:js:export tasks before precompiling assets
+# Otherwise routes.js and routes.d.ts files will not be created properly
+namespace :javascript do
+  task build: %w[i18n:js:export js:routes]
+end

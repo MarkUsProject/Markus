@@ -2,6 +2,7 @@
 en:
   tags:
     invalid_tag_data: Invalid tag data %{item}.
+    not_found: Either a tag or the group was not found
     results:
       available_tags: Available Tags
       current_tags: Current Tags

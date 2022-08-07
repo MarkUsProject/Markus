@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       member do
         put 'update_autotest_url'
       end
+      resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
           post 'create_or_unhide'
@@ -33,6 +34,10 @@ Rails.application.routes.draw do
           collection do
             get 'annotations'
             get 'group_ids_by_name'
+          end
+          member do
+            put 'add_tag'
+            put 'remove_tag'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
@@ -477,14 +482,16 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :lti_deployment do
-    get 'get_canvas_config'
-    post 'launch'
-    get 'public_jwk'
-    post 'redirect_login'
-    get 'choose_course'
-    post 'choose_course'
-    post 'create_course'
+  unless Rails.env.production?
+    namespace :lti_deployment do
+      get 'get_canvas_config'
+      post 'launch'
+      get 'public_jwk'
+      post 'redirect_login'
+      get 'choose_course'
+      post 'choose_course'
+      post 'create_course'
+    end
   end
 
   post 'main', controller: 'courses', action: 'index'

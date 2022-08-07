@@ -31,7 +31,7 @@ jobs:
           --health-retries 5
           --entrypoint redis-server
     env:
-      BUNDLE_WITHOUT: development:production:console:mysql:sqlite:unicorn
+      BUNDLE_WITHOUT: development:production:console:unicorn
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
@@ -76,10 +76,7 @@ jobs:
           sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
           cp config/database.yml.ci config/database.yml
       - name: Build assets
-        run: |
-          bundle exec rake i18n:js:export &&
-          bundle exec rake js:routes &&
-          bundle exec rake javascript:build
+        run: bundle exec rake javascript:build
       - name: Set up database
         run: bundle exec rails db:migrate
       - name: Install chrome and chromedriver

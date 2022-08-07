@@ -31,7 +31,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.31.1
+    rev: v1.33.0
     hooks:
       - id: rubocop
         language_version: 2.7.0

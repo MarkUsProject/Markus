@@ -50,7 +50,7 @@ class TestRun < ApplicationRecord
         end
         test_group_result = create_test_group_result(result, error: error) unless error.nil?
         create_annotations(result['annotations'])
-        create_feedback_file(result['feedback'], test_group_result)
+        result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
       self.submission&.set_autotest_marks
     end

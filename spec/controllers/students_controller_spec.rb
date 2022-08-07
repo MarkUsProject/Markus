@@ -20,6 +20,24 @@ describe StudentsController do
       end
     end
 
+    context '#update' do
+      let(:section) { create :section, { course_id: course.id } }
+      let(:params) do
+        {
+          role: { end_user: { user_name: student.user_name }, id: student.id, hidden: !student.hidden,
+                  section_id: section.id, grace_credits: student.grace_credits + 1 },
+          course_id: course.id,
+          id: student.id
+        }
+      end
+
+      it 'updates the student with the right attributes' do
+        patch_as instructor, :update, params: params
+        expected = params[:role].slice(:hidden, :section_id, :grace_credits).stringify_keys
+        expect(student.reload.attributes.slice('hidden', 'section_id', 'grace_credits')).to eq expected
+      end
+    end
+
     context '#upload' do
       include_examples 'a controller supporting upload', formats: [:csv], background: true do
         let(:params) { { course_id: course.id } }
@@ -37,6 +55,61 @@ describe StudentsController do
         subject do
           post_as new_role, :upload, params: { course_id: course.id,
                                                upload_file: fixture_file_upload('students/form_good.csv', 'text/csv') }
+        end
+      end
+    end
+
+    describe '#bulk_modify' do
+      let(:section) { create :section, { course_id: course.id } }
+      let(:shared_params) { { student_ids: students.map(&:id), course_id: course.id } }
+
+      context 'when the action is update_section' do
+        let(:students) { create_list(:student, 3, section_id: section.id) }
+
+        it "sets each student's section to the given section" do
+          patch_as instructor, :bulk_modify,
+                   params: shared_params.merge({ bulk_action: 'update_section', section: nil })
+          students.each do |student|
+            student.reload
+            expect(student.section).to be_nil
+          end
+        end
+      end
+
+      context 'when the action is hide' do
+        let(:students) { create_list(:student, 3, hidden: false) }
+
+        it "sets each student's status to inactive" do
+          patch_as instructor, :bulk_modify, params: shared_params.merge({ bulk_action: 'hide' })
+          students.each do |student|
+            student.reload
+            expect(student.hidden).to eq(true)
+          end
+        end
+      end
+
+      context 'when the action is unhide' do
+        let(:students) { create_list(:student, 3, hidden: true) }
+
+        it "sets each student's status to active" do
+          patch_as instructor, :bulk_modify, params: shared_params.merge({ bulk_action: 'unhide' })
+          students.each do |student|
+            student.reload
+            expect(student.hidden).to eq(false)
+          end
+        end
+      end
+
+      context 'when the action is give_grace_credits' do
+        let(:students) { create_list(:student, 3, grace_credits: 3) }
+
+        it "adds the provided grace credits to each student's grace credits" do
+          patch_as instructor, :bulk_modify,
+                   params: shared_params.merge({ bulk_action: 'give_grace_credits', grace_credits: 1 })
+          students.each do |student|
+            student.reload
+            expect(student.grace_credits).to eq(4)
+          end
         end
       end
     end
