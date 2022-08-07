@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
+- Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 
 ## [v2.1.0]
 - Remove unmaintained locales (#5727)
