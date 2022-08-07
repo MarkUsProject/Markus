@@ -16,28 +16,12 @@ describe KeyPair do
     end
   end
   context 'callbacks' do
-    it 'should call UpdateKeysJob.perform_later on creation' do
-      expect(UpdateKeysJob).to receive(:perform_later)
-      create :key_pair
-    end
-    it 'should call UpdateKeysJob.perform_later on destruction' do
-      key_pair = create :key_pair
-      expect(UpdateKeysJob).to receive(:perform_later)
-      key_pair.destroy
-    end
     it 'should strip the public_key before validation' do
       key = '    ssh-rsa something   '
       key_pair = build :key_pair, public_key: key
       expect(key_pair.public_key).to eq key
       key_pair.validate
       expect(key_pair.public_key).to eq key.strip
-    end
-  end
-
-  context 'self.full_key_string' do
-    it 'should be formatted properly' do
-      expected = "command=\"LOGIN_USER=a #{Settings.repository.markus_git_shell}\",#{KeyPair::AUTHORIZED_KEY_ARGS} b"
-      expect(KeyPair.full_key_string('a', 'b')).to eq expected
     end
   end
 end

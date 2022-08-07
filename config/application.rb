@@ -97,6 +97,8 @@ module Markus
 
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
+    config.active_record.schema_format = :sql
+
     if Settings.exception_notification.enabled
       config.middleware.use ExceptionNotification::Rack,
                             email: {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # install bundle gems if not up to date with the Gemfile.lock file
-bundle check 2>/dev/null || bundle install --without mysql sqlite unicorn
+bundle check 2>/dev/null || bundle install --without unicorn
 
 # install yarn packages
 yarn install
