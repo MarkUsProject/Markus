@@ -2,6 +2,8 @@
 
 ## [unreleased]
 - Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
+- Enable bulk removal of students from section in student table (#6145)
+- Enable updating student active/inactive status in student edit form (#6145)
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 
 ## [v2.1.0]
@@ -67,9 +69,9 @@
 - Added explicit status and filtering for inactive students and groups in assignment groups page. (#6112)
 - Fixed flaky automated test file tests by rearranging order of test file cleanup (#6114)
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
-- Ensure each file viewer has independent syntax highlighting (#6139)
 - Replace standalone ruby script to check for repository access with database function (#6116)
 - Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
+- Ensure each file viewer has independent syntax highlighting (#6139)
 - Update git over ssh scripts to use the database function to check for authorized keys (#6142)
 - Remove support for sqlite and mysql database types (#6143)
 - Replace uglifier gem with terser gem to support ES6 syntax (#6146)

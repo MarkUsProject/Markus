@@ -241,6 +241,9 @@ class StudentsActionBox extends React.Component {
             onChange={this.inputChanged}
             data-testid={"student_action_box_update_section"}
           >
+            <option key={"none"} value={""}>
+              {I18n.t("students.instructor_actions.no_section")}
+            </option>
             {section_options}
           </select>
         );
@@ -260,7 +263,7 @@ class StudentsActionBox extends React.Component {
             {I18n.t("students.instructor_actions.give_grace_credits")}
           </option>
           <option value="update_section">
-            {I18n.t("students.instructor_actions.add_section")}
+            {I18n.t("students.instructor_actions.update_section")}
           </option>
           <option value="hide">{I18n.t("students.instructor_actions.mark_inactive")}</option>
           <option value="unhide">{I18n.t("students.instructor_actions.mark_active")}</option>

@@ -14,12 +14,17 @@
     <span id='select_sections'>
       <% selected ||= @role.has_section? ? @role.section.id : [''] %>
       <%= f.select :section_id,
-                   options_for_select([''] + @sections.map {|s| [s.name, s.id] },
+                   options_for_select([[I18n.t("students.instructor_actions.no_section"), '']] + @sections.map {|s| [s.name, s.id] },
                                       selected: selected) %>
       <%= link_to t('sections.new.title'),
                   add_new_section_course_students_path(@current_course),
                   remote: true,
                   class: 'button inline-button' %>
+    </span>
+    <%= f.label :hidden, t('students.status') %>
+    <span id='set-active'>
+      <%= f.select :hidden,
+                   options_for_select([[t('students.active'), false], [t('students.inactive'), true]], selected: @role.hidden) %>
     </span>
   </div>
 

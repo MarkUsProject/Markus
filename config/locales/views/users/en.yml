@@ -13,10 +13,11 @@ en:
       manage_students: Mark students as active or inactive, give them grace credits.
     inactive: Inactive
     instructor_actions:
-      add_section: Add to section
       give_grace_credits: Give grace credits
       mark_active: Mark as active
       mark_inactive: Mark as inactive
+      no_section: No section
+      update_section: Update section
     new: Add a Student
     no_students_selected: No students were selected, so no changes were made.
     not_successfully_added_message_1: 'The following students have not been successfully added:'
@@ -24,6 +25,7 @@ en:
     not_successfully_added_message_3: Student names are alphanumeric.
     not_successfully_added_message_4: Each field is separated by a comma (no spaces).
     not_successfully_added_message_5: Each line has the required fields specified near the upload form.
+    status: Status
   tas:
     edit: Edit a Grader
     help:
