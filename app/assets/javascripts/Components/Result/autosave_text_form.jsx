@@ -1,5 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import MarkdownPreview from "../markdown_preview";
 
 // We attempt to autosave once [saveAfterMs] has elapsed from the last user action
 const saveAfterMs = 1500;
@@ -45,15 +47,9 @@ export class TextForm extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.updatePreview();
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.initialValue !== this.props.initialValue) {
       this.setState({value: this.props.initialValue});
-    } else if (prevState.initialValue !== this.state.value) {
-      this.updatePreview();
     }
   }
 
@@ -73,26 +69,24 @@ export class TextForm extends React.Component {
     this.handlePersist();
   };
 
-  updatePreview = () => {
-    if (this.props.previewId) {
-      document.getElementById(this.props.previewId).innerHTML = safe_marked(this.state.value);
-      MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.props.previewId]);
-    }
-  };
-
   render() {
     return (
       <div className={this.props.className || ""}>
         <form onSubmit={this.onSubmit}>
-          <textarea value={this.state.value} onChange={this.updateValue} rows={5} />
+          <Tabs>
+            <TabList>
+              <Tab>{I18n.t("write")}</Tab>
+              <Tab>{I18n.t("preview")}</Tab>
+            </TabList>
+            <TabPanel forceRender>
+              <textarea value={this.state.value} onChange={this.updateValue} rows={5} />
+            </TabPanel>
+            <TabPanel>
+              <MarkdownPreview content={this.state.value} updateAnnotationCompletion={() => {}} />
+            </TabPanel>
+          </Tabs>
           <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
-        {this.props.previewId && (
-          <div>
-            <h3>{I18n.t("preview")}</h3>
-            <div id={this.props.previewId} className="preview" />
-          </div>
-        )}
       </div>
     );
   }
