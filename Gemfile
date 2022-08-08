@@ -21,7 +21,7 @@ gem 'jsbundling-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
-gem 'uglifier'
+gem 'terser'
 
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'

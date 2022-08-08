@@ -104,7 +104,6 @@ Config.setup do |config|
         optional(:split_pdf_job).filled(:string)
         optional(:submissions_job).filled(:string)
         optional(:uncollect_submissions_job).filled(:string)
-        optional(:update_keys_job).filled(:string)
         optional(:update_repo_required_files_job).filled(:string)
         optional(:update_repo_permissions_job).filled(:string)
       end
@@ -131,7 +130,6 @@ Config.setup do |config|
         required(:storage).filled(:string)
         required(:type).value(included_in?: %w[git svn mem])
         required(:url).filled(:string)
-        optional(:markus_git_shell).filled(:string)
         optional(:ssh_url).filled(:string)
         required(:is_repository_admin).filled(:bool)
       end
