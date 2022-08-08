@@ -95,6 +95,7 @@
                              '%Y-%m-%d %l:%M %p'),
                          size: 35,
                          required: true,
+                         autocomplete: "off",
                          placeholder: t('time.format_string.placeholder') %>
         <% unless @sections.empty? %>
           <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
@@ -492,4 +493,5 @@
                    data: { disable_with: t('working') } %>
     </p>
   <% end %>
+  <%= javascript_include_tag 'flatpickr', nonce: true %>
 <% end %>

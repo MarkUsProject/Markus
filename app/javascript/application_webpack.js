@@ -130,3 +130,5 @@ import {makeAdminUsersList} from "javascripts/Components/admin_users_list";
 window.makeAdminUsersList = makeAdminUsersList;
 import {makeCourseList} from "javascripts/Components/course_list";
 window.makeCourseList = makeCourseList;
+import flatpickr from "flatpickr";
+window.flatpickr = flatpickr;
