@@ -114,124 +114,52 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    let criteria_graph = "";
-    if (this.props.show_criteria_stats && this.state.criteria_summary.length > 0) {
-      const criteria_graph_options = {
-        plugins: {
-          legend: {
-            display: true,
-            labels: {
-              // Ensure criteria labels are sorted in position order
-              sort: (a, b) => {
-                const itemA = this.state.criteria_summary.find(item => item.name === a.text);
-                const itemB = this.state.criteria_summary.find(item => item.name === b.text);
-                return itemA.position - itemB.position;
-              },
-            },
-          },
-        },
-        scales: chartScales(),
-      };
-      criteria_graph = (
-        <div className="flex-row">
-          <div className="distribution-graph">
-            <h3>{I18n.t("criteria_grade_distribution")}</h3>
-            <Bar
-              data={this.state.criteria_grade_distribution.data}
-              options={criteria_graph_options}
-              width="400"
-              height="350"
-            />
-          </div>
-          <div className="flex-row-expand">
-            <div className="criteria-summary-table">
-              <ReactTable
-                data={this.state.criteria_summary}
-                columns={[
-                  {
-                    Header: I18n.t("activerecord.models.criterion.one"),
-                    accessor: "name",
-                    minWidth: 150,
-                  },
-                  {
-                    Header: I18n.t("average"),
-                    accessor: "average",
-                    sortable: false,
-                    filterable: false,
-                    Cell: row => (
-                      <FractionStat
-                        numerator={row.original.average}
-                        denominator={row.original.max_mark}
-                      />
-                    ),
-                  },
-                ]}
-                defaultSorted={[{id: "position"}]}
-                SubComponent={row => (
-                  <div className="criteria-stat-breakdown grid-2-col">
-                    <CoreStatistics
-                      average={row.original.average}
-                      median={row.original.median}
-                      standard_deviation={row.original.standard_deviation}
-                      max_mark={row.original.max_mark}
-                      num_zeros={row.original.num_zeros}
-                      num_groupings={this.state.summary.groupings_size}
-                    />
-                  </div>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-      );
-    } else if (this.props.show_criteria_stats) {
-      criteria_graph = (
-        <div className="distribution-graph">
-          <h3>{I18n.t("criteria_grade_distribution")}</h3>
-          <h4>
-            (
-            <a
-              href={Routes.course_assignment_criteria_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("helpers.submit.create", {
-                model: I18n.t("activerecord.models.criterion.one"),
-              })}
-            </a>
-            )
-          </h4>
-        </div>
-      );
-    }
-
-    let ta_grade_distribution_link = (
-      <h4>
-        (
-        <a
-          href={Routes.course_assignment_graders_path(
-            this.props.course_id,
-            this.props.assessment_id
-          )}
-        >
-          {I18n.t("graders.actions.assign_grader")}
-        </a>
-        )
-      </h4>
-    );
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
-      ta_grade_distribution_link = (
-        <p>
+    let ta_grade_distribution_chart = (
+      <div className="distribution-graph">
+        <h3>{I18n.t("grader_distribution")}</h3>
+        <h4>
+          (
           <a
-            href={Routes.grader_summary_course_assignment_graders_path(
+            href={Routes.course_assignment_graders_path(
               this.props.course_id,
               this.props.assessment_id
             )}
           >
-            {I18n.t("activerecord.models.ta.other")}
+            {I18n.t("graders.actions.assign_grader")}
           </a>
-        </p>
+          )
+        </h4>
+      </div>
+    );
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
+      const ta_grade_chart_options = {
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+        scales: chartScales(),
+      };
+      ta_grade_distribution_chart = (
+        <div className="distribution-graph">
+          <h3>{I18n.t("criteria_grade_distribution")}</h3>
+          <Bar
+            data={this.state.ta_grade_distribution.data}
+            options={ta_grade_chart_options}
+            width="400"
+            height="350"
+          />
+          <p>
+            <a
+              href={Routes.grader_summary_course_assignment_graders_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("activerecord.models.ta.other")}
+            </a>
+          </p>
+        </div>
       );
     }
 
@@ -275,7 +203,6 @@ export class AssignmentChart extends React.Component {
         outstanding_remark_request_link={outstanding_remark_request_link}
         secondary_grade_distribution_title={I18n.t("grader_distribution")}
         secondary_grade_distribution_data={this.state.ta_grade_distribution.data}
-        criteria_graph={criteria_graph}
         secondary_grade_distribution_link={ta_grade_distribution_link}
       />
     );

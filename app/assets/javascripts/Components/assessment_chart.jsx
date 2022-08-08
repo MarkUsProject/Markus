@@ -36,45 +36,109 @@ class AssessmentChart extends React.Component {
       </React.Fragment>
     );
 
-    if (this.props.secondary_grade_distribution_data.datasets.length !== 0) {
-      const secondary_grade_chart_options = {
+    let grade_breakdown_graph = "";
+    if (this.props.show_grade_breakdown_chart && this.props.summary.length > 0) {
+      const grade_breakdown_graph_options = {
         plugins: {
           legend: {
             display: true,
+            labels: {
+              // Ensure criteria / grade entry item labels are sorted in position order
+              sort: (a, b) => {
+                const itemA = this.props.summary.find(item => item.name === a.text);
+                const itemB = this.props.summary.find(item => item.name === b.text);
+                return itemA.position - itemB.position;
+              },
+            },
           },
         },
         scales: chartScales(),
       };
-      return (
-        <React.Fragment>
-          <h2>{this.props.assessment_header_content}</h2>
-          {assessment_graph}
-          {this.props.criteria_graph}
+      let grade_breakdown_summary_table = "";
+      if (this.props.show_grade_breakdown_stats) {
+        grade_breakdown_summary_table = (
+          <div className="criteria-summary-table">
+            <ReactTable
+              data={this.props.grade_breakdown_summary}
+              columns={[
+                {
+                  Header: I18n.t("activerecord.models.criterion.one"),
+                  accessor: "name",
+                  minWidth: 150,
+                },
+                {
+                  Header: I18n.t("average"),
+                  accessor: "average",
+                  sortable: false,
+                  filterable: false,
+                  Cell: row => (
+                    <FractionStat
+                      numerator={row.original.average}
+                      denominator={row.original.max_mark}
+                    />
+                  ),
+                },
+              ]}
+              defaultSorted={[{id: "position"}]}
+              SubComponent={row => (
+                <div className="criteria-stat-breakdown grid-2-col">
+                  <CoreStatistics
+                    average={row.original.average}
+                    median={row.original.median}
+                    standard_deviation={row.original.standard_deviation}
+                    max_mark={row.original.max_mark}
+                    num_zeros={row.original.num_zeros}
+                    num_groupings={this.props.grade_breakdown_summary.groupings_size}
+                  />
+                </div>
+              )}
+            />
+          </div>
+        );
+      }
+      grade_breakdown_graph = (
+        <div className="flex-row">
           <div className="distribution-graph">
-            <h3>{this.props.secondary_grade_distribution_title}</h3>
+            <h3>{I18n.t("criteria_grade_distribution")}</h3>
             <Bar
-              data={this.props.secondary_grade_distribution_data}
-              options={secondary_grade_chart_options}
+              data={grade_breakdown_distribution_data}
+              options={grade_breakdown_graph_options}
               width="400"
               height="350"
             />
-            {this.props.secondary_grade_distribution_link}
           </div>
-        </React.Fragment>
+          <div className="flex-row-expand">{grade_breakdown_summary_table}</div>
+        </div>
       );
-    } else {
-      return (
-        <React.Fragment>
-          <h2>{this.props.assessment_header_content}</h2>
-          {assessment_graph}
-          {this.props.criteria_graph}
-          <div className="distribution-graph">
-            <h3>{this.props.secondary_grade_distribution_title}</h3>
-            {this.props.secondary_grade_distribution_link}
-          </div>
-        </React.Fragment>
+    } else if (this.props.show_grade_breakdown_stats) {
+      grade_breakdown_graph = (
+        <div className="distribution-graph">
+          <h3>{I18n.t("criteria_grade_distribution")}</h3>
+          <h4>
+            (
+            <a
+              href={Routes.course_assignment_criteria_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("helpers.submit.create", {
+                model: I18n.t("activerecord.models.criterion.one"),
+              })}
+            </a>
+            )
+          </h4>
+        </div>
       );
     }
+
+    return (
+      <React.Fragment>
+        <h2>{this.props.assessment_header_content}</h2>
+        {assessment_graph}
+        {grade_breakdown_graph}
+      </React.Fragment>
+    );
   }
 }
 
@@ -153,10 +217,10 @@ AssessmentChart.propTypes = {
   assessment_data: PropTypes.object.isRequired,
   additional_assessment_stats: PropTypes.element.isRequired,
   outstanding_remark_request_link: PropTypes.element,
-  secondary_grade_distribution_title: PropTypes.string.isRequired,
-  secondary_grade_distribution_data: PropTypes.object.isRequired,
-  criteria_graph: PropTypes.element,
-  secondary_grade_distribution_link: PropTypes.element,
+  show_grade_breakdown_stats: PropTypes.boolean,
+  grade_breakdown_distribution_title: PropTypes.string.isRequired,
+  grade_breakdown_distribution_data: PropTypes.object.isRequired,
+  grade_breakdown_distribution_link: PropTypes.element,
 };
 
 export {AssessmentChart, CoreStatistics, FractionStat};
