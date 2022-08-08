@@ -70,7 +70,6 @@
 - Changed nav bar layout by moving the MarkUs logo beside the course name on the top bar (#6115)
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
 - Added drag and drop functionality to upload starter files. (#6117)
-- Ensure each file viewer has independent syntax highlighting (#6139)
 - Replace standalone ruby script to check for repository access with database function (#6116)
 - Update git over ssh scripts to optionally use the database function to check for repository access (#6116)
 - Ensure each file viewer has independent syntax highlighting (#6139)
