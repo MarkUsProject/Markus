@@ -194,6 +194,10 @@ class StarterFileManager extends React.Component {
     );
   };
 
+  updateDirUploadTarget = target => {
+    this.setState({dirUploadTarget: target});
+  };
+
   renderFileManagers = () => {
     return (
       <React.Fragment>
@@ -213,6 +217,7 @@ class StarterFileManager extends React.Component {
                 files={files}
                 noFilesMessage={I18n.t("submissions.no_files_available")}
                 readOnly={false}
+                onCreateFiles={this.handleCreateFiles}
                 onDeleteFile={this.handleDeleteFile}
                 onCreateFolder={this.handleCreateFolder}
                 onRenameFolder={
@@ -226,6 +231,8 @@ class StarterFileManager extends React.Component {
                 )}
                 disableActions={{rename: true}}
                 canFilter={false}
+                folderRendererProps={{onFolderHover: this.updateDirUploadTarget}}
+                fileRendererProps={{onFileHover: this.updateDirUploadTarget}}
               />
               <button
                 key={"delete_starter_file_group_button"}
@@ -612,6 +619,7 @@ class StarterFileFileManager extends React.Component {
       onDeleteFile: (...args) => this.props.onDeleteFile(this.props.groupUploadTarget, ...args),
       onCreateFolder: (...args) => this.props.onCreateFolder(this.props.groupUploadTarget, ...args),
       onDeleteFolder: (...args) => this.props.onDeleteFolder(this.props.groupUploadTarget, ...args),
+      onCreateFiles: (...args) => this.props.onCreateFiles(this.props.groupUploadTarget, ...args),
       onActionBarAddFileClick: (...args) =>
         this.props.onActionBarAddFileClick(this.props.groupUploadTarget, ...args),
     };
