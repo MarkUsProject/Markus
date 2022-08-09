@@ -43,6 +43,9 @@ export class GradeEntryFormChart extends React.Component {
     )
       .then(data => data.json())
       .then(res => {
+        for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
+          element.backgroundColor = colours[index];
+        }
         this.setState({
           summary: res.info_summary,
           column_summary: res.column_summary,
@@ -53,9 +56,6 @@ export class GradeEntryFormChart extends React.Component {
             data: res.column_breakdown_data,
           },
         });
-        for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
-          element.backgroundColor = colours[index];
-        }
       });
   };
 

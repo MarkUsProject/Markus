@@ -702,36 +702,4 @@ describe GradeEntryFormsController do
       end
     end
   end
-
-  describe '#summary' do
-    shared_examples 'An authorized role viewing the summary for a grade entry form' do
-      context 'requests an HTML response' do
-        it 'responds with 200' do
-          post_as role, :summary, params: { course_id: course.id, id: grade_entry_form.id }, format: 'html'
-          expect(response).to have_http_status 200
-        end
-      end
-    end
-
-    describe 'When the role is instructor' do
-      let(:role) { create(:instructor) }
-      include_examples 'An authorized role viewing the summary for a grade entry form'
-    end
-
-    describe 'When the role is grader' do
-      context 'when the grader is allowed to manage grade entry forms' do
-        let(:role) { create(:ta, manage_assessments: true) }
-        include_examples 'An authorized role viewing the summary for a grade entry form'
-      end
-      context 'when the grader is not allowed to manage grade entry forms' do
-        let(:role) { create(:ta) }
-        context 'requests an HTML response' do
-          it 'responds with 403' do
-            post_as role, :summary, params: { course_id: course.id, id: grade_entry_form.id }, format: 'html'
-            expect(response).to have_http_status 403
-          end
-        end
-      end
-    end
-  end
 end
