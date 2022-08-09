@@ -3,4 +3,6 @@ Rails.application.config.after_initialize do
                           RETURNS text AS $$SELECT text '#{ENV.fetch('RAILS_RELATIVE_URL_ROOT', '/')}'$$
                           LANGUAGE sql IMMUTABLE PARALLEL SAFE;"
   ActiveRecord::Base.connection.execute(relative_root_function)
+rescue ActiveRecord::NoDatabaseError
+  puts 'Skipping initializing database constants because the database does not exist yet'
 end
