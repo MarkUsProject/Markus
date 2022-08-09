@@ -10,7 +10,7 @@ class GradeEntryFormSummary extends React.Component {
       return (
         <Tabs>
           <TabList>
-            <Tab>{I18n.t("summary_table")}</Tab>
+            <Tab>{I18n.t("activerecord.attributes.grade_entry_form.grades")}</Tab>
             <Tab>{I18n.t("summary_statistics")}</Tab>
           </TabList>
           <TabPanel>

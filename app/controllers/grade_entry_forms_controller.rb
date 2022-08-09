@@ -261,28 +261,24 @@ class GradeEntryFormsController < ApplicationController
       num_zeros: grade_entry_form.results_zeros
     }
 
-    json_data = {
-      grade_dist_data: grade_dist_data,
-      column_breakdown_data: column_breakdown_data,
-      info_summary: info_summary
-    }
-
-    if params[:get_column_summary] == 'true'
-      column_summary = grade_entry_form.grade_entry_items.map do |item|
-        {
-          name: item.name,
-          average: item.average || 0,
-          median: item.median || 0,
-          max_mark: item.out_of || 0,
-          standard_deviation: item.standard_deviation || 0,
-          position: item.position,
-          num_zeros: item.grades_array.count(&:zero?)
-        }
-      end
-      json_data[:column_summary] = column_summary
+    column_summary = grade_entry_form.grade_entry_items.map do |item|
+      {
+        name: item.name,
+        average: item.average || 0,
+        median: item.median || 0,
+        max_mark: item.out_of || 0,
+        standard_deviation: item.standard_deviation || 0,
+        position: item.position,
+        num_zeros: item.grades_array.count(&:zero?)
+      }
     end
 
-    render json: json_data
+    render json: {
+      grade_dist_data: grade_dist_data,
+      column_breakdown_data: column_breakdown_data,
+      info_summary: info_summary,
+      column_summary: column_summary
+    }
   end
 
   def switch

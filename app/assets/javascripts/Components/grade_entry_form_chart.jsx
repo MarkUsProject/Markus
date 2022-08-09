@@ -38,8 +38,7 @@ export class GradeEntryFormChart extends React.Component {
     fetch(
       Routes.grade_distribution_course_grade_entry_form_path(
         this.props.course_id,
-        this.props.assessment_id,
-        {get_column_summary: true}
+        this.props.assessment_id
       )
     )
       .then(data => data.json())

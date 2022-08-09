@@ -513,8 +513,7 @@ describe GradeEntryFormsController do
 
   describe '#grade_distribution' do
     let(:user) { create(:instructor) }
-    let(:params) { { course_id: course.id, id: grade_entry_form_with_data.id } }
-    before { get_as user, :grade_distribution, params: params }
+    before { get_as user, :grade_distribution, params: { course_id: course.id, id: grade_entry_form_with_data.id } }
 
     it('should return grade distribution data') {
       expected_items = grade_entry_form_with_data.grade_distribution_array
@@ -558,32 +557,28 @@ describe GradeEntryFormsController do
       expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
     end
 
-    context 'column_summary' do
-      let(:params) { { course_id: course.id, id: grade_entry_form_with_data.id, get_column_summary: true } }
+    it 'should contain the correct column_summary keys' do
+      keys = response.parsed_body['column_summary'].first.keys
+      expect(keys).to contain_exactly('name',
+                                      'average',
+                                      'median',
+                                      'max_mark',
+                                      'standard_deviation',
+                                      'position',
+                                      'num_zeros')
+    end
 
-      it 'should contain the right keys' do
-        keys = response.parsed_body['column_summary'].first.keys
-        expect(keys).to contain_exactly('name',
-                                        'average',
-                                        'median',
-                                        'max_mark',
-                                        'standard_deviation',
-                                        'position',
-                                        'num_zeros')
-      end
-
-      it 'should contain the right values' do
-        summary = response.parsed_body['column_summary'].first
-        column_item = grade_entry_form_with_data.grade_entry_items.first
-        expected = { name: column_item.name,
-                     average: column_item.average || 0,
-                     median: column_item.median || 0,
-                     max_mark: column_item.out_of || 0,
-                     standard_deviation: column_item.standard_deviation || 0,
-                     position: column_item.position,
-                     num_zeros: column_item.grades_array.count(&:zero?) }
-        expect(summary).to eq expected.as_json
-      end
+    it 'should return the expected column_summary' do
+      summary = response.parsed_body['column_summary'].first
+      column_item = grade_entry_form_with_data.grade_entry_items.first
+      expected = { name: column_item.name,
+                   average: column_item.average || 0,
+                   median: column_item.median || 0,
+                   max_mark: column_item.out_of || 0,
+                   standard_deviation: column_item.standard_deviation || 0,
+                   position: column_item.position,
+                   num_zeros: column_item.grades_array.count(&:zero?) }
+      expect(summary).to eq expected.as_json
     end
   end
 

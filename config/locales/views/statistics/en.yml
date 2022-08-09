@@ -9,6 +9,7 @@ en:
   criteria_grade_distribution: Criteria Grade Distribution
   grade_distribution: Grades Distribution
   grader_distribution: Grader Distribution
+  grade_entry_form_summary: 'Grades: %{short_id}'
   median: Median
   num_entries: Number of entries
   num_failed: Number of fails
