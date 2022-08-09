@@ -4,5 +4,5 @@ Rails.application.config.after_initialize do
                           LANGUAGE sql IMMUTABLE PARALLEL SAFE;"
   ActiveRecord::Base.connection.execute(relative_root_function)
 rescue ActiveRecord::NoDatabaseError
-  puts 'Skipping initializing database constants because the database does not exist yet'
+  warn 'Skipping initializing database constants because the database does not exist yet'
 end
