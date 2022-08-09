@@ -39,13 +39,14 @@ export class GradeEntryFormChart extends React.Component {
       Routes.grade_distribution_course_grade_entry_form_path(
         this.props.course_id,
         this.props.assessment_id,
-        {get_column_summary: this.props.show_column_stats}
+        {get_column_summary: true}
       )
     )
       .then(data => data.json())
       .then(res => {
         this.setState({
           summary: res.info_summary,
+          column_summary: res.column_summary,
           grade_entry_form_distribution: {
             data: res.grade_dist_data,
           },
@@ -55,9 +56,6 @@ export class GradeEntryFormChart extends React.Component {
         });
         for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
           element.backgroundColor = colours[index];
-        }
-        if (this.props.show_column_stats) {
-          this.setState({column_summary: column_summary});
         }
       });
   };
@@ -71,8 +69,6 @@ export class GradeEntryFormChart extends React.Component {
   render() {
     return (
       <AssessmentChart
-        course_id={this.props.course_id}
-        assessment_id={this.props.assessment_id}
         assessment_header_content={
           <a
             href={Routes.edit_course_grade_entry_form_path(
@@ -96,10 +92,25 @@ export class GradeEntryFormChart extends React.Component {
             />
           </React.Fragment>
         }
-        secondary_grade_distribution_title={I18n.t(
+        show_grade_breakdown_chart={true}
+        show_grade_breakdown_table={this.props.show_column_table}
+        grade_breakdown_distribution_title={I18n.t(
           "grade_entry_forms.grade_entry_item_distribution"
         )}
-        secondary_grade_distribution_data={this.state.column_grade_distribution.data}
+        grade_breakdown_summary={this.state.column_summary}
+        grade_breakdown_distribution_data={this.state.column_grade_distribution.data}
+        grade_breakdown_assign_link={
+          <a
+            href={Routes.edit_course_grade_entry_form_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {I18n.t("helpers.submit.create", {
+              model: I18n.t("activerecord.models.grade_entry_item.one"),
+            })}
+          </a>
+        }
       />
     );
   }

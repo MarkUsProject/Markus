@@ -2,6 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import {GradeEntryFormChart} from "./grade_entry_form_chart";
 import {MarksSpreadsheet} from "./marks_spreadsheet";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 class GradeEntryFormSummary extends React.Component {
   render() {
@@ -27,6 +28,7 @@ class GradeEntryFormSummary extends React.Component {
               <GradeEntryFormChart
                 course_id={this.props.course_id}
                 assessment_id={this.props.grade_entry_form_id}
+                show_column_table={true}
               />
             </div>
           </TabPanel>

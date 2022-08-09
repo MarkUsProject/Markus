@@ -1,7 +1,6 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
-import ReactTable from "react-table";
-import {AssessmentChart, CoreStatistics, FractionStat} from "./assessment_chart";
+import {AssessmentChart, FractionStat} from "./assessment_chart";
 import {chartScales} from "./Helpers/chart_helpers";
 
 export class AssignmentChart extends React.Component {
@@ -142,7 +141,7 @@ export class AssignmentChart extends React.Component {
       };
       ta_grade_distribution_chart = (
         <div className="distribution-graph">
-          <h3>{I18n.t("criteria_grade_distribution")}</h3>
+          <h3>{I18n.t("grader_distribution")}</h3>
           <Bar
             data={this.state.ta_grade_distribution.data}
             options={ta_grade_chart_options}
@@ -164,47 +163,62 @@ export class AssignmentChart extends React.Component {
     }
 
     return (
-      <AssessmentChart
-        course_id={this.props.course_id}
-        assessment_id={this.props.assessment_id}
-        assessment_header_content={
-          <a
-            href={Routes.browse_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assessment_id
-            )}
-          >
-            {this.props.show_chart_header ? this.state.summary.name : ""}
-          </a>
-        }
-        summary={this.state.summary}
-        assessment_data={this.state.assignment_grade_distribution.data}
-        additional_assessment_stats={
-          <React.Fragment>
-            <span className="summary-stats-label">{I18n.t("num_groups")}</span>
-            <span>{this.state.summary.groupings_size}</span>
-            <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
-            <FractionStat
-              numerator={this.state.summary.num_students_in_group}
-              denominator={this.state.summary.num_active_students}
-            />
-            <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
-            <FractionStat
-              numerator={this.state.summary.num_submissions_collected}
-              denominator={this.state.summary.groupings_size}
-            />
-            <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
-            <FractionStat
-              numerator={this.state.summary.num_submissions_graded}
-              denominator={this.state.summary.groupings_size}
-            />
-          </React.Fragment>
-        }
-        outstanding_remark_request_link={outstanding_remark_request_link}
-        secondary_grade_distribution_title={I18n.t("grader_distribution")}
-        secondary_grade_distribution_data={this.state.ta_grade_distribution.data}
-        secondary_grade_distribution_link={ta_grade_distribution_link}
-      />
+      <React.Fragment>
+        <AssessmentChart
+          assessment_header_content={
+            <a
+              href={Routes.browse_course_assignment_submissions_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {this.props.show_chart_header ? this.state.summary.name : ""}
+            </a>
+          }
+          summary={this.state.summary}
+          assessment_data={this.state.assignment_grade_distribution.data}
+          additional_assessment_stats={
+            <React.Fragment>
+              <span className="summary-stats-label">{I18n.t("num_groups")}</span>
+              <span>{this.state.summary.groupings_size}</span>
+              <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
+              <FractionStat
+                numerator={this.state.summary.num_students_in_group}
+                denominator={this.state.summary.num_active_students}
+              />
+              <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
+              <FractionStat
+                numerator={this.state.summary.num_submissions_collected}
+                denominator={this.state.summary.groupings_size}
+              />
+              <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
+              <FractionStat
+                numerator={this.state.summary.num_submissions_graded}
+                denominator={this.state.summary.groupings_size}
+              />
+            </React.Fragment>
+          }
+          outstanding_remark_request_link={outstanding_remark_request_link}
+          show_grade_breakdown_chart={this.props.show_criteria_stats}
+          show_grade_breakdown_table={this.props.show_criteria_stats}
+          grade_breakdown_summary={this.state.criteria_summary}
+          grade_breakdown_distribution_title={I18n.t("criteria_grade_distribution")}
+          grade_breakdown_distribution_data={this.state.criteria_grade_distribution.data}
+          grade_breakdown_assign_link={
+            <a
+              href={Routes.course_assignment_criteria_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("helpers.submit.create", {
+                model: I18n.t("activerecord.models.criterion.one"),
+              })}
+            </a>
+          }
+        />
+        {ta_grade_distribution_chart}
+      </React.Fragment>
     );
   }
 }

@@ -3,6 +3,11 @@
   text-align: right;
 }
 
+// Styling for grade breakdown graph
+.grade-breakdown-graph {
+  width: 100%;
+}
+
 // Specific styling for the expanded summary statistics page
 .expanded-summary-stats {
   // Styling for graph titles
@@ -50,5 +55,9 @@
     span {
       font-size: small;
     }
+  }
+
+  .grade-breakdown-graph {
+    width: 50%;
   }
 }
