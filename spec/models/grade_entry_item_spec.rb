@@ -62,8 +62,7 @@ describe GradeEntryItem do
   end
 
   describe '#grades_array' do
-    let(:grade_entry_form) { create(:grade_entry_form_with_data) }
-    let(:grade_entry_item) { create(:grade_entry_item, grade_entry_form: grade_entry_form) }
+    let(:grade_entry_item) { create(:grade_entry_form_with_data).grade_entry_items.first }
     let(:grades) { grade_entry_item.grades.pluck(:grade) }
 
     it 'returns the correct grades' do
@@ -77,7 +76,7 @@ describe GradeEntryItem do
   end
 
   describe '#average' do
-    let(:grade_entry_item) { create(:grade_entry_item, max_mark: 10) }
+    let(:grade_entry_item) { create(:grade_entry_item, out_of: 10) }
 
     it 'returns 0 when there are no results' do
       allow(grade_entry_item).to receive(:grades_array).and_return([])
@@ -89,15 +88,15 @@ describe GradeEntryItem do
       expect(grade_entry_item.average).to eq 2
     end
 
-    it 'returns 0 when the assignment has a max_mark of 0' do
-      grade_entry_item.update(max_mark: 0)
+    it 'returns 0 when the grade entry item is out of 0' do
+      grade_entry_item.update(out_of: 0)
       allow(grade_entry_item).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
       expect(grade_entry_item.average).to eq 0
     end
   end
 
   describe '#median' do
-    let(:grade_entry_item) { create(:grade_entry_item, max_mark: 10) }
+    let(:grade_entry_item) { create(:grade_entry_item, out_of: 10) }
 
     it 'returns 0 when there are no results' do
       allow(grade_entry_item).to receive(:grades_array).and_return([])
@@ -109,15 +108,15 @@ describe GradeEntryItem do
       expect(grade_entry_item.median).to eq 2
     end
 
-    it 'returns 0 when the assignment has a max_mark of 0' do
-      grade_entry_item.update(max_mark: 0)
+    it 'returns 0 when the grade entry item is out of 0' do
+      grade_entry_item.update(out_of: 0)
       allow(grade_entry_item).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
       expect(grade_entry_item.median).to eq 0
     end
   end
 
   describe '#standard_deviation' do
-    let(:grade_entry_item) { create(:grade_entry_item, max_mark: 10) }
+    let(:grade_entry_item) { create(:grade_entry_item, out_of: 10) }
 
     it 'returns 0 when there are no results' do
       allow(grade_entry_item).to receive(:grades_array).and_return([])
@@ -129,8 +128,8 @@ describe GradeEntryItem do
       expect(grade_entry_item.standard_deviation.round(9)).to eq 1.414213562
     end
 
-    it 'returns 0 when the assignment has a max_mark of 0' do
-      grade_entry_item.update(max_mark: 0)
+    it 'returns 0 when the grade entry item is out of 0' do
+      grade_entry_item.update(out_of: 0)
       allow(grade_entry_item).to receive(:grades_array).and_return([2, 3, 4, 1, 0])
       expect(grade_entry_item.standard_deviation).to eq 0
     end
