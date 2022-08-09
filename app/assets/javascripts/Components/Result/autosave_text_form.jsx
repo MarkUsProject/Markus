@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-import MarkdownPreview from "../markdown_preview";
+
+import MarkdownEdit from "../markdown_edit";
 
 // We attempt to autosave once [saveAfterMs] has elapsed from the last user action
 const saveAfterMs = 1500;
@@ -73,18 +73,7 @@ export class TextForm extends React.Component {
     return (
       <div className={this.props.className || ""}>
         <form onSubmit={this.onSubmit}>
-          <Tabs>
-            <TabList>
-              <Tab>{I18n.t("write")}</Tab>
-              <Tab>{I18n.t("preview")}</Tab>
-            </TabList>
-            <TabPanel forceRender>
-              <textarea value={this.state.value} onChange={this.updateValue} rows={5} />
-            </TabPanel>
-            <TabPanel>
-              <MarkdownPreview content={this.state.value} updateAnnotationCompletion={() => {}} />
-            </TabPanel>
-          </Tabs>
+          <MarkdownEdit content={this.state.value} handleChange={this.updateValue} />
           <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
       </div>

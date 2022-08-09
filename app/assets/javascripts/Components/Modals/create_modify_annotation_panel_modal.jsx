@@ -1,8 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-import MarkdownPreview from "../markdown_preview";
+import MarkdownEdit from "../markdown_edit";
 
 class CreateModifyAnnotationPanel extends React.Component {
   constructor(props) {
@@ -203,49 +202,13 @@ class CreateModifyAnnotationPanel extends React.Component {
           <h2>{this.props.title}</h2>
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container-vertical"}>
-              <Tabs disableUpDownKeys>
-                <TabList>
-                  <Tab>{I18n.t("write")}</Tab>
-                  <Tab>{I18n.t("preview")}</Tab>
-                </TabList>
-                <TabPanel forceRender>
-                  <label>
-                    <textarea
-                      required={true}
-                      id="new_annotation_content"
-                      name="content"
-                      placeholder={I18n.t("results.annotation.placeholder")}
-                      value={this.state.content}
-                      onChange={this.handleChange}
-                      rows="8"
-                      autoFocus={true}
-                    />
-                  </label>
-
-                  <div className={this.state.show_autocomplete ? "" : "hidden"}>
-                    <ul className="tags" key="annotation_completion" id="annotation_completion">
-                      <li className="annotation_category" id="annotation_completion_li">
-                        <p id="annotation_completion_text"></p>
-                        <div>
-                          <ul id="annotation_text_list"></ul>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <input
-                    type="hidden"
-                    id="annotation_text_id"
-                    name="annotation_text_id"
-                    value={this.state.annotation_text_id}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <MarkdownPreview
-                    content={this.state.content}
-                    updateAnnotationCompletion={this.updateAnnotationCompletion}
-                  />
-                </TabPanel>
-              </Tabs>
+              <MarkdownEdit
+                annotation_text_id={this.state.annotation_text_id}
+                content={this.state.content}
+                handleChange={this.handleChange}
+                show_autocomplete={this.state.show_autocomplete}
+                updateAnnotationCompletion={this.updateAnnotationCompletion}
+              />
               {this.props.is_reviewer ? (
                 <input
                   type="hidden"
