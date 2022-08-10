@@ -149,6 +149,35 @@
     }
   }
 
+  $(document).ready(function() {
+    // Handle periods and hiding/showing things
+    if ($('#assignment_due_date').val()) {
+      create_grace_periods();
+      create_penalty_decay_periods();
+      create_penalty_periods();
+
+      grace_periods.refresh();
+      penalty_decay_periods.refresh();
+      penalty_periods.refresh();
+
+      toggle_remark_requests(<%= @assignment.allow_remarks? %>);
+    }
+
+    // Handle required fields
+    check_required_fields();
+    $(document).on("change", $('input[required]'), check_required_fields)
+                    .on("keyup", $('input[required]'), check_required_fields)
+                    .on("click", $('#assignment_file_add_link'), check_required_fields);
+
+    console.log('line 172')
+    flatpickr("#assignment_due_date", {
+      allowInput: true,
+      enableTime: true,
+      dateFormat: I18n.t('date.format_string.datetimepicker'),
+      showMonths: 2
+    });
+  });
+
 
 //  $(document).ready(function() {
 //    // Handle periods and hiding/showing things
