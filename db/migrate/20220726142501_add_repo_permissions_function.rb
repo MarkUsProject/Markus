@@ -9,14 +9,19 @@ $$
 DECLARE
     role_type varchar;
     role_id_ integer;
+    role_hidden boolean;
 BEGIN
-    SELECT roles.id, roles.type
-    INTO role_id_, role_type
+    SELECT roles.id, roles.type, roles.hidden
+    INTO role_id_, role_type, role_hidden
     FROM users
         JOIN roles ON roles.user_id=users.id
         JOIN courses ON roles.course_id=courses.id
     WHERE courses.name=course_name AND users.user_name=user_name_
         FETCH FIRST ROW ONLY;
+
+    IF role_hidden THEN
+        RETURN false;
+    END IF
 
     IF role_type IN ('Instructor', 'AdminRole') THEN
         RETURN true;
