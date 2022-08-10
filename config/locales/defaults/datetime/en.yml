@@ -3,7 +3,7 @@ en:
   date:
     before_now_warning: 'WARNING: The date you have selected is in the past.'
     format_string:
-      datetimepicker: yy-mm-dd
+      datetimepicker: Y-m-d h:i K
       default: DD, MM d, yy
       placeholder: YYYY-MM-DD
   durations:

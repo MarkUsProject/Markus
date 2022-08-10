@@ -144,12 +144,32 @@
   }
 
   function check_due_date(new_due_date) {
-    console.log(moment(new_due_date))
-    console.log(moment())
-    console.log(moment(new_due_date).isBefore(moment()))
-    if (moment(new_due_date, I18n.t('time.format_string.js')).isBefore(moment())) {
+    if (moment(new_due_date[0], I18n.t('time.format_string.js')).isBefore(moment())) {
       alert(I18n.t('date.before_now_warning'));
     }
+  }
+
+  const FlatpickrLocale = {
+    hourAriaLabel: I18n.t('datetime.prompts.hour'),
+    minuteAriaLabel: I18n.t('datetime.prompts.minute'),
+    months: {
+      longhand:I18n.t('date.month_names').slice(1),
+      shorthand:I18n.t('date.abbr_month_names').slice(1)
+    },
+    weekdays:{
+      longhand: I18n.t('date.day_names'),
+      shorthand: I18n.t('date.abbr_day_names')
+    }
+  }
+
+
+  const FlatpickrConfig = {
+    locale: FlatpickrLocale,
+    allowInput: true,
+    enableTime: true,
+    showMonths: 2,
+    dateFormat: I18n.t('date.format_string.datetimepicker'),
+    onClose: check_due_date
   }
 
   $(document).ready(function() {
@@ -172,77 +192,10 @@
                     .on("keyup", $('input[required]'), check_required_fields)
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
-
-    flatpickr("#assignment_due_date", {
-      allowInput: true,
-      enableTime: true,
-      showMonths: 2,
-      dateFormat: "Y-m-d h:i K",
-      onClose: check_due_date
-    });
+    // Initialize Flatpickr calendar for different elements in the DOM
+    flatpickr("#assignment_due_date", FlatpickrConfig)
+    flatpickr("#assignment_assignment_properties_attributes_remark_due_date", FlatpickrConfig)
+    flatpickr(".assessment_section_properties_input", FlatpickrConfig)
+    flatpickr("#assignment_assignment_properties_attributes_start_time", FlatpickrConfig)
   });
-
-
-//  $(document).ready(function() {
-//    // Handle periods and hiding/showing things
-//    if ($('#assignment_due_date').val()) {
-//      create_grace_periods();
-//      create_penalty_decay_periods();
-//      create_penalty_periods();
-
-//      grace_periods.refresh();
-//      penalty_decay_periods.refresh();
-//      penalty_periods.refresh();
-
-//      toggle_remark_requests(<%#= @assignment.allow_remarks? %>);
-//    }
-
-//    // Handle required fields
-//    check_required_fields();
-//    $(document).on("change", $('input[required]'), check_required_fields)
-//                    .on("keyup", $('input[required]'), check_required_fields)
-//                    .on("click", $('#assignment_file_add_link'), check_required_fields);
-
-
-    // Handle date/time pickers
-    // TODO: Set defaults globally for datetimepicker
-//    $.extend($.timepicker._defaults, {
-//    controlType: 'select',
-//    showTime: false,
-//    showTimezone: false,
-//    numberOfMonths: 2,
-//    secondMax: 0,
-//    prevText: I18n.t('time.prev'),
-//    nextText: I18n.t('time.next'),
-//    closeText: I18n.t('close'),
-//    hourText: I18n.t('datetime.prompts.hour'),
-//    minuteText: I18n.t('datetime.prompts.minute'),
-//    timeText: I18n.t('time.time'),
-
-//    monthNames: I18n.t('date.month_names').slice(1), // Drop first null element
-//    dayNames: I18n.t('date.day_names'),
-//    dayNamesMin: I18n.t('date.abbr_day_names'),
-
-//    dateFormat: I18n.t('date.format_string.datetimepicker'),
-//    timeFormat: I18n.t('time.format_string.time_only')
-//  });
-
-//  $('.assessment_section_properties_input').each(function() {
-//      $(this).datetimepicker({
-//        onClose:          check_due_date,
-//      });
-//    });
-
-//    $('#assignment_due_date').datetimepicker({
-//      onClose:          check_due_date,
-//    });
-
-//    $('#assignment_assignment_properties_attributes_remark_due_date').datetimepicker({
-//      onClose:          check_due_date,
-//    });
-
-//    $('#assignment_assignment_properties_attributes_start_time').datetimepicker({
-//      onClose:          check_due_date,
-//    });
-//  });
 <% end %>

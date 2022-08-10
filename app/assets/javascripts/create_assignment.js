@@ -2,7 +2,6 @@ $(document).ready(function () {
   // Change repo folder to be same as short identifier
 
   $("#assignment_due_date").change(function () {
-    console.log($("#assignment_due_date").val());
     update_due_date($("#assignment_due_date").val());
   });
 

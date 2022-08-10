@@ -90,9 +90,9 @@
                     @assignment.is_timed ? I18n.t('assignments.timed.end_time') : Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
         <%= f.text_field :due_date,
-                         # value: @assignment.due_date.nil? ? '' :
-                         #   @assignment.due_date.strftime(
-                         #     '%Y-%m-%d %l:%M %p'),
+                         value: @assignment.due_date.nil? ? '' :
+                           @assignment.due_date.strftime(
+                             '%Y-%m-%d %l:%M %p'),
                          size: 35,
                          required: true,
                          autocomplete: "off",
