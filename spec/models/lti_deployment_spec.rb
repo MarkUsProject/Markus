@@ -12,7 +12,7 @@ describe LtiDeployment do
     let(:course) { create :course }
     let(:lti_deployment) { create :lti_deployment, course: course }
     let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
-    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path) }
+    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH) }
     let(:jwk) { { keys: [JWT::JWK.new(pub_jwk_key).export] } }
     let(:scope) { 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly' }
     let(:status) { 'Active' }

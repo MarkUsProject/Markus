@@ -6,7 +6,7 @@ describe LtiClient do
   describe '#get_oauth_token' do
     let(:lti_client) { create :lti_client }
     let(:lti_deployment) { create :lti_deployment, lti_client: lti_client }
-    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path) }
+    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH) }
     let(:jwk) { { keys: [JWT::JWK.new(pub_jwk_key).export] } }
     let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
     before :each do

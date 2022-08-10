@@ -23,26 +23,15 @@ incorrect_login_message: 'Login incorrect. You can check your Foo U user name or
 validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 remote_auth_login_url: https://www.example.com
 
-repository:
-  storage: <%= "#{::Rails.root.to_s}/data/dev" %>/repos
-
 logging:
   log_file: log/info_development.log
   error_file: log/error_development.log
 
 autotest:
-  client_dir: <%= "#{::Rails.root.to_s}/data/dev" %>/autotest
   max_batch_size: 10
-
-scanned_exams:
-  path: <%= "#{::Rails.root.to_s}/data/dev" %>/exam_templates
-
-starter_file:
-  storage: <%= "#{::Rails.root.to_s}/data/dev" %>/starter_files
 
 # The settings below are for an experimental feature that is not available
 # in production yet. Please disregard for now.
 lti:
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
-  key_path: <%= "#{::Rails.root.to_s}/data/dev" %>/lti/key.pem

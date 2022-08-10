@@ -105,3 +105,6 @@ exception_notification:
 rails_performance:
   enabled: true
   duration: 180
+
+file_storage:
+  default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/

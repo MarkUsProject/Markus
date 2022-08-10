@@ -327,7 +327,7 @@ describe SubmissionsController do
         end
         context 'when testing with a git repo', :keep_memory_repos do
           before(:each) { allow(Settings.repository).to receive(:type).and_return('git') }
-          after(:each) { FileUtils.rm_r(Dir.glob(File.join(Settings.repository.storage, '*'))) }
+          after(:each) { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
           it 'displays a failure message when attempting to create a subdirectory with no parent' do
             post_as @student, :update_files,
                     params: { course_id: course.id, assignment_id: @assignment.id,

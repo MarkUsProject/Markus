@@ -11,10 +11,10 @@ namespace :markus do
     check_in_readable_dir(Settings.logging.error_file, 'MarkUs error log file')
     check_in_writable_dir(Settings.logging.error_file, 'MarkUs error log file')
     check_in_executable_dir(Settings.logging.error_file, 'MarkUs error log file')
-    check_writable(Settings.repository.storage, 'REPOSITORY_STORAGE')
-    check_readable(Settings.repository.storage, 'REPOSITORY_STORAGE')
-    check_executable(Settings.repository.storage, 'REPOSITORY_STORAGE')
-    check_in_writable_dir(Settings.autotest.client_dir, 'autotest.client_dir')
+    check_writable(Repository::ROOT_DIR, 'REPOSITORY_STORAGE')
+    check_readable(Repository::ROOT_DIR, 'REPOSITORY_STORAGE')
+    check_executable(Repository::ROOT_DIR, 'REPOSITORY_STORAGE')
+    check_in_writable_dir(TestRun::SETTINGS_FILES_DIR, 'autotest.client_dir')
     ensure_logout_redirect_link_valid
   end
 

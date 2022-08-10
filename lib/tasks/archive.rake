@@ -34,7 +34,7 @@ namespace :markus do
     # copy repositories
     repos_dir = archive_dir + 'repos'
     if Settings.repository.type == 'git'
-      archive_copy(File.join(Settings.repository.storage, 'bare'), repos_dir, rev: rev)
+      archive_copy(File.join(Repository::ROOT_DIR), repos_dir, rev: rev)
     else
       puts "Cannot archive #{Settings.repository.type} type repositories"
     end

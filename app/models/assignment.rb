@@ -897,7 +897,8 @@ class Assignment < Assessment
   ### REPO ###
 
   def starter_file_path
-    File.join(Settings.starter_file.storage, self.course.name, repository_folder)
+    dir = (Settings.file_storage.starter_files || "#{Settings.file_storage.default_root_path}/starter_files")
+    File.join(dir, self.id.to_s)
   end
 
   def default_starter_file_group
@@ -951,7 +952,7 @@ class Assignment < Assessment
   ### /REPO ###
 
   def autotest_path
-    File.join(TestRun::ASSIGNMENTS_DIR, self.course.name, self.repository_folder)
+    File.join(TestRun::SETTINGS_FILES_DIR, self.id.to_s)
   end
 
   def autotest_files_dir

@@ -219,7 +219,8 @@ class ExamTemplate < ApplicationRecord
   end
 
   def file_path
-    File.join(Settings.scanned_exams.path, self.id)
+    dir = Settings.file_storage.exam_templates || "#{Settings.file_storage.default_root_path}/exam_templates"
+    File.join(dir, self.id.to_s)
   end
 
   def num_cover_fields
