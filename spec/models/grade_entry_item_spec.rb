@@ -69,7 +69,7 @@ describe GradeEntryItem do
       grades.each do |grd|
         grade_entry_student = grade_entry_item.grade_entry_form
                                               .grade_entry_students
-                                              .find_or_create_by(role: create(:student))
+                                              .find_by(role: create(:student))
         create(:grade, grade_entry_student: grade_entry_student, grade_entry_item: grade_entry_item, grade: grd)
       end
     end
