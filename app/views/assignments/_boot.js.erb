@@ -144,6 +144,9 @@
   }
 
   function check_due_date(new_due_date) {
+    console.log(moment(new_due_date))
+    console.log(moment())
+    console.log(moment(new_due_date).isBefore(moment()))
     if (moment(new_due_date, I18n.t('time.format_string.js')).isBefore(moment())) {
       alert(I18n.t('date.before_now_warning'));
     }
@@ -169,12 +172,13 @@
                     .on("keyup", $('input[required]'), check_required_fields)
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
-    console.log('line 172')
+
     flatpickr("#assignment_due_date", {
       allowInput: true,
       enableTime: true,
-      dateFormat: I18n.t('date.format_string.datetimepicker'),
-      showMonths: 2
+      showMonths: 2,
+      dateFormat: "Y-m-d h:i K",
+      onClose: check_due_date
     });
   });
 

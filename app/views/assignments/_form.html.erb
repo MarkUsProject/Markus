@@ -2,7 +2,6 @@
   <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= stylesheet_link_tag "flatpickr" %>>
   <%= javascript_include_tag 'create_assignment',
-                             'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
                              'localize_date', nonce: true %>
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
@@ -91,9 +90,9 @@
                     @assignment.is_timed ? I18n.t('assignments.timed.end_time') : Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
         <%= f.text_field :due_date,
-                         value: @assignment.due_date.nil? ? '' :
-                           @assignment.due_date.strftime(
-                             '%Y-%m-%d %l:%M %p'),
+                         # value: @assignment.due_date.nil? ? '' :
+                         #   @assignment.due_date.strftime(
+                         #     '%Y-%m-%d %l:%M %p'),
                          size: 35,
                          required: true,
                          autocomplete: "off",
