@@ -2209,7 +2209,7 @@ describe Assignment do
   describe '#starter_file_path' do
     let(:assignment) { create :assignment }
     it 'should return a path that includes the repository folder' do
-      expect(File.basename(assignment.starter_file_path)).to eq assignment.repository_folder
+      expect(File.basename(assignment.starter_file_path)).to eq assignment.id.to_s
     end
   end
   describe '#default_starter_file_group' do

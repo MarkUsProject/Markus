@@ -170,7 +170,7 @@ Config.setup do |config|
       end
       required(:file_storage).hash do
         required(:default_root_path).filled(:string)
-        optional(:exam_templates).filled(:string)
+        optional(:scanned_exams).filled(:string)
         optional(:starter_files).filled(:string)
         optional(:autotest).filled(:string)
         optional(:lti).filled(:string)

@@ -2,6 +2,7 @@ describe LtiDeployment do
   context 'relationships' do
     it { is_expected.to belong_to(:course).optional }
   end
+  before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
   context '#get_students' do
     let(:student) { create :student }
     let(:student_user_name) { student.user_name }

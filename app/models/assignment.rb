@@ -114,7 +114,7 @@ class Assignment < Assessment
                     :is_hidden, :vcs_submit, :has_peer_review].freeze
 
   STARTER_FILES_DIR = (
-    Settings.file_storage.starter_files || "#{Settings.file_storage.default_root_path}/starter_files"
+    Settings.file_storage.starter_files || File.join(Settings.file_storage.default_root_path, 'starter_files')
   ).freeze
 
   # Set the default order of assignments: in ascending order of date (due_date)
@@ -974,7 +974,7 @@ class Assignment < Assessment
   end
 
   def scanned_exams_path
-    dir = Settings.file_storage.exam_templates || "#{Settings.file_storage.default_root_path}/exam_templates"
+    dir = Settings.file_storage.scanned_exams || File.join(Settings.file_storage.default_root_path, 'scanned_exams')
     Rails.root.join(File.join(dir, self.id.to_s))
   end
 

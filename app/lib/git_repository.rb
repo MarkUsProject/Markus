@@ -55,6 +55,7 @@ class GitRepository < Repository::AbstractRepository
     # Repo is created bare, then clone it in the repository storage location
     barepath = bare_path(connect_string)
     self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
+      FileUtils.mkdir_p(File.dirname(barepath))
       Rugged::Repository.init_at(barepath, :bare)
       bare_config = Rugged::Config.new(File.join(barepath, 'config'))
       bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates

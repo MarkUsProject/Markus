@@ -23,7 +23,7 @@ module Repository
     end
   end
 
-  ROOT_DIR = (Settings.file_storage.repos || "#{Settings.file_storage.default_root_path}/repos").freeze
+  ROOT_DIR = (Settings.file_storage.repos || File.join(Settings.file_storage.default_root_path, 'repos')).freeze
   PERMISSION_FILE = File.join(ROOT_DIR, '.access').freeze
 
   # Exceptions for repositories

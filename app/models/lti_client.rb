@@ -4,7 +4,8 @@ class LtiClient < ApplicationRecord
   validates :client_id, uniqueness: { scope: :host }
   include Rails.application.routes.url_helpers
 
-  KEY_PATH = File.join(Settings.file_storage.lti || "#{Settings.file_storage.default_root_path}/lti", 'key.pem').freeze
+  KEY_PATH = File.join(Settings.file_storage.lti || File.join(Settings.file_storage.default_root_path, 'lti',
+                                                              'key.pem')).freeze
 
   # Send a signed JWT to canvas to get an Oauth token back. Tokens are short-lived, so
   # a new token should be generated with every lti advantage operation.

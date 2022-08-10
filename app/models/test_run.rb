@@ -11,7 +11,8 @@ class TestRun < ApplicationRecord
 
   validate :courses_should_match
 
-  SETTINGS_FILES_DIR = (Settings.file_storage.autotest || "#{Settings.file_storage.default_root_path}/autotest").freeze
+  SETTINGS_FILES_DIR = (Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path,
+                                                                    'autotest')).freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze
 
