@@ -66,11 +66,11 @@ describe GradeEntryItem do
     let!(:grades) { [2, 3, 5, 7, 2, 0] }
 
     before :each do
-      grades.each do |grd|
+      grades.each do |grade|
         grade_entry_student = grade_entry_item.grade_entry_form
                                               .grade_entry_students
                                               .find_by(role: create(:student))
-        create(:grade, grade_entry_student: grade_entry_student, grade_entry_item: grade_entry_item, grade: grd)
+        create(:grade, grade_entry_student: grade_entry_student, grade_entry_item: grade_entry_item, grade: grade)
       end
     end
 
