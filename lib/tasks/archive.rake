@@ -27,17 +27,13 @@ namespace :markus do
     archive_copy(error_dir, error_files_dir, rev: rev)
     # copy starter files
     starter_files_dir = archive_dir + 'starter_files'
-    archive_copy(Settings.starter_file.storage, starter_files_dir, rev: rev)
+    archive_copy(Assignment::STARTER_FILES_DIR, starter_files_dir, rev: rev)
     # copy autotest client dir
     autotest_dir = archive_dir + 'autotest_client'
-    archive_copy(Settings.autotest.client_dir, autotest_dir, rev: rev)
+    archive_copy(TestRun::SETTINGS_FILES_DIR, autotest_dir, rev: rev)
     # copy repositories
     repos_dir = archive_dir + 'repos'
-    if Settings.repository.type == 'git'
-      archive_copy(File.join(Repository::ROOT_DIR), repos_dir, rev: rev)
-    else
-      puts "Cannot archive #{Settings.repository.type} type repositories"
-    end
+    archive_copy(Repository::ROOT_DIR, repos_dir, rev: rev)
   end
 
   # Copy all stateful MarkUs files to +archive_dir+
