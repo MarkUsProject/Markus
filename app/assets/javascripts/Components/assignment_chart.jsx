@@ -1,7 +1,9 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
-import {AssessmentChart, FractionStat} from "./assessment_chart";
 import {chartScales} from "./Helpers/chart_helpers";
+import {AssessmentChart} from "./Assessment_Chart/assessment_chart";
+import {GradeBreakdownChart} from "./Assessment_Chart/grade_breakdown_chart";
+import {FractionStat} from "./Assessment_Chart/fraction_statistic";
 
 export class AssignmentChart extends React.Component {
   constructor(props) {
@@ -113,6 +115,23 @@ export class AssignmentChart extends React.Component {
       );
     }
 
+    let criteria_graph = "";
+    if (this.props.show_criteria_stats) {
+      criteria_graph = (
+        <GradeBreakdownChart
+          show_table={true}
+          summary={this.state.criteria_summary}
+          chart_title={I18n.t("criteria_grade_distribution")}
+          distribution_data={this.state.criteria_grade_distribution.data}
+          item_name={I18n.t("activerecord.models.criterion.one")}
+          assign_link={Routes.course_assignment_criteria_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
+        />
+      );
+    }
+
     let ta_grade_distribution_chart = (
       <div className="distribution-graph">
         <h3>{I18n.t("grader_distribution")}</h3>
@@ -164,17 +183,17 @@ export class AssignmentChart extends React.Component {
 
     return (
       <React.Fragment>
+        <h2>
+          <a
+            href={Routes.browse_course_assignment_submissions_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {this.props.show_chart_header ? this.state.summary.name : ""}
+          </a>
+        </h2>
         <AssessmentChart
-          assessment_header_content={
-            <a
-              href={Routes.browse_course_assignment_submissions_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {this.props.show_chart_header ? this.state.summary.name : ""}
-            </a>
-          }
           summary={this.state.summary}
           assessment_data={this.state.assignment_grade_distribution.data}
           additional_assessment_stats={
@@ -199,17 +218,8 @@ export class AssignmentChart extends React.Component {
             </React.Fragment>
           }
           outstanding_remark_request_link={outstanding_remark_request_link}
-          show_grade_breakdown_chart={this.props.show_criteria_stats}
-          show_grade_breakdown_table={this.props.show_criteria_stats}
-          grade_breakdown_summary={this.state.criteria_summary}
-          grade_breakdown_distribution_title={I18n.t("criteria_grade_distribution")}
-          grade_breakdown_distribution_data={this.state.criteria_grade_distribution.data}
-          grade_breakdown_item_name={I18n.t("activerecord.models.criterion.one")}
-          grade_breakdown_assign_link={Routes.course_assignment_criteria_path(
-            this.props.course_id,
-            this.props.assessment_id
-          )}
         />
+        {criteria_graph}
         {ta_grade_distribution_chart}
       </React.Fragment>
     );

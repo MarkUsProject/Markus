@@ -1,5 +1,7 @@
 import React from "react";
-import {AssessmentChart, FractionStat} from "./assessment_chart";
+import {AssessmentChart} from "./Assessment_Chart/assessment_chart";
+import {GradeBreakdownChart} from "./Assessment_Chart/grade_breakdown_chart";
+import {FractionStat} from "./Assessment_Chart/fraction_statistic";
 
 export class GradeEntryFormChart extends React.Component {
   constructor(props) {
@@ -67,8 +69,8 @@ export class GradeEntryFormChart extends React.Component {
 
   render() {
     return (
-      <AssessmentChart
-        assessment_header_content={
+      <React.Fragment>
+        <h2>
           <a
             href={Routes.edit_course_grade_entry_form_path(
               this.props.course_id,
@@ -77,33 +79,34 @@ export class GradeEntryFormChart extends React.Component {
           >
             {this.props.show_chart_header ? this.state.summary.name : ""}
           </a>
-        }
-        summary={this.state.summary}
-        assessment_data={this.state.grade_entry_form_distribution.data}
-        additional_assessment_stats={
-          <React.Fragment>
-            <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
-            <span>{this.state.summary.date}</span>
-            <span className="summary-stats-label">{I18n.t("num_entries")}</span>
-            <FractionStat
-              numerator={this.state.summary.num_entries}
-              denominator={this.state.summary.groupings_size}
-            />
-          </React.Fragment>
-        }
-        show_grade_breakdown_chart={true}
-        show_grade_breakdown_table={this.props.show_column_table}
-        grade_breakdown_distribution_title={I18n.t(
-          "grade_entry_forms.grade_entry_item_distribution"
-        )}
-        grade_breakdown_summary={this.state.column_summary}
-        grade_breakdown_distribution_data={this.state.column_grade_distribution.data}
-        grade_breakdown_item_name={I18n.t("activerecord.models.grade_entry_item.one")}
-        grade_breakdown_assign_link={Routes.edit_course_grade_entry_form_path(
-          this.props.course_id,
-          this.props.assessment_id
-        )}
-      />
+        </h2>
+        <AssessmentChart
+          summary={this.state.summary}
+          assessment_data={this.state.grade_entry_form_distribution.data}
+          additional_assessment_stats={
+            <React.Fragment>
+              <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
+              <span>{this.state.summary.date}</span>
+              <span className="summary-stats-label">{I18n.t("num_entries")}</span>
+              <FractionStat
+                numerator={this.state.summary.num_entries}
+                denominator={this.state.summary.groupings_size}
+              />
+            </React.Fragment>
+          }
+        />
+        <GradeBreakdownChart
+          show_table={this.props.show_column_table}
+          summary={this.state.column_summary}
+          chart_title={I18n.t("grade_entry_forms.grade_entry_item_distribution")}
+          distribution_data={this.state.column_grade_distribution.data}
+          item_name={I18n.t("activerecord.models.grade_entry_item.one")}
+          assign_link={Routes.edit_course_grade_entry_form_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
+        />
+      </React.Fragment>
     );
   }
 }
