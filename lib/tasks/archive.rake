@@ -25,9 +25,6 @@ namespace :markus do
     error_dir = File.dirname(File.join(::Rails.root, Settings.logging.error_file))
     error_files_dir = archive_dir + 'error_dir'
     archive_copy(error_dir, error_files_dir, rev: rev)
-    # copy scanned exams
-    scanned_exams_dir = archive_dir + 'scanned_exams'
-    archive_copy(Settings.scanned_exams.path, scanned_exams_dir, rev: rev)
     # copy starter files
     starter_files_dir = archive_dir + 'starter_files'
     archive_copy(Settings.starter_file.storage, starter_files_dir, rev: rev)

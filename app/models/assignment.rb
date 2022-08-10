@@ -970,7 +970,7 @@ class Assignment < Assessment
   end
 
   def scanned_exams_path
-    File.join(Settings.scanned_exams.path, course.name, short_identifier)
+    Rails.root.join(File.join('tmp', 'exam_templates', course.name, short_identifier))
   end
 
   # Retrieve current grader data.

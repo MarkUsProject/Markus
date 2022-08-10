@@ -22,11 +22,7 @@ class GenerateJob < ApplicationJob
   def perform(exam_template, num_copies, start)
     m_logger = MarkusLogger.instance
     progress.total = num_copies
-    template_path = File.join(
-      exam_template.base_path,
-      exam_template.filename
-    )
-    template_pdf = CombinePDF.load template_path
+    template_pdf = CombinePDF.load exam_template.file_path
     generated_pdf = CombinePDF.new
     (start..start + num_copies - 1).each do |exam_num|
       m_logger.log("Now generating: #{exam_num}")
