@@ -1,0 +1,24 @@
+<table>
+  <thead>
+  <tr>
+    <th>LTI Settings</th>
+  </tr>
+  </thead>
+  <tbody>
+  <%= fields_for :lti_deployment do |f|  %>
+  <% @lti_deployments.each do |deployment| %>
+    <tr>
+      <td>
+
+        <%= f.label deployment.id, "#{deployment.lms_course_name} on #{URI(deployment.lti_client.host).host}", value: deployment.id %>
+        <% if deployment.lti_line_items.find_by(assessment: @assignment) %>
+          <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false', checked: true, disabled: true %>
+        <% else %>
+          <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false' %>
+        <% end  %>
+      </td>
+    </tr>
+  <% end %>
+  <% end %>
+  </tbody>
+</table>

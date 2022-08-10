@@ -2,6 +2,7 @@ class LtiDeployment < ApplicationRecord
   belongs_to :course, optional: true
   belongs_to :lti_client
   has_many :lti_services, dependent: :destroy
+  has_many :lti_line_items, dependent: :destroy
   validates :external_deployment_id, uniqueness: { scope: :lti_client }
 
   def get_students
@@ -44,5 +45,82 @@ class LtiDeployment < ApplicationRecord
                          { user_id: user['id'], lti_client_id: lti_client.id, lti_user_id: user[:lti_user_id] }
                        end,
                        unique_by: %i[user_id lti_client_id])
+  end
+
+  def create_or_update_lti_assessment(assessment)
+    payload = {
+      label: assessment.description,
+      resourceId: assessment.short_identifier,
+      scoreMaximum: assessment.max_mark.to_f
+    }
+    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'])
+    lineitem_service = self.lti_services.find_by!(lti_deployment: self, service_type: 'agslineitem')
+    lineitem_uri = URI(lineitem_service.url)
+    line_item = self.lti_line_items.find_or_initialize_by(lti_deployment: self, assessment: assessment)
+    if line_item.lti_line_item_id?
+      req = Net::HTTP::Put.new(line_item.lti_line_item_id)
+    else
+      req = Net::HTTP::Post.new(lineitem_uri)
+    end
+    req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
+    req.set_form_data(payload)
+    http = Net::HTTP.new(lineitem_uri.host, lineitem_uri.port)
+    res = http.request(req)
+    line_item_data = JSON.parse(res.body)
+    line_item.update!(lti_line_item_id: line_item_data['id'])
+    line_item_data
+  end
+
+  def create_grades(assessment)
+    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/score'])
+    line_item = self.lti_line_items.find_by!(lti_deployment: self, assessment: assessment)
+    score_uri = URI("#{line_item.lti_line_item_id}/scores")
+    req = Net::HTTP::Post.new(score_uri)
+    req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
+
+    if assessment.is_a?(Assignment)
+      marks = get_assignment_marks(assessment)
+    else
+      marks = get_grade_entry_form_marks(assessment)
+    end
+    marks.each do |lti_user_id, mark|
+      payload = {
+        timestamp: Time.now.iso8601,
+        scoreGiven: mark,
+        scoreMaximum: assessment.max_mark.to_f,
+        activityProgress: 'Completed',
+        gradingProgress: 'FullyGraded',
+        userId: lti_user_id
+      }
+      req.set_form_data(payload)
+      http = Net::HTTP.new(score_uri.host, score_uri.port)
+      http.request(req)
+    end
+  end
+
+  def get_assignment_marks(assignment)
+    marks = assignment.released_marks
+    mark_data = {}
+    marks.each do |mark|
+      result = mark.results.first
+      group_students = mark.grouping.student_memberships
+      group_students.each do |member|
+        lti_user = lti_client.lti_users.find_by(user: member.role.user)
+        mark_data[lti_user.lti_user_id] = result.total_mark
+      end
+    end
+    mark_data
+  end
+
+  def get_grade_entry_form_marks(grade_entry_form)
+    marks = grade_entry_form.released_marks
+    mark_data = {}
+    marks.each do |mark|
+      lti_user = lti_client.lti_users.find_by(user: mark.role.user)
+      unless lti_user.nil?
+        mark_data[lti_user.lti_user_id] = mark.total_grade
+      end
+    end
+    mark_data
   end
 end

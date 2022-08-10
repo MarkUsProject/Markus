@@ -181,6 +181,8 @@ class AssignmentsController < ApplicationController
     @assessment_section_properties.sort_by do |s|
       [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
     end
+
+    @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :edit, layout: 'assignment_content'
   end
 
@@ -223,6 +225,7 @@ class AssignmentsController < ApplicationController
     @sections.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
+    @lti_deployments = @assignment.course.lti_deployments.include(:lti_client)
     render :new, layout: 'assignment_content'
   end
 
@@ -258,6 +261,13 @@ class AssignmentsController < ApplicationController
 
   def summary
     @assignment = record
+    @lti_deployments = LtiLineItem.where(assessment_id: @assignment.id)
+                                  .joins(:lti_deployment)
+                                  .joins(lti_deployment: :lti_client)
+                                  .pluck_to_hash('lti_deployments.id',
+                                                 'lti_clients.host',
+                                                 'lti_deployments.lms_course_name')
+    @lti_deployments.each { |deployment| deployment.deep_transform_keys! { |key| key.to_s.split('.')[-1] } }
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
       format.json { render json: @assignment.summary_json(current_role) }
@@ -783,7 +793,13 @@ class AssignmentsController < ApplicationController
       assignment.group_min = 1
       assignment.group_max = 1
     end
-
+    if params.key?(:lti_deployment)
+      params[:lti_deployment].each do |deployment, enabled|
+        if enabled
+          LtiDeployment.find(deployment).create_or_update_lti_assessment(assignment)
+        end
+      end
+    end
     assignment
   end
 

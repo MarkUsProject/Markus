@@ -7,7 +7,8 @@
         {
           course_id: <%= @current_course.id %>,
           assessment_id: <%= @assignment.id %>,
-          is_instructor: <%= @current_role.instructor? %>
+          is_instructor: <%= @current_role.instructor? %>,
+          lti_deployments: JSON.parse('<%= raw(@lti_deployments.to_json) %>')
         }
       );
     });

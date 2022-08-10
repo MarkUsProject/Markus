@@ -218,6 +218,9 @@
         <%= ap_f.label :display_grader_names_to_students,
                        Assignment.human_attribute_name(:display_grader_names_to_students) %>
         <%= ap_f.check_box :display_grader_names_to_students %>
+        <% if @lti_deployments.present? %>
+          <%= render partial: 'lti_deployment/line_items' %>
+        <% end %>
       </div>
       </fieldset>
     </fieldset>
