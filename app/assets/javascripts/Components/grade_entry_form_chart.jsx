@@ -98,18 +98,11 @@ export class GradeEntryFormChart extends React.Component {
         )}
         grade_breakdown_summary={this.state.column_summary}
         grade_breakdown_distribution_data={this.state.column_grade_distribution.data}
-        grade_breakdown_assign_link={
-          <a
-            href={Routes.edit_course_grade_entry_form_path(
-              this.props.course_id,
-              this.props.assessment_id
-            )}
-          >
-            {I18n.t("helpers.submit.create", {
-              model: I18n.t("activerecord.models.grade_entry_item.one"),
-            })}
-          </a>
-        }
+        grade_breakdown_item_name={I18n.t("activerecord.models.grade_entry_item.one")}
+        grade_breakdown_assign_link={Routes.edit_course_grade_entry_form_path(
+          this.props.course_id,
+          this.props.assessment_id
+        )}
       />
     );
   }

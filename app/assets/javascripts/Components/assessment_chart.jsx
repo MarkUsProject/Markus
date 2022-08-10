@@ -64,7 +64,7 @@ class AssessmentChart extends React.Component {
                 data={this.props.grade_breakdown_summary}
                 columns={[
                   {
-                    Header: I18n.t("activerecord.models.criterion.one"),
+                    Header: this.props.grade_breakdown_item_name,
                     accessor: "name",
                     minWidth: 150,
                   },
@@ -117,7 +117,15 @@ class AssessmentChart extends React.Component {
       grade_breakdown_graph = (
         <div className="grade-breakdown-graph">
           <h3>{this.props.grade_breakdown_distribution_title}</h3>
-          <h4>({this.props.grade_breakdown_assign_link})</h4>
+          <h4>
+            (
+            <a href={this.props.grade_breakdown_assign_link}>
+              {I18n.t("helpers.submit.create", {
+                model: this.props.grade_breakdown_item_name,
+              })}
+            </a>
+            )
+          </h4>
         </div>
       );
     }
@@ -209,7 +217,8 @@ AssessmentChart.propTypes = {
   show_grade_breakdown_table: PropTypes.bool.isRequired,
   grade_breakdown_summary: PropTypes.array,
   grade_breakdown_distribution_data: PropTypes.object,
-  grade_breakdown_assign_link: PropTypes.element,
+  grade_breakdown_item_name: PropTypes.string,
+  grade_breakdown_assign_link: PropTypes.string,
 };
 
 export {AssessmentChart, FractionStat};

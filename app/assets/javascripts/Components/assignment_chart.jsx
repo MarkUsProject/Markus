@@ -204,18 +204,11 @@ export class AssignmentChart extends React.Component {
           grade_breakdown_summary={this.state.criteria_summary}
           grade_breakdown_distribution_title={I18n.t("criteria_grade_distribution")}
           grade_breakdown_distribution_data={this.state.criteria_grade_distribution.data}
-          grade_breakdown_assign_link={
-            <a
-              href={Routes.course_assignment_criteria_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("helpers.submit.create", {
-                model: I18n.t("activerecord.models.criterion.one"),
-              })}
-            </a>
-          }
+          grade_breakdown_item_name={I18n.t("activerecord.models.criterion.one")}
+          grade_breakdown_assign_link={Routes.course_assignment_criteria_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
         />
         {ta_grade_distribution_chart}
       </React.Fragment>
