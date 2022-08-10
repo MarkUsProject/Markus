@@ -62,8 +62,17 @@ describe GradeEntryItem do
   end
 
   describe '#grades_array' do
-    let(:grade_entry_item) { create(:grade_entry_form_with_data).grade_entry_items.first }
-    let(:grades) { grade_entry_item.grades.pluck(:grade) }
+    let!(:grade_entry_item) { create(:grade_entry_item, out_of: 10) }
+    let!(:grades) { [2, 3, 5, 7, 2, 0] }
+
+    before :each do
+      grades.each do |grd|
+        grade_entry_student = grade_entry_item.grade_entry_form
+                                              .grade_entry_students
+                                              .find_or_create_by(role: create(:student))
+        create(:grade, grade_entry_student: grade_entry_student, grade_entry_item: grade_entry_item, grade: grd)
+      end
+    end
 
     it 'returns the correct grades' do
       expect(grade_entry_item.grades_array).to match_array(grades)
