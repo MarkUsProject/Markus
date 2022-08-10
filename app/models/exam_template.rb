@@ -3,7 +3,7 @@ require 'fileutils'
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   before_save :undo_mark_for_destruction
-  after_update :rename_exam_template_directory
+  after_create_commit :create_base_path
   belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :exam_templates
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
@@ -43,8 +43,7 @@ class ExamTemplate < ApplicationRecord
     end
     saved = new_template.save
     if saved
-      FileUtils.mkdir_p File.dirname(new_template.file_path)
-      File.binwrite(File.join(new_template.file_path, filename), blob)
+      File.binwrite(new_template.file_path, blob)
       new_template.save_cover
     end
     new_template
@@ -215,12 +214,11 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join self.assignment.scanned_exams_path, self.id
+    File.join self.assignment.scanned_exams_path, self.id.to_s
   end
 
   def file_path
-    dir = Settings.file_storage.exam_templates || "#{Settings.file_storage.default_root_path}/exam_templates"
-    File.join(dir, self.id.to_s)
+    File.join(base_path, 'exam_template.pdf')
   end
 
   def num_cover_fields
@@ -272,5 +270,9 @@ class ExamTemplate < ApplicationRecord
   # any attempts to delete template divisions should be rejected once exams have been uploaded
   def undo_mark_for_destruction
     template_divisions.each { |div| div.reload if div.marked_for_destruction? } if exam_been_uploaded?
+  end
+
+  def create_base_path
+    FileUtils.mkdir_p self.base_path
   end
 end

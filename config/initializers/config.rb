@@ -127,8 +127,6 @@ Config.setup do |config|
         included_in?: %w[user_name last_name first_name id_number email]
       )
       required(:repository).hash do
-        required(:storage).filled(:string)
-        required(:type).value(included_in?: %w[git mem])
         required(:url).filled(:string)
         optional(:ssh_url).filled(:string)
         required(:is_repository_admin).filled(:bool)
@@ -155,9 +153,6 @@ Config.setup do |config|
       required(:autotest).hash do
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
         required(:max_batch_size).value(:integer, gt?: 0)
-      end
-      required(:starter_file).hash do
-        required(:storage).filled(:string)
       end
       required(:python).hash do
         required(:bin).filled(:string)

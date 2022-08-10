@@ -48,8 +48,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - app_data:/app/data/dev
-      - repos:/app/data/dev/repos
+      - app_data:/app/data/development
+      - repos:/app/data/development/repos
       - bundle:/bundle
       - tmp:/app/tmp
       - node_modules:/app/node_modules

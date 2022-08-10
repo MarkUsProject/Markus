@@ -56,7 +56,7 @@ class ExamTemplatesController < ApplicationController
   def download
     exam_template = record
     filename = exam_template.filename
-    send_file(File.join(exam_template.file_path),
+    send_file(exam_template.file_path,
               filename: filename.to_s,
               type: 'application/pdf')
   end
@@ -109,7 +109,7 @@ class ExamTemplatesController < ApplicationController
 
   def download_generate
     exam_template = record
-    send_file(File.join(exam_template.file_path),
+    send_file(exam_template.file_path,
               filename: params[:file_name],
               type: 'application/pdf')
   end
