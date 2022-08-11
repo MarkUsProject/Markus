@@ -3,6 +3,9 @@ import MarkdownEditor from "../markdown_editor";
 
 const basicProps = {
   content: "",
+  text_area_id: "new_annotation_content",
+  auto_completion_text_id: "annotation_completion_text",
+  auto_completion_list_id: "annotation_text_list",
   handleChange: jest.fn(),
   show_autocomplete: false,
   updateAnnotationCompletion: jest.fn(),
@@ -15,13 +18,6 @@ describe("MarkdownEditor", () => {
   };
   beforeEach(() => {
     props = {...basicProps};
-  });
-
-  it("sets the content to the prop content by default", () => {
-    props.content = "Hi Prof Liu";
-    wrapper = getWrapper(props);
-
-    expect(wrapper.state().content).toBe(props.content);
   });
 
   it("should properly handle the text input change", () => {
@@ -40,10 +36,9 @@ describe("MarkdownEditor", () => {
     inputBox.simulate("change", event);
 
     expect(props.handleChange).toHaveBeenCalledWith(event);
-    expect(wrapper.state().content).toBe(event.target.value);
   });
 
-  it("should show and update autocomplete if desired", () => {
+  it("should show autocomplete if desired", () => {
     props.show_autocomplete = true;
     props.annotation_text_id = "id";
     wrapper = getWrapper(props);
@@ -51,8 +46,6 @@ describe("MarkdownEditor", () => {
     const annotationList = wrapper.find("#annotation_text_list");
 
     expect(annotationList.exists()).toBeTruthy();
-
-    expect(wrapper.find("#annotation_text_id").props().value).toBe(props.annotation_text_id);
   });
 
   it("should properly display and pass down props to the preview tab", () => {
