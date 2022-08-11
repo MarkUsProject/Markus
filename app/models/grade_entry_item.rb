@@ -70,6 +70,7 @@ class GradeEntryItem < ApplicationRecord
   end
 
   def grades_array
-    self.grades.where.not(grade: nil).pluck(:grade)
+    return @grades_array if defined? @grades_array
+    @grades_array = self.grades.where.not(grade: nil).pluck(:grade)
   end
 end

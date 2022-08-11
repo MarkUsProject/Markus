@@ -3,7 +3,7 @@ import {Bar} from "react-chartjs-2";
 import {chartScales} from "./Helpers/chart_helpers";
 import {AssessmentChart} from "./Assessment_Chart/assessment_chart";
 import {GradeBreakdownChart} from "./Assessment_Chart/grade_breakdown_chart";
-import {FractionStat} from "./Assessment_Chart/fraction_statistic";
+import {FractionStat} from "./Assessment_Chart/fraction_stat";
 
 export class AssignmentChart extends React.Component {
   constructor(props) {
@@ -62,7 +62,7 @@ export class AssignmentChart extends React.Component {
         this.setState({
           summary: res.summary,
           assignment_grade_distribution: {
-            data: res.assignment_data,
+            data: res.grade_distribution,
           },
           ta_grade_distribution: {
             data: res.ta_data,
@@ -70,13 +70,13 @@ export class AssignmentChart extends React.Component {
         });
 
         if (this.props.show_criteria_stats) {
-          for (const [index, element] of res.criteria_data.datasets.entries()) {
+          for (const [index, element] of res.criteria_distributions.datasets.entries()) {
             element.backgroundColor = colours[index];
           }
           this.setState({
             criteria_summary: res.criteria_summary,
             criteria_grade_distribution: {
-              data: res.criteria_data,
+              data: res.criteria_distributions,
             },
           });
         }
@@ -119,12 +119,13 @@ export class AssignmentChart extends React.Component {
     if (this.props.show_criteria_stats) {
       criteria_graph = (
         <GradeBreakdownChart
-          show_table={true}
+          show_stats={true}
           summary={this.state.criteria_summary}
+          num_groupings={this.state.summary.groupings_size}
           chart_title={I18n.t("criteria_grade_distribution")}
           distribution_data={this.state.criteria_grade_distribution.data}
           item_name={I18n.t("activerecord.models.criterion.one")}
-          assign_link={Routes.course_assignment_criteria_path(
+          create_link={Routes.course_assignment_criteria_path(
             this.props.course_id,
             this.props.assessment_id
           )}

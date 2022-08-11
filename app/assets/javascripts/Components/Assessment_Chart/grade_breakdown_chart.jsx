@@ -4,12 +4,12 @@ import {chartScales} from "../Helpers/chart_helpers";
 import ReactTable from "react-table";
 import PropTypes from "prop-types";
 import {CoreStatistics} from "./core_statistics";
-import {FractionStat} from "./fraction_statistic";
+import {FractionStat} from "./fraction_stat";
 
 export class GradeBreakdownChart extends React.Component {
   render() {
     let summary_table = "";
-    if (this.props.show_table) {
+    if (this.props.show_stats) {
       summary_table = (
         <div className="flex-row-expand">
           <div className="grade-breakdown-summary-table">
@@ -43,7 +43,7 @@ export class GradeBreakdownChart extends React.Component {
                     standard_deviation={row.original.standard_deviation}
                     max_mark={row.original.max_mark}
                     num_zeros={row.original.num_zeros}
-                    num_groupings={this.props.summary.groupings_size}
+                    num_groupings={this.props.num_groupings}
                   />
                 </div>
               )}
@@ -90,7 +90,7 @@ export class GradeBreakdownChart extends React.Component {
           <h3>{this.props.chart_title}</h3>
           <h4>
             (
-            <a href={this.props.assign_link}>
+            <a href={this.props.create_link ? this.props.create_link : ""}>
               {I18n.t("helpers.submit.create", {
                 model: this.props.item_name,
               })}
@@ -104,10 +104,11 @@ export class GradeBreakdownChart extends React.Component {
 }
 
 GradeBreakdownChart.propTypes = {
-  show_table: PropTypes.bool.isRequired,
+  show_stats: PropTypes.bool.isRequired,
   summary: PropTypes.array.isRequired,
   chart_title: PropTypes.string.isRequired,
   distribution_data: PropTypes.object,
   item_name: PropTypes.string.isRequired,
-  assign_link: PropTypes.string,
+  num_groupings: PropTypes.number.isRequired,
+  create_link: PropTypes.string,
 };

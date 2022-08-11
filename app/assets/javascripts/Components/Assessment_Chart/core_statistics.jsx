@@ -1,5 +1,5 @@
 import React from "react";
-import {FractionStat} from "./fraction_statistic";
+import {FractionStat} from "./fraction_stat";
 import PropTypes from "prop-types";
 
 export class CoreStatistics extends React.Component {

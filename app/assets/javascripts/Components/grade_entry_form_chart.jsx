@@ -1,7 +1,7 @@
 import React from "react";
 import {AssessmentChart} from "./Assessment_Chart/assessment_chart";
 import {GradeBreakdownChart} from "./Assessment_Chart/grade_breakdown_chart";
-import {FractionStat} from "./Assessment_Chart/fraction_statistic";
+import {FractionStat} from "./Assessment_Chart/fraction_stat";
 
 export class GradeEntryFormChart extends React.Component {
   constructor(props) {
@@ -45,17 +45,17 @@ export class GradeEntryFormChart extends React.Component {
     )
       .then(data => data.json())
       .then(res => {
-        for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
+        for (const [index, element] of res.column_distributions.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
         this.setState({
-          summary: res.info_summary,
+          summary: res.summary,
           column_summary: res.column_summary,
           grade_entry_form_distribution: {
-            data: res.grade_dist_data,
+            data: res.grade_distribution,
           },
           column_grade_distribution: {
-            data: res.column_breakdown_data,
+            data: res.column_distributions,
           },
         });
       });
@@ -85,9 +85,9 @@ export class GradeEntryFormChart extends React.Component {
           assessment_data={this.state.grade_entry_form_distribution.data}
           additional_assessment_stats={
             <React.Fragment>
-              <span className="summary-stats-label">{I18n.t("attributes.date")}</span>
-              <span>{this.state.summary.date}</span>
-              <span className="summary-stats-label">{I18n.t("num_entries")}</span>
+              <span className="summary-stats-label">{I18n.t("num_students")}</span>
+              <span>{this.state.summary.groupings_size}</span>
+              <span className="summary-stats-label">{I18n.t("num_students_graded")}</span>
               <FractionStat
                 numerator={this.state.summary.num_entries}
                 denominator={this.state.summary.groupings_size}
@@ -96,12 +96,13 @@ export class GradeEntryFormChart extends React.Component {
           }
         />
         <GradeBreakdownChart
-          show_table={this.props.show_column_table}
+          show_stats={this.props.show_column_stats}
           summary={this.state.column_summary}
+          num_groupings={this.state.summary.groupings_size}
           chart_title={I18n.t("grade_entry_forms.grade_entry_item_distribution")}
           distribution_data={this.state.column_grade_distribution.data}
           item_name={I18n.t("activerecord.models.grade_entry_item.one")}
-          assign_link={Routes.edit_course_grade_entry_form_path(
+          create_link={Routes.edit_course_grade_entry_form_path(
             this.props.course_id,
             this.props.assessment_id
           )}
