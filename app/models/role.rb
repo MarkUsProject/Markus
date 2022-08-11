@@ -1,5 +1,7 @@
 # Model representing a user's role in a given course.
 class Role < ApplicationRecord
+  scope :active, -> { where(hidden: false) }
+  scope :inactive, -> { where(hidden: true) }
   belongs_to :user, inverse_of: :roles
   belongs_to :course, inverse_of: :roles
   accepts_nested_attributes_for :user

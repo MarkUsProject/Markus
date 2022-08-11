@@ -1,7 +1,5 @@
 # Student user for a given course.
 class Student < Role
-  scope :active, -> { where(hidden: false) }
-  scope :inactive, -> { where(hidden: true) }
   has_many :grade_entry_students, foreign_key: :role_id, inverse_of: :role
   has_many :accepted_memberships,
            -> {

@@ -10,11 +10,17 @@ class InstructorsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        data = current_course.instructors
-                             .joins(:user)
-                             .where(type: Instructor.name)
-                             .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
-        render json: data
+        instructors = current_course.instructors
+                                    .joins(:user)
+                                    .where(type: Instructor.name)
+        render json: {
+          data: instructors.pluck_to_hash(:id, :user_name, :first_name, :last_name, :email),
+          counts: {
+            all: instructors.size,
+            active: instructors.active.size,
+            inactive: instructors.inactive.size
+          }
+        }
       end
     end
   end
@@ -35,7 +41,7 @@ class InstructorsController < ApplicationController
 
   def update
     @role = record
-    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]))
+    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name], hidden: role_params[:hidden]))
     respond_with @role, location: course_instructors_path(current_course)
   end
 
@@ -43,6 +49,10 @@ class InstructorsController < ApplicationController
 
   def end_user_params
     params.require(:role).require(:end_user).permit(:user_name)
+  end
+
+  def role_params
+    params.require(:role).permit(:hidden)
   end
 
   def flash_interpolation_options
