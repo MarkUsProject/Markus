@@ -1,6 +1,6 @@
 import {ReactTableDefaults} from "react-table";
 import React from "react";
-import { I18n } from "i18n-js";
+import {I18n} from "i18n-js";
 import translations from "translations.json";
 import {defaultSort, stringFilterMethod, textFilter} from "./Components/Helpers/table_helpers";
 
