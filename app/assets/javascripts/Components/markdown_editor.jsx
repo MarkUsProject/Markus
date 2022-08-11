@@ -4,63 +4,43 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import PropTypes from "prop-types";
 
-export default class MarkdownEdit extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      content: this.props.content,
-      annotation_text_id: "",
-    };
-  }
-
-  handleChange = event => {
-    this.setState({content: event.target.value});
-    this.props.handleChange(event);
-  };
-
+export default class MarkdownEditor extends React.Component {
   render() {
     return (
       <Tabs disableUpDownKeys>
         <TabList>
-          <Tab id="write-tab">{I18n.t("write")}</Tab>
+          <Tab>{I18n.t("write")}</Tab>
           <Tab id="preview-tab">{I18n.t("preview")}</Tab>
         </TabList>
         <TabPanel forceRender>
           <label>
             <textarea
               required={true}
-              id="new_annotation_content"
+              id={this.props.text_area_id}
               name="content"
               placeholder={I18n.t("results.annotation.placeholder")}
-              value={this.state.content}
-              onChange={this.handleChange}
+              value={this.props.content}
+              onChange={this.props.handleChange}
               rows="8"
               autoFocus={true}
             />
           </label>
 
           <div className={this.props.show_autocomplete ? "" : "hidden"}>
-            <ul className="tags" key="annotation_completion" id="annotation_completion">
-              <li className="annotation_category" id="annotation_completion_li">
-                <p id="annotation_completion_text"></p>
+            <ul className="tags" key="auto_completion_category">
+              <li className="annotation_category">
+                <p id={this.props.auto_completion_text_id}></p>
                 <div>
-                  <ul id="annotation_text_list"></ul>
+                  <ul id={this.props.auto_completion_list_id}></ul>
                 </div>
               </li>
             </ul>
           </div>
-          <input
-            type="hidden"
-            id="annotation_text_id"
-            name="annotation_text_id"
-            value={this.props.annotation_text_id}
-          />
         </TabPanel>
         <TabPanel>
           <MarkdownPreview
             id="markdown-preview"
-            content={this.state.content}
+            content={this.props.content}
             updateAnnotationCompletion={this.props.updateAnnotationCompletion}
           />
         </TabPanel>
@@ -69,10 +49,13 @@ export default class MarkdownEdit extends React.Component {
   }
 }
 
-MarkdownEdit.propTypes = {
+MarkdownEditor.propTypes = {
   annotation_text_id: PropTypes.string,
   content: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   show_autocomplete: PropTypes.bool,
+  text_area_id: PropTypes.string,
+  auto_completion_text_id: PropTypes.string,
+  auto_completion_list_id: PropTypes.string,
   updateAnnotationCompletion: PropTypes.func,
 };

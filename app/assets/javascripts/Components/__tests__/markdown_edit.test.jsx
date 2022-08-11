@@ -1,5 +1,5 @@
 import {shallow} from "enzyme";
-import MarkdownEdit from "../markdown_edit";
+import MarkdownEditor from "../markdown_editor";
 
 const basicProps = {
   content: "",
@@ -8,10 +8,10 @@ const basicProps = {
   updateAnnotationCompletion: jest.fn(),
 };
 
-describe("MarkdownEdit", () => {
+describe("MarkdownEditor", () => {
   let props, wrapper;
   const getWrapper = () => {
-    return shallow(<MarkdownEdit {...props} />);
+    return shallow(<MarkdownEditor {...props} />);
   };
   beforeEach(() => {
     props = {...basicProps};

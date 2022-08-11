@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 
-import MarkdownEdit from "../markdown_edit";
+import MarkdownEditor from "../markdown_editor";
 
 // We attempt to autosave once [saveAfterMs] has elapsed from the last user action
 const saveAfterMs = 1500;
@@ -73,7 +73,7 @@ export class TextForm extends React.Component {
     return (
       <div className={this.props.className || ""}>
         <form onSubmit={this.onSubmit}>
-          <MarkdownEdit content={this.state.value} handleChange={this.updateValue} />
+          <MarkdownEditor content={this.state.value} handleChange={this.updateValue} />
           <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
       </div>

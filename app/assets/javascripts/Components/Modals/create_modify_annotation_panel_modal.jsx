@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 
-import MarkdownEdit from "../markdown_edit";
+import MarkdownEditor from "../markdown_editor";
 
 class CreateModifyAnnotationPanel extends React.Component {
   constructor(props) {
@@ -202,12 +202,21 @@ class CreateModifyAnnotationPanel extends React.Component {
           <h2>{this.props.title}</h2>
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container-vertical"}>
-              <MarkdownEdit
+              <MarkdownEditor
                 annotation_text_id={this.state.annotation_text_id}
                 content={this.state.content}
                 handleChange={this.handleChange}
                 show_autocomplete={this.state.show_autocomplete}
+                text_area_id="new_annotation_content"
+                auto_completion_text_id="annotation_completion_text"
+                auto_completion_list_id="annotation_text_list"
                 updateAnnotationCompletion={this.updateAnnotationCompletion}
+              />
+              <input
+                type="hidden"
+                id="annotation_text_id"
+                name="annotation_text_id"
+                value={this.props.annotation_text_id}
               />
               {this.props.is_reviewer ? (
                 <input
