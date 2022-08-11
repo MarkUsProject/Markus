@@ -51,15 +51,11 @@ lib/repo/test/svn_repos/svn_authz
 .dump.rdb
 dump.rdb
 
-# Yarn-related files
+# npm-related files
 public/packs
 public/packs-test
 public/javascripts
 node_modules
-node_modules
-yarn-debug.log*
-.yarn-integrity
-yarn-error.log
 
 # simplecov gem
 coverage/
