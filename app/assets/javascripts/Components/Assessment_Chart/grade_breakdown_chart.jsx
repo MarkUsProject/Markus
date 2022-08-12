@@ -90,7 +90,7 @@ export class GradeBreakdownChart extends React.Component {
           <h3>{this.props.chart_title}</h3>
           <h4>
             (
-            <a href={this.props.create_link ? this.props.create_link : ""}>
+            <a href={this.props.create_link === undefined ? "" : this.props.create_link}>
               {I18n.t("helpers.submit.create", {
                 model: this.props.item_name,
               })}

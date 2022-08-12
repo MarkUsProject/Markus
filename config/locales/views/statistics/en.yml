@@ -11,10 +11,10 @@ en:
   grade_entry_form_summary: 'Grades: %{short_id}'
   grader_distribution: Grader Distribution
   median: Median
-  num_students: Number of students
-  num_students_graded: Number of students graded
   num_failed: Number of fails
   num_groups: Number of groups
+  num_students: Number of students
+  num_students_graded: Number of students graded
   num_students_in_group: Number of students in a group
   num_zeros: Number of zeros
   remark_requests_completed: Remark requests completed
