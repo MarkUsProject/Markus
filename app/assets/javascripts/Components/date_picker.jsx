@@ -1,14 +1,10 @@
-// this component is a wrapper around the jqueryUI datepicker
-
 import React from "react";
-
+import "../flatpickr_config";
 class Datepicker extends React.Component {
   static defaultProps = {
-    controlType: "select",
-    showTime: false,
-    numberOfMonths: 2,
-    secondMax: 0,
-    showTimezone: false,
+    allowInput: true,
+    enableTime: true,
+    showMonths: 2,
   };
 
   handleClose = () => {
@@ -23,55 +19,51 @@ class Datepicker extends React.Component {
     }
   };
 
-  handleSelect = date => {
+  handleSelect = (selectedDate, dateStr) => {
     if (typeof this.props.onChange === "function") {
-      this.props.onChange(date);
+      this.props.onChange(dateStr);
     }
   };
 
   componentDidMount() {
-    $(".datepicker").datetimepicker({
-      controlType: this.props.controlType,
-      showTime: this.props.showTime,
-      numberOfMonths: this.props.numberOfMonths,
-      secondMax: this.props.secondMax,
-      onSelect: this.handleSelect,
+    Flatpickr(".datepicker", {
+      allowInput: this.props.allowInput,
+      enableTime: this.props.enableTime,
+      showMonths: this.props.showMonths,
+      onChange: this.handleSelect,
       onClose: this.handleClose,
-      showTimezone: this.props.showTimezone,
       dateFormat:
         typeof this.props.dateFormat === "undefined"
-          ? I18n.t("date.format_string.datetimepicker")
+          ? I18n.t("date.format_string.date_and_time")
           : this.props.dateFormat,
-      timeFormat:
-        typeof this.props.timeFormat === "undefined"
-          ? I18n.t("time.format_string.time_only")
-          : this.props.timeFormat,
-      monthNames:
-        typeof this.props.monthNames === "undefined"
-          ? I18n.t("date.month_names").slice(1)
-          : this.props.monthNames,
-      dayNames:
-        typeof this.props.dayNames === "undefined" ? I18n.t("date.day_names") : this.props.dayNames,
-      dayNamesMin:
-        typeof this.props.dayNamesMin === "undefined"
-          ? I18n.t("date.abbr_day_names")
-          : this.props.dayNamesMin,
-      hourText:
-        typeof this.props.hourText === "undefined"
+      months: {
+        longhand:
+          typeof this.props.monthnamesLong === "undefined"
+            ? I18n.t("date.month_names").slice(1)
+            : this.props.monthNames,
+        shorthand:
+          typeof this.props.monthNamesShort === "undefined"
+            ? I18n.t("date.abbr_month_names").slice(1)
+            : this.props.monthNamesShort,
+      },
+      weekdays: {
+        longhand:
+          typeof this.props.weekdaysLong === "undefined"
+            ? I18n.t("date.day_names")
+            : this.props.weekdaysLong,
+        shorthand:
+          typeof this.props.weekdaysShort === "undefined"
+            ? I18n.t("date.abbr_day_names")
+            : this.props.weekdaysShort,
+      },
+      hourAriaLabel:
+        typeof this.props.hourAriaLabel === "undefined"
           ? I18n.t("datetime.prompts.hour")
-          : this.props.hourText,
-      minuteText:
-        typeof this.props.minuteText === "undefined"
+          : this.props.hourAriaLabel,
+      minuteAriaLabel:
+        typeof this.props.minuteAriaLabel === "undefined"
           ? I18n.t("datetime.prompts.minute")
-          : this.props.minuteText,
-      timeText:
-        typeof this.props.timeText === "undefined" ? I18n.t("time.time") : this.props.timeText,
-      prevText:
-        typeof this.props.prevText === "undefined" ? I18n.t("time.prev") : this.props.prevText,
-      nextText:
-        typeof this.props.nextText === "undefined" ? I18n.t("time.next") : this.props.nextText,
-      closeText:
-        typeof this.props.closeText === "undefined" ? I18n.t("close") : this.props.closeText,
+          : this.props.minuteAriaLabel,
     });
   }
 
