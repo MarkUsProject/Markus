@@ -15,7 +15,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confd
 
 # Install dependencies
 echo "- - - Installing Dependencies - - -"
-sudo apt-get install -y build-essential libv8-dev ruby-svn ghostscript imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev libaprutil1-dev swig graphviz
+sudo apt-get install -y build-essential libv8-dev ghostscript imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev libaprutil1-dev swig graphviz
 
 # update imagemagick policy file to read PDFs
 sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml

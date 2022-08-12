@@ -113,7 +113,7 @@ module Repository
       raise NotImplementedError
     end
 
-    # Static method: Deletes an existing Subversion repository
+    # Static method: Deletes an existing repository
     def self.delete(connect_string)
       raise NotImplementedError
     end
@@ -222,7 +222,7 @@ module Repository
     # Repository authentication subtleties:
     # 1) a repository is associated with a Group, but..
     # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
-    # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
+    # That creates a problem since authentication in git is at the repository level, while Markus handles it at
     # the assignment level, allowing the same Group repo to have different students according to the assignment.
     # The two extremes to implement it are using the union of all students (permissive) or the intersection
     # (restrictive). Instead, we are going to take a last-deadline approach, where we assume that the valid students at
@@ -517,8 +517,6 @@ module Repository
       GitRepository
     when 'mem'
       MemoryRepository
-    when 'svn'
-      SubversionRepository
     else
       raise "Repository implementation not found: #{repo_type}"
     end

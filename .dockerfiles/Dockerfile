@@ -19,7 +19,6 @@ RUN apt-get update -qq && \
     tzdata \
     libpq-dev \
     libv8-dev \
-    ruby-svn \
     ghostscript \
     imagemagick \
     libmagickwand-dev \
