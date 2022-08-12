@@ -25,30 +25,12 @@ services:
       - postgres
       - redis
 
-  ssh:
-    build:
-      context: .
-      dockerfile: ./.dockerfiles/Dockerfile-ssh
-      args:
-        UBUNTU_VERSION: focal
-        SSH_USER: git
-    image: markus-ssh:1.0.1
-    volumes:
-      - repos_108:/home/git/csc108
-      - repos_209:/home/git/csc209
-    environment:
-      - TZ=America/Toronto
-    command: /usr/sbin/sshd -D -e
-    ports:
-      - '2222:22'
-
-  rails_108: &rails_108
+  rails: &rails
     <<: *app
     command: bundle exec rails server -b 0.0.0.0
     environment:
-      - RAILS_RELATIVE_URL_ROOT=/csc108
-      - PGDATABASE=markus-csc108
-      - PGDATABASETEST=markus-csc108-test
+      - PGDATABASE=markus_production
+      - PGDATABASETEST=markus_test
       - SECRET_KEY_BASE=1 # change this to something secure and/or use a secret to set this
       - PGUSER=postgres
       - PGHOST=postgres
@@ -57,56 +39,35 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - app_data_108:/app/data/prod
-      - repos_108:/app/data/prod/repos
-      - log_108:/app/log
-      - assets_108:/app/public
+      - app_data:/app/data/prod
+      - repos:/app/data/prod/repos
+      - log:/app/log
+      - assets:/app/public
     secrets:
-      - source: csc108.settings
+      - source: markus.settings
         target: /app/config/settings.local.yml
     depends_on:
       - postgres
       - redis
-      - resque_108
+      - resque
       - ssh
 
-  resque_108:
-    <<: *rails_108
-    command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
-    depends_on:
-      - redis
-    ports: []
-
-  rails_209: &rails_209
-    <<: *app
-    command: bundle exec rails server -b 0.0.0.0
-    environment:
-      - RAILS_RELATIVE_URL_ROOT=/csc209
-      - PGDATABASE=markus-csc209
-      - PGDATABASETEST=markus-csc209-test
-      - SECRET_KEY_BASE=1 # change this to something secure and/or use a secret to set this
-      - PGUSER=postgres
-      - PGHOST=postgres
-      - PGPASSWORD=docker # change this to something secure and/or use a secret to set this
-      - TZ=America/Toronto
-    ports:
-      - '3001:3000'
+  ssh:
+    <<: *rails
     volumes:
-      - app_data_209:/app/data/prod
-      - repos_209:/app/data/prod/repos
-      - log_209:/app/log
-      - assets_209:/app/public
-    secrets:
-      - source: csc209.settings
-        target: /app/config/settings.local.yml
-    depends_on:
-      - postgres
-      - redis
-      - resque_209
-      - ssh
+      - log:/home/markus/log
+      - repos:/home/markus/csc108
+    environment:
+      - TZ=America/Toronto
+    command: /usr/sbin/sshd -D -e
+    user: root
+    ports:
+      - '2222:22'
+    entrypoint: []
+    depends_on: []
 
-  resque_209:
-    <<: *rails_209
+  resque:
+    <<: *rails
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
@@ -134,35 +95,24 @@ services:
     ports:
       - '8080:80'
     volumes:
-      - assets_108:/assets/csc108
-      - assets_209:/assets/csc209
-      - repos_108:/repos/csc108
-      - repos_209:/repos/csc209
+      - assets:/assets/
+      - repos:/repos/
     depends_on:
-      - rails_108
-      - rails_209
+      - rails
     secrets:
       - source: markus.conf
         target: /usr/local/apache2/sites-enabled/markus.conf
-      - source: validategit
-        target: /auth/validategit
 
 volumes:
-  app_data_108:
-  repos_108:
-  log_108:
-  assets_108:
-  app_data_209:
-  repos_209:
-  log_209:
-  assets_209:
+  app_data:
+  repos:
+  log:
+  assets:
   postgres:
   redis:
 
 secrets:
   markus.conf:
     file: ./.dockerfiles/production_demo/httpd.example.conf
-  csc108.settings:
-    file: ./.dockerfiles/production_demo/csc108.settings.example.yml
-  csc209.settings:
-    file: ./.dockerfiles/production_demo/csc209.settings.example.yml
+  markus.settings:
+    file: ./.dockerfiles/production_demo/settings.example.yml

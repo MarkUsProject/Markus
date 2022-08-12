@@ -1,0 +1,12 @@
+rails:
+  force_ssl: false # in a true production deployment this should be true
+  session_store:
+    args:
+      secure: false # in a true production deployment this should be true
+  hosts:
+    - localhost
+repository:
+  ssh_url: ssh://markus@localhost:2222/~/csc108
+redis:
+  url: redis://redis:6379/
+validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %> # this is not secure and should be replaced with a true validation script
