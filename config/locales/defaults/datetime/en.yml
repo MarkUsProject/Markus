@@ -3,9 +3,10 @@ en:
   date:
     before_now_warning: 'WARNING: The date you have selected is in the past.'
     format_string:
-      datetimepicker: Y-m-d h:i K
+      datetimepicker: yy-mm-dd
       default: DD, MM d, yy
       placeholder: YYYY-MM-DD
+      date_and_time: Y-m-d h:i K
   durations:
     any_hours: hour(s)
     any_minutes: minute(s)
