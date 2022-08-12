@@ -49,6 +49,10 @@ Chart.register(...registerables);
 window.Chart = Chart;
 import "javascripts/chart_config";
 
+// flatpickr
+import flatpickr from "flatpickr";
+window.Flatpickr = flatpickr;
+
 window.Routes = require("./routes");
 
 // assets with side-effects only
@@ -130,5 +134,3 @@ import {makeAdminUsersList} from "javascripts/Components/admin_users_list";
 window.makeAdminUsersList = makeAdminUsersList;
 import {makeCourseList} from "javascripts/Components/course_list";
 window.makeCourseList = makeCourseList;
-import flatpickr from "flatpickr";
-window.flatpickr = flatpickr;
