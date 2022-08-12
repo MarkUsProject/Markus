@@ -455,6 +455,4 @@ class SpreadsheetActionBox extends React.Component {
 
 let MarksSpreadsheet = withSelection(RawMarksSpreadsheet);
 
-export function makeMarksSpreadsheet(elem, props) {
-  render(<MarksSpreadsheet {...props} />, elem);
-}
+export {MarksSpreadsheet};
