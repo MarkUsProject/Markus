@@ -238,34 +238,45 @@ class GradeEntryFormsController < ApplicationController
     dict_data = grade_entry_form.grade_entry_items.map do |item|
       { label: item.name, data: item.grade_distribution_array(intervals) }
     end
-    column_breakdown_data = {
+    column_distributions = {
       labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
       datasets: dict_data
     }
 
-    grade_dist_data = {
+    grade_distribution = {
       labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
       datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }]
     }
 
-    num_non_nil = grade_entry_form.count_non_nil
-    num_students = grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count
-    num_entries = "#{num_non_nil}/#{num_students}"
-
-    info_summary = {
+    summary = {
       name: "#{grade_entry_form.short_identifier}: #{grade_entry_form.description}",
-      date: I18n.l(grade_entry_form.due_date),
-      average: grade_entry_form.results_average || 0,
-      median: grade_entry_form.results_median || 0,
-      num_entries: num_entries,
+      average: grade_entry_form.results_average(points: true) || 0,
+      median: grade_entry_form.results_median(points: true) || 0,
+      standard_deviation: grade_entry_form.results_standard_deviation || 0,
+      max_mark: grade_entry_form.max_mark,
+      num_entries: grade_entry_form.count_non_nil,
+      groupings_size: grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count,
       num_fails: grade_entry_form.results_fails,
       num_zeros: grade_entry_form.results_zeros
     }
 
+    column_summary = grade_entry_form.grade_entry_items.map do |item|
+      {
+        name: item.name,
+        average: item.average || 0,
+        median: item.median || 0,
+        max_mark: item.out_of || 0,
+        standard_deviation: item.standard_deviation || 0,
+        position: item.position,
+        num_zeros: item.grades_array.count(&:zero?)
+      }
+    end
+
     render json: {
-      grade_dist_data: grade_dist_data,
-      column_breakdown_data: column_breakdown_data,
-      info_summary: info_summary
+      grade_distribution: grade_distribution,
+      column_distributions: column_distributions,
+      summary: summary,
+      column_summary: column_summary
     }
   end
 
