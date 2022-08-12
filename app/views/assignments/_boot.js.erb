@@ -1,3 +1,4 @@
+<%= javascript_include_tag 'flatpickr_config', nonce: true %>
 <%= javascript_tag nonce: true do %>
   var grace_periods = null;
   var penalty_decay_periods = null;
@@ -149,29 +150,6 @@
     }
   }
 
-  const FlatpickrLocale = {
-    hourAriaLabel: I18n.t('datetime.prompts.hour'),
-    minuteAriaLabel: I18n.t('datetime.prompts.minute'),
-    months: {
-      longhand:I18n.t('date.month_names').slice(1),
-      shorthand:I18n.t('date.abbr_month_names').slice(1)
-    },
-    weekdays:{
-      longhand: I18n.t('date.day_names'),
-      shorthand: I18n.t('date.abbr_day_names')
-    }
-  }
-
-
-  const FlatpickrConfig = {
-    locale: FlatpickrLocale,
-    allowInput: true,
-    enableTime: true,
-    showMonths: 2,
-    dateFormat: I18n.t('date.format_string.datetimepicker'),
-    onClose: check_due_date
-  }
-
   $(document).ready(function() {
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
@@ -193,9 +171,9 @@
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
     // Initialize Flatpickr calendar for different elements in the DOM
-    flatpickr("#assignment_due_date", FlatpickrConfig)
-    flatpickr("#assignment_assignment_properties_attributes_remark_due_date", FlatpickrConfig)
-    flatpickr(".assessment_section_properties_input", FlatpickrConfig)
-    flatpickr("#assignment_assignment_properties_attributes_start_time", FlatpickrConfig)
+    Flatpickr("#assignment_due_date", {onClose: check_due_date})
+    Flatpickr("#assignment_assignment_properties_attributes_remark_due_date", {onClose: check_due_date})
+    Flatpickr(".assessment_section_properties_input", {onClose: check_due_date})
+    Flatpickr("#assignment_assignment_properties_attributes_start_time", {onClose: check_due_date})
   });
 <% end %>
