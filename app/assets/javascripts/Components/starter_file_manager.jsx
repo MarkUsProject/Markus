@@ -194,10 +194,6 @@ class StarterFileManager extends React.Component {
     );
   };
 
-  updateDirUploadTarget = target => {
-    this.setState({dirUploadTarget: target});
-  };
-
   renderFileManagers = () => {
     return (
       <React.Fragment>
