@@ -368,6 +368,7 @@ class AutotestManager extends React.Component {
             files={this.state.files}
             noFilesMessage={I18n.t("submissions.no_files_available")}
             readOnly={!this.state.enable_test}
+            onCreateFiles={this.handleCreateFiles}
             onDeleteFile={this.handleDeleteFile}
             onCreateFolder={this.handleCreateFolder}
             onRenameFolder={typeof this.handleCreateFolder === "function" ? () => {} : undefined}
