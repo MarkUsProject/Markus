@@ -263,30 +263,7 @@ class RawFileManagerHeader extends Headers.TableHeader {
   }
 }
 
-class RawFileManagerFolder extends FolderRenderers.RawTableFolder {
-  componentDidUpdate(prevProps) {
-    if (prevProps.isOver !== this.props.isOver) {
-      if (this.props.isOver) {
-        this.props.onFolderHover(this.props.fileKey);
-      } else {
-        this.props.onFolderHover(undefined);
-      }
-    }
-  }
-}
-
 class FileManagerFile extends FileRenderers.RawTableFile {
-  componentDidUpdate(prevProps) {
-    if (prevProps.isOver !== this.props.isOver) {
-      if (this.props.isOver) {
-        const fileKey = this.props.fileKey;
-        this.props.onFileHover(fileKey.substring(0, fileKey.lastIndexOf("/")));
-      } else {
-        this.props.onFileHover(undefined);
-      }
-    }
-  }
-
   handleFileClick = event => {
     if (event) {
       event.preventDefault();
@@ -419,18 +396,6 @@ const FileManagerHeader = DragSource(
   )(RawFileManagerHeader)
 );
 
-const FileManagerFolder = DragSource(
-  "file",
-  BaseFileConnectors.dragSource,
-  BaseFileConnectors.dragCollect
-)(
-  DropTarget(
-    ["file", "folder", NativeTypes.FILE],
-    BaseFileConnectors.targetSource,
-    BaseFileConnectors.targetCollect
-  )(RawFileManagerFolder)
-);
-
 class FileManager extends React.Component {
   render() {
     return (
@@ -444,7 +409,6 @@ class FileManager extends React.Component {
 FileManager.defaultProps = {
   headerRenderer: FileManagerHeader,
   fileRenderer: FileManagerFile,
-  folderRenderer: FileManagerFolder,
   icons: {
     File: <i className="fa fa-file-o" aria-hidden="true" />,
     Image: <i className="fa fa-file-image-o" aria-hidden="true" />,
@@ -459,4 +423,4 @@ FileManager.defaultProps = {
 };
 
 export default FileManager;
-export {FileManagerHeader, FileManagerFile, FileManagerFolder};
+export {FileManagerHeader, FileManagerFile};
