@@ -44,10 +44,6 @@ class AutotestManager extends React.Component {
     this.fetchData();
   }
 
-  updateUploadTarget = target => {
-    this.setState({uploadTarget: target});
-  };
-
   fetchData = () => {
     fetch(
       Routes.populate_autotest_manager_course_assignment_automated_tests_path(
@@ -80,8 +76,8 @@ class AutotestManager extends React.Component {
     this.setState({form_changed: value});
   };
 
-  handleCreateFiles = (files, unzip) => {
-    const prefix = this.state.uploadTarget || "";
+  handleCreateFiles = (files, path, unzip) => {
+    const prefix = path || this.state.uploadTarget || "";
     this.setState({showFileUploadModal: false, uploadTarget: undefined});
     let data = new FormData();
     Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
@@ -376,8 +372,6 @@ class AutotestManager extends React.Component {
             onActionBarAddFileClick={this.openUploadModal}
             downloadAllURL={this.getDownloadAllURL()}
             disableActions={{rename: true}}
-            folderRendererProps={{onFolderHover: this.updateUploadTarget}}
-            fileRendererProps={{onFileHover: this.updateUploadTarget}}
           />
         </fieldset>
         <fieldset>

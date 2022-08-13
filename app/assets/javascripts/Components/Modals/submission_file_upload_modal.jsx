@@ -17,7 +17,7 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newFiles, this.state.unzip, this.state.renameTo);
+    this.props.onSubmit(this.state.newFiles, undefined, this.state.unzip, this.state.renameTo);
   };
 
   handleFileUpload = event => {

@@ -73,8 +73,8 @@ class StarterFileManager extends React.Component {
       .then(this.fetchData);
   };
 
-  handleCreateFiles = (groupUploadTarget, files, unzip) => {
-    const prefix = this.state.dirUploadTarget || "";
+  handleCreateFiles = (groupUploadTarget, files, path, unzip) => {
+    const prefix = path || this.state.dirUploadTarget || "";
     let data = new FormData();
     Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
     data.append("path", prefix);
@@ -231,8 +231,6 @@ class StarterFileManager extends React.Component {
                 )}
                 disableActions={{rename: true}}
                 canFilter={false}
-                folderRendererProps={{onFolderHover: this.updateDirUploadTarget}}
-                fileRendererProps={{onFileHover: this.updateDirUploadTarget}}
               />
               <button
                 key={"delete_starter_file_group_button"}
