@@ -1,0 +1,4 @@
+translations:
+  - file: "public/javascripts/translations.json"
+    patterns:
+     - "*"

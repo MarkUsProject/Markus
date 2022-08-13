@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Added new summary statistics display for grade entry forms and grade entry column items (#6118)
 - Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
 - Enable bulk removal of students from section in student table (#6145)
 - Enable updating student active/inactive status in student edit form (#6145)

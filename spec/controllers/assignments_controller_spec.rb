@@ -1113,23 +1113,23 @@ describe AssignmentsController do
         expect(summary).to eq expected.as_json
       end
     end
-    context 'assignment_data' do
+    context 'grade_distribution' do
       context 'data' do
         it 'should contain the right keys' do
-          data = response.parsed_body['assignment_data']
+          data = response.parsed_body['grade_distribution']
           expect(data.keys).to contain_exactly('labels', 'datasets')
         end
       end
       context 'labels' do
         it 'should contain the right values' do
-          labels = response.parsed_body['assignment_data']['labels']
+          labels = response.parsed_body['grade_distribution']['labels']
           expected = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
           expect(labels).to eq(expected)
         end
       end
       context 'datasets' do
         it 'should contain the right data' do
-          data = response.parsed_body['assignment_data']['datasets'].first['data']
+          data = response.parsed_body['grade_distribution']['datasets'].first['data']
           expected = assignment.grade_distribution_array
           expect(data).to contain_exactly(*expected)
         end
@@ -1173,12 +1173,12 @@ describe AssignmentsController do
       end
     end
 
-    context 'criteria_data' do
+    context 'criteria_distributions' do
       let(:params) { { course_id: assignment.course.id, id: assignment.id, get_criteria_data: true } }
 
       it 'should contain the right data' do
         expected_data = assignment.criteria.map(&:grade_distribution_array)
-        received_data = response.parsed_body['criteria_data']['datasets'].map do |data_response|
+        received_data = response.parsed_body['criteria_distributions']['datasets'].map do |data_response|
           data_response['data']
         end
         expect(received_data).to match_array(expected_data)

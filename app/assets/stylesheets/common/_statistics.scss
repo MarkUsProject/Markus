@@ -3,6 +3,11 @@
   text-align: right;
 }
 
+// Styling for grade breakdown graph
+.grade-breakdown-graph {
+  width: 100%;
+}
+
 // Specific styling for the expanded summary statistics page
 .expanded-summary-stats {
   // Styling for graph titles
@@ -38,8 +43,8 @@
     font-size: 1vw;
   }
 
-  .criteria-summary-table {
-    .criteria-stat-breakdown {
+  .grade-breakdown-summary-table {
+    .grade-stats-breakdown {
       column-gap: 10px;
       margin-bottom: 10px;
       margin-left: 40px;
@@ -50,5 +55,9 @@
     span {
       font-size: small;
     }
+  }
+
+  .grade-breakdown-graph {
+    width: 50%;
   }
 }
