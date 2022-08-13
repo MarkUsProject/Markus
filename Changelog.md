@@ -4,7 +4,8 @@
 - Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
 - Enable bulk removal of students from section in student table (#6145)
 - Enable updating student active/inactive status in student edit form (#6145)
-- Implemented flatpickr for picking date and time for assignments (#6158)
+- Implemented flatpickr for picking date and time (#6158)
+- Removed implementation of jquery-ui-timepicker-addon (#6158)
 
 ## [v2.1.0]
 - Remove unmaintained locales (#5727)
