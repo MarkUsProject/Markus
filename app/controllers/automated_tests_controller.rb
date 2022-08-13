@@ -4,9 +4,6 @@ class AutomatedTestsController < ApplicationController
   before_action { authorize! }
 
   content_security_policy only: :manage do |p|
-    # required because jquery-ui-timepicker-addon inserts style
-    # dynamically. TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
     # required because @rjsf/core uses ajv which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible

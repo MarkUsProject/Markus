@@ -7,12 +7,6 @@ class AssignmentsController < ApplicationController
   responders :flash
   before_action { authorize! }
 
-  content_security_policy only: [:edit, :new] do |p|
-    # required because jquery-ui-timepicker-addon inserts style
-    # dynamically. TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
-  end
-
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
