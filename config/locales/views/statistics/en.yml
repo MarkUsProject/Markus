@@ -8,11 +8,13 @@ en:
   class_median: Class median
   criteria_grade_distribution: Criteria Grade Distribution
   grade_distribution: Grades Distribution
+  grade_entry_form_summary: 'Grades: %{short_id}'
   grader_distribution: Grader Distribution
   median: Median
-  num_entries: Number of entries
   num_failed: Number of fails
   num_groups: Number of groups
+  num_students: Number of students
+  num_students_graded: Number of students graded
   num_students_in_group: Number of students in a group
   num_zeros: Number of zeros
   remark_requests_completed: Remark requests completed
