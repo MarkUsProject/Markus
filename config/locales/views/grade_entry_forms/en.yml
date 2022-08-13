@@ -4,7 +4,7 @@ en:
     add_column: Add a column
     csv:
       overwrite: Overwrite existing grades and columns?
-    grade_entry_item_distribution: Column Distribution
+    grade_entry_item_distribution: Column Grade Distribution
     grades:
       marking_state: State
       select_a_student: You must select at least one student to update.

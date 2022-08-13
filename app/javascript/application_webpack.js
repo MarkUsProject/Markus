@@ -74,6 +74,8 @@ import {makeDashboard} from "javascripts/Components/dashboard";
 window.makeDashboard = makeDashboard;
 import {makeAssignmentSummary} from "javascripts/Components/assignment_summary";
 window.makeAssignmentSummary = makeAssignmentSummary;
+import {makeGradeEntryFormSummary} from "javascripts/Components/grade_entry_form_summary";
+window.makeGradeEntryFormSummary = makeGradeEntryFormSummary;
 import {makeTATable} from "javascripts/Components/ta_table";
 window.makeTATable = makeTATable;
 import {makeInstructorTable} from "javascripts/Components/instructor_table";
@@ -84,8 +86,6 @@ import {makeOneTimeAnnotationsTable} from "javascripts/Components/one_time_annot
 window.makeOneTimeAnnotationsTable = makeOneTimeAnnotationsTable;
 import {makeExamScanLogTable} from "javascripts/Components/exam_scan_log_table";
 window.makeExamScanLogTable = makeExamScanLogTable;
-import {makeMarksSpreadsheet} from "javascripts/Components/marks_spreadsheet";
-window.makeMarksSpreadsheet = makeMarksSpreadsheet;
 import {makeSubmissionFileManager} from "javascripts/Components/submission_file_manager";
 window.makeSubmissionFileManager = makeSubmissionFileManager;
 import {makeRepoBrowser} from "javascripts/Components/repo_browser";
