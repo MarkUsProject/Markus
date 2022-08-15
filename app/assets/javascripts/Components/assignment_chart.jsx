@@ -37,6 +37,7 @@ export class AssignmentChart extends React.Component {
           datasets: [],
         },
       },
+      loading: true,
     };
   }
 
@@ -67,6 +68,7 @@ export class AssignmentChart extends React.Component {
           ta_grade_distribution: {
             data: res.ta_data,
           },
+          loading: false,
         });
 
         if (this.props.show_criteria_stats) {
@@ -182,47 +184,51 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    return (
-      <React.Fragment>
-        <h2>
-          <a
-            href={Routes.browse_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assessment_id
-            )}
-          >
-            {this.props.show_chart_header ? this.state.summary.name : ""}
-          </a>
-        </h2>
-        <AssessmentChart
-          summary={this.state.summary}
-          assessment_data={this.state.assignment_grade_distribution.data}
-          additional_assessment_stats={
-            <React.Fragment>
-              <span className="summary-stats-label">{I18n.t("num_groups")}</span>
-              <span>{this.state.summary.groupings_size}</span>
-              <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_students_in_group}
-                denominator={this.state.summary.num_active_students}
-              />
-              <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_submissions_collected}
-                denominator={this.state.summary.groupings_size}
-              />
-              <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
-              <FractionStat
-                numerator={this.state.summary.num_submissions_graded}
-                denominator={this.state.summary.groupings_size}
-              />
-            </React.Fragment>
-          }
-          outstanding_remark_request_link={outstanding_remark_request_link}
-        />
-        {criteria_graph}
-        {ta_grade_distribution_chart}
-      </React.Fragment>
-    );
+    if (this.state.loading) {
+      return "";
+    } else {
+      return (
+        <React.Fragment>
+          <h2>
+            <a
+              href={Routes.browse_course_assignment_submissions_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {this.props.show_chart_header ? this.state.summary.name : ""}
+            </a>
+          </h2>
+          <AssessmentChart
+            summary={this.state.summary}
+            assessment_data={this.state.assignment_grade_distribution.data}
+            additional_assessment_stats={
+              <React.Fragment>
+                <span className="summary-stats-label">{I18n.t("num_groups")}</span>
+                <span>{this.state.summary.groupings_size}</span>
+                <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
+                <FractionStat
+                  numerator={this.state.summary.num_students_in_group}
+                  denominator={this.state.summary.num_active_students}
+                />
+                <span className="summary-stats-label">{I18n.t("assignments_submitted")}</span>
+                <FractionStat
+                  numerator={this.state.summary.num_submissions_collected}
+                  denominator={this.state.summary.groupings_size}
+                />
+                <span className="summary-stats-label">{I18n.t("assignments_graded")}</span>
+                <FractionStat
+                  numerator={this.state.summary.num_submissions_graded}
+                  denominator={this.state.summary.groupings_size}
+                />
+              </React.Fragment>
+            }
+            outstanding_remark_request_link={outstanding_remark_request_link}
+          />
+          {criteria_graph}
+          {ta_grade_distribution_chart}
+        </React.Fragment>
+      );
+    }
   }
 }
