@@ -21,6 +21,7 @@ class GradersManager extends React.Component {
       hide_unassigned_criteria: false,
       sections: {},
       isGraderDistributionModalOpen: false,
+      show_hidden: false,
     };
   }
 
@@ -266,6 +267,11 @@ class GradersManager extends React.Component {
     }
   };
 
+  toggleShowHidden = event => {
+    let show_hidden = event.target.checked;
+    this.setState({show_hidden});
+  };
+
   render() {
     return (
       <div>
@@ -273,6 +279,8 @@ class GradersManager extends React.Component {
           assignAll={this.assignAll}
           openGraderDistributionModal={this.openGraderDistributionModal}
           unassignAll={this.unassignAll}
+          showHidden={this.state.show_hidden}
+          updateShowHidden={this.toggleShowHidden}
         />
         <div className="mapping-tables">
           <div className="mapping-table">
@@ -282,6 +290,7 @@ class GradersManager extends React.Component {
               loading={this.state.loading}
               assign_graders_to_criteria={this.state.assign_graders_to_criteria}
               numCriteria={this.state.criteria.length}
+              showHidden={this.state.show_hidden}
             />
           </div>
           <div className="mapping-table">
@@ -326,6 +335,7 @@ class GradersManager extends React.Component {
                   sections={this.state.sections}
                   numCriteria={this.state.criteria.length}
                   showCoverage={this.state.assign_graders_to_criteria}
+                  showHidden={this.state.show_hidden}
                 />
               </TabPanel>
               <TabPanel>
@@ -371,7 +381,22 @@ class GradersManager extends React.Component {
 }
 
 class RawGradersTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filtered: [],
+    };
+  }
+
   getColumns = () => [
+    {
+      accessor: "hidden",
+      id: "hidden",
+      width: 0,
+      className: "rt-hidden",
+      headerClassName: "rt-hidden",
+      resizable: false,
+    },
     {
       show: false,
       accessor: "_id",
@@ -381,6 +406,21 @@ class RawGradersTable extends React.Component {
       Header: I18n.t("activerecord.attributes.user.user_name"),
       accessor: "user_name",
       id: "user_name",
+      Cell: props =>
+        props.original.hidden
+          ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
+          : props.value,
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          return `${row._original.user_name}${
+            row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
+          }`.includes(filter.value);
+        } else {
+          return true;
+        }
+      },
+      sortable: true,
+      minWidth: 90,
     },
     {
       Header: I18n.t("activerecord.attributes.user.full_name"),
@@ -411,6 +451,23 @@ class RawGradersTable extends React.Component {
     },
   ];
 
+  static getDerivedStateFromProps(props, state) {
+    let filtered = [];
+    for (let i = 0; i < state.filtered.length; i++) {
+      if (state.filtered[i].id !== "hidden") {
+        filtered.push(state.filtered[i]);
+      }
+    }
+    if (!props.showHidden) {
+      filtered.push({id: "hidden", value: false});
+    }
+    return {filtered};
+  }
+
+  onFilteredChange = filtered => {
+    this.setState({filtered});
+  };
+
   render() {
     return (
       <CheckboxTable
@@ -424,6 +481,8 @@ class RawGradersTable extends React.Component {
         ]}
         loading={this.props.loading}
         filterable
+        filtered={this.state.filtered}
+        onFilteredChange={this.onFilteredChange}
         {...this.props.getCheckboxProps()}
       />
     );
@@ -431,8 +490,23 @@ class RawGradersTable extends React.Component {
 }
 
 class RawGroupsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filtered: [],
+    };
+  }
+
   getColumns = () => {
     return [
+      {
+        accessor: "inactive",
+        id: "inactive",
+        width: 0,
+        className: "rt-hidden",
+        headerClassName: "rt-hidden",
+        resizable: false,
+      },
       {
         show: false,
         accessor: "_id",
@@ -501,6 +575,19 @@ class RawGroupsTable extends React.Component {
     ];
   };
 
+  static getDerivedStateFromProps(props, state) {
+    let filtered = state.filtered.filter(group => group.id !== "inactive");
+
+    if (!props.showInactive) {
+      filtered.push({id: "inactive", value: false});
+    }
+    return {filtered};
+  }
+
+  onFilteredChange = filtered => {
+    this.setState({filtered});
+  };
+
   render() {
     return (
       <CheckboxTable
@@ -514,6 +601,8 @@ class RawGroupsTable extends React.Component {
         ]}
         loading={this.props.loading}
         filterable
+        filtered={this.state.filtered}
+        onFilteredChange={this.onFilteredChange}
         {...this.props.getCheckboxProps()}
       />
     );
@@ -596,8 +685,29 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 
 class GradersActionBox extends React.Component {
   render = () => {
+    let showHiddenTooltip = "";
+    if (this.props.hiddenGradersCount !== null && this.props.hiddenGroupsCount !== null) {
+      showHiddenTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_students", {
+        count: this.props.hiddenGradersCount,
+      })}, ${I18n.t("activerecord.attributes.grouping.inactive_groups", {
+        count: this.props.hiddenGroupsCount,
+      })}`;
+    }
     return (
       <div className="rt-action-box">
+        <span>
+          <input
+            id="show_hidden"
+            name="show_hidden"
+            type="checkbox"
+            checked={this.props.showHidden}
+            onChange={this.props.updateShowHidden}
+            style={{marginLeft: "5px", marginRight: "5px"}}
+          />
+          <label title={showHiddenTooltip} htmlFor="show_hidden">
+            {I18n.t("students.display_inactive")}
+          </label>
+        </span>
         <button className="assign-all-button" onClick={this.props.assignAll}>
           {I18n.t("graders.actions.assign_grader")}
         </button>

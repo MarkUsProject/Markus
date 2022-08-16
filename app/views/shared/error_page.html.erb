@@ -2,5 +2,11 @@
 <div class="error-pages-container">
   <h1><%= HttpStatusHelper::ERROR_CODE[code] %></h1>
   <p><%= message %></p>
-  <%= link_to I18n.t("menu.go_home"), root_path, class: "button" %>
+  <% if @current_course && @current_role.nil? && allowed_to?(:clear_role_switch_session?, @current_course) %>
+    <%= link_to t('main.role_switch.clear_role_switch_session'),
+                clear_role_switch_session_course_path(@current_course),
+                class: "button" %>
+  <% else %>
+    <%= link_to I18n.t("menu.go_home"), root_path, class: "button" %>
+  <% end %>
 </div>
