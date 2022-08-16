@@ -18,7 +18,6 @@ RUN apt-get update -qq && \
     postgresql-client-$PG_MAJOR \
     tzdata \
     libpq-dev \
-    libv8-dev \
     ruby-svn \
     ghostscript \
     imagemagick \
