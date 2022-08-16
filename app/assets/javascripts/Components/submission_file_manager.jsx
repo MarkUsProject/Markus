@@ -95,12 +95,12 @@ class SubmissionFileManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleCreateFiles = (files, unzip, renameTo = "") => {
+  handleCreateFiles = (files, path, unzip, renameTo = "") => {
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
-      const prefix = this.state.uploadTarget || "";
+      const prefix = path || this.state.uploadTarget || "";
       this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
       if (!!renameTo && files.length === 1) {
