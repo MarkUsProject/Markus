@@ -41,7 +41,7 @@ export class GradeBreakdownChart extends React.Component {
                     average={row.original.average}
                     median={row.original.median}
                     standard_deviation={row.original.standard_deviation}
-                    max_mark={row.original.max_mark}
+                    max_mark={Number(row.original.max_mark)}
                     num_zeros={row.original.num_zeros}
                     num_groupings={this.props.num_groupings}
                   />

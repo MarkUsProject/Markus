@@ -186,6 +186,7 @@ export class AssignmentChart extends React.Component {
           </div>
         );
       }
+
       return (
         <React.Fragment>
           <h2>
