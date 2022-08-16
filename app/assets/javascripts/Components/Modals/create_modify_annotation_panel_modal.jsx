@@ -203,7 +203,6 @@ class CreateModifyAnnotationPanel extends React.Component {
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container-vertical"}>
               <MarkdownEditor
-                annotation_text_id={this.state.annotation_text_id}
                 content={this.state.content}
                 handleChange={this.handleChange}
                 show_autocomplete={this.state.show_autocomplete}

@@ -52,7 +52,8 @@ describe("MarkdownEditor", () => {
     props.content = "arma virumque cano";
     wrapper = getWrapper(props);
 
-    wrapper.find("#preview-tab").simulate("click");
+    //At 1 because it is the 2nd tab
+    wrapper.find("Tab").at(1).simulate("click");
 
     const preview = wrapper.find("#markdown-preview");
 

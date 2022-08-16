@@ -65,7 +65,7 @@ export class TextForm extends React.Component {
 
   updateValue = event => {
     const value = event.target.value;
-    this.setState({value, unsavedChanges: true}, this.updatePreview);
+    this.setState({value, unsavedChanges: true});
     this.handlePersist();
   };
 
@@ -73,7 +73,11 @@ export class TextForm extends React.Component {
     return (
       <div className={this.props.className || ""}>
         <form onSubmit={this.onSubmit}>
-          <MarkdownEditor content={this.state.value} handleChange={this.updateValue} />
+          <MarkdownEditor
+            content={this.state.value}
+            handleChange={this.updateValue}
+            show_autocomplete={false}
+          />
           <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
       </div>

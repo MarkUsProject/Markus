@@ -10,7 +10,7 @@ export default class MarkdownEditor extends React.Component {
       <Tabs disableUpDownKeys>
         <TabList>
           <Tab>{I18n.t("write")}</Tab>
-          <Tab id="preview-tab">{I18n.t("preview")}</Tab>
+          <Tab>{I18n.t("preview")}</Tab>
         </TabList>
         <TabPanel forceRender>
           <label>
@@ -50,10 +50,9 @@ export default class MarkdownEditor extends React.Component {
 }
 
 MarkdownEditor.propTypes = {
-  annotation_text_id: PropTypes.string,
   content: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
-  show_autocomplete: PropTypes.bool,
+  show_autocomplete: PropTypes.bool.isRequired,
   text_area_id: PropTypes.string,
   auto_completion_text_id: PropTypes.string,
   auto_completion_list_id: PropTypes.string,
