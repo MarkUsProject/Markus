@@ -1096,7 +1096,7 @@ describe AssignmentsController do
         expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
                      average: assignment.results_average(points: true) || 0,
                      median: assignment.results_median(points: true) || 0,
-                     max_mark: assignment.max_mark || 0,
+                     max_mark: assignment.max_mark.to_f || 0,
                      standard_deviation: assignment.results_standard_deviation || 0,
                      num_submissions_collected: assignment.current_submissions_used.size,
                      num_submissions_graded: assignment.current_submissions_used.size -
