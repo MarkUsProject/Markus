@@ -302,7 +302,6 @@ Rails.application.routes.draw do
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           post 'run_tests'
-          get 'download_svn_export_list'
           get 'download_repo_checkout_commands'
           get 'download_repo_list'
           post 'set_result_marking_state'

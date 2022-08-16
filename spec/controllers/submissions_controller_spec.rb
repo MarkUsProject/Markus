@@ -571,7 +571,7 @@ describe SubmissionsController do
       is_expected.to respond_with(:forbidden)
     end
 
-    it 'should not be able to download the repository repository list' do
+    it 'should not be able to download the repository list' do
       get_as @student, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
 
       is_expected.to respond_with(:forbidden)
@@ -639,7 +639,7 @@ describe SubmissionsController do
       is_expected.to respond_with(:forbidden)
     end
 
-    it 'should be able to download the repository repository list' do
+    it 'should be able to download the repository list' do
       get_as grader, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:forbidden)
     end

@@ -23,9 +23,7 @@ RUN apt-get update -qq && \
     imagemagick \
     libmagickwand-dev \
     cmake \
-    libaprutil1-dev \
     libssl-dev \
-    swig \
     graphviz \
     git \
     python3-venv \

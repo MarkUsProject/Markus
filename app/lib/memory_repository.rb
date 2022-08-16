@@ -1,8 +1,8 @@
 # Implements AbstractRepository for memory repositories
 # It implements the following paradigm:
 #   1. Repositories are created by using MemoryRepository.create()
-#   2. Existing repositories are opened by using either SubversionRepository.open()
-#      or SubversionRepository.new()
+#   2. Existing repositories are opened by using either MemoryRepository.open()
+#      or MemoryRepository.new()
 class MemoryRepository < Repository::AbstractRepository
   # class variable which knows of all memory repositories
   #    key (location), value (reference to repo)
