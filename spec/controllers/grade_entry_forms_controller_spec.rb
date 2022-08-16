@@ -517,11 +517,11 @@ describe GradeEntryFormsController do
 
     it('should return grade distribution data') {
       expected_items = grade_entry_form_with_data.grade_distribution_array
-      expect(response.parsed_body['grade_dist_data']['datasets'][0]['data']).to eq expected_items
+      expect(response.parsed_body['grade_distribution']['datasets'][0]['data']).to eq expected_items
     }
 
     it 'should retrieve the correct column data' do
-      response_data = response.parsed_body['column_breakdown_data']
+      response_data = response.parsed_body['column_distributions']
 
       gef_dataset = grade_entry_form_with_data.grade_entry_items.map do |item|
         { label: item.name, data: item.grade_distribution_array(20) }
@@ -531,12 +531,12 @@ describe GradeEntryFormsController do
 
     it('should return the correct grade distribution labels') {
       new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
-      expect(response.parsed_body['grade_dist_data']['labels']).to eq new_labels
+      expect(response.parsed_body['grade_distribution']['labels']).to eq new_labels
     }
 
     it('should return the correct column data labels') {
       new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
-      expect(response.parsed_body['column_breakdown_data']['labels']).to eq new_labels
+      expect(response.parsed_body['column_distributions']['labels']).to eq new_labels
     }
 
     it('should respond with 200') { expect(response).to have_http_status 200 }
@@ -545,13 +545,39 @@ describe GradeEntryFormsController do
       name = "#{grade_entry_form_with_data.short_identifier}: #{grade_entry_form_with_data.description}"
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:role).where('roles.hidden': false).count
       expected_summary = { name: name,
-                           date: I18n.l(grade_entry_form_with_data.due_date),
-                           average: grade_entry_form_with_data.results_average,
-                           median: grade_entry_form_with_data.results_median,
-                           num_entries: "#{grade_entry_form_with_data.count_non_nil}/#{total_students}",
+                           average: grade_entry_form_with_data.results_average(points: true) || 0,
+                           median: grade_entry_form_with_data.results_median(points: true) || 0,
+                           standard_deviation: grade_entry_form_with_data.results_standard_deviation || 0,
+                           max_mark: grade_entry_form_with_data.max_mark,
+                           num_entries: grade_entry_form_with_data.count_non_nil,
+                           groupings_size: total_students,
                            num_fails: grade_entry_form_with_data.results_fails,
-                           num_zeros: grade_entry_form.results_zeros }
-      expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
+                           num_zeros: grade_entry_form_with_data.results_zeros }
+      expect(response.parsed_body['summary']).to eq expected_summary.as_json
+    end
+
+    it 'should contain the correct column_summary keys' do
+      keys = response.parsed_body['column_summary'].first.keys
+      expect(keys).to contain_exactly('name',
+                                      'average',
+                                      'median',
+                                      'max_mark',
+                                      'standard_deviation',
+                                      'position',
+                                      'num_zeros')
+    end
+
+    it 'should return the expected column_summary' do
+      summary = response.parsed_body['column_summary'].first
+      column_item = grade_entry_form_with_data.grade_entry_items.first
+      expected = { name: column_item.name,
+                   average: column_item.average || 0,
+                   median: column_item.median || 0,
+                   max_mark: column_item.out_of || 0,
+                   standard_deviation: column_item.standard_deviation || 0,
+                   position: column_item.position,
+                   num_zeros: column_item.grades_array.count(&:zero?) }
+      expect(summary).to eq expected.as_json
     end
   end
 

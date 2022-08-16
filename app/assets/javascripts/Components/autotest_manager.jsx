@@ -76,8 +76,8 @@ class AutotestManager extends React.Component {
     this.setState({form_changed: value});
   };
 
-  handleCreateFiles = (files, unzip) => {
-    const prefix = this.state.uploadTarget || "";
+  handleCreateFiles = (files, path, unzip) => {
+    const prefix = path || this.state.uploadTarget || "";
     this.setState({showFileUploadModal: false, uploadTarget: undefined});
     let data = new FormData();
     Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
@@ -364,6 +364,7 @@ class AutotestManager extends React.Component {
             files={this.state.files}
             noFilesMessage={I18n.t("submissions.no_files_available")}
             readOnly={!this.state.enable_test}
+            onCreateFiles={this.handleCreateFiles}
             onDeleteFile={this.handleDeleteFile}
             onCreateFolder={this.handleCreateFolder}
             onRenameFolder={typeof this.handleCreateFolder === "function" ? () => {} : undefined}
