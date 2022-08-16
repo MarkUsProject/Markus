@@ -1,7 +1,5 @@
 import React from "react";
 import {render} from "react-dom";
-// This seems to be the only file that explicitly requires this import.
-import * as I18n from "i18n-js";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 
