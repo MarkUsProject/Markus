@@ -2208,7 +2208,7 @@ describe Assignment do
   end
   describe '#starter_file_path' do
     let(:assignment) { create :assignment }
-    it 'should return a path that includes the repository folder' do
+    it 'should return a path that includes the assignment id' do
       expect(File.basename(assignment.starter_file_path)).to eq assignment.id.to_s
     end
   end
