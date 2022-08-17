@@ -1,6 +1,8 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
 - Added drag and drop functionality to upload starter files and automated tests. (#6117)
 - Added new summary statistics display for grade entry forms and grade entry column items (#6118)
