@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
