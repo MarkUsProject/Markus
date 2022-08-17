@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
 
 ## [v2.1.1]
