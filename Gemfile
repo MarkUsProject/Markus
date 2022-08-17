@@ -79,6 +79,7 @@ group :development do
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
   gem 'bullet'
+  gem 'listen' # to listen for changes in i18n-js files
   gem 'rails-erd'
 end
 
