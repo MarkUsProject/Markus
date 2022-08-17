@@ -39,7 +39,7 @@ describe("GraderDistributionModal", () => {
   it("should close on submit", () => {
     wrapper = getWrapper(props);
 
-    wrapper.find("#grader-form-random").simulate("submit", fakeEvent);
+    wrapper.find("form").simulate("submit", fakeEvent);
 
     expect(props.onSubmit).toHaveBeenCalled();
     expect(props.isOpen).toBeFalsy();
@@ -48,7 +48,7 @@ describe("GraderDistributionModal", () => {
   it("should call setWeighting with value of 1 on build", () => {
     wrapper = getWrapper(props);
 
-    wrapper.find("#grader-form-random").simulate("submit", fakeEvent);
+    wrapper.find("form").simulate("submit", fakeEvent);
     expect(props.onSubmit).toHaveBeenCalledWith({
       1: "1",
       2: "1",
