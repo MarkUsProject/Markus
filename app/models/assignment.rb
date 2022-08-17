@@ -1013,9 +1013,8 @@ class Assignment < Assessment
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
     group_data.each do |group_id, group_name, ta, hidden, count|
-      h = hidden.nil? ? true : hidden
       groups[[group_id, group_name, count]]
-      groups[[group_id, group_name, count]] << [ta, h] unless ta.nil?
+      groups[[group_id, group_name, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
     group_sections = {}
     self.groupings.includes(:section).find_each do |g|
@@ -1027,19 +1026,18 @@ class Assignment < Assessment
         group_name: k[1],
         criteria_coverage_count: k[2],
         section: group_sections[k[0]],
-        graders: v[0],
-        inactive: v[1]
+        graders: v
       }
     end
 
     criterion_data =
       self.criteria.left_outer_joins(tas: :user)
           .pluck('criteria.name', 'criteria.position',
-                 'criteria.assigned_groups_count', 'users.user_name')
+                 'criteria.assigned_groups_count', 'users.user_name', 'roles.hidden')
     criteria = Hash.new { |h, k| h[k] = [] }
-    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta|
+    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta, hidden|
       criteria[[name, pos, count]]
-      criteria[[name, pos, count]] << ta unless ta.nil?
+      criteria[[name, pos, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
     criteria = criteria.map do |k, v|
       {

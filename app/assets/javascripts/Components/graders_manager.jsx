@@ -335,7 +335,6 @@ class GradersManager extends React.Component {
                   sections={this.state.sections}
                   numCriteria={this.state.criteria.length}
                   showCoverage={this.state.assign_graders_to_criteria}
-                  showHidden={this.state.show_hidden}
                 />
               </TabPanel>
               <TabPanel>
@@ -500,14 +499,6 @@ class RawGroupsTable extends React.Component {
   getColumns = () => {
     return [
       {
-        accessor: "inactive",
-        id: "inactive",
-        width: 0,
-        className: "rt-hidden",
-        headerClassName: "rt-hidden",
-        resizable: false,
-      },
-      {
         show: false,
         accessor: "_id",
         id: "_id",
@@ -544,9 +535,11 @@ class RawGroupsTable extends React.Component {
         Header: I18n.t("activerecord.models.ta.other"),
         accessor: "graders",
         Cell: row => {
-          return row.value.map(ta => (
-            <div key={`${row.original._id}-${ta}`}>
-              {ta}
+          return row.value.map(ta_data => (
+            <div key={`${row.original._id}-${ta_data.grader}`}>
+              {ta_data.hidden
+                ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
+                : ta_data.grader}
               <a
                 href="#"
                 className="remove-icon"
@@ -575,19 +568,6 @@ class RawGroupsTable extends React.Component {
     ];
   };
 
-  static getDerivedStateFromProps(props, state) {
-    let filtered = state.filtered.filter(group => group.id !== "inactive");
-
-    if (!props.showHidden) {
-      filtered.push({id: "inactive", value: false});
-    }
-    return {filtered};
-  }
-
-  onFilteredChange = filtered => {
-    this.setState({filtered});
-  };
-
   render() {
     return (
       <CheckboxTable
@@ -601,8 +581,6 @@ class RawGroupsTable extends React.Component {
         ]}
         loading={this.props.loading}
         filterable
-        filtered={this.state.filtered}
-        onFilteredChange={this.onFilteredChange}
         {...this.props.getCheckboxProps()}
       />
     );
@@ -626,9 +604,11 @@ class RawCriteriaTable extends React.Component {
         Header: I18n.t("activerecord.models.ta.other"),
         accessor: "graders",
         Cell: row => {
-          return row.value.map(ta => (
-            <div key={`${row.original._id}-${ta}`}>
-              {ta}
+          return row.value.map(ta_data => (
+            <div key={`${row.original._id}-${ta_data.grader}`}>
+              {ta_data.hidden
+                ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
+                : ta_data.grader}
               <a
                 href="#"
                 className="remove-icon"
