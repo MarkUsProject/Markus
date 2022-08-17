@@ -1,8 +1,9 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
-import ReactTable from "react-table";
-import PropTypes from "prop-types";
 import {chartScales} from "./Helpers/chart_helpers";
+import {AssessmentChart} from "./Assessment_Chart/assessment_chart";
+import {GradeBreakdownChart} from "./Assessment_Chart/grade_breakdown_chart";
+import {FractionStat} from "./Assessment_Chart/fraction_stat";
 
 export class AssignmentChart extends React.Component {
   constructor(props) {
@@ -23,44 +24,17 @@ export class AssignmentChart extends React.Component {
           labels: [],
           datasets: [],
         },
-        options: {
-          scales: chartScales(),
-        },
       },
       ta_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
         },
-        options: {
-          plugins: {
-            legend: {
-              display: true,
-            },
-          },
-          scales: chartScales(),
-        },
       },
       criteria_grade_distribution: {
         data: {
           labels: [],
           datasets: [],
-        },
-        options: {
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                // Ensure criteria labels are sorted in position order
-                sort: (a, b) => {
-                  const itemA = this.state.criteria_summary.find(item => item.name === a.text);
-                  const itemB = this.state.criteria_summary.find(item => item.name === b.text);
-                  return itemA.position - itemB.position;
-                },
-              },
-            },
-          },
-          scales: chartScales(),
         },
       },
     };
@@ -88,27 +62,21 @@ export class AssignmentChart extends React.Component {
         this.setState({
           summary: res.summary,
           assignment_grade_distribution: {
-            ...this.state.assignment_grade_distribution,
-            data: res.assignment_data,
+            data: res.grade_distribution,
           },
           ta_grade_distribution: {
-            ...this.state.ta_grade_distribution,
             data: res.ta_data,
           },
         });
 
-        if (typeof this.props.set_assessment_name === "function") {
-          this.props.set_assessment_name(res.summary.name);
-        }
         if (this.props.show_criteria_stats) {
-          for (const [index, element] of res.criteria_data.datasets.entries()) {
+          for (const [index, element] of res.criteria_distributions.datasets.entries()) {
             element.backgroundColor = colours[index];
           }
           this.setState({
             criteria_summary: res.criteria_summary,
             criteria_grade_distribution: {
-              ...this.state.criteria_grade_distribution,
-              data: res.criteria_data,
+              data: res.criteria_distributions,
             },
           });
         }
@@ -147,20 +115,90 @@ export class AssignmentChart extends React.Component {
       );
     }
 
-    const assignment_graph = (
+    let criteria_graph = "";
+    if (this.props.show_criteria_stats) {
+      criteria_graph = (
+        <GradeBreakdownChart
+          show_stats={true}
+          summary={this.state.criteria_summary}
+          num_groupings={this.state.summary.groupings_size}
+          chart_title={I18n.t("criteria_grade_distribution")}
+          distribution_data={this.state.criteria_grade_distribution.data}
+          item_name={I18n.t("activerecord.models.criterion.one")}
+          create_link={Routes.course_assignment_criteria_path(
+            this.props.course_id,
+            this.props.assessment_id
+          )}
+        />
+      );
+    }
+
+    let ta_grade_distribution_chart = (
+      <div className="distribution-graph">
+        <h3>{I18n.t("grader_distribution")}</h3>
+        <h4>
+          (
+          <a
+            href={Routes.course_assignment_graders_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {I18n.t("graders.actions.assign_grader")}
+          </a>
+          )
+        </h4>
+      </div>
+    );
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
+      const ta_grade_chart_options = {
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+        scales: chartScales(),
+      };
+      ta_grade_distribution_chart = (
+        <div className="distribution-graph">
+          <h3>{I18n.t("grader_distribution")}</h3>
+          <Bar
+            data={this.state.ta_grade_distribution.data}
+            options={ta_grade_chart_options}
+            width="400"
+            height="350"
+          />
+          <p>
+            <a
+              href={Routes.grader_summary_course_assignment_graders_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("activerecord.models.ta.other")}
+            </a>
+          </p>
+        </div>
+      );
+    }
+
+    return (
       <React.Fragment>
-        <div className="flex-row">
-          <div className="distribution-graph">
-            <h3>{I18n.t("grade_distribution")}</h3>
-            <Bar
-              data={this.state.assignment_grade_distribution.data}
-              options={this.state.assignment_grade_distribution.options}
-              width="500"
-              height="450"
-            />
-          </div>
-          <div className="flex-row-expand">
-            <div className="grid-2-col">
+        <h2>
+          <a
+            href={Routes.browse_course_assignment_submissions_path(
+              this.props.course_id,
+              this.props.assessment_id
+            )}
+          >
+            {this.props.show_chart_header ? this.state.summary.name : ""}
+          </a>
+        </h2>
+        <AssessmentChart
+          summary={this.state.summary}
+          assessment_data={this.state.assignment_grade_distribution.data}
+          additional_assessment_stats={
+            <React.Fragment>
               <span className="summary-stats-label">{I18n.t("num_groups")}</span>
               <span>{this.state.summary.groupings_size}</span>
               <span className="summary-stats-label">{I18n.t("num_students_in_group")}</span>
@@ -178,213 +216,13 @@ export class AssignmentChart extends React.Component {
                 numerator={this.state.summary.num_submissions_graded}
                 denominator={this.state.summary.groupings_size}
               />
-              <CoreStatistics
-                average={this.state.summary.average}
-                median={this.state.summary.median}
-                standard_deviation={this.state.summary.standard_deviation}
-                max_mark={this.state.summary.max_mark}
-                num_fails={this.state.summary.num_fails}
-                num_zeros={this.state.summary.num_zeros}
-                num_groupings={this.state.summary.groupings_size}
-              />
-              {outstanding_remark_request_link}
-            </div>
-          </div>
-        </div>
-      </React.Fragment>
-    );
-
-    let criteria_graph = "";
-    if (this.props.show_criteria_stats && this.state.criteria_summary.length > 0) {
-      criteria_graph = (
-        <div className="flex-row">
-          <div className="distribution-graph">
-            <h3>{I18n.t("criteria_grade_distribution")}</h3>
-            <Bar
-              data={this.state.criteria_grade_distribution.data}
-              options={this.state.criteria_grade_distribution.options}
-              width="400"
-              height="350"
-            />
-          </div>
-          <div className="flex-row-expand">
-            <div className="criteria-summary-table">
-              <ReactTable
-                data={this.state.criteria_summary}
-                columns={[
-                  {
-                    Header: I18n.t("activerecord.models.criterion.one"),
-                    accessor: "name",
-                    minWidth: 150,
-                  },
-                  {
-                    Header: I18n.t("average"),
-                    accessor: "average",
-                    sortable: false,
-                    filterable: false,
-                    Cell: row => (
-                      <FractionStat
-                        numerator={row.original.average}
-                        denominator={row.original.max_mark}
-                      />
-                    ),
-                  },
-                ]}
-                defaultSorted={[{id: "position"}]}
-                SubComponent={row => (
-                  <div className="criteria-stat-breakdown grid-2-col">
-                    <CoreStatistics
-                      average={row.original.average}
-                      median={row.original.median}
-                      standard_deviation={row.original.standard_deviation}
-                      max_mark={row.original.max_mark}
-                      num_zeros={row.original.num_zeros}
-                      num_groupings={this.state.summary.groupings_size}
-                    />
-                  </div>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-      );
-    } else if (this.props.show_criteria_stats) {
-      criteria_graph = (
-        <div className="distribution-graph">
-          <h3>{I18n.t("criteria_grade_distribution")}</h3>
-          <h4>
-            (
-            <a
-              href={Routes.course_assignment_criteria_path(
-                this.props.course_id,
-                this.props.assessment_id
-              )}
-            >
-              {I18n.t("helpers.submit.create", {
-                model: I18n.t("activerecord.models.criterion.one"),
-              })}
-            </a>
-            )
-          </h4>
-        </div>
-      );
-    }
-
-    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
-      return (
-        <React.Fragment>
-          {assignment_graph}
-          {criteria_graph}
-          <div className="distribution-graph">
-            <h3>{I18n.t("grader_distribution")}</h3>
-            <Bar
-              data={this.state.ta_grade_distribution.data}
-              options={this.state.ta_grade_distribution.options}
-              width="400"
-              height="350"
-            />
-            <p>
-              <a
-                href={Routes.grader_summary_course_assignment_graders_path(
-                  this.props.course_id,
-                  this.props.assessment_id
-                )}
-              >
-                {I18n.t("activerecord.models.ta.other")}
-              </a>
-            </p>
-          </div>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          {assignment_graph}
-          {criteria_graph}
-          <div className="distribution-graph">
-            <h3>{I18n.t("grader_distribution")}</h3>
-            <h4>
-              (
-              <a
-                href={Routes.course_assignment_graders_path(
-                  this.props.course_id,
-                  this.props.assessment_id
-                )}
-              >
-                {I18n.t("graders.actions.assign_grader")}
-              </a>
-              )
-            </h4>
-          </div>
-        </React.Fragment>
-      );
-    }
-  }
-}
-
-class FractionStat extends React.Component {
-  render() {
-    const numerator = +(Number(this.props.numerator) || 0).toFixed(2),
-      denominator = +(Number(this.props.denominator) || 0).toFixed(2);
-    let result = "0.00";
-    if (denominator !== 0) {
-      result = ((Number(this.props.numerator) / Number(this.props.denominator) || 0) * 100).toFixed(
-        2
-      );
-    }
-    return (
-      <span>
-        {numerator} / {denominator} ({result}%)
-      </span>
-    );
-  }
-}
-
-class CoreStatistics extends React.Component {
-  render() {
-    const max_mark_value = Number(this.props.max_mark) || 0;
-    let percent_standard_deviation = "0.00";
-    if (max_mark_value !== 0) {
-      percent_standard_deviation = (
-        (100 / max_mark_value) *
-        (Number(this.props.standard_deviation) || 0)
-      ).toFixed(2);
-    }
-    let num_fails = "";
-    if (this.props.num_fails !== undefined) {
-      num_fails = (
-        <React.Fragment>
-          <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-          <FractionStat numerator={this.props.num_fails} denominator={this.props.num_groupings} />
-        </React.Fragment>
-      );
-    }
-
-    return (
-      <React.Fragment>
-        <span className="summary-stats-label">{I18n.t("average")}</span>
-        <FractionStat numerator={this.props.average} denominator={this.props.max_mark} />
-        <span className="summary-stats-label">{I18n.t("median")}</span>
-        <FractionStat numerator={this.props.median} denominator={this.props.max_mark} />
-        <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
-        <span>
-          {(this.props.standard_deviation || 0).toFixed(2)}
-          &nbsp;({percent_standard_deviation}%)
-        </span>
-        {num_fails}
-        <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-        <FractionStat numerator={this.props.num_zeros} denominator={this.props.num_groupings} />
+            </React.Fragment>
+          }
+          outstanding_remark_request_link={outstanding_remark_request_link}
+        />
+        {criteria_graph}
+        {ta_grade_distribution_chart}
       </React.Fragment>
     );
   }
 }
-
-CoreStatistics.propTypes = {
-  average: PropTypes.number.isRequired,
-  median: PropTypes.number.isRequired,
-  standard_deviation: PropTypes.number.isRequired,
-  max_mark: PropTypes.number.isRequired,
-  num_fails: PropTypes.number,
-  num_zeros: PropTypes.number.isRequired,
-  num_groupings: PropTypes.number.isRequired,
-};

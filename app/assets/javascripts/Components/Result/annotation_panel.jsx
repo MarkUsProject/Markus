@@ -39,7 +39,6 @@ export class AnnotationPanel extends React.Component {
         <TextForm
           initialValue={this.props.overallComment}
           persistChanges={this.props.updateOverallComment}
-          previewId={"overall_comment_preview"}
         />
       );
     }

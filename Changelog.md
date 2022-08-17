@@ -1,10 +1,15 @@
 # Changelog
 
 ## [unreleased]
+- Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
+
+## [v2.1.1]
+- Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
+- Added drag and drop functionality to upload starter files and automated tests. (#6117)
+- Added new summary statistics display for grade entry forms and grade entry column items (#6118)
 - Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
 - Enable bulk removal of students from section in student table (#6145)
 - Enable updating student active/inactive status in student edit form (#6145)
-- Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 
 ## [v2.1.0]
 - Remove unmaintained locales (#5727)

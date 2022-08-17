@@ -1,5 +1,3 @@
-import * as I18n from "i18n-js";
-
 export function chartScales() {
   let bars = document.documentElement.style.getPropertyValue("--primary_one");
   let ticksColor = document.documentElement.style.getPropertyValue("--line");
