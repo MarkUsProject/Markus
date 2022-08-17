@@ -578,7 +578,7 @@ class RawGroupsTable extends React.Component {
   static getDerivedStateFromProps(props, state) {
     let filtered = state.filtered.filter(group => group.id !== "inactive");
 
-    if (!props.showInactive) {
+    if (!props.showHidden) {
       filtered.push({id: "inactive", value: false});
     }
     return {filtered};

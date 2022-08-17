@@ -994,25 +994,28 @@ class Assignment < Assessment
                       .group('user_name')
                       .count
     graders = self.course.tas.joins(:user)
-                  .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
+                  .pluck(:user_name, :first_name, :last_name, 'roles.id',
+                         'roles.hidden').map do |user_name, first_name, last_name, id, hidden|
       {
         user_name: user_name,
         first_name: first_name,
         last_name: last_name,
         groups: grader_data[user_name] || 0,
         _id: id,
-        criteria: ta_counts[id] || 0
+        criteria: ta_counts[id] || 0,
+        hidden: hidden
       }
     end
 
     group_data = self.groupings
                      .left_outer_joins(:group, tas: :user)
-                     .pluck('groupings.id', 'groups.group_name', 'users.user_name',
+                     .pluck('groupings.id', 'groups.group_name', 'users.user_name', 'roles.hidden',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
-    group_data.each do |group_id, group_name, ta, count|
+    group_data.each do |group_id, group_name, ta, hidden, count|
+      h = hidden.nil? ? true : hidden
       groups[[group_id, group_name, count]]
-      groups[[group_id, group_name, count]] << ta unless ta.nil?
+      groups[[group_id, group_name, count]] << [ta, h] unless ta.nil?
     end
     group_sections = {}
     self.groupings.includes(:section).find_each do |g|
@@ -1024,7 +1027,8 @@ class Assignment < Assessment
         group_name: k[1],
         criteria_coverage_count: k[2],
         section: group_sections[k[0]],
-        graders: v
+        graders: v[0],
+        inactive: v[1]
       }
     end
 
