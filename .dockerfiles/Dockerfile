@@ -18,14 +18,11 @@ RUN apt-get update -qq && \
     postgresql-client-$PG_MAJOR \
     tzdata \
     libpq-dev \
-    ruby-svn \
     ghostscript \
     imagemagick \
     libmagickwand-dev \
     cmake \
-    libaprutil1-dev \
     libssl-dev \
-    swig \
     graphviz \
     git \
     python3-venv \

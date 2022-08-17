@@ -38,8 +38,6 @@ namespace :markus do
     repos_dir = archive_dir + 'repos'
     if Settings.repository.type == 'git'
       archive_copy(File.join(Settings.repository.storage, 'bare'), repos_dir, rev: rev)
-    elsif Settings.repository.type == 'svn'
-      archive_copy(Settings.repository.storage, repos_dir, rev: rev)
     else
       puts "Cannot archive #{Settings.repository.type} type repositories"
     end
