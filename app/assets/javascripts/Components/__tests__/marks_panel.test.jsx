@@ -422,7 +422,7 @@ describe("RubricCriterionInput", () => {
 
   it("should handleChange on clicking a rubric level", () => {
     const wrapper = getWrapper(basicProps);
-    console.log(wrapper.find(".rubric-level"));
+
     const level1 = wrapper.find(`.rubric-level`).at(0);
     const level2 = wrapper.find(`.rubric-level`).at(1);
 
