@@ -23,6 +23,26 @@ describe InstructorsController do
         get_as instructor, :index, params: { course_id: course.id }
         expect(response.status).to eq(200)
       end
+      it 'retrieves correct data' do
+        get_as instructor, :index, params: { course_id: course.id }
+        response_data = response.parsed_body['data']
+        expected_data = current_course.instructors
+                                      .joins(:user)
+                                      .where(type: Instructor.name)
+                                      .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+                                      .as_json
+        expect(response_data).to eq(expected_data)
+      end
+      it 'retrieves correct hidden count' do
+        get_as instructor, :index, params: { course_id: course.id }
+        response_data = response.parsed_body['counts']
+        expected_data = {
+          all: 1,
+          active: 1,
+          inactive: 0
+        }.as_json
+        expect(response_data).to eq(expected_data)
+      end
     end
 
     context '#create' do

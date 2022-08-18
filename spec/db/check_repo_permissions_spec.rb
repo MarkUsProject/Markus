@@ -39,6 +39,12 @@ describe 'Check Repo Permissions Function' do
         expect(script_success?).to be_falsy
       end
     end
+    context 'when the instructor is hidden' do
+      let(:role) { create :instructor, hidden: true }
+      it 'should fail' do
+        expect(script_success?).to be_falsy
+      end
+    end
   end
   context 'role is an AdminRole' do
     let(:role) { create :admin_role }
@@ -72,6 +78,12 @@ describe 'Check Repo Permissions Function' do
           it 'should succeed' do
             expect(script_success?).to be_truthy
           end
+          context 'when the ta is hidden' do
+            before { role.update!(hidden: true) }
+            it 'should fail' do
+              expect(script_success?).to be_falsy
+            end
+          end
         end
       end
       context 'when the Ta is not assigned as a grader' do
@@ -101,6 +113,12 @@ describe 'Check Repo Permissions Function' do
           context 'the assignment is not hidden for everyone' do
             it 'should succeed' do
               expect(script_success?).to be_truthy
+            end
+            context 'when the student is hidden' do
+              before { role.update!(hidden: true) }
+              it 'should fail' do
+                expect(script_success?).to be_falsy
+              end
             end
           end
           context 'the assignment is hidden for everyone' do

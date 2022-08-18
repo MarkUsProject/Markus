@@ -27,6 +27,7 @@ en:
     not_successfully_added_message_5: Each line has the required fields specified near the upload form.
     status: Status
   tas:
+    display_inactive: Display inactive graders
     edit: Edit a Grader
     help:
       manage_graders: Create graders.

@@ -163,4 +163,29 @@ describe TasController do
       end
     end
   end
+
+  context '#index' do
+    it 'respond with success on index' do
+      get_as instructor, :index, params: { course_id: course.id }
+      expect(response.status).to eq(200)
+    end
+    it 'retrieves correct data' do
+      get_as instructor, :index, params: { course_id: course.id }
+      response_data = response.parsed_body['data']
+      expected_data = current_course.tas.joins(:user)
+                                    .pluck_to_hash(:id, :user_name, :first_name,
+                                                   :last_name, :email, :hidden).as_json
+      expect(response_data).to eq(expected_data)
+    end
+    it 'retrieves correct hidden count' do
+      get_as instructor, :index, params: { course_id: course.id }
+      response_data = response.parsed_body['counts']
+      expected_data = {
+        all: current_course.tas.size,
+        active: current_course.tas.active.size,
+        inactive: current_course.tas.inactive.size
+      }.as_json
+      expect(response_data).to eq(expected_data)
+    end
+  end
 end

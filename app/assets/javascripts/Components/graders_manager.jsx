@@ -675,17 +675,17 @@ class GradersActionBox extends React.Component {
     }
     return (
       <div className="rt-action-box">
-        <span>
+        <span className={"flex-row-expand"}>
           <input
             id="show_hidden"
             name="show_hidden"
             type="checkbox"
             checked={this.props.showHidden}
             onChange={this.props.updateShowHidden}
-            style={{marginLeft: "5px", marginRight: "5px"}}
+            className={"hide-user-checkbox"}
           />
           <label title={showHiddenTooltip} htmlFor="show_hidden">
-            {I18n.t("students.display_inactive")}
+            {I18n.t("tas.display_inactive")}
           </label>
         </span>
         <button className="assign-all-button" onClick={this.props.assignAll}>
