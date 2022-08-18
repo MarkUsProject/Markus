@@ -565,13 +565,13 @@ describe SubmissionsController do
     end
 
     # Stopping a curious student
-    it 'should not be able download svn checkout commands' do
+    it 'should not be able download repository checkout commands' do
       get_as @student, :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: @assignment.id }
 
       is_expected.to respond_with(:forbidden)
     end
 
-    it 'should not be able to download the svn repository list' do
+    it 'should not be able to download the repository list' do
       get_as @student, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
 
       is_expected.to respond_with(:forbidden)
@@ -634,12 +634,12 @@ describe SubmissionsController do
       expect(response).to render_template('layouts/assignment_content')
     end
 
-    it 'should be able to download the svn checkout commands' do
+    it 'should be able to download the repository checkout commands' do
       get_as grader, :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:forbidden)
     end
 
-    it 'should be able to download the svn repository list' do
+    it 'should be able to download the repository list' do
       get_as grader, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:forbidden)
     end
@@ -746,13 +746,13 @@ describe SubmissionsController do
       expect(response).to render_template(layout: 'layouts/assignment_content')
     end
 
-    it 'should be able to download the svn checkout commands' do
+    it 'should be able to download the repository checkout commands' do
       get_as @instructor, :download_repo_checkout_commands,
              params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
     end
 
-    it 'should be able to download the svn repository list' do
+    it 'should be able to download the repository list' do
       get_as @instructor, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
     end
@@ -1187,12 +1187,12 @@ describe SubmissionsController do
 
   describe 'An unauthenticated or unauthorized role' do
     let(:assignment) { create :assignment }
-    it 'should not be able to download the svn checkout commands' do
+    it 'should not be able to download the repository checkout commands' do
       get :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: assignment.id }
       is_expected.to respond_with(:redirect)
     end
 
-    it 'should not be able to download the svn repository list' do
+    it 'should not be able to download the repository list' do
       get :download_repo_list, params: { course_id: course.id, assignment_id: assignment.id }
       is_expected.to respond_with(:redirect)
     end

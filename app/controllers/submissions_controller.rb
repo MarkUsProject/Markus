@@ -701,8 +701,8 @@ class SubmissionsController < ApplicationController
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
     ssh_url = allowed_to?(:view?, with: KeyPairPolicy) && params[:url_type] == 'ssh'
-    svn_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
-    send_data svn_commands.join("\n"),
+    checkout_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
+    send_data checkout_commands.join("\n"),
               disposition: 'attachment',
               type: 'text/plain',
               filename: "#{assignment.short_identifier}_repo_checkouts"

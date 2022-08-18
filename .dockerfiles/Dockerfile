@@ -19,14 +19,11 @@ RUN apt-get update -qq && \
     tzdata \
     libpq-dev \
     libv8-dev \
-    ruby-svn \
     ghostscript \
     imagemagick \
     libmagickwand-dev \
     cmake \
-    libaprutil1-dev \
     libssl-dev \
-    swig \
     graphviz \
     git \
     python3-venv \

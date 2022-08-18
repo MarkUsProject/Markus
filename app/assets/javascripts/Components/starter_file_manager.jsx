@@ -73,8 +73,8 @@ class StarterFileManager extends React.Component {
       .then(this.fetchData);
   };
 
-  handleCreateFiles = (groupUploadTarget, files, unzip) => {
-    const prefix = this.state.dirUploadTarget || "";
+  handleCreateFiles = (groupUploadTarget, files, path, unzip) => {
+    const prefix = path || this.state.dirUploadTarget || "";
     let data = new FormData();
     Array.from(files).forEach(f => data.append("new_files[]", f, f.name));
     data.append("path", prefix);
@@ -213,6 +213,7 @@ class StarterFileManager extends React.Component {
                 files={files}
                 noFilesMessage={I18n.t("submissions.no_files_available")}
                 readOnly={false}
+                onCreateFiles={this.handleCreateFiles}
                 onDeleteFile={this.handleDeleteFile}
                 onCreateFolder={this.handleCreateFolder}
                 onRenameFolder={
@@ -612,6 +613,7 @@ class StarterFileFileManager extends React.Component {
       onDeleteFile: (...args) => this.props.onDeleteFile(this.props.groupUploadTarget, ...args),
       onCreateFolder: (...args) => this.props.onCreateFolder(this.props.groupUploadTarget, ...args),
       onDeleteFolder: (...args) => this.props.onDeleteFolder(this.props.groupUploadTarget, ...args),
+      onCreateFiles: (...args) => this.props.onCreateFiles(this.props.groupUploadTarget, ...args),
       onActionBarAddFileClick: (...args) =>
         this.props.onActionBarAddFileClick(this.props.groupUploadTarget, ...args),
     };

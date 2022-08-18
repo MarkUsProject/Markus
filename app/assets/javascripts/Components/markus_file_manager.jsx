@@ -6,7 +6,13 @@ import ClassNames from "classnames";
 import {HTML5Backend, NativeTypes} from "react-dnd-html5-backend";
 import {DndProvider, DragSource, DropTarget} from "react-dnd";
 
-import {RawFileBrowser, Headers, FileRenderers, BaseFileConnectors} from "react-keyed-file-browser";
+import {
+  RawFileBrowser,
+  Headers,
+  FileRenderers,
+  BaseFileConnectors,
+  FolderRenderers,
+} from "react-keyed-file-browser";
 
 class RawFileManager extends RawFileBrowser {
   handleActionBarAddFileClick = (event, selectedItem) => {
@@ -230,7 +236,7 @@ class RawFileManager extends RawFileBrowser {
   }
 }
 
-class FileManagerHeader extends Headers.TableHeader {
+class RawFileManagerHeader extends Headers.TableHeader {
   render() {
     const header = (
       <tr
@@ -250,9 +256,7 @@ class FileManagerHeader extends Headers.TableHeader {
       typeof this.props.browserProps.moveFile === "function" ||
       typeof this.props.browserProps.moveFolder === "function"
     ) {
-      return header;
-      // TODO: look into activating the following instead.
-      // return this.props.connectDropTarget(header);
+      return this.props.connectDropTarget(header);
     } else {
       return header;
     }
@@ -378,6 +382,18 @@ FileManagerFile = DragSource(
     BaseFileConnectors.targetSource,
     BaseFileConnectors.targetCollect
   )(FileManagerFile)
+);
+
+const FileManagerHeader = DragSource(
+  "file",
+  BaseFileConnectors.dragSource,
+  BaseFileConnectors.dragCollect
+)(
+  DropTarget(
+    ["file", "folder", NativeTypes.FILE],
+    BaseFileConnectors.targetSource,
+    BaseFileConnectors.targetCollect
+  )(RawFileManagerHeader)
 );
 
 class FileManager extends React.Component {

@@ -1,9 +1,10 @@
 <% # Manage grades page %>
+<% content_for :title, t('grade_entry_form_summary', short_id: @grade_entry_form.short_identifier) %>
 <% content_for :head do %>
 
   <%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
-    makeMarksSpreadsheet(
+    makeGradeEntryFormSummary(
       document.getElementById('react_grades_table'),
       {
         course_id: <%= @current_course.id %>,
@@ -11,7 +12,7 @@
         show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
         max_mark: <%= @grade_entry_form.max_mark %>,
         show_sections: <%= @current_course.sections.exists? %>,
-        can_release: <%= allowed_to? :manage? %>
+        can_manage: <%= allowed_to? :manage? %>
       }
     );
   })

@@ -380,7 +380,7 @@ class AssignmentsController < ApplicationController
         data: assignment.grade_distribution_array
       }
     ]
-    assignment_data = { labels: assignment_labels, datasets: assignment_datasets }
+    grade_distribution = { labels: assignment_labels, datasets: assignment_datasets }
     ta_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
     ta_datasets = assignment.tas.map do |ta|
       num_marked_label = t('submissions.how_many_marked',
@@ -391,7 +391,7 @@ class AssignmentsController < ApplicationController
     end
     json_data = {
       summary: summary,
-      assignment_data: assignment_data,
+      grade_distribution: grade_distribution,
       ta_data: { labels: ta_labels, datasets: ta_datasets }
     }
     if params[:get_criteria_data] == 'true'
@@ -407,14 +407,14 @@ class AssignmentsController < ApplicationController
           name: criterion.name,
           average: criterion.average || 0,
           median: criterion.median || 0,
-          max_mark: criterion.max_mark || 0,
+          max_mark: criterion.max_mark.to_f || 0,
           standard_deviation: criterion.standard_deviation || 0,
           position: criterion.position,
           num_zeros: criterion_grades.count(&:zero?)
         }
       end
       json_data[:criteria_summary] = criteria_summary
-      json_data[:criteria_data] = { labels: criteria_labels, datasets: criteria_datasets }
+      json_data[:criteria_distributions] = { labels: criteria_labels, datasets: criteria_datasets }
     end
     render json: json_data
   end

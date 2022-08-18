@@ -11,7 +11,7 @@ describe KeyPairPolicy, keep_memory_repos: true do
     end
     failed 'repo type is not git' do
       before do
-        allow(Settings.repository).to receive(:type).and_return('svn')
+        allow(Settings.repository).to receive(:type).and_return('mem')
         allow(Settings).to receive(:enable_key_storage).and_return(true)
       end
     end

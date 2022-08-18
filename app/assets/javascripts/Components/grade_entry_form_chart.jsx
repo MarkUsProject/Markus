@@ -1,32 +1,35 @@
 import React from "react";
-import {Bar} from "react-chartjs-2";
-
-import {chartScales} from "./Helpers/chart_helpers";
+import {AssessmentChart} from "./Assessment_Chart/assessment_chart";
+import {GradeBreakdownChart} from "./Assessment_Chart/grade_breakdown_chart";
+import {FractionStat} from "./Assessment_Chart/fraction_stat";
 
 export class GradeEntryFormChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distribution_data: {
-        labels: [],
-        datasets: [],
-        options: {
-          scales: chartScales(),
+      summary: {
+        average: null,
+        median: null,
+        num_submissions_collected: null,
+        num_submissions_graded: null,
+        num_fails: null,
+        num_zeros: null,
+        groupings_size: null,
+      },
+      grade_entry_form_distribution: {
+        data: {
+          labels: [],
+          datasets: [],
         },
       },
-      info_data: {},
-      column_data: {
-        labels: [],
-        datasets: [],
-        options: {
-          plugins: {
-            legend: {
-              display: true,
-            },
-          },
-          scales: chartScales(),
+      column_summary: [],
+      column_grade_distribution: {
+        data: {
+          labels: [],
+          datasets: [],
         },
       },
+      loading: true,
     };
   }
 
@@ -43,19 +46,19 @@ export class GradeEntryFormChart extends React.Component {
     )
       .then(data => data.json())
       .then(res => {
-        for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
+        for (const [index, element] of res.column_distributions.datasets.entries()) {
           element.backgroundColor = colours[index];
         }
         this.setState({
-          distribution_data: {
-            ...res.grade_dist_data,
-            options: this.state.distribution_data.options,
+          summary: res.summary,
+          column_summary: res.column_summary,
+          grade_entry_form_distribution: {
+            data: res.grade_distribution,
           },
-          column_data: {
-            ...res.column_breakdown_data,
-            options: this.state.column_data.options,
+          column_grade_distribution: {
+            data: res.column_distributions,
           },
-          info_data: res.info_summary,
+          loading: false,
         });
       });
   };
@@ -67,57 +70,50 @@ export class GradeEntryFormChart extends React.Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <h2>
-          <a
-            href={Routes.edit_course_grade_entry_form_path(
+    if (this.state.loading) {
+      return "";
+    } else {
+      return (
+        <React.Fragment>
+          <h2>
+            <a
+              href={Routes.edit_course_grade_entry_form_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {this.props.show_chart_header ? this.state.summary.name : ""}
+            </a>
+          </h2>
+          <AssessmentChart
+            summary={this.state.summary}
+            assessment_data={this.state.grade_entry_form_distribution.data}
+            additional_assessment_stats={
+              <React.Fragment>
+                <span className="summary-stats-label">{I18n.t("num_students")}</span>
+                <span>{this.state.summary.groupings_size}</span>
+                <span className="summary-stats-label">{I18n.t("num_students_graded")}</span>
+                <FractionStat
+                  numerator={this.state.summary.num_entries}
+                  denominator={this.state.summary.groupings_size}
+                />
+              </React.Fragment>
+            }
+          />
+          <GradeBreakdownChart
+            show_stats={this.props.show_column_stats}
+            summary={this.state.column_summary}
+            num_groupings={this.state.summary.groupings_size}
+            chart_title={I18n.t("grade_entry_forms.grade_entry_item_distribution")}
+            distribution_data={this.state.column_grade_distribution.data}
+            item_name={I18n.t("activerecord.models.grade_entry_item.one")}
+            create_link={Routes.edit_course_grade_entry_form_path(
               this.props.course_id,
               this.props.assessment_id
             )}
-          >
-            {this.state.info_data.name}
-          </a>
-        </h2>
-        <div className="flex-row">
-          <div>
-            <Bar
-              data={this.state.distribution_data}
-              options={this.state.distribution_data.options}
-              width="500"
-              height="450"
-            />
-          </div>
-
-          <div className="flex-row-expand">
-            <p>
-              {this.state.info_data.date &&
-                I18n.t("attributes.date") + ": " + this.state.info_data.date}
-            </p>
-
-            <div className="grid-2-col">
-              <span>{I18n.t("average")}</span>
-              <span>{(this.state.info_data.average || 0).toFixed(2)}%</span>
-              <span>{I18n.t("median")}</span>
-              <span>{(this.state.info_data.median || 0).toFixed(2)}%</span>
-              <span>{I18n.t("num_entries")}</span>
-              <span>{this.state.info_data.num_entries}</span>
-              <span>{I18n.t("num_failed")}</span>
-              <span>{this.state.info_data.num_fails}</span>
-              <span>{I18n.t("num_zeros")}</span>
-              <span>{this.state.info_data.num_zeros}</span>
-            </div>
-          </div>
-        </div>
-
-        <h3>{I18n.t("grade_entry_forms.grade_entry_item_distribution")}</h3>
-        <Bar
-          data={this.state.column_data}
-          options={this.state.column_data.options}
-          width="400"
-          height="350"
-        />
-      </React.Fragment>
-    );
+          />
+        </React.Fragment>
+      );
+    }
   }
 }
