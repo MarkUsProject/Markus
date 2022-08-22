@@ -16,4 +16,8 @@ class InstructorPolicy < RolePolicy
   def manage_assessments?
     true
   end
+
+  def manage_user_status?
+    user.admin_user?
+  end
 end

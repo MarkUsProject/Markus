@@ -31,4 +31,8 @@ class StudentPolicy < RolePolicy
   def settings?
     role.student?
   end
+
+  def manage_user_status?
+    role.instructor? || user.admin_user?
+  end
 end

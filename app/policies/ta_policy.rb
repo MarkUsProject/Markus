@@ -26,4 +26,8 @@ class TaPolicy < RolePolicy
   def upload?
     role.instructor?
   end
+
+  def manage_user_status?
+    role.instructor? || user.admin_user?
+  end
 end

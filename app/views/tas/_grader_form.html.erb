@@ -13,8 +13,8 @@
             <span id='set-active'>
               <%= f.select :hidden,
                            options_for_select([[t('students.active'), false], [t('students.inactive'), true]],
-                                              selected: @role.hidden,
-                                              disabled: !@current_role.instructor? ) %>
+                                              selected: @role.hidden),
+                           {}, disabled: !allowed_to?(:manage_user_status?) %>
             </span>
           </div>
         <% end %>

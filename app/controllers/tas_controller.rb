@@ -39,8 +39,8 @@ class TasController < ApplicationController
 
   def update
     @role = record
-    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), hidden: role_params[:hidden],
-                 **permission_params)
+    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), **permission_params)
+    @role.update(params.require(:role).permit(:hidden)) if allowed_to?(:manage_user_status?)
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -81,10 +81,6 @@ class TasController < ApplicationController
 
   def permission_params
     params.require(:role).permit(grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
-  end
-
-  def role_params
-    params.require(:role).permit(:hidden)
   end
 
   def end_user_params
