@@ -543,7 +543,9 @@ class RawGroupsTable extends React.Component {
               <a
                 href="#"
                 className="remove-icon"
-                onClick={() => this.props.unassignSingle(row.original._id, ta, "groups_table")}
+                onClick={() =>
+                  this.props.unassignSingle(row.original._id, ta_data.grader, "groups_table")
+                }
                 title={I18n.t("graders.actions.unassign_grader")}
               />
             </div>
@@ -612,7 +614,9 @@ class RawCriteriaTable extends React.Component {
               <a
                 href="#"
                 className="remove-icon"
-                onClick={() => this.props.unassignSingle(row.original._id, ta, "criteria_table")}
+                onClick={() =>
+                  this.props.unassignSingle(row.original._id, ta_data.grader, "criteria_table")
+                }
                 title={I18n.t("graders.actions.unassign_grader")}
               />
             </div>
