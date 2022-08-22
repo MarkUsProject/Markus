@@ -94,11 +94,11 @@ describe("CheckboxCriterionInput", () => {
   });
 
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    wrapper.find(`#checkbox_criterion_${basicProps.id}_expand`).simulate("click");
+    wrapper.find(`.criterion-name`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
 
-    wrapper.find(`#checkbox_criterion_${basicProps.id}_expand`).simulate("click");
+    wrapper.find(`.criterion-name`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
   });
@@ -108,13 +108,13 @@ describe("CheckboxCriterionInput", () => {
     basicProps.mark = 1;
     wrapper.setProps(basicProps);
 
-    wrapper.find(`#checkbox_criterion_${basicProps.id}_destroy`).simulate("click");
+    wrapper.find(`a`).simulate("click");
     expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
   });
 
   it("correctly updates mark to max_mark and 0 when clicking on respective buttons", () => {
-    const no_button = wrapper.find(`#check_no_${basicProps.id}`);
-    const yes_button = wrapper.find(`#check_correct_${basicProps.id}`);
+    const no_button = wrapper.find(`.check_no_${basicProps.id}`);
+    const yes_button = wrapper.find(`.check_correct_${basicProps.id}`);
 
     yes_button.simulate("click");
 
@@ -138,9 +138,9 @@ describe("CheckboxCriterionInput", () => {
       released_to_students: true,
     });
 
-    expect(wrapper.find(`#checkbox_criterion_${basicProps.id}_destroy`).exists()).toBeFalsy();
-    expect(wrapper.find(`#check_no_${basicProps.id}`).exists()).toBeFalsy();
-    expect(wrapper.find(`#check_correct_${basicProps.id}`).exists()).toBeFalsy();
+    expect(wrapper.find(`a`).exists()).toBeFalsy();
+    expect(wrapper.find(`.check_no_${basicProps.id}`).exists()).toBeFalsy();
+    expect(wrapper.find(`.check_correct_${basicProps.id}`).exists()).toBeFalsy();
   });
 
   it("should display oldMark.mark", () => {
@@ -192,11 +192,11 @@ describe("FlexibleCriterionInput", () => {
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
     const wrapper = getWrapper(basicProps);
 
-    wrapper.find(`#flexible_criterion_${basicProps.id}_expand`).simulate("click");
+    wrapper.find(`.criterion-name`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
 
-    wrapper.find(`#flexible_criterion_${basicProps.id}_expand`).simulate("click");
+    wrapper.find(`.criterion-name`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
   });
@@ -222,7 +222,7 @@ describe("FlexibleCriterionInput", () => {
     ];
     const wrapper = getWrapper(basicProps);
 
-    const deductionLink = wrapper.find(`#flexible_deduction_${basicProps.id}`);
+    const deductionLink = wrapper.find(`.red-text`);
     expect(deductionLink.exists()).toBeTruthy();
     deductionLink.simulate("click");
     expect(basicProps.findDeductiveAnnotation).toHaveBeenCalledWith(
@@ -278,7 +278,7 @@ describe("FlexibleCriterionInput", () => {
   it("should call handleChange on change and set rawText to new value", () => {
     const wrapper = getWrapper(basicProps);
 
-    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    const input = wrapper.find(`input[size=4]`);
     input.simulate("change", {target: {value: 1}});
     expect(wrapper.state().rawText).toBe(1);
   });
@@ -286,7 +286,7 @@ describe("FlexibleCriterionInput", () => {
   it("should set the mark as invalid if it is greater than max_mark", () => {
     const wrapper = getWrapper(basicProps);
 
-    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    const input = wrapper.find(`input[size=4]`);
     input.simulate("change", {target: {value: 999}});
     expect(wrapper.state().rawText).toBe(999);
     expect(wrapper.state().invalid).toBeTruthy();
@@ -295,7 +295,7 @@ describe("FlexibleCriterionInput", () => {
   it("should set the mark as invalid if it is not a number", () => {
     const wrapper = getWrapper(basicProps);
 
-    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    const input = wrapper.find(`input[size=4]`);
     input.simulate("change", {target: {value: "Hi Prof Liu"}});
     expect(wrapper.state().rawText).toBe("Hi Prof Liu");
     expect(wrapper.state().invalid).toBeTruthy();
@@ -304,7 +304,7 @@ describe("FlexibleCriterionInput", () => {
   it("should set the mark as valid if it has a decimal", () => {
     const wrapper = getWrapper(basicProps);
 
-    const input = wrapper.find(`#flexible_input_${basicProps.id}`);
+    const input = wrapper.find(`input[size=4]`);
     input.simulate("change", {target: {value: 2.0}});
     expect(wrapper.state().rawText).toBe(2.0);
     expect(wrapper.state().invalid).toBeFalsy();
@@ -315,7 +315,7 @@ describe("FlexibleCriterionInput", () => {
     basicProps.override = true;
     const wrapper = getWrapper(basicProps);
 
-    const destroyer = wrapper.find(`#flexible_destroy_${basicProps.id}_criteria`);
+    const destroyer = wrapper.find(`a`);
 
     destroyer.simulate("click");
 
@@ -338,7 +338,7 @@ describe("FlexibleCriterionInput", () => {
     ];
     const wrapper = getWrapper(basicProps);
 
-    const reverter = wrapper.find(`#flexible_revert_${basicProps.id}`);
+    const reverter = wrapper.find(`.flexible-revert`);
 
     reverter.simulate("click");
 
@@ -390,11 +390,11 @@ describe("RubricCriterionInput", () => {
   it("should toggle expand and contract upon clicking the expand/contract button", () => {
     const wrapper = getWrapper(basicProps);
 
-    wrapper.find(`#rubric_criterion_${basicProps.id}_expand`).simulate("click");
+    wrapper.find(`.criterion-name`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
 
-    wrapper.find(`#rubric_criterion_${basicProps.id}_expand`).simulate("click");
+    wrapper.find(`.criterion-name`).simulate("click");
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
   });
@@ -402,7 +402,7 @@ describe("RubricCriterionInput", () => {
   it("should destroy properly upon clicking destroy", () => {
     const wrapper = getWrapper(basicProps);
 
-    wrapper.find(`#rubric_${basicProps.id}_destroy`).simulate("click");
+    wrapper.find(`a`).simulate("click");
     expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
   });
 
@@ -423,8 +423,8 @@ describe("RubricCriterionInput", () => {
   it("should handleChange on clicking a rubric level", () => {
     const wrapper = getWrapper(basicProps);
 
-    const level1 = wrapper.find(`#rubric_${basicProps.id}_1`);
-    const level2 = wrapper.find(`#rubric_${basicProps.id}_2`);
+    const level1 = wrapper.find(`.rubric-level`).at(0);
+    const level2 = wrapper.find(`.rubric-level`).at(1);
 
     level1.simulate("click");
 
@@ -459,6 +459,6 @@ describe("RubricCriterionInput", () => {
     basicProps.released_to_students = true;
     const wrapper = getWrapper(basicProps);
 
-    expect(wrapper.find(`#rubric_${basicProps.id}_destroy`).exists()).toBeFalsy();
+    expect(wrapper.find(`a`).exists()).toBeFalsy();
   });
 });
