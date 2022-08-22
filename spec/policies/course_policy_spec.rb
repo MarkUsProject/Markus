@@ -9,6 +9,9 @@ describe CoursePolicy do
     succeed 'role is a student' do
       let(:role) { create :student }
     end
+    failed 'role is nil' do
+      let(:role) { nil }
+    end
   end
   describe_rule :index? do
     succeed 'role is an end user'

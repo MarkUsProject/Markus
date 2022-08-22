@@ -50,4 +50,19 @@ describe TaPolicy do
       let(:role) { create :ta, manage_assessments: false }
     end
   end
+
+  describe_rule? :manage_user_status? do
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
+    end
+    failed 'role is a student' do
+      let(:role) { create(:student) }
+    end
+    succeed 'user is an admin' do
+      let(:role) { create :admin_role }
+    end
+  end
 end

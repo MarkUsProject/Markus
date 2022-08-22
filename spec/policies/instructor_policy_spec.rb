@@ -35,4 +35,13 @@ describe InstructorPolicy do
   describe_rule :manage_assessments? do
     succeed
   end
+
+  describe_rule? :manage_user_status? do
+    failed 'user is an end user' do
+      let(:user) { create :end_user }
+    end
+    succeed 'user is an admin' do
+      let(:user) { create :admin_user }
+    end
+  end
 end

@@ -188,4 +188,8 @@ describe TasController do
       expect(response_data).to eq(expected_data)
     end
   end
+
+  context '#update' do
+    # TODO: add tests
+  end
 end

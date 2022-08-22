@@ -107,6 +107,13 @@ describe InstructorsController do
           subject
           expect(role.reload.user).to eq(new_end_user)
         end
+
+        context 'when updating user visibility' do
+          it 'should not update the user' do
+            subject
+            expect(role.reload.hidden).to eq(new_end_user)
+          end
+        end
       end
       context 'when the user does not exist' do
         let(:new_end_user) { build :end_user }

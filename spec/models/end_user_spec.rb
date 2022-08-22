@@ -19,6 +19,22 @@ describe EndUser do
       it 'does not return the course' do
         expect(end_user.visible_courses).to be_empty
       end
+
+      context 'when the user is an instructor' do
+        let(:end_user) { create :end_user }
+        let!(:instructor) { create :instructor, course: course, user: end_user }
+        it 'returns the course' do
+          expect(end_user.visible_courses).to contain_exactly(course)
+        end
+      end
+
+      context 'when the user is a grader' do
+        let(:end_user) { create :end_user }
+        let!(:grader) { create :ta, course: course, user: end_user }
+        it 'returns the course' do
+          expect(end_user.visible_courses).to contain_exactly(course)
+        end
+      end
     end
     context 'when a student is hidden in a course' do
       let(:end_user) { create :end_user }
@@ -52,6 +68,22 @@ describe EndUser do
       end
       it 'returns courses that are visible as a student, ta, or instructor' do
         expect(end_user4.visible_courses).to contain_exactly(course, course2, course3)
+      end
+    end
+
+    context 'when a grader is hidden in a course' do
+      let(:end_user) { create :end_user }
+      let!(:grader) { create :ta, course: course, hidden: true, user: end_user }
+      it 'does not return the course' do
+        expect(end_user.visible_courses).to be_empty
+      end
+    end
+
+    context 'when an instructor is hidden in a course' do
+      let(:end_user) { create :end_user }
+      let!(:instructor) { create :instructor, course: course, hidden: true, user: end_user }
+      it 'does not return the course' do
+        expect(end_user.visible_courses).to be_empty
       end
     end
   end
