@@ -18,8 +18,6 @@ SimpleCov.start do
   add_filter 'better_errors'
   add_filter 'bullet'
   add_filter 'rails_erd'
-  add_filter 'subversion'
-  add_filter 'svn'
 end
 
 ENV['RAILS_ENV'] ||= 'test'

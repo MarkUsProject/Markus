@@ -20,5 +20,5 @@ export default class MarkdownPreview extends React.Component {
 
 MarkdownPreview.propTypes = {
   content: PropTypes.string.isRequired,
-  updateAnnotationCompletion: PropTypes.func.isRequired,
+  updateAnnotationCompletion: PropTypes.func,
 };

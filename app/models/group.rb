@@ -62,7 +62,7 @@ class Group < ApplicationRecord
     # a repo collision *should* never occur then.
     #
     # For more info about the exception
-    # See 'self.create' of lib/repo/subversion_repository.rb.
+    # See 'self.create' of lib/repo/git_repository.rb.
 
     begin
       Repository.get_class.create(repo_path, self.course)

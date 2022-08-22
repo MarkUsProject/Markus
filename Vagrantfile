@@ -59,9 +59,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       Then visit localhost:3000/csc108, and you should see the MarkUs login screen.
       Login as an instructor with username 'a' and any non-empty password.
-
-      If you want to use MarkUs with subversion, run the following command:
-
-        $ vagrant provision --provision-with=install-svn
     HEREDOC
 end
