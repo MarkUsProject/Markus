@@ -24,17 +24,14 @@ describe InstructorsController do
         expect(response.status).to eq(200)
       end
       it 'retrieves correct data' do
-        get_as instructor, :index, params: { course_id: course.id }
+        get_as instructor, :index, format: 'json', params: { course_id: course.id }
         response_data = response.parsed_body['data']
-        expected_data = current_course.instructors
-                                      .joins(:user)
-                                      .where(type: Instructor.name)
-                                      .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
-                                      .as_json
+        expected_data = course.instructors.joins(:user).where(type: Instructor.name)
+                              .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email, :hidden).as_json
         expect(response_data).to eq(expected_data)
       end
       it 'retrieves correct hidden count' do
-        get_as instructor, :index, params: { course_id: course.id }
+        get_as instructor, :index, format: 'json', params: { course_id: course.id }
         response_data = response.parsed_body['counts']
         expected_data = {
           all: 1,
@@ -110,8 +107,13 @@ describe InstructorsController do
 
         context 'when updating user visibility' do
           it 'should not update the user' do
-            subject
-            expect(role.reload.hidden).to eq(new_end_user)
+            post_as instructor, :update,
+                    params: {
+                      course_id: course.id,
+                      id: role,
+                      role: { end_user: { user_name: new_end_user.user_name }, hidden: true }
+                    }
+            expect(role.reload.hidden).to eq(false)
           end
         end
       end

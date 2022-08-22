@@ -10,6 +10,7 @@ describe CoursePolicy do
       let(:role) { create :student }
     end
     failed 'role is nil' do
+      let(:context) { { role: role, real_user: create(:end_user) } }
       let(:role) { nil }
     end
   end

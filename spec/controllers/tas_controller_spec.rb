@@ -170,26 +170,56 @@ describe TasController do
       expect(response.status).to eq(200)
     end
     it 'retrieves correct data' do
-      get_as instructor, :index, params: { course_id: course.id }
+      get_as instructor, :index, format: 'json', params: { course_id: course.id }
       response_data = response.parsed_body['data']
-      expected_data = current_course.tas.joins(:user)
-                                    .pluck_to_hash(:id, :user_name, :first_name,
-                                                   :last_name, :email, :hidden).as_json
+      expected_data = course.tas.joins(:user)
+                            .pluck_to_hash(:id, :user_name, :first_name,
+                                           :last_name, :email, :hidden).as_json
       expect(response_data).to eq(expected_data)
     end
     it 'retrieves correct hidden count' do
-      get_as instructor, :index, params: { course_id: course.id }
+      get_as instructor, :index, format: 'json', params: { course_id: course.id }
       response_data = response.parsed_body['counts']
       expected_data = {
-        all: current_course.tas.size,
-        active: current_course.tas.active.size,
-        inactive: current_course.tas.inactive.size
+        all: course.tas.size,
+        active: course.tas.active.size,
+        inactive: course.tas.inactive.size
       }.as_json
       expect(response_data).to eq(expected_data)
     end
   end
 
   context '#update' do
-    # TODO: add tests
+    let(:grader) { create(:ta, course: course) }
+    subject { post_as grader, :update, params: params }
+    context 'when updating user visibility' do
+      let(:new_end_user) { create :end_user }
+      context 'as an instructor' do
+        let(:params) do
+          {
+            course_id: course.id,
+            id: grader.id,
+            role: { end_user: { user_name: grader.user_name }, hidden: true }
+          }
+        end
+        it 'should update the user' do
+          post_as instructor, :update, params: params
+          expect(grader.reload.hidden).to eq(true)
+        end
+      end
+      context 'as a grader' do
+        let(:params) do
+          {
+            course_id: course.id,
+            id: grader.id,
+            role: { end_user: { user_name: grader.user_name }, hidden: true }
+          }
+        end
+        it 'should not update the user' do
+          subject
+          expect(grader.reload.hidden).to eq(false)
+        end
+      end
+    end
   end
 end

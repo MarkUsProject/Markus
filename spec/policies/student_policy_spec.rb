@@ -74,7 +74,8 @@ describe StudentPolicy do
     end
   end
 
-  describe_rule? :manage_user_status? do
+  describe_rule :manage_user_status? do
+    let(:context) { { role: role, real_user: role.user, user: role.user } }
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
