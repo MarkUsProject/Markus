@@ -6,7 +6,6 @@ ARG RUBY_VERSION
 ARG PG_MAJOR
 ARG NODE_MAJOR
 ARG BUNDLER_VERSION
-ARG YARN_VERSION
 ARG PYTHON_VERSION
 ARG USER
 
@@ -34,9 +33,6 @@ RUN apt-get update -qq && \
 # Install node
 ADD https://deb.nodesource.com/setup_$NODE_MAJOR.x /tmp/setup_node.sh
 RUN bash /tmp/setup_node.sh && DEBIAN_FRONTEND=noninteractive apt-get install -yq nodejs && rm /tmp/setup_node.sh
-
-# Install yarn (see https://yarnpkg.com/getting-started/install)
-RUN corepack enable && yarn set version $YARN_VERSION && yarn config set --home enableTelemetry 0
 
 # Add ppa so that we can select different ruby versions and install ruby
 RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
