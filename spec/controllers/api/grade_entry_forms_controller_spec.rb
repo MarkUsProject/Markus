@@ -286,7 +286,32 @@ describe Api::GradeEntryFormsController do
       end
     end
     context 'PUT update_grades' do
-      # TODO
+      let(:student) { create :student }
+      let(:grade_params) do
+        { short_identifier: 'A0', course_id: course.id, description: 'Test',
+          due_date: '2012-03-26 18:04:39', is_hidden: false,
+          id: grade_entry_form.id,
+          grade_entry_items: [
+            { name: 'col1', out_of: 10, bonus: false },
+            { name: 'col2', out_of: 2, bonus: true }
+          ] }
+      end
+      let!(:grade_entry_item) { create :grade_entry_item, grade_entry_form: grade_entry_form, out_of: 5, name: 'col1' }
+      it 'creates new grades' do
+        put :update_grades,
+            params: { course_id: course.id, id: grade_entry_form.id, user_name: student.user_name,
+                      grade_entry_items: { col1: 2 } }
+        expect(grade_entry_form.grade_entry_students.find_by(role: student).grades.count).to eq(1)
+      end
+      it 'updates existing grades' do
+        put :update_grades,
+            params: { course_id: course.id, id: grade_entry_form.id, user_name: student.user_name,
+                      grade_entry_items: { col1: 2 } }
+        put :update_grades,
+            params: { course_id: course.id, id: grade_entry_form.id, user_name: student.user_name,
+                      grade_entry_items: { col1: 5 } }
+        expect(grade_entry_form.grade_entry_students.find_by(role: student).grades.first.grade).to eq(5)
+      end
     end
   end
 end
