@@ -36,7 +36,7 @@ module Markus
     config.assets.enabled = true
     # Suppress logger output for asset requests.
     config.assets.quiet = true
-    # Add Yarn node_modules folder to the asset load path.
+    # Add node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
 
     # Ensure form_with calls generate remote forms by
