@@ -2,6 +2,8 @@
 
 ## [unreleased]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
+- Simplify configuration options for storing files on disk (#6157)
+- Replace yarn with npm as a package manager (#6159)
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
 
@@ -12,7 +14,6 @@
 - Moved markdown text preview to new tab in the modify/create annotation modal (#6138)
 - Enable bulk removal of students from section in student table (#6145)
 - Enable updating student active/inactive status in student edit form (#6145)
-- Simplify configuration options for storing files on disk (#6157)
 
 ## [v2.1.0]
 - Remove unmaintained locales (#5727)

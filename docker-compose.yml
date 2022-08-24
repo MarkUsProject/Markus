@@ -11,7 +11,6 @@ services:
         RUBY_VERSION: '2.7'
         PG_MAJOR: '12'
         NODE_MAJOR: '18'
-        YARN_VERSION: '3.2.1'
         BUNDLER_VERSION: '2.3.17'
         PYTHON_VERSION: '3.9'
         USER: 'markus'
@@ -60,7 +59,7 @@ services:
       - postgres
       - redis
       - resque
-      - webpacker
+      - webpack
       - ssh
 
   ssh:
@@ -107,10 +106,10 @@ services:
     ports:
       - 6379
 
-  webpacker:
+  webpack:
     <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
-    command: yarn build-dev
+    command: npm run build-dev
     volumes:
       - bundle:/bundle
       - node_modules:/app/node_modules
