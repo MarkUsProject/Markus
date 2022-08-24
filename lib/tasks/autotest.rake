@@ -2,7 +2,6 @@ namespace :db do
   desc 'Sets up environment to test the autotester'
   task autotest: :environment do
     include AutomatedTestsHelper
-    FileUtils.mkdir_p Settings.autotest.client_dir
     puts 'Set up testing environment for autotest'
     autotest_setting = AutotestSetting.find_or_create_by!(url: ENV.fetch('AUTOTEST_URL', nil))
     Course.first.update!(autotest_setting_id: autotest_setting.id)
