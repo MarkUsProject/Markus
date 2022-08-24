@@ -1165,7 +1165,7 @@ describe AssignmentsController do
         expected = { name: criterion.name,
                      average: criterion.average,
                      median: criterion.median || 0,
-                     max_mark: criterion.max_mark || 0,
+                     max_mark: criterion.max_mark.to_f || 0,
                      standard_deviation: criterion.standard_deviation || 0,
                      position: criterion.position,
                      num_zeros: criterion.grades_array.count(&:zero?) }

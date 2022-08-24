@@ -31,6 +31,7 @@ class Dashboard extends React.Component {
           course_id={this.props.course_id}
           assessment_id={this.state.assessment_id}
           show_chart_header={true}
+          show_column_stats={false}
         />
       );
     } else {

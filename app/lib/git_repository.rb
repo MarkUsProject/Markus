@@ -55,6 +55,7 @@ class GitRepository < Repository::AbstractRepository
     # Repo is created bare, then clone it in the repository storage location
     barepath = bare_path(connect_string)
     self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
+      FileUtils.mkdir_p(File.dirname(barepath))
       Rugged::Repository.init_at(barepath, :bare)
       bare_config = Rugged::Config.new(File.join(barepath, 'config'))
       bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
@@ -409,8 +410,7 @@ class GitRepository < Repository::AbstractRepository
   ####################################################################
 
   # Helper method to generate all the permissions for students for all groupings in all assignments.
-  # This is done as a single operation to mirror the SVN repo code. We found
-  # a substantial performance improvement by writing the auth file only once in the SVN case.
+  # This is done as a single operation to mirror the SVN repo code.
   def self.update_permissions_file(permissions)
     # If we're not in authoritative mode, bail out
     unless Settings.repository.is_repository_admin

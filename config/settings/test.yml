@@ -23,25 +23,16 @@ remote_auth_login_url: https://www.example.com
 
 repository:
   type: mem
-  storage: <%= "#{::Rails.root.to_s}/data/test" %>/repos
 
 logging:
   log_file: log/info_test.log
   error_file: log/error_test.log
 
 autotest:
-  client_dir: <%= "#{::Rails.root.to_s}/data/test" %>/autotest
   max_batch_size: 10
-
-scanned_exams:
-  path: <%= "#{::Rails.root.to_s}/data/test" %>/exam_templates
-
-starter_file:
-  storage: <%= "#{::Rails.root.to_s}/data/test" %>/starter_files
 
 # The settings below are for an experimental feature that is not available
 # in production yet. Please disregard for now.
 lti:
   domains: <%= %w[test.host] %>
   token_endpoint: "http://test.host.com/login/oauth2/token"
-  key_path: <%= "#{::Rails.root.to_s}/data/test" %>/lti/key.pem

@@ -3,12 +3,12 @@
 # install bundle gems if not up to date with the Gemfile.lock file
 bundle check 2>/dev/null || bundle install --without unicorn
 
-# install yarn packages
-yarn install
+# install node packages
+npm list &> /dev/null || npm ci
 
 # install python packages
-python3 -m venv ./venv
-./venv/bin/pip install -r requirements.txt
+[ -f ./venv/bin/pip ] || python3 -m venv ./venv
+./venv/bin/pip install -r requirements.txt > /dev/null
 
 # setup the database (checks for db existence first)
 cp .dockerfiles/database.yml.postgresql config/database.yml

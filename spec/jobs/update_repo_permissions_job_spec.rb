@@ -18,13 +18,6 @@ describe UpdateRepoPermissionsJob do
       end
     end
 
-    context 'when called with "SubversionRepository"' do
-      it 'should call update_permissions_file' do
-        expect(SubversionRepository).to receive(:update_permissions_file)
-        UpdateRepoPermissionsJob.perform_now('SubversionRepository')
-      end
-    end
-
     context 'when called with "GitRepository"' do
       it 'should call update_permissions_file' do
         expect(GitRepository).to receive(:update_permissions_file)

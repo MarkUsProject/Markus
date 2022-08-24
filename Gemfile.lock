@@ -9,7 +9,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.6.1)
+    action_policy (0.6.2)
       ruby-next-core (>= 0.14.0)
     actioncable (7.0.3.1)
       actionpack (= 7.0.3.1)
@@ -230,7 +230,6 @@ GEM
     json (2.6.2)
     jwt (2.4.1)
     kgio (2.11.4)
-    libv8 (8.4.255.0)
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -406,7 +405,7 @@ GEM
       rubocop-ast (>= 0.4.0)
     ruby-graphviz (1.2.5)
       rexml
-    ruby-next-core (0.15.1)
+    ruby-next-core (0.15.2)
     ruby-progressbar (1.11.0)
     ruby-rc4 (0.1.5)
     ruby2_keywords (0.0.5)
@@ -523,7 +522,6 @@ DEPENDENCIES
   jsbundling-rails
   json
   jwt
-  libv8
   listen
   machinist (< 3)
   mini_mime
