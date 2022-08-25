@@ -1,5 +1,4 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'jquery-ui', 'flatpickr' %>
   <%= javascript_include_tag 'create_assignment',
                              'PeriodDeltaChain/PeriodDeltaChain',
                              'localize_date', nonce: true %>
@@ -78,9 +77,7 @@
                          I18n.t('assignments.timed.start_time'),
                       class: 'required' %>
           <%= ap_f.text_field :start_time,
-                              value: @assignment.start_time.nil? ? '' :
-                                       @assignment.start_time.strftime(
-                                         '%Y-%m-%d %l:%M %p'),
+                              value: @assignment.start_time.nil? ? '' : l(@assignment.start_time, format: :flatpickr),
                               size: 35,
                               required: true,
                               placeholder: t('time.format_string.placeholder') %>
@@ -88,10 +85,9 @@
         <%= f.label :due_date,
                     @assignment.is_timed ? I18n.t('assignments.timed.end_time') : Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
+        <%# byebug %>
         <%= f.text_field :due_date,
-                         value: @assignment.due_date.nil? ? '' :
-                           @assignment.due_date.strftime(
-                             '%Y-%m-%d %l:%M %p'),
+                         value: @assignment.due_date.nil? ? '' : l(@assignment.due_date, format: :flatpickr),
                          size: 35,
                          required: true,
                          placeholder: t('time.format_string.placeholder') %>
@@ -142,8 +138,7 @@
                       <%= due_date_f.text_field :start_time,
                                                 class: 'assessment_section_properties_input',
                                                 value: obj.start_time.nil? ? '' :
-                                                         obj.start_time.strftime(
-                                                           '%Y-%m-%d %l:%M %p') %>
+                                                         l(obj.start_time, format: :flatpickr) %>
                     </td>
                   <% end %>
                   <td>
@@ -151,8 +146,7 @@
                     <%= due_date_f.text_field :due_date,
                                               class: 'assessment_section_properties_input',
                                               value: obj.due_date.nil? ? '' :
-                                                obj.due_date.strftime(
-                                                  '%Y-%m-%d %l:%M %p') %>
+                                                       l(obj.due_date, format: :flatpickr) %>
                   </td>
                   <td>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>
@@ -475,8 +469,7 @@
         <%= ap_f.label :remark_due_date, Assignment.human_attribute_name(:remark_due_date) %>
         <%= ap_f.text_field :remark_due_date,
                             value: @assignment.remark_due_date.nil? ? '' :
-                                   @assignment.remark_due_date.strftime(
-                                     '%Y-%m-%d %l:%M %p'),
+                                     l(@assignment.remark_due_date, format: :flatpickr),
                             size: 35 %>
 
         <%= ap_f.label :remark_message, Assignment.human_attribute_name(:remark_message) %>

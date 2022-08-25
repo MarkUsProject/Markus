@@ -1,4 +1,3 @@
-<%= javascript_include_tag 'flatpickr_config', nonce: true %>
 <%= javascript_tag nonce: true do %>
   var grace_periods = null;
   var penalty_decay_periods = null;
@@ -144,8 +143,8 @@
     }
   }
 
-  function check_due_date(new_due_date) {
-    if (moment(new_due_date[0], I18n.t('time.format_string.js')).isBefore(moment())) {
+  function check_due_date(selectedDates) {
+    if (selectedDates.length > 0 && moment(selectedDates[0], I18n.t('time.format_string.js')).isBefore(moment())) {
       alert(I18n.t('date.before_now_warning'));
     }
   }
@@ -170,10 +169,10 @@
                     .on("keyup", $('input[required]'), check_required_fields)
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
-    // Initialize Flatpickr calendar for different elements in the DOM
-    Flatpickr("#assignment_due_date", {onClose: check_due_date})
-    Flatpickr("#assignment_assignment_properties_attributes_remark_due_date", {onClose: check_due_date})
-    Flatpickr(".assessment_section_properties_input", {onClose: check_due_date})
-    Flatpickr("#assignment_assignment_properties_attributes_start_time", {onClose: check_due_date})
+    // Initialize flatpickr calendar for different elements in the DOM
+    flatpickr("#assignment_due_date", {onClose: check_due_date})
+    flatpickr("#assignment_assignment_properties_attributes_remark_due_date", {onClose: check_due_date})
+    flatpickr(".assessment_section_properties_input", {onClose: check_due_date})
+    flatpickr("#assignment_assignment_properties_attributes_start_time", {onClose: check_due_date})
   });
 <% end %>

@@ -1,5 +1,4 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'jquery-ui', 'flatpickr' %>
   <%= javascript_include_tag 'create_assignment',
                              'PeriodDeltaChain/PeriodDeltaChain',
                              'localize_date', nonce: true %>
@@ -68,8 +67,7 @@
                     class: 'required' %>
         <%= f.text_field :due_date,
                          value: @assignment.due_date.nil? ? '' :
-                           @assignment.due_date.strftime(
-                             '%Y-%m-%d %l:%M %p'),
+                                  l(@assignment.due_date, format: :flatpickr),
                          size: 35,
                          required: true,
                          placeholder: t('time.format_string.placeholder') %>
@@ -116,8 +114,7 @@
                     <%= due_date_f.text_field :due_date,
                                               class: 'assessment_section_properties_input',
                                               value: obj.due_date.nil? ? '' :
-                                                obj.due_date.strftime(
-                                                  '%Y-%m-%d %l:%M %p') %>
+                                                       l(obj.due_date, format: :flatpickr) %>
                   </td>
                   <td>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>

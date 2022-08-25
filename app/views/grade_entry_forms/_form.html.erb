@@ -7,7 +7,6 @@
 %>
 
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'jquery-ui', "flatpickr" %>
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
@@ -47,6 +46,7 @@
 
       <%= f.label :due_date, GradeEntryForm.human_attribute_name(:date) %>
       <%= f.text_field :due_date,
+                       value: @grade_entry_form.due_date.nil? ? '' : l(@grade_entry_form.due_date, format: :flatpickr),
                        class: 'datepicker',
                        size: 30,
                        placeholder: t('date.format_string.placeholder') %>

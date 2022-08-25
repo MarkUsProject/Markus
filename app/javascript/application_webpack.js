@@ -51,11 +51,12 @@ import "javascripts/chart_config";
 
 // flatpickr
 import flatpickr from "flatpickr";
-window.Flatpickr = flatpickr;
+window.flatpickr = flatpickr;
 
 window.Routes = require("./routes");
 
 // assets with side-effects only
+import "javascripts/flatpickr_config";
 import "javascripts/help-system";
 import "javascripts/layouts";
 import "javascripts/menu";

@@ -1,4 +1,3 @@
-<%= javascript_include_tag 'flatpickr_config', nonce: true %>
 <%= javascript_tag nonce: true do %>
   function add_column() {
     var last_col = $('.grade_entry_item').last();
@@ -45,6 +44,6 @@
   }
 
   $(document).ready(function() {
-    Flatpickr(".datepicker", {})
+    flatpickr(".datepicker", {enableTime: false, dateFormat: I18n.t('date.format_string.flatpickr')})
   });
 <% end %>
