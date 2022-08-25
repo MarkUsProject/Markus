@@ -6,6 +6,7 @@
 - Replace yarn with npm as a package manager (#6159)
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
+- Allow for more flexible database creation by replacing relative_url_root function only if it already exists (#6189)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
