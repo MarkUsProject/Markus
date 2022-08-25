@@ -392,7 +392,27 @@ class AutotestManager extends React.Component {
             uiSchema={this.state.uiSchema}
             formData={this.state.formData}
             onChange={this.handleFormChange}
-            noValidate={true}
+            liveValidate={true}
+            showErrorList={false}
+            transformErrors={errors => {
+              const unique_properties = [];
+              const unique_errors = errors.filter(error => {
+                if (!unique_properties.includes(error.property)) {
+                  unique_properties.push(error.property);
+                  return true;
+                }
+                return false;
+              });
+              unique_errors.map(error => {
+                const property = error.property.split(".").at(-1);
+                if (property === "timeout") {
+                  console.log(error);
+                  error.message = "Timeout value should be an integer";
+                }
+                return error;
+              });
+              return unique_errors;
+            }}
           >
             <p /> {/*need something here so that the form doesn't render its own submit button*/}
           </Form>
