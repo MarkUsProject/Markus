@@ -144,7 +144,7 @@ module Api
       grade_entry_form = record
 
       grade_entry_student = grade_entry_form.grade_entry_students
-                                            .joins(role: :user)
+                                            .joins(:user)
                                             .where('users.user_name': params[:user_name])
                                             .first
 
