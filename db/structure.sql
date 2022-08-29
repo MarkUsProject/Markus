@@ -112,7 +112,7 @@ $$;
 
 CREATE FUNCTION public.relative_url_root() RETURNS text
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $$SELECT text '/csc108'$$;
+    AS $$SELECT text '/'$$;
 
 
 >>>>>>> 65bdd720b (merged back changes)

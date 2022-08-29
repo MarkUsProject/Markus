@@ -231,10 +231,12 @@ module Repository
     # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
     # some students from it)
     def self.get_repo_auth_records
-      records = Assignment.joins(:assignment_properties)
-                          .includes(groupings: [:group, { accepted_students: :section }])
-                          .where(assignment_properties: { vcs_submit: true })
-                          .order(due_date: :desc)
+      assignments = Assignment.joins(:courses)
+                              .where('courses.is_hidden': false)
+      records = assignments.joins(:assignment_properties)
+                           .includes(groupings: [:group, { accepted_students: :section }])
+                           .where(assignment_properties: { vcs_submit: true })
+                           .order(due_date: :desc)
       records.where(assignment_properties: { is_timed: false })
              .or(records.where.not(groupings: { start_time: nil }))
              .or(records.where(groupings: { start_time: nil }, due_date: Time.utc(0)..Time.current))

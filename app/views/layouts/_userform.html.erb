@@ -4,12 +4,10 @@
       <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
       <%= u_f.text_field :user_name, required: true, pattern: '[a-zA-Z0-9\-_]+' %>
       <%= f.label :hidden, t('students.status') %>
-      <span id='set-active'>
-        <%= f.select :hidden,
-                     options_for_select([[t('students.active'), false], [t('students.inactive'), true]],
-                                        selected: @role.hidden),
-                     {}, disabled: !allowed_to?(:manage_user_status?) %>
-      </span>
+      <%= f.select :hidden,
+                   options_for_select([[t('students.active'), false], [t('students.inactive'), true]],
+                                      selected: @role.hidden),
+                   {}, disabled: !allowed_to?(:manage_user_status?) %>
     </div>
   <% end %>
 

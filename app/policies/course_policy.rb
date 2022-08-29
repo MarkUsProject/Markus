@@ -1,6 +1,7 @@
 # Policy for courses controller.
 class CoursePolicy < ApplicationPolicy
   skip_pre_check :role_exists?
+  skip_pre_check :view_hidden_course?
 
   default_rule :manage?
   alias_rule :clear_role_switch_session?, to: :role_is_switched?

@@ -45,11 +45,13 @@ BEGIN
                     JOIN groups ON groupings.group_id=groups.id
                     JOIN assignment_properties ON assignment_properties.assessment_id=groupings.assessment_id
                     JOIN assessments ON groupings.assessment_id=assessments.id
+                    JOIN courses ON assessments.course_id=courses.id
                     LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
                 WHERE memberships.type='StudentMembership'
                   AND memberships.membership_status IN ('inviter','accepted')
                   AND assignment_properties.vcs_submit=true
                   AND roles.id=role_id_
+                  AND courses.hidden=false
                   AND groups.repo_name=repo_name_
                   AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
                            OR assessment_section_properties.is_hidden=false)

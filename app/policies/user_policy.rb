@@ -1,6 +1,7 @@
 # User policy class
 class UserPolicy < ApplicationPolicy
   skip_pre_check :role_exists?
+  skip_pre_check :view_hidden_course?
 
   def manage?
     false

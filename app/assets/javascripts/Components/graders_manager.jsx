@@ -670,7 +670,8 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 class GradersActionBox extends React.Component {
   render = () => {
     let showHiddenTooltip = "";
-    if (this.props.hiddenGradersCount !== null && this.props.hiddenGroupsCount !== null) {
+    // TODO: update this entire if statement
+    if (this.props.hiddenGradersCount !== null) {
       showHiddenTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_students", {
         count: this.props.hiddenGradersCount,
       })}, ${I18n.t("activerecord.attributes.grouping.inactive_groups", {

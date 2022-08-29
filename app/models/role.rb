@@ -19,6 +19,9 @@ class Role < ApplicationRecord
 
   validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
   validates :user_id, uniqueness: { scope: :course_id }
+  after_update :update_repo_permissions, if: ->(r) {
+    r.previous_changes.key?('hidden')
+  }
 
   # Helper methods -----------------------------------------------------
 
@@ -84,5 +87,9 @@ class Role < ApplicationRecord
     unless self.user.nil? || self.user.end_user?
       errors.add(:base, "non end users cannot be assigned the #{self.model_name.human} role")
     end
+  end
+
+  def update_repo_permissions
+    Repository.get_class.update_permissions
   end
 end
