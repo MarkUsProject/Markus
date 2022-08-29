@@ -2,7 +2,8 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import Form from "@rjsf/core";
-import Datepicker from "./date_picker";
+import Flatpickr from "react-flatpickr";
+import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
 
@@ -169,8 +170,9 @@ class AutotestManager extends React.Component {
     );
   };
 
-  handleTokenStartDateChange = date => {
-    this.setState({token_start_date: date}, () => this.toggleFormChanged(true));
+  handleTokenStartDateChange = selectedDates => {
+    const newDate = selectedDates[0] || "";
+    this.setState({token_start_date: newDate}, () => this.toggleFormChanged(true));
   };
 
   handleTokensPerPeriodChange = event => {
@@ -298,12 +300,17 @@ class AutotestManager extends React.Component {
           <label className="inline_label" htmlFor="token_start_date">
             {I18n.t("activerecord.attributes.assignment.token_start_date")}
           </label>
-          <Datepicker
+          <Flatpickr
             id="token_start_date"
-            warn_before_now={true}
-            date={this.state.token_start_date}
+            value={this.state.token_start_date}
             onChange={this.handleTokenStartDateChange}
-            disabled={!this.state.enable_test || !this.state.enable_student_tests}
+            options={{
+              altInput: true,
+              altFormat: I18n.t("time.format_string.flatpickr"),
+              dateFormat: "Z",
+              disabled: !this.state.enable_test || !this.state.enable_student_tests,
+              plugins: [labelPlugin()], // Ensure id is applied to visible input
+            }}
           />
           <label className="inline_label" htmlFor="token_period">
             {I18n.t("activerecord.attributes.assignment.token_period")}

@@ -143,12 +143,6 @@
     }
   }
 
-  function check_due_date(new_due_date) {
-    if (moment(new_due_date, I18n.t('time.format_string.js')).isBefore(moment())) {
-      alert(I18n.t('date.before_now_warning'));
-    }
-  }
-
   $(document).ready(function() {
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
@@ -169,45 +163,10 @@
                     .on("keyup", $('input[required]'), check_required_fields)
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
-    // Handle date/time pickers
-    // TODO: Set defaults globally for datetimepicker
-    $.extend($.timepicker._defaults, {
-    controlType: 'select',
-    showTime: false,
-    showTimezone: false,
-    numberOfMonths: 2,
-    secondMax: 0,
-    prevText: I18n.t('time.prev'),
-    nextText: I18n.t('time.next'),
-    closeText: I18n.t('close'),
-    hourText: I18n.t('datetime.prompts.hour'),
-    minuteText: I18n.t('datetime.prompts.minute'),
-    timeText: I18n.t('time.time'),
-
-    monthNames: I18n.t('date.month_names').slice(1), // Drop first null element
-    dayNames: I18n.t('date.day_names'),
-    dayNamesMin: I18n.t('date.abbr_day_names'),
-
-    dateFormat: I18n.t('date.format_string.datetimepicker'),
-    timeFormat: I18n.t('time.format_string.time_only')
-  });
-
-  $('.assessment_section_properties_input').each(function() {
-      $(this).datetimepicker({
-        onClose:          check_due_date,
-      });
-    });
-
-    $('#assignment_due_date').datetimepicker({
-      onClose:          check_due_date,
-    });
-
-    $('#assignment_assignment_properties_attributes_remark_due_date').datetimepicker({
-      onClose:          check_due_date,
-    });
-
-    $('#assignment_assignment_properties_attributes_start_time').datetimepicker({
-      onClose:          check_due_date,
-    });
+    // Initialize flatpickr calendar for different elements in the DOM
+    flatpickr("#assignment_due_date")
+    flatpickr("#assignment_assignment_properties_attributes_remark_due_date")
+    flatpickr(".assessment_section_properties_input")
+    flatpickr("#assignment_assignment_properties_attributes_start_time")
   });
 <% end %>
