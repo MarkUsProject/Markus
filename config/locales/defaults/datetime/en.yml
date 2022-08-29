@@ -1,7 +1,6 @@
 ---
 en:
   date:
-    before_now_warning: 'WARNING: The date you have selected is in the past.'
     format_string:
       default: DD, MM d, yy
       flatpickr: Y-m-d

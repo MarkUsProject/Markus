@@ -143,12 +143,6 @@
     }
   }
 
-  function check_due_date(selectedDates) {
-    if (selectedDates.length > 0 && moment(selectedDates[0], I18n.t('time.format_string.js')).isBefore(moment())) {
-      alert(I18n.t('date.before_now_warning'));
-    }
-  }
-
   $(document).ready(function() {
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
@@ -170,9 +164,9 @@
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
     // Initialize flatpickr calendar for different elements in the DOM
-    flatpickr("#assignment_due_date", {onClose: check_due_date})
-    flatpickr("#assignment_assignment_properties_attributes_remark_due_date", {onClose: check_due_date})
-    flatpickr(".assessment_section_properties_input", {onClose: check_due_date})
-    flatpickr("#assignment_assignment_properties_attributes_start_time", {onClose: check_due_date})
+    flatpickr("#assignment_due_date")
+    flatpickr("#assignment_assignment_properties_attributes_remark_due_date")
+    flatpickr(".assessment_section_properties_input")
+    flatpickr("#assignment_assignment_properties_attributes_start_time")
   });
 <% end %>
