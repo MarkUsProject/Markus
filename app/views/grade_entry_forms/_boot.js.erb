@@ -44,14 +44,6 @@
   }
 
   $(document).ready(function() {
-    $('.datepicker').datepicker({
-      numberOfMonths:   2,
-      dateFormat:       I18n.t('date.format_string.datetimepicker'),
-      monthNames:       I18n.t('date.month_names').slice(1), // Drop first null element
-      dayNames:         I18n.t('date.day_names'),
-      dayNamesMin:      I18n.t('date.abbr_day_names'),
-      prevText:         I18n.t('time.prev'),
-      nextText:         I18n.t('time.next')
-    });
+    flatpickr(".datepicker", {enableTime: false, dateFormat: I18n.t('date.format_string.flatpickr')})
   });
 <% end %>

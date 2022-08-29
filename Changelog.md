@@ -1,6 +1,7 @@
 # Changelog
 
 ## [v2.1.7]
+- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
 - Allow results to be made available only through unique tokens (#6244)
 
 ## [v2.1.6]

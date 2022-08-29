@@ -4,9 +4,6 @@ class AutomatedTestsController < ApplicationController
   before_action { authorize! }
 
   content_security_policy only: :manage do |p|
-    # required because jquery-ui-timepicker-addon inserts style
-    # dynamically. TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
     # required because @rjsf/core uses ajv which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible
@@ -102,7 +99,7 @@ class AutomatedTestsController < ApplicationController
     test_specs = autotest_settings_for(assignment)
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
     assignment_data['token_start_date'] ||= Time.current
-    assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')
+    assignment_data['token_start_date'] = assignment_data['token_start_date'].iso8601
     data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
     render json: data
   end
