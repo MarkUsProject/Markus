@@ -22,6 +22,7 @@ class GradersManager extends React.Component {
       sections: {},
       isGraderDistributionModalOpen: false,
       show_hidden: false,
+      hidden_graders_count: 0,
     };
   }
 
@@ -67,6 +68,7 @@ class GradersManager extends React.Component {
         anonymize_groups: res.anonymize_groups,
         hide_unassigned_criteria: res.hide_unassigned_criteria,
         isGraderDistributionModalOpen: false,
+        hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
       });
     });
   };
@@ -281,6 +283,7 @@ class GradersManager extends React.Component {
           unassignAll={this.unassignAll}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.toggleShowHidden}
+          hiddenGradersCount={this.state.loading ? null : this.state.hidden_graders_count}
         />
         <div className="mapping-tables">
           <div className="mapping-table">
@@ -670,14 +673,12 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 class GradersActionBox extends React.Component {
   render = () => {
     let showHiddenTooltip = "";
-    // TODO: update this entire if statement
     if (this.props.hiddenGradersCount !== null) {
-      showHiddenTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_students", {
-        count: this.props.hiddenGradersCount,
-      })}, ${I18n.t("activerecord.attributes.grouping.inactive_groups", {
-        count: this.props.hiddenGroupsCount,
-      })}`;
+      showHiddenTooltip = I18n.t("graders.inactive_graders_count", {
+        count: this.props.hiddenGradersCount || 0,
+      });
     }
+
     return (
       <div className="rt-action-box">
         <span className={"flex-row-expand"}>

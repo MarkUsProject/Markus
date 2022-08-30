@@ -45,6 +45,7 @@ class StudentsController < ApplicationController
   def update
     @role = record
     @role.update(role_params)
+    update_active_status
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(@current_course)
   end
@@ -81,6 +82,7 @@ class StudentsController < ApplicationController
   def create
     user = EndUser.find_by(user_name: params[:role][:end_user][:user_name])
     @role = current_course.students.create(user: user, **role_params)
+    update_active_status
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(current_course)
   end
@@ -142,7 +144,7 @@ class StudentsController < ApplicationController
   private
 
   def role_params
-    params.require(:role).permit(:hidden, :grace_credits, :section_id)
+    params.require(:role).permit(:grace_credits, :section_id)
   end
 
   def settings_params
@@ -152,5 +154,9 @@ class StudentsController < ApplicationController
   def flash_interpolation_options
     { resource_name: @role.user&.user_name.blank? ? @role.model_name.human : @role.user_name,
       errors: @role.errors.full_messages.join('; ') }
+  end
+
+  def update_active_status
+    @role.update(params.require(:role).permit(:hidden)) if allowed_to?(:manage_user_status?)
   end
 end

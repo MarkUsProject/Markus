@@ -231,7 +231,7 @@ module Repository
     # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
     # some students from it)
     def self.get_repo_auth_records
-      assignments = Assignment.joins(:courses)
+      assignments = Assignment.joins(:course)
                               .where('courses.is_hidden': false)
       records = assignments.joins(:assignment_properties)
                            .includes(groupings: [:group, { accepted_students: :section }])

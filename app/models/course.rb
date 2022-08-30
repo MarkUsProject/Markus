@@ -28,6 +28,9 @@ class Course < ApplicationRecord
   validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
 
   after_save_commit :update_repo_max_file_size
+  after_update :update_repo_permissions, if: ->(c) {
+    c.previous_changes.key?('is_hidden')
+  }
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
@@ -165,5 +168,9 @@ class Course < ApplicationRecord
     return unless saved_change_to_max_file_size? || saved_change_to_id?
 
     UpdateRepoMaxFileSizeJob.perform_later(self.id)
+  end
+
+  def update_repo_permissions
+    Repository.get_class.update_permissions
   end
 end

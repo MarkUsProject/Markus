@@ -28,3 +28,4 @@ en:
       remove_existing_mappings: Remove existing grader assignments
     weight: Grader Weight
     wiki: See our wiki for more information.
+    inactive_graders_count: "%{count} inactive graders"
