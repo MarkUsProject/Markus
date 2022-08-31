@@ -3,7 +3,7 @@ require 'fileutils'
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   before_save :undo_mark_for_destruction
-  after_update :rename_exam_template_directory
+  after_create_commit :create_base_path
   belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :exam_templates
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
@@ -25,13 +25,6 @@ class ExamTemplate < ApplicationRecord
     assignment = Assignment.find(attributes[:assessment_id])
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
-    exam_template_name = name_input.presence || File.basename(attributes[:filename].tr(' ', '_'), '.pdf')
-    template_path = File.join(
-      assignment.scanned_exams_path,
-      exam_template_name
-    )
-    FileUtils.mkdir_p template_path
-    File.binwrite(File.join(template_path, filename), blob)
     pdf = CombinePDF.parse blob
     num_pages = pdf.pages.length
     if name_input == ''
@@ -50,6 +43,7 @@ class ExamTemplate < ApplicationRecord
     end
     saved = new_template.save
     if saved
+      File.binwrite(new_template.file_path, blob)
       new_template.save_cover
     end
     new_template
@@ -57,7 +51,7 @@ class ExamTemplate < ApplicationRecord
 
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes = {})
-    File.binwrite(File.join(base_path, attributes[:new_filename].tr(' ', '_')), blob)
+    File.binwrite(self.file_path, blob)
 
     pdf = CombinePDF.parse blob
     self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])
@@ -66,6 +60,7 @@ class ExamTemplate < ApplicationRecord
 
   def delete_with_file
     FileUtils.rm_rf base_path
+    FileUtils.rm_f file_path
     self.destroy
   end
 
@@ -219,7 +214,11 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join self.assignment.scanned_exams_path, self.name
+    File.join self.assignment.scanned_exams_path, self.id.to_s
+  end
+
+  def file_path
+    File.join(base_path, 'exam_template.pdf')
   end
 
   def num_cover_fields
@@ -235,7 +234,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   def save_cover
-    pdf = CombinePDF.load File.join(self.base_path, self.filename)
+    pdf = CombinePDF.load file_path
     return if pdf.pages.empty?
     cover = pdf.pages[0]
     cover_page = CombinePDF.new
@@ -268,23 +267,12 @@ class ExamTemplate < ApplicationRecord
     end
   end
 
-  # when name of exam template is changed, exam template directory in server should be renamed
-  def rename_exam_template_directory
-    if self.name_changed?
-      old_directory_name = File.join(
-        self.assignment.scanned_exams_path,
-        name_was
-      )
-      new_directory_name = File.join(
-        self.assignment.scanned_exams_path,
-        name
-      )
-      File.rename old_directory_name, new_directory_name
-    end
-  end
-
   # any attempts to delete template divisions should be rejected once exams have been uploaded
   def undo_mark_for_destruction
     template_divisions.each { |div| div.reload if div.marked_for_destruction? } if exam_been_uploaded?
+  end
+
+  def create_base_path
+    FileUtils.mkdir_p self.base_path
   end
 end

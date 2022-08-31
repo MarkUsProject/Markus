@@ -35,9 +35,6 @@ describe AutomatedTestsController do
         file = fixture_file_upload('automated_tests/minimal_testers.json')
         assignment.course.autotest_setting.update!(schema: file.read)
       end
-      after do
-        FileUtils.rm_f File.join(Settings.autotest.client_dir, 'testers.json')
-      end
       it 'should respond with success' do
         subject
         expect(response.status).to eq 200
@@ -70,7 +67,7 @@ describe AutomatedTestsController do
             enable_student_tests: true,
             tokens_per_period: 10,
             token_period: 24,
-            token_start_date: Time.current.strftime('%Y-%m-%d %l:%M %p'),
+            token_start_date: Time.current.iso8601,
             non_regenerating_tokens: false,
             unlimited_tokens: false }
         end

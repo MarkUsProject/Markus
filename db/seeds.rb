@@ -1,9 +1,7 @@
-# clean up existing repos first
-if Dir.exist?(Settings.repository.storage)
-  FileUtils.rm_rf(Dir.glob(File.join(Settings.repository.storage, '*')))
-else
-  FileUtils.mkdir_p(Settings.repository.storage)
-end
+# clean up existing files first
+FileUtils.rm_rf(Repository::ROOT_DIR)
+FileUtils.rm_rf(Assignment::STARTER_FILES_DIR)
+FileUtils.rm_rf(TestRun::SETTINGS_FILES_DIR)
 
 FileUtils.mkdir_p('tmp')
 
