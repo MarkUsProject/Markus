@@ -49,10 +49,10 @@ class StarterFileGroupsController < ApplicationController
         folder_path = File.join(starter_file_group.path, params[:path].to_s, f)
         FileUtils.mkdir_p(folder_path)
       else
-        if f.size > assignment.course.max_file_size_settings
+        if f.size > assignment.course.max_file_size
           flash_now(:error, t('student.submission.file_too_large',
                               file_name: f.original_filename,
-                              max_size: (assignment.course.max_file_size_settings / 1_000_000.00).round(2)))
+                              max_size: (assignment.course.max_file_size / 1_000_000.00).round(2)))
           next
         elsif f.size == 0
           flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))

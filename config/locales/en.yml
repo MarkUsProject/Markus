@@ -17,6 +17,7 @@ en:
     split_pdf_job: Processing page %{progress} out of %{total} for %{exam_name}
     submissions_job: "%{progress}/%{total} Submissions collected"
     uncollect_submissions_job: 'Uncollecting assignments ... '
+    update_repo_max_file_size_job: "%{progress}/%{total} Student repositories updated with new maximum file size"
     update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
     working_message: "%{progress} out of %{total}"
   repo:
@@ -26,6 +27,7 @@ en:
       default: Update files
       initial: Initial commit
       required_files: Update the list of required files for assignment %{assignment}
+      max_file_size: Update the maximum file size
     timeout: Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.
   student:
     submission:
