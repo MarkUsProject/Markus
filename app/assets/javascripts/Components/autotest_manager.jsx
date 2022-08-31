@@ -413,8 +413,9 @@ class AutotestManager extends React.Component {
               unique_errors.map(error => {
                 const property = error.property.split(".").at(-1);
                 if (property === "timeout") {
-                  console.log(error);
                   error.message = "Timeout value should be an integer";
+                } else if (property === "script_files") {
+                  error.message = "A test file must be selected";
                 }
                 return error;
               });
