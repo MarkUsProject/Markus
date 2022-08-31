@@ -5,8 +5,8 @@ en:
       course:
         display_name: Display Name
         is_hidden: Course Visibility
-        name: Name
         max_file_size: Maximum File Size (bytes)
+        name: Name
     models:
       course:
         one: Course

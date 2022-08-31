@@ -6,7 +6,11 @@ describe UpdateRepoMaxFileSizeJob do
   end
 
   context 'updating required files' do
-    include_context 'git'
+    before do
+      allow(Settings.repository).to receive(:type).and_return('git')
+      allow(Repository.get_class).to receive(:purge_all).and_return nil
+    end
+    after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
 
     let!(:groups) { create_list :group, 3, course: course }
     it 'should update every repo' do
