@@ -93,20 +93,23 @@ class Course < ApplicationRecord
         self.assignments.reorder(:due_date).first
   end
 
+  # Return a string where each line contains a required file for this course and a boolean string ('true' or 'false')
+  # indicating whether the assignment this required file belongs to has the only_required_files attribute set to true
+  # of false. For example:
+  #
+  # A0/submission.py true
+  # A0/submission2.py true
+  # A0/data.txt true
+  # A5/something.hs false
   def get_required_files
     assignments = self.assignments.includes(:assignment_files, :assignment_properties)
                       .where(assignment_properties: { scanned_exam: false }, is_hidden: false)
-    required = {}
-    assignments.each do |assignment|
-      files = assignment.assignment_files.map(&:filename)
-      if assignment.only_required_files.nil?
-        required_only = false
-      else
-        required_only = assignment.only_required_files
+    assignments.map do |assignment|
+      assignment.assignment_files.map do |file|
+        filename = File.join(assignment.repository_folder, file.filename)
+        "#{filename} #{assignment.only_required_files ? true : false}"
       end
-      required[assignment.repository_folder] = { required: files, required_only: required_only }
-    end
-    required
+    end.flatten.join("\n")
   end
 
   def export_student_data_csv

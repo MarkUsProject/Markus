@@ -34,8 +34,7 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.server_hooks
-    { update: "#{::Rails.root}/lib/repo/git_hooks/multihook.py",
-      'post-receive': "#{::Rails.root}/lib/repo/git_hooks/multihook.py" }
+    "#{::Rails.root}/lib/repo/git_hooks/server"
   end
 
   def self.client_hooks
@@ -64,11 +63,11 @@ class GitRepository < Repository::AbstractRepository
       FileUtils.rm_rf(tmp_repo_path)
       repo = Rugged::Repository.clone_at(barepath, tmp_repo_path)
 
-      # Do an initial commit with the .required_files.json
+      # Do an initial commit with the .required file
       required = course.get_required_files
-      required_path = File.join(tmp_repo_path, '.required.json')
-      File.write(required_path, required.to_json)
-      repo.index.add('.required.json')
+      required_path = File.join(tmp_repo_path, '.required')
+      File.write(required_path, required)
+      repo.index.add('.required')
 
       # Do an initial commit with the .max_file_size file
       max_file_size_path = File.join(tmp_repo_path, '.max_file_size')
@@ -78,13 +77,15 @@ class GitRepository < Repository::AbstractRepository
       # Add client-side hooks
       dest = File.join(tmp_repo_path, 'markus-hooks')
       FileUtils.copy_entry client_hooks, dest
-      FileUtils.chmod 0o755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
+
+      FileUtils.chmod(0o755, Dir.glob(File.join(tmp_repo_path, 'markus-hooks', '**', '*')).select { |f| File.file?(f) })
       repo.index.add_all('markus-hooks')
 
       # Set up server-side hooks
-      server_hooks.each do |hook_symbol, hook_script|
-        FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
-      end
+      dest = File.join(barepath, 'hooks')
+      FileUtils.rm_rf dest
+      FileUtils.copy_entry server_hooks, dest
+      FileUtils.chmod(0o755, Dir.glob(File.join(dest, '**', '*')).select { |f| File.file?(f) })
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
     rescue StandardError
@@ -292,6 +293,9 @@ class GitRepository < Repository::AbstractRepository
   def get_repo_name
     @connect_string.rpartition(File::SEPARATOR)[2]
   end
+
+  # Gets the repository connection string
+  attr_reader :connect_string
 
   # Given a RevisionFile object, returns its content as a string.
   def stringify(file)

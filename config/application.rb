@@ -6,6 +6,10 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# This environment variable is used in server-side git hooks to determine whether the change
+# is being sent locally (from MarkUs itself) or remotely (from a user accessing git over ssh or https).
+ENV['SKIP_LOCAL_GIT_HOOKS'] = 'true'
+
 # Settings in config/environments/* take precedence over those specified here.
 # Application configuration can go into files in config/initializers
 # -- all .rb files in that directory are automatically loaded after loading
