@@ -51,7 +51,7 @@ BEGIN
                   AND memberships.membership_status IN ('inviter','accepted')
                   AND assignment_properties.vcs_submit=true
                   AND roles.id=role_id_
-                  AND courses.hidden=false
+                  AND courses.is_hidden=false
                   AND groups.repo_name=repo_name_
                   AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
                            OR assessment_section_properties.is_hidden=false)
