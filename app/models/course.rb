@@ -114,10 +114,14 @@ class Course < ApplicationRecord
   end
 
   def update_autotest_url(url)
-    autotest_setting = AutotestSetting.find_or_create_by!(url: url)
-    if autotest_setting.id != self.autotest_setting&.id
-      self.update!(autotest_setting_id: autotest_setting.id)
-      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
+    if url.blank?
+      clear_autotest_setting_ids if self.update(autotest_setting_id: nil)
+    else
+      autotest_setting = AutotestSetting.find_or_create_by(url: url)
+      if autotest_setting && autotest_setting.id != self.autotest_setting&.id
+        self.update!(autotest_setting_id: autotest_setting.id)
+        clear_autotest_setting_ids
+      end
     end
   end
 
@@ -146,5 +150,11 @@ class Course < ApplicationRecord
                   section_name: student.section&.name)
     end
     output.to_yaml
+  end
+
+  private
+
+  def clear_autotest_setting_ids
+    AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
   end
 end

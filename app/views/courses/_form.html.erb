@@ -16,6 +16,12 @@
                      size: 35,
                      required: true,
                      readonly: !allowed_to?(:edit?) %>
+    <%= f.label :autotest_url,
+                AutotestSetting.human_attribute_name(:url) %>
+    <%= f.text_field :autotest_url,
+                     size: 35,
+                     value: @current_course.autotest_setting&.url,
+                     readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
     <%= f.label :is_hidden, Course.human_attribute_name(:is_hidden) %>
     <span>
       <%= f.label :is_hidden, I18n.t('courses.hidden'), value: 'true' %>

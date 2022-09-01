@@ -83,6 +83,16 @@ describe Course do
             expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
           end
         end
+        context 'when the autotest setting is changed to a blank value' do
+          it 'should associate the course with no autotest settings' do
+            course.update_autotest_url('')
+            expect(course.reload.autotest_setting).to be_nil
+          end
+          it 'should reset the remote_autotest_settings_id for all assignments' do
+            course.update_autotest_url('')
+            expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
+          end
+        end
       end
     end
   end

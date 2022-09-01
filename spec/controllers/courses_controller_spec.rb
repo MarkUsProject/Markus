@@ -209,6 +209,27 @@ describe CoursesController do
           updated_course = Course.find(course.id)
           expect(updated_course.name).not_to eq('CS101')
         end
+        context 'updating the autotest_url' do
+          before do
+            allow_any_instance_of(AutotestSetting).to receive(:register).and_return(1)
+            allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
+          end
+          it 'does not update the autotest_url as an instructor' do
+            put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            expect(course.reload.autotest_setting).to be_nil
+          end
+          it 'does update the autotest_url as an admin' do
+            put_as create(:admin_role), :update,
+                   params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            expect(course.reload.autotest_setting.url).to eq 'http://example.com'
+          end
+          it 'should reset the remote_autotest_settings_id for all assignments' do
+            create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 1 })
+            put_as create(:admin_role), :update,
+                   params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            expect(course.reload.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
+          end
+        end
         it 'does not update when parameters are invalid' do
           expected_course_data = {
             name: course.name,

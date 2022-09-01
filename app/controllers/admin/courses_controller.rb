@@ -19,6 +19,7 @@ module Admin
 
     def create
       @current_course = Course.create(course_params)
+      update_autotest_url if @current_course.persisted?
       respond_with @current_course, location: -> { admin_courses_path }
     end
 
@@ -26,6 +27,7 @@ module Admin
 
     def update
       current_course.update(params.require(:course).permit(:is_hidden, :display_name))
+      update_autotest_url
       respond_with @current_course, location: -> { edit_admin_course_path(@current_course) }
     end
 
@@ -33,6 +35,13 @@ module Admin
 
     def course_params
       params.require(:course).permit(:name, :is_hidden, :display_name)
+    end
+
+    def update_autotest_url
+      current_course.update_autotest_url(params.require(:course).permit(:autotest_url)[:autotest_url])
+    rescue SocketError => e
+      current_course.errors.add(:base, e.message)
+      flash_message(:error, e.message)
     end
 
     def flash_interpolation_options

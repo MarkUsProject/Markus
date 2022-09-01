@@ -27,6 +27,7 @@ class CoursesController < ApplicationController
 
   def update
     @current_course.update(params.require(:course).permit(:is_hidden, :display_name))
+    update_autotest_url if allowed_to?(:edit?, with: Admin::CoursePolicy)
     respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
 
@@ -169,6 +170,13 @@ class CoursesController < ApplicationController
 
   def course_params
     params.require(:course).permit(:name, :is_hidden)
+  end
+
+  def update_autotest_url
+    current_course.update_autotest_url(params.require(:course).permit(:autotest_url)[:autotest_url])
+  rescue SocketError => e
+    current_course.errors.add(:base, e.message)
+    flash_message(:error, e.message)
   end
 
   def flash_interpolation_options
