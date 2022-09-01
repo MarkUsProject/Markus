@@ -76,6 +76,14 @@ describe Course do
         include_examples 'when not using git repos'
       end
     end
+    context 'The repository permissions file' do
+      context 'should be updated' do
+        it 'when changing toggling the hidden status for a course' do
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          course.update(is_hidden: true)
+        end
+      end
+    end
   end
 
   describe '#get_assignment_list' do
@@ -144,6 +152,28 @@ describe Course do
 
   describe '#upload_assignment_list' # TODO
   describe '#get_required_files' # TODO
+  describe '#update_autotest_url' do
+    before do
+      allow_any_instance_of(AutotestSetting).to receive(:register).and_return(1)
+      allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
+    end
+    let(:url) { 'http://example.com' }
+    context 'when no autotest setting already exists for that url' do
+      it 'should create a new autotest setting' do
+        expect { course.update_autotest_url(url) }.to(change { AutotestSetting.where(url: url).count }.from(0).to(1))
+      end
+      it 'should associate the new setting with the course' do
+        course.update_autotest_url(url)
+        expect(course.reload.autotest_setting.url).to eq url
+      end
+      context 'when assignments exist for the course' do
+        before do
+          create_list :assignment, 3, course: course,
+                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
+        end
+      end
+    end
+  end
 
   describe '#get_current_assignment' do
     context 'when no assignments are found' do
