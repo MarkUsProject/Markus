@@ -21,6 +21,6 @@ class UserPolicy < ApplicationPolicy
 
   # Any standard user can reset their API key
   def reset_api_key?
-    user.end_user?
+    true
   end
 end
