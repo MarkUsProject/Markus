@@ -58,9 +58,9 @@ class StudentsController < ApplicationController
       end
       case params[:bulk_action]
       when 'hide'
-        Student.hide_students(student_ids)
+        Student.hide_students(student_ids) if allowed_to?(:manage_user_status?)
       when 'unhide'
-        Student.unhide_students(student_ids)
+        Student.unhide_students(student_ids) if allowed_to?(:manage_user_status?)
       when 'give_grace_credits'
         Student.give_grace_credits(student_ids,
                                    params[:grace_credits])

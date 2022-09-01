@@ -6,7 +6,7 @@ describe EndUser do
     end
   end
   describe '#visible_courses' do
-    let(:course) { create :course, is_hidden: false }
+    let(:course) { create :course }
     let(:end_user) { create :end_user }
     let!(:student) { create :student, course: course, user: end_user }
     context 'when there is a visible course' do
@@ -15,7 +15,7 @@ describe EndUser do
       end
     end
     context 'when there is a hidden course' do
-      let(:course) { create :course }
+      let(:course) { create :course, is_hidden: true }
       it 'does not return the course' do
         expect(end_user.visible_courses).to be_empty
       end
@@ -45,7 +45,7 @@ describe EndUser do
     end
     context 'when there are multiple courses' do
       let(:end_user2) { create :end_user }
-      let(:course2) { create :course }
+      let(:course2) { create :course, is_hidden: true }
       let!(:student2) { create :student, user: end_user2, course: course2 }
       let!(:student2c1) { create :student, user: end_user2, course: course }
       let(:course3) { create :course, is_hidden: false }

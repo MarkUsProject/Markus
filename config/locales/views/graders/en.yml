@@ -17,6 +17,7 @@ en:
     group_submission_no_files: One or more of the groups selected has no files submitted. Grader not assigned.
     help: Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria.
     hide_unassigned_criteria: Only show assigned criteria to graders (if unselected, all graders will be able to see all criteria)
+    inactive_graders_count: "%{count} inactive graders"
     no_grader_assigned: 'Default grader: course instructor(s)'
     number_error: The sum of the weights must be greater than 0 and no weight can be negative.
     random_instruction: Assign a weight for each grader for randomized assignment. With the default weights of 1, all graders will be assigned an equal number of groups.
@@ -28,4 +29,3 @@ en:
       remove_existing_mappings: Remove existing grader assignments
     weight: Grader Weight
     wiki: See our wiki for more information.
-    inactive_graders_count: "%{count} inactive graders"

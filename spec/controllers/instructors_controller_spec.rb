@@ -56,6 +56,29 @@ describe InstructorsController do
         expect(course.instructors.joins(:user).where('users.user_name': end_user.user_name)).to exist
         expect(response).to redirect_to action: 'index'
       end
+      context 'when changing the default visibility status' do
+        let(:params) do
+          {
+            course_id: course.id,
+            role: { end_user: { user_name: end_user.user_name }, hidden: true }
+          }
+        end
+        context 'as an admin' do
+          let(:admin) { create :admin_user }
+          it 'should change the default visibility status' do
+            post_as admin, :create, params: params
+            instructor = end_user.roles.first
+            expect(instructor.hidden).to eq(true)
+          end
+        end
+        context 'as an instructor' do
+          it 'should not change the default visibility status' do
+            post_as instructor, :create, params: params
+            instructor = end_user.roles.first
+            expect(instructor.hidden).to eq(false)
+          end
+        end
+      end
       context 'when a end_user does not exist' do
         let(:end_user) { build :end_user }
         subject do

@@ -146,6 +146,19 @@ describe TasController do
             expect(ta.grader_permission.run_tests).to be false
           end
         end
+
+        context 'when changing the default role' do
+          let(:params) do
+            {
+              course_id: course.id,
+              role: { end_user: { user_name: end_user.user_name }, hidden: true }
+            }
+          end
+          it 'should change the default visibility status' do
+            grader = end_user.roles.first
+            expect(grader.hidden).to eq(true)
+          end
+        end
       end
       it_behaves_like 'role is from a different course' do
         let(:role) { instructor }
