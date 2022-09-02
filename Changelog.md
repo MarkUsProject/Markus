@@ -8,6 +8,7 @@
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
 - Fix bug preventing use of the update_grades API route (#6188)
+- Do not dynamically change the database schema which causes migration and installation issues (#6189)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)

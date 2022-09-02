@@ -37,4 +37,6 @@ authorized_key_paths() {
 }
 
 # shellcheck disable=SC2046
-cat $(authorized_key_paths)
+cat $(authorized_key_paths) 2> /dev/null
+
+exit 0 # always exit nicely in case some of the authorized keys paths don't exists

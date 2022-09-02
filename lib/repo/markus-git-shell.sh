@@ -60,12 +60,6 @@ _REQUESTED_DIR_PATH=$(dirname "${REQUESTED_REPO_PATH}") # ex: /2021-02/csc108
 REQUESTED_COURSE=$(basename "${_REQUESTED_DIR_PATH}") # ex: csc108
 REQUESTED_INSTANCE=$(basename "$(dirname "${_REQUESTED_DIR_PATH}")") # ex: 2021-02
 
-if [ -n "${INSTANCE}" ] && [ "$(basename "${INSTANCE}")" != "${REQUESTED_INSTANCE}" ]; then
-  # Exit if the INSTANCE environment variable does not match the requested instance in the path
-  # This prevents users with the same username in a different instance from accessing each other's repositories
-  exit 1
-fi
-
 REQUESTED_REPO_BASE=$(basename "${REQUESTED_REPO_PATH}") # ex: group_1.git
 REQUESTED_REPO_DIR="${REQUESTED_COURSE}/${REQUESTED_REPO_BASE}" # ex: csc108/group_1.git'
 UPDATED_REPO_PATH="$(updated_repo_path)" # ex: /some/path/csc108/repos/group_123.git
@@ -74,7 +68,13 @@ SSH_UPDATED_COMMAND="$(echo "${SSH_ORIGINAL_COMMAND}" | rev | cut -f2- -d' ' | r
 if [[ -z ${MARKUS_USE_ACCESS_FILE} ]]; then
   PERMITTED_QUERY="SELECT check_repo_permissions(:'user_name', :'course_name', :'repo_name')"
   SERVICE=$(if [ "${REQUESTED_INSTANCE}" == '/' ]; then echo "${DEFAULT_SERVICE:-markus}"; else echo "${REQUESTED_INSTANCE}"; fi)
-  USER_PERMITTED=$(echo "${PERMITTED_QUERY}" | psql service="${SERVICE}" -qtA -v user_name="${LOGIN_USER}" -v course_name="${REQUESTED_COURSE}" -v repo_name="${REQUESTED_REPO_BASE%.*}")
+  if [ -n "${INSTANCE}" ] && [ "$(echo 'SELECT database_identifier()' | psql service="${SERVICE}" -qtA)" = "${INSTANCE}" ]; then
+    USER_PERMITTED=$(echo "${PERMITTED_QUERY}" | psql service="${SERVICE}" -qtA -v user_name="${LOGIN_USER}" -v course_name="${REQUESTED_COURSE}" -v repo_name="${REQUESTED_REPO_BASE%.*}")
+  else
+    # Deny if the INSTANCE environment variable does not match the database identifier
+    # This prevents users with the same username in a different instance from accessing each other's repositories
+    USER_PERMITTED=f
+  fi
 else
   GIT_ACCESS_FILE="$(dirname "$(dirname "${UPDATED_REPO_PATH}")")/.access" # ex: /some/path/csc108/repos/.access
   # A string containing all repository names (without .git) that the user with username == LOGIN_USER is
