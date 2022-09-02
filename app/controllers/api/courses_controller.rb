@@ -50,8 +50,7 @@ module Api
     end
 
     def update_autotest_url
-      current_course.update_autotest_url(params[:url])
-      raise current_course.errors.full_messages.join(' ') if current_course.reload.autotest_settings.url != params[:url]
+      AutotestResetUrlJob.perform_now(current_course, params[:url], request.protocol + request.host_with_port)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError

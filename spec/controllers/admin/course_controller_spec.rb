@@ -200,19 +200,13 @@ describe Admin::CoursesController do
         expect(updated_course.name).not_to eq('CSC2000')
       end
       context 'updating the autotest_url' do
-        before do
-          allow_any_instance_of(AutotestSetting).to receive(:register).and_return(1)
-          allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
-        end
-        it 'updates the autotest_url' do
+        it 'does update the autotest_url as an admin' do
+          expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+            expect(course_).to eq course
+            expect(url).to eq 'http://example.com'
+            nil # mocked return value
+          end
           put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
-          expect(course.reload.autotest_setting.url).to eq 'http://example.com'
-        end
-        it 'should reset the remote_autotest_settings_id for all assignments' do
-          create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 1 })
-          put_as create(:admin_role), :update,
-                 params: { id: course.id, course: { autotest_url: 'http://example.com' } }
-          expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
         end
       end
       it 'does not update when parameters are invalid' do

@@ -8,6 +8,8 @@ en:
     display_output_title: Display test output to students?
     files: Test Files
     invalid_specs_file: Settings file is not a valid json file
+    job_messages:
+      resetting_test_settings_error: "Unable to update test settings for assignment %{short_identifier}: %{error}\n\nPlease try saving the settings again from the Automated Testing page."
     need_group_for_test: You must have a group to run tests.
     need_one_file: You must submit at least one file in order to run tests.
     need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.

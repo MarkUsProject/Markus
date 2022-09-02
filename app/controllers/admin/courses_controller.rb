@@ -38,10 +38,9 @@ module Admin
     end
 
     def update_autotest_url
-      current_course.update_autotest_url(params.require(:course).permit(:autotest_url)[:autotest_url])
-    rescue SocketError => e
-      current_course.errors.add(:base, e.message)
-      flash_message(:error, e.message)
+      url = params.require(:course).permit(:autotest_url)[:autotest_url]
+      @current_job = AutotestResetUrlJob.perform_later(current_course, url, request.protocol + request.host_with_port)
+      session[:job_id] = @current_job.job_id if @current_job
     end
 
     def flash_interpolation_options

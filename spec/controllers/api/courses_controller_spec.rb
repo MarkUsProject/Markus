@@ -96,8 +96,11 @@ describe Api::CoursesController do
     context '#update_autotest_url' do
       let(:course) { create :course }
       subject { put :update_autotest_url, params: { id: course.id, url: 'http://example.com' } }
-      it 'should call update_autotest_url' do
-        expect_any_instance_of(Course).to receive(:update_autotest_url).with('http://example.com')
+      it 'should call AutotestResetUrlJob' do
+        expect(AutotestResetUrlJob).to receive(:perform_now) do |course_, url|
+          expect(course_).to eq course
+          expect(url).to eq 'http://example.com'
+        end
         subject
       end
     end
