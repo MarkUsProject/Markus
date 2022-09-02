@@ -18,6 +18,8 @@ class GradeEntryStudent < ApplicationRecord
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
 
+  has_one :user, through: :role
+
   validates :released_to_student, inclusion: { in: [true, false] }
 
   before_save :refresh_total_grade

@@ -31,7 +31,7 @@ describe GradeEntryFormsController do
       @file_total_included = fixture_file_upload('grade_entry_forms/total_column_included.csv', 'text/csv')
 
       @student = grade_entry_form_with_data.grade_entry_students
-                                           .joins(role: :user)
+                                           .joins(:user)
                                            .find_by('users.user_name': 'c8shosta')
       @original_item = grade_entry_form_with_data.grade_entry_items.first
       @student.grades.find_or_create_by(grade_entry_item: @original_item).update(
@@ -304,7 +304,7 @@ describe GradeEntryFormsController do
       end
       context 'when the ta has been assigned to a student' do
         let(:student) do
-          gef.grade_entry_students.joins(role: :user).find_by('users.user_name': 'c8shosta')
+          gef.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
         end
         let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
         it 'returns data for only the assigned student' do
@@ -339,9 +339,9 @@ describe GradeEntryFormsController do
     before :each do
       create(:student, user: create(:end_user, user_name: 'paneroar'))
       @student = grade_entry_form_with_data.grade_entry_students
-                                           .joins(role: :user).find_by('users.user_name': 'c8shosta')
+                                           .joins(:user).find_by('users.user_name': 'c8shosta')
       @another = grade_entry_form_with_data.grade_entry_students
-                                           .joins(role: :user).find_by('users.user_name': 'paneroar')
+                                           .joins(:user).find_by('users.user_name': 'paneroar')
       @this_form = grade_entry_form_with_data
     end
 
@@ -459,7 +459,7 @@ describe GradeEntryFormsController do
     end
     describe 'When the grader is not allowed to release and unrelease the grades' do
       let(:student) do
-        grade_entry_form_with_data.grade_entry_students.joins(role: :user).find_by('users.user_name': 'c8shosta')
+        grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       end
       it 'should respond with 403' do
         post_as user, :update_grade_entry_students,
@@ -680,7 +680,7 @@ describe GradeEntryFormsController do
       end
       context 'who has been assigned a student' do
         let(:student) do
-          grade_entry_form_with_data.grade_entry_students.joins(role: :user).find_by('users.user_name': 'c8shosta')
+          grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
         end
         let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
         it 'returns data' do
@@ -695,7 +695,7 @@ describe GradeEntryFormsController do
           get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
           students = role.grade_entry_students
                          .where(grade_entry_form: grade_entry_form_with_data)
-                         .joins(role: :user).pluck('users.user_name')
+                         .joins(:user).pluck('users.user_name')
           expect(response.parsed_body['data'].map { |stu| stu['user_name'] }).to match_array(students)
         end
       end

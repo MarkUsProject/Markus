@@ -67,7 +67,7 @@ describe AutomatedTestsController do
             enable_student_tests: true,
             tokens_per_period: 10,
             token_period: 24,
-            token_start_date: Time.current.strftime('%Y-%m-%d %l:%M %p'),
+            token_start_date: Time.current.iso8601,
             non_regenerating_tokens: false,
             unlimited_tokens: false }
         end

@@ -10,3 +10,4 @@
 //
 //= link_tree ../images
 //= link_tree ../builds
+//= link flatpickr/dist/flatpickr.css

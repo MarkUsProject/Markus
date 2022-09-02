@@ -3,9 +3,11 @@
 ## [unreleased]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Simplify configuration options for storing files on disk (#6157)
+- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
 - Replace yarn with npm as a package manager (#6159)
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
+- Fix bug preventing use of the update_grades API route (#6188)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
 
 ## [v2.1.1]
