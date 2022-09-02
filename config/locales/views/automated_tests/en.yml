@@ -7,6 +7,9 @@ en:
       instructors_and_students: Always display test output to students
     display_output_title: Display test output to students?
     files: Test Files
+    form_input_errors:
+      enum: Please select a valid %{property} from the list of options
+      required: The %{property} field cannot be blank
     invalid_specs_file: Settings file is not a valid json file
     need_group_for_test: You must have a group to run tests.
     need_one_file: You must submit at least one file in order to run tests.

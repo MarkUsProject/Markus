@@ -352,6 +352,48 @@ class AutotestManager extends React.Component {
     );
   };
 
+  transformFormErrors = errors => {
+    const unique_properties = [];
+
+    // Filter out any duplicate and unwanted errors
+    const unique_errors = errors.filter(error => {
+      if (unique_properties.includes(error.property)) {
+        return false;
+      }
+      unique_properties.push(error.property);
+      return true;
+    });
+
+    // Change the error message
+    return unique_errors.map(error => {
+      const property = error.property.split(".").at(-1);
+      console.log(error);
+      switch (error.name) {
+        case "required":
+          error.message = I18n.t("automated_tests.form_input_errors.required", {
+            property: property,
+          });
+          break;
+        case "enum":
+          // Removes tester type error when one field is incorrect
+          error.message =
+            property === "tester_type"
+              ? ""
+              : I18n.t("automated_tests.form_input_errors.enum", {
+                  property: property,
+                });
+          break;
+        case "oneOf":
+          error.message = "";
+          break;
+        default:
+          error.message = property + " " + error.message;
+          break;
+      }
+      return error;
+    });
+  };
+
   render() {
     return (
       <div>
@@ -401,26 +443,7 @@ class AutotestManager extends React.Component {
             onChange={this.handleFormChange}
             liveValidate={true}
             showErrorList={false}
-            transformErrors={errors => {
-              const unique_properties = [];
-              const unique_errors = errors.filter(error => {
-                if (!unique_properties.includes(error.property)) {
-                  unique_properties.push(error.property);
-                  return true;
-                }
-                return false;
-              });
-              unique_errors.map(error => {
-                const property = error.property.split(".").at(-1);
-                if (property === "timeout") {
-                  error.message = "Timeout value should be an integer";
-                } else if (property === "script_files") {
-                  error.message = "A test file must be selected";
-                }
-                return error;
-              });
-              return unique_errors;
-            }}
+            transformErrors={this.transformFormErrors}
           >
             <p /> {/*need something here so that the form doesn't render its own submit button*/}
           </Form>
