@@ -25,7 +25,7 @@ describe MarksGradersController do
     it 'accepts a valid file and can preserve existing TA mappings' do
       create(:student, user: create(:end_user, user_name: 'c5granad'))
       ges = grade_entry_form_with_data.grade_entry_students
-                                      .joins(role: :user)
+                                      .joins(:user)
                                       .find_by('users.user_name': 'c5granad')
       create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
       post_as instructor,
@@ -45,7 +45,7 @@ describe MarksGradersController do
       # check that the ta was assigned to each student
       @student_user_names.each do |name|
         expect(
-          GradeEntryStudentTa.joins(grade_entry_student: [role: :user])
+          GradeEntryStudentTa.joins(grade_entry_student: :user)
                              .exists?('users.user_name': name)
         ).to be true
       end
@@ -55,7 +55,7 @@ describe MarksGradersController do
     it 'accepts a valid file and can remove existing TA mappings' do
       create(:student, user: create(:end_user, user_name: 'c5granad'))
       ges = grade_entry_form_with_data.grade_entry_students
-                                      .joins(role: :user)
+                                      .joins(:user)
                                       .find_by('users.user_name': 'c5granad')
       create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
       post_as instructor,
@@ -76,7 +76,7 @@ describe MarksGradersController do
       # check that the ta was assigned to each student
       @student_user_names.each do |name|
         expect(
-          GradeEntryStudentTa.joins(grade_entry_student: [role: :user])
+          GradeEntryStudentTa.joins(grade_entry_student: :user)
             .exists?(grade_entry_student: { users: { user_name: name } })
         ).to be true
       end

@@ -46,8 +46,8 @@ class GradeEntryStudentTa < ApplicationRecord
 
     new_mappings = []
     tas = grade_entry_form.course.tas.joins(:user).pluck('users.user_name', :id).to_h
-    grade_entry_students = grade_entry_form.grade_entry_students.joins(role: :user).pluck('users.user_name',
-                                                                                          :id).to_h
+    grade_entry_students = grade_entry_form.grade_entry_students.joins(:user).pluck('users.user_name',
+                                                                                    :id).to_h
 
     result = MarkusCsv.parse(csv_data.read) do |row|
       raise CsvInvalidLineError if row.empty?
