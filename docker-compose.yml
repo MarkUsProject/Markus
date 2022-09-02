@@ -108,7 +108,7 @@ services:
 
   webpack:
     <<: *app
-    entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
+    entrypoint: .dockerfiles/entrypoint-dev-webpack.sh
     command: npm run build-dev
     volumes:
       - bundle:/bundle
