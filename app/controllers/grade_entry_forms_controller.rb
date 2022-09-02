@@ -135,7 +135,7 @@ class GradeEntryFormsController < ApplicationController
 
     if current_role.instructor?
       students = grade_entry_form.grade_entry_students
-                                 .joins(role: :user)
+                                 .joins(:user)
                                  .pluck_to_hash(*student_pluck_attrs)
       grades = grade_entry_form.grade_entry_students
                                .joins(:grades)
@@ -144,7 +144,7 @@ class GradeEntryFormsController < ApplicationController
     elsif current_role.ta?
       students = current_role.grade_entry_students
                              .where(grade_entry_form: grade_entry_form)
-                             .joins(role: :user)
+                             .joins(:user)
                              .pluck_to_hash(*student_pluck_attrs)
       grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)

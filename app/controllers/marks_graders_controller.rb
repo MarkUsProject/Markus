@@ -33,7 +33,7 @@ class MarksGradersController < ApplicationController
 
         # Student information
         student_data = gef.grade_entry_students
-                          .left_outer_joins(role: :user, tas: :user)
+                          .left_outer_joins(:user, tas: :user)
                           .pluck('roles.id',
                                  'users.user_name',
                                  'users.first_name',

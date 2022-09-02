@@ -101,7 +101,7 @@ class GradeEntryForm < Assessment
     elsif role.ta?
 
       students = role.grade_entry_students
-                     .joins(role: :user)
+                     .joins(:user)
                      .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
                      .where(grade_entry_form: self, 'roles.hidden': false,
                             'grade_entry_students.assessment_id': self.id)
@@ -125,13 +125,13 @@ class GradeEntryForm < Assessment
 
     if role.instructor?
       grade_data = self.grades
-                       .joins(:grade_entry_item, grade_entry_student: [role: :user])
+                       .joins(:grade_entry_item, grade_entry_student: :user)
                        .pluck('users.user_name', 'grade_entry_items.position', :grade)
                        .group_by { |x| x[0] }
       num_items = self.grade_entry_items.count
     elsif role.ta?
       grade_data = role.grade_entry_students
-                       .joins(role: :user)
+                       .joins(:user)
                        .joins(:grades)
                        .joins(:grade_entry_items)
                        .where(grade_entry_form: self)
@@ -160,7 +160,7 @@ class GradeEntryForm < Assessment
   end
 
   def from_csv(grades_data, overwrite)
-    grade_entry_students = self.grade_entry_students.joins(role: :user).pluck('users.user_name', :id).to_h
+    grade_entry_students = self.grade_entry_students.joins(:user).pluck('users.user_name', :id).to_h
     all_grades = Set.new(
       self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)
     )
