@@ -79,7 +79,6 @@ group :development do
   gem 'brakeman', require: false
   gem 'bullet'
   gem 'listen' # to listen for changes in i18n-js files
-  gem 'rails-erd'
 end
 
 group :test do
