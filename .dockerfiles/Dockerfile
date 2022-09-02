@@ -22,7 +22,6 @@ RUN apt-get update -qq && \
     libmagickwand-dev \
     cmake \
     libssl-dev \
-    graphviz \
     git \
     python3-venv \
     python3-dev \

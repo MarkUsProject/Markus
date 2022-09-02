@@ -73,6 +73,15 @@ $$;
 
 
 --
+-- Name: database_identifier(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.database_identifier() RETURNS text
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$SELECT CONCAT((SELECT system_identifier FROM pg_control_system()), '-', (SELECT current_database FROM current_database()));$$;
+
+
+--
 -- Name: get_authorized_keys(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -82,7 +91,7 @@ CREATE FUNCTION public.get_authorized_keys() RETURNS TABLE(authorized_keys text)
 DECLARE
   instance text;
 BEGIN
-  SELECT INTO instance relative_url_root();
+  SELECT INTO instance database_identifier();
   RETURN QUERY SELECT CONCAT(
                 'command="LOGIN_USER=',
                 users.user_name,
@@ -93,15 +102,6 @@ BEGIN
   FROM key_pairs JOIN users ON key_pairs.user_id = users.id;
 END
 $$;
-
-
---
--- Name: relative_url_root(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.relative_url_root() RETURNS text
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $$SELECT text '/'$$;
 
 
 SET default_tablespace = '';
@@ -4577,4 +4577,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220629225622'),
 ('20220707182822'),
 ('20220726142501'),
-('20220726201403');
+('20220726201403'),
+('20220825171354');
