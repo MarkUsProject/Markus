@@ -187,10 +187,10 @@ describe("For the StudentTable's display of students", () => {
           children: student.section
             ? wrapper.instance().wrapped.state.data.sections[student.section]
             : "",
-        })
+        }),
       ).toBeTruthy();
       expect(
-        row.children({children: `${student.remaining_grace_credits} / ${student.grace_credits}`})
+        row.children({children: `${student.remaining_grace_credits} / ${student.grace_credits}`}),
       ).toBeTruthy();
       expect(row.children({children: !student.hidden ? "Active" : "Inactive"})).toBeTruthy();
     };
@@ -228,7 +228,7 @@ describe("For the StudentTable's display of students", () => {
           students: students_sample,
           sections: {1: "LEC0101"},
           counts: {all: 2, active: 2, inactive: 0},
-        })
+        }),
       );
       wrapper = mount(<StudentTable selection={[]} course_id={1} />);
     });
@@ -247,7 +247,7 @@ describe("For the StudentTable's display of students", () => {
           students: students_sample,
           sections: {},
           counts: {all: 0, active: 0, inactive: 0},
-        })
+        }),
       );
       wrapper = mount(<StudentTable selection={[]} course_id={1} />);
     });

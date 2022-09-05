@@ -123,7 +123,7 @@ export class ImageViewer extends React.Component {
           end: Math.floor(midHeightRotated + corners[0][1]),
         },
       },
-      annotation.id
+      annotation.id,
     );
   };
 
@@ -139,7 +139,7 @@ export class ImageViewer extends React.Component {
       {
         rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90,
       },
-      this.rotateImage
+      this.rotateImage,
     );
   };
 

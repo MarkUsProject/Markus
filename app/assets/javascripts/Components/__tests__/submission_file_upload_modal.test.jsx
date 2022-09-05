@@ -10,7 +10,7 @@ describe("For the SubmissionFileUploadModal", () => {
           onlyRequiredFiles={true}
           requiredFiles={["q1.py", "q2.py", "q3.py", "part1/p1.py"]}
           uploadTarget={null}
-        />
+        />,
       );
     });
 
@@ -59,7 +59,7 @@ describe("For the SubmissionFileUploadModal", () => {
           onlyRequiredFiles={false}
           requiredFiles={["q1.py", "q2.py", "q3.py", "part1/p1.py"]}
           uploadTarget={null}
-        />
+        />,
       );
     });
     it("renders the element if onlyRequiredFiles is false and requiredFiles is non empty", () => {
@@ -107,7 +107,7 @@ describe("For the SubmissionFileUploadModal", () => {
           onlyRequiredFiles={false}
           requiredFiles={[]}
           uploadTarget={null}
-        />
+        />,
       );
     });
     it("renders the element if onlyRequiredFiles is false and requiredFiles is empty", () => {

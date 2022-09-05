@@ -69,7 +69,7 @@ export class SubmissionInfoPanel extends React.Component {
               this.props.assignment_id,
               {
                 grouping_id: this.props.grouping_id,
-              }
+              },
             )}
           >
             {I18n.t("results.view_group_repo")}

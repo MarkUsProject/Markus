@@ -42,7 +42,7 @@ class BatchTestRunTable extends React.Component {
       if (row.status === "in_progress") {
         const stop_tests_url = Routes.stop_test_course_assignment_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         );
         row.action = (
           <a href={stop_tests_url + "?test_run_id=" + row.id}>
@@ -129,7 +129,7 @@ class BatchTestRunTable extends React.Component {
                   } else {
                     const stop_tests_url = Routes.stop_batch_tests_course_assignment_path(
                       this.props.course_id,
-                      this.props.assignment_id
+                      this.props.assignment_id,
                     );
                     return (
                       <span>

@@ -143,7 +143,7 @@ class SourceCodeLine {
         false,
         annotationId,
         hoverOnFunction,
-        hoverOffFunction
+        hoverOffFunction,
       );
     } else {
       // Split the start node and set class/data/events
@@ -153,7 +153,7 @@ class SourceCodeLine {
         true,
         annotationId,
         hoverOnFunction,
-        hoverOffFunction
+        hoverOffFunction,
       );
 
       // Split the end node and set class/data/events
@@ -163,7 +163,7 @@ class SourceCodeLine {
         false,
         annotationId,
         hoverOnFunction,
-        hoverOffFunction
+        hoverOffFunction,
       );
     }
   }

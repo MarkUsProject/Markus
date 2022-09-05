@@ -147,7 +147,7 @@ class ImageAnnotationManager extends AnnotationManager {
       this.annotation_text_displayer.displayCollection(
         annots_to_display,
         xy_coords[0] + image_container.offsetLeft - codeviewer.scrollLeft,
-        xy_coords[1] + image_container.offsetTop - codeviewer.scrollTop
+        xy_coords[1] + image_container.offsetTop - codeviewer.scrollTop,
       );
     } else {
       // No annotation found

@@ -49,6 +49,6 @@ describe("For the submissions managed by the FileManager component", () => {
       files_sample.forEach(file => {
         expect(wrapper.exists("a", {href: file.url, download: file.raw_name})).toEqual(true);
       });
-    }
+    },
   );
 });

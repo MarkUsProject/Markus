@@ -60,7 +60,7 @@ export class TextForm extends React.Component {
       });
     },
     saveAfterMs,
-    false
+    false,
   );
 
   updateValue = event => {

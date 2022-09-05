@@ -104,7 +104,7 @@ export function selectFilter({filter, onChange, column}) {
   options.unshift(
     <option value="all" key="all">
       {allOptionText}
-    </option>
+    </option>,
   );
 
   return (

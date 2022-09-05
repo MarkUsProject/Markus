@@ -20,7 +20,7 @@ class OneTimeAnnotationsTable extends React.Component {
     $.ajax({
       url: Routes.uncategorized_annotations_course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(res => {
@@ -35,7 +35,7 @@ class OneTimeAnnotationsTable extends React.Component {
     $.ajax({
       url: Routes.update_annotation_text_course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {content: content, annotation_text_id: annot_id},
       method: "PUT",
@@ -48,7 +48,7 @@ class OneTimeAnnotationsTable extends React.Component {
     $.ajax({
       url: Routes.destroy_annotation_text_course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {annotation_text_id: annot_id},
       method: "delete",

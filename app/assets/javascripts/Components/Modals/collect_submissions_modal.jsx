@@ -31,7 +31,7 @@ class CollectSubmissionsModal extends React.Component {
     if (this.props.isScannedExam) {
       label_text = label_text.concat(
         " ",
-        I18n.t("submissions.collect.scanned_exam_latest_warning")
+        I18n.t("submissions.collect.scanned_exam_latest_warning"),
       );
     }
     return label_text;

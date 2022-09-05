@@ -22,7 +22,7 @@ Element.prototype.removeClass = function (className) {
   } else {
     this.className = this.className.replace(
       new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"),
-      " "
+      " ",
     );
   }
 };

@@ -49,8 +49,8 @@ class AutotestManager extends React.Component {
     fetch(
       Routes.populate_autotest_manager_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
-      )
+        this.props.assignment_id,
+      ),
     )
       .then(data => data.json())
       .then(data => this.setState({...data, loading: false}));
@@ -60,8 +60,8 @@ class AutotestManager extends React.Component {
     fetch(
       Routes.populate_autotest_manager_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
-      )
+        this.props.assignment_id,
+      ),
     )
       .then(data => data.json())
       .then(data =>
@@ -69,7 +69,7 @@ class AutotestManager extends React.Component {
           files: data.files,
           schema: data.schema,
           loading: false,
-        })
+        }),
       );
   };
 
@@ -87,7 +87,7 @@ class AutotestManager extends React.Component {
     $.post({
       url: Routes.upload_files_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: data,
       processData: false, // tell jQuery not to process the data
@@ -105,7 +105,7 @@ class AutotestManager extends React.Component {
     $.post({
       url: Routes.upload_files_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {delete_files: fileKeys},
     })
@@ -118,7 +118,7 @@ class AutotestManager extends React.Component {
     $.post({
       url: Routes.upload_files_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {new_folders: [folderKey], path: this.state.uploadTarget || ""},
     })
@@ -131,7 +131,7 @@ class AutotestManager extends React.Component {
     $.post({
       url: Routes.upload_files_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {delete_folders: folderKeys},
     })
@@ -154,19 +154,19 @@ class AutotestManager extends React.Component {
 
   toggleEnableStudentTest = () => {
     this.setState({enable_student_tests: !this.state.enable_student_tests}, () =>
-      this.toggleFormChanged(true)
+      this.toggleFormChanged(true),
     );
   };
 
   toggleNonRegeneratingTokens = () => {
     this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens}, () =>
-      this.toggleFormChanged(true)
+      this.toggleFormChanged(true),
     );
   };
 
   toggleUnlimitedTokens = () => {
     this.setState({unlimited_tokens: !this.state.unlimited_tokens}, () =>
-      this.toggleFormChanged(true)
+      this.toggleFormChanged(true),
     );
   };
 
@@ -199,7 +199,7 @@ class AutotestManager extends React.Component {
     $.post({
       url: Routes.course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: JSON.stringify(data),
       processData: false,
@@ -213,14 +213,14 @@ class AutotestManager extends React.Component {
   getDownloadAllURL = () => {
     return Routes.download_files_course_assignment_automated_tests_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
     );
   };
 
   specsDownloadURL = () => {
     return Routes.download_specs_course_assignment_automated_tests_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
     );
   };
 
@@ -235,7 +235,7 @@ class AutotestManager extends React.Component {
     $.post({
       url: Routes.upload_specs_course_assignment_automated_tests_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: data,
       processData: false, // tell jQuery not to process the data

@@ -54,7 +54,7 @@ export class AnnotationTable extends React.Component {
                 full_path,
                 row.original.submission_file_id,
                 row.original.line_start,
-                row.original.id
+                row.original.id,
               )
             }
           >

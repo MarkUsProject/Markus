@@ -54,7 +54,7 @@ class GradesSummaryDisplay extends React.Component {
         ...res,
         loading: false,
         datasets: this.compileDatasets(res.graph_data),
-      })
+      }),
     );
   };
 

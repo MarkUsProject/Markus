@@ -63,7 +63,7 @@ class SubmissionFileManager extends React.Component {
           requiredFiles: data.required_files,
           maxFileSize: data.max_file_size,
           numberOfMissingFiles: data.number_of_missing_files,
-        })
+        }),
       );
   };
 
@@ -87,7 +87,7 @@ class SubmissionFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: data_to_upload,
     })
@@ -116,7 +116,7 @@ class SubmissionFileManager extends React.Component {
       $.post({
         url: Routes.update_files_course_assignment_submissions_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
         data: data,
         processData: false, // tell jQuery not to process the data
@@ -135,7 +135,7 @@ class SubmissionFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         delete_files: fileKeys,
@@ -147,9 +147,9 @@ class SubmissionFileManager extends React.Component {
           ? () =>
               this.setState(
                 {viewFile: null, viewFileType: null, viewFileURL: null},
-                this.props.onChange
+                this.props.onChange,
               )
-          : this.fetchData
+          : this.fetchData,
       )
       .then(this.endAction);
   };
@@ -162,7 +162,7 @@ class SubmissionFileManager extends React.Component {
       $.post({
         url: Routes.update_files_course_assignment_submissions_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
         data: {
           new_folders: [folderKey],
@@ -178,7 +178,7 @@ class SubmissionFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         delete_folders: folderKeys,
@@ -204,7 +204,7 @@ class SubmissionFileManager extends React.Component {
       {
         revision_identifier: this.props.revision_identifier,
         grouping_id: this.props.grouping_id,
-      }
+      },
     );
   };
 

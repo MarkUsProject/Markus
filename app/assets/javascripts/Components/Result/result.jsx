@@ -142,8 +142,8 @@ class Result extends React.Component {
       Routes.download_course_result_path(
         this.props.course_id,
         this.state.submission_id,
-        this.state.result_id
-      )
+        this.state.result_id,
+      ),
     );
 
     let common_annotations = this.state.annotation_categories.map(annotation_category => {
@@ -165,7 +165,7 @@ class Result extends React.Component {
           return {
             title: `${text.content.replace(
               /\r?\n/gi,
-              " "
+              " ",
             )} <span class="red-text">${deduction}</span>`,
             cmd: `annotation_text_${text.id}`,
             action: () => this.addExistingAnnotation(text.id),
@@ -258,7 +258,7 @@ class Result extends React.Component {
     mark_value = null,
     new_subtotal = null,
     new_total = null,
-    new_num_marked = null
+    new_num_marked = null,
   ) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
 
@@ -304,7 +304,7 @@ class Result extends React.Component {
     if (data) {
       $.post(
         Routes.add_existing_annotation_course_annotations_path(this.props.course_id),
-        data
+        data,
       ).then(this.refreshAnnotations);
     }
   };
@@ -333,7 +333,7 @@ class Result extends React.Component {
     $.get({
       url: Routes.course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.state.parent_assignment_id || this.state.assignment_id
+        this.state.parent_assignment_id || this.state.assignment_id,
       ),
       dataType: "json",
     }).then(res => {
@@ -373,7 +373,7 @@ class Result extends React.Component {
     };
 
     let annotation = this.state.annotations.find(
-      annotation => annotation.id === parseInt(annot_id, 10)
+      annotation => annotation.id === parseInt(annot_id, 10),
     );
 
     let category_id = annotation.annotation_category_id ? annotation.annotation_category_id : "";
@@ -518,7 +518,7 @@ class Result extends React.Component {
     $.ajax({
       url: Routes.revert_to_automatic_deductions_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
       ),
       method: "PATCH",
       data: {criterion_id: criterion_id},
@@ -575,7 +575,7 @@ class Result extends React.Component {
     $.ajax({
       url: Routes.delete_grace_period_deduction_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
       ),
       method: "DELETE",
       data: {deduction_id: deduction_id},
@@ -623,7 +623,7 @@ class Result extends React.Component {
     $.ajax({
       url: Routes.toggle_marking_state_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
       ),
       method: "POST",
     }).then(this.fetchData);
@@ -633,7 +633,7 @@ class Result extends React.Component {
     $.ajax({
       url: Routes.set_released_to_students_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
       ),
       method: "POST",
     }).then(() => {
@@ -646,7 +646,7 @@ class Result extends React.Component {
     return () => {
       const url = Routes.next_grouping_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
       );
 
       this.setState({loading: true}, () => {
@@ -678,7 +678,7 @@ class Result extends React.Component {
     return $.post({
       url: Routes.update_overall_comment_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
       ),
       data: {result: {overall_comment: value}},
     }).then(result => {

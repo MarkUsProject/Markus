@@ -32,7 +32,7 @@ describe("For the StudentsActionBox component's non-conditional rendering", () =
         I18n.t("students.instructor_actions.mark_active"),
       ].forEach(text => {
         expect(
-          within(screen.getByRole("combobox")).getByText(text, {value: text})
+          within(screen.getByRole("combobox")).getByText(text, {value: text}),
         ).toBeInTheDocument();
       });
     });

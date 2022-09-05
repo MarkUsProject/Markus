@@ -123,7 +123,7 @@ export function markupTextInRange(range, colour, content) {
       new_node.style.backgroundColor = colour;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
       const marked = document.createTextNode(
-        old_node.nodeValue.substring(range.startOffset, range.endOffset)
+        old_node.nodeValue.substring(range.startOffset, range.endOffset),
       );
       const unmarked2 = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
       new_node.appendChild(marked);
@@ -149,7 +149,7 @@ export function markupTextInRange(range, colour, content) {
           new_node.style.backgroundColor = colour;
           if (old_node === range.startContainer) {
             const unmarked = document.createTextNode(
-              old_node.nodeValue.substring(0, range.startOffset)
+              old_node.nodeValue.substring(0, range.startOffset),
             );
             const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset));
             new_node.appendChild(marked);
@@ -157,7 +157,7 @@ export function markupTextInRange(range, colour, content) {
             parent.insertBefore(new_node, unmarked.nextSibling);
           } else if (old_node === range.endContainer) {
             const marked = document.createTextNode(
-              old_node.nodeValue.substring(0, range.endOffset)
+              old_node.nodeValue.substring(0, range.endOffset),
             );
             const unmarked = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
             new_node.appendChild(marked);

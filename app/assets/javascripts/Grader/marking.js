@@ -28,7 +28,7 @@ function activeCriterion($next_criteria) {
       {
         scrollTop: $next_criteria.offset().top - $criteria_list.first().offset().top,
       },
-      100
+      100,
     );
     $next_criteria.addClass("active-criterion");
     // Unfocus any exisiting textfields/radio buttons

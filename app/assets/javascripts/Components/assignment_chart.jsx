@@ -50,8 +50,8 @@ export class AssignmentChart extends React.Component {
       Routes.grade_distribution_course_assignment_path(
         this.props.course_id,
         this.props.assessment_id,
-        {get_criteria_data: this.props.show_criteria_stats}
-      )
+        {get_criteria_data: this.props.show_criteria_stats},
+      ),
     )
       .then(data => data.json())
       .then(res => {
@@ -103,7 +103,7 @@ export class AssignmentChart extends React.Component {
           {
             filter_by: "marking_state",
             filter_value: "remark",
-          }
+          },
         );
         outstanding_remark_request_link = (
           <React.Fragment>
@@ -132,7 +132,7 @@ export class AssignmentChart extends React.Component {
             item_name={I18n.t("activerecord.models.criterion.one")}
             create_link={Routes.course_assignment_criteria_path(
               this.props.course_id,
-              this.props.assessment_id
+              this.props.assessment_id,
             )}
           />
         );
@@ -146,7 +146,7 @@ export class AssignmentChart extends React.Component {
             <a
               href={Routes.course_assignment_graders_path(
                 this.props.course_id,
-                this.props.assessment_id
+                this.props.assessment_id,
               )}
             >
               {I18n.t("graders.actions.assign_grader")}
@@ -177,7 +177,7 @@ export class AssignmentChart extends React.Component {
               <a
                 href={Routes.grader_summary_course_assignment_graders_path(
                   this.props.course_id,
-                  this.props.assessment_id
+                  this.props.assessment_id,
                 )}
               >
                 {I18n.t("activerecord.models.ta.other")}
@@ -193,7 +193,7 @@ export class AssignmentChart extends React.Component {
             <a
               href={Routes.browse_course_assignment_submissions_path(
                 this.props.course_id,
-                this.props.assessment_id
+                this.props.assessment_id,
               )}
             >
               {this.props.show_chart_header ? this.state.summary.name : ""}

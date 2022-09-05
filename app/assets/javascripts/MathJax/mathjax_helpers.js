@@ -5,7 +5,7 @@ function reloadDOM() {
     document.getElementsByClassName("annotation_text_display"),
     element => {
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, element]);
-    }
+    },
   );
 }
 

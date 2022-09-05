@@ -88,7 +88,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         global_actions: "assign",
@@ -110,7 +110,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         global_actions: "random_assign",
@@ -142,7 +142,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         global_actions: "unassign",
@@ -167,7 +167,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         global_actions: "unassign",
@@ -190,7 +190,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_course_assignment_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         attribute: {
@@ -207,7 +207,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_course_assignment_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         attribute: {
@@ -222,7 +222,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_course_assignment_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         attribute: {

@@ -92,7 +92,7 @@ export class PDFViewer extends React.Component {
         y2: annotation.y_range.end,
         page: annotation.page,
       },
-      annotation.id
+      annotation.id,
     );
   };
 

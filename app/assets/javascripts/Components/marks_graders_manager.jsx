@@ -21,7 +21,7 @@ class MarksGradersManager extends React.Component {
     $.get({
       url: Routes.course_grade_entry_form_marks_graders_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       dataType: "json",
     }).then(res => {
@@ -52,7 +52,7 @@ class MarksGradersManager extends React.Component {
     $.post({
       url: Routes.assign_all_course_grade_entry_form_marks_graders_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       data: {
         students: students,
@@ -78,7 +78,7 @@ class MarksGradersManager extends React.Component {
     $.post({
       url: Routes.unassign_all_course_grade_entry_form_marks_graders_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       data: {
         students: students,
@@ -91,7 +91,7 @@ class MarksGradersManager extends React.Component {
     $.post({
       url: Routes.unassign_single_course_grade_entry_form_marks_graders_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       data: {
         student_id: student_id,
@@ -117,7 +117,7 @@ class MarksGradersManager extends React.Component {
     $.post({
       url: Routes.randomly_assign_course_grade_entry_form_marks_graders_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       data: {
         students: students,

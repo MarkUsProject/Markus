@@ -229,7 +229,7 @@ describe("FlexibleCriterionInput", () => {
       "filename",
       basicProps.id,
       1,
-      basicProps.id + 1
+      basicProps.id + 1,
     );
   });
 
@@ -249,7 +249,7 @@ describe("FlexibleCriterionInput", () => {
     const wrapper = getWrapper(basicProps);
 
     expect(wrapper.find(".mark-deductions").text()).toContain(
-      "(" + I18n.t("results.overridden_deductions") + ") "
+      "(" + I18n.t("results.overridden_deductions") + ") ",
     );
   });
 
@@ -259,7 +259,7 @@ describe("FlexibleCriterionInput", () => {
 
     expect(wrapper.find(".old-mark").exists()).toBeTruthy();
     expect(wrapper.find(".old-mark").text()).toBe(
-      `(${I18n.t("results.remark.old_mark")}: ${basicProps.oldMark.mark})`
+      `(${I18n.t("results.remark.old_mark")}: ${basicProps.oldMark.mark})`,
     );
   });
 
@@ -271,7 +271,7 @@ describe("FlexibleCriterionInput", () => {
     expect(wrapper.find(".old-mark").text()).toBe(
       `(${I18n.t("results.remark.old_mark")}: (${I18n.t("results.overridden_deductions")}) ${
         basicProps.oldMark.mark
-      })`
+      })`,
     );
   });
 

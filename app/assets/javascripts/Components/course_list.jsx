@@ -23,7 +23,7 @@ class CourseList extends React.Component {
       this.setState({
         courses: res.data,
         loading: false,
-      })
+      }),
     );
   };
 

@@ -21,7 +21,7 @@ class ExamScanLogTable extends React.Component {
     $.ajax({
       url: Routes.view_logs_course_assignment_exam_templates_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(data => {
@@ -50,7 +50,7 @@ class ExamScanLogTable extends React.Component {
             const path = Routes.download_raw_split_file_course_exam_template_path(
               this.props.course_id,
               row.original.exam_template_id,
-              {split_pdf_log_id: row.original.file_id}
+              {split_pdf_log_id: row.original.file_id},
             );
             return <a href={path}>{row.original.filename}</a>;
           },
@@ -150,7 +150,7 @@ class ExamScanErrorsTable extends React.Component {
                   {
                     split_pdf_log_id: this.props.split_pdf_log_id,
                     split_page_id: row.original.id,
-                  }
+                  },
                 )}
               >
                 {I18n.t("exam_templates.assign_errors.fix_errors")}

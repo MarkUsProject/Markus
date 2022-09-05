@@ -74,10 +74,10 @@ export class SubmissionFilePanel extends React.Component {
           initialFile={selectedFile}
           downloadURL={Routes.download_course_result_url(
             this.props.course_id,
-            this.props.result_id
+            this.props.result_id,
           )}
         />,
-        document.getElementById("download_dialog_body")
+        document.getElementById("download_dialog_body"),
       );
     }
   };
@@ -138,7 +138,7 @@ export class SubmissionFilePanel extends React.Component {
       submission_file_id = this.state.selectedFile[1];
       submission_file_mime_type = getType(this.state.selectedFile[0]);
       visibleAnnotations = this.props.annotations.filter(
-        a => a.submission_file_id === submission_file_id
+        a => a.submission_file_id === submission_file_id,
       );
     }
     return (
@@ -218,7 +218,7 @@ export class FileSelector extends React.Component {
           >
             <a key={`${dir.path.join("/")}-a`}>{dir.name}</a>
             {this.hashToHTMLList(dir, newExpanded)}
-          </li>
+          </li>,
         );
       }
     }

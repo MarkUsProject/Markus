@@ -80,7 +80,7 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
       // Locate the preview block
       const file_viewer_comp = wrapper.find("FileViewer");
       const file_displayed = files_sample.entries.find(
-        file => file.url === file_viewer_comp.props().selectedFileURL
+        file => file.url === file_viewer_comp.props().selectedFileURL,
       );
 
       expect(file_viewer_comp.props().selectedFile).toEqual(file_displayed.relativeKey);
