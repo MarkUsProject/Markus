@@ -136,6 +136,11 @@ describe Admin::CoursesController do
         expect(created_course).to be_nil
       end
       it 'updates the autotest_url' do
+        expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+          expect(course_).to eq Course.find_by(name: 'CSC207')
+          expect(url).to eq 'http://example.com'
+          nil # mocked return value
+        end
         post_as admin, :create, params: {
           course: {
             name: 'CSC207',
@@ -144,7 +149,6 @@ describe Admin::CoursesController do
             autotest_url: 'http://example.com'
           }
         }
-        expect(Course.find_by(name: 'CSC207').reload.autotest_setting.url).to eq 'http://example.com'
       end
     end
 
