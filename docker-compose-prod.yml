@@ -11,7 +11,6 @@ services:
         RUBY_VERSION: '2.7'
         PG_MAJOR: '12'
         NODE_MAJOR: '18'
-        YARN_VERSION: '3.2.1'
         BUNDLER_VERSION: '2.3.17'
         PYTHON_VERSION: '3.9'
         USER: 'markus'
@@ -39,8 +38,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - app_data:/app/data/prod
-      - repos:/app/data/prod/repos
+      - app_data:/app/data/production
+      - repos:/app/data/production/repos
       - log:/app/log
       - assets:/app/public
     secrets:
@@ -56,11 +55,14 @@ services:
     <<: *rails
     volumes:
       - log:/home/markus/log
-      - repos:/home/markus/csc108
+      - repos:/home/markus/
     environment:
       - TZ=America/Toronto
     command: /usr/sbin/sshd -D -e
     user: root
+    secrets:
+      - source: markus.pg_service
+        target: /home/markus/.pg_service.conf
     ports:
       - '2222:22'
     entrypoint: []
@@ -116,3 +118,5 @@ secrets:
     file: ./.dockerfiles/production_demo/httpd.example.conf
   markus.settings:
     file: ./.dockerfiles/production_demo/settings.example.yml
+  markus.pg_service:
+    file: ./.dockerfiles/production_demo/ssh.pg_service.conf
