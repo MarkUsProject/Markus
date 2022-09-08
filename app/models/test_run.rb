@@ -10,6 +10,7 @@ class TestRun < ApplicationRecord
   has_one :course, through: :role
 
   validate :courses_should_match
+  validates :autotest_test_id, uniqueness: { allow_nil: true }
 
   SETTINGS_FILES_DIR = (Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path,
                                                                     'autotest')).freeze

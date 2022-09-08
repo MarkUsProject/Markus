@@ -6,6 +6,8 @@ describe TestRun do
   it { is_expected.to belong_to(:grouping) }
   it { is_expected.to belong_to(:role) }
   it { is_expected.to have_one(:course) }
+  it { is_expected.to validate_uniqueness_of(:autotest_test_id).allow_nil }
+
   include_examples 'course associations'
 
   describe '#cancel' do

@@ -43,14 +43,17 @@ class AutotestResetUrlJob < ApplicationJob
 
   def perform(course, url, host_with_port)
     if url.blank?
-      if course.update(autotest_setting_id: nil)
-        AssignmentProperties.where(assessment_id: course.assignments.ids).update_all(remote_autotest_settings_id: nil)
-      end
+      course.update!(autotest_setting_id: nil)
+      TestRun.where(status: :in_progress).update_all(status: :cancelled)
+      TestRun.update_all(autotest_test_id: nil)
+      AssignmentProperties.where(assessment_id: course.assignments.ids).update_all(remote_autotest_settings_id: nil)
     else
       autotest_setting = AutotestSetting.find_or_create_by(url: url.strip)
       errors = []
       if autotest_setting.id != course.autotest_setting&.id
         course.update!(autotest_setting_id: autotest_setting.id)
+        TestRun.where(status: :in_progress).update_all(status: :cancelled)
+        TestRun.update_all(autotest_test_id: nil)
         AssignmentProperties.where(assessment_id: course.assignments.ids).update_all(remote_autotest_settings_id: nil)
         course.assignments
               .joins(:assignment_properties)
