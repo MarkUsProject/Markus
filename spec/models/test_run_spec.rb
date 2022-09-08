@@ -1,5 +1,5 @@
 describe TestRun do
-  subject { create :test_run }
+  subject { create :test_run, status: :in_progress }
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to belong_to(:test_batch).optional }
   it { is_expected.to belong_to(:submission).optional }
@@ -13,9 +13,12 @@ describe TestRun do
   describe '#cancel' do
     before { test_run.cancel }
     context 'is in progress' do
-      let(:test_run) { create :test_run, status: :in_progress }
+      let(:test_run) { create :test_run, status: :in_progress, autotest_test_id: 1 }
       it 'should update the status to cancelled' do
         expect(test_run.reload.status).to eq('cancelled')
+      end
+      it 'should unset the autotest_test_id' do
+        expect(test_run.reload.autotest_test_id).to be_nil
       end
     end
     context 'is not in progress' do
@@ -29,9 +32,12 @@ describe TestRun do
     let(:problems) { 'some problem' }
     before { test_run.failure(problems) }
     context 'is in progress' do
-      let(:test_run) { create :test_run, status: :in_progress }
+      let(:test_run) { create :test_run, status: :in_progress, autotest_test_id: 1 }
       it 'should update the status to cancelled' do
         expect(test_run.reload.status).to eq('failed')
+      end
+      it 'should unset the autotest_test_id' do
+        expect(test_run.reload.autotest_test_id).to be_nil
       end
     end
     context 'is not in progress' do
@@ -49,7 +55,7 @@ describe TestRun do
   describe '#update_results!' do
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping, assignment: assignment }
-    let(:test_run) { create :test_run, status: :in_progress, grouping: grouping }
+    let(:test_run) { create :test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1 }
     let(:criterion) { create :flexible_criterion, max_mark: 2, assignment: assignment }
     let(:test_group) { create :test_group, criterion: criterion, assignment: assignment }
     let(:results) do
@@ -86,11 +92,19 @@ describe TestRun do
       it 'should not update criteria marks' do
         expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
       end
+      it 'should unset the autotest_test_id' do
+        test_run.update_results!(results)
+        expect(test_run.reload.autotest_test_id).to be_nil
+      end
     end
     context 'there is a success reported' do
       let(:test_group_result) { TestGroupResult.find_by(test_group_id: test_group.id, test_run_id: test_run.id) }
       it 'should update the status to completed' do
         expect { test_run.update_results!(results) }.to change { test_run.status }.to('complete')
+      end
+      it 'should unset the autotest_test_id' do
+        test_run.update_results!(results)
+        expect(test_run.reload.autotest_test_id).to be_nil
       end
       context 'there is an error message' do
         before { results['error'] = 'error message' }
