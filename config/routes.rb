@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resources :courses, only: [:index, :show, :create, :update] do
       member do
         put 'update_autotest_url'
+        get 'test_autotest_connection'
+        put 'reset_autotest_connection'
       end
       resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
@@ -89,7 +91,12 @@ Rails.application.routes.draw do
         post 'upload'
       end
     end
-    resources :courses, only: [:index, :new, :create, :edit, :update]
+    resources :courses, only: [:index, :new, :create, :edit, :update] do
+      member do
+        get 'test_autotest_connection'
+        put 'reset_autotest_connection'
+      end
+    end
     get '/', controller: 'main_admin', action: 'index'
 
     mount Resque::Server.new, at: '/resque', as: 'resque'

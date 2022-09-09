@@ -39,6 +39,20 @@ describe Admin::CoursesController do
           expect(response).to have_http_status(403)
         end
       end
+
+      describe '#test_autotest_connection' do
+        it 'responds with 403' do
+          get_as user, :test_autotest_connection, params: { id: course.id }
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      describe '#reset_autotest_connection' do
+        it 'responds with 403' do
+          put_as user, :reset_autotest_connection, params: { id: course.id }
+          expect(response).to have_http_status(403)
+        end
+      end
     end
 
     context 'Instructor' do
@@ -227,6 +241,72 @@ describe Admin::CoursesController do
           is_hidden: updated_course.is_hidden
         }
         expect(updated_course_data).to eq(expected_course_data)
+      end
+    end
+    shared_context 'course with an autotest setting' do
+      before do
+        allow_any_instance_of(AutotestSetting).to receive(:register).and_return('someapikey')
+        allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
+      end
+      let(:autotest_setting) { create :autotest_setting }
+      let(:course) { create :course, autotest_setting: autotest_setting }
+    end
+    describe '#test_autotest_connection' do
+      subject { get_as admin, :test_autotest_connection, params: { id: course.id } }
+      context 'there is no autotest_setting set' do
+        it 'should return unprocessable_entity' do
+          subject
+          assert_response :unprocessable_entity
+        end
+      end
+      context 'there is an autotest_setting' do
+        include_context 'course with an autotest setting'
+        it 'should try to get the schema from the autotester' do
+          expect(controller).to receive(:get_schema)
+          subject
+        end
+        context 'when the schema is successfully retrieved' do
+          before { expect(controller).to receive(:get_schema) }
+          it 'should flash a success message' do
+            subject
+            expect(flash.now[:success]).not_to be_empty
+          end
+        end
+        context 'when the request goes through but the schema is not valid json' do
+          before { expect(controller).to receive(:get_schema).and_raise(JSON::ParserError) }
+          it 'should flash a success message' do
+            subject
+            expect(flash.now[:error]).not_to be_empty
+          end
+        end
+        context 'when the request does not go through' do
+          before { expect(controller).to receive(:get_schema).and_raise(StandardError) }
+          it 'should flash a success message' do
+            subject
+            expect(flash.now[:error]).not_to be_empty
+          end
+        end
+      end
+    end
+    describe '#reset_autotest_connection' do
+      subject { put_as admin, :reset_autotest_connection, params: { id: course.id } }
+      context 'there is no autotest_setting set' do
+        it 'should return unprocessable_entity' do
+          subject
+          assert_response :unprocessable_entity
+        end
+      end
+      context 'there is an autotest_setting' do
+        include_context 'course with an autotest setting'
+        it 'should call AutotestResetUrlJob with the correct settings' do
+          expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url, _markus_url, options|
+            expect(course_.id).to eq course.id
+            expect(url).to eq course.autotest_setting.url
+            expect(options[:refresh]).to be_truthy
+            OpenStruct.new job_id: 1 # mock return value so that the job id can be set on the session
+          end
+          subject
+        end
       end
     end
   end

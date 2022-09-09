@@ -1,6 +1,7 @@
 module Api
   # API controller for Courses
   class CoursesController < MainApiController
+    include AutomatedTestsHelper::AutotestApi
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
 
     def index
@@ -59,6 +60,50 @@ module Api
     else
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+    end
+
+    def test_autotest_connection
+      settings = current_course.autotest_setting
+      if settings&.url
+        begin
+          get_schema(current_course.autotest_setting)
+          render 'shared/http_status', locals: { code: '200', message:
+            I18n.t('automated_tests.manage_connection.test_success', url: settings.url) }, status: :ok
+        rescue JSON::ParserError
+          render 'shared/http_status',
+                 locals: { code: '500',
+                           message: I18n.t('automated_tests.manage_connection.test_schema_failure',
+                                           url: settings.url) },
+                 status: :internal_server_error
+        rescue StandardError => e
+          render 'shared/http_status',
+                 locals: { code: '500',
+                           message: I18n.t('automated_tests.manage_connection.test_failure',
+                                           url: settings.url,
+                                           error: e.to_s) },
+                 status: :internal_server_error
+        end
+      else
+        render 'shared/http_status', locals: { code: '422', message:
+          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_entity
+      end
+    end
+
+    def reset_autotest_connection
+      settings = current_course.autotest_setting
+      if settings&.url
+        begin
+          AutotestResetUrlJob.perform_now(current_course, settings.url,
+                                          request.protocol + request.host_with_port, refresh: true)
+          render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        rescue StandardError => e
+          render 'shared/http_status', locals: { code: '500', message: e.to_s }, status: :internal_server_error
+        end
+      else
+        render 'shared/http_status', locals: { code: '422', message:
+          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_entity
+      end
     end
 
     private

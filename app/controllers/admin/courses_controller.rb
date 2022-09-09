@@ -1,5 +1,6 @@
 module Admin
   class CoursesController < ApplicationController
+    include AutomatedTestsHelper::AutotestApi
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
     before_action { authorize! }
 
@@ -29,6 +30,31 @@ module Admin
       current_course.update(params.require(:course).permit(:is_hidden, :display_name))
       update_autotest_url
       respond_with @current_course, location: -> { edit_admin_course_path(@current_course) }
+    end
+
+    def test_autotest_connection
+      settings = current_course.autotest_setting
+      return head :unprocessable_entity unless settings&.url
+      begin
+        get_schema(current_course.autotest_setting)
+        flash_now(:success, I18n.t('automated_tests.manage_connection.test_success', url: settings.url))
+      rescue JSON::ParserError
+        flash_now(:error, I18n.t('automated_tests.manage_connection.test_schema_failure', url: settings.url))
+      rescue StandardError => e
+        flash_now(:error, I18n.t('automated_tests.manage_connection.test_failure', url: settings.url, error: e.to_s))
+      end
+      head :ok
+    end
+
+    def reset_autotest_connection
+      settings = current_course.autotest_setting
+      return head :unprocessable_entity unless settings&.url
+      @current_job = AutotestResetUrlJob.perform_later(current_course,
+                                                       settings.url,
+                                                       request.protocol + request.host_with_port,
+                                                       refresh: true)
+      session[:job_id] = @current_job.job_id if @current_job
+      respond_with current_course, location: -> { edit_admin_course_path(current_course) }
     end
 
     private

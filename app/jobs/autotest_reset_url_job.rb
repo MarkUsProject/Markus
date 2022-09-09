@@ -1,12 +1,14 @@
 class AutotestResetUrlJob < ApplicationJob
   include AutomatedTestsHelper::AutotestApi
 
-  def self.show_status(_status); end
+  def self.show_status(_status)
+    I18n.t('automated_tests.job_messages.resetting_test_settings')
+  end
 
   def should_run?
-    course, url, _ = self.arguments
+    course, url, _, options = self.arguments
     current_url = course.autotest_setting&.url
-    (current_url.nil? && url.present?) || (current_url != url&.strip)
+    (current_url.nil? && url.present?) || (options&.[](:refresh) || current_url != url&.strip)
   end
 
   def self.js_set_url(url)
@@ -41,7 +43,7 @@ class AutotestResetUrlJob < ApplicationJob
     block.call if job.should_run?
   end
 
-  def perform(course, url, host_with_port)
+  def perform(course, url, host_with_port, refresh: false)
     if url.blank?
       course.update!(autotest_setting_id: nil)
       TestRun.where(status: :in_progress).update_all(status: :cancelled)
@@ -49,8 +51,9 @@ class AutotestResetUrlJob < ApplicationJob
       AssignmentProperties.where(assessment_id: course.assignments.ids).update_all(remote_autotest_settings_id: nil)
     else
       autotest_setting = AutotestSetting.find_or_create_by(url: url.strip)
+      update_credentials(autotest_setting) if refresh
       errors = []
-      if autotest_setting.id != course.autotest_setting&.id
+      if refresh || autotest_setting.id != course.autotest_setting&.id
         course.update!(autotest_setting_id: autotest_setting.id)
         TestRun.where(status: :in_progress).update_all(status: :cancelled)
         TestRun.update_all(autotest_test_id: nil)
