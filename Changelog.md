@@ -11,6 +11,7 @@
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
 - Allow admins to set the autotester url for each course in the courses view (#6213)
+- Allow admins to test and reset the connection to the autotester in the courses view and through the API (#6213)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
