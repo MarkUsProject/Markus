@@ -10,6 +10,7 @@
 - Fix bug preventing use of the update_grades API route (#6188)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
+- Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
