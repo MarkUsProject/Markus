@@ -11,7 +11,7 @@ class AutotestResetUrlJob < ApplicationJob
     (current_url.nil? && url.present?) || (options&.[](:refresh) || current_url != url&.strip)
   end
 
-  def self.js_set_url(url)
+  def self.js_update_form(url)
     %(
       () => {
         if (!document.getElementById('course_autotest_url')) {
@@ -21,16 +21,23 @@ class AutotestResetUrlJob < ApplicationJob
         } else {
            document.getElementById('course_autotest_url').value='#{url}'
         }
+        if (!document.getElementById('manage-connection')) {
+          window.addEventListener("load", () => {
+           document.getElementById('manage-connection').className='#{url.empty? ? 'no-display' : ''}'
+          })
+        } else {
+           document.getElementById('manage-connection').className='#{url.empty? ? 'no-display' : ''}'
+        }
       }
     )
   end
 
   def self.on_success_js(status)
-    self.js_set_url(status[:url] || '')
+    self.js_update_form(status[:url] || '')
   end
 
   def self.on_failure_js(status)
-    self.js_set_url(status[:prev_url] || '')
+    self.js_update_form(status[:prev_url] || '')
   end
 
   around_perform do |job, block|
