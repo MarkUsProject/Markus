@@ -18,7 +18,6 @@ RUN apt-get update -qq && \
     tzdata \
     libpq-dev \
     ghostscript \
-    imagemagick \
     libmagickwand-dev \
     cmake \
     libssl-dev \
