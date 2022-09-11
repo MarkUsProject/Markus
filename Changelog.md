@@ -9,6 +9,7 @@
 - Fix undefined prop type warnings when loading assessment charts (#6172)
 - Fix bug preventing use of the update_grades API route (#6188)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
+- Fix overly restrictive policies for admin users (#6209)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
 
 ## [v2.1.1]
