@@ -71,6 +71,7 @@ Evan Browning
 Farah Juma
 Fernando Garces
 François Neber
+Gabriel Anover
 Gabriel Roy-Lortie
 Gaëtan Girin
 Geoffrey Flores
