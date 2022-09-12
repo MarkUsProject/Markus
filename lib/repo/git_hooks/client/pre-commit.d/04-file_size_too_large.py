@@ -1,8 +1,6 @@
 import sys
 import subprocess
 
-MAX_FILE_SIZE = 5_000_000
-
 if __name__ == '__main__':
     # get new/updated files:
     changes = subprocess.run(['git', 'diff', '--name-status', '--no-renames', '--diff-filter=d', 'HEAD'],

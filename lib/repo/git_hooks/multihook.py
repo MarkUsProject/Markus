@@ -16,7 +16,7 @@ if __name__ == '__main__':
         for script in scripts:
             argv2 = sys.argv[1:]
             hook = subprocess.run([script] + argv2, input=sys.stdin.read(), stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE, universal_newlines=True, env=env)
+                                  stderr=subprocess.PIPE, universal_newlines=True)
             sys.stdout.write(hook.stdout)
             sys.stderr.write(hook.stderr)
             if hook.returncode != 0:

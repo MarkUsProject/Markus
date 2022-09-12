@@ -113,10 +113,6 @@ class Course < ApplicationRecord
     required
   end
 
-  def max_file_size_settings
-    Settings[self.name]&.max_file_size || Settings.max_file_size
-  end
-
   def update_autotest_url(url)
     autotest_setting = AutotestSetting.find_or_create_by!(url: url)
     if autotest_setting.id != self.autotest_setting&.id
