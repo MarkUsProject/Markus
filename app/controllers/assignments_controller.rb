@@ -707,12 +707,12 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     parent_short_id = properties[:parent_assessment_short_identifier]
+    properties = filter_assignment_properties(properties)
     if parent_short_id.blank?
       assignment = current_course.assignments.new(properties)
     else
       # Filter properties not supported by peer review assignments, then build assignment
-      peer_review_properties = properties.except(:parent_assessment_short_identifier,
-                                                 :submission_rule_attributes,
+      peer_review_properties = properties.except(:submission_rule_attributes,
                                                  :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
       assignment.enable_test = false
@@ -722,6 +722,32 @@ class AssignmentsController < ApplicationController
     end
     assignment.repository_folder = assignment.short_identifier
     assignment
+  end
+
+  # Filters assignment properties to remove any properties that do not match the relevant models.
+  def filter_assignment_properties(properties)
+    filtered_props = properties.slice(*Assignment.column_names.map(&:to_sym))
+    assignment_properties_props = properties[:assignment_properties_attributes]
+                                    &.slice(*AssignmentProperties.column_names.map(&:to_sym))
+    assignment_files_props = properties[:assignment_files_attributes]&.each do |file_prop|
+      file_prop&.slice(*AssignmentFile.column_names.map(&:to_sym))
+    end
+
+    submission_rule_props = properties[:submission_rule_attributes]
+                                                    &.slice(*SubmissionRule.column_names.map(&:to_sym))
+
+    period_props = properties[:submission_rule_attributes][:periods_attributes]&.each do |submission_period|
+      submission_period&.slice(*Period.column_names.map(&:to_sym))
+    end
+
+    unless assignment_properties_props.nil?
+      filtered_props[:assignment_properties_attributes] = assignment_properties_props
+    end
+    filtered_props[:assignment_files_attributes] = assignment_files_props unless assignment_files_props.nil?
+    filtered_props[:submission_rule_attributes] = submission_rule_props unless submission_rule_props.nil?
+    filtered_props[:submission_rule_attributes][:periods_attributes] = period_props unless period_props.nil?
+
+    filtered_props
   end
 
   def set_repo_vars(assignment, grouping)

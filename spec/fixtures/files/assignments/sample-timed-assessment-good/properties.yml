@@ -9,6 +9,8 @@ assignment_properties_attributes:
   group_max: 1
   tokens_per_period: 4
   allow_web_submits: true
+  group_name_displayed: false
+  test_additional_param: true
   student_form_groups: false
   remark_due_date:
   remark_message:
@@ -39,6 +41,7 @@ assignment_properties_attributes:
   starter_files_after_due: true
 submission_rule_attributes:
   type: PenaltyDecayPeriodSubmissionRule
+  additional_submission_rule: NoLateSubmissionRule
   periods_attributes:
     - deduction: 5
       hours: 0.1
