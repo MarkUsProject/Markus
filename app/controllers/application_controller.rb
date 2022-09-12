@@ -74,6 +74,7 @@ class ApplicationController < ActionController::Base
       version_info[k.downcase] = v
     end
     @markus_version = version_info['version']
+    raise "Invalid Version: #{@markus_version}" unless @markus_version.match(/master|v\d+\.\d+\.\d+/)
   end
 
   # Set locale according to URL parameter. If unknown parameter is

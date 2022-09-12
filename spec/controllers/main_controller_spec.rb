@@ -26,6 +26,30 @@ describe MainController do
       end
     end
   end
+  describe 'tests for all routes' do
+    # check_timeout is used here as a basic example but any route could be used in its place
+    describe 'set_markus_version' do
+      let(:version_number) { "#{rand(0..100)}.#{rand(0..100)}.#{rand(0..100)}" }
+      it 'should allow a master version' do
+        allow_any_instance_of(File).to receive(:read).and_return('VERSION=master')
+        expect { get :check_timeout }.not_to raise_error
+      end
+      it 'should not allow a generic release version' do
+        allow_any_instance_of(File).to receive(:read).and_return('VERSION=release')
+        expect { get :check_timeout }.to raise_error(RuntimeError)
+      end
+      it 'should allow a properly formatted release version' do
+        version = "VERSION=v#{version_number}"
+        allow_any_instance_of(File).to receive(:read).and_return(version)
+        expect { get :check_timeout }.not_to raise_error
+      end
+      it 'should not allow a release version without a v prefix' do
+        version = "VERSION=#{version_number}"
+        allow_any_instance_of(File).to receive(:read).and_return(version)
+        expect { get :check_timeout }.to raise_error(RuntimeError)
+      end
+    end
+  end
   context 'An Instructor' do
     let :all_assignments do
       a2 = create(:assignment, due_date: 1.day.ago)
