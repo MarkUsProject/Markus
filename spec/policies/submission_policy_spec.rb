@@ -1,5 +1,6 @@
 describe SubmissionPolicy do
-  let(:context) { { role: role, real_user: role.user } }
+  let(:real_user) { role.user }
+  let(:context) { { role: role, real_user: real_user } }
 
   describe_rule :manage? do
     succeed 'role is an instructor' do
@@ -45,5 +46,12 @@ describe SubmissionPolicy do
     failed 'role is a student' do
       let(:role) { create(:student) }
     end
+  end
+
+  describe_rule :manage_subdirectories? do
+    # role and user doesn't matter but needs to be set
+    let(:role) { 1 }
+    let(:real_user) { 1 }
+    succeed
   end
 end

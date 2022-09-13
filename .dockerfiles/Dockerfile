@@ -18,11 +18,9 @@ RUN apt-get update -qq && \
     tzdata \
     libpq-dev \
     ghostscript \
-    imagemagick \
     libmagickwand-dev \
     cmake \
     libssl-dev \
-    graphviz \
     git \
     python3-venv \
     python3-dev \
@@ -80,7 +78,8 @@ ARG RUBY_VERSION
 
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
-             /app/data/dev/repos \
+             /app/data/development \
+             /app/data/development/repos \
              /app/tmp \
              /app/node_modules \
              /app/public/packs \

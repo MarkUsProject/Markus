@@ -2,6 +2,7 @@ describe LtiDeployment do
   context 'relationships' do
     it { is_expected.to belong_to(:course).optional }
   end
+  before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
   context '#get_students' do
     let(:student) { create :student }
     let(:student_user_name) { student.user_name }
@@ -12,7 +13,7 @@ describe LtiDeployment do
     let(:course) { create :course }
     let(:lti_deployment) { create :lti_deployment, course: course }
     let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
-    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path) }
+    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH) }
     let(:jwk) { { keys: [JWT::JWK.new(pub_jwk_key).export] } }
     let(:scope) { 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly' }
     let(:status) { 'Active' }

@@ -25,26 +25,15 @@ i18n:
 validate_user_not_allowed_message: ~
 incorrect_login_message: ~
 
-repository:
-  storage: <%= "#{::Rails.root.to_s}/data/prod" %>/repos
-
 logging:
   log_file: log/info_production.log
   error_file: log/error_production.log
 
 autotest:
-  client_dir: <%= "#{::Rails.root.to_s}/data/prod" %>/autotest
   max_batch_size: 500
-
-scanned_exams:
-  path: <%= "#{::Rails.root.to_s}/data/prod" %>/exam_templates
-
-starter_file:
-  storage: <%= "#{::Rails.root.to_s}/data/prod" %>/starter_files
 
 # The settings below are for an experimental feature that is not available
 # in production yet. Please disregard for now.
 lti:
   domains: <%= %w[canvas.instructure.com] %>
   token_endpoint: "https://canvas.instructure.com/login/oauth2/token"
-  key_path: <%= "#{::Rails.root.to_s}/data/prod" %>/lti/key.pem

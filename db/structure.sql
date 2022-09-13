@@ -73,6 +73,15 @@ $$;
 
 
 --
+-- Name: database_identifier(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.database_identifier() RETURNS text
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$SELECT CONCAT((SELECT system_identifier FROM pg_control_system()), '-', (SELECT current_database FROM current_database()));$$;
+
+
+--
 -- Name: get_authorized_keys(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -82,7 +91,7 @@ CREATE FUNCTION public.get_authorized_keys() RETURNS TABLE(authorized_keys text)
 DECLARE
   instance text;
 BEGIN
-  SELECT INTO instance relative_url_root();
+  SELECT INTO instance database_identifier();
   RETURN QUERY SELECT CONCAT(
                 'command="LOGIN_USER=',
                 users.user_name,
@@ -93,16 +102,6 @@ BEGIN
   FROM key_pairs JOIN users ON key_pairs.user_id = users.id;
 END
 $$;
-
-
---
--- Name: relative_url_root(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.relative_url_root() RETURNS text
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $$SELECT text '/csc108'$$;
-
 
 SET default_tablespace = '';
 
@@ -461,7 +460,8 @@ CREATE TABLE public.courses (
     display_name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    autotest_setting_id bigint
+    autotest_setting_id bigint,
+    max_file_size bigint DEFAULT 5000000 NOT NULL
 );
 
 
@@ -4666,3 +4666,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220726142501'),
 ('20220726201403'),
 ('20220727161425');
+('20220825171354'),
+('20220826132206');

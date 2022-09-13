@@ -18,12 +18,69 @@ describe Course do
     it { is_expected.to allow_value(true).for(:is_hidden) }
     it { is_expected.to allow_value(false).for(:is_hidden) }
     it { is_expected.not_to allow_value(nil).for(:is_hidden) }
+    it { is_expected.to validate_numericality_of(:max_file_size).is_greater_than_or_equal_to(0) }
+  end
+
+  context 'callbacks' do
+    describe '#update_repo_max_file_size' do
+      # a course should be the only thing created here, if that ever changes, make sure the db is cleaned properly
+      after { course.destroy! }
+      shared_examples 'when not using git repos' do
+        before { allow(Settings.repository).to receive(:type).and_return('mem') }
+        it 'should not schedule a background job' do
+          expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
+          subject
+        end
+      end
+      shared_context 'git repos' do
+        before do
+          allow(Settings.repository).to receive(:type).and_return('git')
+          allow(GitRepository).to receive(:purge_all)
+        end
+        after(:each) { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+      end
+      context 'after creation' do
+        subject { course }
+        context 'when using git repos' do
+          include_context 'git repos'
+          it 'should schedule a background job' do
+            expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later)
+            subject
+          end
+        end
+        include_examples 'when not using git repos'
+      end
+      context 'after save to max_file_size' do
+        before { course }
+        subject { course.update! max_file_size: course.max_file_size + 10_000 }
+        context 'when using git repos' do
+          include_context 'git repos'
+          after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+          it 'should schedule a background job' do
+            expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later).with(course.id)
+            subject
+          end
+        end
+        include_examples 'when not using git repos'
+      end
+      context 'after save to something else' do
+        before { course }
+        subject { course.update! display_name: "#{course.display_name}abc" }
+        context 'when using git repos' do
+          include_context 'git repos'
+          it 'should not schedule a background job' do
+            expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
+            subject
+          end
+        end
+        include_examples 'when not using git repos'
+      end
+    end
   end
 
   describe '#get_assignment_list' # TODO
   describe '#upload_assignment_list' # TODO
   describe '#get_required_files' # TODO
-  describe '#max_file_size_settings' # TODO
   describe '#update_autotest_url' do
     before do
       allow_any_instance_of(AutotestSetting).to receive(:register).and_return(1)

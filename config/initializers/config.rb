@@ -127,13 +127,10 @@ Config.setup do |config|
         included_in?: %w[user_name last_name first_name id_number email]
       )
       required(:repository).hash do
-        required(:storage).filled(:string)
-        required(:type).value(included_in?: %w[git mem])
         required(:url).filled(:string)
         optional(:ssh_url).filled(:string)
         required(:is_repository_admin).filled(:bool)
       end
-      required(:max_file_size).value(:integer, gt?: 0)
       required(:session_timeout).value(:integer, gt?: 0)
       required(:enable_key_storage).filled(:bool)
       required(:logging).hash do
@@ -147,7 +144,6 @@ Config.setup do |config|
       end
       required(:scanned_exams).hash do
         required(:enable).filled(:bool)
-        required(:path).filled(:string)
       end
       required(:i18n).hash do
         required(:available_locales).array(:string)
@@ -155,11 +151,7 @@ Config.setup do |config|
       end
       required(:autotest).hash do
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
-        required(:client_dir).filled(:string)
         required(:max_batch_size).value(:integer, gt?: 0)
-      end
-      required(:starter_file).hash do
-        required(:storage).filled(:string)
       end
       required(:python).hash do
         required(:bin).filled(:string)
@@ -174,6 +166,14 @@ Config.setup do |config|
         optional(:sender_display_name).filled(:string)
         optional(:email_prefix).filled(:string)
         optional(:recipients).array(:str?)
+      end
+      required(:file_storage).hash do
+        required(:default_root_path).filled(:string)
+        optional(:scanned_exams).filled(:string)
+        optional(:starter_files).filled(:string)
+        optional(:autotest).filled(:string)
+        optional(:lti).filled(:string)
+        optional(:repos).filled(:string)
       end
     end
   end

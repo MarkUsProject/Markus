@@ -18,23 +18,10 @@ describe 'Check Authorized Keys Function' do
       key_public_key = keys.map { |k| k.match(/ssh-rsa \d+$/)[0] }
       expect(key_users.zip(key_public_key)).to contain_exactly(*key_pairs.map { |k| [k.user.user_name, k.public_key] })
     end
-    it 'sets the INSTANCE variable to the RELATIVE_URL_ROOT environment variable' do
+    it 'sets the INSTANCE variable to the unique database identifier environment variable' do
       key_instances = keys.map { |k| k.match(/(?<=INSTANCE=)\S+/)[0] }
-      expect(key_instances).to contain_exactly(*[ENV.fetch('RAILS_RELATIVE_URL_ROOT', '/')] * 5)
-    end
-    context 'when the relative_url_root() function has been set to something else' do
-      let(:new_instance_name) { 'a_brand_new_instance_name' }
-      let(:relative_root_function) do
-        "CREATE OR REPLACE FUNCTION relative_url_root()
-         RETURNS text AS $$SELECT text '%s'$$
-         LANGUAGE sql IMMUTABLE PARALLEL SAFE;"
-      end
-      before { ActiveRecord::Base.connection.execute(format(relative_root_function, new_instance_name)) }
-      after { ActiveRecord::Base.connection.execute(format(relative_root_function, instance_name)) }
-      it 'sets the INSTANCE variable to the new instance name' do
-        key_instances = keys.map { |k| k.match(/(?<=INSTANCE=)\S+/)[0] }
-        expect(key_instances).to contain_exactly(*[new_instance_name] * 5)
-      end
+      db_id = ActiveRecord::Base.connection.execute('SELECT database_identifier()')[0]['database_identifier']
+      expect(key_instances).to contain_exactly(*[db_id] * 5)
     end
     it 'sets the command' do
       expect(keys.map { |k| k.match(/command="[^"]+\s(\S+)"/)[1] }).to contain_exactly(*['markus-git-shell.sh'] * 5)

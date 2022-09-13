@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.3'
+gem 'rails', '~> 7.0.4'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -79,7 +79,6 @@ group :development do
   gem 'brakeman', require: false
   gem 'bullet'
   gem 'listen' # to listen for changes in i18n-js files
-  gem 'rails-erd'
 end
 
 group :test do

@@ -7,4 +7,4 @@ numpy==1.22.0
 scipy==1.7.0
 
 # jupyter-notebook
-nbconvert==6.5.0
+nbconvert==6.5.1

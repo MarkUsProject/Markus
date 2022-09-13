@@ -129,7 +129,7 @@ class SubmissionsController < ApplicationController
       entries: entries,
       only_required_files: assignment.only_required_files,
       required_files: assignment.assignment_files.pluck(:filename).sort,
-      max_file_size: assignment.course.max_file_size_settings / 1_000_000,
+      max_file_size: assignment.course.max_file_size / 1_000_000,
       number_of_missing_files: grouping.missing_assignment_files(@revision).length
     }
 

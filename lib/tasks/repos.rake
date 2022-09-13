@@ -3,7 +3,7 @@ namespace :markus do
     desc 'Destroy all repositories'
     task(drop: :environment) do
       puts 'Destroying Repositories...'
-      FileUtils.rm_r Dir.glob(File.join(Settings.repository.storage, '*'))
+      FileUtils.rm_r Dir.glob(File.join(Repository::ROOT_DIR, '*'))
       FileUtils.rm_f(Repository::PERMISSION_FILE)
     end
 

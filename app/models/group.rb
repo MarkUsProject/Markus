@@ -80,7 +80,7 @@ class Group < ApplicationRecord
   end
 
   def repo_path
-    File.join(Settings.repository.storage, self.repository_relative_path)
+    File.join(Repository::ROOT_DIR, self.repository_relative_path)
   end
 
   # Yields a repository object, if possible, and closes it after it is finished

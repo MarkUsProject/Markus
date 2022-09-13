@@ -45,8 +45,6 @@ repository:
   ssh_url: 'git@example.com/csc108'
   is_repository_admin: true
 
-max_file_size: 5000000
-
 session_timeout: 1800
 
 enable_key_storage: true
@@ -106,3 +104,6 @@ exception_notification:
 rails_performance:
   enabled: true
   duration: 180
+
+file_storage:
+  default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/
