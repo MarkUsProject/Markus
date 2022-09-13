@@ -42,7 +42,7 @@
     "jest-canvas-mock": "^2.4.0",
     "jest-environment-jsdom": "^29.0.1",
     "jest-fetch-mock": "^3.0.3",
-    "jsdom-worker": "^0.2.1",
+    "jsdom-worker": "^0.3.0",
     "mini-css-extract-plugin": "^2.6.1",
     "sass": "^1.53.0",
     "sass-loader": "^13.0.2",
