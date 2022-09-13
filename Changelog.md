@@ -13,6 +13,7 @@
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Fix bug where test run table did not re-render when switching results (#6223)
+- Allow admin users to manage the maximum file size setting through the UI (#6195)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)

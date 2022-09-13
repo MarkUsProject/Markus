@@ -209,6 +209,16 @@ describe CoursesController do
           updated_course = Course.find(course.id)
           expect(updated_course.name).not_to eq('CS101')
         end
+        it 'does not update the max_file_size as an instructor' do
+          put_as instructor, :update, params: { id: course.id, course: { max_file_size: 200 } }
+          updated_course = Course.find(course.id)
+          expect(updated_course.max_file_size).not_to eq(200)
+        end
+        it 'does update the max_file_size as an admin' do
+          put_as create(:admin_role), :update, params: { id: course.id, course: { max_file_size: 200 } }
+          updated_course = Course.find(course.id)
+          expect(updated_course.max_file_size).to eq(200)
+        end
         it 'does not update when parameters are invalid' do
           expected_course_data = {
             name: course.name,

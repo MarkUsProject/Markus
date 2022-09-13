@@ -461,7 +461,8 @@ CREATE TABLE public.courses (
     display_name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    autotest_setting_id bigint
+    autotest_setting_id bigint,
+    max_file_size bigint DEFAULT 5000000 NOT NULL
 );
 
 
@@ -4578,4 +4579,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220707182822'),
 ('20220726142501'),
 ('20220726201403'),
-('20220825171354');
+('20220825171354'),
+('20220826132206');
