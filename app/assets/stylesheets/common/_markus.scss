@@ -212,6 +212,10 @@ textarea {
 
   &[type='number'] {
     width: 5em;
+
+    &.fixed-width {
+      width: unset;
+    }
   }
 }
 

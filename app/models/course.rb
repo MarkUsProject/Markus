@@ -24,6 +24,10 @@ class Course < ApplicationRecord
   validates :display_name, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
 
+  validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
+
+  after_save_commit :update_repo_max_file_size
+
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
     assignments = self.assignments
@@ -109,10 +113,6 @@ class Course < ApplicationRecord
     required
   end
 
-  def max_file_size_settings
-    Settings[self.name]&.max_file_size || Settings.max_file_size
-  end
-
   def update_autotest_url(url)
     autotest_setting = AutotestSetting.find_or_create_by!(url: url)
     if autotest_setting.id != self.autotest_setting&.id
@@ -146,5 +146,31 @@ class Course < ApplicationRecord
                   section_name: student.section&.name)
     end
     output.to_yaml
+  end
+
+  # Yield an open repo for each group of this course, then yield again for each repo that raised an exception, to
+  # try to mitigate concurrent accesses to those repos.
+  def each_group_repo(&block)
+    failed_groups = []
+    self.groups.each do |group|
+      group.access_repo(&block)
+    rescue StandardError
+      # in the event of a concurrent repo modification, retry later
+      failed_groups << group
+    end
+    failed_groups.each do |grouping|
+      grouping.access_repo(&block)
+    rescue StandardError
+      # give up
+    end
+  end
+
+  private
+
+  def update_repo_max_file_size
+    return unless Settings.repository.type == 'git'
+    return unless saved_change_to_max_file_size? || saved_change_to_id?
+
+    UpdateRepoMaxFileSizeJob.perform_later(self.id)
   end
 end

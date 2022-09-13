@@ -49,8 +49,10 @@
         padding: 10px;
       }
     }
+
     .login-selector {
       margin: 15px 0 25px;
+
       .button {
         margin: 0.5em 0;
         padding: 10px;
@@ -58,10 +60,12 @@
         width: 100%;
       }
     }
+
     #login-or {
       display: flex;
       flex-direction: row;
     }
+
     #login-or::before,
     #login-or::after {
       border-bottom: 1px solid;
@@ -70,9 +74,11 @@
       flex: 1 1;
       margin: auto;
     }
+
     #login-or::before {
       margin-right: 10px;
     }
+
     #login-or::after {
       margin-left: 10px;
     }
