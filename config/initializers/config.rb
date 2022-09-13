@@ -131,7 +131,6 @@ Config.setup do |config|
         optional(:ssh_url).filled(:string)
         required(:is_repository_admin).filled(:bool)
       end
-      required(:max_file_size).value(:integer, gt?: 0)
       required(:session_timeout).value(:integer, gt?: 0)
       required(:enable_key_storage).filled(:bool)
       required(:logging).hash do

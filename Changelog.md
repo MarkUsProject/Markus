@@ -9,7 +9,10 @@
 - Fix undefined prop type warnings when loading assessment charts (#6172)
 - Fix bug preventing use of the update_grades API route (#6188)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
+- Fix overly restrictive policies for admin users (#6209)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
+- Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
+- Allow admin users to manage the maximum file size setting through the UI (#6195)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)

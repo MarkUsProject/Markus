@@ -16,7 +16,11 @@ class GenerateJob < ApplicationJob
   end
 
   before_enqueue do |job|
-    status.update(exam_name: job.arguments[0].name)
+    exam_template, num_copies, start = job.arguments
+    status.update(exam_name: exam_template.name,
+                  file_name: exam_template.generated_copies_file_name(num_copies, start),
+                  exam_id: exam_template.id,
+                  course_id: exam_template.course.id)
   end
 
   def perform(exam_template, num_copies, start)
@@ -45,10 +49,8 @@ class GenerateJob < ApplicationJob
       progress.increment
     end
 
-    generated_pdf.save File.join(
-      exam_template.base_path,
-      "#{exam_template.name}-#{start}-#{start + num_copies - 1}.pdf"
-    )
+    FileUtils.mkdir_p(exam_template.tmp_path)
+    generated_pdf.save File.join(exam_template.tmp_path, exam_template.generated_copies_file_name(num_copies, start))
     m_logger.log('Generate pdf copies process done')
   end
 end

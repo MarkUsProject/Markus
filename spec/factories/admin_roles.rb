@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :admin_role, class: AdminRole, parent: :role do
-    user { association(:admin_user) }
+    association :user, factory: :admin_user
   end
 end
