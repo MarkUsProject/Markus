@@ -130,6 +130,6 @@ RUN python${PYTHON_VERSION} -m venv /app/venv && /app/venv/bin/pip install nbcon
 ENV RAILS_ENV=production
 ENV NODE_ENV=production
 
-RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline production_test
 
 RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true NO_INIT_SCHEDULER=true PGDATABASE=dummy bundle exec rails assets:precompile
