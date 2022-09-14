@@ -12,6 +12,7 @@
 - Fix overly restrictive policies for admin users (#6209)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
+- Add check for version format to ensure that Wiki links are well-formed (#6221)
 - Fix bug where empty groups are hidden by default (#6222)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 
