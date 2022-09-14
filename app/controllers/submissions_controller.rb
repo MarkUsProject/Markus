@@ -456,8 +456,9 @@ class SubmissionsController < ApplicationController
 
   def download
     preview = params[:preview] == 'true'
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
 
-    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview
+    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
       redirect_to action: :notebook_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],

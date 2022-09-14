@@ -123,7 +123,8 @@ COPY --chown=${USER}:${USER} .dockerfiles/ssh.pg_service.conf /home/${USER}/.pg_
 
 # install python packages
 RUN python${PYTHON_VERSION} -m venv /app/venv && \
-    /app/venv/bin/pip install nbconvert==6.1.0
+    /app/venv/bin/pip install --upgrade pip && \
+    /app/venv/bin/pip install -r requirements-jupyter.txt
 
 ENV RAILS_ENV=production
 ENV NODE_ENV=production

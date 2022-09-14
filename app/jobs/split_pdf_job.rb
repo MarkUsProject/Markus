@@ -238,7 +238,7 @@ class SplitPdfJob < ApplicationJob
         end
         repo.commit(txn)
 
-        next unless exam_template.automatic_parsing
+        next unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
         begin
           # convert PDF to an image
           imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
