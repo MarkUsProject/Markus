@@ -3,6 +3,7 @@
 ## [v2.1.2]
 - Fix bug preventing use of the update_grades API route (#6188)
 - Fix overly restrictive policies for admin users (#6209)
+- Add check for version format to ensure that Wiki links are well-formed (#6221)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
