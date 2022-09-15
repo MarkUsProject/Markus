@@ -14,6 +14,7 @@
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Add check for version format to ensure that Wiki links are well-formed (#6221)
 - Fix bug where empty groups are hidden by default (#6222)
+- Fix bug where test run table did not re-render when switching results (#6223)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 
 ## [v2.1.1]
