@@ -60,10 +60,10 @@ describe SubmissionPolicy do
     let(:role) { 1 }
     let(:real_user) { 1 }
     succeed 'scanner dependencies are installed' do
-      before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(true) }
+      before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
     end
     failed 'scanner dependencies are not installed' do
-      before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(false) }
+      before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
     end
   end
 end
