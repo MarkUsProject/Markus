@@ -62,13 +62,13 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Install python packages
         run: |
           python3.9 -m venv venv
-          ./venv/bin/pip install -r requirements.txt
+          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt
       - name: Configure server
         run: |
           sudo rm -f /etc/localtime
