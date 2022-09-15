@@ -54,4 +54,16 @@ describe SubmissionPolicy do
     let(:real_user) { 1 }
     succeed
   end
+
+  describe_rule :notebook_content? do
+    # role and user doesn't matter but needs to be set
+    let(:role) { 1 }
+    let(:real_user) { 1 }
+    succeed 'scanner dependencies are installed' do
+      before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(true) }
+    end
+    failed 'scanner dependencies are not installed' do
+      before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(false) }
+    end
+  end
 end

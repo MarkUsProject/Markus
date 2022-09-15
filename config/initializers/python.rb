@@ -1,7 +1,7 @@
 # Initialize python dependencies
 require 'open3'
 
-Rails.configuration.after_initialize do
+Rails.application.config.after_initialize do
   pip_exe = File.join(Settings.python.bin, 'pip')
 
   def process_requirements(requirements_file)
