@@ -22,9 +22,6 @@ RUN apt-get update -qq && \
     cmake \
     libssl-dev \
     git \
-    python3-venv \
-    python3-dev \
-    pandoc \
     libgl1 \
     openssh-server
 
