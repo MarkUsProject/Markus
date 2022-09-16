@@ -26,7 +26,7 @@ class CoursesController < ApplicationController
   def edit; end
 
   def update
-    @current_course.update(params.require(:course).permit(:is_hidden, :display_name))
+    @current_course.update(course_params)
     update_autotest_url if allowed_to?(:edit?, with: Admin::CoursePolicy)
     respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
@@ -169,7 +169,9 @@ class CoursesController < ApplicationController
   end
 
   def course_params
-    params.require(:course).permit(:name, :is_hidden)
+    fields = [:is_hidden, :display_name]
+    fields << :max_file_size if allowed_to?(:edit?, with: Admin::CoursePolicy)
+    params.require(:course).permit(*fields)
   end
 
   def update_autotest_url

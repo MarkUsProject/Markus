@@ -664,9 +664,8 @@ class Grouping < ApplicationRecord
                                         .map do |v|
       v.max_by do |h|
         h['test_group_results.created_at']
-      end ['test_group_results.id']
-    end
-                                        .compact
+      end['test_group_results.id']
+    end.compact
     plucked = Grouping.pluck_test_runs(
       filtered.where('test_group_results.id': latest_test_group_results),
       filter_output: true,

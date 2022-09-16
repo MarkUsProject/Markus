@@ -19,7 +19,7 @@ module Admin
     end
 
     def create
-      @current_course = Course.create(course_params)
+      @current_course = Course.create(course_create_params)
       update_autotest_url if @current_course.persisted?
       respond_with @current_course, location: -> { admin_courses_path }
     end
@@ -27,7 +27,7 @@ module Admin
     def edit; end
 
     def update
-      current_course.update(params.require(:course).permit(:is_hidden, :display_name))
+      current_course.update(course_update_params)
       update_autotest_url
       respond_with @current_course, location: -> { edit_admin_course_path(@current_course) }
     end
@@ -59,8 +59,12 @@ module Admin
 
     private
 
-    def course_params
-      params.require(:course).permit(:name, :is_hidden, :display_name)
+    def course_create_params
+      params.require(:course).permit(:name, :is_hidden, :display_name, :max_file_size)
+    end
+
+    def course_update_params
+      params.require(:course).permit(:is_hidden, :display_name, :max_file_size)
     end
 
     def update_autotest_url

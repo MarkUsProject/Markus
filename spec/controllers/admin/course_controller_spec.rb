@@ -126,21 +126,27 @@ describe Admin::CoursesController do
         allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
       end
       it 'responds with 302' do
-        post_as admin, :create, params: { course: { name: 'CSC207', display_name: 'Software Design', is_hidden: true } }
+        post_as admin, :create, params: {
+          course: { name: 'CSC207', display_name: 'Software Design', is_hidden: true, max_file_size: 1000 }
+        }
         expect(response).to have_http_status(302)
       end
       it 'creates the course' do
-        post_as admin, :create, params: { course: { name: 'CSC207', display_name: 'Software Design', is_hidden: true } }
+        post_as admin, :create, params: {
+          course: { name: 'CSC207', display_name: 'Software Design', is_hidden: true, max_file_size: 1000 }
+        }
         created_course = Course.find_by(name: 'CSC207')
         expected_course_data = {
           name: 'CSC207',
           display_name: 'Software Design',
-          is_hidden: true
+          is_hidden: true,
+          max_file_size: 1000
         }
         created_course_data = {
           name: created_course.name,
           display_name: created_course.display_name,
-          is_hidden: created_course.is_hidden
+          is_hidden: created_course.is_hidden,
+          max_file_size: created_course.max_file_size
         }
         expect(created_course_data).to eq(expected_course_data)
       end
@@ -179,7 +185,8 @@ describe Admin::CoursesController do
           id: course.id,
           course: {
             display_name: 'Computational Thinking',
-            is_hidden: true
+            is_hidden: true,
+            max_file_size: 200
           }
         }
       end
@@ -189,7 +196,8 @@ describe Admin::CoursesController do
           course: {
             name: 'CSC2000',
             display_name: nil,
-            is_hidden: nil
+            is_hidden: nil,
+            max_file_size: nil
           }
         }
       end
@@ -203,12 +211,14 @@ describe Admin::CoursesController do
         expected_course_data = {
           name: course.name,
           display_name: 'Computational Thinking',
-          is_hidden: true
+          is_hidden: true,
+          max_file_size: 200
         }
         updated_course_data = {
           name: updated_course.name,
           display_name: updated_course.display_name,
-          is_hidden: updated_course.is_hidden
+          is_hidden: updated_course.is_hidden,
+          max_file_size: 200
         }
         expect(updated_course_data).to eq(expected_course_data)
       end
@@ -231,14 +241,16 @@ describe Admin::CoursesController do
         expected_course_data = {
           name: course.name,
           display_name: course.display_name,
-          is_hidden: course.is_hidden
+          is_hidden: course.is_hidden,
+          max_file_size: course.max_file_size
         }
         put_as admin, :update, params: invalid_params
         updated_course = Course.find(course.id)
         updated_course_data = {
           name: updated_course.name,
           display_name: updated_course.display_name,
-          is_hidden: updated_course.is_hidden
+          is_hidden: updated_course.is_hidden,
+          max_file_size: updated_course.max_file_size
         }
         expect(updated_course_data).to eq(expected_course_data)
       end

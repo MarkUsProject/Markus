@@ -74,6 +74,13 @@ describe GenerateJob do
       expect_any_instance_of(CombinePDF::PDF).to receive(:save)
       GenerateJob.perform_now(exam_template, 1, 0)
     end
+
+    it 'should save the correct number of pages' do
+      expect_any_instance_of(CombinePDF::PDF).to receive(:save) do |pdf|
+        expect(pdf.pages.length).to eq(3 * exam_template.num_pages)
+      end
+      GenerateJob.perform_now(exam_template, 3, 0)
+    end
   end
 end
 

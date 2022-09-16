@@ -16,6 +16,12 @@
                      size: 35,
                      required: true,
                      readonly: !allowed_to?(:edit?) %>
+    <%= f.label :max_file_size, Course.human_attribute_name(:max_file_size) %>
+    <%= f.number_field :max_file_size,
+                       size: 35,
+                       min: 0,
+                       class: 'fixed-width',
+                       readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
     <%= f.label :autotest_url,
                 AutotestSetting.human_attribute_name(:url) %>
     <%= f.text_field :autotest_url,
