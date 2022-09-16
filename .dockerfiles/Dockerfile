@@ -62,9 +62,6 @@ RUN mkdir -p -m0755 /var/run/sshd
 RUN ln -s /app/lib/repo/markus-git-shell.sh /usr/local/bin/markus-git-shell.sh
 RUN ln -fs $(which python${PYTHON_VERSION}) /usr/bin/python3
 
-ENV GEM_HOME="/bundle"
-ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
-
 WORKDIR /app
 
 FROM base AS dev
@@ -72,6 +69,9 @@ FROM base AS dev
 ARG USER
 ARG BUNDLER_VERSION
 ARG RUBY_VERSION
+
+ENV GEM_HOME="/bundle"
+ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
@@ -107,16 +107,19 @@ ARG USER
 ARG BUNDLER_VERSION
 ARG RUBY_VERSION
 
-RUN mkdir -p /bundle /app /app/public && chown -R $USER /bundle /app
+# pre-create mount-points for volumes and set ownership of these mountpoints
+RUN mkdir -p /app/public /app/log /app/data/production/repos && chown -R $USER /app
 
 COPY --chown=root:root ./lib/repo/authorized_key_command.sh /usr/local/bin/authorized_key_command.sh
 
-USER $USER
+# install bundler
+RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
 COPY --chown=${USER}:${USER} . /app
 COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/database.yml
 COPY --chown=${USER}:${USER} .dockerfiles/git-ssh.rc /home/${USER}/.ssh/rc
-COPY --chown=${USER}:${USER} .dockerfiles/ssh.pg_service.conf /home/${USER}/.pg_service.conf
+
+USER $USER
 
 # install python packages
 RUN python${PYTHON_VERSION} -m venv /app/venv && \
@@ -126,10 +129,6 @@ RUN python${PYTHON_VERSION} -m venv /app/venv && \
 ENV RAILS_ENV=production
 ENV NODE_ENV=production
 
-# install bundler
-RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline production_test
 
-RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline
-
-RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails i18n:js:export && \
-    SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails assets:precompile
+RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true NO_INIT_SCHEDULER=true PGDATABASE=dummy bundle exec rails assets:precompile

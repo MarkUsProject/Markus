@@ -1,3 +1,5 @@
+exit unless Rails.env.development?
+
 # clean up existing files first
 FileUtils.rm_rf(Repository::ROOT_DIR)
 FileUtils.rm_rf(Assignment::STARTER_FILES_DIR)

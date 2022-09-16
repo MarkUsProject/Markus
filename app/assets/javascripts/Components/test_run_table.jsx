@@ -26,7 +26,7 @@ export class TestRunTable extends React.Component {
       prevProps.instructor_run !== this.props.instructor_run ||
       prevProps.instructor_view !== this.props.instructor_view
     ) {
-      this.fetchData();
+      this.setState({loading: true}, this.fetchData);
     }
   }
 
@@ -84,6 +84,7 @@ export class TestRunTable extends React.Component {
         <ReactTable
           ref={this.testRuns}
           data={this.state.data}
+          key={this.state.data.length ? this.state.data[0]["test_runs.id"] : "empty-table"}
           columns={[
             {
               id: "created_at",

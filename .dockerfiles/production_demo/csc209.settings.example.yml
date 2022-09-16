@@ -1,9 +1,0 @@
-rails:
-  hosts:
-    - localhost
-queues:
-  default_queue: DEFAULT_QUEUE_209
-repository:
-  ssh_url: ssh://git@localhost:2222/~/csc209
-redis:
-  url: redis://redis:6379/
