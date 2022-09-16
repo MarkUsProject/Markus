@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.1.2]
+- Fix bug preventing use of the update_grades API route (#6188)
+- Fix overly restrictive policies for admin users (#6209)
+- Add check for version format to ensure that Wiki links are well-formed (#6221)
+- Fix bug where empty groups are hidden by default (#6222)
+- Fix bug where test run table did not re-render when switching results (#6223)
+
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
 - Added drag and drop functionality to upload starter files and automated tests. (#6117)
