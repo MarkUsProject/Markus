@@ -188,10 +188,16 @@ module AutomatedTestsHelper
       req = Net::HTTP::Put.new(uri)
       set_headers(req, assignment.course.autotest_setting.api_key)
       markus_address = get_markus_address(host_with_port)
+      # NOTE: this stores the order in which groups are sent to the autotester. The autotester will return an array of
+      #       autotest_test_ids *in the same order* so this array can be zipped together with that one to create a
+      #       mapping between the group id and the autotest_test_id (used later to associate the result of the test to
+      #       a test run).
+      group_id_send_order = []
       test_data = group_info_for_tests(assignment, group_ids).map do |id_, name, starter_files|
         param = collected ? 'collected=true' : ''
         file_url = "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/" \
                    "groups/#{id_}/submission_files?#{param}"
+        group_id_send_order << id_
         # TODO: add other relevant info to env_vars as needed and make the environment variable customizable
         { file_url: file_url, env_vars: { MARKUS_GROUP: name, MARKUS_STARTER_FILES: starter_files.to_json } }
       end
@@ -202,7 +208,7 @@ module AutomatedTestsHelper
       }.to_json
       res = send_request!(req, uri)
       autotest_test_ids = JSON.parse(res.body)['test_ids']
-      test_id_hash = group_ids.zip(autotest_test_ids).to_h
+      test_id_hash = group_id_send_order.zip(autotest_test_ids).to_h
       groupings = Grouping.includes(:current_submission_used).where(group_id: group_ids, assignment: assignment)
       groupings.each do |grouping|
         revision_id = collected ? nil : grouping.access_repo { |repo| repo.get_latest_revision.revision_identifier }
