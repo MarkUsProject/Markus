@@ -2,6 +2,8 @@ require 'resque/server'
 require 'resque-scheduler'
 require 'resque/scheduler/server'
 
+Resque.redis = Settings.redis.url
+
 # Modify Resque::Server class to add (manual) authentication
 unless ENV['NO_INIT_SCHEDULER']
   Rails.application.config.after_initialize do
