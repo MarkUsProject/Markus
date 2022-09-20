@@ -110,6 +110,19 @@ module Markus
                             error_grouping: true
     end
 
+    if Settings.logging.tag_with_usernames && Settings.rails.session_store.type == 'cookie_store'
+      config.log_tags = [proc do |request|
+        session_info = request.cookie_jar.encrypted[Rails.application.config.session_options[:key]]
+        real_user_name = session_info['real_user_name']
+        user_name = session_info['user_name']
+        if user_name && user_name != real_user_name
+          "#{real_user_name} as #{user_name}"
+        else
+          real_user_name
+        end
+      end]
+    end
+
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib
