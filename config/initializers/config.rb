@@ -141,6 +141,7 @@ Config.setup do |config|
         required(:old_files).filled(:integer, gt?: 0)
         required(:log_file).filled(:string)
         required(:error_file).filled(:string)
+        required(:tag_with_usernames).filled(:bool)
       end
       required(:scanned_exams).hash do
         required(:enable).filled(:bool)

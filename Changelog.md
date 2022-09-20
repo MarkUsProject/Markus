@@ -12,6 +12,7 @@
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
+- Optionally log which user makes each request by tagging the log files with user_names (#6241)
 
 ## [v2.1.2]
 - Fix bug preventing use of the update_grades API route (#6188)
