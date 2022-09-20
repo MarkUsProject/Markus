@@ -333,6 +333,8 @@ module AutomatedTestsHelper
   # and the given group.
   #
   # Only groups with id in +group_ids+ are included in the list.
+  # Note that the group information returned by this function is not guaranteed to be in
+  # the same order as +group_ids+.
   def group_info_for_tests(assignment, group_ids)
     assignment.groupings
               .left_outer_joins(:group, starter_file_entries: :starter_file_group)
