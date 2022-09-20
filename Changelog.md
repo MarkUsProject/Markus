@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.1.3]
+- Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
+
 ## [v2.1.2]
 - Fix bug preventing use of the update_grades API route (#6188)
 - Fix overly restrictive policies for admin users (#6209)
