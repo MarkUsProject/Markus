@@ -11,6 +11,7 @@
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
+- Disable python features if python dependencies are not installed (#6232)
 
 ## [v2.1.3]
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
@@ -21,6 +22,7 @@
 - Add check for version format to ensure that Wiki links are well-formed (#6221)
 - Fix bug where empty groups are hidden by default (#6222)
 - Fix bug where test run table did not re-render when switching results (#6223)
+- Allow admin users to manage the maximum file size setting through the UI (#6195)
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)

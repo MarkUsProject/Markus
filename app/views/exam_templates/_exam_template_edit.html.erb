@@ -13,11 +13,13 @@
 <h2><%= exam_template.name %></h2>
 <%= render partial: 'form',
            locals: { exam_template: exam_template } %>
-<hr>
-<div class="student-info">
-  <h3><%= t('exam_templates.parsing.title') %></h3>
-  <p>
-    <%= render partial: 'student_info',
-               locals: { exam_template: exam_template } %>
-  </p>
-</div>
+<% if Rails.application.config.scanner_enabled %>
+  <hr>
+  <div class="student-info">
+    <h3><%= t('exam_templates.parsing.title') %></h3>
+    <p>
+      <%= render partial: 'student_info',
+                 locals: { exam_template: exam_template } %>
+    </p>
+  </div>
+<% end %>
