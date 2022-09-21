@@ -112,7 +112,7 @@ module Markus
 
     if Settings.logging.tag_with_usernames && Settings.rails.session_store.type == 'cookie_store'
       config.log_tags = [proc do |request|
-        session_info = request.cookie_jar.encrypted[Rails.application.config.session_options[:key]]
+        session_info = request.cookie_jar.encrypted[Rails.application.config.session_options[:key]] || {}
         real_user_name = session_info['real_user_name']
         user_name = session_info['user_name']
         if user_name && user_name != real_user_name
