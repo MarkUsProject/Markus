@@ -5,6 +5,8 @@ class LtiDeployment < ApplicationRecord
   has_many :lti_line_items, dependent: :destroy
   validates :external_deployment_id, uniqueness: { scope: :lti_client }
 
+  # Gets a list of all users in the LMS course associated with this deployment
+  # with the learner role and creates roles and LTI IDs for each user.
   def get_students
     auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'])
     names_service = self.lti_services.find_by!(service_type: 'namesrole')
@@ -47,6 +49,7 @@ class LtiDeployment < ApplicationRecord
                        unique_by: %i[user_id lti_client_id])
   end
 
+  # Creates or updates an assignment in the LMS gradebook for a given assessment.
   def create_or_update_lti_assessment(assessment)
     payload = {
       label: assessment.description,
@@ -71,6 +74,8 @@ class LtiDeployment < ApplicationRecord
     line_item_data
   end
 
+  # Takes as input an assessment. Sends all *released* marks to
+  # the LMS associated with the assignment and the current deployment
   def create_grades(assessment)
     auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/score'])
     line_item = self.lti_line_items.find_by!(lti_deployment: self, assessment: assessment)
@@ -85,7 +90,7 @@ class LtiDeployment < ApplicationRecord
     end
     marks.each do |lti_user_id, mark|
       payload = {
-        timestamp: Time.now.iso8601,
+        timestamp: Time.current.iso8601,
         scoreGiven: mark,
         scoreMaximum: assessment.max_mark.to_f,
         activityProgress: 'Completed',
@@ -98,25 +103,31 @@ class LtiDeployment < ApplicationRecord
     end
   end
 
+  # Returns a hash mapping lti_user_id to marks
+  # for each released mark where the user has an lti_user_id
   def get_assignment_marks(assignment)
     marks = assignment.released_marks
     mark_data = {}
+    lti_users = LtiUser.where(lti_client: lti_client)
     marks.each do |mark|
       result = mark.results.first
       group_students = mark.grouping.student_memberships
       group_students.each do |member|
-        lti_user = lti_client.lti_users.find_by(user: member.role.user)
-        mark_data[lti_user.lti_user_id] = result.total_mark
+        lti_user = lti_users.find_by(user: member.role.user)
+        mark_data[lti_user.lti_user_id] = result.total_mark unless lti_user.nil?
       end
     end
     mark_data
   end
 
+  # Returns a hash mapping lti_user_id to marks
+  # for each released mark where the user has an lti_user_id
   def get_grade_entry_form_marks(grade_entry_form)
     marks = grade_entry_form.released_marks
     mark_data = {}
+    lti_users = LtiUser.where(lti_client: lti_client)
     marks.each do |mark|
-      lti_user = lti_client.lti_users.find_by(user: mark.role.user)
+      lti_user = lti_users.find_by(user: mark.role.user)
       unless lti_user.nil?
         mark_data[lti_user.lti_user_id] = mark.total_grade
       end

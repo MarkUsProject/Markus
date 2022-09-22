@@ -103,6 +103,7 @@ BEGIN
 END
 $$;
 
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -4665,6 +4666,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220707182822'),
 ('20220726142501'),
 ('20220726201403'),
-('20220727161425');
+('20220727161425'),
 ('20220825171354'),
 ('20220826132206');

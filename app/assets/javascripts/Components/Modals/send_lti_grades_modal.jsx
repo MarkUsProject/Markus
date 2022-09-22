@@ -59,12 +59,10 @@ class LtiGradeModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t("submissions.collect.submit")}</h2>
+        <h2>{I18n.t("lti.sync_grades_lms")}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
-            <p>
-              <b>Note: </b> This will only synchronize grades that have been released.
-            </p>
+            <p>{I18n.t("lti.grade_sync_instructions")}</p>
             {this.state.deployments.map(deployment => {
               return (
                 <p>
@@ -76,14 +74,17 @@ class LtiGradeModal extends React.Component {
                       defaultChecked="true"
                       onChange={this.handleChange}
                     />
-                    &nbsp; {deployment.lms_course_name} "on" {deployment.host}
+                    {I18n.t("lti.lti_eployment", {
+                      lti_deployment_name: deployment.lms_course_name,
+                      lti_host: deployment.host,
+                    })}
                   </label>
                 </p>
               );
             })}
 
             <section className={"modal-container dialog-actions"}>
-              <input type="submit" value={I18n.t("submissions.collect.submit")} />
+              <input type="submit" value={I18n.t("lti.sync_grades")} />
             </section>
           </div>
         </form>
