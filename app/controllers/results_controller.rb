@@ -543,6 +543,7 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
+    # set a successful view token in the session so that it doesn't have to be re-entered for every request
     (session['view_token'] ||= {})[record.id] = view_token_param
 
     result_from_id = record
@@ -717,17 +718,20 @@ class ResultsController < ApplicationController
     render json: submission.grouping.test_runs_instructors_released(submission)
   end
 
+  # Regenerate the view tokens for the results whose ids are given
   def refresh_view_tokens
     updated = requested_results.map { |r| r.regenerate_view_token ? r.id : nil }.compact
     render json: Result.where(id: updated).pluck(:id, :view_token).to_h
   end
 
+  # Update the view token expiry date for the results whose ids are given
   def update_view_token_expiry
     expiry = params[:expiry_datetime]
     updated = requested_results.map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }.compact
     render json: Result.where(id: updated).pluck(:id, :view_token_expiry).to_h
   end
 
+  # Download a csv containing view token and grouping information for the results whose ids are given
   def download_view_tokens
     data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
                             .pluck('groups.group_name',
