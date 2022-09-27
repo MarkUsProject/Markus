@@ -377,7 +377,9 @@ class RawSubmissionTable extends React.Component {
         />
         <ReleaseUrlsModal
           isOpen={this.state.showReleaseUrlsModal}
-          data={this.state.groupings.filter(g => this.props.selection.includes(g._id))}
+          data={this.state.groupings.filter(
+            g => this.props.selection.includes(g._id) && !!g.result_view_token
+          )}
           groupNameWithMembers={this.groupNameWithMembers}
           groupNameFilter={this.groupNameFilter}
           course_id={this.props.course_id}
