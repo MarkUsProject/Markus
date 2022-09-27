@@ -3,6 +3,10 @@ en:
   submissions:
     api_submission_disabled: The instructor has disabled submission via the API
     cannot_display: Cannot display this file. Please download it to view.
+    clear_all_token_expiry_confirmation: |-
+      The release token expiry date for all students will cleared.
+
+      Would you like to continue?
     collect:
       apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)
       could_not_collect_some_due: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings.
@@ -53,9 +57,9 @@ en:
       Would you like to continue?
     release_marks: Release Marks
     release_token: Release Token
-    release_token_url: Release URL
     release_token_expires: Expiry Date
     release_token_expires_null: Never
+    release_token_url: Release URL
     release_url_with_token: |-
       Students can access released marks only at the following url:
 
@@ -111,10 +115,6 @@ en:
     update_all_token_expiry: Update all expiry dates
     update_all_token_expiry_confirmation: |-
       The release token expiry date for all students will be updated to %{date}.
-
-      Would you like to continue?
-    clear_all_token_expiry_confirmation: |-
-      The release token expiry date for all students will cleared.
 
       Would you like to continue?
     url_preview_error: Unable to display a preview for this URL
