@@ -10,6 +10,28 @@ describe ResultPolicy do
     end
     succeed 'role is a student' do
       let(:role) { create(:student) }
+      let(:record) { create :complete_result }
+      let(:assignment) { record.grouping.assignment }
+      succeed 'assignment.release_with_urls is false' do
+        before { assignment.update! release_with_urls: false }
+      end
+      context 'assignment.release_with_urls is true' do
+        before { assignment.update! release_with_urls: true }
+        let(:context) { { role: role, real_user: role.user, view_token: view_token } }
+        failed 'the view token does not match the record token' do
+          let(:view_token) { "#{record.view_token}abc123" }
+        end
+        context 'the view token matches the record token' do
+          let(:view_token) { record.view_token }
+          succeed 'the token does not have an expiry set'
+          succeed 'the record has a token expiry set in the future' do
+            before { record.update! view_token_expiry: 1.hour.from_now }
+          end
+          failed 'the record has a token expiry set in the past' do
+            before { record.update! view_token_expiry: 1.hour.ago }
+          end
+        end
+      end
     end
   end
 
@@ -214,6 +236,32 @@ describe ResultPolicy do
         end
         failed 'role is not an accepted member of the results grouping' do
           let(:role) { create(:student) }
+        end
+      end
+    end
+  end
+
+  describe_rule :submit_result_token? do
+    failed 'role is an instructor' do
+      let(:role) { create :instructor }
+    end
+    failed 'role is a ta' do
+      let(:role) { create :ta }
+    end
+    describe 'role is a student' do
+      let(:role) { create :student }
+      let(:record) { create :complete_result }
+      let(:assignment) { record.grouping.assignment }
+      failed 'assignment.release_with_urls is false' do
+        before { assignment.update! release_with_urls: false }
+      end
+      context 'assignment.release_with_urls is true' do
+        before { assignment.update! release_with_urls: true }
+        failed 'view_token is expired' do
+          before { record.update! view_token_expiry: 1.minute.ago }
+        end
+        succeed 'view_token is not expired' do
+          before { record.update! view_token_expiry: 1.minute.from_now }
         end
       end
     end

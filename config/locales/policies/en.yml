@@ -101,6 +101,7 @@ en:
         manage?: You do not have permission to manage results.
         review?: You do not have permission to grade this result.
         run_tests?: You do not have permission to run tests.
+        view_with_result_token?: The provided token is invalid or expired.
         view?: You do not have permission to view results.
       section:
         manage?: You do not have permission to manage sections.

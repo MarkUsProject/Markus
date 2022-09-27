@@ -3,6 +3,7 @@ class ResultsController < ApplicationController
 
   authorize :from_codeviewer, through: :from_codeviewer_param
   authorize :select_file, through: :select_file
+  authorize :view_token, through: :view_token_param
 
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
@@ -535,7 +536,15 @@ class ResultsController < ApplicationController
     }
   end
 
+  # Check whether the token submitted as the view_token param is valid (matches the result and is not expired)
+  def view_token_check
+    token_is_good = flash_allowance(:error, allowance_to(:view?), flash.now, most_specific: true).value
+    token_is_good ? head(:ok) : head(:unauthorized)
+  end
+
   def view_marks
+    (session['view_token'] ||= {})[record.id] = view_token_param
+
     result_from_id = record
     @assignment = result_from_id.submission.grouping.assignment
     @assignment = @assignment.is_peer_review? ? @assignment.parent_assignment : @assignment
@@ -708,6 +717,42 @@ class ResultsController < ApplicationController
     render json: submission.grouping.test_runs_instructors_released(submission)
   end
 
+  def refresh_view_tokens
+    updated = requested_results.map { |r| r.regenerate_view_token ? r.id : nil }.compact
+    render json: Result.where(id: updated).pluck(:id, :view_token).to_h
+  end
+
+  def update_view_token_expiry
+    expiry = params[:expiry_datetime]
+    updated = requested_results.map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }.compact
+    render json: Result.where(id: updated).pluck(:id, :view_token_expiry).to_h
+  end
+
+  def download_view_tokens
+    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
+                            .pluck('groups.group_name',
+                                   'users.user_name',
+                                   'results.view_token',
+                                   'results.view_token_expiry',
+                                   'results.id')
+                            .group_by(&:first)
+    header = [[I18n.t('activerecord.models.group.one'),
+               I18n.t('submissions.release_token'),
+               I18n.t('submissions.release_token_url'),
+               I18n.t('submissions.release_token_expires'),
+               I18n.t('activerecord.attributes.group.student_memberships')]]
+    assignment = Assignment.find(params[:assignment_id])
+    csv_string = MarkusCsv.generate(data, header) do |group_name, vals|
+      _group_name, _member_name, view_token, view_token_expiry, result_id = vals.first
+      view_token_expiry ||= I18n.t('submissions.release_token_expires_null')
+      url = view_marks_course_result_url(current_course.id, result_id, view_token: view_token)
+      [group_name, view_token, url, view_token_expiry.to_s, *vals.map(&:second)]
+    end
+    send_data csv_string,
+              disposition: 'attachment',
+              filename: "#{assignment.short_identifier}_release_view_tokens.csv"
+  end
+
   private
 
   def from_codeviewer_param
@@ -722,5 +767,14 @@ class ResultsController < ApplicationController
     params.require(:extra_mark).permit(:result,
                                        :description,
                                        :extra_mark)
+  end
+
+  def view_token_param
+    params[:view_token] || session['view_token']&.[](record&.id&.to_s)
+  end
+
+  def requested_results
+    Result.joins(grouping: :assignment)
+          .where('results.id': params[:result_ids], 'assessments.id': params[:assignment_id])
   end
 end

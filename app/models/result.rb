@@ -13,6 +13,8 @@ class Result < ApplicationRecord
 
   has_one :course, through: :submission
 
+  has_secure_token :view_token
+
   before_save :check_for_nil_marks
   after_create :create_marks
   validates :marking_state, presence: true
@@ -179,6 +181,10 @@ class Result < ApplicationRecord
   # TODO: make it include extra marks as well.
   def mark_hash
     marks.pluck_to_hash(:criterion_id, :mark, :override).index_by { |x| x[:criterion_id] }
+  end
+
+  def view_token_expired?
+    self.view_token_expiry && Time.current >= self.view_token_expiry
   end
 
   private

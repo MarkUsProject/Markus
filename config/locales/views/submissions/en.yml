@@ -44,7 +44,22 @@ en:
     no_files_available: No files available
     no_url_name: The URL %{url} has not been given a name
     past_collection_time: Any changes you make to your submitted files will be recorded, but not graded.
+    refresh_all_tokens: Refresh All Release Tokens
+    refresh_token_confirmation: |-
+      New release tokens will be generated for these groups.
+
+      Any old tokens or URLs will be automatically expired and you will have to provide the new tokens or URLs to the students.
+
+      Would you like to continue?
     release_marks: Release Marks
+    release_token: Release Token
+    release_token_url: Release URL
+    release_token_expires: Expiry Date
+    release_token_expires_null: Never
+    release_url_with_token: |-
+      Students can access released marks only at the following url:
+
+      %{url}
     repo_browser:
       client_time: 'commit:'
       collected: collected
@@ -57,6 +72,7 @@ en:
     repo_checkout_file: Repository Checkout File (%{type})
     repo_list: Repository List
     run_tests: Run Tests
+    show_release_tokens: Show Release Tokens
     state:
       before_due_date: Before Due Date
       complete: Complete
@@ -92,5 +108,14 @@ en:
     submission_summary: Submission Report
     successfully_changed: Successfully updated %{changed} results.
     unrelease_marks: Unrelease Marks
+    update_all_token_expiry: Update all expiry dates
+    update_all_token_expiry_confirmation: |-
+      The release token expiry date for all students will be updated to %{date}.
+
+      Would you like to continue?
+    clear_all_token_expiry_confirmation: |-
+      The release token expiry date for all students will cleared.
+
+      Would you like to continue?
     url_preview_error: Unable to display a preview for this URL
     urls_disabled: Unable to submit URL. URL submissions are disabled for this assignment.
