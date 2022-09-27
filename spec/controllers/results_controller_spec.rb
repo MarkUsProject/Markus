@@ -39,7 +39,9 @@ describe ResultsController do
 
   def self.test_unauthorized(route_name)
     it "should not be authorized to access #{route_name}" do
-      method(ROUTES[route_name]).call(route_name, params: { course_id: course.id, id: incomplete_result.id })
+      method(ROUTES[route_name]).call(route_name, params: { course_id: course.id,
+                                                            id: incomplete_result.id,
+                                                            assignment_id: assignment.id })
       expect(response).to have_http_status(:forbidden)
     end
   end
@@ -343,7 +345,7 @@ describe ResultsController do
         get :view_marks, params: { course_id: course.id,
                                    id: incomplete_result.id }, xhr: true
       end
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:forbidden) }
     end
     context 'accessing add_extra_mark' do
       context 'but cannot save the mark' do
@@ -630,7 +632,8 @@ describe ResultsController do
     include_examples 'showing json data', true
     context '#view_token_check' do
       let(:role) { create(:student) }
-      let(:record) { create :complete_result }
+      let(:grouping) { create :grouping_with_inviter_and_submission, inviter: student }
+      let(:record) { grouping.current_result }
       let(:assignment) { record.grouping.assignment }
       let(:view_token) { nil }
       let(:base_params) { { course_id: record.course.id, id: record.id } }
@@ -804,13 +807,14 @@ describe ResultsController do
         s.get_original_result.update!(released_to_students: true)
         s
       end
+      let(:result) { submission.get_original_result }
 
       context 'when saving a remark request message' do
         let(:subject) do
           patch_as student,
                    :update_remark_request,
                    params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
+                             id: result.id,
                              submission: { remark_request: 'Message' },
                              save: true }
         end
@@ -831,7 +835,7 @@ describe ResultsController do
           patch_as student,
                    :update_remark_request,
                    params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
+                             id: result.id,
                              submission: { remark_request: 'Message' },
                              submit: true }
         end
@@ -871,8 +875,7 @@ describe ResultsController do
         delete_as student,
                   :cancel_remark_request,
                   params: { course_id: assignment.course_id,
-                            id: submission.remark_result.id,
-                            submission_id: submission.id }
+                            id: submission.remark_result.id }
       end
 
       before { subject }

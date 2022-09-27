@@ -160,12 +160,6 @@ Rails.application.routes.draw do
         get 'collect_and_begin_grading'
         get 'get_file'
       end
-
-      resources :results, only: [:edit] do
-        collection do
-          patch 'update_remark_request'
-        end
-      end
     end
 
     resources :results, only: [:show, :edit] do
@@ -194,6 +188,7 @@ Rails.application.routes.draw do
         get 'get_test_runs_instructors'
         get 'get_test_runs_instructors_released'
         get 'view_token_check'
+        patch 'update_remark_request'
       end
     end
 

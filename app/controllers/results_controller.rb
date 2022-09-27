@@ -546,10 +546,10 @@ class ResultsController < ApplicationController
     # set a successful view token in the session so that it doesn't have to be re-entered for every request
     (session['view_token'] ||= {})[record.id] = view_token_param
 
-    result_from_id = record
-    @assignment = result_from_id.submission.grouping.assignment
+    @result = record
+    @assignment = @result.submission.grouping.assignment
     @assignment = @assignment.is_peer_review? ? @assignment.parent_assignment : @assignment
-    is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(current_role, @assignment)
+    is_review = @result.is_a_review? || @result.is_review_for?(current_role, @assignment)
 
     if current_role.student?
       @grouping = current_role.accepted_grouping_for(@assignment.id)
@@ -566,17 +566,11 @@ class ResultsController < ApplicationController
         render 'results/student/no_result'
         return
       end
-      if result_from_id.is_a_review?
-        @result = result_from_id
-      else
-        unless @submission
-          render 'results/student/no_result'
-          return
-        end
-        @result = @submission.get_original_result
+      if !@result.is_a_review? && !@submission
+        render 'results/student/no_result'
+        return
       end
     else
-      @result = result_from_id
       @submission = @result.submission
       @grouping = @submission.grouping
     end
@@ -608,12 +602,10 @@ class ResultsController < ApplicationController
       @current_group_name = @current_pr_result.submission.grouping.group.group_name
     end
 
-    @old_result = nil
     if !is_review && @submission.remark_submitted?
-      @old_result = @result
-      @result = @submission.remark_result
+      remark_result = @submission.remark_result
       # Check if remark request has been submitted but not released yet
-      if !@result.remark_request_submitted_at.nil? && !@result.released_to_students
+      if !remark_result.remark_request_submitted_at.nil? && !remark_result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
@@ -663,7 +655,7 @@ class ResultsController < ApplicationController
   end
 
   def update_remark_request
-    @submission = Submission.find(params[:submission_id])
+    @submission = record.submission
     @assignment = @submission.grouping.assignment
     if @assignment.past_remark_due_date?
       head :bad_request
@@ -690,7 +682,7 @@ class ResultsController < ApplicationController
 
   # Allows student to cancel a remark request.
   def cancel_remark_request
-    submission = Submission.find(params[:submission_id])
+    submission = record.submission
 
     submission.remark_result.destroy
     submission.get_original_result.update(released_to_students: true)

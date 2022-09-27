@@ -19,7 +19,7 @@
               <%= link_to Result.model_name.human.pluralize,
                           view_marks_course_result_path(@current_course, result) %>
             </p>
-          <% elsif allowed_to? :submit_result_token?, result %>
+          <% elsif allowed_to? :view_token_check?, result %>
             <p>
               <%= link_to Result.model_name.human.pluralize, '#',
                           id: opener_id = "submit-view-token-#{assignment.id}" %>

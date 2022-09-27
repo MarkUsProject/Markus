@@ -1,11 +1,10 @@
 # Result policy class
 class ResultPolicy < ApplicationPolicy
   default_rule :manage?
-  alias_rule :update_remark_request?, :cancel_remark_request?, :get_test_runs_instructors_released?,
-             :view_token_check?, to: :student?
+  alias_rule :update_remark_request?, :cancel_remark_request?, :get_test_runs_instructors_released?, to: :view_marks?
   alias_rule :create?, :add_extra_mark?, :remove_extra_mark?, :get_test_runs_instructors?,
              :add_tag?, :remove_tag?, :revert_to_automatic_deductions?, to: :grade?
-  alias_rule :show?, :view_marks?, :get_annotations?, :show?, to: :view?
+  alias_rule :show?, :get_annotations?, to: :view?
   alias_rule :download_zip?, to: :download?
   alias_rule :edit?, :update_mark?, :toggle_marking_state?, :update_overall_comment?, :next_grouping?, to: :review?
   alias_rule :refresh_view_tokens?, :update_view_token_expiry?, to: :set_released_to_students?
@@ -13,7 +12,21 @@ class ResultPolicy < ApplicationPolicy
   authorize :from_codeviewer, :select_file, :view_token, optional: true
 
   def view?
-    check?(:view_without_result_token?) || check?(:view_with_result_token?)
+    role.instructor? ||
+      role.ta? ||
+      (!record.grouping.assignment.release_with_urls && check?(:member?, record.submission.grouping)) ||
+      check?(:view_with_result_token?)
+  end
+
+  def view_marks?
+    check?(:member?, record.submission.grouping) &&
+      (!record.grouping.assignment.release_with_urls || check?(:view_with_result_token?))
+  end
+
+  def view_token_check?
+    check?(:member?, record.submission.grouping) &&
+      record.grouping.assignment.release_with_urls &&
+      !record.view_token_expired?
   end
 
   def run_tests?
@@ -55,16 +68,8 @@ class ResultPolicy < ApplicationPolicy
     )
   end
 
-  def view_without_result_token?
-    role.instructor? || role.ta? || !record.grouping.assignment.release_with_urls
-  end
-
-  def submit_result_token?
-    !check?(:view_without_result_token?) && !record.view_token_expired?
-  end
-
   # This is a separate policy function because it reports a specific error message on failure
   def view_with_result_token?
-    record.view_token == view_token && !record.view_token_expired?
+    check?(:member?, record.submission.grouping) && record.view_token == view_token && !record.view_token_expired?
   end
 end
