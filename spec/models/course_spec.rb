@@ -122,7 +122,7 @@ describe Course do
   describe '#get_assignment_list' do
     context 'when file_format = yml' do
       context 'when there are no assignments in the course' do
-        it 'should return a yml representation of a course with no assignments' do
+        it 'should return a yml representation of the assignments in a course with no assignments' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [] }.to_yaml
           expect(result).to eq(expected)
@@ -132,7 +132,7 @@ describe Course do
         # NOTE: the created assignment must be reloaded as the value for assignment1.due_date stored in the database is
         # less precise than that stored by ruby.
         let!(:assignment1) { (create :assignment, due_date: 5.days.ago, course: course).reload }
-        it 'should return a yml representation of a assignments in a course with a single assignment' do
+        it 'should return a yml representation of the assignments in a course with a single assignment' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [create_assignment_symbol_to_value_map(assignment1)] }.to_yaml
           expect(result).to eq(expected)
@@ -142,7 +142,7 @@ describe Course do
         let!(:assignment1) { (create :assignment, due_date: 5.days.ago, course: course).reload }
         let!(:assignment2) { (create :assignment, due_date: 1.day.ago, course: course).reload }
         let!(:assignment3) { (create :assignment, due_date: 8.days.from_now, course: course).reload }
-        it 'should return a yml representation of a assignments in a course with a multiple assignments' do
+        it 'should return a yml representation of the assignments in a course with multiple assignments' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [create_assignment_symbol_to_value_map(assignment1),
                                      create_assignment_symbol_to_value_map(assignment2),
@@ -153,18 +153,17 @@ describe Course do
     end
     context 'when file_format = csv' do
       context 'when there are no assignments in the course' do
-        it 'should return an empty string' do
+        it 'should return a csv representation of the assignments in a course with no assignments aka an empty' \
+           'string' do
           result = course.get_assignment_list('csv')
           expect(result).to eq('')
         end
       end
       context 'when the course has a single assignment' do
         let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
-        it 'should return a string representation of the assignment1 object' do
+        it 'should return a csv representation of the assignments in a course with a single assignment' do
           result = course.get_assignment_list('csv').to_s
           expected_result = create_assignment_csv_string(assignment1)
-          puts result
-          puts expected_result
           expect(result).to eq(expected_result)
         end
       end
@@ -172,7 +171,7 @@ describe Course do
         let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
         let!(:assignment2) { create :assignment, due_date: 1.day.ago, course: course }
         let!(:assignment3) { create :assignment, due_date: 8.days.from_now, course: course }
-        it 'should return a csv string representation of the assignment 1, 2 and 3 objects' do
+        it 'should return a csv representation of the assignments in a course with multiple assignments' do
           result = course.get_assignment_list('csv').to_s
           expected_result = ''
           [assignment1, assignment2, assignment3].each do |assignment|
