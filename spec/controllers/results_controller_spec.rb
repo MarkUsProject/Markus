@@ -105,12 +105,22 @@ describe ResultsController do
       end
       context 'file is a jupyter-notebook file' do
         let(:filename) { 'example.ipynb' }
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to(
-            redirect_to(notebook_content_course_assignment_submissions_path(course,
-                                                                            assignment,
-                                                                            select_file_id: submission_file.id))
-          )
+        let(:redirect_location) do
+          notebook_content_course_assignment_submissions_path(course,
+                                                              assignment,
+                                                              select_file_id: submission_file.id)
+        end
+        context 'and the python dependencies are installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
+          it 'should redirect to "notebook_content"' do
+            expect(subject).to(redirect_to(redirect_location))
+          end
+        end
+        context 'and the python dependencies are not installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+          it 'should not redirect to "notebook_content"' do
+            expect(subject).not_to(redirect_to(redirect_location))
+          end
         end
       end
       context 'file is a rmarkdown file' do

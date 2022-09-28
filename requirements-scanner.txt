@@ -1,10 +1,7 @@
-# scanner
+# TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
 opencv-python==4.5.2.54
 torch==1.9.0
 torchvision==0.10.0
 Pillow==9.0.1
 numpy==1.22.0
 scipy==1.7.0
-
-# jupyter-notebook
-nbconvert==6.5.1
