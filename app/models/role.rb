@@ -19,9 +19,7 @@ class Role < ApplicationRecord
 
   validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
   validates :user_id, uniqueness: { scope: :course_id }
-  after_update :update_repo_permissions, if: ->(r) {
-    r.previous_changes.key?('hidden')
-  }
+  after_update_commit :update_repo_permissions
 
   # Helper methods -----------------------------------------------------
 
@@ -90,6 +88,6 @@ class Role < ApplicationRecord
   end
 
   def update_repo_permissions
-    Repository.get_class.update_permissions
+    Repository.get_class.update_permissions if saved_change_to_hidden?
   end
 end

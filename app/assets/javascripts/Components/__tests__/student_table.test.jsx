@@ -162,7 +162,7 @@ describe("For the StudentTable component's rendering", () => {
         I18n.t("activerecord.attributes.user.id_number"),
         I18n.t("activerecord.models.section", {count: 1}),
         I18n.t("activerecord.attributes.user.grace_credits"),
-        I18n.t("students.active") + "?",
+        I18n.t("roles.active") + "?",
         I18n.t("actions"),
       ].forEach(text => {
         expect(within(screen.getByTestId("raw_student_table")).getByText(text)).toBeInTheDocument;

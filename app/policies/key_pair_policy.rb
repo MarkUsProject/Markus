@@ -1,7 +1,6 @@
 # Policy for managing KeyPairs
 class KeyPairPolicy < ApplicationPolicy
   skip_pre_check :role_exists?
-  skip_pre_check :view_hidden_course?
 
   default_rule :manage?
 

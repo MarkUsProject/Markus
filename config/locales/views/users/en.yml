@@ -5,13 +5,14 @@ en:
     help:
       manage_instructors: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
     new: Add an Instructor
-  students:
+  roles:
     active: Active
+    inactive: Inactive
+  students:
     display_inactive: Display inactive students
     edit: Edit a Student
     help:
       manage_students: Mark students as active or inactive, give them grace credits.
-    inactive: Inactive
     instructor_actions:
       give_grace_credits: Give grace credits
       mark_active: Mark as active

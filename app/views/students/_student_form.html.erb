@@ -24,7 +24,7 @@
     <%= f.label :hidden, t('students.status') %>
     <span id='set-active'>
       <%= f.select :hidden,
-                   options_for_select([[t('students.active'), false], [t('students.inactive'), true]], selected: @role.hidden) %>
+                   options_for_select([[t('roles.active'), false], [t('roles.inactive'), true]], selected: @role.hidden) %>
     </span>
   </div>
 

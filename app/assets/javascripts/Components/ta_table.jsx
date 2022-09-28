@@ -52,9 +52,9 @@ class TATable extends React.Component {
             accessor: "email",
           },
           {
-            Header: I18n.t("students.active") + "?",
+            Header: I18n.t("roles.active") + "?",
             accessor: "hidden",
-            Cell: ({value}) => (value ? I18n.t("students.inactive") : I18n.t("students.active")),
+            Cell: ({value}) => (value ? I18n.t("roles.inactive") : I18n.t("roles.active")),
             filterMethod: (filter, row) => {
               if (filter.value === "all") {
                 return true;
@@ -69,11 +69,11 @@ class TATable extends React.Component {
             filterOptions: [
               {
                 value: "active",
-                text: `${I18n.t("students.active")} (${this.state.counts.active})`,
+                text: `${I18n.t("roles.active")} (${this.state.counts.active})`,
               },
               {
                 value: "inactive",
-                text: `${I18n.t("students.inactive")} (${this.state.counts.inactive})`,
+                text: `${I18n.t("roles.inactive")} (${this.state.counts.inactive})`,
               },
             ],
             filterAllOptionText: `${I18n.t("all")} (${this.state.counts.all})`,

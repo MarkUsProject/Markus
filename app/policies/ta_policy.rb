@@ -27,7 +27,7 @@ class TaPolicy < RolePolicy
     role.instructor?
   end
 
-  def manage_user_status?
-    role.instructor? || user.admin_user?
+  def manage_role_status?
+    role.instructor?
   end
 end

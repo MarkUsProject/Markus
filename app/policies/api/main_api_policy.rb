@@ -4,7 +4,6 @@ module Api
     default_rule :manage?
 
     skip_pre_check :role_exists?
-    skip_pre_check :view_hidden_course?
     pre_check :admin_user?
 
     def manage?
