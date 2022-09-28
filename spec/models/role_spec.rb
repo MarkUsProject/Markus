@@ -63,8 +63,8 @@ describe Role do
         end
 
         it 'after bulk unhiding students' do
-          student1 = create :student
-          student2 = create :student
+          student1 = create :student, hidden: true
+          student2 = create :student, hidden: true
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
           Student.unhide_students([student1.id, student2.id])
         end
