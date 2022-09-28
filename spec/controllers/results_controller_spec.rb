@@ -641,7 +641,7 @@ describe ResultsController do
       subject { get :view_token_check, params: params }
       context 'assignment.release_with_urls is false' do
         before { assignment.update! release_with_urls: false }
-        it { is_expected.to have_http_status(:success) }
+        it { is_expected.to have_http_status(:forbidden) }
         it 'should not flash an error message' do
           subject
           expect(flash.now[:error]).to be_blank
@@ -676,10 +676,10 @@ describe ResultsController do
           end
           context 'the record has a token expiry set in the past' do
             before { record.update! view_token_expiry: 1.hour.ago }
-            it { is_expected.to have_http_status(:unauthorized) }
-            it 'should flash an error message' do
+            it { is_expected.to have_http_status(:forbidden) }
+            it 'should not flash an error message' do
               subject
-              expect(flash.now[:error]).not_to be_blank
+              expect(flash.now[:error]).to be_blank
             end
           end
         end

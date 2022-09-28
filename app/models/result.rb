@@ -184,7 +184,7 @@ class Result < ApplicationRecord
   end
 
   def view_token_expired?
-    self.view_token_expiry && Time.current >= self.view_token_expiry
+    !self.view_token_expiry.nil? && Time.current >= self.view_token_expiry
   end
 
   private
