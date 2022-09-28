@@ -14,14 +14,16 @@ repos:
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
-  -   repo: https://github.com/awebdeveloper/pre-commit-stylelint
-      rev: 0.0.2
+  -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
+      rev: v14.11.0
       hooks:
         - id: stylelint
           additional_dependencies: [
-              "stylelint@13.13.1",
-              "stylelint-config-sass-guidelines@8.0.0",
-              "stylelint-config-prettier@8.0.1",
+              "stylelint@14.11.0",
+              "postcss-scss@4.0.4",
+              "stylelint-config-sass-guidelines@9.0.1",
+              "stylelint-config-prettier@9.0.3",
+              "postcss@8.4.16",
             ]
           args: ["--fix"]
           types_or: ["css", "scss"]
@@ -31,7 +33,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.35.0
+    rev: v1.36.0
     hooks:
       - id: rubocop
         language_version: 2.7.0

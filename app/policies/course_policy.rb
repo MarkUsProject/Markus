@@ -10,7 +10,7 @@ class CoursePolicy < ApplicationPolicy
   end
 
   def index?
-    true
+    user.end_user?
   end
 
   def edit?

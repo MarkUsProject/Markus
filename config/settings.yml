@@ -44,8 +44,6 @@ repository:
   ssh_url: 'git@example.com/csc108'
   is_repository_admin: true
 
-max_file_size: 5000000
-
 session_timeout: 1800
 
 enable_key_storage: true
@@ -91,8 +89,7 @@ autotest:
 scanned_exams:
   enable: true
 
-python:
-  bin: <%= ::Rails.root %>/venv/bin
+python: <%= ::Rails.root %>/venv/bin/python
 
 exception_notification:
   enabled: false

@@ -64,11 +64,6 @@ class ExamTemplate < ApplicationRecord
     self.destroy
   end
 
-  # Generate copies of the given exam template, with the given start number.
-  def generate_copies(num_copies, start = 1)
-    GenerateJob.perform_later(self, num_copies, start)
-  end
-
   # Split up PDF file based on this exam template.
   def split_pdf(path, original_filename = nil, current_role = nil)
     basename = File.basename path, '.pdf'
@@ -219,6 +214,14 @@ class ExamTemplate < ApplicationRecord
 
   def file_path
     File.join(base_path, 'exam_template.pdf')
+  end
+
+  def tmp_path
+    Rails.root.join "tmp/exam_templates/#{self.id}/"
+  end
+
+  def generated_copies_file_name(num_copies, start)
+    "#{self.name}-#{start}-#{start + num_copies - 1}.pdf"
   end
 
   def num_cover_fields
