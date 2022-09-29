@@ -1,0 +1,20 @@
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+
+Package: markus
+Depends:
+  cmake,
+  libssl-dev,
+  tzdata,
+  build-essential,
+  postgresql-client (>= 12) | postgresql-client-12,
+  libpq-dev (>= 12),
+  ghostscript (>= 9.5), ghostscript (<< 10),
+  libmagickwand-dev (>= 8:6), libmagickwand-dev (<< 8:7),
+  git (>= 1:2), git (<< 1:3),
+  libgl1 (>= 1.3), libgl1 (<< 2),
+  nodejs (>= 18), nodejs (<< 19),
+  ruby (>= 1:2.7) | ruby2.7, ruby (<< 1:3) | ruby2.7,
+  ruby-dev (>= 1:2.7) | ruby2.7-dev, ruby-dev (<< 1:3) | ruby2.7-dev,
+  rubygems-integration

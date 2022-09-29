@@ -6,14 +6,6 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
       target: prod
-      args:
-        UBUNTU_VERSION: focal
-        RUBY_VERSION: '2.7'
-        PG_MAJOR: '12'
-        NODE_MAJOR: '18'
-        BUNDLER_VERSION: '2.3.17'
-        PYTHON_VERSION: '3.9'
-        USER: 'markus'
     image: markus:1.0.1
     tmpfs:
       - /tmp
