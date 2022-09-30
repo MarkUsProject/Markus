@@ -80,7 +80,125 @@ describe Course do
 
   describe '#get_assignment_list' # TODO
   describe '#upload_assignment_list' # TODO
-  describe '#get_required_files' # TODO
+  describe '#get_required_files' do
+    context 'when a course has no assignments' do
+      it 'should return an empty hashmap' do
+        test_course = create :course
+        expected = {}
+        actual = test_course.get_required_files
+        expect(expected).to eq(actual)
+      end
+    end
+    context 'when a course has one assignment' do
+      let!(:test_course) do
+        Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
+              .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
+                               display_name: 'Test Course')
+      end
+      let!(:assignment) do
+        test_course.assignments.new(short_identifier: 'TEST', is_hidden: false, description: 'ello',
+                                    due_date: 5.days.from_now)
+      end
+      before(:each) do
+        assignment.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
+                                                                           repository_folder: 'TEST' } })
+        assignment.save
+      end
+      context 'when the result from the assignment query does not return the assignment' do
+        context 'when the assignment is a scanned exam and not hidden' do
+          it 'should return an empty hashmap' do
+            assignment.assignment_properties.scanned_exam = true
+            assignment.save
+
+            expect(assignment.assignment_properties.scanned_exam).to eq(true)
+            # ensure that the the condition assignment.is_hidden = false is not causing the query to fail
+            expect(assignment.is_hidden).to eq(false)
+            expect(test_course.get_required_files).to eq({})
+          end
+        end
+        context 'when the assignment is hidden' do
+          it 'should return an empty hashmap' do
+            assignment.is_hidden = true
+            assignment.save
+
+            expect(assignment.assignment_properties.scanned_exam).to eq(false)
+            expect(assignment.is_hidden).to eq(true)
+            expect(test_course.get_required_files).to eq({})
+          end
+        end
+      end
+      context 'when only_required_files is false' do
+        context 'when there are files (even not required) in the repository' do
+          it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
+            expected = test_course.get_required_files
+
+            expect(assignment.assignment_properties.scanned_exam).to eq(false)
+            expect(assignment.is_hidden).to eq(false)
+            expect(assignment.only_required_files).to eq(false)
+            expect(expected).to eq({ 'TEST' => { required: [], required_only: false } })
+          end
+        end
+      end
+      context 'when only_required_files is true' do
+        it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
+          test_course = Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
+                              .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
+                                               display_name: 'Test Course')
+          assignment = test_course.assignments.new(short_identifier: 'TEST', is_hidden: false, description: 'ello',
+                                                   due_date: 5.days.from_now)
+          assignment.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
+                                                                             repository_folder: 'TEST' } })
+          assignment.save
+
+          expected = test_course.get_required_files
+
+          expect(assignment.assignment_properties.scanned_exam).to eq(false)
+          expect(assignment.is_hidden).to eq(false)
+
+          expect(assignment.only_required_files).to eq(false)
+          expect(expected).to eq({ 'TEST' => { required: [], required_only: false } })
+        end
+      end
+      context 'when an assignment has required files' do
+        it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
+          assignment.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
+                                                                             repository_folder: 'TEST' } })
+          assignment.save
+          assignment.assignment_files.create(filename: 'a')
+          expected = test_course.get_required_files
+          expect(assignment.assignment_properties.scanned_exam).to eq(false)
+          expect(assignment.is_hidden).to eq(false)
+          expect(assignment.only_required_files).to eq(false)
+          expect(expected).to eq({ 'TEST' => { required: ['a'], required_only: false } })
+        end
+      end
+    end
+    context 'when a course has multiple assignments' do
+      it 'should return a mapping with multiple assignments' do
+        test_course = Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
+                            .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
+                                             display_name: 'Test Course')
+        assignments = []
+        3.times do |test_number|
+          assignments.append(test_course.assignments.new(short_identifier: "TEST-#{test_number}", is_hidden: false,
+                                                         description: 'ello',
+                                                         due_date: 5.days.from_now))
+          assignment = assignments[test_number]
+          assignment.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
+                                                                             repository_folder:
+                                                                               "TEST-#{test_number}" } })
+          assignment.save
+
+          expect(assignment.assignment_properties.scanned_exam).to eq(false)
+          expect(assignment.is_hidden).to eq(false)
+        end
+        expected = test_course.get_required_files
+        3.times do |test_number|
+          expect(expected[assignments[test_number].repository_folder]).to eq({ required: [], required_only: false })
+        end
+      end
+    end
+  end
   describe '#update_autotest_url' do
     before do
       allow_any_instance_of(AutotestSetting).to receive(:register).and_return(1)
