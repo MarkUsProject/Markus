@@ -10,12 +10,12 @@ repos:
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
   -   repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v2.7.1
+      rev: v3.0.0-alpha.0
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v14.11.0
+      rev: v14.13.0
       hooks:
         - id: stylelint
           additional_dependencies: [
