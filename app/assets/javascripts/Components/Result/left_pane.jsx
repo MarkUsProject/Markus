@@ -57,7 +57,7 @@ export class LeftPane extends React.Component {
       file,
       submission_file_id,
       focus_line,
-      annotation_focus
+      annotation_focus,
     );
     this.setState({tabIndex: 0}); // Switch to Submission Files tab
   };
@@ -127,7 +127,7 @@ export class LeftPane extends React.Component {
                   data-remote="true"
                   action={Routes.run_tests_course_result_path(
                     this.props.course_id,
-                    this.props.result_id
+                    this.props.result_id,
                   )}
                 >
                   <input

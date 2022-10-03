@@ -7,7 +7,7 @@ export class FractionStat extends React.Component {
     let result = "0.00";
     if (denominator !== 0) {
       result = ((Number(this.props.numerator) / Number(this.props.denominator) || 0) * 100).toFixed(
-        2
+        2,
       );
     }
     return (

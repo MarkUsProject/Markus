@@ -113,7 +113,7 @@ export class FileViewer extends React.Component {
             submission_file_id: submission_file_id,
             force_text: force_text,
           }),
-          {credentials: "include"}
+          {credentials: "include"},
         )
           .then(res => res.json())
           .then(body => {

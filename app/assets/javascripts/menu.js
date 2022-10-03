@@ -9,7 +9,7 @@ function initMenu() {
     () => {
       document.body.classList.toggle("show_menu");
     },
-    false
+    false,
   );
 
   /* Close menu if content clicked, or if window resized and no longer "mobile" */
@@ -23,7 +23,7 @@ function initMenu() {
 
       hideMenu();
     },
-    false
+    false,
   );
 
   window.onresize = () => {

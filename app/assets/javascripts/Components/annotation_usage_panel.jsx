@@ -42,7 +42,7 @@ class AnnotationUsagePanel extends React.Component {
           return row[filter.id].toLowerCase().includes(filter.value.toLowerCase());
         } else {
           return row._subRows.some(sr =>
-            sr["group_name"].toLowerCase().includes(filter.value.toLowerCase())
+            sr["group_name"].toLowerCase().includes(filter.value.toLowerCase()),
           );
         }
       },
@@ -61,7 +61,7 @@ class AnnotationUsagePanel extends React.Component {
     $.ajax({
       url: Routes.annotation_text_uses_course_assignment_annotation_categories_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         annotation_text_id: this.props.annotation_id,

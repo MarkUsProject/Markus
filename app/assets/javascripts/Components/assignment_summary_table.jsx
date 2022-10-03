@@ -66,7 +66,7 @@ export class AssignmentSummaryTable extends React.Component {
           if (row.original.result_id) {
             const path = Routes.edit_course_result_path(
               this.props.course_id,
-              row.original.result_id
+              row.original.result_id,
             );
             return <a href={path}>{row.original.group_name}</a>;
           } else {
@@ -82,7 +82,7 @@ export class AssignmentSummaryTable extends React.Component {
 
             // Check member names
             const member_matches = row._original.members.some(member =>
-              member.some(name => name.includes(filter.value))
+              member.some(name => name.includes(filter.value)),
             );
 
             if (member_matches) {

@@ -146,11 +146,11 @@
         y1: parseInt(this.currentSelection.y * COORDINATE_MULTIPLIER, 10),
         x2: parseInt(
           (this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER,
-          10
+          10,
         ),
         y2: parseInt(
           (this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER,
-          10
+          10,
         ),
         page: this.selectionBox.page,
       };
@@ -227,7 +227,7 @@
           [annotation_text],
           point.x * 100,
           point.y * 100,
-          "%"
+          "%",
         );
       };
 

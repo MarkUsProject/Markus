@@ -39,7 +39,7 @@ class StarterFileManager extends React.Component {
     $.get({
       url: Routes.populate_starter_file_manager_course_assignment_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(res => this.setState({loading: false, ...res}));
@@ -49,7 +49,7 @@ class StarterFileManager extends React.Component {
     $.post({
       url: Routes.course_assignment_starter_file_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
     }).then(this.fetchData);
   };
@@ -65,7 +65,7 @@ class StarterFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_starter_file_group_path(
         this.props.course_id,
-        groupUploadTarget
+        groupUploadTarget,
       ),
       data: {delete_files: fileKeys},
     })
@@ -82,7 +82,7 @@ class StarterFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_starter_file_group_path(
         this.props.course_id,
-        groupUploadTarget
+        groupUploadTarget,
       ),
       data: data,
       processData: false, // tell jQuery not to process the data
@@ -93,7 +93,7 @@ class StarterFileManager extends React.Component {
           showFileUploadModal: false,
           dirUploadTarget: undefined,
           groupUploadTarget: undefined,
-        })
+        }),
       )
       .then(this.fetchData);
   };
@@ -102,7 +102,7 @@ class StarterFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_starter_file_group_path(
         this.props.course_id,
-        groupUploadTarget
+        groupUploadTarget,
       ),
       data: {new_folders: [folderKey]},
     }).then(this.fetchData);
@@ -112,7 +112,7 @@ class StarterFileManager extends React.Component {
     $.post({
       url: Routes.update_files_course_starter_file_group_path(
         this.props.course_id,
-        groupUploadTarget
+        groupUploadTarget,
       ),
       data: {delete_folders: folderKeys},
     }).then(this.fetchData);
@@ -154,7 +154,7 @@ class StarterFileManager extends React.Component {
       type: "PUT",
       url: Routes.update_starter_file_course_assignment_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: JSON.stringify(data),
       processData: false,
@@ -175,7 +175,7 @@ class StarterFileManager extends React.Component {
         });
         return {files: new_files};
       },
-      () => this.toggleFormChanged(true)
+      () => this.toggleFormChanged(true),
     );
   };
 
@@ -190,7 +190,7 @@ class StarterFileManager extends React.Component {
         });
         return {files: new_files};
       },
-      () => this.toggleFormChanged(true)
+      () => this.toggleFormChanged(true),
     );
   };
 
@@ -223,7 +223,7 @@ class StarterFileManager extends React.Component {
                 onActionBarAddFileClick={this.openUploadModal}
                 downloadAllURL={Routes.download_files_course_starter_file_group_path(
                   this.props.course_id,
-                  id
+                  id,
                 )}
                 disableActions={{rename: true}}
                 canFilter={false}
@@ -254,7 +254,7 @@ class StarterFileManager extends React.Component {
         });
         return {sections: new_sections};
       },
-      () => this.toggleFormChanged(true)
+      () => this.toggleFormChanged(true),
     );
   };
 
@@ -333,7 +333,7 @@ class StarterFileManager extends React.Component {
           <select
             onChange={e =>
               this.setState({defaultStarterFileGroup: parseInt(e.target.value)}, () =>
-                this.toggleFormChanged(true)
+                this.toggleFormChanged(true),
               )
             }
             value={this.state.defaultStarterFileGroup}
@@ -440,7 +440,7 @@ class StarterFileManager extends React.Component {
             onChange={() => {
               this.setState(
                 prev => ({available_after_due: !prev.available_after_due}),
-                () => this.toggleFormChanged(true)
+                () => this.toggleFormChanged(true),
               );
             }}
           />
@@ -488,7 +488,7 @@ class StarterFileManager extends React.Component {
               <a
                 href={Routes.download_starter_file_mappings_course_assignment_path(
                   this.props.course_id,
-                  this.props.assignment_id
+                  this.props.assignment_id,
                 )}
               >
                 {I18n.t("assignments.starter_file.download_mappings_csv")}
@@ -497,7 +497,7 @@ class StarterFileManager extends React.Component {
               <a
                 href={Routes.download_sample_starter_files_course_assignment_path(
                   this.props.course_id,
-                  this.props.assignment_id
+                  this.props.assignment_id,
                 )}
               >
                 {I18n.t("assignments.starter_file.download_sample_starter_files")}
@@ -533,7 +533,7 @@ class StarterFileGroupName extends React.Component {
   handleBlur = event => {
     this.setState(
       {editing: false},
-      this.props.changeGroupName(this.props.groupUploadTarget, this.props.name, event)
+      this.props.changeGroupName(this.props.groupUploadTarget, this.props.name, event),
     );
   };
 

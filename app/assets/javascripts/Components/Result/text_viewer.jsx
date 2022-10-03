@@ -53,7 +53,7 @@ export class TextViewer extends React.Component {
     dp.SyntaxHighlighter.HighlightAll(
       preElementName,
       true /* showGutter */,
-      false /* showControls */
+      false /* showControls */,
     );
     this.highlight_root =
       this.raw_content.current.parentNode.getElementsByClassName("dp-highlighter")[0];
@@ -63,7 +63,7 @@ export class TextViewer extends React.Component {
       window.annotation_type = ANNOTATION_TYPES.CODE;
 
       window.annotation_manager = new TextAnnotationManager(
-        this.highlight_root.children[1].children
+        this.highlight_root.children[1].children,
       );
       this.annotation_manager = window.annotation_manager;
     }
@@ -94,7 +94,7 @@ export class TextViewer extends React.Component {
         column_start: parseInt(annotation.column_start, 10),
         column_end: parseInt(annotation.column_end, 10),
       },
-      annotation.id
+      annotation.id,
     );
   };
 

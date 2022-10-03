@@ -20,7 +20,7 @@ class StudentPeerReviewsTable extends React.Component {
     $.get({
       url: Routes.list_reviews_course_assignment_peer_reviews_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(res => {

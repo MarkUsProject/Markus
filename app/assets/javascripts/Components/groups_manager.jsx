@@ -78,7 +78,7 @@ class GroupsManager extends React.Component {
       $.get({
         url: Routes.new_course_assignment_group_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
       }).then(this.fetchData);
     } else {
@@ -96,7 +96,7 @@ class GroupsManager extends React.Component {
     $.get({
       url: Routes.create_groups_when_students_work_alone_course_assignment_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
     }).then(this.fetchData);
   };
@@ -113,7 +113,7 @@ class GroupsManager extends React.Component {
     $.ajax(
       Routes.remove_group_course_assignment_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       {
         method: "DELETE",
@@ -121,7 +121,7 @@ class GroupsManager extends React.Component {
           // TODO: change param to grouping_ids
           grouping_id: groupings,
         },
-      }
+      },
     ).then(this.fetchData);
   };
 
@@ -129,7 +129,7 @@ class GroupsManager extends React.Component {
     $("#new_groupname").val("");
     $("#rename_group_dialog form").attr(
       "action",
-      Routes.rename_group_course_group_path(this.props.course_id, grouping_id)
+      Routes.rename_group_course_group_path(this.props.course_id, grouping_id),
     );
     modal_rename.open();
   };
@@ -138,7 +138,7 @@ class GroupsManager extends React.Component {
     $.post({
       url: Routes.global_actions_course_assignment_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         global_actions: "unassign",
@@ -167,7 +167,7 @@ class GroupsManager extends React.Component {
     $.post({
       url: Routes.global_actions_course_assignment_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         global_actions: "assign",
@@ -185,7 +185,7 @@ class GroupsManager extends React.Component {
     $.get({
       url: Routes.valid_grouping_course_assignment_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {grouping_id: grouping_id},
     }).then(this.fetchData);
@@ -199,7 +199,7 @@ class GroupsManager extends React.Component {
     $.get({
       url: Routes.invalid_grouping_course_assignment_groups_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {grouping_id: grouping_id},
     }).then(this.fetchData);
@@ -369,7 +369,7 @@ class RawGroupsTable extends React.Component {
           const assign_url = Routes.assign_scans_course_assignment_groups_path(
             this.props.course_id,
             this.props.assignment_id,
-            {grouping_id: row.original._id}
+            {grouping_id: row.original._id},
           );
           return <a href={assign_url}>{I18n.t("exam_templates.assign_scans.title")}</a>;
         }

@@ -41,8 +41,8 @@ export class GradeEntryFormChart extends React.Component {
     fetch(
       Routes.grade_distribution_course_grade_entry_form_path(
         this.props.course_id,
-        this.props.assessment_id
-      )
+        this.props.assessment_id,
+      ),
     )
       .then(data => data.json())
       .then(res => {
@@ -79,7 +79,7 @@ export class GradeEntryFormChart extends React.Component {
             <a
               href={Routes.edit_course_grade_entry_form_path(
                 this.props.course_id,
-                this.props.assessment_id
+                this.props.assessment_id,
               )}
             >
               {this.props.show_chart_header ? this.state.summary.name : ""}
@@ -109,7 +109,7 @@ export class GradeEntryFormChart extends React.Component {
             item_name={I18n.t("activerecord.models.grade_entry_item.one")}
             create_link={Routes.edit_course_grade_entry_form_path(
               this.props.course_id,
-              this.props.assessment_id
+              this.props.assessment_id,
             )}
           />
         </React.Fragment>

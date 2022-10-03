@@ -33,7 +33,7 @@ class CreateModifyAnnotationPanel extends React.Component {
       method: "get",
       url: Routes.find_annotation_text_course_assignment_annotation_categories_url(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
       data: {
@@ -52,7 +52,7 @@ class CreateModifyAnnotationPanel extends React.Component {
           "results.annotation.similar_annotations_found",
           {
             count: res.length,
-          }
+          },
         );
         res.forEach(elem => {
           const annotation = document.createElement("li");
@@ -180,7 +180,7 @@ class CreateModifyAnnotationPanel extends React.Component {
       options.push(
         <option key={category.id} value={category.id}>
           {category.annotation_category_name}
-        </option>
+        </option>,
       );
     });
 

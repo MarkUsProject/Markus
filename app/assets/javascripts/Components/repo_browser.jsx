@@ -28,7 +28,7 @@ class RepoBrowser extends React.Component {
         headers: {
           "content-type": "application/json",
         },
-      }
+      },
     )
       .then(data => data.json())
       .then(data => this.setState({revisions: data, revision_identifier: data[0].id}));
@@ -134,7 +134,7 @@ class ManualCollectionForm extends React.Component {
   render() {
     const action = Routes.manually_collect_and_begin_grading_course_assignment_submissions_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
     );
 
     return (

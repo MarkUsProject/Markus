@@ -98,7 +98,7 @@ class RawFileManager extends RawFileBrowser {
                 <i className="fa fa-folder-o" aria-hidden="true" />
                 &nbsp;{I18n.t("add_folder")}
               </a>
-            </li>
+            </li>,
           );
         }
         if (
@@ -113,7 +113,7 @@ class RawFileManager extends RawFileBrowser {
                 <i className="fa fa-i-cursor" aria-hidden="true" />
                 &nbsp;{I18n.t("rename")}
               </a>
-            </li>
+            </li>,
           );
         }
         if (
@@ -131,7 +131,7 @@ class RawFileManager extends RawFileBrowser {
                 <i className="fa fa-trash-o" aria-hidden="true" />
                 &nbsp;{I18n.t("delete")}
               </a>
-            </li>
+            </li>,
           );
         }
         if (this.props.enableUrlSubmit) {
@@ -145,7 +145,7 @@ class RawFileManager extends RawFileBrowser {
                 <i className="fa fa-submit-link-o" aria-hidden="true" />
                 &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
               </a>
-            </li>
+            </li>,
           );
         }
         // NEW
@@ -159,7 +159,7 @@ class RawFileManager extends RawFileBrowser {
               <i className="fa fa-add-file-o" aria-hidden="true" />
               &nbsp;{this.upload_or_submit_file_label()}
             </a>
-          </li>
+          </li>,
         );
       }
     } else if (!this.props.readOnly) {
@@ -175,7 +175,7 @@ class RawFileManager extends RawFileBrowser {
               <i className="fa fa-folder-o" aria-hidden="true" />
               &nbsp;{I18n.t("add_folder")}
             </a>
-          </li>
+          </li>,
         );
       }
       if (this.props.enableUrlSubmit) {
@@ -189,7 +189,7 @@ class RawFileManager extends RawFileBrowser {
               <i className="fa fa-submit-link-o" aria-hidden="true" />
               &nbsp;{I18n.t("submit_the", {item: I18n.t("submissions.student.link")})}
             </a>
-          </li>
+          </li>,
         );
       }
       // NEW
@@ -203,14 +203,14 @@ class RawFileManager extends RawFileBrowser {
             <i className="fa fa-add-file-o" aria-hidden="true" />
             &nbsp;{this.upload_or_submit_file_label()}
           </a>
-        </li>
+        </li>,
       );
 
       actions.push(
         <li key="action-delete" style={{color: "#8d8d8d"}}>
           <i className="fa fa-trash-o" aria-hidden="true" />
           &nbsp;{I18n.t("delete")}
-        </li>
+        </li>,
       );
     }
 
@@ -221,7 +221,7 @@ class RawFileManager extends RawFileBrowser {
             <i className="fa fa-download-file-o" aria-hidden="true" />
             &nbsp;{I18n.t("download_the", {item: I18n.t("all")})}
           </a>
-        </li>
+        </li>,
       );
     }
 
@@ -375,25 +375,25 @@ class FileManagerFile extends FileRenderers.RawTableFile {
 FileManagerFile = DragSource(
   "file",
   BaseFileConnectors.dragSource,
-  BaseFileConnectors.dragCollect
+  BaseFileConnectors.dragCollect,
 )(
   DropTarget(
     ["file", "folder", NativeTypes.FILE],
     BaseFileConnectors.targetSource,
-    BaseFileConnectors.targetCollect
-  )(FileManagerFile)
+    BaseFileConnectors.targetCollect,
+  )(FileManagerFile),
 );
 
 const FileManagerHeader = DragSource(
   "file",
   BaseFileConnectors.dragSource,
-  BaseFileConnectors.dragCollect
+  BaseFileConnectors.dragCollect,
 )(
   DropTarget(
     ["file", "folder", NativeTypes.FILE],
     BaseFileConnectors.targetSource,
-    BaseFileConnectors.targetCollect
-  )(RawFileManagerHeader)
+    BaseFileConnectors.targetCollect,
+  )(RawFileManagerHeader),
 );
 
 class FileManager extends React.Component {

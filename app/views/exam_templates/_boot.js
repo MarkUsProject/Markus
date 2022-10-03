@@ -63,7 +63,7 @@ function attach_crop_box(id) {
     {
       onChange: pos => {
         const stageHeight = parseFloat(
-          getComputedStyle(crop_target, null).height.replace("px", "")
+          getComputedStyle(crop_target, null).height.replace("px", ""),
         );
         const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
         const {x, y, w, h} = pos;
@@ -77,7 +77,7 @@ function attach_crop_box(id) {
     },
     function () {
       jcrop_api = this;
-    }
+    },
   );
 
   // Set crop selection if values exist.

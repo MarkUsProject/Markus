@@ -37,7 +37,7 @@ export class TestRunTable extends React.Component {
         ajaxDetails = {
           url: Routes.get_test_runs_instructors_course_result_path(
             this.props.course_id,
-            this.props.result_id
+            this.props.result_id,
           ),
           dataType: "json",
         };
@@ -45,7 +45,7 @@ export class TestRunTable extends React.Component {
         ajaxDetails = {
           url: Routes.get_test_runs_instructors_released_course_result_path(
             this.props.course_id,
-            this.props.result_id
+            this.props.result_id,
           ),
           dataType: "json",
         };
@@ -54,7 +54,7 @@ export class TestRunTable extends React.Component {
       ajaxDetails = {
         url: Routes.get_test_runs_students_course_assignment_automated_tests_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
         dataType: "json",
       };
@@ -227,7 +227,7 @@ class TestGroupResultTable extends React.Component {
             acc[0] + (row._original["test_results.marks_earned"] || 0),
             acc[1] + (row._original["test_results.marks_total"] || 0),
           ],
-          [0, 0]
+          [0, 0],
         ),
       Aggregated: row => {
         return `${row.value[0]} / ${row.value[1]}`;
@@ -348,7 +348,7 @@ class TestGroupFeedbackFileTable extends React.Component {
             selectedFile={row.original.filename}
             selectedFileURL={Routes.course_feedback_file_path(
               this.props.course_id,
-              row.original.id
+              row.original.id,
             )}
             mime_type={getType(row["filename"])}
             selectedFileType={row.original.type}

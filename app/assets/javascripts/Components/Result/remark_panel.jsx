@@ -24,7 +24,7 @@ export class RemarkPanel extends React.Component {
     return $.ajax({
       url: Routes.update_remark_request_course_submission_results_path(
         this.props.course_id, // TODO: pass this prop to this component
-        this.props.submission_id
+        this.props.submission_id,
       ),
       method: "PATCH",
       data: data,

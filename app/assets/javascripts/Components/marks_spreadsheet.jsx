@@ -26,7 +26,7 @@ class RawMarksSpreadsheet extends React.Component {
     $.ajax({
       url: Routes.get_mark_columns_course_grade_entry_form_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       method: "GET",
       dataType: "json",
@@ -42,7 +42,7 @@ class RawMarksSpreadsheet extends React.Component {
           className: "grade-input",
           minWidth: 50,
           defaultSortDesc: true,
-        })
+        }),
       );
       this.setState({grade_columns});
     });
@@ -51,7 +51,7 @@ class RawMarksSpreadsheet extends React.Component {
     $.ajax({
       url: Routes.populate_grades_table_course_grade_entry_form_path(
         this.props.course_id,
-        this.props.grade_entry_form_id
+        this.props.grade_entry_form_id,
       ),
       method: "GET",
       dataType: "json",
@@ -64,7 +64,7 @@ class RawMarksSpreadsheet extends React.Component {
           loading: false,
           sections: response.sections,
         },
-        () => this.forceUpdate()
+        () => this.forceUpdate(),
       );
     });
   };
@@ -252,7 +252,7 @@ class RawMarksSpreadsheet extends React.Component {
         method: "POST",
         url: Routes.update_grade_entry_students_course_grade_entry_form_path(
           this.props.course_id,
-          this.props.grade_entry_form_id
+          this.props.grade_entry_form_id,
         ),
         data: dataLoad,
       }).then(this.fetchData);
@@ -352,7 +352,7 @@ class GradeEntryCell extends React.Component {
       $.ajax({
         url: Routes.update_grade_course_grade_entry_form_path(
           this.props.course_id,
-          this.props.grade_entry_form_id
+          this.props.grade_entry_form_id,
         ),
         data: params,
         type: "POST",

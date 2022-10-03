@@ -24,7 +24,7 @@ export class DownloadSubmissionModal extends React.Component {
     let downloadSingleURL = new URL(this.props.downloadURL);
     downloadSingleURL.searchParams.append(
       "select_file_id",
-      this.state.selectedFile && this.state.selectedFile[1]
+      this.state.selectedFile && this.state.selectedFile[1],
     );
     downloadSingleURL.searchParams.append("include_annotations", this.state.includeAnnotations);
 

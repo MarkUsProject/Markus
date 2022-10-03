@@ -32,7 +32,7 @@ class RawSubmissionTable extends React.Component {
     $.get({
       url: Routes.course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(res => {
@@ -81,7 +81,7 @@ class RawSubmissionTable extends React.Component {
         if (row.original.result_id) {
           const result_url = Routes.edit_course_result_path(
             this.props.course_id,
-            row.original.result_id
+            row.original.result_id,
           );
           return <a href={result_url}>{row.value + members}</a>;
         } else {
@@ -117,7 +117,7 @@ class RawSubmissionTable extends React.Component {
               this.props.assignment_id,
               {
                 grouping_id: row.original._id,
-              }
+              },
             )}
           >
             {row.original.group_name}
@@ -223,7 +223,7 @@ class RawSubmissionTable extends React.Component {
     $.post({
       url: Routes.collect_submissions_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {groupings: this.props.selection, override: override},
     });
@@ -237,7 +237,7 @@ class RawSubmissionTable extends React.Component {
     $.get({
       url: Routes.uncollect_all_submissions_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {groupings: this.props.selection},
     });
@@ -247,7 +247,7 @@ class RawSubmissionTable extends React.Component {
     $.post({
       url: Routes.set_result_marking_state_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         groupings: this.props.selection,
@@ -261,7 +261,7 @@ class RawSubmissionTable extends React.Component {
       $.post({
         url: Routes.zip_groupings_files_course_assignment_submissions_url(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
         data: {
           groupings: this.props.selection,
@@ -274,7 +274,7 @@ class RawSubmissionTable extends React.Component {
     $.post({
       url: Routes.run_tests_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {groupings: this.props.selection},
     });
@@ -285,7 +285,7 @@ class RawSubmissionTable extends React.Component {
       $.post({
         url: Routes.update_submissions_course_assignment_submissions_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
         data: {
           release_results: released,

@@ -35,7 +35,7 @@ class TextAnnotationManager extends AnnotationManager {
         annotation_id,
         lineNum,
         lineNum === lineStart ? columnStart : 0,
-        lineNum === lineEnd ? columnEnd : -1 // -1 is used to represent the end of the line
+        lineNum === lineEnd ? columnEnd : -1, // -1 is used to represent the end of the line
       );
     }
   }
@@ -57,7 +57,7 @@ class TextAnnotationManager extends AnnotationManager {
       },
       () => {
         this.annotation_text_displayer.hide();
-      }
+      },
     );
   }
 
@@ -84,7 +84,7 @@ class TextAnnotationManager extends AnnotationManager {
 
       if (
         !Object.values(this.annotations).some(
-          ({range}) => range.start <= line_num && line_num <= range.end
+          ({range}) => range.start <= line_num && line_num <= range.end,
         )
       ) {
         line.stopObserving();
@@ -112,10 +112,10 @@ class TextAnnotationManager extends AnnotationManager {
     let anchor_node = this.getRootFromSelection(mouse_anchor);
     let focus_node = this.getRootFromSelection(mouse_focus);
     let line_start = this.source_lines.findIndex(
-      line => line !== null && line.line_node === anchor_node
+      line => line !== null && line.line_node === anchor_node,
     );
     let line_end = this.source_lines.findIndex(
-      line => line !== null && line.line_node === focus_node
+      line => line !== null && line.line_node === focus_node,
     );
 
     // If the entire line was selected through a triple-click, highlight the entire line.

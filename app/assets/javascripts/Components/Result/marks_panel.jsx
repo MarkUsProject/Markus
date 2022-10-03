@@ -22,7 +22,7 @@ export class MarksPanel extends React.Component {
       // Capture the mouse event to add "active-criterion" to the clicked element
       $(document).on("click", ".rubric_criterion, .flexible_criterion, .checkbox_criterion", e => {
         let criterion = $(e.target).closest(
-          ".rubric_criterion, .flexible_criterion, .checkbox_criterion"
+          ".rubric_criterion, .flexible_criterion, .checkbox_criterion",
         );
         if (!criterion.hasClass("unassigned")) {
           e.preventDefault();
@@ -272,7 +272,7 @@ export class FlexibleCriterionInput extends React.Component {
                 full_path,
                 a.submission_file_id,
                 a.line_start,
-                a.id
+                a.id,
               )
             }
             className={"red-text"}

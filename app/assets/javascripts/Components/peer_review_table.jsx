@@ -24,7 +24,7 @@ class RawPeerReviewTable extends React.Component {
     $.get({
       url: Routes.populate_table_course_assignment_peer_reviews_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(res => {
@@ -99,7 +99,7 @@ class RawPeerReviewTable extends React.Component {
     $.post({
       url: Routes.set_result_marking_state_course_assignment_submissions_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         peer_reviews: this.props.selection,
@@ -113,7 +113,7 @@ class RawPeerReviewTable extends React.Component {
       $.post({
         url: Routes.update_submissions_course_assignment_submissions_path(
           this.props.course_id,
-          this.props.assignment_id
+          this.props.assignment_id,
         ),
         data: {
           release_results: released,

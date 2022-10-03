@@ -28,7 +28,7 @@ class PeerReviewsManager extends React.Component {
     $.get({
       url: Routes.populate_course_assignment_peer_reviews_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       dataType: "json",
     }).then(res => {
@@ -94,7 +94,7 @@ class PeerReviewsManager extends React.Component {
     $.post({
       url: Routes.assign_groups_course_assignment_peer_reviews_path(
         this.props.course_id,
-        this.props.assignment_id
+        this.props.assignment_id,
       ),
       data: {
         actionString: action,
@@ -289,11 +289,11 @@ class RawRevieweesTable extends React.Component {
     const isChecked = event.currentTarget.checked;
     const reviewerGroupId = parseInt(
       event.currentTarget.getAttribute("data-reviewer-group-id"),
-      10
+      10,
     );
     const revieweeGroupId = parseInt(
       event.currentTarget.getAttribute("data-reviewee-group-id"),
-      10
+      10,
     );
     onReviewerChangeInRevieweeTable(reviewerGroupId, revieweeGroupId, isChecked);
   };
@@ -324,7 +324,7 @@ class RawRevieweesTable extends React.Component {
               onChange={this.reviewerInRevieweeChange}
             />{" "}
             {reviewer_group_name}
-          </div>
+          </div>,
         );
       });
       return {
