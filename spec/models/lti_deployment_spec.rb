@@ -197,7 +197,6 @@ describe LtiDeployment do
     let(:student) { create :student }
     let(:lti_deployment) { create :lti_deployment, course: course }
     let!(:assessment) { create :assignment_with_criteria_and_results, course: course }
-    let!(:assessment2) { create :assignment_with_criteria_and_results, course: course }
 
     let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
     let(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti_deployment }
@@ -245,16 +244,18 @@ describe LtiDeployment do
                                                                      'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
                                                                    ] }]
                                                    }.to_json)
-      stub_request(:post, lti_line_item.lti_line_item_id).with(headers: { Authorization: 'Bearer access_token' },
-                                                               body: hash_including({
-                                                                 scoreGiven: /\d+\.?\d+/,
-                                                                 scoreMaximum: assessment.max_mark.to_f.to_s,
-                                                                 activityProgress: 'Completed',
-                                                                 gradingProgress: 'FullyGraded',
-                                                                 userId: LtiUser.first.lti_user_id
-                                                               })).to_return(status: :success)
+      stub_request(:post, "#{lti_line_item.lti_line_item_id}/scope").with(headers:
+                                                                            { Authorization: 'Bearer access_token' },
+                                                                          body: hash_including({
+                                                                            scoreGiven: /\d+\.?\d+/,
+                                                                            scoreMaximum: assessment.max_mark.to_f.to_s,
+                                                                            activityProgress: 'Completed',
+                                                                            gradingProgress: 'FullyGraded'
+                                                                          })).to_return(status: :success)
     end
-    it 'does get xx'
+    it 'does send grades' do
+      expect(lti_deployment.create_grades).not_to raise_error
+    end
   end
   describe '#get_assignment_grades' do
     let(:course) { create :course }

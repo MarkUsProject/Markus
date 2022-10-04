@@ -219,7 +219,7 @@ class AssignmentsController < ApplicationController
     @sections.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
-    @lti_deployments = @assignment.course.lti_deployments.include(:lti_client)
+    @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :new, layout: 'assignment_content'
   end
 
