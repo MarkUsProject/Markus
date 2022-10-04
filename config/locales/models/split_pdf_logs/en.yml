@@ -13,3 +13,4 @@ en:
     models:
       split_pdf_log:
         one: Uploaded Scans Log
+        other: Uploaded Scans Logs
