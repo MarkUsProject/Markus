@@ -1,7 +1,7 @@
 <table>
   <thead>
   <tr>
-    <th>LTI Settings</th>
+    <th><%= t("lti.lti_settings") %></th>
   </tr>
   </thead>
   <tbody>
@@ -14,7 +14,7 @@
         <% if deployment.lti_line_items.find_by(assessment: @assignment) %>
           <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false', checked: true, disabled: true %>
         <% else %>
-          <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false' %>
+          <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false', checked: false %>
         <% end  %>
       </td>
     </tr>

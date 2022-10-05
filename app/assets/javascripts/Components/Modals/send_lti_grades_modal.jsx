@@ -74,7 +74,7 @@ class LtiGradeModal extends React.Component {
                       defaultChecked="true"
                       onChange={this.handleChange}
                     />
-                    {I18n.t("lti.lti_eployment", {
+                    {I18n.t("lti.lti_deployment", {
                       lti_deployment_name: deployment.lms_course_name,
                       lti_host: deployment.host,
                     })}

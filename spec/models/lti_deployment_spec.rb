@@ -213,7 +213,7 @@ describe LtiDeployment do
           body: hash_including(
             { grant_type: 'client_credentials',
               client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-              scope: scope,
+              scope: /.*/,
               client_assertion: /.*/ }
           ),
           headers: {
@@ -244,17 +244,17 @@ describe LtiDeployment do
                                                                      'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
                                                                    ] }]
                                                    }.to_json)
-      stub_request(:post, "#{lti_line_item.lti_line_item_id}/scope").with(headers:
+      stub_request(:post, "#{lti_line_item.lti_line_item_id}/scores").with(headers:
                                                                             { Authorization: 'Bearer access_token' },
-                                                                          body: hash_including({
-                                                                            scoreGiven: /\d+\.?\d+/,
-                                                                            scoreMaximum: assessment.max_mark.to_f.to_s,
-                                                                            activityProgress: 'Completed',
-                                                                            gradingProgress: 'FullyGraded'
-                                                                          })).to_return(status: :success)
+                                                                           body: hash_including({
+                                                                             scoreGiven: /\d+\.?\d+/,
+                                                                             scoreMaximum: assessment.max_mark.to_s,
+                                                                             activityProgress: 'Completed',
+                                                                             gradingProgress: 'FullyGraded'
+                                                                           })).to_return(status: :success)
     end
     it 'does send grades' do
-      expect(lti_deployment.create_grades).not_to raise_error
+      expect(lti_deployment.create_grades(assessment)).not_to be_empty
     end
   end
   describe '#get_assignment_grades' do
