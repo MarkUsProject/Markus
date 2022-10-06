@@ -1195,7 +1195,7 @@ CREATE TABLE public.lti_deployments (
     external_deployment_id character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    lms_course_id integer,
+    lms_course_id integer NOT NULL,
     lms_course_name character varying NOT NULL
 );
 
