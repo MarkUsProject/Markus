@@ -11,7 +11,6 @@ class LtiGradeModal extends React.Component {
     this.state = {
       deploymentsChecked: undefined,
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
