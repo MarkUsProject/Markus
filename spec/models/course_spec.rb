@@ -79,22 +79,177 @@ describe Course do
   end
 
   describe '#get_assignment_list' # TODO
-  describe '#upload_assignment_list' # TODO
+  describe '#upload_assignment_list' do
+    context 'when file_format = \'csv\'' do
+      let!(:test_course) do
+        Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
+              .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
+                               display_name: 'Test Course')
+      end
+      context 'when the file contains no assignments' do
+        it 'should not change the state of the database' do
+          # get assignments associated with a course before uploading assignments
+          assignments_before_upload = test_course.assignments.to_ary
+
+          test_course.upload_assignment_list('csv', [].to_csv)
+
+          # reload the course so that we can see if the state of the course has changed in the database
+          test_course.reload
+
+          assignments_after_upload = test_course.assignments.to_ary
+
+          expect(assignments_after_upload).to eq(assignments_before_upload)
+        end
+      end
+      context 'when the file contains a single assignment' do
+        let!(:assignment_before_call) do
+          # state of assignments before upload_assignment_list call
+          test_course.assignments.new(short_identifier: 'TEST', is_hidden: false, description: 'ello',
+                                      due_date: 5.days.from_now)
+        end
+        before(:each) do
+          assignment_before_call.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
+                                                                                         repository_folder: 'TEST' } })
+        end
+        context 'when the assignment already exists and an attribute is changed' do
+          before(:each) do
+            assignment_before_call.message = 'a'
+            assignment_before_call.save
+            assignment_before_call.reload
+            # change the state of the assignment locally to be compared with the updated one in the database
+            assignment_before_call.message = 'b'
+          end
+          # desired list of assignment attributes
+          let!(:assignment_values) do
+            Assignment::DEFAULT_FIELDS.map do |f|
+              assignment_before_call.public_send(f)
+            end
+          end
+          let!(:csv) do
+            # csv representation of the single assignment
+            assignment_values.to_csv
+          end
+          before(:each) do
+            test_course.upload_assignment_list('csv', csv)
+          end
+          it 'should update only the attributes that were changed' do
+            assignment_after_call = test_course.assignments.find(assignment_before_call.id)
+
+            # check if the assignment stored locally, vs the one edited using upload_assignment_list match
+            expect(assignment_after_call).to eq(assignment_before_call)
+          end
+          it 'should not create a new assignment' do
+            # check if the length of assignments list has changed
+            expect(test_course.assignments.length).to eq(1)
+          end
+        end
+        context 'when the assignment is new to the database' do
+          it 'should set certain assignment_properties.repository_folder, token_period and ' \
+             'unlimited_tokens to pre-determined values' do
+            # setting properties to different values than the ones they are supposed to be changed to
+            assignment_before_call.token_period = nil
+            assignment_before_call.unlimited_tokens = nil
+
+            # desired list of assignment attributes
+            assignment_value = Assignment::DEFAULT_FIELDS.map do |f|
+              assignment_before_call.public_send(f)
+            end
+
+            # this is done to assure assignment_properties.repository_folder = row[0]
+            assignment_value[0] = 'TEST_FOLDER'
+
+            # csv representation of the single assignment
+            csv = assignment_value.to_csv
+
+            # attributes of the object afterwards
+            test_course.upload_assignment_list('csv', csv)
+
+            assignment_after_call = test_course.assignments.find_by(short_identifier: 'TEST_FOLDER')
+
+            expect(assignment_after_call.assignment_properties.repository_folder).to eq('TEST_FOLDER')
+            expect(assignment_after_call.assignment_properties.token_period).to eq(1)
+            expect(assignment_after_call.assignment_properties.unlimited_tokens).to eq(false)
+          end
+          it 'should save the new object to the database with the intended attributes' do
+            desired_attributes = ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
+                                  1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
+                                  true, true, false, true, true, true, true, false, true, true]
+            csv = desired_attributes.to_csv
+
+            test_course.upload_assignment_list('csv', csv)
+
+            assignment = test_course.assignments.find_by(short_identifier: 'short_identifier')
+
+            # Check that the assignment is saved in the database
+            expect(assignment).not_to eq(nil)
+
+            # Check that all attributes stored in the assignment match the desired attributes
+            Assignment::DEFAULT_FIELDS.length.times do |index|
+              expect(assignment.public_send(
+                       Assignment::DEFAULT_FIELDS[index]
+                     )).to eq(desired_attributes[index])
+            end
+          end
+        end
+      end
+      context 'when there are multiple assignments' do
+        context 'when some rows of the csv are valid and others are invalid' do
+          let!(:csv) do
+            # creating 2 rows only containing invalid short identifiers
+            ['{:}', 'a'].to_csv + ['^_^', 'a'].to_csv +
+
+            # adding 2 valid rows
+            ['row_1', 'description', 1.day.from_now.at_beginning_of_minute, 'message'].to_csv +
+              ['row_2', 'description', 1.day.from_now.at_beginning_of_minute, 'message'].to_csv
+          end
+          let!(:actual) do
+            test_course.upload_assignment_list('csv', csv)
+          end
+          it 'should return a hash mapping \'invalid_lines\' a string representation of all' \
+             'invalid lines and \'valid_lines\ to a string telling us how many valid lines were successfully' \
+             'uploaded' do
+            expected_invalid_lines = 'The following CSV rows were invalid: {:},a - ^_^,a'
+
+            expected_valid_lines = '2 objects successfully uploaded.'
+
+            expect(expected_invalid_lines).to eq(actual[:invalid_lines])
+            expect(expected_valid_lines).to eq(actual[:valid_lines])
+          end
+          it 'should set the attributes of the rows changed' do
+            # check that the two new records are created and that the attributes match with the ones set
+            2.times do |index|
+              row = ["row_#{index + 1}", 'description', 1.day.from_now.at_beginning_of_minute, 'message']
+              assignment = test_course.assignments.find_by(short_identifier: "row_#{index + 1}")
+
+              # Check that the assignment exists in the database
+              expect(assignment).not_to eq(nil)
+
+              # Checking that the attributes of the stored object match those specified in row
+              4.times do |j|
+                expect(assignment.public_send(
+                         Assignment::DEFAULT_FIELDS[j]
+                       )).to eq(row[j])
+              end
+            end
+          end
+        end
+      end
+    end
+  end
   describe '#get_required_files' do
+    let!(:test_course) do
+      Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
+            .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
+                             display_name: 'Test Course')
+    end
     context 'when a course has no assignments' do
       it 'should return an empty hashmap' do
-        test_course = create :course
         expected = {}
         actual = test_course.get_required_files
         expect(expected).to eq(actual)
       end
     end
     context 'when a course has one assignment' do
-      let!(:test_course) do
-        Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
-              .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
-                               display_name: 'Test Course')
-      end
       let!(:assignment) do
         test_course.assignments.new(short_identifier: 'TEST', is_hidden: false, description: 'ello',
                                     due_date: 5.days.from_now)
@@ -127,8 +282,8 @@ describe Course do
           end
         end
       end
-      context 'when only_required_files is false' do
-        context 'when there are files (even not required) in the repository' do
+      context 'when the result from the assignment query does not return the assignment' do
+        context 'when assignment.only_required_files is false' do
           it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
             expected = test_course.get_required_files
 
@@ -140,30 +295,20 @@ describe Course do
         end
       end
       context 'when only_required_files is true' do
-        it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
-          test_course = Course.where(name: 'TestCourse-2022-Fall', display_name: 'Test Course')
-                              .first_or_create(name: 'TestCourse-2022-Fall', is_hidden: false,
-                                               display_name: 'Test Course')
-          assignment = test_course.assignments.new(short_identifier: 'TEST', is_hidden: false, description: 'ello',
-                                                   due_date: 5.days.from_now)
-          assignment.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
-                                                                             repository_folder: 'TEST' } })
+        it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> true}' do
+          assignment.only_required_files = true
           assignment.save
-
           expected = test_course.get_required_files
 
           expect(assignment.assignment_properties.scanned_exam).to eq(false)
           expect(assignment.is_hidden).to eq(false)
 
-          expect(assignment.only_required_files).to eq(false)
-          expect(expected).to eq({ 'TEST' => { required: [], required_only: false } })
+          expect(assignment.only_required_files).to eq(true)
+          expect(expected).to eq({ 'TEST' => { required: [], required_only: true } })
         end
       end
       context 'when an assignment has required files' do
         it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
-          assignment.assign_attributes({ assignment_properties_attributes: { scanned_exam: 'false',
-                                                                             repository_folder: 'TEST' } })
-          assignment.save
           assignment.assignment_files.create(filename: 'a')
           expected = test_course.get_required_files
           expect(assignment.assignment_properties.scanned_exam).to eq(false)

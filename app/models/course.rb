@@ -77,13 +77,8 @@ class Course < ApplicationRecord
             row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
             row[:assignment_properties_attributes][:token_period] = 1
             row[:assignment_properties_attributes][:unlimited_tokens] = false
-            row[:submission_rule] = NoLateSubmissionRule.new
           end
           assignment.update(row)
-          unless assignment.id
-            assignment[:display_median_to_students] = false
-            assignment[:display_grader_names_to_students] = false
-          end
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e
