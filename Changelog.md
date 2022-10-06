@@ -15,6 +15,9 @@
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Disable python features if python dependencies are not installed (#6232)
 
+## [v2.1.4]
+- Fix bug where git hooks are not run server side when symlinked (#6276)
+
 ## [v2.1.3]
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
 
