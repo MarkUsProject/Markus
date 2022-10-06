@@ -1540,7 +1540,7 @@ CREATE TABLE public.results (
     total_mark double precision DEFAULT 0.0,
     remark_request_submitted_at timestamp without time zone,
     peer_review_id integer,
-    view_token character varying,
+    view_token character varying NOT NULL,
     view_token_expiry timestamp without time zone
 );
 

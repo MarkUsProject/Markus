@@ -728,21 +728,28 @@ class ResultsController < ApplicationController
     data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
                             .pluck('groups.group_name',
                                    'users.user_name',
+                                   'users.first_name',
+                                   'users.last_name',
+                                   'users.email',
+                                   'users.id_number',
                                    'results.view_token',
                                    'results.view_token_expiry',
                                    'results.id')
-                            .group_by(&:first)
     header = [[I18n.t('activerecord.models.group.one'),
+               I18n.t('activerecord.attributes.user.user_name'),
+               I18n.t('activerecord.attributes.user.first_name'),
+               I18n.t('activerecord.attributes.user.last_name'),
+               I18n.t('activerecord.attributes.user.email'),
+               I18n.t('activerecord.attributes.user.id_number'),
                I18n.t('submissions.release_token'),
-               I18n.t('submissions.release_token_url'),
                I18n.t('submissions.release_token_expires'),
-               I18n.t('activerecord.attributes.group.student_memberships')]]
+               I18n.t('submissions.release_token_url')]]
     assignment = Assignment.find(params[:assignment_id])
-    csv_string = MarkusCsv.generate(data, header) do |group_name, vals|
-      _group_name, _member_name, view_token, view_token_expiry, result_id = vals.first
+    csv_string = MarkusCsv.generate(data, header) do |row|
+      view_token, view_token_expiry, result_id = row.pop(3)
       view_token_expiry ||= I18n.t('submissions.release_token_expires_null')
       url = view_marks_course_result_url(current_course.id, result_id, view_token: view_token)
-      [group_name, view_token, url, view_token_expiry.to_s, *vals.map(&:second)]
+      [*row, view_token, view_token_expiry, url]
     end
     send_data csv_string,
               disposition: 'attachment',

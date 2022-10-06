@@ -24,11 +24,12 @@
               <%= link_to Result.model_name.human.pluralize, '#',
                           id: opener_id = "submit-view-token-#{assignment.id}" %>
             </p>
-            <div id=<%= modal_id = "submit-view-token-modal-#{assignment.id}" %>></div>
             <%= javascript_tag nonce: true do %>
               <%= render partial: 'shared/submit_view_token_modal',
                          formats: :js,
-                         locals: { result: result, modal_id: modal_id, opener_id: opener_id } %>
+                         locals: { result: result,
+                                   modal_id: "submit-view-token-modal-#{assignment.id}",
+                                   opener_id: opener_id } %>
             <% end %>
           <% else %>
             <%= t('results.no_result') %>

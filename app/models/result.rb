@@ -66,6 +66,7 @@ class Result < ApplicationRecord
 
     if release
       groupings.includes(:accepted_students).find_each do |grouping|
+        next if grouping.assignment.release_with_urls  # don't email if release_with_urls is true
         grouping.accepted_students.each do |student|
           if student.receives_results_emails?
             NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later

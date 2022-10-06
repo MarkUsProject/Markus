@@ -1019,15 +1019,19 @@ describe ResultsController do
           data = subject.body.lines
           data.shift # skip header
           data.each do |row|
-            group_name, view_token, url, view_token_expiry, *members = row.chomp.split(',')
+            group_name, user_name, first_name, last_name, email, id_number,
+              view_token, view_token_expiry, url = row.chomp.split(',')
             result = results.find_by(view_token: view_token)
             expect(group_name).to eq result.grouping.group.group_name
             expect(url).to eq view_marks_course_result_url(result.course.id, result.id, view_token: view_token)
             expect(Time.zone.parse(view_token_expiry)).to be_within(1.second).of(result.view_token_expiry)
-            expect(members).to contain_exactly(
-              *result.grouping.accepted_student_memberships.joins(role: :user)
-                     .pluck('users.user_name')
-            )
+            user_info = result.grouping.accepted_student_memberships.joins(role: :user).pluck('users.user_name',
+                                                                                              'users.first_name',
+                                                                                              'users.last_name',
+                                                                                              'users.email',
+                                                                                              'users.id_number')
+            user_info = user_info.map { |info| info.map { |a| a || '' } }
+            expect(user_info).to include([user_name, first_name, last_name, email, id_number])
           end
         end
       end

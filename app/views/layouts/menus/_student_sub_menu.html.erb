@@ -29,7 +29,8 @@
     <% end %>
 
     <% if !@assignment.nil? &&
-      @current_role.has_accepted_grouping_for?(@assignment) %>
+      @current_role.has_accepted_grouping_for?(@assignment) &&
+      allowed_to?(:see_hidden?, @assignment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name != 'peer_review' %>'>
         <%= link_to Assignment.model_name.human.pluralize,
                     course_assignment_path(@current_course, @assignment) %>
@@ -66,7 +67,6 @@
           <li class='<%= "active" if active %>'>
             <%= link_to Result.model_name.human.pluralize, '#', id: "submit-view-token" %>
           </li>
-          <div id="submit-view-token-modal"></div>
           <%= javascript_tag nonce: true do %>
             <%= render partial: 'shared/submit_view_token_modal',
                        formats: :js,

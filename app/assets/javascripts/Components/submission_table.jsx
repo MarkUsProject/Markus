@@ -350,6 +350,7 @@ class RawSubmissionTable extends React.Component {
           completeResults={() => this.setMarkingStates("complete")}
           incompleteResults={() => this.setMarkingStates("incomplete")}
           authenticity_token={this.props.authenticity_token}
+          release_with_urls={this.props.release_with_urls}
         />
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
@@ -447,11 +448,13 @@ class SubmissionsActionBox extends React.Component {
           {I18n.t("submissions.unrelease_marks")}
         </button>
       );
-      showReleaseUrlsButton = (
-        <button onClick={this.props.showReleaseUrls} disabled={this.props.disabled}>
-          {I18n.t("submissions.show_release_tokens")}
-        </button>
-      );
+      if (this.props.release_with_urls) {
+        showReleaseUrlsButton = (
+          <button onClick={this.props.showReleaseUrls} disabled={this.props.disabled}>
+            {I18n.t("submissions.show_release_tokens")}
+          </button>
+        );
+      }
     }
     if (this.props.can_run_tests) {
       runTestsButton = (
