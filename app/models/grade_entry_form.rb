@@ -49,8 +49,7 @@ class GradeEntryForm < Assessment
   end
 
   def released_marks
-    self.grade_entry_students.joins(:role)
-        .joins(role: :user)
+    self.grade_entry_students.joins(role: :user)
         .where(roles: { hidden: false })
         .where(released_to_student: true)
         .where.not(total_grade: nil)

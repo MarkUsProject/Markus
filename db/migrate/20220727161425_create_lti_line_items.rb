@@ -7,7 +7,7 @@ class CreateLtiLineItems < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-    add_column :lti_deployments, :lms_course_id, :integer, null: true
+    add_column :lti_deployments, :lms_course_id, :integer, null: false
     add_column :lti_deployments, :lms_course_name, :string, null: false
     add_index :lti_line_items, [:lti_deployment_id, :assessment_id], unique: true
   end

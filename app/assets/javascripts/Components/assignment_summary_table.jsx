@@ -198,7 +198,7 @@ export class AssignmentSummaryTable extends React.Component {
               })}
             </button>
             <button type="submit" name="sync_grades" onClick={this.onLtiGradeModal}>
-              Sync LTI Grades
+              {I18n.t("lti.sync_grades_lms")}
             </button>
           </div>
         )}

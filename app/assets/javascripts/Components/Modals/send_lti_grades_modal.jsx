@@ -9,14 +9,14 @@ class LtiGradeModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      deployments: this.props.lti_deployments,
+      deploymentsChecked: undefined,
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
     Modal.setAppElement("body");
-    const deploymentsMapped = this.state.deployments.map(deployment => ({
+    const deploymentsMapped = this.props.lti_deployments.map(deployment => ({
       deployment: deployment.id,
       checked: true,
     }));
@@ -40,10 +40,8 @@ class LtiGradeModal extends React.Component {
   };
 
   sendLtiGrades = () => {
-    const checked = this.state.deploymentsChecked.filter(deployment => deployment.checked == true);
-    console.log(checked);
+    const checked = this.state.deploymentsChecked.filter(deployment => deployment.checked);
     const deploymentsToUpdate = checked.map(deployment => deployment.deployment);
-    console.log(deploymentsToUpdate);
     $.post({
       url: Routes.lti_deployment_create_lti_grades_path(),
       data: {
@@ -63,7 +61,7 @@ class LtiGradeModal extends React.Component {
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <p>{I18n.t("lti.grade_sync_instructions")}</p>
-            {this.state.deployments.map(deployment => {
+            {this.props.lti_deployments.map(deployment => {
               return (
                 <p>
                   <label>
