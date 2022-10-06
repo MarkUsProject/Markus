@@ -10,6 +10,8 @@ class TestRun < ApplicationRecord
   has_one :course, through: :role
 
   validate :courses_should_match
+  validates :autotest_test_id, uniqueness: { allow_nil: true }
+  before_save :unset_autotest_test_id
 
   SETTINGS_FILES_DIR = (Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path,
                                                                     'autotest')).freeze
@@ -135,5 +137,10 @@ class TestRun < ApplicationRecord
   def unzip_file_data(file_data)
     return ActiveSupport::Gzip.decompress(file_data['content']) if file_data['compression'] == 'gzip'
     file_data['content']
+  end
+
+  def unset_autotest_test_id
+    return if self.in_progress?
+    self.autotest_test_id = nil
   end
 end
