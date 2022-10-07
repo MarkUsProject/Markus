@@ -34,8 +34,11 @@ class Result < ApplicationRecord
   # Update the total_mark attributes for the results with id in +result_ids+
   def self.update_total_marks(result_ids, user_visibility: :ta_visible)
     total_marks = Result.get_total_marks(result_ids, user_visibility: user_visibility)
+    view_tokens = Result.where(id: result_ids).pluck(:id, :view_token).to_h
     unless total_marks.empty?
-      Result.upsert_all(total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark } })
+      Result.upsert_all(
+        total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark, view_token: view_tokens[r_id] } }
+      )
     end
   end
 
