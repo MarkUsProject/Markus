@@ -351,6 +351,75 @@ describe Course do
           end
         end
       end
+      context 'when there are multiple assignments' do
+        context 'when some assignments are new, others are old' do
+          before(:each) do
+            # set up the old assignment and save it
+            @old_assignment_pre_upload = test_course.assignments.new(short_identifier: 'old', is_hidden: false,
+                                                                     description: 'ello', due_date: 5.days.from_now)
+            @old_assignment_pre_upload.assign_attributes({ assignment_properties_attributes:
+                                                             { scanned_exam: 'false', repository_folder: 'TEST' } })
+            @old_assignment_pre_upload.save
+
+            @old_assignment_pre_upload.reload
+
+            # Create a hash mapping assignment attributes to desired values (to be used when setting attributes for old
+            # assignment)
+            @old_assignment_new_attr = { short_identifier: 'old', description: 'Hello' }
+
+            # Create a hash mapping assignment attributes to desired values (to be used when setting attributes for new
+            # assignment)
+
+            @new_assignment_attr = ['new', 'abc', 1.day.from_now.at_beginning_of_minute, 'message',
+                                    1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
+                                    true, true, false, true, true, true, true, false, true, true]
+            @new_assignment_attr_hash = Assignment::DEFAULT_FIELDS.zip(@new_assignment_attr).to_h
+
+            # create a new yml file using old_assignment_attr_hash and new_assignment_attr_hash
+            @yaml = parse_yaml_content({ 'assignments' => [
+              @old_assignment_new_attr, @new_assignment_attr_hash
+            ] }.to_yaml)
+
+            @returned = test_course.upload_assignment_list('yml', @yaml)
+
+            @old_assignment = test_course.assignments.find_by(short_identifier: 'old')
+            @new_assignment = test_course.assignments.find_by(short_identifier: 'new')
+          end
+          it 'should add the new assignment, setting the repository_folder, token_period, unlimited_tokens' \
+             'and all user specified attributes to to specified values' do
+            # Check that attributes are properly set for the new assignment
+            expect(@new_assignment.assignment_properties.repository_folder).to eq('new')
+            expect(@new_assignment.assignment_properties.token_period).to eq(1)
+            expect(@new_assignment.assignment_properties.unlimited_tokens).to eq(false)
+
+            Assignment::DEFAULT_FIELDS.length.times do |index|
+              expect(@new_assignment.public_send(
+                       Assignment::DEFAULT_FIELDS[index]
+                     )).to eq(@new_assignment_attr[index])
+            end
+          end
+          it 'should correctly update the old assignment\'s attributes with ones specified by the user' do
+            # Check that all attributes are properly set for the old assignment
+            old_assignment_pre_call_attr = @old_assignment_pre_upload.attributes.to_a
+            old_assignment_post_call_attr = @old_assignment.attributes.to_a
+
+            # Remove the time updated in preparation for comparison
+            old_assignment_pre_call_attr.delete_if { |k, _| %w[updated_at description].include?(k) }
+            old_assignment_post_call_attr.delete_if { |k, _| %w[updated_at description].include?(k) }
+
+            expect(old_assignment_post_call_attr).to eq(old_assignment_pre_call_attr)
+            expect(@old_assignment.description).to eq('Hello')
+          end
+          it 'should return a list with the success status of saving each row to the database' do
+            expect(@returned).to eq([true, true])
+          end
+          it 'should not add any new courses not specified in the yml file' do
+            expect(@old_assignment).not_to eq(nil)
+            expect(@new_assignment).not_to eq(nil)
+            expect(test_course.assignments.to_a.length).to eq(2)
+          end
+        end
+      end
     end
   end
   describe '#get_required_files' do
