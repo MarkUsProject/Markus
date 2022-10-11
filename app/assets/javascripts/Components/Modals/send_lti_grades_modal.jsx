@@ -8,18 +8,17 @@ class LtiGradeModal extends React.Component {
 
   constructor(props) {
     super(props);
+    const deploymentsMapped = this.props.lti_deployments.map(deployment => ({
+      deployment: deployment.id,
+      checked: true,
+    }));
     this.state = {
-      deploymentsChecked: undefined,
+      deploymentsChecked: deploymentsMapped,
     };
   }
 
   componentDidMount() {
     Modal.setAppElement("body");
-    const deploymentsMapped = this.props.lti_deployments.map(deployment => ({
-      deployment: deployment.id,
-      checked: true,
-    }));
-    this.setState({deploymentsChecked: deploymentsMapped});
   }
 
   onSubmit = event => {
