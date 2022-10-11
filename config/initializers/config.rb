@@ -154,9 +154,7 @@ Config.setup do |config|
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
         required(:max_batch_size).value(:integer, gt?: 0)
       end
-      required(:python).hash do
-        required(:bin).filled(:string)
-      end
+      optional(:python).filled(:string)
       required(:rails_performance).hash do
         required(:enabled).filled(:bool)
         optional(:duration).value(:integer, gt?: 0)

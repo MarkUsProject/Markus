@@ -8,7 +8,8 @@ npm list &> /dev/null || npm ci
 
 # install python packages
 [ -f ./venv/bin/pip ] || python3 -m venv ./venv
-./venv/bin/pip install -r requirements.txt > /dev/null
+./venv/bin/python3 -m pip install --upgrade pip > /dev/null
+./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt > /dev/null
 
 # setup the database (checks for db existence first)
 until pg_isready -q; do

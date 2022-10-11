@@ -1,7 +1,10 @@
 <% if session[:job_id] %>
   <% job_status = ActiveJob::Status.get(session[:job_id]) %>
   <% if job_status[:job_class] %>
-    poll_job('<%= session[:job_id] %>', undefined, <%= raw job_status[:job_class].on_complete_js(job_status) %>);
+    poll_job('<%= session[:job_id] %>',
+              <%= raw job_status[:job_class].on_success_js(job_status) %>,
+              <%= raw job_status[:job_class].on_failure_js(job_status) %>,
+              <%= raw job_status[:job_class].on_complete_js(job_status) %>);
   <% else %>
     <% session[:job_id] = nil %>
   <% end %>

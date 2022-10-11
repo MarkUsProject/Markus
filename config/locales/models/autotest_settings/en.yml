@@ -1,0 +1,6 @@
+---
+en:
+  activerecord:
+    attributes:
+      autotest_setting:
+        url: Autotester Url

@@ -90,8 +90,7 @@ autotest:
 scanned_exams:
   enable: true
 
-python:
-  bin: <%= ::Rails.root %>/venv/bin
+python: <%= ::Rails.root %>/venv/bin/python
 
 exception_notification:
   enabled: false

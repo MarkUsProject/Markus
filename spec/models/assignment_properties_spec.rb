@@ -14,6 +14,11 @@ describe AssignmentProperties do
     it { should allow_value(false).for(:display_grader_names_to_students) }
     it { is_expected.to have_one(:course) }
 
+    context 'with a subject' do
+      subject { create(:assignment).assignment_properties }
+      it { is_expected.to validate_uniqueness_of(:remote_autotest_settings_id).allow_nil }
+    end
+
     it 'should not be valid with a negative duration' do
       extension = build(:timed_assignment, assignment_properties_attributes: { duration: -10.hours })
       expect(extension.valid?).to be(false)
