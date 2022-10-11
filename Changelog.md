@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.1.5]
+- Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
+
 ## [v2.1.4]
 - Fix bug where git hooks are not run server side when symlinked (#6276)
 
