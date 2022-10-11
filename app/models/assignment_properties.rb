@@ -58,6 +58,7 @@ class AssignmentProperties < ApplicationRecord
   validates :start_time, presence: { if: :is_timed }
   validate :start_before_due, if: :is_timed
   validate :not_timed_and_scanned
+  validates :remote_autotest_settings_id, uniqueness: { allow_nil: true }
 
   STARTER_FILE_TYPES = %w[simple sections shuffle group].freeze
 
