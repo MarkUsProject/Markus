@@ -592,7 +592,6 @@ describe Course do
       end
     end
   end
-
   describe '#get_current_assignment' do
     context 'when no assignments are found' do
       it 'returns nil' do
