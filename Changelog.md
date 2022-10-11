@@ -15,10 +15,10 @@
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Disable python features if python dependencies are not installed (#6232)
 - Fix bug where git hooks are not run server side when symlinked (#6277)
+- Optionally log which user makes each request by tagging the log files with user_names (#6241)
 
 ## [v2.1.3]
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
-- Optionally log which user makes each request by tagging the log files with user_names (#6241)
 
 ## [v2.1.2]
 - Fix bug preventing use of the update_grades API route (#6188)
