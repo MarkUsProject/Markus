@@ -15,7 +15,7 @@ repos:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v14.11.0
+      rev: v14.13.0
       hooks:
         - id: stylelint
           additional_dependencies: [
