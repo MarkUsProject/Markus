@@ -143,7 +143,7 @@ describe Course do
 
             # adjust the precision of assignment_before_call to account for precision loss
             # in csv to object conversion
-            assignment_before_call_attr['due_date'] = assignment_before_call_attr['due_date'].round
+            assignment_before_call_attr['due_date'] = assignment_before_call_attr['due_date'].floor
 
             # check if the assignment stored locally, vs the one edited using upload_assignment_list match
             expect(assignment_after_call_attr).to eq(assignment_before_call_attr)
