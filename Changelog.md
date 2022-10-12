@@ -9,9 +9,13 @@
 - Fix undefined prop type warnings when loading assessment charts (#6172)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
+- Allow admins to set the autotester url for each course in the courses view (#6213)
+- Allow admins to test and reset the connection to the autotester in the courses view and through the API (#6213)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
+- Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
 - Disable python features if python dependencies are not installed (#6232)
+- Fix bug where git hooks are not run server side when symlinked (#6277)
 
 ## [v2.1.3]
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
