@@ -4,6 +4,7 @@ due_date: 2021-11-17 16:00:00
 message: Sample midterm to help you practice for our second midterm
 is_hidden: false
 show_total: true
+new_message: This is a new message.
 assignment_properties_attributes:
   group_min: 1
   group_max: 1
@@ -49,6 +50,8 @@ submission_rule_attributes:
     - deduction: 15
       hours: 0.1
       interval: 0.1
+      additional_hours: 0.5
 assignment_files_attributes:
   - filename: short_answer.txt
+    additional_filename: file.txt
   - filename: mc.txt

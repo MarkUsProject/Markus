@@ -707,7 +707,7 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     parent_short_id = properties[:parent_assessment_short_identifier]
-    properties = filter_assignment_properties(properties)
+    properties = filter_nested_attributes(properties, Assignment)
     if parent_short_id.blank?
       assignment = current_course.assignments.new(properties)
     else
@@ -725,29 +725,21 @@ class AssignmentsController < ApplicationController
   end
 
   # Filters assignment properties to remove any properties that do not match the relevant models.
-  def filter_assignment_properties(properties)
-    filtered_props = properties.slice(*Assignment.column_names.map(&:to_sym))
-    assignment_properties_props = properties[:assignment_properties_attributes]
-                                    &.slice(*AssignmentProperties.column_names.map(&:to_sym))
-    assignment_files_props = properties[:assignment_files_attributes]&.each do |file_prop|
-      file_prop&.slice(*AssignmentFile.column_names.map(&:to_sym))
+  def filter_nested_attributes(attributes, klass)
+    class_attributes = attributes.slice(*klass.column_names.map(&:to_sym))
+    attributes.keys.filter_map { |a| a.to_s.match(/^(.+)_attributes$/) }.each do |attr_match|
+      attribute_key = attr_match[0].to_sym
+      attribute_value = attributes[attribute_key]
+      association_name = attr_match[1]
+      associated_klass = klass.reflect_on_association(association_name).klass
+
+      if attribute_value.is_a? Hash
+        class_attributes[attribute_key] = filter_nested_attributes(attribute_value, associated_klass)
+      elsif attribute_value.is_a? Array
+        class_attributes[attribute_key] = attribute_value.map { |v| filter_nested_attributes(v, associated_klass) }
+      end
     end
-
-    submission_rule_props = properties[:submission_rule_attributes]
-                                                    &.slice(*SubmissionRule.column_names.map(&:to_sym))
-
-    period_props = properties[:submission_rule_attributes][:periods_attributes]&.each do |submission_period|
-      submission_period&.slice(*Period.column_names.map(&:to_sym))
-    end
-
-    unless assignment_properties_props.nil?
-      filtered_props[:assignment_properties_attributes] = assignment_properties_props
-    end
-    filtered_props[:assignment_files_attributes] = assignment_files_props unless assignment_files_props.nil?
-    filtered_props[:submission_rule_attributes] = submission_rule_props unless submission_rule_props.nil?
-    filtered_props[:submission_rule_attributes][:periods_attributes] = period_props unless period_props.nil?
-
-    filtered_props
+    class_attributes
   end
 
   def set_repo_vars(assignment, grouping)
