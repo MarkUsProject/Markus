@@ -2,6 +2,7 @@
 
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
+- Hide manual submission collection button from users who don't have permission (#6282)
 - Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
 
 ## [v2.1.4]
