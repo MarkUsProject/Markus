@@ -1,19 +1,24 @@
 describe TestRun do
-  subject { create :test_run }
+  subject { create :test_run, status: :in_progress }
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to belong_to(:test_batch).optional }
   it { is_expected.to belong_to(:submission).optional }
   it { is_expected.to belong_to(:grouping) }
   it { is_expected.to belong_to(:role) }
   it { is_expected.to have_one(:course) }
+  it { is_expected.to validate_uniqueness_of(:autotest_test_id).allow_nil }
+
   include_examples 'course associations'
 
   describe '#cancel' do
     before { test_run.cancel }
     context 'is in progress' do
-      let(:test_run) { create :test_run, status: :in_progress }
+      let(:test_run) { create :test_run, status: :in_progress, autotest_test_id: 1 }
       it 'should update the status to cancelled' do
         expect(test_run.reload.status).to eq('cancelled')
+      end
+      it 'should unset the autotest_test_id' do
+        expect(test_run.reload.autotest_test_id).to be_nil
       end
     end
     context 'is not in progress' do
@@ -27,9 +32,12 @@ describe TestRun do
     let(:problems) { 'some problem' }
     before { test_run.failure(problems) }
     context 'is in progress' do
-      let(:test_run) { create :test_run, status: :in_progress }
+      let(:test_run) { create :test_run, status: :in_progress, autotest_test_id: 1 }
       it 'should update the status to cancelled' do
         expect(test_run.reload.status).to eq('failed')
+      end
+      it 'should unset the autotest_test_id' do
+        expect(test_run.reload.autotest_test_id).to be_nil
       end
     end
     context 'is not in progress' do
@@ -47,34 +55,71 @@ describe TestRun do
   describe '#update_results!' do
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping, assignment: assignment }
-    let(:test_run) { create :test_run, status: :in_progress, grouping: grouping }
+    let(:test_run) { create :test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1 }
     let(:criterion) { create :flexible_criterion, max_mark: 2, assignment: assignment }
     let(:test_group) { create :test_group, criterion: criterion, assignment: assignment }
+    let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
+    let(:text_file_content) { 'test123' }
     let(:results) do
-      JSON.parse({ status: :finished,
-                   error: nil,
-                   test_groups: [{
-                     time: 10,
-                     timeout: nil,
-                     stderr: '',
-                     malformed: '',
-                     extra_info: { test_group_id: test_group.id },
-                     tests: [{
-                       name: :test1,
-                       status: :pass,
-                       marks_earned: 1,
-                       marks_total: 1,
-                       output: 'output',
-                       time: 1
-                     }, {
-                       name: :test2,
-                       status: :fail,
-                       marks_earned: 0,
-                       marks_total: 1,
-                       output: 'failure',
-                       time: nil
-                     }]
-                   }] }.to_json)
+      { status: :finished,
+        error: nil,
+        test_groups: [{
+          time: 10,
+          timeout: nil,
+          stderr: '',
+          malformed: '',
+          extra_info: { test_group_id: test_group.id },
+          feedback: [
+            { filename: 'test.txt', mime_type: 'text', content: text_file_content },
+            {
+              filename: 'test_compressed.txt',
+              mime_type: 'text',
+              compression: 'gzip',
+              content: Zlib.gzip(text_file_content)
+            },
+            { filename: 'test.png', mime_type: 'image/png', content: png_file_content },
+            {
+              filename: 'test_compressed.png',
+              mime_type: 'image/png',
+              compression: 'gzip',
+              content: Zlib.gzip(png_file_content)
+            }
+          ],
+          tests: [{
+            name: :test1,
+            status: :pass,
+            marks_earned: 1,
+            marks_total: 1,
+            output: 'output',
+            time: 1
+          }, {
+            name: :test2,
+            status: :fail,
+            marks_earned: 0,
+            marks_total: 1,
+            output: 'failure',
+            time: nil
+          }]
+        }] }.deep_stringify_keys
+    end
+    context 'when there are feedback files' do
+      let(:feedback_files) { test_group.test_group_results.first.feedback_files }
+      before { test_run.update_results!(results) }
+      it 'should create 4 feedback files' do
+        expect(feedback_files.count).to eq 4
+      end
+      it 'should create a feedback file from uncompressed text' do
+        expect(feedback_files.find_by(filename: 'test.txt').file_content).to eq(text_file_content)
+      end
+      it 'should create a feedback file from compressed text' do
+        expect(feedback_files.find_by(filename: 'test_compressed.txt').file_content).to eq(text_file_content)
+      end
+      it 'should create a feedback file from uncompressed binary data' do
+        expect(feedback_files.find_by(filename: 'test.png').file_content).to eq(png_file_content)
+      end
+      it 'should create a feedback file from compressed binary data' do
+        expect(feedback_files.find_by(filename: 'test_compressed.png').file_content).to eq(png_file_content)
+      end
     end
     context 'there is a failure reported' do
       before { results['status'] = 'failed' }
@@ -84,11 +129,19 @@ describe TestRun do
       it 'should not update criteria marks' do
         expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
       end
+      it 'should unset the autotest_test_id' do
+        test_run.update_results!(results)
+        expect(test_run.reload.autotest_test_id).to be_nil
+      end
     end
     context 'there is a success reported' do
       let(:test_group_result) { TestGroupResult.find_by(test_group_id: test_group.id, test_run_id: test_run.id) }
       it 'should update the status to completed' do
         expect { test_run.update_results!(results) }.to change { test_run.status }.to('complete')
+      end
+      it 'should unset the autotest_test_id' do
+        test_run.update_results!(results)
+        expect(test_run.reload.autotest_test_id).to be_nil
       end
       context 'there is an error message' do
         before { results['error'] = 'error message' }

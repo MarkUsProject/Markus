@@ -113,14 +113,6 @@ class Course < ApplicationRecord
     required
   end
 
-  def update_autotest_url(url)
-    autotest_setting = AutotestSetting.find_or_create_by!(url: url)
-    if autotest_setting.id != self.autotest_setting&.id
-      self.update!(autotest_setting_id: autotest_setting.id)
-      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
-    end
-  end
-
   def export_student_data_csv
     students = self.students.joins(:user).order('users.user_name').includes(:section)
     MarkusCsv.generate(students) do |student|

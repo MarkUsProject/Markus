@@ -209,6 +209,21 @@ describe CoursesController do
           updated_course = Course.find(course.id)
           expect(updated_course.name).not_to eq('CS101')
         end
+        context 'updating the autotest_url' do
+          it 'does not update the autotest_url as an instructor' do
+            expect(AutotestResetUrlJob).not_to receive(:perform_later)
+            put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end
+          it 'does update the autotest_url as an admin' do
+            expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+              expect(course_).to eq course
+              expect(url).to eq 'http://example.com'
+              nil # mocked return value
+            end
+            put_as create(:admin_role), :update,
+                   params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end
+        end
         it 'does not update the max_file_size as an instructor' do
           put_as instructor, :update, params: { id: course.id, course: { max_file_size: 200 } }
           updated_course = Course.find(course.id)
