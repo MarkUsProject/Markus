@@ -15,6 +15,7 @@
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
 - Disable python features if python dependencies are not installed (#6232)
+- Optionally log which user makes each request by tagging the log files with user_names (#6241)
 - Fix bug where git hooks are not run server side when symlinked (#6277)
 - Hide manual submission collection button from users who don't have permission (#6282)
 - Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
