@@ -46,48 +46,47 @@ module AutomatedTestsHelper
   # Create/Modify test groups based on the autotest specs
   def update_test_groups_from_specs(assignment, test_specs)
     test_group_ids = []
-    ApplicationRecord.transaction do
-      test_group_position = 1
-      test_specs['testers']&.each do |tester_specs|
-        current_test_group_ids = []
-        tester_specs['test_data']&.each do |test_group_specs|
-          test_group_specs['extra_info'] ||= {}
-          extra_data_specs = test_group_specs['extra_info']
-          test_group_id = extra_data_specs['test_group_id']
-          display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
-          test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
-          criterion_name = extra_data_specs['criterion']
-          criterion = assignment.ta_criteria.find_by(name: criterion_name)
-          if criterion_name.present? && criterion.nil?
-            flash_message(:warning, I18n.t('automated_tests.no_criteria', name: criterion_name))
-          end
-          fields = { name: test_group_name, display_output: display_output,
-                     criterion_id: criterion&.id, autotest_settings: test_group_specs,
-                     position: test_group_position }
-          test_group_position += 1
-          if test_group_id.nil?
-            test_group = assignment.test_groups.create!(fields)
-            test_group_id = test_group.id
-            extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
-          else
-            test_group = assignment.test_groups.find(test_group_id)
-            test_group.update!(fields)
-          end
-          test_group_ids << test_group_id
-          current_test_group_ids << test_group_id
-        end
-        tester_specs['test_data'] = current_test_group_ids
-      end
-      # delete test groups that are not in the autotest specs
-      deleted_test_groups = assignment.test_groups
-      unless test_group_ids.empty?
-        deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
-      end
-      deleted_test_groups.delete_all
 
-      # Save test specs
-      assignment.update!(autotest_settings: test_specs)
+    test_group_position = 1
+    test_specs['testers']&.each do |tester_specs|
+      current_test_group_ids = []
+      tester_specs['test_data']&.each do |test_group_specs|
+        test_group_specs['extra_info'] ||= {}
+        extra_data_specs = test_group_specs['extra_info']
+        test_group_id = extra_data_specs['test_group_id']
+        display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
+        test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
+        criterion_name = extra_data_specs['criterion']
+        criterion = assignment.ta_criteria.find_by(name: criterion_name)
+        if criterion_name.present? && criterion.nil?
+          flash_message(:warning, I18n.t('automated_tests.no_criteria', name: criterion_name))
+        end
+        fields = { name: test_group_name, display_output: display_output,
+                   criterion_id: criterion&.id, autotest_settings: test_group_specs,
+                   position: test_group_position }
+        test_group_position += 1
+        if test_group_id.nil?
+          test_group = assignment.test_groups.create!(fields)
+          test_group_id = test_group.id
+          extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
+        else
+          test_group = assignment.test_groups.find(test_group_id)
+          test_group.update!(fields)
+        end
+        test_group_ids << test_group_id
+        current_test_group_ids << test_group_id
+      end
+      tester_specs['test_data'] = current_test_group_ids
     end
+    # delete test groups that are not in the autotest specs
+    deleted_test_groups = assignment.test_groups
+    unless test_group_ids.empty?
+      deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
+    end
+    deleted_test_groups.destroy_all
+
+    # Save test specs
+    assignment.update!(autotest_settings: test_specs)
   end
 
   def server_params(markus_address, assignment_id)
