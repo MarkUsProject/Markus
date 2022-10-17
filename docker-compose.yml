@@ -60,6 +60,7 @@ services:
       - postgres
       - redis
       - resque
+      - resque-scheduler
       - webpack
       - ssh
 
@@ -80,13 +81,17 @@ services:
     entrypoint: .dockerfiles/entrypoint-dev-ssh.sh
     depends_on: []
 
-  resque:
+  resque: &resque
     <<: *rails
-    entrypoint: .dockerfiles/entrypoint-dev-resque.sh
+    entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
     ports: []
+
+  resque-scheduler:
+    <<: *resque
+    command: bundle exec rails resque:scheduler
 
   postgres:
     image: postgres:12.11

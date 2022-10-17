@@ -77,6 +77,18 @@ class RepoBrowser extends React.Component {
     if (this.state.revision_identifier === this.props.collected_revision_id) {
       className = "collected-checked";
     }
+    let manualCollectionForm = "";
+    if (this.props.enableCollect) {
+      manualCollectionForm = (
+        <ManualCollectionForm
+          course_id={this.props.course_id}
+          assignment_id={this.props.assignment_id}
+          late_penalty={this.props.late_penalty}
+          grouping_id={this.props.grouping_id}
+          revision_identifier={this.state.revision_identifier}
+        />
+      );
+    }
     return (
       <div>
         <h3>
@@ -114,13 +126,7 @@ class RepoBrowser extends React.Component {
           enableUrlSubmit={this.props.enableUrlSubmit}
           readOnly={this.isReadOnly()}
         />
-        <ManualCollectionForm
-          course_id={this.props.course_id}
-          assignment_id={this.props.assignment_id}
-          late_penalty={this.props.late_penalty}
-          grouping_id={this.props.grouping_id}
-          revision_identifier={this.state.revision_identifier}
-        />
+        {manualCollectionForm}
       </div>
     );
   }
