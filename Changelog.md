@@ -6,6 +6,7 @@
 - Allow users to upload and download csv files for marks spreadsheets in the same format (#6267)
 - Hide manual submission collection button from users who don't have permission (#6282)
 - Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
+- Fix bug where remark request summary table wasn't being rendered correctly (#6284)
 
 ## [v2.1.4]
 - Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
