@@ -175,25 +175,25 @@ class GradeEntryForm < Assessment
       next unless row.any?
       # grab names and totals from the first two rows
       if names.empty?
-        names = row.drop(1)
+        names = row
         next
       elsif totals.empty?
-        totals = row.drop(1)
-        if self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
-          self.update_grade_entry_items(names[0...-1], totals[0...-1], overwrite)
-        else
-          self.update_grade_entry_items(names, totals, overwrite)
-        end
-        updated_columns = self.grade_entry_items.reload.ids
+        totals = row.map { |cell| Float(cell, exception: false)&.>=(0) ? cell : nil }
+        totals[-1] = nil if self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
+        names = names.reject.with_index { |_cell, i| totals[i].nil? }
+        self.update_grade_entry_items(names, totals.compact, overwrite)
+        updated_columns = self.grade_entry_items.reload.pluck(:name, :id).to_h
         next
+      else
+        s_id = grade_entry_students[row[0]]
+        raise CsvInvalidLineError if s_id.nil?
+        row = row.reject.with_index { |_cell, i| totals[i].nil? }
       end
-
-      s_id = grade_entry_students[row[0]]
-      raise CsvInvalidLineError if s_id.nil?
-
-      row.drop(1).zip(updated_columns).take([row.size - 1, updated_columns.size].min).each do |grade, item_id|
+      row.each_with_index do |grade, i|
+        item_id = updated_columns[names[i]]
         begin
-          new_grade = grade.blank? ? nil : Float(grade)
+          new_grade = Float(grade, exception: false)
+          new_grade = new_grade&.>=(0) ? Float(grade) : nil
         rescue ArgumentError
           raise CsvInvalidLineError
         end

@@ -132,7 +132,7 @@ class TestRun < ApplicationRecord
   end
 
   def unzip_file_data(file_data)
-    return ActiveSupport::Gzip.decompress(file_data['content']) if file_data['compression'] == 'gzip'
+    return Zlib.gunzip(file_data['content']) if file_data['compression'] == 'gzip'
     file_data['content']
   end
 end

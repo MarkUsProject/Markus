@@ -262,6 +262,8 @@ module Repository
     def self.get_all_permissions
       visibility = self.visibility_hash
       permissions = Hash.new { |h, k| h[k] = [] }
+      admins = AdminUser.pluck(:user_name)
+      permissions['*/*'] = admins unless admins.empty?
       instructors = Instructor.joins(:course, :user)
                               .pluck('courses.name', 'users.user_name')
                               .group_by(&:first)

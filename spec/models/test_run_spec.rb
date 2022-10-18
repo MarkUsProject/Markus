@@ -50,31 +50,68 @@ describe TestRun do
     let(:test_run) { create :test_run, status: :in_progress, grouping: grouping }
     let(:criterion) { create :flexible_criterion, max_mark: 2, assignment: assignment }
     let(:test_group) { create :test_group, criterion: criterion, assignment: assignment }
+    let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
+    let(:text_file_content) { 'test123' }
     let(:results) do
-      JSON.parse({ status: :finished,
-                   error: nil,
-                   test_groups: [{
-                     time: 10,
-                     timeout: nil,
-                     stderr: '',
-                     malformed: '',
-                     extra_info: { test_group_id: test_group.id },
-                     tests: [{
-                       name: :test1,
-                       status: :pass,
-                       marks_earned: 1,
-                       marks_total: 1,
-                       output: 'output',
-                       time: 1
-                     }, {
-                       name: :test2,
-                       status: :fail,
-                       marks_earned: 0,
-                       marks_total: 1,
-                       output: 'failure',
-                       time: nil
-                     }]
-                   }] }.to_json)
+      { status: :finished,
+        error: nil,
+        test_groups: [{
+          time: 10,
+          timeout: nil,
+          stderr: '',
+          malformed: '',
+          extra_info: { test_group_id: test_group.id },
+          feedback: [
+            { filename: 'test.txt', mime_type: 'text', content: text_file_content },
+            {
+              filename: 'test_compressed.txt',
+              mime_type: 'text',
+              compression: 'gzip',
+              content: Zlib.gzip(text_file_content)
+            },
+            { filename: 'test.png', mime_type: 'image/png', content: png_file_content },
+            {
+              filename: 'test_compressed.png',
+              mime_type: 'image/png',
+              compression: 'gzip',
+              content: Zlib.gzip(png_file_content)
+            }
+          ],
+          tests: [{
+            name: :test1,
+            status: :pass,
+            marks_earned: 1,
+            marks_total: 1,
+            output: 'output',
+            time: 1
+          }, {
+            name: :test2,
+            status: :fail,
+            marks_earned: 0,
+            marks_total: 1,
+            output: 'failure',
+            time: nil
+          }]
+        }] }.deep_stringify_keys
+    end
+    context 'when there are feedback files' do
+      let(:feedback_files) { test_group.test_group_results.first.feedback_files }
+      before { test_run.update_results!(results) }
+      it 'should create 4 feedback files' do
+        expect(feedback_files.count).to eq 4
+      end
+      it 'should create a feedback file from uncompressed text' do
+        expect(feedback_files.find_by(filename: 'test.txt').file_content).to eq(text_file_content)
+      end
+      it 'should create a feedback file from compressed text' do
+        expect(feedback_files.find_by(filename: 'test_compressed.txt').file_content).to eq(text_file_content)
+      end
+      it 'should create a feedback file from uncompressed binary data' do
+        expect(feedback_files.find_by(filename: 'test.png').file_content).to eq(png_file_content)
+      end
+      it 'should create a feedback file from compressed binary data' do
+        expect(feedback_files.find_by(filename: 'test_compressed.png').file_content).to eq(png_file_content)
+      end
     end
     context 'there is a failure reported' do
       before { results['status'] = 'failed' }

@@ -1,7 +1,16 @@
 # Changelog
 
+## [v2.1.5]
+- Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
+- Optionally log which user makes each request by tagging the log files with user_names (#6241)
+- Allow users to upload and download csv files for marks spreadsheets in the same format (#6267)
+- Hide manual submission collection button from users who don't have permission (#6282)
+- Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
+- Fix bug where remark request summary table wasn't being rendered correctly (#6284)
+- Fix bug where test results were being associated with the wrong test runs (#6287)
+
 ## [v2.1.4]
-- Fix bug where git hooks are not run server side when symlinked (#6276)
+- Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
 
 ## [v2.1.3]
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)

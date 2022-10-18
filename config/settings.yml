@@ -71,6 +71,7 @@ logging:
   rotate_interval: daily
   size_threshold: 1024000000
   old_files: 10
+  tag_with_usernames: true
 
 # resque-scheduler configuration: https://github.com/resque/resque-scheduler#static-schedules
 # See also: https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
