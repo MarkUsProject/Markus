@@ -31,6 +31,7 @@ services:
       - RAILS_RELATIVE_URL_ROOT=/csc108
       - PGDATABASE=markus_development
       - PGDATABASETEST=markus_test
+      - MARKUS_URL=http://host.docker.internal:3000 # used by the tasks in autotest.rake
       - MARKUS__REPOSITORY__SSH_URL=ssh://markus@localhost:2222/~/csc108
       - CAPYBARA_SERVER_PORT=${CAPYBARA_SERVER_PORT:-3434}
       - CAPYBARA_SERVER_HOST=${CAPYBARA_SERVER_HOST:-0.0.0.0}
@@ -51,6 +52,7 @@ services:
       - postgres
       - redis
       - resque
+      - resque-scheduler
       - webpack
       - ssh
 
@@ -71,13 +73,17 @@ services:
     entrypoint: .dockerfiles/entrypoint-dev-ssh.sh
     depends_on: []
 
-  resque:
+  resque: &resque
     <<: *rails
-    entrypoint: .dockerfiles/entrypoint-dev-resque.sh
+    entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
     ports: []
+
+  resque-scheduler:
+    <<: *resque
+    command: bundle exec rails resque:scheduler
 
   postgres:
     image: postgres:12.11

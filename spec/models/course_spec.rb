@@ -78,71 +78,72 @@ describe Course do
     end
   end
 
-  describe '#get_assignment_list' # TODO
-  describe '#upload_assignment_list' # TODO
-  describe '#get_required_files' # TODO
-  describe '#update_autotest_url' do
-    before do
-      allow_any_instance_of(AutotestSetting).to receive(:register).and_return(1)
-      allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
+  describe '#get_assignment_list' do
+    context 'when file_format = yml' do
+      context 'when there are no assignments in the course' do
+        it 'should return a yml representation of the assignments in a course with no assignments' do
+          result = course.get_assignment_list('yml')
+          expected = { assignments: [] }.to_yaml
+          expect(result).to eq(expected)
+        end
+      end
+      context 'when the course has a single assignment' do
+        # NOTE: the created assignment must be reloaded as the value for assignment1.due_date stored in the database is
+        # less precise than that stored by ruby.
+        let!(:assignment1) { (create :assignment, due_date: 5.days.ago, course: course).reload }
+        it 'should return a yml representation of the assignments in a course with a single assignment' do
+          result = course.get_assignment_list('yml')
+          expected = { assignments: [create_assignment_symbol_to_value_map(assignment1)] }.to_yaml
+          expect(result).to eq(expected)
+        end
+      end
+      context 'when the course has multiple assignments' do
+        let!(:assignment1) { (create :assignment, due_date: 5.days.ago, course: course).reload }
+        let!(:assignment2) { (create :assignment, due_date: 1.day.ago, course: course).reload }
+        let!(:assignment3) { (create :assignment, due_date: 8.days.from_now, course: course).reload }
+        it 'should return a yml representation of the assignments in a course with multiple assignments' do
+          result = course.get_assignment_list('yml')
+          expected = { assignments: [create_assignment_symbol_to_value_map(assignment1),
+                                     create_assignment_symbol_to_value_map(assignment2),
+                                     create_assignment_symbol_to_value_map(assignment3)] }.to_yaml
+          expect(result).to eq(expected)
+        end
+      end
     end
-    let(:url) { 'http://example.com' }
-    context 'when no autotest setting already exists for that url' do
-      it 'should create a new autotest setting' do
-        expect { course.update_autotest_url(url) }.to(change { AutotestSetting.where(url: url).count }.from(0).to(1))
-      end
-      it 'should associate the new setting with the course' do
-        course.update_autotest_url(url)
-        expect(course.reload.autotest_setting.url).to eq url
-      end
-      context 'when assignments exist for the course' do
-        before do
-          create_list :assignment, 3, course: course,
-                                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
-        end
-        it 'should reset the remote_autotest_settings_id for all assignments' do
-          course.update_autotest_url(url)
-          expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
+    context 'when file_format = csv' do
+      context 'when there are no assignments in the course' do
+        it 'should return a csv representation of the assignments in a course with no assignments aka an empty' \
+           'string' do
+          result = course.get_assignment_list('csv')
+          expect(result).to eq('')
         end
       end
-    end
-    context 'when an autotest setting exists for that url' do
-      before { course.update! autotest_setting_id: create(:autotest_setting, url: url).id }
-      it 'should not create a new autotest setting' do
-        expect { course.update_autotest_url(url) }.not_to(change { AutotestSetting.where(url: url).count })
-      end
-      it 'should not change the association' do
-        course.update_autotest_url(url)
-        expect(course.reload.autotest_setting.url).to eq url
-      end
-      context 'when assignments exist for the course' do
-        before do
-          create_list :assignment, 3, course: course,
-                                      assignment_properties_attributes: { remote_autotest_settings_id: 1 }
-        end
-        it 'should not reset the remote_autotest_settings_id for all assignments' do
-          course.update_autotest_url(url)
-          expect(course.assignments.pluck(:remote_autotest_settings_id).to_set).to contain_exactly(1)
+      context 'when the course has a single assignment' do
+        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
+        it 'should return a csv representation of the assignments in a course with a single assignment' do
+          result = course.get_assignment_list('csv').to_s
+          expected_result = create_assignment_csv_string(assignment1)
+          expect(result).to eq(expected_result)
         end
       end
-      context 'when the autotest setting is changed' do
-        it 'should associate the new setting with the course' do
-          course.update_autotest_url('http://example.com/other')
-          expect(course.reload.autotest_setting.url).to eq 'http://example.com/other'
-        end
-        context 'when assignments exist for the course' do
-          before do
-            create_list :assignment, 3, course: course,
-                                        assignment_properties_attributes: { remote_autotest_settings_id: 1 }
+      context 'when the course has multiple assignments' do
+        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
+        let!(:assignment2) { create :assignment, due_date: 1.day.ago, course: course }
+        let!(:assignment3) { create :assignment, due_date: 8.days.from_now, course: course }
+        it 'should return a csv representation of the assignments in a course with multiple assignments' do
+          result = course.get_assignment_list('csv').to_s
+          expected_result = ''
+          [assignment1, assignment2, assignment3].each do |assignment|
+            expected_result += create_assignment_csv_string(assignment)
           end
-          it 'should reset the remote_autotest_settings_id for all assignments' do
-            course.update_autotest_url('http://example.com/other')
-            expect(course.assignments.pluck(:remote_autotest_settings_id).compact).to be_empty
-          end
+          expect(result).to eq(expected_result)
         end
       end
     end
   end
+
+  describe '#upload_assignment_list' # TODO
+  describe '#get_required_files' # TODO
 
   describe '#get_current_assignment' do
     context 'when no assignments are found' do
@@ -309,4 +310,44 @@ describe Course do
       end
     end
   end
+end
+
+private
+
+def create_assignment_csv_string(assignment)
+  # returns a csv formatted string for an assignment where each attribute
+  # specified by Assignment::DEFAULT_FIELDS appears in the same order as initialized
+  # and is comma separated.
+  [assignment.short_identifier, assignment.description, assignment.due_date, assignment.message,
+   assignment.group_min, assignment.group_max, assignment.tokens_per_period, assignment.allow_web_submits,
+   assignment.student_form_groups, assignment.remark_due_date, assignment.remark_message,
+   assignment.assign_graders_to_criteria, assignment.enable_test, assignment.enable_student_tests,
+   assignment.allow_remarks, assignment.display_grader_names_to_students, assignment.display_median_to_students,
+   assignment.group_name_autogenerated, assignment.is_hidden, assignment.vcs_submit, assignment.has_peer_review].to_csv
+end
+
+def create_assignment_symbol_to_value_map(assignment)
+  # returns a mapping of attribute symbols present in Assignment::DEFAULT_FIELDS to
+  # their associated value in the variable a where a is an assignment.
+  { short_identifier: assignment.short_identifier,
+    description: assignment.description,
+    due_date: assignment.due_date,
+    message: assignment.message,
+    group_min: assignment.group_min,
+    group_max: assignment.group_max,
+    tokens_per_period: assignment.tokens_per_period,
+    allow_web_submits: assignment.allow_web_submits,
+    student_form_groups: assignment.student_form_groups,
+    remark_due_date: assignment.remark_due_date,
+    remark_message: assignment.remark_message,
+    assign_graders_to_criteria: assignment.assign_graders_to_criteria,
+    enable_test: assignment.enable_test,
+    enable_student_tests: assignment.enable_student_tests,
+    allow_remarks: assignment.allow_remarks,
+    display_grader_names_to_students: assignment.display_grader_names_to_students,
+    display_median_to_students: assignment.display_median_to_students,
+    group_name_autogenerated: assignment.group_name_autogenerated,
+    is_hidden: assignment.is_hidden,
+    vcs_submit: assignment.vcs_submit,
+    has_peer_review: assignment.has_peer_review }
 end

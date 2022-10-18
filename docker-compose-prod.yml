@@ -41,6 +41,7 @@ services:
       - postgres
       - redis
       - resque
+      - resque-scheduler
       - ssh
 
   ssh:
@@ -60,12 +61,16 @@ services:
     entrypoint: []
     depends_on: []
 
-  resque:
+  resque: &resque
     <<: *rails
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
     ports: []
+
+  resque-scheduler:
+    <<: *resque
+    command: bundle exec rails resque:scheduler
 
   postgres:
     image: postgres:12.11
