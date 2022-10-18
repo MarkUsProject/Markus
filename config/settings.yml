@@ -44,8 +44,6 @@ repository:
   ssh_url: 'git@example.com/csc108'
   is_repository_admin: true
 
-max_file_size: 5000000
-
 session_timeout: 1800
 
 enable_key_storage: true
@@ -71,6 +69,7 @@ logging:
   rotate_interval: daily
   size_threshold: 1024000000
   old_files: 10
+  tag_with_usernames: true
 
 # resque-scheduler configuration: https://github.com/resque/resque-scheduler#static-schedules
 # See also: https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
@@ -91,8 +90,7 @@ autotest:
 scanned_exams:
   enable: true
 
-python:
-  bin: <%= ::Rails.root %>/venv/bin
+python: <%= ::Rails.root %>/venv/bin/python
 
 exception_notification:
   enabled: false

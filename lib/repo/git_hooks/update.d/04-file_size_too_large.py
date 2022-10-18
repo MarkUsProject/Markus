@@ -4,8 +4,6 @@ import os
 import sys
 import subprocess
 
-MAX_FILE_SIZE = int(os.environ['MAX_FILE_SIZE'])
-
 if __name__ == '__main__':
     ref_name = sys.argv[1]
     old_commit = sys.argv[2]
@@ -14,6 +12,9 @@ if __name__ == '__main__':
     # get new/updated files:
     changes = subprocess.run(['git', 'rev-list', '--objects', f'{old_commit}..{new_commit}'],
                              stdout=subprocess.PIPE, universal_newlines=True)
+    size = subprocess.run(['git', 'show', '{}:{}'.format(old_commit, '.max_file_size')], stdout=subprocess.PIPE,
+                          universal_newlines=True)
+    max_file_size = int(req.stdout.strip())
     # check all changed/added files
     for change in changes.stdout.splitlines():
         sha, *paths = change.split(maxsplit=1)
@@ -22,7 +23,7 @@ if __name__ == '__main__':
             file_size_proc = subprocess.run(['git', 'cat-file', '-s', sha],
                                        stdout=subprocess.PIPE, universal_newlines=True)
             file_size = file_size_proc.stdout.strip()
-            if int(file_size) > MAX_FILE_SIZE:
+            if int(file_size) > max_file_size:
                 mb_size = round(int(file_size) / 1_000_000, 2)
                 print(f'[MARKUS] Error: The size of the uploaded file {path} exceeds the maximum of {mb_size} MB.')
                 sys.exit(1)

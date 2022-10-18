@@ -3,7 +3,7 @@ default: &default
   encoding: unicode
   host: <%= ENV['PGHOST'] %>
   username: <%= ENV['PGUSER'] %>
-  password: <%= ENV.fetch('PGPASSWORD') { Rails.application.secrets.pg_password }  %>
+  password: <%= ENV['PGPASSWORD'] %>
   pool: 5
   database: <%= ENV['PGDATABASE'] %>
   port: <%= ENV['PGPORT'] %>

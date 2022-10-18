@@ -636,9 +636,9 @@ class Grouping < ApplicationRecord
 
       # Hide display_output
       if filter_output && ((h['roles.type'] == 'Student' && h['test_groups.display_output'] == 'instructors') ||
-            (%w[Instructor Ta].include?(h['roles.type']) &&
-                                          %w[instructors_and_student_tests
-                                             instructors].include?(h['test_groups.display_output'])))
+            (%w[Instructor Ta AdminRole].include?(h['roles.type']) &&
+                                                  %w[instructors_and_student_tests
+                                                     instructors].include?(h['test_groups.display_output'])))
         h.delete('test_results.output')
       end
     end
@@ -647,7 +647,7 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = test_runs_all_data.where('roles.type': %w[Instructor Ta], 'test_runs.submission': submission)
+    filtered = test_runs_all_data.where('roles.type': %w[Instructor Ta AdminRole], 'test_runs.submission': submission)
     plucked = Grouping.pluck_test_runs(filtered)
     Util.group_hashes(plucked,
                       %w[test_runs.id test_runs.created_at test_runs.status test_runs.problems users.user_name],
@@ -655,7 +655,7 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors_released(submission)
-    filtered = test_runs_all_data.where('roles.type': %w[Instructor Ta], 'test_runs.submission': submission)
+    filtered = test_runs_all_data.where('roles.type': %w[Instructor Ta AdminRole], 'test_runs.submission': submission)
     latest_test_group_results = filtered.pluck_to_hash('test_groups.id',
                                                        'test_group_results.id',
                                                        'test_group_results.created_at')
@@ -664,9 +664,8 @@ class Grouping < ApplicationRecord
                                         .map do |v|
       v.max_by do |h|
         h['test_group_results.created_at']
-      end ['test_group_results.id']
-    end
-                                        .compact
+      end['test_group_results.id']
+    end.compact
     plucked = Grouping.pluck_test_runs(
       filtered.where('test_group_results.id': latest_test_group_results),
       filter_output: true,

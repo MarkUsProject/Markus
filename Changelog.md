@@ -7,10 +7,36 @@
 - Replace yarn with npm as a package manager (#6159)
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
-- Fix bug preventing use of the update_grades API route (#6188)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
+- Allow admins to set the autotester url for each course in the courses view (#6213)
+- Allow admins to test and reset the connection to the autotester in the courses view and through the API (#6213)
+- Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
+- Allow admin users to manage the maximum file size setting through the UI (#6195)
+- Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
+- Disable python features if python dependencies are not installed (#6232)
+- Optionally log which user makes each request by tagging the log files with user_names (#6241)
+- Allow users to upload and download csv files for marks spreadsheets in the same format (#6267)
+- Hide manual submission collection button from users who don't have permission (#6282)
+- Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
+- Fix bug where remark request summary table wasn't being rendered correctly (#6284)
+- Fix bug where test results were being associated with the wrong test runs (#6287)
 - Filter out invalid properties on assignment upload (#6224)
+
+## [v2.1.4]
+- Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
+
+## [v2.1.3]
+- Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
+
+## [v2.1.2]
+- Fix bug preventing use of the update_grades API route (#6188)
+- Fix overly restrictive policies for admin users (#6209)
+- Add check for version format to ensure that Wiki links are well-formed (#6221)
+- Fix bug where empty groups are hidden by default (#6222)
+- Fix bug where test run table did not re-render when switching results (#6223)
+- Allow admin users to manage the maximum file size setting through the UI (#6195)
+>>>>>>> master
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)

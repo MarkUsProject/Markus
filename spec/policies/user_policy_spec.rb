@@ -1,6 +1,6 @@
 describe UserPolicy do
   let(:context) { { real_user: user, user: user } }
-  let(:user) { create :end_user }
+  let(:user) { 1 } # user doesn't actually matter for any of these policies but needs to be set
   describe_rule :manage? do
     failed
   end

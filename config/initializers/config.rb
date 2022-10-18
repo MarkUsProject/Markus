@@ -131,7 +131,6 @@ Config.setup do |config|
         optional(:ssh_url).filled(:string)
         required(:is_repository_admin).filled(:bool)
       end
-      required(:max_file_size).value(:integer, gt?: 0)
       required(:session_timeout).value(:integer, gt?: 0)
       required(:enable_key_storage).filled(:bool)
       required(:logging).hash do
@@ -142,6 +141,7 @@ Config.setup do |config|
         required(:old_files).filled(:integer, gt?: 0)
         required(:log_file).filled(:string)
         required(:error_file).filled(:string)
+        required(:tag_with_usernames).filled(:bool)
       end
       required(:scanned_exams).hash do
         required(:enable).filled(:bool)
@@ -154,9 +154,7 @@ Config.setup do |config|
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
         required(:max_batch_size).value(:integer, gt?: 0)
       end
-      required(:python).hash do
-        required(:bin).filled(:string)
-      end
+      optional(:python).filled(:string)
       required(:rails_performance).hash do
         required(:enabled).filled(:bool)
         optional(:duration).value(:integer, gt?: 0)
