@@ -6,7 +6,58 @@ describe TestRun do
   it { is_expected.to belong_to(:grouping) }
   it { is_expected.to belong_to(:role) }
   it { is_expected.to have_one(:course) }
-  it { is_expected.to validate_uniqueness_of(:autotest_test_id).allow_nil }
+
+  describe 'validations' do
+    describe 'autotest_test_id_uniqueness' do
+      before do
+        allow_any_instance_of(AutotestSetting).to receive(:register_autotester)
+        create :course, autotest_setting: create(:autotest_setting)
+        create(:test_run, autotest_test_id: 1, status: :in_progress)
+      end
+      context 'a test run exists with the same associated autotest_settings' do
+        let(:test_run) { create :test_run, autotest_test_id: autotest_test_id, status: :in_progress }
+        context 'and the same autotest_test_id' do
+          let(:autotest_test_id) { 1 }
+          it 'should not be valid' do
+            expect { test_run }.to raise_exception(ActiveRecord::RecordInvalid)
+          end
+        end
+        context 'and a different autotest_test_id' do
+          let(:autotest_test_id) { 2 }
+          it 'should be valid' do
+            expect { test_run }.not_to raise_exception
+          end
+        end
+      end
+
+      context 'a test run exists with a different associated autotest_settings' do
+        let(:other_course) { create :course, autotest_setting: create(:autotest_setting) }
+        let(:other_role) { create :instructor, course: other_course }
+        let(:other_assignment) do
+          create :assignment,
+                 assignment_properties_attributes: { remote_autotest_settings_id: 11 },
+                 course: other_course
+        end
+        let(:other_grouping) { create :grouping, assignment: other_assignment }
+        let(:test_run) do
+          build(:test_run, grouping: other_grouping, role: other_role,
+                           autotest_test_id: autotest_test_id, status: :in_progress)
+        end
+        context 'and the same autotest_test_id' do
+          let(:autotest_test_id) { 1 }
+          it 'should be valid' do
+            expect { test_run }.not_to raise_exception
+          end
+        end
+        context 'and a different autotest_test_id' do
+          let(:autotest_test_id) { 2 }
+          it 'should be valid' do
+            expect { test_run }.not_to raise_exception
+          end
+        end
+      end
+    end
+  end
 
   include_examples 'course associations'
 
