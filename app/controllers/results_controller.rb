@@ -726,6 +726,7 @@ class ResultsController < ApplicationController
   # Download a csv containing view token and grouping information for the results whose ids are given
   def download_view_tokens
     data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
+                            .order('groups.group_name')
                             .pluck('groups.group_name',
                                    'users.user_name',
                                    'users.first_name',

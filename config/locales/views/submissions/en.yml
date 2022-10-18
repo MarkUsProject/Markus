@@ -61,7 +61,7 @@ en:
     release_token_expires_null: Never
     release_token_url: Release URL
     release_url_with_token: |-
-      Students can access released marks only at the following url:
+      Students can access released marks only at the following URL:
 
       %{url}
     repo_browser:

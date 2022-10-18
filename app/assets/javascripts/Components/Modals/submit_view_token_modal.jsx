@@ -46,7 +46,7 @@ class SubmitViewTokenModal extends React.Component {
               <input onChange={e => this.setState({token: e.target.value})} />
             </div>
             <div className={"modal-container"}>
-              <input type="submit" value={I18n.t("save")} />
+              <input type="submit" value={I18n.t("results.submit_token")} />
             </div>
           </div>
         </form>
