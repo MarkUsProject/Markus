@@ -163,6 +163,38 @@ describe AutotestResultsJob do
             subject
           end
         end
+        context 'when there is a test run with the same autotest_test_id in a different course' do
+          let(:status_return) { { 1 => 'finished' } }
+          let(:other_course) { create :course, autotest_setting: create(:autotest_setting) }
+          let(:other_role) { create :instructor, course: other_course }
+          let(:other_assignment) do
+            create :assignment,
+                   assignment_properties_attributes: { remote_autotest_settings_id: 11 },
+                   course: other_course
+          end
+          let(:other_grouping) { create :grouping, assignment: other_assignment }
+          let(:test_runs) { [] }
+          let(:other_test_runs) do
+            [
+              create(:test_run, grouping: grouping, autotest_test_id: 1, status: :in_progress),
+              create(:test_run, grouping: other_grouping, role: other_role,
+                                autotest_test_id: 1, status: :in_progress)
+            ]
+          end
+          before do
+            grouping.course.autotest_setting = create(:autotest_setting)
+            other_test_runs
+          end
+          it 'should get results for both test runs' do
+            allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
+            called_test_runs = []
+            allow_any_instance_of(AutotestResultsJob).to receive(:results) do |_job, _assignment, test_run|
+              called_test_runs << test_run
+            end
+            subject
+            expect(called_test_runs.map(&:id)).to contain_exactly(*other_test_runs.map(&:id))
+          end
+        end
       end
     end
     context 'tests are not set up' do
