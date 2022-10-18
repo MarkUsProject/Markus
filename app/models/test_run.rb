@@ -147,11 +147,11 @@ class TestRun < ApplicationRecord
   def autotest_test_id_uniqueness
     return unless self.autotest_test_id
 
-    other_test_runs = TestRun.joins(role: [course: :autotest_setting])
+    other_test_runs = TestRun.joins(role: :course)
                              .where('courses.autotest_setting_id': self.course.autotest_setting_id,
                                     autotest_test_id: self.autotest_test_id)
                              .where.not(id: self.id)
-                             .count
-    errors.add(:base, 'autotest_test_id must be unique scoped to autotest settings') unless other_test_runs.zero?
+                             .exists?
+    errors.add(:base, 'autotest_test_id must be unique scoped to autotest settings') if other_test_runs
   end
 end
