@@ -1,0 +1,15 @@
+window.submitViewTokenModals ||= {};
+
+const modal_div = document.createElement('div');
+modal_div.setAttribute('id', '<%= modal_id %>')
+document.body.appendChild(modal_div)
+
+window.submitViewTokenModals['<%= modal_id %>'] = makeSubmitViewTokenModal(
+  document.getElementById('<%= modal_id %>'), {
+    course_id: <%= @current_course.id %>,
+    result_id: <%= result.id %>
+  }
+);
+document.getElementById('<%= opener_id %>').addEventListener('click', () => {
+  window.submitViewTokenModals['<%= modal_id %>'].setState({isOpen: true})
+})

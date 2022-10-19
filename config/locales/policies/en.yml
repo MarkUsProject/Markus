@@ -102,6 +102,7 @@ en:
         review?: You do not have permission to grade this result.
         run_tests?: You do not have permission to run tests.
         view?: You do not have permission to view results.
+        view_with_result_token?: The provided token is invalid or expired.
       section:
         manage?: You do not have permission to manage sections.
       starter_file_group:

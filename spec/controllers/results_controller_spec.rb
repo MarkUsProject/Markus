@@ -39,7 +39,9 @@ describe ResultsController do
 
   def self.test_unauthorized(route_name)
     it "should not be authorized to access #{route_name}" do
-      method(ROUTES[route_name]).call(route_name, params: { course_id: course.id, id: incomplete_result.id })
+      method(ROUTES[route_name]).call(route_name, params: { course_id: course.id,
+                                                            id: incomplete_result.id,
+                                                            assignment_id: assignment.id })
       expect(response).to have_http_status(:forbidden)
     end
   end
@@ -343,7 +345,7 @@ describe ResultsController do
         get :view_marks, params: { course_id: course.id,
                                    id: incomplete_result.id }, xhr: true
       end
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:forbidden) }
     end
     context 'accessing add_extra_mark' do
       context 'but cannot save the mark' do
@@ -564,7 +566,10 @@ describe ResultsController do
              run_tests: :post,
              stop_test: :get,
              get_test_runs_instructors: :get,
-             get_test_runs_instructors_released: :get }.freeze
+             get_test_runs_instructors_released: :get,
+             refresh_view_tokens: :put,
+             update_view_token_expiry: :put,
+             download_view_tokens: :get }.freeze
 
   context 'A student' do
     before(:each) { sign_in student }
@@ -575,7 +580,10 @@ describe ResultsController do
      :update_overall_comment,
      :update_mark,
      :add_extra_mark,
-     :remove_extra_mark].each { |route_name| test_unauthorized(route_name) }
+     :remove_extra_mark,
+     :refresh_view_tokens,
+     :update_view_token_expiry,
+     :download_view_tokens].each { |route_name| test_unauthorized(route_name) }
     context 'downloading files' do
       shared_examples 'without permission' do
         before :each do
@@ -622,6 +630,61 @@ describe ResultsController do
     end
     include_examples 'download files'
     include_examples 'showing json data', true
+    context '#view_token_check' do
+      let(:role) { create(:student) }
+      let(:grouping) { create :grouping_with_inviter_and_submission, inviter: student }
+      let(:record) { grouping.current_result }
+      let(:assignment) { record.grouping.assignment }
+      let(:view_token) { nil }
+      let(:base_params) { { course_id: record.course.id, id: record.id } }
+      let(:params) { view_token ? { **base_params, view_token: view_token } : base_params }
+      subject { get :view_token_check, params: params }
+      context 'assignment.release_with_urls is false' do
+        before { assignment.update! release_with_urls: false }
+        it { is_expected.to have_http_status(:forbidden) }
+        it 'should not flash an error message' do
+          subject
+          expect(flash.now[:error]).to be_blank
+        end
+      end
+      context 'assignment.release_with_urls is true' do
+        before { assignment.update! release_with_urls: true }
+        context 'the view token does not match the record token' do
+          let(:view_token) { "#{record.view_token}abc123" }
+          it { is_expected.to have_http_status(:unauthorized) }
+          it 'should flash an error message' do
+            subject
+            expect(flash.now[:error]).not_to be_blank
+          end
+        end
+        context 'the view token matches the record token' do
+          let(:view_token) { record.view_token }
+          context 'the token does not have an expiry set' do
+            it { is_expected.to have_http_status(:success) }
+            it 'should not flash an error message' do
+              subject
+              expect(flash.now[:error]).to be_blank
+            end
+          end
+          context 'the record has a token expiry set in the future' do
+            before { record.update! view_token_expiry: 1.hour.from_now }
+            it { is_expected.to have_http_status(:success) }
+            it 'should not flash an error message' do
+              subject
+              expect(flash.now[:error]).to be_blank
+            end
+          end
+          context 'the record has a token expiry set in the past' do
+            before { record.update! view_token_expiry: 1.hour.ago }
+            it { is_expected.to have_http_status(:forbidden) }
+            it 'should not flash an error message' do
+              subject
+              expect(flash.now[:error]).to be_blank
+            end
+          end
+        end
+      end
+    end
     context 'viewing a file' do
       context 'for a grouping with no submission' do
         before :each do
@@ -660,21 +723,78 @@ describe ResultsController do
         test_assigns_not_nil :submission
       end
       context 'and the result is available for viewing' do
-        before :each do
+        before do
           allow_any_instance_of(Submission).to receive(:has_result?).and_return true
           allow_any_instance_of(Result).to receive(:released_to_students).and_return true
-          get :view_marks, params: { course_id: course.id,
-                                     id: complete_result.id }
         end
-        it { expect(response).to have_http_status(:success) }
-        it { expect(response).to render_template(:view_marks) }
-        test_assigns_not_nil :assignment
-        test_assigns_not_nil :grouping
-        test_assigns_not_nil :submission
-        test_assigns_not_nil :result
-        test_assigns_not_nil :annotation_categories
-        test_assigns_not_nil :group
-        test_assigns_not_nil :files
+        subject { get :view_marks, params: { course_id: course.id, id: complete_result.id } }
+        context 'assignment.release_with_urls is false' do
+          before { subject }
+          it { expect(response).to have_http_status(:success) }
+          it { expect(response).to render_template(:view_marks) }
+          test_assigns_not_nil :assignment
+          test_assigns_not_nil :grouping
+          test_assigns_not_nil :submission
+          test_assigns_not_nil :result
+          test_assigns_not_nil :annotation_categories
+          test_assigns_not_nil :group
+          test_assigns_not_nil :files
+        end
+        context 'assignment.release_with_urls is true' do
+          before { assignment.update! release_with_urls: true }
+          let(:view_token) { complete_result.view_token }
+          let(:session) { {} }
+          let(:params) { { course_id: course.id, id: complete_result.id, view_token: view_token } }
+          subject do
+            get :view_marks,
+                params: params,
+                session: session
+          end
+          context 'view token has expired' do
+            before { allow_any_instance_of(Result).to receive(:view_token_expired?).and_return(true) }
+            it 'should be forbidden when the tokens match' do
+              subject
+              expect(response).to have_http_status(:forbidden)
+            end
+          end
+          context 'view token has not expired' do
+            before { allow_any_instance_of(Result).to receive(:view_token_expired?).and_return(false) }
+            it 'should succeed when the tokens match' do
+              subject
+              expect(response).to have_http_status(:success)
+            end
+            context 'when the token does not match' do
+              let(:view_token) { "#{complete_result.view_token}abc123" }
+              it 'should be forbidden' do
+                subject
+                expect(response).to have_http_status(:forbidden)
+              end
+            end
+            context 'when the token is nil' do
+              let(:params) { { course_id: course.id, id: complete_result.id } }
+              it 'should be forbidden' do
+                subject
+                expect(response).to have_http_status(:forbidden)
+              end
+              context 'but the token is saved in the session for this result' do
+                context 'when the tokens match' do
+                  let(:session) { { view_token: { complete_result.id.to_s => complete_result.view_token } } }
+                  it 'should succeed' do
+                    subject
+                    expect(response).to have_http_status(:success)
+                  end
+                end
+                context 'when the tokens do not match' do
+                  let(:session) { { view_token: { complete_result.id.to_s => "#{complete_result.view_token}abc123" } } }
+                  it 'should be forbidden' do
+                    subject
+                    expect(response).to have_http_status(:forbidden)
+                  end
+                end
+              end
+            end
+          end
+        end
       end
     end
 
@@ -687,13 +807,14 @@ describe ResultsController do
         s.get_original_result.update!(released_to_students: true)
         s
       end
+      let(:result) { submission.get_original_result }
 
       context 'when saving a remark request message' do
         let(:subject) do
           patch_as student,
                    :update_remark_request,
                    params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
+                             id: result.id,
                              submission: { remark_request: 'Message' },
                              save: true }
         end
@@ -714,7 +835,7 @@ describe ResultsController do
           patch_as student,
                    :update_remark_request,
                    params: { course_id: assignment.course_id,
-                             submission_id: submission.id,
+                             id: result.id,
                              submission: { remark_request: 'Message' },
                              submit: true }
         end
@@ -754,8 +875,7 @@ describe ResultsController do
         delete_as student,
                   :cancel_remark_request,
                   params: { course_id: assignment.course_id,
-                            id: submission.remark_result.id,
-                            submission_id: submission.id }
+                            id: submission.remark_result.id }
       end
 
       before { subject }
@@ -788,6 +908,141 @@ describe ResultsController do
     end
     include_examples 'shared ta and instructor tests'
     include_examples 'showing json data', false
+
+    describe '#refresh_view_tokens' do
+      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:results) { assignment.current_results }
+      let(:ids) { results.ids }
+      subject do
+        put :refresh_view_tokens,
+            params: { course_id: assignment.course.id, assignment_id: assignment.id, result_ids: ids }
+      end
+      it { is_expected.to have_http_status(:success) }
+      it 'should regenerate view tokens for all results' do
+        view_tokens = results.pluck(:id, :view_token)
+        subject
+        new_view_tokens = results.pluck(:id, :view_token)
+        expect((view_tokens | new_view_tokens).size).to eq 6
+      end
+      it 'should return a json containing the new tokens' do
+        subject
+        expect(JSON.parse(response.body)).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
+      end
+      context 'some result ids are not associated with the assignment' do
+        let(:extra_result) { create :complete_result }
+        let(:ids) { results.ids + [extra_result.id] }
+        it { is_expected.to have_http_status(:success) }
+        it 'should regenerate view tokens for all results for the assignment' do
+          view_tokens = results.pluck(:id, :view_token)
+          subject
+          new_view_tokens = results.pluck(:id, :view_token)
+          expect((view_tokens | new_view_tokens).size).to eq 6
+        end
+        it 'should not regenerate view tokens for the extra result' do
+          old_token = extra_result.view_token
+          subject
+          expect(old_token).to eq extra_result.reload.view_token
+        end
+        it 'should return a json containing the new tokens for the assignment (not the extra one)' do
+          subject
+          expect(JSON.parse(response.body)).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
+        end
+      end
+    end
+    describe '#update_view_token_expiry' do
+      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:results) { assignment.current_results }
+      let(:ids) { results.ids }
+      let(:expiry_datetime) { 1.hour.from_now }
+      before { results.update_all view_token_expiry: 1.day.ago }
+      subject do
+        put :update_view_token_expiry,
+            params: { course_id: assignment.course.id, assignment_id: assignment.id,
+                      result_ids: ids, expiry_datetime: expiry_datetime }
+      end
+      it { is_expected.to have_http_status(:success) }
+      it 'should update the expiry for all results' do
+        subject
+        results.pluck(:view_token_expiry).each { |d| expect(d).to be_within(1.second).of(expiry_datetime) }
+      end
+      it 'should return a json containing the new dates' do
+        subject
+        data = JSON.parse(response.body)
+        results.pluck(:id, :view_token_expiry).each do |id, date|
+          expect(Time.zone.parse(data[id.to_s])).to be_within(1.second).of(date)
+        end
+      end
+      context 'when the expiry_datetime is nil' do
+        let(:expiry_datetime) { nil }
+        it 'should remove the expiry date' do
+          subject
+          expect(results.pluck(:view_token_expiry)).to eq([expiry_datetime] * results.count)
+        end
+      end
+      context 'some result ids are not associated with the assignment' do
+        let(:extra_result) { create :complete_result }
+        let(:ids) { results.ids + [extra_result.id] }
+        it { is_expected.to have_http_status(:success) }
+        it 'should set the expiry date for all results for the assignment' do
+          subject
+          results.pluck(:view_token_expiry).each { |d| expect(d).to be_within(1.second).of(expiry_datetime) }
+        end
+        it 'should not set the expiry date for the extra result' do
+          old_date = extra_result.view_token_expiry
+          subject
+          expect(old_date).to eq extra_result.reload.view_token_expiry
+        end
+        it 'should return a json containing the new tokens for the assignment (not the extra one)' do
+          subject
+          data = JSON.parse(response.body)
+          results.pluck(:id, :view_token_expiry).each do |id, date|
+            expect(Time.zone.parse(data[id.to_s])).to be_within(1.second).of(date)
+          end
+        end
+      end
+    end
+    describe '#download_view_tokens' do
+      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:results) { assignment.current_results }
+      let(:ids) { results.ids }
+      before { results.update_all view_token_expiry: 1.day.ago }
+      subject do
+        put :download_view_tokens,
+            params: { course_id: assignment.course.id, assignment_id: assignment.id, result_ids: ids }
+      end
+      it { is_expected.to have_http_status(:success) }
+      it 'should return a csv with a header and a row for all results' do
+        expect(subject.body.split("\n").count).to eq(1 + results.count)
+      end
+      shared_examples 'csv contains the right stuff' do
+        it 'should return the correct info for all results' do
+          data = subject.body.lines
+          data.shift # skip header
+          data.each do |row|
+            group_name, user_name, first_name, last_name, email, id_number,
+              view_token, view_token_expiry, url = row.chomp.split(',')
+            result = results.find_by(view_token: view_token)
+            expect(group_name).to eq result.grouping.group.group_name
+            expect(url).to eq view_marks_course_result_url(result.course.id, result.id, view_token: view_token)
+            expect(Time.zone.parse(view_token_expiry)).to be_within(1.second).of(result.view_token_expiry)
+            user_info = result.grouping.accepted_student_memberships.joins(role: :user).pluck('users.user_name',
+                                                                                              'users.first_name',
+                                                                                              'users.last_name',
+                                                                                              'users.email',
+                                                                                              'users.id_number')
+            user_info = user_info.map { |info| info.map { |a| a || '' } }
+            expect(user_info).to include([user_name, first_name, last_name, email, id_number])
+          end
+        end
+      end
+      it_behaves_like 'csv contains the right stuff'
+      context 'some result ids are not associated with the assignment' do
+        let(:extra_result) { create :complete_result }
+        let(:ids) { results.ids + [extra_result.id] }
+        it { is_expected.to have_http_status(:success) }
+        it_behaves_like 'csv contains the right stuff'
+      end
+    end
 
     describe '#delete_grace_period_deduction' do
       it 'deletes an existing grace period deduction' do

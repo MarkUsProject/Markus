@@ -21,7 +21,8 @@
 - Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
 - Fix bug where remark request summary table wasn't being rendered correctly (#6284)
 - Fix bug where test results were being associated with the wrong test runs (#6287)
-- Filter out invalid properties on assignment upload (#6224)
+- Allow results to be made available only through unique tokens (#6244)
+- Fix bug where assignments could not be uploaded with unexpected properties in file upload content (#6224)
 
 ## [v2.1.4]
 - Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
@@ -36,7 +37,6 @@
 - Fix bug where empty groups are hidden by default (#6222)
 - Fix bug where test run table did not re-render when switching results (#6223)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
->>>>>>> master
 
 ## [v2.1.1]
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)

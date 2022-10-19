@@ -169,7 +169,7 @@ module RandomAssignHelper
     end.to_h
 
     now = Time.current
-    results = Result.insert_all(
+    results = Result.create(
       @reviewees.map do |reviewee_id|
         { submission_id: submission_map[reviewee_id],
           marking_state: Result::MARKING_STATES[:incomplete],
@@ -181,7 +181,7 @@ module RandomAssignHelper
       Mark.insert_all(
         results.flat_map do |result|
           assignment_criteria.map do |criterion|
-            { result_id: result['id'],
+            { result_id: result.id,
               criterion_id: criterion.id,
               created_at: now,
               updated_at: now }
@@ -193,13 +193,13 @@ module RandomAssignHelper
     # Peer reviews require IDs to have been made, so they come last.
     pr_ids = PeerReview.insert_all(
       results.zip(@reviewers).map do |result, reviewer_id|
-        { reviewer_id: reviewer_id, result_id: result['id'], created_at: now, updated_at: now }
+        { reviewer_id: reviewer_id, result_id: result.id, created_at: now, updated_at: now }
       end
     )
 
     Result.upsert_all(
       results.zip(pr_ids).map do |result, pr_id|
-        { id: result['id'], peer_review_id: pr_id['id'] }
+        { id: result.id, peer_review_id: pr_id['id'], view_token: result.view_token }
       end
     )
   end
