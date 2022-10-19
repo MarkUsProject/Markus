@@ -3,7 +3,7 @@ describe AutotestSpecsJob do
   let(:assignment) { create :assignment }
   let(:dummy_return) { OpenStruct.new(body: { 'settings_id' => 43 }.to_json) }
   context 'when running as a background job' do
-    let(:job_args) { [host_with_port, assignment] }
+    let(:job_args) { [host_with_port, assignment, {}] }
     include_examples 'background job'
   end
 
@@ -45,7 +45,7 @@ describe AutotestSpecsJob do
     end
 
     describe '#perform' do
-      subject { described_class.perform_now(host_with_port, assignment) }
+      subject { described_class.perform_now(host_with_port, assignment, {}) }
       before do
         allow(File).to receive(:read).and_return("123456789\n")
       end

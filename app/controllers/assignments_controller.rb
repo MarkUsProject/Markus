@@ -630,7 +630,7 @@ class AssignmentsController < ApplicationController
     rescue JSON::ParserError
       raise I18n.t('automated_tests.invalid_specs_file')
     else
-      assignment.update!(autotest_settings: spec_data) unless spec_data.empty?
+      update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
       test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
       zip_file.glob(test_file_glob_pattern) do |entry|
         zip_file_path = Pathname.new(entry.name)
