@@ -116,4 +116,36 @@ describe Submission do
       expect(s.remark_result.marking_state).to eq Result::MARKING_STATES[:incomplete]
     end
   end
+
+  describe '#get_visible_result' do
+    let(:submission) { create :submission }
+    let(:released_result) { create :released_result, submission: submission }
+    let(:remark_result) { create :remark_result, submission: submission }
+    let(:released_remark_result) { create :remark_result, submission: submission, released_to_students: true }
+    context 'when the remark result is released' do
+      before do
+        released_remark_result
+      end
+      it 'should return the remark result' do
+        expect(submission.get_visible_result).to eq released_remark_result
+      end
+    end
+    context 'when the original result is released' do
+      before do
+        released_result
+        remark_result
+      end
+      it 'should return the original result' do
+        expect(submission.get_visible_result).to eq released_result
+      end
+    end
+    context 'when the original result is not released' do
+      before do
+        remark_result
+      end
+      it 'should return the original result' do
+        expect(submission.get_visible_result).to eq submission.get_original_result
+      end
+    end
+  end
 end

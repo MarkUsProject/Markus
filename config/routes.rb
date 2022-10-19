@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resources :courses, only: [:index, :show, :create, :update] do
       member do
         put 'update_autotest_url'
+        get 'test_autotest_connection'
+        put 'reset_autotest_connection'
       end
       resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
@@ -89,7 +91,12 @@ Rails.application.routes.draw do
         post 'upload'
       end
     end
-    resources :courses, only: [:index, :new, :create, :edit, :update]
+    resources :courses, only: [:index, :new, :create, :edit, :update] do
+      member do
+        get 'test_autotest_connection'
+        put 'reset_autotest_connection'
+      end
+    end
     get '/', controller: 'main_admin', action: 'index'
 
     mount Resque::Server.new, at: '/resque', as: 'resque'
@@ -153,12 +160,6 @@ Rails.application.routes.draw do
         get 'collect_and_begin_grading'
         get 'get_file'
       end
-
-      resources :results, only: [:edit] do
-        collection do
-          patch 'update_remark_request'
-        end
-      end
     end
 
     resources :results, only: [:show, :edit] do
@@ -186,6 +187,8 @@ Rails.application.routes.draw do
         get 'stop_test'
         get 'get_test_runs_instructors'
         get 'get_test_runs_instructors_released'
+        get 'view_token_check'
+        patch 'update_remark_request'
       end
     end
 
@@ -357,6 +360,14 @@ Rails.application.routes.draw do
           get 'find_annotation_text'
           get 'annotation_text_uses'
           get 'uncategorized_annotations'
+        end
+      end
+
+      resources :results, only: [] do
+        collection do
+          put 'refresh_view_tokens'
+          put 'update_view_token_expiry'
+          get 'download_view_tokens'
         end
       end
     end
