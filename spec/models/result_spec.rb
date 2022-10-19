@@ -6,7 +6,6 @@ describe Result do
     it { is_expected.to have_many(:annotations) }
     it { is_expected.to validate_presence_of(:marking_state) }
     it { is_expected.to validate_inclusion_of(:marking_state).in_array(%w[complete incomplete]) }
-    it { is_expected.to validate_numericality_of(:total_mark).is_greater_than_or_equal_to(0) }
     it { is_expected.to callback(:create_marks).after(:create) }
     it { is_expected.to callback(:check_for_released).before(:update) }
     it { is_expected.to callback(:check_for_nil_marks).before(:save) }
@@ -62,25 +61,6 @@ describe Result do
 
   shared_context 'get subtotals context' do
     let!(:assignment) { create :assignment_with_criteria_and_results }
-  end
-  describe '#update_total_mark' do
-    let(:result) { create :incomplete_result }
-    it 'should update the total mark' do
-      old_total = result.total_mark
-      allow(result).to receive(:get_total_mark).and_return(old_total - 1)
-      expect { result.update_total_mark }.to change { result.total_mark }.by(-1)
-    end
-  end
-  describe '.update_total_marks' do
-    include_context 'get subtotals context'
-    it 'should update all total_marks' do
-      ids = Result.ids
-      changes = ids.index_with { |id| Result.find(id).total_mark - 1 }
-      allow(Result).to receive(:get_total_marks).and_return(changes)
-      expect { Result.update_total_marks(ids) }.to(
-        change { Result.pluck(:total_mark) }.to(contain_exactly(*changes.values))
-      )
-    end
   end
   shared_context 'get subtotal context' do
     let(:result) { create :incomplete_result }

@@ -165,7 +165,7 @@ describe GradeEntryFormsController do
 
       # Check that the total column is the actual total and not the incorrect total given in the file
       expect(@student.grades.first.grade).to eq 22
-      expect(@student.reload.total_grade).to eq 22
+      expect(@student.reload.get_total_grade).to eq 22
     end
   end
 

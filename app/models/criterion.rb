@@ -5,7 +5,6 @@ class Criterion < ApplicationRecord
   before_validation :update_assigned_groups_count
   after_create :update_result_marking_states
   after_update :update_results_with_change
-  after_destroy :update_results
 
   has_one :course, through: :assignment
 
@@ -157,14 +156,6 @@ class Criterion < ApplicationRecord
     unless updated_marks.empty?
       Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
     end
-    updated_results = results.map do |result|
-      [result.id, result.get_total_mark]
-    end.to_h
-    unless updated_results.empty?
-      Result.upsert_all(
-        results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
-      )
-    end
   end
 
   def results_unreleased?
@@ -227,11 +218,6 @@ class Criterion < ApplicationRecord
       errors.add(:base, I18n.t('activerecord.errors.models.criterion.visibility_error'))
       false
     end
-  end
-
-  def update_results
-    result_ids = Result.includes(submission: :grouping).where(groupings: { assessment_id: assessment_id }).ids
-    Result.update_total_marks(result_ids)
   end
 
   def update_result_marking_states

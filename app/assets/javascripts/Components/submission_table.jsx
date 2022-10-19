@@ -175,7 +175,7 @@ class RawSubmissionTable extends React.Component {
     },
     markingStateColumn(this.state.marking_states, this.state.markingStateFilter, {minWidth: 70}),
     {
-      Header: I18n.t("activerecord.attributes.result.total_mark"),
+      Header: I18n.t("results.total_mark"),
       accessor: "final_grade",
       Cell: row => {
         const value =

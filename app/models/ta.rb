@@ -20,7 +20,7 @@ class Ta < Role
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(result, out_of)
-    total = result.total_mark
+    total = result.get_total_mark
 
     percent = BLANK_MARK
 
@@ -65,7 +65,7 @@ class Ta < Role
       out_of = assignment.max_mark
       groupings.includes(:current_result).find_each do |grouping|
         result = grouping.current_result
-        unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
+        unless result.nil? || result.get_total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
           percent = calculate_total_percent(result, out_of)
           unless percent == BLANK_MARK
             grades << percent

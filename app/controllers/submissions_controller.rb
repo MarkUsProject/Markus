@@ -531,7 +531,7 @@ class SubmissionsController < ApplicationController
       submission_time: t('submissions.commit_date'),
       grace_credits_used: t('submissions.grace_credits_used'),
       marking_state: t('activerecord.attributes.result.marking_state'),
-      final_grade: t('activerecord.attributes.result.total_mark'),
+      final_grade: t('results.total_mark'),
       tags: t('activerecord.models.tag.other')
     }
     header.delete(:start_time) unless assignment.is_timed

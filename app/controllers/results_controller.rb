@@ -633,7 +633,6 @@ class ResultsController < ApplicationController
     @extra_mark = @result.extra_marks.build(extra_mark_params.merge(unit: ExtraMark::POINTS))
     if @extra_mark.save
       # need to re-calculate total mark
-      @result.update_total_mark
       head :ok
     else
       head :bad_request
@@ -645,7 +644,6 @@ class ResultsController < ApplicationController
     extra_mark = result.extra_marks.find(params[:extra_mark_id])
 
     extra_mark.destroy
-    result.update_total_mark
     head :ok
   end
 

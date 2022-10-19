@@ -294,10 +294,8 @@ class Assignment < Assessment
   def completed_result_marks
     return @completed_result_marks if defined? @completed_result_marks
 
-    @completed_result_marks = self.current_results
-                                  .where(marking_state: Result::MARKING_STATES[:complete])
-                                  .order(:total_mark)
-                                  .pluck(:total_mark)
+    completed_result_ids = self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).ids
+    @completed_result_marks = Result.get_total_marks(completed_result_ids).values.sort
   end
 
   def all_grouping_data
@@ -690,7 +688,7 @@ class Assignment < Assessment
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
-      [Result.human_attribute_name(:total_mark)]
+      [I18n.t('results.total_mark')]
 
     second_row = [' '] * Student::CSV_ORDER.length + [Assessment.human_attribute_name(:max_mark), self.max_mark]
 
@@ -704,6 +702,7 @@ class Assignment < Assessment
     headers[1] << ''
 
     result_ids = groupings.pluck('results.id').uniq.compact
+    total_marks_hash = Result.get_total_marks(result_ids)
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
     CSV.generate do |csv|
       csv << headers[0]
@@ -718,9 +717,9 @@ class Assignment < Assessment
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
-            row << result.total_mark
+            row << total_marks_hash[result.id]
             row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
-            row << extra_marks_hash[result&.id]
+            row << extra_marks_hash[result.id]
           end
           csv << row
         end
@@ -1100,7 +1099,6 @@ class Assignment < Assessment
                   .pluck_to_hash('groupings.id',
                                  'results.id',
                                  'results.marking_state',
-                                 'results.total_mark',
                                  'results.released_to_students',
                                  'results.view_token',
                                  'results.view_token_expiry')

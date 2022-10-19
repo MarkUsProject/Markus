@@ -819,7 +819,6 @@ CREATE TABLE public.grade_entry_students (
     released_to_student boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    total_grade double precision,
     assessment_id bigint,
     role_id bigint NOT NULL
 );
@@ -1574,7 +1573,6 @@ CREATE TABLE public.results (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     released_to_students boolean DEFAULT false NOT NULL,
-    total_mark double precision DEFAULT 0.0,
     remark_request_submitted_at timestamp without time zone,
     peer_review_id integer,
     view_token character varying NOT NULL,
@@ -2142,7 +2140,8 @@ CREATE TABLE public.test_groups (
     updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     autotest_settings json DEFAULT '{}'::json NOT NULL,
-    "position" integer NOT NULL
+    "position" integer NOT NULL,
+    tester_index integer
 );
 
 
@@ -4698,4 +4697,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220825171354'),
 ('20220826132206'),
 ('20220922131809'),
-('20221111182002');
+('20221019191315'),
+('20221111182002'),
+('20221114170146');

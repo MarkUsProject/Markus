@@ -347,7 +347,7 @@ shared_examples 'a criterion' do
       removed_value = mark.mark
       previous_total = mark.mark + other_mark.mark
       criterion2.destroy
-      expect(result.reload.total_mark).to eq previous_total - removed_value
+      expect(result.reload.get_total_mark).to eq previous_total - removed_value
     end
 
     it 'result total marks get updated to reflect the loss of the marks when marking state complete' do
@@ -355,7 +355,7 @@ shared_examples 'a criterion' do
       previous_total = mark.mark + other_mark.mark
       result.update(marking_state: Result::MARKING_STATES[:complete])
       criterion2.destroy
-      expect(result.reload.total_mark).to eq previous_total - removed_value
+      expect(result.reload.get_total_mark).to eq previous_total - removed_value
     end
 
     context 'when there is a percentage extra mark for the result' do
@@ -366,7 +366,7 @@ shared_examples 'a criterion' do
         new_subtotal = previous_total - removed_value
         new_total = new_subtotal + (criterion.max_mark * 0.1)
         criterion2.destroy
-        expect(result.reload.total_mark).to eq new_total
+        expect(result.reload.get_total_mark).to eq new_total
       end
     end
   end
@@ -380,7 +380,6 @@ shared_examples 'a criterion' do
       assignment.groupings.each_with_index do |grouping, index|
         result = grouping.current_result
         result.marks.create(criterion: criterion, mark: grades[index])
-        result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end
     end
