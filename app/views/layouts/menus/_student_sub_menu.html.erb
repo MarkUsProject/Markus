@@ -29,7 +29,8 @@
     <% end %>
 
     <% if !@assignment.nil? &&
-      @current_role.has_accepted_grouping_for?(@assignment) %>
+      @current_role.has_accepted_grouping_for?(@assignment) &&
+      allowed_to?(:see_hidden?, @assignment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name != 'peer_review' %>'>
         <%= link_to Assignment.model_name.human.pluralize,
                     course_assignment_path(@current_course, @assignment) %>
@@ -53,13 +54,27 @@
       <% end %>
 
       <% @submission = @grouping.nil? ? nil : @grouping.current_submission_used %>
-      <% @result = @submission.nil? ? nil : @submission.get_original_result %>
+      <% @result = @submission.nil? ? nil : @submission.get_visible_result %>
       <% if !@grouping.nil? && !@submission.nil? && !@result.nil? %>
-        <li class='<%= "active" if controller.controller_name == 'results' &&
-          !@result.is_a_review? %>'>
-          <%= link_to Result.model_name.human.pluralize,
-                      view_marks_course_result_path(@current_course, @result) %>
-        </li>
+        <% active = controller.controller_name == 'results' && !@result.is_a_review? %>
+        <% if allowed_to?(:view?, @result, context: {view_token: session["view_token"]&.[](@result&.id&.to_s)}) %>
+          <!-- check if a token not required or if the current user has entered the token already this session -->
+          <li class='<%= "active" if active %>'>
+            <%= link_to Result.model_name.human.pluralize,
+                        view_marks_course_result_path(@current_course, @result) %>
+          </li>
+        <% elsif allowed_to? :view_token_check?, @result %>
+          <li class='<%= "active" if active %>'>
+            <%= link_to Result.model_name.human.pluralize, '#', id: "submit-view-token" %>
+          </li>
+          <%= javascript_tag nonce: true do %>
+            <%= render partial: 'shared/submit_view_token_modal',
+                       formats: :js,
+                       locals: { result: @result,
+                                 modal_id: "submit-view-token-modal",
+                                 opener_id: "submit-view-token" } %>
+          <% end %>
+        <% end %>
       <% end %>
 
       <% if @assignment.has_peer_review_assignment? && allowed_to?(:see_hidden?, @assignment.pr_assignment) %>
