@@ -851,7 +851,8 @@ class AssignmentsController < ApplicationController
         :section_due_dates_type,
         :scanned_exam,
         :is_timed,
-        :start_time
+        :start_time,
+        :release_with_urls
       ],
       assessment_section_properties_attributes: [
         :_destroy,

@@ -1086,7 +1086,9 @@ class Assignment < Assessment
                                  'results.id',
                                  'results.marking_state',
                                  'results.total_mark',
-                                 'results.released_to_students')
+                                 'results.released_to_students',
+                                 'results.view_token',
+                                 'results.view_token_expiry')
                   .group_by { |h| h['groupings.id'] }
 
     if current_role.ta? && anonymize_groups
@@ -1157,6 +1159,11 @@ class Assignment < Assessment
         extra_mark = extra_marks_hash[result_info['results.id']] || 0
         base[:result_id] = result_info['results.id']
         base[:final_grade] = [0, (total_marks[result_info['results.id']] || 0.0) + extra_mark].max
+        if self.release_with_urls
+          base[:result_view_token] = result_info['results.view_token']
+          token_expiry = result_info['results.view_token_expiry']
+          base[:result_view_token_expiry] = token_expiry.nil? ? nil : I18n.l(token_expiry.in_time_zone)
+        end
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?

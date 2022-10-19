@@ -70,10 +70,12 @@ en:
     set_to_complete: Set to Complete
     set_to_incomplete: Set to Incomplete
     submission_info: Submission Info
+    submit_token: Submit Token
     subtotal: Subtotal
     summary: Summary
     total_extra_marks: Total Extra Marks
     view_group_repo: View group repository
+    view_token_submit: Please enter the unique token provided by your instructor to view the results for this assignment.
     your_mark: Your Mark
     zoom_in_image: Zoom in
     zoom_out_image: Zoom out

@@ -164,7 +164,6 @@ export class LeftPane extends React.Component {
           <div id="remark_request_tab">
             <RemarkPanel
               result_id={this.props.result_id}
-              submission_id={this.props.submission_id}
               assignment_id={this.props.assignment_id}
               assignmentRemarkMessage={this.props.assignment_remark_message}
               updateOverallComment={this.props.update_overall_comment}

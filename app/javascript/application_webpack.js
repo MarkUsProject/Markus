@@ -130,3 +130,5 @@ import {makeAdminUsersList} from "javascripts/Components/admin_users_list";
 window.makeAdminUsersList = makeAdminUsersList;
 import {makeCourseList} from "javascripts/Components/course_list";
 window.makeCourseList = makeCourseList;
+import {makeSubmitViewTokenModal} from "javascripts/Components/Modals/submit_view_token_modal";
+window.makeSubmitViewTokenModal = makeSubmitViewTokenModal;

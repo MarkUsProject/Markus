@@ -1,19 +1,32 @@
 # Result policy class
 class ResultPolicy < ApplicationPolicy
   default_rule :manage?
-  alias_rule :update_remark_request?, :cancel_remark_request?, :get_test_runs_instructors_released?, to: :student?
+  alias_rule :update_remark_request?, :cancel_remark_request?, :get_test_runs_instructors_released?, to: :view_marks?
   alias_rule :create?, :add_extra_mark?, :remove_extra_mark?, :get_test_runs_instructors?,
              :add_tag?, :remove_tag?, :revert_to_automatic_deductions?, to: :grade?
-  alias_rule :show?, :view_marks?, :get_annotations?, :show?, to: :view?
+  alias_rule :show?, :get_annotations?, to: :view?
   alias_rule :download_zip?, to: :download?
   alias_rule :edit?, :update_mark?, :toggle_marking_state?, :update_overall_comment?, :next_grouping?, to: :review?
+  alias_rule :refresh_view_tokens?, :update_view_token_expiry?, to: :set_released_to_students?
 
-  authorize :from_codeviewer, :select_file, optional: true
+  authorize :from_codeviewer, :select_file, :view_token, optional: true
 
   def view?
     check?(:manage_submissions?, role) ||
       check?(:assigned_grader?, record.grouping) ||
-      check?(:member?, record.submission.grouping)
+      (!record.grouping.assignment.release_with_urls && check?(:member?, record.submission.grouping)) ||
+      check?(:view_with_result_token?)
+  end
+
+  def view_marks?
+    check?(:member?, record.submission.grouping) &&
+      (!record.grouping.assignment.release_with_urls || check?(:view_with_result_token?))
+  end
+
+  def view_token_check?
+    check?(:member?, record.submission.grouping) &&
+      record.grouping.assignment.release_with_urls &&
+      !record.view_token_expired?
   end
 
   def run_tests?
@@ -53,5 +66,10 @@ class ResultPolicy < ApplicationPolicy
         select_file.nil? || select_file.submission == record.submission
       )
     )
+  end
+
+  # This is a separate policy function because it reports a specific error message on failure
+  def view_with_result_token?
+    check?(:member?, record.submission.grouping) && record.view_token == view_token && !record.view_token_expired?
   end
 end

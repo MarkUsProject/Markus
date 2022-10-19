@@ -14,6 +14,7 @@
 - Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
 - Fix bug where remark request summary table wasn't being rendered correctly (#6284)
 - Fix bug where test results were being associated with the wrong test runs (#6287)
+- Allow results to be made available only through unique tokens (#6244)
 
 ## [v2.1.4]
 - Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
