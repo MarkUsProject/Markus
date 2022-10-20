@@ -593,71 +593,55 @@ class Assignment < Assessment
       numMarked: self.get_num_marked(user.instructor? ? nil : user.id) }
   end
 
-  # Generates the summary of the most test results associated with an assignment.
+  # Generates the summary of the most recent test results associated with an assignment.
   def summary_test_results
-    test_groups_query = self.test_groups
-                            .joins(test_group_results: { test_run: :grouping })
-                            .group('test_groups.id', 'groupings.id')
-                            .select('test_groups.id AS test_groups_id',
-                                    'MAX(test_group_results.created_at) AS test_group_results_created_at')
-                            .where.not('test_runs.submission_id': nil)
-                            .to_sql
+    maximums = self.test_groups
+                   .joins(test_group_results: { test_run: :grouping })
+                   .where.not('test_runs.submission_id': nil)
+                   .group('test_groups.id', 'groupings.id')
+                   .maximum('test_group_results.created_at')
+                   .values
+
+    test_run_ids = self.groupings
+                       .joins(test_runs: [:test_group_results, :grouping])
+                       .where('test_group_results.created_at': maximums)
+                       .group('groupings.id')
+                       .maximum('test_runs.id')
+                       .values
 
     self.test_groups
         .joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
-        .joins("INNER JOIN (#{test_groups_query}) sub \
-                ON test_groups.id = sub.test_groups_id \
-                AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
-        .select('test_groups.name',
-                'test_groups_id',
-                'groups.group_name',
-                'test_results.name as test_result_name',
-                'test_results.status',
-                'test_results.marks_earned',
-                'test_results.marks_total',
-                :output, :extra_info, :error_type)
+        .where('test_runs.id': test_run_ids)
+        .pluck_to_hash('groups.group_name as group_name',
+                       'test_groups.name as test_group_name',
+                       'test_results.name as test_result_name',
+                       'test_results.status as test_result_status',
+                       'test_results.marks_earned as marks_earned',
+                       'test_results.marks_total as marks_total',
+                       :output,
+                       :extra_info,
+                       :error_type)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
   def summary_test_result_json
-    self.summary_test_results.group_by(&:group_name).transform_values do |grouping|
-      grouping.group_by(&:name)
+    self.summary_test_results.group_by { |h| h['group_name'] }.transform_values do |gr|
+      gr.group_by { |h| h['test_group_name'] }.transform_values do |tgs|
+        tgs.map do |tg|
+          tg.except('group_name', 'test_group_name')
+        end
+      end
     end.to_json
   end
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
-    results = {}
-    headers = SortedSet.new
-    summary_test_results = self.summary_test_results.as_json
+    results = self.summary_test_results
+    return '' if results.empty?
 
-    summary_test_results.each do |test_result|
-      header = "#{test_result['name']}:#{test_result['test_result_name']}"
-
-      if results.key?(test_result['group_name'])
-        results[test_result['group_name']][header] = test_result['status']
-      else
-        results[test_result['group_name']] = { header => test_result['status'] }
-      end
-
-      headers << header
-    end
-
-    CSV.generate do |csv|
-      csv << [nil, *headers]
-
-      results.sort_by(&:first).each do |group_name, _test_group|
-        row = [group_name]
-
-        headers.each do |header|
-          if results[group_name].key?(header)
-            row << results[group_name][header]
-          else
-            row << nil
-          end
-        end
-        csv << row
-      end
+    headers = results.first.keys
+    MarkusCsv.generate(results, [headers]) do |result|
+      headers.map { |h| result[h] }
     end
   end
 

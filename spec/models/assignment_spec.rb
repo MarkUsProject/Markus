@@ -1975,36 +1975,19 @@ describe Assignment do
     context 'an assignment with test results' do
       let(:assignment) { create :assignment_with_criteria_and_test_results }
 
-      it 'has the correct group and test names' do
-        summary_test_results = JSON.parse(assignment.summary_test_result_json)
-        summary_test_results.map do |group_name, group|
-          group.map do |test_group_name, test_group|
-            test_group.each do |test_result|
-              expect(test_result.fetch('name')).to eq test_group_name
-              expect(test_result.fetch('group_name')).to eq group_name
-              expect(test_result.key?('status')).to eq true
-            end
-          end
-        end
-      end
-
       it 'has the correct test result keys' do
         summary_test_results = JSON.parse(assignment.summary_test_result_json)
         expected_keys = %w[marks_earned
                            marks_total
                            output
-                           name
                            test_result_name
-                           test_groups_id
-                           group_name
-                           status
+                           test_result_status
                            extra_info
-                           error_type
-                           id]
+                           error_type]
         summary_test_results.map do |_, group|
           group.map do |_, test_group|
             test_group.each do |test_result|
-              expect(test_result.keys).to match_array expected_keys
+              expect(test_result.keys).to contain_exactly(*expected_keys)
             end
           end
         end

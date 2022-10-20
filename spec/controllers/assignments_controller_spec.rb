@@ -124,12 +124,10 @@ describe AssignmentsController do
       body = response.parsed_body
 
       # We want to ensure that the test result's group name, test name and status exists
-      body.map do |group_name, group|
-        group.map do |test_group_name, test_group|
+      body.values.map do |group|
+        group.values.map do |test_group|
           test_group.each do |test_result|
-            expect(test_result.fetch('name')).to eq test_group_name
-            expect(test_result.fetch('group_name')).to eq group_name
-            expect(test_result.key?('status')).to eq true
+            expect(test_result.key?('test_result_status')).to eq true
           end
         end
       end
@@ -168,58 +166,26 @@ describe AssignmentsController do
       test_results = CSV.parse(response.body, headers: true)
 
       expect(test_results.to_a.size).to eq 4
-      expect(test_results.headers.length).to eq 10
+      expect(test_results.headers.length).to eq 9
     end
 
     it 'returns the correct csv headers' do
       get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true)
-
-      assignment_results = assignment.summary_test_results
-
-      headers = SortedSet.new(test_results.headers)
-      assignment_results.each do |result|
-        expect(headers.include?("#{result['name']}:#{result['test_result_name']}")).to eq true
-      end
+      expect(test_results.headers).to contain_exactly(*assignment.summary_test_results.first.keys)
     end
 
     it 'returns the correct csv headers in the correct order' do
       get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true)
 
-      headers = test_results.headers.drop(1)
-      sorted_headers = SortedSet.new(headers)
-      sorted_headers.each_with_index do |header, i|
-        expect(header).to eq headers[i]
-      end
+      expect(test_results.headers).to match_array assignment.summary_test_results.first.keys
     end
 
     it 'returns the correct amount of passed tests per group' do
       get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
-      test_results = CSV.parse(response.body, headers: true).to_a.drop(1)
-      test_results.to_a.each do |row|
-        count = 0
-        row.each do |cell|
-          if cell == 'pass'
-            count += 1
-          end
-        end
-        expect(count).to eq 3
-      end
-    end
-
-    context 'most recent test results with static names' do
-      let(:assignment) { create(:static_assignment_with_criteria_and_test_results) }
-
-      it 'returns the correct tests passed per group' do
-        get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
-
-        test_results = CSV.parse(response.body, headers: true)
-        test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
-        test_results_static = CSV.parse(test_results_fixture, headers: true)
-
-        expect(test_results).to match_array test_results_static
-      end
+      test_results = CSV.parse(response.body, headers: true)
+      expect(test_results.map { |r| r['test_result_status'] }.count('pass')).to eq 3
     end
   end
 
