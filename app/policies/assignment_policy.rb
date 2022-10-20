@@ -36,8 +36,8 @@ class AssignmentPolicy < ApplicationPolicy
     record.enable_test
   end
 
-  def test_groups_exist?
-    record.test_groups.exists?
+  def tests_set_up?
+    !record.remote_autotest_settings_id.nil?
   end
 
   def tokens_released?

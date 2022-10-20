@@ -27,7 +27,7 @@ en:
         student_tests_enabled?: Student tests are not enabled.
         students_form_groups?: This assignment does not allow students to form their own groups.
         switch_assignment?: You do not have permission to switch assignments.
-        test_groups_exist?: You cannot run tests because the test framework is not configured.
+        tests_set_up?: You cannot run tests because the test framework is not configured.
         tests_enabled?: Tests are not enabled for this assessment.
         tokens_released?: You cannot run tests because tokens are not available yet.
         view?: You are not allowed to view and manage assessments.

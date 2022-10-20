@@ -28,7 +28,7 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment.test_groups.build
+    flash_message(:warning, I18n.t('automated_tests.tests_run')) if @assignment.groupings.joins(:test_runs).exists?
     render layout: 'assignment_content'
   end
 

@@ -78,12 +78,6 @@ module AutomatedTestsHelper
       end
       tester_specs['test_data'] = current_test_group_ids
     end
-    # delete test groups that are not in the autotest specs
-    deleted_test_groups = assignment.test_groups
-    unless test_group_ids.empty?
-      deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
-    end
-    deleted_test_groups.destroy_all
 
     # Save test specs
     assignment.update!(autotest_settings: test_specs)
