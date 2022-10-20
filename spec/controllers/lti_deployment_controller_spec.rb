@@ -4,15 +4,6 @@ describe LtiDeploymentController do
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
   let(:host) { 'https://canvas.instructure.com' }
   let(:state) { 'state_param' }
-  describe 'get_config', :get_canvas_config do
-    it 'should respond with success when not logged in' do
-      is_expected.to respond_with(:success)
-    end
-    before { get_as instructor, :get_canvas_config }
-    it 'should respond with success when logged in' do
-      is_expected.to respond_with(:success)
-    end
-  end
   describe '#launch', :launch do
     context 'when launching with invalid parameters' do
       let(:lti_message_hint) { 'opaque string' }
@@ -157,17 +148,6 @@ describe LtiDeploymentController do
           expect(flash[:error]).not_to be_empty
         end
       end
-    end
-  end
-  describe '#check_host' do
-    it 'does not redirect to an error with a known host' do
-      get_as instructor, :get_canvas_config
-      is_expected.to respond_with(:success)
-    end
-    it 'does redirect to an error with an unknown host' do
-      @request.host = 'example.com'
-      get_as instructor, :get_canvas_config
-      expect(response).to render_template('shared/http_status')
     end
   end
   describe '#new_course' do

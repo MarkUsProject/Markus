@@ -3,52 +3,13 @@ class LtiDeploymentController < ApplicationController
   skip_forgery_protection except: [:choose_course]
 
   before_action :authenticate, :check_course_switch, :check_record,
-                except: [:get_canvas_config, :launch, :public_jwk, :redirect_login]
-  before_action(except: [:get_canvas_config, :launch, :public_jwk, :redirect_login]) { authorize! }
+                except: [:get_config, :launch, :public_jwk, :redirect_login]
+  before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
   before_action :check_host, except: [:choose_course]
 
-  def get_canvas_config
-    # See https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html
-    # for example configuration and descriptions of fields
-    config = {
-      title: I18n.t('markus'),
-      description: I18n.t('markus'),
-      oidc_initiation_url: lti_deployment_launch_url,
-      target_link_uri: lti_deployment_redirect_login_url,
-      scopes: ['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',
-               'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
-               'https://purl.imsglobal.org/spec/lti-ags/scope/score'],
-      extensions: [
-        {
-          domain: request.domain(3),
-          tool_id: I18n.t('markus'),
-          platform: 'canvas.instructure.com',
-          privacy_level: 'public', # Include user name information
-          settings: {
-            text: I18n.t('lti.launch'),
-            placements: [
-              {
-                text: I18n.t('lti.launch'),
-                placement: 'course_navigation',
-                canvas_icon_class: 'icon-lti',
-                default: 'disabled',
-                visibility: 'admins',
-                windowTarget: '_blank'
-              }
-            ]
-          }
-        }
-      ],
-      public_jwk_url: lti_deployment_public_jwk_url,
-      custom_fields: {
-        user_id: '$Canvas.user.id',
-        course_id: '$Canvas.course.id',
-        course_name: '$Canvas.course.name'
-      }
-    }
-
-    render json: config.to_json
-  end
+  # Default Canvas values to be overridden in each LMS controller
+  LMS_REDIRECT_ENDPOINT = '/api/lti/authorize_redirect'.freeze
+  JWK_ENDPOINT = '/api/lti/security/jwks'.freeze
 
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
@@ -74,7 +35,7 @@ class LtiDeploymentController < ApplicationController
     referrer = URI(request.referer)
 
     # TODO: generalize this to platforms other than canvas.
-    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}/api/lti/authorize_redirect")
+    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{LMS_REDIRECT_ENDPOINT}")
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
     req = Net::HTTP::Post.new(auth_request_uri)
@@ -112,15 +73,16 @@ class LtiDeploymentController < ApplicationController
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
       return
     end
-    unless decoded_token[0]['nonce'] == session[:nonce]
+    lti_params = decoded_token[0]
+    unless lti_params['nonce'] == session[:nonce]
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
       return
     end
-    session[:lti_course_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['course_id']
-    session[:lti_user_id] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/custom']['user_id']
-    session[:lti_course_name] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/context']['title']
-    session[:lti_course_label] = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/context']['label']
-    deployment_id = decoded_token[0]['https://purl.imsglobal.org/spec/lti/claim/deployment_id']
+    session[:lti_course_id] = lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id']
+    session[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['user_id']
+    session[:lti_course_name] = lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title']
+    session[:lti_course_label] = lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label']
+    deployment_id = lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]]
     lti_host = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}"
     lti_client = LtiClient.find_or_create_by(client_id: session[:client_id], host: lti_host)
     lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client, external_deployment_id: deployment_id)
@@ -128,13 +90,13 @@ class LtiDeploymentController < ApplicationController
                            lms_course_id: session[:lti_course_id])
     session[:lti_client_id] = lti_client.id
     session[:lti_deployment_id] = lti_deployment.id
-    if decoded_token[0].key?('https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice')
-      name_and_roles_endpoint = decoded_token[0]['https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice']['context_memberships_url']
+    if lti_params.key?(LtiDeployment::LTI_CLAIMS[:names_role])
+      name_and_roles_endpoint = lti_params[LtiDeployment::LTI_CLAIMS[:names_role]]['context_memberships_url']
       names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
       names_service.update!(url: name_and_roles_endpoint)
     end
-    if decoded_token[0].key?('https://purl.imsglobal.org/spec/lti-ags/claim/endpoint')
-      grades_endpoints = decoded_token[0]['https://purl.imsglobal.org/spec/lti-ags/claim/endpoint']
+    if lti_params.key?(LtiDeployment::LTI_CLAIMS[:ags_lineitem])
+      grades_endpoints = lti_params[LtiDeployment::LTI_CLAIMS[:ags_lineitem]]
       if grades_endpoints.key?('lineitems')
         lineitem_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'agslineitem')
         lineitem_service.update!(url: grades_endpoints['lineitems'])

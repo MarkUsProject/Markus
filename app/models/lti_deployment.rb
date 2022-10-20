@@ -4,11 +4,19 @@ class LtiDeployment < ApplicationRecord
   has_many :lti_services, dependent: :destroy
   has_many :lti_line_items, dependent: :destroy
   validates :external_deployment_id, uniqueness: { scope: :lti_client }
+  LTI_SCOPES = { names_role: 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',
+                 ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+                 score: 'https://purl.imsglobal.org/spec/lti-ags/scope/score' }.freeze
+  LTI_CLAIMS = { context: 'https://purl.imsglobal.org/spec/lti/claim/context',
+                 custom: 'https://purl.imsglobal.org/spec/lti/claim/custom',
+                 names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
+                 ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
+                 deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id' }.freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
   # with the learner role and creates roles and LTI IDs for each user.
   def get_students
-    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'])
+    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:names_role]])
     names_service = self.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
     membership_uri.query = URI.encode_www_form(role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner')
@@ -56,7 +64,7 @@ class LtiDeployment < ApplicationRecord
       resourceId: assessment.short_identifier,
       scoreMaximum: assessment.max_mark.to_f
     }
-    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'])
+    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:ags_lineitem]])
     lineitem_service = self.lti_services.find_by!(lti_deployment: self, service_type: 'agslineitem')
     lineitem_uri = URI(lineitem_service.url)
     line_item = self.lti_line_items.find_or_initialize_by(assessment: assessment)
@@ -76,7 +84,7 @@ class LtiDeployment < ApplicationRecord
   # Takes as input an assessment. Sends all *released* marks to
   # the LMS associated with the assignment and the current deployment
   def create_grades(assessment)
-    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/score'])
+    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:score]])
     line_item = self.lti_line_items.find_by!(assessment: assessment)
     score_uri = URI("#{line_item.lti_line_item_id}/scores")
     req = Net::HTTP::Post.new(score_uri)
