@@ -60,7 +60,8 @@ class GradeEntryForm < Assessment
     out_of = self.max_mark
 
     # Check for NA mark f or division by 0
-    unless grade_entry_student&.get_total_grade.nil? || out_of == 0
+    ges_total_grade = grade_entry_student&.get_total_grade
+    unless ges_total_grade.nil? || out_of == 0
       return (ges_total_grade / out_of) * 100
     end
 
