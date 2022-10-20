@@ -39,7 +39,6 @@ en:
     stop_batch: Stop batch
     stop_test: Stop test
     student_tests: Student-Run Tests
-    tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     test_runs_status: Test Runs Status
     test_runs_statuses:
       cancelled: cancelled
@@ -47,5 +46,6 @@ en:
       failed: error
       in_progress: in progress
     testing_disabled: Automated testing is not enabled for this assignment.
+    tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     tests_running: Running tests. Please refresh this page in a bit to view the results.
     title: Automated Testing
