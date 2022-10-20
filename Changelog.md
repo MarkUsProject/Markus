@@ -15,6 +15,8 @@
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Disable python features if python dependencies are not installed (#6232)
 - Allow results to be made available only through unique tokens (#6244)
+- Update format of test result downloads to be more consistent and informative (#6291)
+
 
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
