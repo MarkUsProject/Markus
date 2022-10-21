@@ -495,14 +495,9 @@ Rails.application.routes.draw do
   unless Rails.env.production?
     resources :lti_deployment, only: [] do
       collection do
-        if Rails.env.test?
-          post 'launch'
-          post 'redirect_login'
-        end
         get 'public_jwk'
         get 'choose_course'
         post 'choose_course'
-        post 'create_course'
         post 'create_lti_grades'
         resources :canvas, only: [] do
           collection do
@@ -511,6 +506,9 @@ Rails.application.routes.draw do
             post 'redirect_login'
           end
         end
+      end
+      member do
+        post 'create_course'
       end
     end
   end

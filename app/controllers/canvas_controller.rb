@@ -1,4 +1,5 @@
 class CanvasController < LtiDeploymentController
+  # Canvas specific url paths
   LMS_REDIRECT_ENDPOINT = '/api/lti/authorize_redirect'.freeze
   JWK_ENDPOINT = '/api/lti/security/jwks'.freeze
 
@@ -8,8 +9,8 @@ class CanvasController < LtiDeploymentController
     config = {
       title: I18n.t('markus'),
       description: I18n.t('markus'),
-      oidc_initiation_url: launch_canvas_index_url,
-      target_link_uri: redirect_login_canvas_index_url,
+      oidc_initiation_url: launch_canvas_url,
+      target_link_uri: redirect_login_canvas_url,
       scopes: [LtiDeployment::LTI_SCOPES[:names_role],
                LtiDeployment::LTI_SCOPES[:ags_lineitem],
                LtiDeployment::LTI_SCOPES[:score]],

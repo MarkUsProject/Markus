@@ -34,7 +34,6 @@ class LtiDeploymentController < ApplicationController
     }
     referrer = URI(request.referer)
 
-    # TODO: generalize this to platforms other than canvas.
     auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{LMS_REDIRECT_ENDPOINT}")
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
@@ -54,9 +53,9 @@ class LtiDeploymentController < ApplicationController
 
     referrer_uri = URI(request.referer)
     # Get canvas JWK set
-    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}/api/lti/security/jwks"
+    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{JWK_ENDPOINT}"
     # A list of public keys and associated metadata for JWTs signed by canvas
-    canvas_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
+    lms_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
     begin
       decoded_token = JWT.decode(
         params[:id_token], # Encoded JWT signed by canvas
@@ -67,7 +66,7 @@ class LtiDeploymentController < ApplicationController
         verify_iss: true,
         aud: session[:client_id], # canvas uses client ID as the aud parameter
         verify_aud: true,
-        jwks: canvas_jwks # The correct JWK will be selected by matching jwk kid param with id_token kid
+        jwks: lms_jwks # The correct JWK will be selected by matching jwk kid param with id_token kid
       )
     rescue JWT::DecodeError
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
@@ -143,7 +142,7 @@ class LtiDeploymentController < ApplicationController
   def create_course
     new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
     Instructor.create!(user: current_user, course: new_course)
-    lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+    lti_deployment = record
     lti_deployment.update!(course: new_course)
     redirect_to edit_course_path(new_course)
   end
