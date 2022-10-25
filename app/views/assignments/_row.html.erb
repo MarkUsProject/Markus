@@ -13,10 +13,27 @@
       <% result = @a_id_results[assignment.id] %>
       <% if !result.nil? %>
         <% if assignment.max_mark > 0 && !assignment.results_average.nil? %>
-          <p>
-            <%= link_to Result.model_name.human.pluralize,
-                        view_marks_course_result_path(@current_course, result) %>
-          </p>
+          <% if allowed_to?(:view?, result, context: {view_token: session["view_token"]&.[](result&.id&.to_s)}) %>
+            <!-- check if a token not required or if the current user has entered the token already this session -->
+            <p>
+              <%= link_to Result.model_name.human.pluralize,
+                          view_marks_course_result_path(@current_course, result) %>
+            </p>
+          <% elsif allowed_to? :view_token_check?, result %>
+            <p>
+              <%= link_to Result.model_name.human.pluralize, '#',
+                          id: opener_id = "submit-view-token-#{assignment.id}" %>
+            </p>
+            <%= javascript_tag nonce: true do %>
+              <%= render partial: 'shared/submit_view_token_modal',
+                         formats: :js,
+                         locals: { result: result,
+                                   modal_id: "submit-view-token-modal-#{assignment.id}",
+                                   opener_id: opener_id } %>
+            <% end %>
+          <% else %>
+            <%= t('results.no_result') %>
+          <% end %>
         <% end %>
       <% elsif assignment.due_date < Time.current %>
         <%= t('results.no_result') %>

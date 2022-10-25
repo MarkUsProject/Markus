@@ -395,7 +395,8 @@ CREATE TABLE public.assignment_properties (
     starter_files_after_due boolean DEFAULT true NOT NULL,
     url_submit boolean DEFAULT false NOT NULL,
     autotest_settings json,
-    api_submit boolean DEFAULT false NOT NULL
+    api_submit boolean DEFAULT false NOT NULL,
+    release_with_urls boolean DEFAULT false NOT NULL
 );
 
 
@@ -1573,7 +1574,9 @@ CREATE TABLE public.results (
     released_to_students boolean DEFAULT false NOT NULL,
     total_mark double precision DEFAULT 0.0,
     remark_request_submitted_at timestamp without time zone,
-    peer_review_id integer
+    peer_review_id integer,
+    view_token character varying NOT NULL,
+    view_token_expiry timestamp without time zone
 );
 
 
@@ -3604,6 +3607,13 @@ CREATE INDEX index_results_on_peer_review_id ON public.results USING btree (peer
 
 
 --
+-- Name: index_results_on_view_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_results_on_view_token ON public.results USING btree (view_token);
+
+
+--
 -- Name: index_roles_on_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4668,4 +4678,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220726201403'),
 ('20220727161425'),
 ('20220825171354'),
-('20220826132206');
+('20220826132206'),
+('20220922131809');

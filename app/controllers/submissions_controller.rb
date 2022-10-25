@@ -90,6 +90,17 @@ class SubmissionsController < ApplicationController
 
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
+    unless allowed_to?(:see_hidden?, @assignment)
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: :not_found,
+             layout: false
+      return
+    end
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
       head :bad_request
@@ -456,8 +467,9 @@ class SubmissionsController < ApplicationController
 
   def download
     preview = params[:preview] == 'true'
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
 
-    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview
+    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
       redirect_to action: :notebook_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -754,7 +766,7 @@ class SubmissionsController < ApplicationController
       FileUtils.mkdir_p(cache_file.dirname)
       if type == 'jupyter-notebook'
         args = [
-          File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
+          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s
         ]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)

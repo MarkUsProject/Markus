@@ -10,6 +10,8 @@ class TestRun < ApplicationRecord
   has_one :course, through: :role
 
   validate :courses_should_match
+  validate :autotest_test_id_uniqueness
+  before_save :unset_autotest_test_id
 
   SETTINGS_FILES_DIR = (Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path,
                                                                     'autotest')).freeze
@@ -133,7 +135,23 @@ class TestRun < ApplicationRecord
   end
 
   def unzip_file_data(file_data)
-    return ActiveSupport::Gzip.decompress(file_data['content']) if file_data['compression'] == 'gzip'
+    return Zlib.gunzip(file_data['content']) if file_data['compression'] == 'gzip'
     file_data['content']
+  end
+
+  def unset_autotest_test_id
+    return if self.in_progress?
+    self.autotest_test_id = nil
+  end
+
+  def autotest_test_id_uniqueness
+    return unless self.autotest_test_id
+
+    other_test_runs = TestRun.joins(role: :course)
+                             .where('courses.autotest_setting_id': self.course.autotest_setting_id,
+                                    autotest_test_id: self.autotest_test_id)
+                             .where.not(id: self.id)
+                             .exists?
+    errors.add(:base, 'autotest_test_id must be unique scoped to autotest settings') if other_test_runs
   end
 end

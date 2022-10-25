@@ -166,6 +166,25 @@ describe Result do
     end
   end
 
+  describe '#view_token_expired?' do
+    let(:result) { create :complete_result, view_token_expiry: expiry }
+    subject { result.view_token_expired? }
+    context 'no view token expiry exists for the result' do
+      let(:expiry) { nil }
+      it { is_expected.to be_falsy }
+    end
+    context 'a view token expiry exists' do
+      context 'and it is in the future' do
+        let(:expiry) { 1.day.from_now }
+        it { is_expected.to be_falsy }
+      end
+      context 'and it is in the past' do
+        let(:expiry) { 1.day.ago }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe '.set_release_on_results' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
     it 'should raise StandardError with message not_complete error if result has not been completed' do

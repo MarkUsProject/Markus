@@ -1233,13 +1233,23 @@ describe SubmissionsController do
                                                   preview: true,
                                                   grouping_id: grouping.id }
         end
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to redirect_to(
-            notebook_content_course_assignment_submissions_url(course_id: course.id,
-                                                               assignment_id: assignment.id,
-                                                               file_name: 'example.ipynb',
-                                                               grouping_id: grouping.id)
-          )
+        let(:redirect_location) do
+          notebook_content_course_assignment_submissions_url(course_id: course.id,
+                                                             assignment_id: assignment.id,
+                                                             file_name: 'example.ipynb',
+                                                             grouping_id: grouping.id)
+        end
+        context 'and the python dependencies are installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
+          it 'should redirect to "notebook_content"' do
+            expect(subject).to redirect_to(redirect_location)
+          end
+        end
+        context 'and the python dependencies are not installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+          it 'should redirect to "notebook_content"' do
+            expect(subject).not_to redirect_to(redirect_location)
+          end
         end
       end
       describe 'When the file is an rmarkdown file' do
@@ -1341,7 +1351,8 @@ describe SubmissionsController do
         end
       end
 
-      context 'a jupyter-notebook file' do
+      context 'a jupyter-notebook file',
+              skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
         let(:filename) { 'example.ipynb' }
         it_behaves_like 'notebook content'
       end

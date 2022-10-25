@@ -46,7 +46,7 @@ class GroupsManager extends React.Component {
       this.groupsTable.resetSelection();
       var inactive_groups_count = 0;
       res.groups.forEach(group => {
-        if (group.members.every(member => member[2])) {
+        if (group.members.length && group.members.every(member => member[2])) {
           group.inactive = true;
           inactive_groups_count += 1;
         } else {

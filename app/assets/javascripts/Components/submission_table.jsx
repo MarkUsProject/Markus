@@ -9,6 +9,7 @@ import {
   getMarkingStates,
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
+import ReleaseUrlsModal from "./Modals/release_urls_modal";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -18,7 +19,8 @@ class RawSubmissionTable extends React.Component {
       groupings: [],
       sections: {},
       loading: true,
-      showModal: false,
+      showCollectSubmissionsModal: false,
+      showReleaseUrlsModal: false,
       marking_states: markingStates,
       markingStateFilter: "all",
     };
@@ -58,6 +60,34 @@ class RawSubmissionTable extends React.Component {
     }
   };
 
+  groupNameWithMembers = row => {
+    let members = "";
+    if (
+      !row.original.members ||
+      (row.original.members.length === 1 && row.value === row.original.members[0])
+    ) {
+      members = "";
+    } else {
+      members = ` (${row.original.members.join(", ")})`;
+    }
+    return row.value + members;
+  };
+
+  groupNameFilter = (filter, row) => {
+    if (filter.value) {
+      // Check group name
+      if (row._original.group_name.includes(filter.value)) {
+        return true;
+      }
+      // Check member names
+      return (
+        row._original.members && row._original.members.some(name => name.includes(filter.value))
+      );
+    } else {
+      return true;
+    }
+  };
+
   columns = () => [
     {
       show: false,
@@ -69,41 +99,19 @@ class RawSubmissionTable extends React.Component {
       accessor: "group_name",
       id: "group_name",
       Cell: row => {
-        let members = "";
-        if (
-          !row.original.members ||
-          (row.original.members.length === 1 && row.value === row.original.members[0])
-        ) {
-          members = "";
-        } else {
-          members = ` (${row.original.members.join(", ")})`;
-        }
+        const group_name = this.groupNameWithMembers(row);
         if (row.original.result_id) {
           const result_url = Routes.edit_course_result_path(
             this.props.course_id,
             row.original.result_id
           );
-          return <a href={result_url}>{row.value + members}</a>;
+          return <a href={result_url}>{group_name}</a>;
         } else {
-          return row.value + members;
+          return group_name;
         }
       },
       minWidth: 170,
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          // Check group name
-          if (row._original.group_name.includes(filter.value)) {
-            return true;
-          }
-
-          // Check member names
-          return (
-            row._original.members && row._original.members.some(name => name.includes(filter.value))
-          );
-        } else {
-          return true;
-        }
-      },
+      filterMethod: this.groupNameFilter,
     },
     {
       Header: I18n.t("submissions.repo_browser.repository"),
@@ -219,7 +227,7 @@ class RawSubmissionTable extends React.Component {
 
   // Submission table actions
   collectSubmissions = override => {
-    this.setState({showModal: false});
+    this.setState({showCollectSubmissionsModal: false});
     $.post({
       url: Routes.collect_submissions_course_assignment_submissions_path(
         this.props.course_id,
@@ -297,6 +305,28 @@ class RawSubmissionTable extends React.Component {
     });
   };
 
+  refreshViewTokens = (updated_tokens, after_function) => {
+    this.setState(prevState => {
+      prevState.groupings.forEach(row => {
+        if (updated_tokens[row.result_id]) {
+          row["result_view_token"] = updated_tokens[row.result_id];
+        }
+      });
+      return prevState;
+    }, after_function);
+  };
+
+  refreshViewTokenExpiry = (updated_tokens, after_function) => {
+    this.setState(prevState => {
+      prevState.groupings.forEach(row => {
+        if (updated_tokens[row.result_id] !== undefined) {
+          row["result_view_token_expiry"] = updated_tokens[row.result_id];
+        }
+      });
+      return prevState;
+    }, after_function);
+  };
+
   render() {
     const {loading} = this.state;
 
@@ -309,9 +339,10 @@ class RawSubmissionTable extends React.Component {
           assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
           collectSubmissions={() => {
-            this.setState({showModal: true});
+            this.setState({showCollectSubmissionsModal: true});
           }}
           downloadGroupingFiles={this.prepareGroupingFiles}
+          showReleaseUrls={() => this.setState({showReleaseUrlsModal: true})}
           selection={this.props.selection}
           runTests={this.runTests}
           releaseMarks={() => this.toggleRelease(true)}
@@ -319,6 +350,7 @@ class RawSubmissionTable extends React.Component {
           completeResults={() => this.setMarkingStates("complete")}
           incompleteResults={() => this.setMarkingStates("incomplete")}
           authenticity_token={this.props.authenticity_token}
+          release_with_urls={this.props.release_with_urls}
         />
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
@@ -337,12 +369,27 @@ class RawSubmissionTable extends React.Component {
           {...this.props.getCheckboxProps()}
         />
         <CollectSubmissionsModal
-          isOpen={this.state.showModal}
+          isOpen={this.state.showCollectSubmissionsModal}
           isScannedExam={this.props.is_scanned_exam}
           onRequestClose={() => {
-            this.setState({showModal: false});
+            this.setState({showCollectSubmissionsModal: false});
           }}
           onSubmit={this.collectSubmissions}
+        />
+        <ReleaseUrlsModal
+          isOpen={this.state.showReleaseUrlsModal}
+          data={this.state.groupings.filter(
+            g => this.props.selection.includes(g._id) && !!g.result_view_token
+          )}
+          groupNameWithMembers={this.groupNameWithMembers}
+          groupNameFilter={this.groupNameFilter}
+          course_id={this.props.course_id}
+          assignment_id={this.props.assignment_id}
+          refreshViewTokens={this.refreshViewTokens}
+          refreshViewTokenExpiry={this.refreshViewTokenExpiry}
+          onRequestClose={() => {
+            this.setState({showReleaseUrlsModal: false});
+          }}
         />
       </div>
     );
@@ -370,7 +417,8 @@ class SubmissionsActionBox extends React.Component {
       collectButton,
       runTestsButton,
       releaseMarksButton,
-      unreleaseMarksButton;
+      unreleaseMarksButton,
+      showReleaseUrlsButton;
 
     completeButton = (
       <button onClick={this.props.completeResults} disabled={this.props.disabled}>
@@ -400,6 +448,13 @@ class SubmissionsActionBox extends React.Component {
           {I18n.t("submissions.unrelease_marks")}
         </button>
       );
+      if (this.props.release_with_urls) {
+        showReleaseUrlsButton = (
+          <button onClick={this.props.showReleaseUrls} disabled={this.props.disabled}>
+            {I18n.t("submissions.show_release_tokens")}
+          </button>
+        );
+      }
     }
     if (this.props.can_run_tests) {
       runTestsButton = (
@@ -426,6 +481,7 @@ class SubmissionsActionBox extends React.Component {
         {runTestsButton}
         {releaseMarksButton}
         {unreleaseMarksButton}
+        {showReleaseUrlsButton}
       </div>
     );
   };

@@ -238,7 +238,7 @@ class SplitPdfJob < ApplicationJob
         end
         repo.commit(txn)
 
-        next unless exam_template.automatic_parsing
+        next unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
         begin
           # convert PDF to an image
           imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
@@ -256,7 +256,7 @@ class SplitPdfJob < ApplicationJob
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
 
-        python_exe = File.join(Settings.python.bin, 'python')
+        python_exe = Rails.application.config.python
         read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
         stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
         next unless status.success?

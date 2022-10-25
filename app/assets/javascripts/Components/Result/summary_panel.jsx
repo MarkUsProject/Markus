@@ -83,7 +83,7 @@ export class SummaryPanel extends React.Component {
     },
     {
       Header: "Old Mark",
-      accessor: "old_mark",
+      accessor: "old_mark.mark",
       className: "number",
       show: this.props.remark_submitted,
     },

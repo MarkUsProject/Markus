@@ -403,7 +403,8 @@ th.required::after {
   width: 100%;
 
   button,
-  .button {
+  .button,
+  .form-control {
     height: 3em;
     line-height: 2.75em;
     margin-left: 1em;
