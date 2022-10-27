@@ -3,6 +3,7 @@
 class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criteria
   before_validation :update_assigned_groups_count
+  after_create :update_result_marking_states
   after_update :update_results_with_change
   after_destroy :update_results
 
@@ -231,5 +232,9 @@ class Criterion < ApplicationRecord
   def update_results
     result_ids = Result.includes(submission: :grouping).where(groupings: { assessment_id: assessment_id }).ids
     Result.update_total_marks(result_ids)
+  end
+
+  def update_result_marking_states
+    UpdateResultsMarkingStatesJob.perform_later(assessment_id, :incomplete)
   end
 end
