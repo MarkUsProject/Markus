@@ -4,7 +4,7 @@
 
 <%= content_for :modal_content do %>
 
-  <%= t('assignments.upload_config_help_html', markus_version: @markus_version, section_id: 'assignment-configuration') %>
+  <%= t('assignments.upload_config_help_html', markus_version: Rails.configuration.markus_version, section_id: 'assignment-configuration') %>
 
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',

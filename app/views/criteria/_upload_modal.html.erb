@@ -15,7 +15,7 @@
       <p><%= t('assignments.due_date.marking_overwrite_warning_html') %></p>
     </div>
   <% end %>
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: Criterion.name.pluralize.underscore.dasherize) %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: Criterion.name.pluralize.underscore.dasherize) %>
   <%= form_tag upload_course_assignment_criteria_path(@current_course, @assignment),
                multipart: true, size: 1 do %>
     <p><%= file_field_tag :upload_file, required: true %></p>
