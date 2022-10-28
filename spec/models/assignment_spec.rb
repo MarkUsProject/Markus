@@ -2156,18 +2156,15 @@ describe Assignment do
 
     context 'an Instructor user' do
       let(:instructor) { create :instructor }
+      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:summary) { CSV.parse assignment.summary_csv(instructor) }
 
-      before :each do
-        @assignment = create(:assignment_with_criteria_and_results)
-      end
+      shared_examples 'check csv content' do
+        it 'contains data' do
+          expect(summary).not_to be_empty
+        end
 
-      context 'with assigned students' do
-        it 'has student data' do
-          summary_string = @assignment.summary_csv(instructor)
-          summary = CSV.parse(summary_string)
-
-          expect(summary).to_not be_empty
-          expect(summary[0]).to_not be_empty
+        it 'contains header information' do
           expect(summary[0]).to include(User.human_attribute_name(:group_name),
                                         User.human_attribute_name(:user_name),
                                         User.human_attribute_name(:last_name),
@@ -2176,6 +2173,13 @@ describe Assignment do
                                         User.human_attribute_name(:id_number),
                                         User.human_attribute_name(:email))
         end
+      end
+      context 'when all criteria are pre-created' do
+        include_examples 'check csv content'
+      end
+      context 'when criteria are created after marking' do
+        before { create :flexible_criterion, assignment: assignment }
+        include_examples 'check csv content'
       end
     end
   end
