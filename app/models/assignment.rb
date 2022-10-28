@@ -705,7 +705,7 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map { |field| s.__send__(field) }
+          other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
           row = [g.group.group_name] + other_info
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
