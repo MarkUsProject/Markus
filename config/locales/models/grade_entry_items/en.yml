@@ -9,3 +9,4 @@ en:
     models:
       grade_entry_item:
         one: Column
+        other: Columns

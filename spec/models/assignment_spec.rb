@@ -1867,6 +1867,27 @@ describe Assignment do
         expect(data.select { |h| h.key? :final_grade }.count).to eq 1
       end
 
+      context 'release_with_urls is true' do
+        before { assignment.update! release_with_urls: true }
+        it 'should include the view_token if the result exists' do
+          token = submission.current_result.view_token
+          expect(data.pluck(:result_view_token)).to include(token)
+        end
+        it 'should include the view_token_expiry if the result exists' do
+          expiry = submission.current_result.view_token_expiry
+          expect(data.pluck(:result_view_token_expiry)).to include(expiry)
+        end
+      end
+      context 'release_with_urls is false' do
+        before { assignment.update! release_with_urls: true }
+        it 'should not include the view_token if the result exists' do
+          expect(data.pluck(:result_view_token).compact).to be_empty
+        end
+        it 'should include the view_token_expiry if the result exists' do
+          expect(data.pluck(:result_view_token_expiry).compact).to be_empty
+        end
+      end
+
       context 'there is an extra mark' do
         let(:result) { create :complete_result, submission: submission }
         let!(:extra_mark) { create :extra_mark_points, result: result }
@@ -2156,18 +2177,15 @@ describe Assignment do
 
     context 'an Instructor user' do
       let(:instructor) { create :instructor }
+      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:summary) { CSV.parse assignment.summary_csv(instructor) }
 
-      before :each do
-        @assignment = create(:assignment_with_criteria_and_results)
-      end
+      shared_examples 'check csv content' do
+        it 'contains data' do
+          expect(summary).not_to be_empty
+        end
 
-      context 'with assigned students' do
-        it 'has student data' do
-          summary_string = @assignment.summary_csv(instructor)
-          summary = CSV.parse(summary_string)
-
-          expect(summary).to_not be_empty
-          expect(summary[0]).to_not be_empty
+        it 'contains header information' do
           expect(summary[0]).to include(User.human_attribute_name(:group_name),
                                         User.human_attribute_name(:user_name),
                                         User.human_attribute_name(:last_name),
@@ -2176,6 +2194,13 @@ describe Assignment do
                                         User.human_attribute_name(:id_number),
                                         User.human_attribute_name(:email))
         end
+      end
+      context 'when all criteria are pre-created' do
+        include_examples 'check csv content'
+      end
+      context 'when criteria are created after marking' do
+        before { create :flexible_criterion, assignment: assignment }
+        include_examples 'check csv content'
       end
     end
   end

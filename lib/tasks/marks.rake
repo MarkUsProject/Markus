@@ -190,7 +190,8 @@ namespace :db do
         id: result_id,
         total_mark: total_mark,
         marking_state: Result::MARKING_STATES[:complete],
-        released_to_students: true
+        released_to_students: true,
+        view_token: Result.generate_unique_secure_token
       }
     end
     Annotation.insert_all annotations

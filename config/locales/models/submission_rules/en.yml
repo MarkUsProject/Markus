@@ -25,3 +25,4 @@ en:
     models:
       submission_rule:
         one: Late Submission Policy
+        other: Late Submission Policies

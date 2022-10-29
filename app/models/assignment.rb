@@ -705,13 +705,13 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map { |field| s.__send__(field) }
+          other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
           row = [g.group.group_name] + other_info
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += self.ta_criteria.map { |crit| marks[crit.id][:mark] }
+            row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -1091,7 +1091,9 @@ class Assignment < Assessment
                                  'results.id',
                                  'results.marking_state',
                                  'results.total_mark',
-                                 'results.released_to_students')
+                                 'results.released_to_students',
+                                 'results.view_token',
+                                 'results.view_token_expiry')
                   .group_by { |h| h['groupings.id'] }
 
     if current_role.ta? && anonymize_groups
@@ -1162,6 +1164,11 @@ class Assignment < Assessment
         extra_mark = extra_marks_hash[result_info['results.id']] || 0
         base[:result_id] = result_info['results.id']
         base[:final_grade] = [0, (total_marks[result_info['results.id']] || 0.0) + extra_mark].max
+        if self.release_with_urls
+          base[:result_view_token] = result_info['results.view_token']
+          token_expiry = result_info['results.view_token_expiry']
+          base[:result_view_token_expiry] = token_expiry.nil? ? nil : I18n.l(token_expiry.in_time_zone)
+        end
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
