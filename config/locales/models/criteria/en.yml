@@ -34,10 +34,13 @@ en:
     models:
       checkbox_criterion:
         one: Checkbox Criterion
+        other: Checkbox Criteria
       criterion:
         one: Criterion
         other: Criteria
       flexible_criterion:
         one: Flexible Criterion
+        other: Flexible Criteria
       rubric_criterion:
         one: Rubric Criterion
+        other: Rubric Criteria

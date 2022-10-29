@@ -10,3 +10,4 @@ en:
     models:
       course:
         one: Course
+        other: Courses
