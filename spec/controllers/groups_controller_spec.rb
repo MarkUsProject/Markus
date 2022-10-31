@@ -944,13 +944,36 @@ describe GroupsController do
       let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
 
       shared_examples 'populate starter files properly' do
-        it 'populates the grouping repository with the correct content' do
-          subject
-          grouping.access_repo do |repo|
-            rev = repo.get_latest_revision
-            expect(rev.path_exists?(File.join(assignment.short_identifier, 'q1', 'q1.txt'))).to be true
-            expect(rev.path_exists?(File.join(assignment.short_identifier, 'q2.txt'))).to be true
+        shared_examples 'write starter files to repo' do
+          it 'populates the grouping repository with the correct content' do
+            subject
+            grouping.access_repo do |repo|
+              rev = repo.get_latest_revision
+              expect(rev.path_exists?(File.join(assignment.short_identifier, 'q1', 'q1.txt'))).to be true
+              expect(rev.path_exists?(File.join(assignment.short_identifier, 'q2.txt'))).to be true
+            end
           end
+          it 'writes the correct content' do
+            subject
+            grouping.access_repo do |repo|
+              rev_file = repo.get_latest_revision.files_at_path(assignment.short_identifier)['q2.txt']
+              expect(repo.download_as_string(rev_file)).to eq 'q2 content'
+            end
+          end
+        end
+        context 'when the repo is empty' do
+          include_examples 'write starter files to repo'
+        end
+        context 'when some files already exist in the repo' do
+          before do
+            grouping.access_repo do |repo|
+              txn = repo.get_transaction(role.user_name)
+              txn.add_path(File.join(assignment.short_identifier, 'q1'))
+              txn.add(File.join(assignment.short_identifier, 'q2.txt'), 'other_content', 'application/octet-stream')
+              repo.commit(txn)
+            end
+          end
+          include_examples 'write starter files to repo'
         end
       end
       context 'when the grouping was created after any starter file groups' do
