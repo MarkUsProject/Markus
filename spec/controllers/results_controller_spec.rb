@@ -399,18 +399,6 @@ describe ResultsController do
         expect(@old_mark).not_to eq incomplete_result.total_mark
       end
     end
-    context 'accessing update_overall_comment' do
-      before :each do
-        post :update_overall_comment, params: { course_id: course.id,
-                                                id: incomplete_result.id,
-                                                result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
-        incomplete_result.reload
-      end
-      it { expect(response).to have_http_status(:success) }
-      it 'should update the overall comment' do
-        expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
-      end
-    end
 
     context 'accessing an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -799,6 +787,18 @@ describe ResultsController do
     include_examples 'shared ta and instructor tests'
     include_examples 'showing json data', false
 
+    context 'accessing update_overall_comment' do
+      before :each do
+        post :update_overall_comment, params: { course_id: course.id,
+                                                id: incomplete_result.id,
+                                                result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+        incomplete_result.reload
+      end
+      it { expect(response).to have_http_status(:success) }
+      it 'should update the overall comment' do
+        expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
+      end
+    end
     describe '#delete_grace_period_deduction' do
       it 'deletes an existing grace period deduction' do
         expect(grouping.grace_period_deductions.exists?).to be false
@@ -956,12 +956,21 @@ describe ResultsController do
     before(:each) { sign_in ta }
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
     context 'accessing edit' do
-      before :each do
-        get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+      context 'when assigned to grade the given group\'s work' do
+        before :each do
+          get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+        end
+        test_no_flash
+        it { expect(response).to render_template('edit') }
+        it { expect(response).to have_http_status(:success) }
       end
-      test_no_flash
-      it { expect(response).to render_template('edit') }
-      it { expect(response).to have_http_status(:success) }
+      context 'when not assigned to grade the given group\'s work' do
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+        it {
+          get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
     end
     include_examples 'shared ta and instructor tests'
     include_examples 'showing json data', false
@@ -1065,16 +1074,75 @@ describe ResultsController do
     end
 
     context 'accessing update_mark' do
-      it 'should not count completed groupings that are not assigned to the TA' do
-        grouping2 = create(:grouping_with_inviter, assignment: assignment)
-        create(:version_used_submission, grouping: grouping2)
-        grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+      context 'when is assigned to grade the given group\'s submission' do
+        it 'should not count completed groupings that are not assigned to the TA' do
+          grouping2 = create(:grouping_with_inviter, assignment: assignment)
+          create(:version_used_submission, grouping: grouping2)
+          grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
 
-        patch :update_mark, params: { course_id: course.id,
-                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
-                                      mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)['num_marked']).to eq 0
+          patch :update_mark, params: { course_id: course.id,
+                                        id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
+                                        mark: 1 }, xhr: true
+          expect(JSON.parse(response.body)['num_marked']).to eq 0
+        end
       end
+      context 'when not assigned to grade the given group\'s work' do
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+        it {
+          patch :update_mark, params: { course_id: course.id,
+                                        id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
+                                        mark: 1 }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+    end
+
+    context 'accessing update_overall_comment' do
+      context 'when assigned to grade the given group\'s submission' do
+        before :each do
+          post :update_overall_comment, params: { course_id: course.id,
+                                                  id: incomplete_result.id,
+                                                  result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+          incomplete_result.reload
+        end
+        it { expect(response).to have_http_status(:success) }
+        it 'should update the overall comment' do
+          expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
+        end
+      end
+      context 'when not assigned to grade the given group\'s submission' do
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+        it {
+          post :update_overall_comment, params: { course_id: course.id,
+                                                  id: incomplete_result.id,
+                                                  result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+    end
+
+    context 'accessing toggle_marking_state' do
+      context 'when assigned to grade the given group\'s work' do
+        it {
+          post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
+          expect(response).to have_http_status(:success)
+        }
+      end
+      context 'when not assigned to grade the given group\'s work' do
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+        it {
+          post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+    end
+    context 'accessing next_grouping and TA is not assigned to grade the given group\'s work' do
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+      it {
+        allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+        get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
+        expect(response).to have_http_status(:forbidden)
+      }
     end
     describe '#add_tag' do
       it 'adds a tag to a grouping' do

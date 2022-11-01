@@ -124,12 +124,20 @@ describe ResultPolicy do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
+    context 'role is a ta' do
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
       let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
       let(:assignment) { create :assignment_with_peer_review }
-      let(:role) { create(:ta) }
+      succeed 'when they are assigned to grade the associated group\'s submission' do
+        let(:role) { create(:ta) }
+      end
+      failed 'when they have not been assigned to grade the associated group\'s submission' do
+        # Assure the grouping used does not have any ta's assigned to grade their submission
+        let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+        let(:role) { create(:ta) }
+      end
     end
+
     context 'role is a student' do
       let(:role) { create(:student) }
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
@@ -158,13 +166,18 @@ describe ResultPolicy do
     end
     context 'role is a ta' do
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
-      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
       let(:assignment) { create :assignment_with_peer_review }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
       succeed 'that can manage submissions' do
         let(:role) { create :ta, manage_submissions: true }
       end
       failed 'that cannot manage submissions' do
         let(:role) { create :ta, manage_submissions: false }
+      end
+      failed 'that is not assigned to grade the groups work' do
+        # Make sure TA is not assigned grade the group's work
+        let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+        let(:role) { create :ta, manage_submissions: true }
       end
     end
     failed 'role is a student' do
