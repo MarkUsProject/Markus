@@ -5,7 +5,8 @@ describe ResultsController do
   let(:student) { create :student, grace_credits: 2 }
   let(:instructor) { create :instructor }
   let(:ta) { create :ta }
-  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student, tas: [ta] }
+  let(:ta_membership) { TaMembership.create(role: ta, grouping: grouping) }
   let(:submission) { create :version_used_submission, grouping: grouping }
   let(:incomplete_result) { submission.current_result }
   let(:complete_result) { create :complete_result, submission: submission }
@@ -149,6 +150,11 @@ describe ResultsController do
       end
       it 'should receive a JSON object of the next grouping when next grouping has a submission' do
         a2 = create(:assignment_with_criteria_and_results)
+        a2.groupings.each do |group|
+          group.tas.push(ta)
+          group.save
+        end
+        a2.save
         get :next_grouping, params: { course_id: course.id,
                                       grouping_id: a2.groupings.first.id,
                                       id: a2.submissions.first.current_result.id }
@@ -268,6 +274,10 @@ describe ResultsController do
         let(:result) { assignment.groupings.first.current_result }
         let(:submission) { result.submission }
         let(:mark) { assignment.groupings.first.current_result.marks.first }
+        before(:each) do
+          assignment.groupings.first.tas.push(ta)
+          assignment.groupings.first.save
+        end
         it 'sets override to true for mark if input value is not null' do
           patch :update_mark, params: { course_id: course.id,
                                         id: result.id, criterion_id: mark.criterion_id,

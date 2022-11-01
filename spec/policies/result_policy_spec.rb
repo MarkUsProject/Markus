@@ -125,6 +125,9 @@ describe ResultPolicy do
       let(:role) { create(:instructor) }
     end
     succeed 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
+      let(:assignment) { create :assignment_with_peer_review }
       let(:role) { create(:ta) }
     end
     context 'role is a student' do
@@ -154,6 +157,9 @@ describe ResultPolicy do
       let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
+      let(:assignment) { create :assignment_with_peer_review }
       succeed 'that can manage submissions' do
         let(:role) { create :ta, manage_submissions: true }
       end
