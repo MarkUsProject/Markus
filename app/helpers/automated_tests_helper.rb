@@ -224,7 +224,7 @@ module AutomatedTestsHelper
       uri = URI("#{assignment.course.autotest_setting.url}/settings/" \
                 "#{assignment.remote_autotest_settings_id}/tests/cancel")
       req = Net::HTTP::Delete.new(uri)
-      req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
+      req.body = { test_ids: test_runs.where.not(autotest_test_id: nil).pluck(:autotest_test_id) }.to_json
       set_headers(req, assignment.course.autotest_setting.api_key)
       send_request!(req, uri)
       test_runs.each(&:cancel)

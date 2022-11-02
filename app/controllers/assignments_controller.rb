@@ -707,12 +707,12 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     parent_short_id = properties[:parent_assessment_short_identifier]
+    properties = filter_nested_attributes(properties, Assignment)
     if parent_short_id.blank?
       assignment = current_course.assignments.new(properties)
     else
       # Filter properties not supported by peer review assignments, then build assignment
-      peer_review_properties = properties.except(:parent_assessment_short_identifier,
-                                                 :submission_rule_attributes,
+      peer_review_properties = properties.except(:submission_rule_attributes,
                                                  :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
       assignment.enable_test = false
@@ -722,6 +722,24 @@ class AssignmentsController < ApplicationController
     end
     assignment.repository_folder = assignment.short_identifier
     assignment
+  end
+
+  # Filters assignment properties to remove any properties that do not match the relevant models.
+  def filter_nested_attributes(attributes, klass)
+    class_attributes = attributes.slice(*klass.column_names.map(&:to_sym))
+    attributes.keys.filter_map { |a| a.to_s.match(/^(.+)_attributes$/) }.each do |attr_match|
+      attribute_key = attr_match[0].to_sym
+      attribute_value = attributes[attribute_key]
+      association_name = attr_match[1]
+      associated_klass = klass.reflect_on_association(association_name).klass
+
+      if attribute_value.is_a? Hash
+        class_attributes[attribute_key] = filter_nested_attributes(attribute_value, associated_klass)
+      elsif attribute_value.is_a? Array
+        class_attributes[attribute_key] = attribute_value.map { |v| filter_nested_attributes(v, associated_klass) }
+      end
+    end
+    class_attributes
   end
 
   def set_repo_vars(assignment, grouping)
