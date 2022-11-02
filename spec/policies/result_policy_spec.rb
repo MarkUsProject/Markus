@@ -232,18 +232,13 @@ describe ResultPolicy do
     end
     context 'role is a ta' do
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
-      let(:assignment) { create :assignment_with_peer_review }
       let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
+      let(:assignment) { create :assignment_with_peer_review }
       succeed 'that can manage submissions' do
         let(:role) { create :ta, manage_submissions: true }
       end
       failed 'that cannot manage submissions' do
         let(:role) { create :ta, manage_submissions: false }
-      end
-      failed 'that is not assigned to grade the group\'s work' do
-        # Make sure TA is not assigned grade the group's work
-        let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
-        let(:role) { create :ta, manage_submissions: true }
       end
     end
     failed 'role is a student' do
