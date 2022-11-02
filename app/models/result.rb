@@ -13,6 +13,8 @@ class Result < ApplicationRecord
 
   has_one :course, through: :submission
 
+  has_secure_token :view_token
+
   before_save :check_for_nil_marks
   after_create :create_marks
   validates :marking_state, presence: true
@@ -32,8 +34,11 @@ class Result < ApplicationRecord
   # Update the total_mark attributes for the results with id in +result_ids+
   def self.update_total_marks(result_ids, user_visibility: :ta_visible)
     total_marks = Result.get_total_marks(result_ids, user_visibility: user_visibility)
+    view_tokens = Result.where(id: result_ids).pluck(:id, :view_token).to_h
     unless total_marks.empty?
-      Result.upsert_all(total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark } })
+      Result.upsert_all(
+        total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark, view_token: view_tokens[r_id] } }
+      )
     end
   end
 
@@ -64,6 +69,7 @@ class Result < ApplicationRecord
 
     if release
       groupings.includes(:accepted_students).find_each do |grouping|
+        next if grouping.assignment.release_with_urls  # don't email if release_with_urls is true
         grouping.accepted_students.each do |student|
           if student.receives_results_emails?
             NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later
@@ -179,6 +185,10 @@ class Result < ApplicationRecord
   # TODO: make it include extra marks as well.
   def mark_hash
     marks.pluck_to_hash(:criterion_id, :mark, :override).index_by { |x| x[:criterion_id] }
+  end
+
+  def view_token_expired?
+    !self.view_token_expiry.nil? && Time.current >= self.view_token_expiry
   end
 
   private

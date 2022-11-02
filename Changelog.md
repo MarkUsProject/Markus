@@ -13,8 +13,14 @@
 - Allow admins to test and reset the connection to the autotester in the courses view and through the API (#6213)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
-- Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
 - Disable python features if python dependencies are not installed (#6232)
+- Allow results to be made available only through unique tokens (#6244)
+- Fix bug where assignments could not be uploaded with unexpected properties in file upload content (#6224)
+- Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
+- Fix bug where csv summary download fails if criteria are created after marking (#6302)
+
+## [v2.1.5]
+- Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
 - Optionally log which user makes each request by tagging the log files with user_names (#6241)
 - Allow users to upload and download csv files for marks spreadsheets in the same format (#6267)
 - Hide manual submission collection button from users who don't have permission (#6282)

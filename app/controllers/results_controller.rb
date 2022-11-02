@@ -3,6 +3,7 @@ class ResultsController < ApplicationController
 
   authorize :from_codeviewer, through: :from_codeviewer_param
   authorize :select_file, through: :select_file
+  authorize :view_token, through: :view_token_param
 
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
@@ -535,11 +536,20 @@ class ResultsController < ApplicationController
     }
   end
 
+  # Check whether the token submitted as the view_token param is valid (matches the result and is not expired)
+  def view_token_check
+    token_is_good = flash_allowance(:error, allowance_to(:view?), flash.now, most_specific: true).value
+    token_is_good ? head(:ok) : head(:unauthorized)
+  end
+
   def view_marks
-    result_from_id = record
-    @assignment = result_from_id.submission.grouping.assignment
+    # set a successful view token in the session so that it doesn't have to be re-entered for every request
+    (session['view_token'] ||= {})[record.id] = view_token_param
+
+    @result = record
+    @assignment = @result.submission.grouping.assignment
     @assignment = @assignment.is_peer_review? ? @assignment.parent_assignment : @assignment
-    is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(current_role, @assignment)
+    is_review = @result.is_a_review? || @result.is_review_for?(current_role, @assignment)
 
     if current_role.student?
       @grouping = current_role.accepted_grouping_for(@assignment.id)
@@ -556,17 +566,11 @@ class ResultsController < ApplicationController
         render 'results/student/no_result'
         return
       end
-      if result_from_id.is_a_review?
-        @result = result_from_id
-      else
-        unless @submission
-          render 'results/student/no_result'
-          return
-        end
-        @result = @submission.get_original_result
+      if !@result.is_a_review? && !@submission
+        render 'results/student/no_result'
+        return
       end
     else
-      @result = result_from_id
       @submission = @result.submission
       @grouping = @submission.grouping
     end
@@ -598,12 +602,10 @@ class ResultsController < ApplicationController
       @current_group_name = @current_pr_result.submission.grouping.group.group_name
     end
 
-    @old_result = nil
     if !is_review && @submission.remark_submitted?
-      @old_result = @result
-      @result = @submission.remark_result
+      remark_result = @submission.remark_result
       # Check if remark request has been submitted but not released yet
-      if !@result.remark_request_submitted_at.nil? && !@result.released_to_students
+      if !remark_result.remark_request_submitted_at.nil? && !remark_result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
@@ -653,7 +655,7 @@ class ResultsController < ApplicationController
   end
 
   def update_remark_request
-    @submission = Submission.find(params[:submission_id])
+    @submission = record.submission
     @assignment = @submission.grouping.assignment
     if @assignment.past_remark_due_date?
       head :bad_request
@@ -680,7 +682,7 @@ class ResultsController < ApplicationController
 
   # Allows student to cancel a remark request.
   def cancel_remark_request
-    submission = Submission.find(params[:submission_id])
+    submission = record.submission
 
     submission.remark_result.destroy
     submission.get_original_result.update(released_to_students: true)
@@ -708,6 +710,53 @@ class ResultsController < ApplicationController
     render json: submission.grouping.test_runs_instructors_released(submission)
   end
 
+  # Regenerate the view tokens for the results whose ids are given
+  def refresh_view_tokens
+    updated = requested_results.map { |r| r.regenerate_view_token ? r.id : nil }.compact
+    render json: Result.where(id: updated).pluck(:id, :view_token).to_h
+  end
+
+  # Update the view token expiry date for the results whose ids are given
+  def update_view_token_expiry
+    expiry = params[:expiry_datetime]
+    updated = requested_results.map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }.compact
+    render json: Result.where(id: updated).pluck(:id, :view_token_expiry).to_h
+  end
+
+  # Download a csv containing view token and grouping information for the results whose ids are given
+  def download_view_tokens
+    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
+                            .order('groups.group_name')
+                            .pluck('groups.group_name',
+                                   'users.user_name',
+                                   'users.first_name',
+                                   'users.last_name',
+                                   'users.email',
+                                   'users.id_number',
+                                   'results.view_token',
+                                   'results.view_token_expiry',
+                                   'results.id')
+    header = [[I18n.t('activerecord.models.group.one'),
+               I18n.t('activerecord.attributes.user.user_name'),
+               I18n.t('activerecord.attributes.user.first_name'),
+               I18n.t('activerecord.attributes.user.last_name'),
+               I18n.t('activerecord.attributes.user.email'),
+               I18n.t('activerecord.attributes.user.id_number'),
+               I18n.t('submissions.release_token'),
+               I18n.t('submissions.release_token_expires'),
+               I18n.t('submissions.release_token_url')]]
+    assignment = Assignment.find(params[:assignment_id])
+    csv_string = MarkusCsv.generate(data, header) do |row|
+      view_token, view_token_expiry, result_id = row.pop(3)
+      view_token_expiry ||= I18n.t('submissions.release_token_expires_null')
+      url = view_marks_course_result_url(current_course.id, result_id, view_token: view_token)
+      [*row, view_token, view_token_expiry, url]
+    end
+    send_data csv_string,
+              disposition: 'attachment',
+              filename: "#{assignment.short_identifier}_release_view_tokens.csv"
+  end
+
   private
 
   def from_codeviewer_param
@@ -722,5 +771,14 @@ class ResultsController < ApplicationController
     params.require(:extra_mark).permit(:result,
                                        :description,
                                        :extra_mark)
+  end
+
+  def view_token_param
+    params[:view_token] || session['view_token']&.[](record&.id&.to_s)
+  end
+
+  def requested_results
+    Result.joins(grouping: :assignment)
+          .where('results.id': params[:result_ids], 'assessments.id': params[:assignment_id])
   end
 end

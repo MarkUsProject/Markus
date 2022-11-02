@@ -11,3 +11,4 @@ en:
     models:
       exam_template:
         one: Exam Template
+        other: Exam Templates

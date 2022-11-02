@@ -90,6 +90,17 @@ class SubmissionsController < ApplicationController
 
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
+    unless allowed_to?(:see_hidden?, @assignment)
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: :not_found,
+             layout: false
+      return
+    end
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
       head :bad_request

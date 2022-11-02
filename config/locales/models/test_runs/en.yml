@@ -8,3 +8,4 @@ en:
     models:
       test_run:
         one: Test Run
+        other: Test Runs

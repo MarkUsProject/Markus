@@ -24,6 +24,7 @@ en:
         non_regenerating_tokens: Tokens do not regenerate
         only_required_files: Only allow students to submit the required files (this also restricts the file extensions)
         parent_assignment: Source assignment
+        release_with_urls: Only allow students to view released marks via a unique URL
         remark_due_date: Remark Due Date
         remark_message: Remark Request Instructions
         repository_folder: Repository Folder
@@ -48,9 +49,13 @@ en:
     models:
       assignment:
         one: Assignment
+        other: Assignments
       peer_review_assignment:
         one: Peer Review Assignment
+        other: Peer Review Assignments
       scanned_assignment:
         one: Scanned Assignment
+        other: Scanned Assignments
       timed_assignment:
         one: Timed Assessment
+        other: Timed Assessments
