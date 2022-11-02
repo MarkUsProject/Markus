@@ -194,10 +194,10 @@ describe ResultPolicy do
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
       let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
       let(:assignment) { create :assignment_with_peer_review }
-      succeed 'when they are assigned to grade the associated group\'s submission' do
+      succeed 'when they are assigned to grade the given group\'s submission' do
         let(:role) { create(:ta) }
       end
-      failed 'when they have not been assigned to grade the associated group\'s submission' do
+      failed 'when they have not been assigned to grade the given group\'s submission' do
         # Assure the grouping used does not have any ta's assigned to grade their submission
         let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
         let(:role) { create(:ta) }
@@ -240,7 +240,7 @@ describe ResultPolicy do
       failed 'that cannot manage submissions' do
         let(:role) { create :ta, manage_submissions: false }
       end
-      failed 'that is not assigned to grade the groups work' do
+      failed 'that is not assigned to grade the group\'s work' do
         # Make sure TA is not assigned grade the group's work
         let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
         let(:role) { create :ta, manage_submissions: true }
