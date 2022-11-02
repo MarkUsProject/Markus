@@ -59,7 +59,7 @@ class LtiDeployment < ApplicationRecord
     auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'])
     lineitem_service = self.lti_services.find_by!(lti_deployment: self, service_type: 'agslineitem')
     lineitem_uri = URI(lineitem_service.url)
-    line_item = self.lti_line_items.find_or_initialize_by(lti_deployment: self, assessment: assessment)
+    line_item = self.lti_line_items.find_or_initialize_by(assessment: assessment)
     if line_item.lti_line_item_id?
       req = Net::HTTP::Put.new(line_item.lti_line_item_id)
     else
@@ -71,14 +71,13 @@ class LtiDeployment < ApplicationRecord
     res = http.request(req)
     line_item_data = JSON.parse(res.body)
     line_item.update!(lti_line_item_id: line_item_data['id'])
-    line_item_data
   end
 
   # Takes as input an assessment. Sends all *released* marks to
   # the LMS associated with the assignment and the current deployment
   def create_grades(assessment)
     auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/score'])
-    line_item = self.lti_line_items.find_by!(lti_deployment: self, assessment: assessment)
+    line_item = self.lti_line_items.find_by!(assessment: assessment)
     score_uri = URI("#{line_item.lti_line_item_id}/scores")
     req = Net::HTTP::Post.new(score_uri)
     req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
@@ -111,7 +110,7 @@ class LtiDeployment < ApplicationRecord
     lti_users = LtiUser.where(lti_client: lti_client)
     marks.each do |mark|
       result = mark.results.first
-      group_students = mark.grouping.student_memberships
+      group_students = mark.grouping.accepted_student_memberships
       group_students.each do |member|
         lti_user = lti_users.find_by(user: member.role.user)
         mark_data[lti_user.lti_user_id] = result.total_mark unless lti_user.nil?

@@ -2,16 +2,13 @@ import React from "react";
 import Modal from "react-modal";
 
 class LtiGradeModal extends React.Component {
-  static defaultProps = {
-    override: false,
-  };
+  static defaultProps = {};
 
   constructor(props) {
     super(props);
-    const deploymentsMapped = this.props.lti_deployments.map(deployment => ({
-      deployment: deployment.id,
-      checked: true,
-    }));
+    const deploymentsMapped = Object.fromEntries(
+      this.props.lti_deployments.map(deployment => [deployment.id, true])
+    );
     this.state = {
       deploymentsChecked: deploymentsMapped,
     };
@@ -31,15 +28,16 @@ class LtiGradeModal extends React.Component {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const deployment_id = target.name;
-    let deploymentsSettings = this.state.deploymentsChecked;
-    let setting = deploymentsSettings.find(deployment => deployment.deployment == deployment_id);
-    setting.checked = value;
+    const deploymentsSettings = this.state.deploymentsChecked;
+    deploymentsSettings[deployment_id] = value;
     this.setState({deploymentsChecked: deploymentsSettings});
   };
 
   sendLtiGrades = () => {
-    const checked = this.state.deploymentsChecked.filter(deployment => deployment.checked);
-    const deploymentsToUpdate = checked.map(deployment => deployment.deployment);
+    const checked = Object.entries(this.state.deploymentsChecked).filter(
+      deployment => deployment[1] == true
+    );
+    const deploymentsToUpdate = checked.map(deployment => deployment[0]);
     $.post({
       url: Routes.lti_deployment_create_lti_grades_path(),
       data: {

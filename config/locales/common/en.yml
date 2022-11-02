@@ -23,7 +23,7 @@ en:
     create_course: Create New Course
     grade_sync_instructions: This will only synchronize grades that have been released.
     launch: Launch MarkUs
-    lti_deployment: deployment %{lti_deployment_name} on %{lti_host}
+    lti_deployment: '%{lti_deployment_name} on %{lti_host}'
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
     select_course: Select the course that matches %{course_name}

@@ -9,12 +9,14 @@
   <% @lti_deployments.each do |deployment| %>
     <tr>
       <td>
-
-        <%= f.label deployment.id, "#{deployment.lms_course_name} on #{URI(deployment.lti_client.host).host}", value: deployment.id %>
-        <% if deployment.lti_line_items.find_by(assessment: @assignment) %>
-          <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false', checked: true, disabled: true %>
+        <%= f.label deployment.id, I18n.t("lti.lti_deployment", {
+          lti_deployment_name: deployment.lms_course_name,
+          lti_host: URI(deployment.lti_client.host).host,
+        })%>
+        <% if deployment.lti_line_items.where(assessment: @assignment).exists? %>
+          <%= f.check_box deployment.id, checked: true, disabled: true %>
         <% else %>
-          <%= f.check_box deployment.id, checked_value: 'true', unchecked_value: 'false', checked: false %>
+          <%= f.check_box deployment.id, checked: false %>
         <% end  %>
       </td>
     </tr>

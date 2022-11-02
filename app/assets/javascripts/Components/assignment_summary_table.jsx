@@ -19,6 +19,7 @@ export class AssignmentSummaryTable extends React.Component {
       markingStateFilter: "all",
       showDownloadTestsModal: false,
       showLtiGradeModal: false,
+      lti_deployments: [],
     };
   }
 
@@ -43,6 +44,7 @@ export class AssignmentSummaryTable extends React.Component {
         num_marked: res.numMarked,
         loading: false,
         marking_states: markingStates,
+        lti_deployments: res.ltiDeployments,
       });
     });
   };
@@ -159,6 +161,14 @@ export class AssignmentSummaryTable extends React.Component {
 
   render() {
     const {data, criteriaColumns} = this.state;
+    let ltiButton;
+    if (this.state.lti_deployments.length > 0) {
+      ltiButton = (
+        <button type="submit" name="sync_grades" onClick={this.onLtiGradeModal}>
+          {I18n.t("lti.sync_grades_lms")}
+        </button>
+      );
+    }
     return (
       <div>
         <div style={{display: "inline-block"}}>
@@ -197,9 +207,7 @@ export class AssignmentSummaryTable extends React.Component {
                 item: I18n.t("activerecord.models.test_result.other"),
               })}
             </button>
-            <button type="submit" name="sync_grades" onClick={this.onLtiGradeModal}>
-              {I18n.t("lti.sync_grades_lms")}
-            </button>
+            {ltiButton}
           </div>
         )}
         <ReactTable
@@ -247,7 +255,7 @@ export class AssignmentSummaryTable extends React.Component {
         <LtiGradeModal
           isOpen={this.state.showLtiGradeModal}
           onRequestClose={() => this.setState({showLtiGradeModal: false})}
-          lti_deployments={this.props.lti_deployments}
+          lti_deployments={this.state.lti_deployments}
           assignment_id={this.props.assignment_id}
         />
       </div>

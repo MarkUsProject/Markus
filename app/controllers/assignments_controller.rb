@@ -255,12 +255,6 @@ class AssignmentsController < ApplicationController
 
   def summary
     @assignment = record
-    @lti_deployments = LtiLineItem.where(assessment_id: @assignment.id)
-                                  .joins(lti_deployment: :lti_client)
-                                  .pluck_to_hash('lti_deployments.id',
-                                                 'lti_clients.host',
-                                                 'lti_deployments.lms_course_name')
-    @lti_deployments.each { |deployment| deployment.transform_keys! { |key| key.to_s.split('.')[-1] } }
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
       format.json { render json: @assignment.summary_json(current_role) }
@@ -788,7 +782,7 @@ class AssignmentsController < ApplicationController
     end
     if params.key?(:lti_deployment)
       params[:lti_deployment].each do |deployment, enabled|
-        if enabled
+        if enabled.to_i != 0
           LtiDeployment.find(deployment).create_or_update_lti_assessment(assignment)
         end
       end

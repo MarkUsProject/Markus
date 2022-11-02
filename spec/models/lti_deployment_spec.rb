@@ -204,8 +204,7 @@ describe LtiDeployment do
     let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
     let(:status) { 'Active' }
     before :each do
-      Result.joins(:grouping)
-            .joins(grouping: :assignment)
+      Result.joins(grouping: :assignment)
             .where('assignment.id': assessment.id).update!(released_to_students: true)
       User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
       stub_request(:post, Settings.lti.token_endpoint)
@@ -261,13 +260,11 @@ describe LtiDeployment do
     let(:course) { create :course }
     let(:student1) { create :student, course: course }
     let(:lti_deployment) { create :lti_deployment, course: course }
-    # let(:lti_user) { create :lti_user, user: student1, lti_deployment: lti_deployment}
     let!(:assessment) { create :assignment_with_criteria_and_results, course: course }
     let!(:assessment2) { create :assignment_with_criteria_and_results, course: course }
     before :each do
       User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
-      Result.joins(:grouping)
-            .joins(grouping: :assignment)
+      Result.joins(grouping: :assignment)
             .where('assignment.id': assessment.id).update!(released_to_students: true)
     end
     it 'successfully gets grades for an assignment with released grades' do
@@ -277,21 +274,17 @@ describe LtiDeployment do
       expect(lti_deployment.get_assignment_marks(assessment2)).to be_empty
     end
     it 'does not get unreleased grades for an assignment with released grades' do
-      Result.joins(:grouping)
-            .joins(grouping: :assignment)
+      Result.joins(grouping: :assignment)
             .where('assignment.id': assessment2.id).first.update!(released_to_students: true)
       expect(lti_deployment.get_assignment_marks(assessment2)).not_to be_empty
     end
   end
   describe '#get_grade_entry_form_marks' do
     let(:course) { create :course }
-    let(:student1) { create :student, course: course }
+    let!(:student1) { create :student, course: course }
     let(:lti_deployment) { create :lti_deployment, course: course }
-    # let(:lti_user) { create :lti_user, user: student1, lti_deployment: lti_deployment}
-    let(:assessment) { create :grade_entry_form_with_data, course: course }
+    let!(:assessment) { create :grade_entry_form_with_data, course: course }
     before :each do
-      student1
-      assessment
       User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
     end
     it 'does not get unreleased grades' do
