@@ -248,6 +248,8 @@ GEM
     multi_json (1.15.0)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
+    net-http (0.3.0)
+      uri
     net-imap (0.2.3)
       digest
       net-protocol
@@ -468,6 +470,7 @@ GEM
       kgio (~> 2.6)
       raindrops (~> 0.7)
     uniform_notifier (1.16.0)
+    uri (0.11.0)
     webmock (3.18.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -519,6 +522,7 @@ DEPENDENCIES
   listen
   machinist (< 3)
   mini_mime
+  net-http
   pg
   pluck_to_hash
   prawn

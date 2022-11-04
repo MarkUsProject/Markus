@@ -12,6 +12,11 @@ gem 'rails', '~> 7.0.4'
 gem 'sprockets'
 gem 'sprockets-rails'
 
+# Adding this removes some warnings caused by double-loading of the net-protocol library
+# (see https://github.com/ruby/net-imap/issues/16)
+# we should be able to remove this after upgrading to Ruby 3
+gem 'net-http'
+
 # Models and database interactions
 gem 'pluck_to_hash'
 
