@@ -19,6 +19,7 @@
 - Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
 - Fix bug where csv summary download fails if criteria are created after marking (#6302)
 - Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
+- Downloading files from a single repository no longer adds an additional subdirectory to the zip archive (#6323)
 
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
