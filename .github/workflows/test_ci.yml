@@ -37,7 +37,7 @@ jobs:
       RSPEC_RENDER_VIEWS: true
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -48,18 +48,18 @@ jobs:
           ruby-version: ruby-2.7
           bundler-cache: true
       - name: Set up node and cache packages
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: npm
       - name: Install npm packages
         run: npm ci
       - name: Install python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}
