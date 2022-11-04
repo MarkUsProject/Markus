@@ -431,7 +431,7 @@ class ResultsController < ApplicationController
     Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
           submission_file&.retrieve_file(
             include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
