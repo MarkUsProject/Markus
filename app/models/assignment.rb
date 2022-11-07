@@ -489,6 +489,7 @@ class Assignment < Assessment
   # for the current user. The user should be an instructor or TA.
   def summary_json(user)
     return {} unless user.instructor? || user.ta?
+    lti_deployments = []
 
     if user.instructor?
       groupings = self.groupings
@@ -496,6 +497,12 @@ class Assignment < Assessment
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
+      lti_deployments = LtiLineItem.where(assessment_id: self.id)
+                                   .joins(lti_deployment: :lti_client)
+                                   .pluck_to_hash('lti_deployments.id',
+                                                  'lti_clients.host',
+                                                  'lti_deployments.lms_course_name')
+      lti_deployments.each { |deployment| deployment.transform_keys! { |key| key.to_s.split('.')[-1] } }
     else
       groupings = self.groupings
                       .joins(:memberships)
@@ -590,7 +597,8 @@ class Assignment < Assessment
     { data: final_data,
       criteriaColumns: criteria_columns,
       numAssigned: self.get_num_assigned(user.instructor? ? nil : user.id),
-      numMarked: self.get_num_marked(user.instructor? ? nil : user.id) }
+      numMarked: self.get_num_marked(user.instructor? ? nil : user.id),
+      ltiDeployments: lti_deployments }
   end
 
   # Generates the summary of the most test results associated with an assignment.

@@ -48,6 +48,13 @@ class GradeEntryForm < Assessment
                                   .pluck(:total_grade)
   end
 
+  def released_marks
+    self.grade_entry_students.joins(role: :user)
+        .where(roles: { hidden: false })
+        .where(released_to_student: true)
+        .where.not(total_grade: nil)
+  end
+
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
     unless grade_entry_student.nil?
