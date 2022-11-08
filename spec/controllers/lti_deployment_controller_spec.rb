@@ -31,8 +31,8 @@ describe LtiDeploymentController do
     end
   end
   describe '#new_course' do
-    let(:lti_deployment) { create :lti_deployment }
-    let(:course_params) { { display_name: 'Introduction to Computer Science', name: 'csc108' } }
+    let!(:lti_deployment) { create :lti_deployment }
+    let(:course_params) { { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: 'csc108' } }
     before :each do
       session[:lti_deployment_id] = lti_deployment.id
       post_as instructor, :create_course, params: course_params

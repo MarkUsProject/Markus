@@ -263,7 +263,9 @@ describe LtiDeployment do
     let!(:assessment) { create :assignment_with_criteria_and_results, course: course }
     let!(:assessment2) { create :assignment_with_criteria_and_results, course: course }
     before :each do
-      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
+      User.all.each do |usr|
+        create :lti_user, user: usr, lti_client: lti_deployment.lti_client if LtiUser.find_by(user: usr).nil?
+      end
       Result.joins(grouping: :assignment)
             .where('assignment.id': assessment.id).update!(released_to_students: true)
     end
