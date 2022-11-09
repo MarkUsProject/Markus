@@ -161,87 +161,51 @@ describe Course do
         end
       end
       context 'when the file contains a single assignment' do
-        let(:assignment_before_call) do
-          build(:assignment, course: course, short_identifier: 'TEST', is_hidden: false,
-                             description: 'ello', due_date: 5.days.from_now)
-        end
         context 'when the assignment already exists and an attribute is changed' do
+          let(:assignment) do
+            create(:assignment, course: course, short_identifier: 'TEST', message: 'a', is_hidden: false,
+                                description: 'ello', due_date: 5.days.from_now)
+          end
           before(:each) do
-            assignment_before_call.message = 'a'
-            assignment_before_call.save
-            assignment_before_call.reload
-
-            # change the state of the assignment locally to be compared with the updated one in the database
-            assignment_before_call.message = 'b'
-
             # desired list of assignment attributes
             assignment_values = Assignment::DEFAULT_FIELDS.map do |f|
-              assignment_before_call.public_send(f)
+              f == :message ? 'b' : assignment.public_send(f)
             end
 
             # csv representation of the single assignment
             csv = assignment_values.to_csv
 
+            # The only attribute to have changed is b
             course.upload_assignment_list('csv', csv)
+            assignment.reload
           end
 
-          it 'should update only the attributes that were changed' do
-            assignment_before_call_attr = assignment_before_call.attributes
-            assignment_after_call_attr = course.assignments.find(assignment_before_call.id).attributes
-
-            # Remove the time updated in preparation for comparison
-            assignment_before_call_attr.delete_if { |k, _| k == 'updated_at' }
-            assignment_after_call_attr.delete_if { |k, _| k == 'updated_at' }
-
-            # adjust the precision of assignment_before_call to account for precision loss
-            # in csv to object conversion
-            assignment_before_call_attr['due_date'] = assignment_before_call_attr['due_date'].floor
-
-            # check if the assignment stored locally, vs the one edited using upload_assignment_list match
-            expect(assignment_after_call_attr).to eq(assignment_before_call_attr)
+          it 'should update the attributes that were changed' do
+            expect(assignment.message).to eq('b')
           end
           it 'should not create a new assignment' do
-            # check if the number of assignments stored has changed
             expect(course.assignments.length).to eq(1)
           end
         end
         context 'when the assignment is new to the database' do
+          let(:desired_attributes) do
+            ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
+             1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
+             true, true, false, true, true, true, true, false, true, true]
+          end
+          let(:assignment) do
+            csv = desired_attributes.to_csv
+            course.upload_assignment_list('csv', csv)
+            course.assignments.find_by(short_identifier: 'short_identifier')
+          end
           it 'should set assignment_properties.repository_folder, token_period and ' \
              'unlimited_tokens to pre-determined values' do
-            # setting properties to different values than the ones they are supposed to be changed to
-            assignment_before_call.token_period = nil
-            assignment_before_call.unlimited_tokens = nil
-
-            # desired list of assignment attributes
-            desired_attributes = Assignment::DEFAULT_FIELDS.map do |f|
-              assignment_before_call.public_send(f)
-            end
-
-            # csv representation of the single assignment
-            csv = desired_attributes.to_csv
-
-            course.upload_assignment_list('csv', csv)
-
-            assignment_after_call = course.assignments.find_by(short_identifier: 'TEST')
-
-            expect(assignment_after_call.assignment_properties.repository_folder).to eq('TEST')
-            expect(assignment_after_call.assignment_properties.token_period).to eq(1)
-            expect(assignment_after_call.assignment_properties.unlimited_tokens).to eq(false)
+            expect(assignment.assignment_properties.repository_folder).to eq('short_identifier')
+            expect(assignment.assignment_properties.token_period).to eq(1)
+            expect(assignment.assignment_properties.unlimited_tokens).to eq(false)
           end
           it 'should save the new object to the database with the intended attributes' do
-            desired_attributes = ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
-                                  1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-                                  true, true, false, true, true, true, true, false, true, true]
-            csv = desired_attributes.to_csv
-
-            course.upload_assignment_list('csv', csv)
-
-            assignment = course.assignments.find_by(short_identifier: 'short_identifier')
-
-            # Check that the assignment is saved in the database
-            expect(assignment).not_to eq(nil)
-
-            # Check that al the desired attributes match those stored in the assignment
+            # Check that all the desired attributes match those stored in the assignment
             Assignment::DEFAULT_FIELDS.length.times do |index|
               expect(assignment.public_send(
                        Assignment::DEFAULT_FIELDS[index]
@@ -308,86 +272,49 @@ describe Course do
         end
       end
       context 'when the file contains a single assignment' do
-        let(:assignment_before_call) do
-          build(:assignment, course: course, short_identifier: 'TEST', is_hidden: false,
-                             description: 'ello', due_date: 5.days.from_now)
+        let(:assignment) do
+          create(:assignment, course: course, short_identifier: 'TEST', message: 'a', is_hidden: false,
+                              description: 'ello', due_date: 5.days.from_now)
         end
         context 'when the assignment already exists and an attribute is changed' do
           before(:each) do
-            assignment_before_call.message = 'a'
-            # Saving the assignment to the database (a.k.a making sure the assignment already exists)
-            assignment_before_call.save
-            assignment_before_call.reload
-            # change the state of the assignment locally to be compared with the updated one in the database
-            assignment_before_call.message = 'b'
-
             # hash from attribute names to their desired values
             assignment_values = Assignment::DEFAULT_FIELDS.zip(
               Assignment::DEFAULT_FIELDS.map do |f|
-                assignment_before_call.public_send(f)
+                f == :message ? 'b' : assignment.public_send(f)
               end
             ).to_h
             yaml = parse_yaml_content({ 'assignments' => [assignment_values] }.to_yaml)
 
             course.upload_assignment_list('yml', yaml)
+            assignment.reload
           end
-          it 'should update only the attributes that were changed' do
-            assignment_before_call_attr = assignment_before_call.attributes
-            assignment_after_call_attr = course.assignments.find(assignment_before_call.id).attributes
-
-            # Remove the time updated in preparation for comparison
-            assignment_before_call_attr.delete_if { |k, _| k == 'updated_at' }
-            assignment_after_call_attr.delete_if { |k, _| k == 'updated_at' }
-
-            # check if the assignment stored locally, vs the one edited using upload_assignment_list match
-            expect(assignment_after_call_attr).to eq(assignment_before_call_attr)
+          it 'should update the attributes that were changed' do
+            expect(assignment.message).to eq('b')
           end
           it 'should not create a new assignment' do
-            # check if the length of assignments list has changed
             expect(course.assignments.length).to eq(1)
           end
         end
         context 'when the assignment is new to the database' do
+          let(:desired_attributes) do
+            ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
+             1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
+             true, true, false, true, true, true, true, false, true, true]
+          end
+          let(:assignment) do
+            desired_attribute_value_hash = Assignment::DEFAULT_FIELDS.zip(desired_attributes).to_h
+            yaml = parse_yaml_content({ 'assignments' => [desired_attribute_value_hash] }.to_yaml)
+            course.upload_assignment_list('yml', yaml)
+            course.assignments.find_by(short_identifier: 'short_identifier')
+          end
           it 'should set assignment_properties.repository_folder, token_period and ' \
              'unlimited_tokens to pre-determined values' do
-            # setting properties to different values than the ones they are supposed to be changed to
-            assignment_before_call.token_period = nil
-            assignment_before_call.unlimited_tokens = nil
-
-            # desired list of assignment attributes
-
-            assignment_values_list = Assignment::DEFAULT_FIELDS.map do |f|
-              assignment_before_call.public_send(f)
-            end
-
-            desired_attribute_value_hash = Assignment::DEFAULT_FIELDS.zip(assignment_values_list).to_h
-
-            # yml representation of the single assignment
-            yaml = parse_yaml_content({ 'assignments' => [desired_attribute_value_hash] }.to_yaml)
-
-            course.upload_assignment_list('yml', yaml)
-
-            assignment_after_call = course.assignments.find_by(short_identifier: 'TEST')
-
-            expect(assignment_after_call.assignment_properties.repository_folder).to eq('TEST')
-            expect(assignment_after_call.assignment_properties.token_period).to eq(1)
-            expect(assignment_after_call.assignment_properties.unlimited_tokens).to eq(false)
+            expect(assignment.assignment_properties.repository_folder).to eq('short_identifier')
+            expect(assignment.assignment_properties.token_period).to eq(1)
+            expect(assignment.assignment_properties.unlimited_tokens).to eq(false)
           end
           it 'should save the new object to the database with the intended attributes' do
-            desired_attributes = ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
-                                  1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-                                  true, true, false, true, true, true, true, false, true, true]
-            desired_attribute_value_hash = Assignment::DEFAULT_FIELDS.zip(desired_attributes).to_h
-            # yml representation of the single assignment
-            yaml = parse_yaml_content({ 'assignments' => [desired_attribute_value_hash] }.to_yaml)
-
-            course.upload_assignment_list('yml', yaml)
-
-            assignment = course.assignments.find_by(short_identifier: 'short_identifier')
-
-            # Check that the assignment is saved in the database
-            expect(assignment).not_to eq(nil)
-
             # Check that all attributes stored in the assignment match the desired attributes
             Assignment::DEFAULT_FIELDS.length.times do |index|
               expect(assignment.public_send(
@@ -399,17 +326,15 @@ describe Course do
       end
       context 'when there are multiple assignments' do
         context 'when some assignments are new, others are old' do
-          let!(:old_assignment_pre_upload) do
-            a = create(:assignment, course: course, short_identifier: 'old', is_hidden: false,
-                                    description: 'ello', due_date: 5.days.from_now)
-            a.reload
-          end
           let!(:new_assignment_attr) do
             ['new', 'abc', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, true, true, false, true, true]
+             true, true, false, true, true, true, true, false, true, false]
           end
           let!(:returned) do
+            # create the old assignment
+            create(:assignment, course: course, short_identifier: 'old', is_hidden: false,
+                                description: 'ello', due_date: 5.days.from_now)
             # Create a hash mapping assignment attributes to desired values (to be used when setting attributes for old
             # assignment)
             old_assignment_new_attr = { short_identifier: 'old', description: 'Hello' }
@@ -441,28 +366,14 @@ describe Course do
             end
           end
           it 'should correctly update the old assignment\'s attributes with ones specified by the user' do
-            # Check that all attributes are properly set for the old assignment
-            old_assignment_pre_call_attr = old_assignment_pre_upload.attributes.to_a
-            old_assignment_post_call_attr = old_assignment.attributes.to_a
-
-            # Remove the time updated in preparation for comparison
-            old_assignment_pre_call_attr.delete_if { |k, _| %w[updated_at description].include?(k) }
-            old_assignment_post_call_attr.delete_if { |k, _| %w[updated_at description].include?(k) }
-
-            expect(old_assignment_post_call_attr).to eq(old_assignment_pre_call_attr)
             expect(old_assignment.description).to eq('Hello')
           end
           it 'should return a list with the success status of saving each row to the database' do
             expect(returned).to eq([true, true])
           end
           it 'should not add any new courses not specified in the yml file' do
-            # rand = course.assignments.find_by(short_identifier: 'new_pr')
             expect(old_assignment).not_to eq(nil)
             expect(new_assignment).not_to eq(nil)
-            # Assignment::DEFAULT_FIELDS.length.times do |index|
-            #   puts Assignment::DEFAULT_FIELDS[index].to_s + " " + rand.public_send(
-            #     Assignment::DEFAULT_FIELDS[index]).to_s
-            # end
             expect(course.assignments.to_a.length).to eq(2)
           end
         end
