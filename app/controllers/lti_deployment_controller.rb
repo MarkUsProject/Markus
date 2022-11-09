@@ -7,10 +7,6 @@ class LtiDeploymentController < ApplicationController
   before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
   before_action :check_host, except: [:choose_course]
 
-  # Default Canvas values to be overridden in each LMS controller
-  LMS_REDIRECT_ENDPOINT = '/api/lti/authorize_redirect'.freeze
-  JWK_ENDPOINT = '/api/lti/security/jwks'.freeze
-
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
       params[:target_link_uri].blank? || params[:lti_message_hint].blank?
@@ -34,7 +30,7 @@ class LtiDeploymentController < ApplicationController
     }
     referrer = URI(request.referer)
 
-    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{LMS_REDIRECT_ENDPOINT}")
+    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{lms_redirect_endpoint}")
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
     req = Net::HTTP::Post.new(auth_request_uri)
@@ -53,7 +49,7 @@ class LtiDeploymentController < ApplicationController
 
     referrer_uri = URI(request.referer)
     # Get canvas JWK set
-    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{JWK_ENDPOINT}"
+    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{lms_jwk_endpoint}"
     # A list of public keys and associated metadata for JWTs signed by canvas
     lms_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
     begin
@@ -134,7 +130,8 @@ class LtiDeploymentController < ApplicationController
   def check_host
     known_lti_hosts = Settings.lti.domains
     if known_lti_hosts.exclude?(request.host)
-      render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
+      render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
+                                   status: :unprocessable_entity, layout: false
       nil
     end
   end
@@ -154,6 +151,16 @@ class LtiDeploymentController < ApplicationController
       lti.create_or_update_lti_assessment(assessment)
       lti.create_grades(assessment)
     end
+  end
+
+  # Methods which return the lms redirect endpoints.
+  # To be overridden by subclasses.
+  def lms_redirect_endpoint
+    nil
+  end
+
+  def lms_jwk_endpoint
+    nil
   end
 
   # Define default URL options to not include locale

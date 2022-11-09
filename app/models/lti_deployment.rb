@@ -65,7 +65,7 @@ class LtiDeployment < ApplicationRecord
       scoreMaximum: assessment.max_mark.to_f
     }
     auth_data = lti_client.get_oauth_token([LTI_SCOPES[:ags_lineitem]])
-    lineitem_service = self.lti_services.find_by!(lti_deployment: self, service_type: 'agslineitem')
+    lineitem_service = self.lti_services.find_by!(service_type: 'agslineitem')
     lineitem_uri = URI(lineitem_service.url)
     line_item = self.lti_line_items.find_or_initialize_by(assessment: assessment)
     if line_item.lti_line_item_id?

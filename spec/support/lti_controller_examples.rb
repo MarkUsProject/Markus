@@ -4,7 +4,7 @@ shared_examples 'lti deployment controller' do
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
   let(:host) { 'https://canvas.instructure.com' }
   let(:state) { 'state_param' }
-  describe '#launch', :launch do
+  describe '#launch' do
     context 'when launching with invalid parameters' do
       let(:lti_message_hint) { 'opaque string' }
       let(:login_hint) { 'another opque string' }
@@ -130,7 +130,7 @@ shared_examples 'lti deployment controller' do
     it 'does redirect to an error with an unknown host' do
       @request.host = 'example.com'
       get_as instructor, :get_config
-      expect(response).to render_template('shared/http_status')
+      expect(response.status).to eq(422)
     end
   end
 end
