@@ -272,11 +272,11 @@ describe Course do
         end
       end
       context 'when the file contains a single assignment' do
-        let(:assignment) do
-          create(:assignment, course: course, short_identifier: 'TEST', message: 'a', is_hidden: false,
-                              description: 'ello', due_date: 5.days.from_now)
-        end
         context 'when the assignment already exists and an attribute is changed' do
+          let(:assignment) do
+            create(:assignment, course: course, short_identifier: 'TEST', message: 'a', is_hidden: false,
+                                description: 'ello', due_date: 5.days.from_now)
+          end
           before(:each) do
             # hash from attribute names to their desired values
             assignment_values = Assignment::DEFAULT_FIELDS.zip(
