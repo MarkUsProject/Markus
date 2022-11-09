@@ -11,6 +11,8 @@ class Assessment < ApplicationRecord
   has_many :assessment_section_properties, inverse_of: :assessment, class_name: 'AssessmentSectionProperties'
   accepts_nested_attributes_for :assessment_section_properties
 
+  has_many :lti_line_items
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info

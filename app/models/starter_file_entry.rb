@@ -49,8 +49,8 @@ class StarterFileEntry < ApplicationRecord
       repo_entry_path = File.join(assignment_path, repo_entry_path)
 
       entry_exists = rev.path_exists? repo_entry_path
-      if abs_path.directory? && !entry_exists
-        txn.add_path(repo_entry_path)
+      if abs_path.directory?
+        txn.add_path(repo_entry_path) unless entry_exists
       else
         content = File.read(abs_path.to_s, mode: 'rb')
         if entry_exists

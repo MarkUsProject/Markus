@@ -3,6 +3,7 @@ import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
 
 import ReactTable from "react-table";
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
+import LtiGradeModal from "./Modals/send_lti_grades_modal";
 
 export class AssignmentSummaryTable extends React.Component {
   constructor() {
@@ -17,6 +18,8 @@ export class AssignmentSummaryTable extends React.Component {
       marking_states: markingStates,
       markingStateFilter: "all",
       showDownloadTestsModal: false,
+      showLtiGradeModal: false,
+      lti_deployments: [],
     };
   }
 
@@ -41,6 +44,7 @@ export class AssignmentSummaryTable extends React.Component {
         num_marked: res.numMarked,
         loading: false,
         marking_states: markingStates,
+        lti_deployments: res.ltiDeployments,
       });
     });
   };
@@ -151,8 +155,20 @@ export class AssignmentSummaryTable extends React.Component {
     this.setState({showDownloadTestsModal: true});
   };
 
+  onLtiGradeModal = () => {
+    this.setState({showLtiGradeModal: true});
+  };
+
   render() {
     const {data, criteriaColumns} = this.state;
+    let ltiButton;
+    if (this.state.lti_deployments.length > 0) {
+      ltiButton = (
+        <button type="submit" name="sync_grades" onClick={this.onLtiGradeModal}>
+          {I18n.t("lti.sync_grades_lms")}
+        </button>
+      );
+    }
     return (
       <div>
         <div style={{display: "inline-block"}}>
@@ -191,6 +207,7 @@ export class AssignmentSummaryTable extends React.Component {
                 item: I18n.t("activerecord.models.test_result.other"),
               })}
             </button>
+            {ltiButton}
           </div>
         )}
         <ReactTable
@@ -234,6 +251,12 @@ export class AssignmentSummaryTable extends React.Component {
           isOpen={this.state.showDownloadTestsModal}
           onRequestClose={() => this.setState({showDownloadTestsModal: false})}
           onSubmit={() => {}}
+        />
+        <LtiGradeModal
+          isOpen={this.state.showLtiGradeModal}
+          onRequestClose={() => this.setState({showLtiGradeModal: false})}
+          lti_deployments={this.state.lti_deployments}
+          assignment_id={this.props.assignment_id}
         />
       </div>
     );

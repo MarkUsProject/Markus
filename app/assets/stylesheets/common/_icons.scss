@@ -174,3 +174,9 @@
 .array-item-move-down::after {
   content: asset-url('icons/arrow_down.png');
 }
+
+.refresh::after {
+  content: asset-url('icons/arrow_refresh.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}

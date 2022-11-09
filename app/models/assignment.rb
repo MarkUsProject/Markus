@@ -489,6 +489,7 @@ class Assignment < Assessment
   # for the current user. The user should be an instructor or TA.
   def summary_json(user)
     return {} unless user.instructor? || user.ta?
+    lti_deployments = []
 
     if user.instructor?
       groupings = self.groupings
@@ -496,6 +497,12 @@ class Assignment < Assessment
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
+      lti_deployments = LtiLineItem.where(assessment_id: self.id)
+                                   .joins(lti_deployment: :lti_client)
+                                   .pluck_to_hash('lti_deployments.id',
+                                                  'lti_clients.host',
+                                                  'lti_deployments.lms_course_name')
+      lti_deployments.each { |deployment| deployment.transform_keys! { |key| key.to_s.split('.')[-1] } }
     else
       groupings = self.groupings
                       .joins(:memberships)
@@ -590,7 +597,8 @@ class Assignment < Assessment
     { data: final_data,
       criteriaColumns: criteria_columns,
       numAssigned: self.get_num_assigned(user.instructor? ? nil : user.id),
-      numMarked: self.get_num_marked(user.instructor? ? nil : user.id) }
+      numMarked: self.get_num_marked(user.instructor? ? nil : user.id),
+      ltiDeployments: lti_deployments }
   end
 
   # Generates the summary of the most test results associated with an assignment.
@@ -705,13 +713,13 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map { |field| s.__send__(field) }
+          other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
           row = [g.group.group_name] + other_info
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += self.ta_criteria.map { |crit| marks[crit.id][:mark] }
+            row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -1091,7 +1099,9 @@ class Assignment < Assessment
                                  'results.id',
                                  'results.marking_state',
                                  'results.total_mark',
-                                 'results.released_to_students')
+                                 'results.released_to_students',
+                                 'results.view_token',
+                                 'results.view_token_expiry')
                   .group_by { |h| h['groupings.id'] }
 
     if current_role.ta? && anonymize_groups
@@ -1162,6 +1172,11 @@ class Assignment < Assessment
         extra_mark = extra_marks_hash[result_info['results.id']] || 0
         base[:result_id] = result_info['results.id']
         base[:final_grade] = [0, (total_marks[result_info['results.id']] || 0.0) + extra_mark].max
+        if self.release_with_urls
+          base[:result_view_token] = result_info['results.view_token']
+          token_expiry = result_info['results.view_token_expiry']
+          base[:result_view_token_expiry] = token_expiry.nil? ? nil : I18n.l(token_expiry.in_time_zone)
+        end
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?

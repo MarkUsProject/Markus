@@ -175,6 +175,8 @@ class AssignmentsController < ApplicationController
     @assessment_section_properties.sort_by do |s|
       [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
     end
+
+    @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :edit, layout: 'assignment_content'
   end
 
@@ -217,6 +219,7 @@ class AssignmentsController < ApplicationController
     @sections.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
+    @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :new, layout: 'assignment_content'
   end
 
@@ -707,12 +710,12 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     parent_short_id = properties[:parent_assessment_short_identifier]
+    properties = filter_nested_attributes(properties, Assignment)
     if parent_short_id.blank?
       assignment = current_course.assignments.new(properties)
     else
       # Filter properties not supported by peer review assignments, then build assignment
-      peer_review_properties = properties.except(:parent_assessment_short_identifier,
-                                                 :submission_rule_attributes,
+      peer_review_properties = properties.except(:submission_rule_attributes,
                                                  :assignment_files_attributes)
       assignment = current_course.assignments.new(peer_review_properties)
       assignment.enable_test = false
@@ -722,6 +725,24 @@ class AssignmentsController < ApplicationController
     end
     assignment.repository_folder = assignment.short_identifier
     assignment
+  end
+
+  # Filters assignment properties to remove any properties that do not match the relevant models.
+  def filter_nested_attributes(attributes, klass)
+    class_attributes = attributes.slice(*klass.column_names.map(&:to_sym))
+    attributes.keys.filter_map { |a| a.to_s.match(/^(.+)_attributes$/) }.each do |attr_match|
+      attribute_key = attr_match[0].to_sym
+      attribute_value = attributes[attribute_key]
+      association_name = attr_match[1]
+      associated_klass = klass.reflect_on_association(association_name).klass
+
+      if attribute_value.is_a? Hash
+        class_attributes[attribute_key] = filter_nested_attributes(attribute_value, associated_klass)
+      elsif attribute_value.is_a? Array
+        class_attributes[attribute_key] = attribute_value.map { |v| filter_nested_attributes(v, associated_klass) }
+      end
+    end
+    class_attributes
   end
 
   def set_repo_vars(assignment, grouping)
@@ -777,7 +798,13 @@ class AssignmentsController < ApplicationController
       assignment.group_min = 1
       assignment.group_max = 1
     end
-
+    if params.key?(:lti_deployment)
+      params[:lti_deployment].each do |deployment, enabled|
+        if enabled.to_i != 0
+          LtiDeployment.find(deployment).create_or_update_lti_assessment(assignment)
+        end
+      end
+    end
     assignment
   end
 
@@ -845,7 +872,8 @@ class AssignmentsController < ApplicationController
         :section_due_dates_type,
         :scanned_exam,
         :is_timed,
-        :start_time
+        :start_time,
+        :release_with_urls
       ],
       assessment_section_properties_attributes: [
         :_destroy,

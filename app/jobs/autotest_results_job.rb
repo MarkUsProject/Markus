@@ -34,7 +34,7 @@ class AutotestResultsJob < AutotestJob
         if %(started queued deferred).include? status
           outstanding_results = true
         else
-          test_run = TestRun.find_by(autotest_test_id: autotest_test_id)
+          test_run = test_runs.find_by(autotest_test_id: autotest_test_id)
           if %(finished failed).include? status
             results(test_run.grouping.assignment, test_run) unless test_run.nil?
           else

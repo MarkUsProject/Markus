@@ -8,3 +8,4 @@ en:
     models:
       annotation_text:
         one: Annotation Text
+        other: Annotation Texts
