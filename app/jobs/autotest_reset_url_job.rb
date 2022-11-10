@@ -73,7 +73,6 @@ class AutotestResetUrlJob < ApplicationJob
         rescue StandardError => e
           errors << I18n.t('automated_tests.job_messages.resetting_test_settings_error',
                            short_identifier: assignment.short_identifier, error: e.to_s)
-          status.update(error_message: e.to_s)
         end
         raise errors.join("\n") unless errors.empty?
       end
