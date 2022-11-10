@@ -71,8 +71,8 @@ describe LtiDeploymentController do
       is_expected.to respond_with(:success)
     end
     it 'responds with a valid jwk' do
-      get :public_jwk
-      expect(JWT::JWK.new(response.body)).not_to raise_error
+      pub_jwk = get :public_jwk
+      expect { JWT::JWK.new(pub_jwk.body) }.not_to raise_error
     end
   end
   describe '#create_lti_grades' do
@@ -157,8 +157,9 @@ describe LtiDeploymentController do
       post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
       expect(response.status).to eq(204)
     end
-    it 'updates lti user name for a student'
-    post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
-    expect(LtiUser.find_by(user: Student.first.user, lti_client: lti.lti_client).lti_user_id).to eq('lti_user_id')
+    it 'updates lti user name for a student' do
+      post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
+      expect(LtiUser.find_by(user: Student.first.user, lti_client: lti.lti_client).lti_user_id).to eq('lti_user_id')
+    end
   end
 end
