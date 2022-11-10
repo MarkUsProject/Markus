@@ -14,7 +14,7 @@ if __name__ == '__main__':
                              stdout=subprocess.PIPE, universal_newlines=True)
     size = subprocess.run(['git', 'show', '{}:{}'.format(old_commit, '.max_file_size')], stdout=subprocess.PIPE,
                           universal_newlines=True)
-    max_file_size = int(req.stdout.strip())
+    max_file_size = int(size.stdout.strip())
     # check all changed/added files
     for change in changes.stdout.splitlines():
         sha, *paths = change.split(maxsplit=1)
