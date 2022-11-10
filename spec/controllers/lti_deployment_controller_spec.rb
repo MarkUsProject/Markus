@@ -70,9 +70,39 @@ describe LtiDeploymentController do
       get_as instructor, :public_jwk
       is_expected.to respond_with(:success)
     end
-    it 'responds with a valid jwk' do
-      pub_jwk = get :public_jwk
-      expect { JWT::JWK.new(pub_jwk.body) }.not_to raise_error
+    it 'responds with valid JSON' do
+      jwk = get :public_jwk
+      expect { JSON.parse(jwk.body) }.not_to raise_error
+    end
+    context 'a valid jwk set' do
+      let(:pub_jwk) { get :public_jwk }
+      let(:hash_jwk) { JSON.parse(pub_jwk.body) }
+      it 'stores keys under the key parameter' do
+        expect(hash_jwk).to have_key('keys')
+      end
+      it 'stores keys as a list' do
+        expect(hash_jwk['keys']).to be_a(Array)
+      end
+      context 'an individual key' do
+        let(:pub_jwk) { get :public_jwk }
+        let(:hash_jwk) { JSON.parse(pub_jwk.body) }
+        let(:jwk_key) { hash_jwk['keys'][0] }
+        it 'stores the correct signing algorithm' do
+          expect(jwk_key['kty']).to eq('RSA')
+        end
+        it 'has a kid parameter' do
+          expect(jwk_key).to have_key('kid')
+        end
+        it 'verifies a signed message' do
+          key = OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH)
+          jwk = JWT::JWK.new(key)
+          payload = { test: 'data' }
+          token = JWT.encode payload, jwk.keypair, 'RS256', { kid: jwk_key['kid'] }
+          decoded = JWT.decode(token, nil, true, algorithms: ['RS256'],
+                                                 verify_iss: false, verify_aud: false, jwks: hash_jwk)
+          expect(decoded[0]['test']).to match('data')
+        end
+      end
     end
   end
   describe '#create_lti_grades' do
@@ -80,7 +110,7 @@ describe LtiDeploymentController do
     let(:instructor) { create :instructor, course: course }
     let!(:lti) { create :lti_deployment, course: course }
     let(:assignment) { create :assignment_with_criteria_and_results }
-    let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
+    let(:scope) { LtiDeployment::LTI_SCOPES['names_role'] }
     let!(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti }
     let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti }
     let(:status) { 'Active' }
