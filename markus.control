@@ -4,17 +4,31 @@ Standards-Version: 3.9.2
 
 Package: markus
 Depends:
+# cmake: for making certain ruby gems
   cmake,
+# libssl-dev: for ssl/tsl encryption
   libssl-dev,
+# tzdata: for timezone management
   tzdata,
+# build-essential: for building/compiling packages
   build-essential,
+# postgresql-client: the pg gem uses these to manage databases (spefically required for the pg_dump utility)
   postgresql-client (>= 12) | postgresql-client-12,
+# libpq-dev: needed by the pg gem
   libpq-dev (>= 12),
+# ghostscript: for managing pdfs
   ghostscript (>= 9.5), ghostscript (<< 10),
+# libmagickwand-dev: used by the rmagick gem
   libmagickwand-dev (>= 8:6), libmagickwand-dev (<< 8:7),
+# git: used by the rugged gem
   git (>= 1:2), git (<< 1:3),
+# libgl1: used by opencv-python python package
   libgl1 (>= 1.3), libgl1 (<< 2),
+# nodejs: for serving/managing javascript
   nodejs (>= 18), nodejs (<< 19),
+# ruby: required to run Rails
   ruby (>= 1:2.7) | ruby2.7, ruby (<< 1:3) | ruby2.7,
+# ruby-dev: required to run rails
   ruby-dev (>= 1:2.7) | ruby2.7-dev, ruby-dev (<< 1:3) | ruby2.7-dev,
+# rubygems-integration: required to install ruby gems
   rubygems-integration
