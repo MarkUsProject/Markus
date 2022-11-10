@@ -501,6 +501,7 @@ Rails.application.routes.draw do
       get 'choose_course'
       post 'choose_course'
       post 'create_course'
+      post 'create_lti_grades'
     end
   end
 
