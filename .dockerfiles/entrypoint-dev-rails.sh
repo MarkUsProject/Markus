@@ -21,6 +21,9 @@ done
 cp .dockerfiles/database.yml.postgresql config/database.yml
 bundle exec rails db:prepare
 
+# strip newlines from end of structure.sql (revert when/if https://github.com/rails/rails/pull/46454 is implemented)
+sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' /app/db/structure.sql
+
 rm -f ./tmp/pids/server.pid
 
 # Then exec the container's main process (what's set as CMD in the Dockerfile or docker-compose.yml).
