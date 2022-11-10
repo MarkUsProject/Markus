@@ -156,11 +156,11 @@ class LtiDeploymentController < ApplicationController
   # Methods which return the lms redirect endpoints.
   # To be overridden by subclasses.
   def lms_redirect_endpoint
-    nil
+    self.class::LMS_REDIRECT_ENDPOINT
   end
 
   def lms_jwk_endpoint
-    nil
+    self.class::LMS_JWK_ENDPOINT
   end
 
   # Define default URL options to not include locale

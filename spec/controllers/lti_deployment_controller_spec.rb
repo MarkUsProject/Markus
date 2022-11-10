@@ -1,6 +1,7 @@
 describe LtiDeploymentController do
   let(:instructor) { create :instructor }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
+  before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
 
   describe '#choose_course' do
     let!(:course) { create :course }
@@ -13,6 +14,7 @@ describe LtiDeploymentController do
         expect(response.status).to eq(302)
       end
       it 'is accessible when logged in' do
+        session[:lti_deployment_id] = lti.id
         get_as instructor, :choose_course
         expect(response.status).to eq(200)
       end
@@ -67,6 +69,10 @@ describe LtiDeploymentController do
     it 'responds with success when logged in' do
       get_as instructor, :public_jwk
       is_expected.to respond_with(:success)
+    end
+    it 'responds with a valid jwk' do
+      get :public_jwk
+      expect(JWT::JWK.new(response.body)).not_to raise_error
     end
   end
   describe '#create_lti_grades' do
@@ -151,5 +157,8 @@ describe LtiDeploymentController do
       post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
       expect(response.status).to eq(204)
     end
+    it 'updates lti user name for a student'
+    post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
+    expect(LtiUser.find_by(user: Student.first.user, lti_client: lti.lti_client).lti_user_id).to eq('lti_user_id')
   end
 end

@@ -1,4 +1,7 @@
 class CanvasController < LtiDeploymentController
+  LMS_REDIRECT_ENDPOINT = '/api/lti/authorize_redirect'.freeze
+  LMS_JWK_ENDPOINT = '/api/lti/security/jwks'.freeze
+  s
   def get_config
     # See https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html
     # for example configuration and descriptions of fields
@@ -40,13 +43,5 @@ class CanvasController < LtiDeploymentController
     }
 
     render json: config.to_json
-  end
-
-  def lms_redirect_endpoint
-    '/api/lti/authorize_redirect'
-  end
-
-  def lms_jwk_endpoint
-    '/api/lti/security/jwks'
   end
 end
