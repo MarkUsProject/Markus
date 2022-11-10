@@ -44,7 +44,7 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def review?
-    role.instructor? || (role.ta? && record.grouping.tas.exists?(role.id)) || (
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
       record&.submission&.assignment&.has_peer_review &&
           role.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
     )
