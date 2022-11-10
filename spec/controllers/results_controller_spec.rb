@@ -5,8 +5,7 @@ describe ResultsController do
   let(:student) { create :student, grace_credits: 2 }
   let(:instructor) { create :instructor }
   let(:ta) { create :ta }
-  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student, tas: [ta] }
-  let(:ta_membership) { TaMembership.create(role: ta, grouping: grouping) }
+  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
   let(:submission) { create :version_used_submission, grouping: grouping }
   let(:incomplete_result) { submission.current_result }
   let(:complete_result) { create :complete_result, submission: submission }
@@ -140,6 +139,7 @@ describe ResultsController do
   shared_examples 'shared ta and instructor tests' do
     include_examples 'download files'
     context 'accessing next_grouping' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       it 'should receive 200 when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
         get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
@@ -165,6 +165,7 @@ describe ResultsController do
       end
     end
     context 'accessing toggle_marking_state' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       context 'with a complete result' do
         before :each do
           post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
@@ -263,6 +264,7 @@ describe ResultsController do
       end
     end
     context 'accessing update_mark' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       it 'should report an updated mark' do
         patch :update_mark, params: { course_id: course.id,
                                       id: incomplete_result.id,
@@ -276,10 +278,7 @@ describe ResultsController do
         let(:result) { assignment.groupings.first.current_result }
         let(:submission) { result.submission }
         let(:mark) { assignment.groupings.first.current_result.marks.first }
-        before(:each) do
-          assignment.groupings.first.tas.push(ta)
-          assignment.groupings.first.save
-        end
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: assignment.groupings.first }
         it 'sets override to true for mark if input value is not null' do
           patch :update_mark, params: { course_id: course.id,
                                         id: result.id, criterion_id: mark.criterion_id,
@@ -1214,6 +1213,7 @@ describe ResultsController do
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
     context 'accessing edit' do
       context 'when assigned to grade the given group\'s work' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
         before :each do
           get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
         end
@@ -1222,7 +1222,6 @@ describe ResultsController do
         it { expect(response).to have_http_status(:success) }
       end
       context 'when not assigned to grade the given group\'s work' do
-        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
         it {
           get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
           expect(response).to have_http_status(:forbidden)
@@ -1332,6 +1331,7 @@ describe ResultsController do
 
     context 'accessing update_mark' do
       context 'when is assigned to grade the given group\'s submission' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
         it 'should not count completed groupings that are not assigned to the TA' do
           grouping2 = create(:grouping_with_inviter, assignment: assignment)
           create(:version_used_submission, grouping: grouping2)
@@ -1344,7 +1344,6 @@ describe ResultsController do
         end
       end
       context 'when not assigned to grade the given group\'s work' do
-        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
         it {
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
@@ -1356,6 +1355,7 @@ describe ResultsController do
 
     context 'accessing update_overall_comment' do
       context 'when assigned to grade the given group\'s submission' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
         before :each do
           post :update_overall_comment, params: { course_id: course.id,
                                                   id: incomplete_result.id,
@@ -1368,7 +1368,6 @@ describe ResultsController do
         end
       end
       context 'when not assigned to grade the given group\'s submission' do
-        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
         it {
           post :update_overall_comment, params: { course_id: course.id,
                                                   id: incomplete_result.id,
@@ -1380,13 +1379,13 @@ describe ResultsController do
 
     context 'accessing toggle_marking_state' do
       context 'when assigned to grade the given group\'s work' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
         it {
           post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
           expect(response).to have_http_status(:success)
         }
       end
       context 'when not assigned to grade the given group\'s work' do
-        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
         it {
           post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
           expect(response).to have_http_status(:forbidden)
@@ -1394,7 +1393,6 @@ describe ResultsController do
       end
     end
     context 'accessing next_grouping and TA is not assigned to grade the given group\'s work' do
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
       it {
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
         get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
