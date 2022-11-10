@@ -154,6 +154,14 @@ class LtiDeploymentController < ApplicationController
     end
   end
 
+  def lms_jwk_endpoint
+    self.class::LMS_JWK_ENDPOINT
+  end
+
+  def lms_redirect_endpoint
+    self.class::LMS_REDIRECT_ENDPOINT
+  end
+
   # Define default URL options to not include locale
   def default_url_options(_options = {})
     {}
