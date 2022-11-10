@@ -106,18 +106,6 @@ END
 $$;
 
 
-<<<<<<< HEAD
-=======
---
--- Name: relative_url_root(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.relative_url_root() RETURNS text
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $$SELECT text '/'$$;
-
-
->>>>>>> 65bdd720b (merged back changes)
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
