@@ -15,10 +15,12 @@
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Disable python features if python dependencies are not installed (#6232)
 - Allow results to be made available only through unique tokens (#6244)
-- Allow spaces in file names (#6306)
+- Install system dependencies from a debian package (#6246)
 - Fix bug where assignments could not be uploaded with unexpected properties in file upload content (#6224)
 - Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
 - Fix bug where csv summary download fails if criteria are created after marking (#6302)
+- Allow spaces in file names (#6306)
+- Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
 
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)

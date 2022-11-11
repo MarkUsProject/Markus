@@ -25,7 +25,8 @@ rails:
     deliver_later_queue_name: ~
   action_controller:
     default_url_options:
-      host: 'localhost:3000'
+      host: 'localhost'
+      port: '3000'
 
 queues:
   default: DEFAULT_QUEUE

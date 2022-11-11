@@ -19,14 +19,32 @@ describe AutotestCancelJob do
     subject { described_class.perform_now(assignment.id, test_run_ids) }
     context 'tests are set up for an assignment' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
-      before { test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) } }
       it 'should send an api request to the autotester' do
         expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj, uri|
           expect(net_obj.instance_of?(Net::HTTP::Delete)).to be true
           expect(uri.to_s).to eq "#{assignment.course.autotest_setting.url}/settings/10/tests/cancel"
-          expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2, 3)
         end
         subject
+      end
+      context 'when all test runs are cancelable' do
+        before { test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) } }
+        it 'should request to cancel all test runs' do
+          expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj, uri|
+            expect(net_obj.instance_of?(Net::HTTP::Delete)).to be true
+            expect(uri.to_s).to eq "#{assignment.course.autotest_setting.url}/settings/10/tests/cancel"
+            expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2, 3)
+          end
+          subject
+        end
+      end
+      context 'when only some of the test runs are cancelable' do
+        before { test_runs[0...2].each_with_index { |t, i| t.update!(autotest_test_id: i + 1) } }
+        it 'should only request to cancel test runs with autotest_test_id values' do
+          expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj, _uri|
+            expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2)
+          end
+          subject
+        end
       end
       it 'should set headers' do
         expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj|

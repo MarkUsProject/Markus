@@ -7,9 +7,9 @@ bundle check 2>/dev/null || bundle install --without unicorn
 npm list &> /dev/null || npm ci
 
 # install python packages
-[ -f ./venv/bin/pip ] || python3 -m venv ./venv
+[ -f ./venv/bin/python3 ] || python3 -m venv ./venv
 ./venv/bin/python3 -m pip install --upgrade pip > /dev/null
-./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt > /dev/null
+./venv/bin/python3 -m pip install -r requirements-jupyter.txt -r requirements-scanner.txt > /dev/null
 
 # setup the database (checks for db existence first)
 until pg_isready -q; do
@@ -20,6 +20,9 @@ done
 # sets up the database if it doesn't exist
 cp .dockerfiles/database.yml.postgresql config/database.yml
 bundle exec rails db:prepare
+
+# strip newlines from end of structure.sql (revert when/if https://github.com/rails/rails/pull/46454 is implemented)
+sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' /app/db/structure.sql
 
 rm -f ./tmp/pids/server.pid
 
