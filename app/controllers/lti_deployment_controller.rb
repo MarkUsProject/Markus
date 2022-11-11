@@ -30,7 +30,7 @@ class LtiDeploymentController < ApplicationController
     }
     referrer = URI(request.referer)
 
-    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{lms_redirect_endpoint}")
+    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{self.class::LMS_REDIRECT_ENDPOINT}")
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
     req = Net::HTTP::Post.new(auth_request_uri)
@@ -46,10 +46,9 @@ class LtiDeploymentController < ApplicationController
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
       return
     end
-
     referrer_uri = URI(request.referer)
     # Get canvas JWK set
-    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{lms_jwk_endpoint}"
+    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{self.class::LMS_JWK_ENDPOINT}"
     # A list of public keys and associated metadata for JWTs signed by canvas
     lms_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
     begin
@@ -152,14 +151,6 @@ class LtiDeploymentController < ApplicationController
       lti.create_or_update_lti_assessment(assessment)
       lti.create_grades(assessment)
     end
-  end
-
-  def lms_jwk_endpoint
-    self.class::LMS_JWK_ENDPOINT
-  end
-
-  def lms_redirect_endpoint
-    self.class::LMS_REDIRECT_ENDPOINT
   end
 
   # Define default URL options to not include locale

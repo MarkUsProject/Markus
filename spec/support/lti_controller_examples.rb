@@ -2,13 +2,13 @@ shared_examples 'lti deployment controller' do
   let(:instructor) { create :instructor }
   let!(:client_id) { 'LMS defined ID' }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
-  let(:host) { 'https://canvas.instructure.com' }
+  let(:host) { 'https://example.com' }
   let(:state) { 'state_param' }
   describe '#launch' do
     context 'when launching with invalid parameters' do
       let(:lti_message_hint) { 'opaque string' }
       let(:login_hint) { 'another opque string' }
-      let(:auth_url) { 'http://canvas.instructure.com:433/api/lti/authorize_redirect' }
+      let(:auth_url) { "http://example.com:433#{self.described_class::LMS_REDIRECT_ENDPOINT}" }
       it 'responds with unprocessable_entity if no parameters are passed' do
         post :launch, params: {}
         is_expected.to respond_with(:unprocessable_entity)
@@ -33,7 +33,7 @@ shared_examples 'lti deployment controller' do
       end
       context 'when all required params exist' do
         before :each do
-          stub_request(:post, 'http://canvas.instructure.com:443/api/lti/authorize_redirect')
+          stub_request(:post, "http://example.com:443#{self.described_class::LMS_REDIRECT_ENDPOINT}")
             .with(
               body: hash_including({ client_id: 'LMS defined ID',
                                      login_hint: 'another opque string',
@@ -76,16 +76,16 @@ shared_examples 'lti deployment controller' do
       end
     end
     context 'with correct parameters' do
-      let(:jwk_url) { 'https://canvas.instructure.com:443/api/lti/security/jwks' }
+      let(:jwk_url) { "https://example.com:443#{self.class.described_class::LMS_JWK_ENDPOINT}" }
       let(:payload) do
         { aud: client_id,
-          iss: 'https://canvas.instructure.com',
-          'https://purl.imsglobal.org/spec/lti/claim/deployment_id': 'some_deployment_id',
-          'https://purl.imsglobal.org/spec/lti/claim/context': {
+          iss: 'https://example.com',
+          LtiDeployment::LTI_CLAIMS[:deployment_id] => 'some_deployment_id',
+          LtiDeployment::LTI_CLAIMS[:context] => {
             label: 'csc108',
             title: 'test'
           },
-          'https://purl.imsglobal.org/spec/lti/claim/custom': {
+          LtiDeployment::LTI_CLAIMS[:custom] => {
             course_id: 1,
             user_id: 1
           } }
