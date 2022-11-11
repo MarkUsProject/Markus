@@ -3,6 +3,17 @@ shared_examples 'a criterion' do
   it { is_expected.to allow_value(false).for(:bonus) }
   it { is_expected.to allow_value(true).for(:bonus) }
   it { is_expected.to_not allow_value(nil).for(:bonus) }
+  it { is_expected.to callback(:update_result_marking_states).after(:create) }
+
+  describe 'callbacks' do
+    describe '#update_result_marking_states' do
+      let(:assignment) { create :assignment }
+      it 'should trigger job' do
+        expect(UpdateResultsMarkingStatesJob).to receive(:perform_later).with(assignment.id, :incomplete)
+        create criterion_factory_name, assignment: assignment
+      end
+    end
+  end
 
   describe 'assigning and unassigning TAs' do
     let(:assignment) { FactoryBot.create(:assignment) }
