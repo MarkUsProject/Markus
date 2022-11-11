@@ -6,7 +6,7 @@ describe LtiClient do
   before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
   describe '#get_oauth_token' do
     let(:lti_client) { create :lti_client }
-    let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
+    let(:scope) { LtiDeployment::LTI_SCOPES[:ags_lineitem] }
     before :each do
       stub_request(:post, Settings.lti.token_endpoint)
         .with(

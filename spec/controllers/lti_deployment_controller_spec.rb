@@ -133,7 +133,7 @@ describe LtiDeploymentController do
                                               expires_in: 3600 }.to_json)
       stub_request(:get, lti_service_namesrole.url).with(headers: { Authorization: 'Bearer access_token' },
                                                          query: {
-                                                           role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                           role: LtiDeployment::LTI_ROLES[:learner]
                                                          })
                                                    .to_return(status: :success, body: {
                                                      id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
@@ -149,7 +149,7 @@ describe LtiDeploymentController do
                                                                  lti11_legacy_user_id: 'legacy_lti_user_id',
                                                                  roles:
                                                                    [
-                                                                     'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                                     LtiDeployment::LTI_ROLES[:learner]
                                                                    ] }]
                                                    }.to_json)
       stub_request(:post, "#{lti_service_lineitem.url}/1/scores").with(headers:

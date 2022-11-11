@@ -4,6 +4,8 @@ class LtiDeployment < ApplicationRecord
   has_many :lti_services, dependent: :destroy
   has_many :lti_line_items, dependent: :destroy
   validates :external_deployment_id, uniqueness: { scope: :lti_client }
+  # See LTI documentation for full lists of scopes/claims/roles
+  # https://www.imsglobal.org/spec/lti/v1p3
   LTI_SCOPES = { names_role: 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',
                  ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
                  score: 'https://purl.imsglobal.org/spec/lti-ags/scope/score' }.freeze
@@ -12,6 +14,7 @@ class LtiDeployment < ApplicationRecord
                  names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
                  ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
                  deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id' }.freeze
+  LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner' }.freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
   # with the learner role and creates roles and LTI IDs for each user.
@@ -19,7 +22,7 @@ class LtiDeployment < ApplicationRecord
     auth_data = lti_client.get_oauth_token([LTI_SCOPES[:names_role]])
     names_service = self.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
-    membership_uri.query = URI.encode_www_form(role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner')
+    membership_uri.query = URI.encode_www_form(role: LTI_ROLES[:learner])
     req = Net::HTTP::Get.new(membership_uri)
     req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
     http = Net::HTTP.new(membership_uri.host, membership_uri.port)
