@@ -94,12 +94,10 @@ describe LtiDeploymentController do
           expect(jwk_key).to have_key('kid')
         end
         it 'verifies a signed message' do
-          key = OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH)
-          jwk = JWT::JWK.new(key)
           payload = { test: 'data' }
-          token = JWT.encode payload, jwk.keypair, 'RS256', { kid: jwk_key['kid'] }
-          decoded = JWT.decode(token, nil, true, algorithms: ['RS256'],
-                                                 verify_iss: false, verify_aud: false, jwks: hash_jwk)
+          token = JWT.encode payload, File.read(LtiClient::KEY_PATH), 'RS256', { kid: jwk_key['kid'] }
+          decoded = JWT.decode(token, nil, true, algorithms: ['RS256'], verify_iss: false, verify_aud: false,
+                                                 jwks: hash_jwk)
           expect(decoded[0]['test']).to match('data')
         end
       end
