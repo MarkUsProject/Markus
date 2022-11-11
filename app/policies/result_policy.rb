@@ -12,8 +12,7 @@ class ResultPolicy < ApplicationPolicy
   authorize :from_codeviewer, :select_file, :view_token, optional: true
 
   def view?
-    role.instructor? ||
-      role.ta? ||
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) ||
       (!record.grouping.assignment.release_with_urls && check?(:member?, record.submission.grouping)) ||
       check?(:view_with_result_token?)
   end
@@ -40,7 +39,7 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def grade?
-    role.instructor? || role.ta?
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping)
   end
 
   def review?

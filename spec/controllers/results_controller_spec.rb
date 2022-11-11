@@ -357,6 +357,7 @@ describe ResultsController do
       it { expect(response).to have_http_status(:forbidden) }
     end
     context 'accessing add_extra_mark' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       context 'but cannot save the mark' do
         before :each do
           allow_any_instance_of(ExtraMark).to receive(:save).and_return false
@@ -385,6 +386,7 @@ describe ResultsController do
       end
     end
     context 'accessing remove_extra_mark' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
         submission.get_latest_result.update_total_mark
@@ -404,6 +406,7 @@ describe ResultsController do
     context 'accessing an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
       let(:mark) { assignment.groupings.first.current_result.marks.first }
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: assignment.groupings.first }
       it 'returns annotation data with criteria information' do
         post :get_annotations, params: { course_id: course.id,
                                          id: assignment.groupings.first.current_result,
@@ -425,7 +428,7 @@ describe ResultsController do
           .to eq "#{category.annotation_category_name} [#{category.flexible_criterion.name}]"
         expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
         expect(response.parsed_body['annotation_categories']
-                   .first['flexible_criterion_id']).to eq category.flexible_criterion.id
+                       .first['flexible_criterion_id']).to eq category.flexible_criterion.id
       end
 
       it 'reverts a mark to a value calculated from automatic deductions correctly' do
@@ -469,74 +472,77 @@ describe ResultsController do
                            id: complete_result.id,
                            format: :json }
     end
+    context 'user has access to view the result' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
 
-    it 'contains important basic data' do
-      subject
-      expect(response.status).to eq(200)
-      data = JSON.parse(response.body)
-      received_data = {
-        instructor_run: data['instructor_run'],
-        is_reviewer: data['is_reviewer'],
-        student_view: data['student_view'],
-        can_run_tests: data['can_run_tests']
-      }
-      expected_data = {
-        instructor_run: true,
-        is_reviewer: false,
-        student_view: is_student,
-        can_run_tests: false
-      }
-      expect(received_data).to eq(expected_data)
-    end
-
-    it 'has submission file data' do
-      subject
-      data = JSON.parse(response.body)
-      file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
-      file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
-      expect(data['submission_files']).to eq(file_data)
-    end
-
-    it 'has no annotation categories data' do
-      subject
-      data = JSON.parse(response.body)
-      expected_data = is_student ? be_nil : eq([])
-      expect(data['annotation_categories']).to expected_data
-    end
-
-    it 'has no grace token deduction data' do
-      subject
-      data = JSON.parse(response.body)
-      expect(data['grace_token_deductions']).to eq([])
-    end
-
-    context 'with grace token deductions' do
-      let!(:grace_period_deduction1) do
-        create :grace_period_deduction, membership: grouping.memberships.find_by(role: student)
+      it 'contains important basic data' do
+        subject
+        expect(response.status).to eq(200)
+        data = JSON.parse(response.body)
+        received_data = {
+          instructor_run: data['instructor_run'],
+          is_reviewer: data['is_reviewer'],
+          student_view: data['student_view'],
+          can_run_tests: data['can_run_tests']
+        }
+        expected_data = {
+          instructor_run: true,
+          is_reviewer: false,
+          student_view: is_student,
+          can_run_tests: false
+        }
+        expect(received_data).to eq(expected_data)
       end
-      let!(:grace_period_deduction2) do
-        create :grace_period_deduction, membership: grouping.memberships.find_by(role: student2)
-      end
-      it 'sends grace token deduction data' do
+
+      it 'has submission file data' do
         subject
         data = JSON.parse(response.body)
-        expected_deduction_data = [
-          {
-            id: grace_period_deduction1.id,
-            deduction: grace_period_deduction1.deduction,
-            'users.user_name': student.user_name,
-            'users.display_name': student.display_name
-          }.stringify_keys
-        ]
-        unless is_student
-          expected_deduction_data << {
-            id: grace_period_deduction2.id,
-            deduction: grace_period_deduction2.deduction,
-            'users.user_name': student2.user_name,
-            'users.display_name': student2.display_name
-          }.stringify_keys
+        file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+        file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+        expect(data['submission_files']).to eq(file_data)
+      end
+
+      it 'has no annotation categories data' do
+        subject
+        data = JSON.parse(response.body)
+        expected_data = is_student ? be_nil : eq([])
+        expect(data['annotation_categories']).to expected_data
+      end
+
+      it 'has no grace token deduction data' do
+        subject
+        data = JSON.parse(response.body)
+        expect(data['grace_token_deductions']).to eq([])
+      end
+
+      context 'with grace token deductions' do
+        let!(:grace_period_deduction1) do
+          create :grace_period_deduction, membership: grouping.memberships.find_by(role: student)
         end
-        expect(data['grace_token_deductions']).to eq(expected_deduction_data)
+        let!(:grace_period_deduction2) do
+          create :grace_period_deduction, membership: grouping.memberships.find_by(role: student2)
+        end
+        it 'sends grace token deduction data' do
+          subject
+          data = JSON.parse(response.body)
+          expected_deduction_data = [
+            {
+              id: grace_period_deduction1.id,
+              deduction: grace_period_deduction1.deduction,
+              'users.user_name': student.user_name,
+              'users.display_name': student.display_name
+            }.stringify_keys
+          ]
+          unless is_student
+            expected_deduction_data << {
+              id: grace_period_deduction2.id,
+              deduction: grace_period_deduction2.deduction,
+              'users.user_name': student2.user_name,
+              'users.display_name': student2.display_name
+            }.stringify_keys
+          end
+          expect(data['grace_token_deductions']).to eq(expected_deduction_data)
+        end
       end
     end
   end
@@ -1089,6 +1095,7 @@ describe ResultsController do
       end
     end
     describe '#add_tag' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: complete_result.submission.grouping }
       it 'adds a tag to a grouping' do
         tag = create(:tag)
         post :add_tag,
@@ -1236,6 +1243,7 @@ describe ResultsController do
       let!(:grace_period_deduction) do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
         assignment.assignment_properties.update(anonymize_groups: true)
         get :show, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
@@ -1259,6 +1267,7 @@ describe ResultsController do
         assignment = create(:assignment_with_deductive_annotations)
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         non_deductive_category = create(:annotation_category, assignment: assignment)
+        create :ta_membership, role: ta, grouping: assignment.groupings.first
         post :show, params: { course_id: course.id,
                               id: assignment.groupings.first.current_result,
                               format: :json }, xhr: true
@@ -1272,6 +1281,7 @@ describe ResultsController do
     context 'when criteria are assigned to this grader' do
       let(:data) { JSON.parse(response.body) }
       let(:params) { { course_id: course.id, id: incomplete_result.id } }
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: rubric_mark.criterion, ta: ta)
@@ -1292,6 +1302,7 @@ describe ResultsController do
           end
           assignment.assignment_properties.update(assign_graders_to_criteria: true)
           create(:criterion_ta_association, criterion: other_criterion, ta: ta)
+          create :ta_membership, role: ta, grouping: assignment.groupings.first
           other_category = create(:annotation_category,
                                   assignment: assignment,
                                   flexible_criterion_id: other_criterion.id)
@@ -1400,6 +1411,7 @@ describe ResultsController do
       }
     end
     describe '#add_tag' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       it 'adds a tag to a grouping' do
         tag = create(:tag)
         post :add_tag,
@@ -1409,6 +1421,7 @@ describe ResultsController do
     end
 
     describe '#remove_tag' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       it 'removes a tag from a grouping' do
         tag = create(:tag)
         submission.grouping.tags << tag
