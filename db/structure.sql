@@ -2060,7 +2060,7 @@ ALTER SEQUENCE public.test_batches_id_seq OWNED BY public.test_batches.id;
 
 CREATE TABLE public.test_group_results (
     id integer NOT NULL,
-    test_group_id integer,
+    test_group_id integer NOT NULL,
     marks_earned double precision DEFAULT 0.0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -3711,6 +3711,13 @@ CREATE INDEX index_test_batches_on_course_id ON public.test_batches USING btree 
 
 
 --
+-- Name: index_test_group_results_on_test_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_test_group_results_on_test_group_id ON public.test_group_results USING btree (test_group_id);
+
+
+--
 -- Name: index_test_group_results_on_test_run_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3970,6 +3977,14 @@ ALTER TABLE ONLY public.test_batches
 
 ALTER TABLE ONLY public.feedback_files
     ADD CONSTRAINT fk_rails_55b6a53fc7 FOREIGN KEY (test_group_result_id) REFERENCES public.test_group_results(id);
+
+
+--
+-- Name: test_group_results fk_rails_5ad5ab0a6d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_group_results
+    ADD CONSTRAINT fk_rails_5ad5ab0a6d FOREIGN KEY (test_group_id) REFERENCES public.test_groups(id);
 
 
 --
@@ -4591,4 +4606,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220726201403'),
 ('20220825171354'),
 ('20220826132206'),
-('20220922131809');
+('20220922131809'),
+('20221111182002');

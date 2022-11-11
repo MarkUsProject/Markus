@@ -1,6 +1,6 @@
 class TestGroupResult < ApplicationRecord
   has_many :test_results, dependent: :destroy
-  belongs_to :test_group, optional: true
+  belongs_to :test_group
   belongs_to :test_run
 
   has_many :feedback_files, dependent: :destroy

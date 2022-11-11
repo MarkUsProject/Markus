@@ -59,7 +59,6 @@ class Grouping < ApplicationRecord
            -> {
              left_outer_joins(role: :user,
                               test_group_results: [:test_group, :test_results])
-               .where.not('test_groups.id': nil)
                .order('test_groups.position', 'test_results.position')
            },
            class_name: 'TestRun',
