@@ -472,6 +472,14 @@ describe ResultsController do
         expect(complete_result.submission.grouping.tags.size).to eq 0
       end
     end
+    describe '#get_test_runs_instructors' do
+      it 'should be authorized to access the action' do
+        get :get_test_runs_instructors, params: { course_id: course.id,
+                                                  id: incomplete_result.id,
+                                                  assignment_id: assignment.id }
+        expect(response).to have_http_status(:success)
+      end
+    end
   end
 
   shared_examples 'showing json data' do |is_student|
@@ -1402,33 +1410,54 @@ describe ResultsController do
         expect(response).to have_http_status(:forbidden)
       }
     end
-    context 'TA cannot manage submissions and is not assigned to grade this group\'s submission' do
-      describe '#add_tag' do
-        it 'doesn\'t add a tag to a grouping' do
+    context 'that has been assigned to grade the group\'s result' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+      include_examples 'shared ta and instructor tests'
+      include_examples 'showing json data', false
+    end
+    context 'that can manage submissions' do
+      let(:ta) { create :ta, manage_submissions: true }
+      include_examples 'shared ta and instructor tests'
+      include_examples 'showing json data', false
+    end
+    context 'that cannot manage submissions and is not assigned to grade this group\'s submission' do
+      context 'accessing add_tag' do
+        before(:each) do
           tag = create(:tag)
           post :add_tag,
                params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        end
+        it 'doesn\'t add a tag to a grouping' do
           expect(complete_result.submission.grouping.tags.to_a.size).to eq 0
         end
+        it { expect(response).to have_http_status(:forbidden) }
       end
-      describe '#remove_tag' do
-        it 'removes a tag from a grouping' do
-          tag = create(:tag)
+      context 'accessing remove_tag' do
+        let!(:tag) { create(:tag) }
+        before(:each) do
           submission.grouping.tags << tag
           post :remove_tag,
                params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        end
+        it 'doesn\'t remove a tag from the grouping' do
           expect(complete_result.submission.grouping.tags).to eq [tag]
         end
+        it { expect(response).to have_http_status(:forbidden) }
       end
-      context 'accessing an assignment with deductive annotations' do
+      context 'accessing get_annotations' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
         let(:mark) { assignment.groupings.first.current_result.marks.first }
-        it 'get_annotations HTTP request returns response status code 403' do
+        it {
           post :get_annotations, params: { course_id: course.id,
                                            id: assignment.groupings.first.current_result,
                                            format: :json }, xhr: true
-        end
-        it 'revert_automatic_deductions HTTP request returns response status code 403' do
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing revert_to_automatic_deductions' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it {
           mark.update!(override: true, mark: 3.0)
           patch :revert_to_automatic_deductions, params: {
             course_id: course.id,
@@ -1437,50 +1466,39 @@ describe ResultsController do
             format: :json
           }, xhr: true
           expect(response).to have_http_status(:forbidden)
-        end
-      end
-      context 'that has been assigned to grade the group\'s result' do
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-        include_examples 'shared ta and instructor tests'
-        include_examples 'showing json data', false
-      end
-      context 'that can manage submissions' do
-        let(:ta) { create :ta, manage_submissions: true }
-        include_examples 'shared ta and instructor tests'
-        include_examples 'showing json data', false
+        }
       end
       context 'accessing add_extra_mark' do
-        context 'and user cannot access the action for the given result' do
-          before :each do
-            allow_any_instance_of(ExtraMark).to receive(:save).and_return false
-            @old_mark = submission.get_latest_result.total_mark
-            post :add_extra_mark, params: { course_id: course.id,
-                                            id: submission.get_latest_result.id,
-                                            extra_mark: { extra_mark: 1 } }, xhr: true
-          end
-          it { expect(response).to have_http_status(:forbidden) }
-          it 'should not update the total mark' do
-            expect(@old_mark).to eq(submission.get_latest_result.total_mark)
-          end
+        let!(:old_mark) { submission.get_latest_result.total_mark }
+        before :each do
+          post :add_extra_mark, params: { course_id: course.id,
+                                          id: submission.get_latest_result.id,
+                                          extra_mark: { extra_mark: 1 } }, xhr: true
         end
-        context 'accessing remove_extra_mark' do
-          before :each do
-            extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
-            submission.get_latest_result.update_total_mark
-            @old_mark = submission.get_latest_result.total_mark
-            delete :remove_extra_mark, params: { course_id: course.id,
-                                                 id: submission.get_latest_result.id,
-                                                 extra_mark_id: extra_mark.id }, xhr: true
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:forbidden) }
-          it 'should not change the total value' do
-            submission.get_latest_result.update_total_mark
-            expect(@old_mark).to eq incomplete_result.total_mark
-          end
+        it { expect(response).to have_http_status(:forbidden) }
+        it 'should not update the total mark' do
+          expect(old_mark).to eq(submission.get_latest_result.total_mark)
         end
       end
-      describe '#download' do
+      context 'accessing remove_extra_mark' do
+        let!(:extra_mark) { create(:extra_mark_points, result: submission.get_latest_result) }
+        let!(:old_mark) do
+          submission.get_latest_result.update_total_mark
+          submission.get_latest_result.total_mark
+        end
+        before :each do
+          delete :remove_extra_mark, params: { course_id: course.id,
+                                               id: submission.get_latest_result.id,
+                                               extra_mark_id: extra_mark.id }, xhr: true
+        end
+        test_no_flash
+        it { expect(response).to have_http_status(:forbidden) }
+        it 'should not change the total value' do
+          submission.get_latest_result.update_total_mark
+          expect(old_mark).to eq incomplete_result.total_mark
+        end
+      end
+      context 'accessing download' do
         it {
           get :download, params: { course_id: course.id,
                                    select_file_id: submission_file.id,
@@ -1489,7 +1507,7 @@ describe ResultsController do
           expect(response).to have_http_status(:forbidden)
         }
       end
-      describe '#download_zip' do
+      context 'accessing download_zip' do
         it {
           grouping.group.access_repo do |repo|
             txn = repo.get_transaction('test')
@@ -1505,7 +1523,7 @@ describe ResultsController do
           expect(response).to have_http_status(:forbidden)
         }
       end
-      describe '#show' do
+      context 'accessing show' do
         context 'HTTP POST request' do
           it {
             post :show, params: { course_id: course.id,
@@ -1522,6 +1540,9 @@ describe ResultsController do
             expect(response).to have_http_status(:forbidden)
           }
         end
+      end
+      context 'accessing get_test_runs_instructors' do
+        test_unauthorized(:get_test_runs_instructors)
       end
     end
   end
