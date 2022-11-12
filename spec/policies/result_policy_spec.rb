@@ -13,6 +13,9 @@ describe ResultPolicy do
         let!(:role) { create(:ta) }
         let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
       end
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
       failed 'when they aren\'t assigned to grade the given group\'s submission' do
         let(:role) { create(:ta) }
       end
@@ -195,6 +198,9 @@ describe ResultPolicy do
         let!(:role) { create(:ta) }
         let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
       end
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
       failed 'when they aren\'t assigned to grade the given group\'s submission' do
         let(:role) { create(:ta) }
       end
@@ -212,6 +218,9 @@ describe ResultPolicy do
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
       let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
       let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
       succeed 'when they are assigned to grade the given group\'s submission' do
         let(:role) { create(:ta) }
       end
@@ -284,6 +293,9 @@ describe ResultPolicy do
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
       let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
       let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
       succeed 'when they are assigned to grade the given group\'s submission' do
         let!(:role) { create(:ta) }
         let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
