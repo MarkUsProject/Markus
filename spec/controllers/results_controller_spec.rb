@@ -139,7 +139,6 @@ describe ResultsController do
   shared_examples 'shared ta and instructor tests' do
     include_examples 'download files'
     context 'accessing next_grouping' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       it 'should receive 200 when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
         get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
@@ -165,7 +164,6 @@ describe ResultsController do
       end
     end
     context 'accessing toggle_marking_state' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       context 'with a complete result' do
         before :each do
           post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
@@ -264,7 +262,6 @@ describe ResultsController do
       end
     end
     context 'accessing update_mark' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       it 'should report an updated mark' do
         patch :update_mark, params: { course_id: course.id,
                                       id: incomplete_result.id,
@@ -357,36 +354,36 @@ describe ResultsController do
       it { expect(response).to have_http_status(:forbidden) }
     end
     context 'accessing add_extra_mark' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-      context 'but cannot save the mark' do
-        before :each do
-          allow_any_instance_of(ExtraMark).to receive(:save).and_return false
-          @old_mark = submission.get_latest_result.total_mark
-          post :add_extra_mark, params: { course_id: course.id,
-                                          id: submission.get_latest_result.id,
-                                          extra_mark: { extra_mark: 1 } }, xhr: true
+      context 'and user can access the action' do
+        context 'but cannot save the mark' do
+          before :each do
+            allow_any_instance_of(ExtraMark).to receive(:save).and_return false
+            @old_mark = submission.get_latest_result.total_mark
+            post :add_extra_mark, params: { course_id: course.id,
+                                            id: submission.get_latest_result.id,
+                                            extra_mark: { extra_mark: 1 } }, xhr: true
+          end
+          it { expect(response).to have_http_status(:bad_request) }
+          it 'should not update the total mark' do
+            expect(@old_mark).to eq(submission.get_latest_result.total_mark)
+          end
         end
-        it { expect(response).to have_http_status(:bad_request) }
-        it 'should not update the total mark' do
-          expect(@old_mark).to eq(submission.get_latest_result.total_mark)
-        end
-      end
-      context 'and can save the mark' do
-        before :each do
-          allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
-          @old_mark = submission.get_latest_result.total_mark
-          post :add_extra_mark, params: { course_id: course.id,
-                                          id: submission.get_latest_result.id,
-                                          extra_mark: { extra_mark: 1 } }, xhr: true
-        end
-        it { expect(response).to have_http_status(:success) }
-        it 'should update the total mark' do
-          expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
+        context 'and can save the mark' do
+          before :each do
+            allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
+            @old_mark = submission.get_latest_result.total_mark
+            post :add_extra_mark, params: { course_id: course.id,
+                                            id: submission.get_latest_result.id,
+                                            extra_mark: { extra_mark: 1 } }, xhr: true
+          end
+          it { expect(response).to have_http_status(:success) }
+          it 'should update the total mark' do
+            expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
+          end
         end
       end
     end
     context 'accessing remove_extra_mark' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
         submission.get_latest_result.update_total_mark
@@ -458,6 +455,23 @@ describe ResultsController do
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end
+    describe '#add_tag' do
+      it 'adds a tag to a grouping' do
+        tag = create(:tag)
+        post :add_tag,
+             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+      end
+    end
+    describe '#remove_tag' do
+      it 'removes a tag from a grouping' do
+        tag = create(:tag)
+        submission.grouping.tags << tag
+        post :remove_tag,
+             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.size).to eq 0
+      end
+    end
   end
 
   shared_examples 'showing json data' do |is_student|
@@ -473,8 +487,6 @@ describe ResultsController do
                            format: :json }
     end
     context 'user has access to view the result' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-
       it 'contains important basic data' do
         subject
         expect(response.status).to eq(200)
@@ -618,6 +630,7 @@ describe ResultsController do
           let(:student) { incomplete_result.grouping.accepted_students.first }
           context 'and the selected file is associated with the current submission' do
             let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
+            let(:grouping) { incomplete_result.grouping }
             include_examples 'download files'
           end
           context 'and the selected file is associated with a different submission' do
@@ -1094,25 +1107,6 @@ describe ResultsController do
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
-    describe '#add_tag' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: complete_result.submission.grouping }
-      it 'adds a tag to a grouping' do
-        tag = create(:tag)
-        post :add_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
-      end
-    end
-
-    describe '#remove_tag' do
-      it 'removes a tag from a grouping' do
-        tag = create(:tag)
-        submission.grouping.tags << tag
-        post :remove_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.size).to eq 0
-      end
-    end
 
     describe 'when criteria are assigned to graders' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -1235,8 +1229,6 @@ describe ResultsController do
         }
       end
     end
-    include_examples 'shared ta and instructor tests'
-    include_examples 'showing json data', false
 
     context 'when groups information is anonymized' do
       let(:data) { JSON.parse(response.body) }
@@ -1410,24 +1402,126 @@ describe ResultsController do
         expect(response).to have_http_status(:forbidden)
       }
     end
-    describe '#add_tag' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-      it 'adds a tag to a grouping' do
-        tag = create(:tag)
-        post :add_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+    context 'TA cannot manage submissions and is not assigned to grade this group\'s submission' do
+      describe '#add_tag' do
+        it 'doesn\'t add a tag to a grouping' do
+          tag = create(:tag)
+          post :add_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+          expect(complete_result.submission.grouping.tags.to_a.size).to eq 0
+        end
       end
-    end
-
-    describe '#remove_tag' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-      it 'removes a tag from a grouping' do
-        tag = create(:tag)
-        submission.grouping.tags << tag
-        post :remove_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.size).to eq 0
+      describe '#remove_tag' do
+        it 'removes a tag from a grouping' do
+          tag = create(:tag)
+          submission.grouping.tags << tag
+          post :remove_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+          expect(complete_result.submission.grouping.tags).to eq [tag]
+        end
+      end
+      context 'accessing an assignment with deductive annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it 'get_annotations HTTP request returns response status code 403' do
+          post :get_annotations, params: { course_id: course.id,
+                                           id: assignment.groupings.first.current_result,
+                                           format: :json }, xhr: true
+        end
+        it 'revert_automatic_deductions HTTP request returns response status code 403' do
+          mark.update!(override: true, mark: 3.0)
+          patch :revert_to_automatic_deductions, params: {
+            course_id: course.id,
+            id: assignment.groupings.first.current_result,
+            criterion_id: mark.criterion_id,
+            format: :json
+          }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+      context 'that has been assigned to grade the group\'s result' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+        include_examples 'shared ta and instructor tests'
+        include_examples 'showing json data', false
+      end
+      context 'that can manage submissions' do
+        let(:ta) { create :ta, manage_submissions: true }
+        include_examples 'shared ta and instructor tests'
+        include_examples 'showing json data', false
+      end
+      context 'accessing add_extra_mark' do
+        context 'and user cannot access the action for the given result' do
+          before :each do
+            allow_any_instance_of(ExtraMark).to receive(:save).and_return false
+            @old_mark = submission.get_latest_result.total_mark
+            post :add_extra_mark, params: { course_id: course.id,
+                                            id: submission.get_latest_result.id,
+                                            extra_mark: { extra_mark: 1 } }, xhr: true
+          end
+          it { expect(response).to have_http_status(:forbidden) }
+          it 'should not update the total mark' do
+            expect(@old_mark).to eq(submission.get_latest_result.total_mark)
+          end
+        end
+        context 'accessing remove_extra_mark' do
+          before :each do
+            extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
+            submission.get_latest_result.update_total_mark
+            @old_mark = submission.get_latest_result.total_mark
+            delete :remove_extra_mark, params: { course_id: course.id,
+                                                 id: submission.get_latest_result.id,
+                                                 extra_mark_id: extra_mark.id }, xhr: true
+          end
+          test_no_flash
+          it { expect(response).to have_http_status(:forbidden) }
+          it 'should not change the total value' do
+            submission.get_latest_result.update_total_mark
+            expect(@old_mark).to eq incomplete_result.total_mark
+          end
+        end
+      end
+      describe '#download' do
+        it {
+          get :download, params: { course_id: course.id,
+                                   select_file_id: submission_file.id,
+                                   from_codeviewer: from_codeviewer,
+                                   id: incomplete_result.id }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      describe '#download_zip' do
+        it {
+          grouping.group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
+            txn.add(path, SAMPLE_FILE_CONTENT, '')
+            repo.commit(txn)
+            @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
+          end
+          get :download_zip, params: { course_id: course.id,
+                                       id: @submission.results.first.id,
+                                       grouping_id: grouping.id,
+                                       include_annotations: 'true' }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      describe '#show' do
+        context 'HTTP POST request' do
+          it {
+            post :show, params: { course_id: course.id,
+                                  id: incomplete_result.id,
+                                  format: :json }, xhr: true
+            expect(response).to have_http_status(:forbidden)
+          }
+        end
+        context 'HTTP GET request' do
+          it {
+            get :show, params: { course_id: course.id,
+                                 id: incomplete_result.id,
+                                 format: :json }
+            expect(response).to have_http_status(:forbidden)
+          }
+        end
       end
     end
   end

@@ -5,8 +5,17 @@ describe ResultPolicy do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+      let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+      end
+      failed 'when they aren\'t assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
     end
     failed 'role is a student who is not part of the grouping' do
       let(:role) { create :student }
@@ -175,11 +184,20 @@ describe ResultPolicy do
   end
 
   describe_rule :grade? do
+    let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+    let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+    let(:assignment) { create :assignment_with_peer_review }
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+      end
+      failed 'when they aren\'t assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
     end
     failed 'role is a student' do
       let(:role) { create(:student) }
@@ -262,8 +280,17 @@ describe ResultPolicy do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+      let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+      end
+      failed 'when they aren\'t assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
     end
     context 'role is a student' do
       let(:assignment) { create :assignment_with_peer_review_and_groupings_results }

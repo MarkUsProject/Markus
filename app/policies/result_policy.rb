@@ -58,7 +58,7 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def download?
-    role.instructor? || role.ta? || (
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
       from_codeviewer && role.is_reviewer_for?(record.submission.grouping.assignment.pr_assignment, record)
     ) || (
       record.submission.grouping.accepted_students.ids.include?(role.id) && (
