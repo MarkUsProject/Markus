@@ -7,8 +7,8 @@ describe FileHelper do
                                       { expected: '________', orig: 'öä*?`ßÜÄ' },
                                       { expected: '', orig: nil },
                                       { expected: 'garbage-__.txt', orig: 'garbage-éæ.txt' },
-                                      { expected: 'space_space.txt', orig: 'space space.txt' },
-                                      { expected: '______.txt', orig: '      .txt' },
+                                      { expected: 'space space.txt', orig: 'space space.txt' },
+                                      { expected: '      .txt', orig: '      .txt' },
                                       { expected: 'garbage-__.txt', orig: 'garbage-éæ.txt' }]
       end
 
