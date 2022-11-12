@@ -480,6 +480,32 @@ describe ResultsController do
         expect(response).to have_http_status(:success)
       end
     end
+    describe 'accessing edit' do
+      before :each do
+        get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+      end
+      test_no_flash
+      it { expect(response).to render_template('edit') }
+      it { expect(response).to have_http_status(:success) }
+    end
+    describe '#update_overall_comment' do
+      before :each do
+        post :update_overall_comment, params: { course_id: course.id,
+                                                id: incomplete_result.id,
+                                                result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+        incomplete_result.reload
+      end
+      it { expect(response).to have_http_status(:success) }
+      it 'should update the overall comment' do
+        expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
+      end
+    end
+    describe '#toggle_marking_state' do
+      it {
+        post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
+        expect(response).to have_http_status(:success)
+      }
+    end
   end
 
   shared_examples 'showing json data' do |is_student|
@@ -1220,23 +1246,6 @@ describe ResultsController do
   context 'A TA' do
     before(:each) { sign_in ta }
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
-    context 'accessing edit' do
-      context 'when assigned to grade the given group\'s work' do
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-        before :each do
-          get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
-        end
-        test_no_flash
-        it { expect(response).to render_template('edit') }
-        it { expect(response).to have_http_status(:success) }
-      end
-      context 'when not assigned to grade the given group\'s work' do
-        it {
-          get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
-          expect(response).to have_http_status(:forbidden)
-        }
-      end
-    end
 
     context 'when groups information is anonymized' do
       let(:data) { JSON.parse(response.body) }
@@ -1340,6 +1349,16 @@ describe ResultsController do
       end
     end
 
+    context 'that has been assigned to grade the group\'s result' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+      include_examples 'shared ta and instructor tests'
+      include_examples 'showing json data', false
+    end
+    context 'that can manage submissions' do
+      let(:ta) { create :ta, manage_submissions: true }
+      include_examples 'shared ta and instructor tests'
+      include_examples 'showing json data', false
+    end
     context 'accessing update_mark' do
       context 'when is assigned to grade the given group\'s submission' do
         let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
@@ -1354,7 +1373,15 @@ describe ResultsController do
           expect(JSON.parse(response.body)['num_marked']).to eq 0
         end
       end
-      context 'when not assigned to grade the given group\'s work' do
+    end
+    context 'that cannot manage submissions and is not assigned to grade this group\'s submission' do
+      context 'accessing edit' do
+        it {
+          get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing update_mark' do
         it {
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
@@ -1362,23 +1389,7 @@ describe ResultsController do
           expect(response).to have_http_status(:forbidden)
         }
       end
-    end
-
-    context 'accessing update_overall_comment' do
-      context 'when assigned to grade the given group\'s submission' do
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-        before :each do
-          post :update_overall_comment, params: { course_id: course.id,
-                                                  id: incomplete_result.id,
-                                                  result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
-          incomplete_result.reload
-        end
-        it { expect(response).to have_http_status(:success) }
-        it 'should update the overall comment' do
-          expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
-        end
-      end
-      context 'when not assigned to grade the given group\'s submission' do
+      context 'accessing update_overall_comment' do
         it {
           post :update_overall_comment, params: { course_id: course.id,
                                                   id: incomplete_result.id,
@@ -1386,41 +1397,19 @@ describe ResultsController do
           expect(response).to have_http_status(:forbidden)
         }
       end
-    end
-
-    context 'accessing toggle_marking_state' do
-      context 'when assigned to grade the given group\'s work' do
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-        it {
-          post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
-          expect(response).to have_http_status(:success)
-        }
-      end
-      context 'when not assigned to grade the given group\'s work' do
+      context 'accessing toggle_marking_state' do
         it {
           post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
           expect(response).to have_http_status(:forbidden)
         }
       end
-    end
-    context 'accessing next_grouping and TA is not assigned to grade the given group\'s work' do
-      it {
-        allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
-        get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
-        expect(response).to have_http_status(:forbidden)
-      }
-    end
-    context 'that has been assigned to grade the group\'s result' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-      include_examples 'shared ta and instructor tests'
-      include_examples 'showing json data', false
-    end
-    context 'that can manage submissions' do
-      let(:ta) { create :ta, manage_submissions: true }
-      include_examples 'shared ta and instructor tests'
-      include_examples 'showing json data', false
-    end
-    context 'that cannot manage submissions and is not assigned to grade this group\'s submission' do
+      context 'accessing next_grouping' do
+        it {
+          allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
       context 'accessing add_tag' do
         before(:each) do
           tag = create(:tag)
