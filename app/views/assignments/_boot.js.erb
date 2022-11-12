@@ -41,28 +41,24 @@
       }
     });
 
-    var filename_re = /^[\-\._a-zA-Z0-9][\/\-\._a-zA-Z0-9]*$/;
-    $('.assignment_file').each(function() {
-      if (!filename_re.exec(this.value)) {
-        invalid = true;
-        $(this).css('background-color', document.documentElement.style.getPropertyValue('--light_error'));
-      } else {
-        $(this).css('background-color', '');
-      }
-    });
-
     $('input[type="submit"]').prop('disabled', invalid);
   }
 
   function add_assignment_file() {
     var new_id = new Date().getTime();
-    var input_id = 'assignment_assignment_files_attributes_' + new_id +
-                   '_filename';
-    var assignment_file = '<p id="' + input_id + '_holder">' +
-      '<label class="required" for="' + input_id + '">' + I18n.t('attributes.filename') + '</label>' +
-      '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
-      new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
-      '<a id="remove-assignment-file-'+new_id+'" class="small-indent">' + I18n.t('delete') + '</a></p>';
+    var input_id = `assignment_assignment_files_attributes_${new_id}_filename'`;
+    var assignment_file = `
+      <p id="${input_id}_holder">
+          <label class="required" for="'${input_id}'">${I18n.t('attributes.filename')}</label>
+          <input type="text"
+                 required="required"
+                 pattern="^[\-\._a-zA-Z0-9][\-\/\._a-zA-Z0-9\\s]*$"
+                 name="assignment[assignment_files_attributes][${new_id}][filename]"
+                 id="${input_id}"
+                 class="assignment_file" />
+          <a id="remove-assignment-file-${new_id}" class="small-indent">${I18n.t('delete')}</a>
+      </p>
+    `;
     $('#assignment_files').append($(assignment_file));
     $('#remove-assignment-file-'+new_id).click((e) => {
       remove_assignment_file(input_id);
