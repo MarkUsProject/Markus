@@ -383,7 +383,7 @@ describe Api::AssignmentsController do
       context 'when the content is nested parameters' do
         let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys.to_json }
         before :each do
-          allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
+          allow_any_instance_of(AutotestSpecsJob).to receive(:update_settings)
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
           assignment.reload
         end
@@ -395,7 +395,7 @@ describe Api::AssignmentsController do
       context 'when the content is a json string' do
         let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys.to_json }
         before :each do
-          allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
+          allow_any_instance_of(AutotestSpecsJob).to receive(:update_settings)
           post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: JSON.dump(content) }
           assignment.reload
         end
