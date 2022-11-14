@@ -139,6 +139,11 @@ describe ResultsController do
       end
       it 'should receive a JSON object of the next grouping when next grouping has a submission' do
         a2 = create(:assignment_with_criteria_and_results)
+        a2.groupings.each do |group|
+          group.tas.push(ta)
+          group.save
+        end
+        a2.save
         get :next_grouping, params: { course_id: course.id,
                                       grouping_id: a2.groupings.first.id,
                                       id: a2.submissions.first.current_result.id }
@@ -258,6 +263,7 @@ describe ResultsController do
         let(:result) { assignment.groupings.first.current_result }
         let(:submission) { result.submission }
         let(:mark) { assignment.groupings.first.current_result.marks.first }
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: assignment.groupings.first }
         it 'sets override to true for mark if input value is not null' do
           patch :update_mark, params: { course_id: course.id,
                                         id: result.id, criterion_id: mark.criterion_id,
@@ -336,30 +342,32 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
     end
     context 'accessing add_extra_mark' do
-      context 'but cannot save the mark' do
-        before :each do
-          allow_any_instance_of(ExtraMark).to receive(:save).and_return false
-          @old_mark = submission.get_latest_result.total_mark
-          post :add_extra_mark, params: { course_id: course.id,
-                                          id: submission.get_latest_result.id,
-                                          extra_mark: { extra_mark: 1 } }, xhr: true
+      context 'and user can access the action' do
+        context 'but cannot save the mark' do
+          before :each do
+            allow_any_instance_of(ExtraMark).to receive(:save).and_return false
+            @old_mark = submission.get_latest_result.total_mark
+            post :add_extra_mark, params: { course_id: course.id,
+                                            id: submission.get_latest_result.id,
+                                            extra_mark: { extra_mark: 1 } }, xhr: true
+          end
+          it { expect(response).to have_http_status(:bad_request) }
+          it 'should not update the total mark' do
+            expect(@old_mark).to eq(submission.get_latest_result.total_mark)
+          end
         end
-        it { expect(response).to have_http_status(:bad_request) }
-        it 'should not update the total mark' do
-          expect(@old_mark).to eq(submission.get_latest_result.total_mark)
-        end
-      end
-      context 'and can save the mark' do
-        before :each do
-          allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
-          @old_mark = submission.get_latest_result.total_mark
-          post :add_extra_mark, params: { course_id: course.id,
-                                          id: submission.get_latest_result.id,
-                                          extra_mark: { extra_mark: 1 } }, xhr: true
-        end
-        it { expect(response).to have_http_status(:success) }
-        it 'should update the total mark' do
-          expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
+        context 'and can save the mark' do
+          before :each do
+            allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
+            @old_mark = submission.get_latest_result.total_mark
+            post :add_extra_mark, params: { course_id: course.id,
+                                            id: submission.get_latest_result.id,
+                                            extra_mark: { extra_mark: 1 } }, xhr: true
+          end
+          it { expect(response).to have_http_status(:success) }
+          it 'should update the total mark' do
+            expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
+          end
         end
       end
     end
@@ -379,22 +387,11 @@ describe ResultsController do
         expect(@old_mark).not_to eq incomplete_result.total_mark
       end
     end
-    context 'accessing update_overall_comment' do
-      before :each do
-        post :update_overall_comment, params: { course_id: course.id,
-                                                id: incomplete_result.id,
-                                                result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
-        incomplete_result.reload
-      end
-      it { expect(response).to have_http_status(:success) }
-      it 'should update the overall comment' do
-        expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
-      end
-    end
 
     context 'accessing an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
       let(:mark) { assignment.groupings.first.current_result.marks.first }
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: assignment.groupings.first }
       it 'returns annotation data with criteria information' do
         post :get_annotations, params: { course_id: course.id,
                                          id: assignment.groupings.first.current_result,
@@ -416,7 +413,7 @@ describe ResultsController do
           .to eq "#{category.annotation_category_name} [#{category.flexible_criterion.name}]"
         expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
         expect(response.parsed_body['annotation_categories']
-                   .first['flexible_criterion_id']).to eq category.flexible_criterion.id
+                       .first['flexible_criterion_id']).to eq category.flexible_criterion.id
       end
 
       it 'reverts a mark to a value calculated from automatic deductions correctly' do
@@ -446,6 +443,57 @@ describe ResultsController do
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end
+    describe '#add_tag' do
+      it 'adds a tag to a grouping' do
+        tag = create(:tag)
+        post :add_tag,
+             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+      end
+    end
+    describe '#remove_tag' do
+      it 'removes a tag from a grouping' do
+        tag = create(:tag)
+        submission.grouping.tags << tag
+        post :remove_tag,
+             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.size).to eq 0
+      end
+    end
+    describe '#get_test_runs_instructors' do
+      it 'should be authorized to access the action' do
+        get :get_test_runs_instructors, params: { course_id: course.id,
+                                                  id: incomplete_result.id,
+                                                  assignment_id: assignment.id }
+        expect(response).to have_http_status(:success)
+      end
+    end
+    describe 'accessing edit' do
+      before :each do
+        get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+      end
+      test_no_flash
+      it { expect(response).to render_template('edit') }
+      it { expect(response).to have_http_status(:success) }
+    end
+    describe '#update_overall_comment' do
+      before :each do
+        post :update_overall_comment, params: { course_id: course.id,
+                                                id: incomplete_result.id,
+                                                result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+        incomplete_result.reload
+      end
+      it { expect(response).to have_http_status(:success) }
+      it 'should update the overall comment' do
+        expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
+      end
+    end
+    describe '#toggle_marking_state' do
+      it {
+        post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
+        expect(response).to have_http_status(:success)
+      }
+    end
   end
 
   shared_examples 'showing json data' do |is_student|
@@ -460,74 +508,75 @@ describe ResultsController do
                            id: complete_result.id,
                            format: :json }
     end
-
-    it 'contains important basic data' do
-      subject
-      expect(response.status).to eq(200)
-      data = JSON.parse(response.body)
-      received_data = {
-        instructor_run: data['instructor_run'],
-        is_reviewer: data['is_reviewer'],
-        student_view: data['student_view'],
-        can_run_tests: data['can_run_tests']
-      }
-      expected_data = {
-        instructor_run: true,
-        is_reviewer: false,
-        student_view: is_student,
-        can_run_tests: false
-      }
-      expect(received_data).to eq(expected_data)
-    end
-
-    it 'has submission file data' do
-      subject
-      data = JSON.parse(response.body)
-      file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
-      file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
-      expect(data['submission_files']).to eq(file_data)
-    end
-
-    it 'has no annotation categories data' do
-      subject
-      data = JSON.parse(response.body)
-      expected_data = is_student ? be_nil : eq([])
-      expect(data['annotation_categories']).to expected_data
-    end
-
-    it 'has no grace token deduction data' do
-      subject
-      data = JSON.parse(response.body)
-      expect(data['grace_token_deductions']).to eq([])
-    end
-
-    context 'with grace token deductions' do
-      let!(:grace_period_deduction1) do
-        create :grace_period_deduction, membership: grouping.memberships.find_by(role: student)
+    context 'user has access to view the result' do
+      it 'contains important basic data' do
+        subject
+        expect(response.status).to eq(200)
+        data = JSON.parse(response.body)
+        received_data = {
+          instructor_run: data['instructor_run'],
+          is_reviewer: data['is_reviewer'],
+          student_view: data['student_view'],
+          can_run_tests: data['can_run_tests']
+        }
+        expected_data = {
+          instructor_run: true,
+          is_reviewer: false,
+          student_view: is_student,
+          can_run_tests: false
+        }
+        expect(received_data).to eq(expected_data)
       end
-      let!(:grace_period_deduction2) do
-        create :grace_period_deduction, membership: grouping.memberships.find_by(role: student2)
-      end
-      it 'sends grace token deduction data' do
+
+      it 'has submission file data' do
         subject
         data = JSON.parse(response.body)
-        expected_deduction_data = [
-          {
-            id: grace_period_deduction1.id,
-            deduction: grace_period_deduction1.deduction,
-            'users.user_name': student.user_name,
-            'users.display_name': student.display_name
-          }.stringify_keys
-        ]
-        unless is_student
-          expected_deduction_data << {
-            id: grace_period_deduction2.id,
-            deduction: grace_period_deduction2.deduction,
-            'users.user_name': student2.user_name,
-            'users.display_name': student2.display_name
-          }.stringify_keys
+        file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+        file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+        expect(data['submission_files']).to eq(file_data)
+      end
+
+      it 'has no annotation categories data' do
+        subject
+        data = JSON.parse(response.body)
+        expected_data = is_student ? be_nil : eq([])
+        expect(data['annotation_categories']).to expected_data
+      end
+
+      it 'has no grace token deduction data' do
+        subject
+        data = JSON.parse(response.body)
+        expect(data['grace_token_deductions']).to eq([])
+      end
+
+      context 'with grace token deductions' do
+        let!(:grace_period_deduction1) do
+          create :grace_period_deduction, membership: grouping.memberships.find_by(role: student)
         end
-        expect(data['grace_token_deductions']).to eq(expected_deduction_data)
+        let!(:grace_period_deduction2) do
+          create :grace_period_deduction, membership: grouping.memberships.find_by(role: student2)
+        end
+        it 'sends grace token deduction data' do
+          subject
+          data = JSON.parse(response.body)
+          expected_deduction_data = [
+            {
+              id: grace_period_deduction1.id,
+              deduction: grace_period_deduction1.deduction,
+              'users.user_name': student.user_name,
+              'users.display_name': student.display_name
+            }.stringify_keys
+          ]
+          unless is_student
+            expected_deduction_data << {
+              id: grace_period_deduction2.id,
+              deduction: grace_period_deduction2.deduction,
+              'users.user_name': student2.user_name,
+              'users.display_name': student2.display_name
+            }.stringify_keys
+          end
+          expect(data['grace_token_deductions']).to eq(expected_deduction_data)
+        end
       end
     end
   end
@@ -597,6 +646,7 @@ describe ResultsController do
           let(:student) { incomplete_result.grouping.accepted_students.first }
           context 'and the selected file is associated with the current submission' do
             let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
+            let(:grouping) { incomplete_result.grouping }
             include_examples 'download files'
           end
           context 'and the selected file is associated with a different submission' do
@@ -779,6 +829,18 @@ describe ResultsController do
     include_examples 'shared ta and instructor tests'
     include_examples 'showing json data', false
 
+    context 'accessing update_overall_comment' do
+      before :each do
+        post :update_overall_comment, params: { course_id: course.id,
+                                                id: incomplete_result.id,
+                                                result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+        incomplete_result.reload
+      end
+      it { expect(response).to have_http_status(:success) }
+      it 'should update the overall comment' do
+        expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
+      end
+    end
     describe '#delete_grace_period_deduction' do
       it 'deletes an existing grace period deduction' do
         expect(grouping.grace_period_deductions.exists?).to be false
@@ -810,24 +872,6 @@ describe ResultsController do
           delete :delete_grace_period_deduction,
                  params: { course_id: course.id, id: complete_result.id, deduction_id: deduction.id }
         end.to raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-    describe '#add_tag' do
-      it 'adds a tag to a grouping' do
-        tag = create(:tag)
-        post :add_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
-      end
-    end
-
-    describe '#remove_tag' do
-      it 'removes a tag from a grouping' do
-        tag = create(:tag)
-        submission.grouping.tags << tag
-        post :remove_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.size).to eq 0
       end
     end
 
@@ -935,22 +979,13 @@ describe ResultsController do
   context 'A TA' do
     before(:each) { sign_in ta }
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
-    context 'accessing edit' do
-      before :each do
-        get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
-      end
-      test_no_flash
-      it { expect(response).to render_template('edit') }
-      it { expect(response).to have_http_status(:success) }
-    end
-    include_examples 'shared ta and instructor tests'
-    include_examples 'showing json data', false
 
     context 'when groups information is anonymized' do
       let(:data) { JSON.parse(response.body) }
       let!(:grace_period_deduction) do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
         assignment.assignment_properties.update(anonymize_groups: true)
         get :show, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
@@ -974,6 +1009,7 @@ describe ResultsController do
         assignment = create(:assignment_with_deductive_annotations)
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         non_deductive_category = create(:annotation_category, assignment: assignment)
+        create :ta_membership, role: ta, grouping: assignment.groupings.first
         post :show, params: { course_id: course.id,
                               id: assignment.groupings.first.current_result,
                               format: :json }, xhr: true
@@ -987,6 +1023,7 @@ describe ResultsController do
     context 'when criteria are assigned to this grader' do
       let(:data) { JSON.parse(response.body) }
       let(:params) { { course_id: course.id, id: incomplete_result.id } }
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: rubric_mark.criterion, ta: ta)
@@ -1007,6 +1044,7 @@ describe ResultsController do
           end
           assignment.assignment_properties.update(assign_graders_to_criteria: true)
           create(:criterion_ta_association, criterion: other_criterion, ta: ta)
+          create :ta_membership, role: ta, grouping: assignment.groupings.first
           other_category = create(:annotation_category,
                                   assignment: assignment,
                                   flexible_criterion_id: other_criterion.id)
@@ -1044,34 +1082,189 @@ describe ResultsController do
       end
     end
 
+    context 'that has been assigned to grade the group\'s result' do
+      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+      include_examples 'shared ta and instructor tests'
+      include_examples 'showing json data', false
+    end
+    context 'that can manage submissions' do
+      let(:ta) { create :ta, manage_submissions: true }
+      include_examples 'shared ta and instructor tests'
+      include_examples 'showing json data', false
+    end
     context 'accessing update_mark' do
-      it 'should not count completed groupings that are not assigned to the TA' do
-        grouping2 = create(:grouping_with_inviter, assignment: assignment)
-        create(:version_used_submission, grouping: grouping2)
-        grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+      context 'when is assigned to grade the given group\'s submission' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+        it 'should not count completed groupings that are not assigned to the TA' do
+          grouping2 = create(:grouping_with_inviter, assignment: assignment)
+          create(:version_used_submission, grouping: grouping2)
+          grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
 
-        patch :update_mark, params: { course_id: course.id,
-                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
-                                      mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)['num_marked']).to eq 0
+          patch :update_mark, params: { course_id: course.id,
+                                        id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
+                                        mark: 1 }, xhr: true
+          expect(JSON.parse(response.body)['num_marked']).to eq 0
+        end
       end
     end
-    describe '#add_tag' do
-      it 'adds a tag to a grouping' do
-        tag = create(:tag)
-        post :add_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+    context 'that cannot manage submissions and is not assigned to grade this group\'s submission' do
+      context 'accessing edit' do
+        it {
+          get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
       end
-    end
-
-    describe '#remove_tag' do
-      it 'removes a tag from a grouping' do
-        tag = create(:tag)
-        submission.grouping.tags << tag
-        post :remove_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
-        expect(complete_result.submission.grouping.tags.size).to eq 0
+      context 'accessing update_mark' do
+        it {
+          patch :update_mark, params: { course_id: course.id,
+                                        id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
+                                        mark: 1 }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing update_overall_comment' do
+        it {
+          post :update_overall_comment, params: { course_id: course.id,
+                                                  id: incomplete_result.id,
+                                                  result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing toggle_marking_state' do
+        it {
+          post :toggle_marking_state, params: { course_id: course.id, id: complete_result.id }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing next_grouping' do
+        it {
+          allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing add_tag' do
+        before(:each) do
+          tag = create(:tag)
+          post :add_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        end
+        it 'doesn\'t add a tag to a grouping' do
+          expect(complete_result.submission.grouping.tags.to_a.size).to eq 0
+        end
+        it { expect(response).to have_http_status(:forbidden) }
+      end
+      context 'accessing remove_tag' do
+        let!(:tag) { create(:tag) }
+        before(:each) do
+          submission.grouping.tags << tag
+          post :remove_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
+        end
+        it 'doesn\'t remove a tag from the grouping' do
+          expect(complete_result.submission.grouping.tags).to eq [tag]
+        end
+        it { expect(response).to have_http_status(:forbidden) }
+      end
+      context 'accessing get_annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it {
+          post :get_annotations, params: { course_id: course.id,
+                                           id: assignment.groupings.first.current_result,
+                                           format: :json }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing revert_to_automatic_deductions' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it {
+          mark.update!(override: true, mark: 3.0)
+          patch :revert_to_automatic_deductions, params: {
+            course_id: course.id,
+            id: assignment.groupings.first.current_result,
+            criterion_id: mark.criterion_id,
+            format: :json
+          }, xhr: true
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing add_extra_mark' do
+        let!(:old_mark) { submission.get_latest_result.total_mark }
+        before :each do
+          post :add_extra_mark, params: { course_id: course.id,
+                                          id: submission.get_latest_result.id,
+                                          extra_mark: { extra_mark: 1 } }, xhr: true
+        end
+        it { expect(response).to have_http_status(:forbidden) }
+        it 'should not update the total mark' do
+          expect(old_mark).to eq(submission.get_latest_result.total_mark)
+        end
+      end
+      context 'accessing remove_extra_mark' do
+        let!(:extra_mark) { create(:extra_mark_points, result: submission.get_latest_result) }
+        let!(:old_mark) do
+          submission.get_latest_result.update_total_mark
+          submission.get_latest_result.total_mark
+        end
+        before :each do
+          delete :remove_extra_mark, params: { course_id: course.id,
+                                               id: submission.get_latest_result.id,
+                                               extra_mark_id: extra_mark.id }, xhr: true
+        end
+        test_no_flash
+        it { expect(response).to have_http_status(:forbidden) }
+        it 'should not change the total value' do
+          submission.get_latest_result.update_total_mark
+          expect(old_mark).to eq incomplete_result.total_mark
+        end
+      end
+      context 'accessing download' do
+        it {
+          get :download, params: { course_id: course.id,
+                                   select_file_id: submission_file.id,
+                                   from_codeviewer: from_codeviewer,
+                                   id: incomplete_result.id }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing download_zip' do
+        it {
+          grouping.group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
+            txn.add(path, SAMPLE_FILE_CONTENT, '')
+            repo.commit(txn)
+            @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
+          end
+          get :download_zip, params: { course_id: course.id,
+                                       id: @submission.results.first.id,
+                                       grouping_id: grouping.id,
+                                       include_annotations: 'true' }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing show' do
+        context 'HTTP POST request' do
+          it {
+            post :show, params: { course_id: course.id,
+                                  id: incomplete_result.id,
+                                  format: :json }, xhr: true
+            expect(response).to have_http_status(:forbidden)
+          }
+        end
+        context 'HTTP GET request' do
+          it {
+            get :show, params: { course_id: course.id,
+                                 id: incomplete_result.id,
+                                 format: :json }
+            expect(response).to have_http_status(:forbidden)
+          }
+        end
+      end
+      context 'accessing get_test_runs_instructors' do
+        test_unauthorized(:get_test_runs_instructors)
       end
     end
   end
