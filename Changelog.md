@@ -17,14 +17,16 @@
 - Allow results to be made available only through unique tokens (#6244)
 - Install system dependencies from a debian package (#6246)
 - Fix bug where assignments could not be uploaded with unexpected properties in file upload content (#6224)
-- Fix bug where TAs were able to access urls for results they haven't been assigned to (#6251)
 - Fix bug where tests group results associated with old test groups aren't displayed with test group information (#6285)
-- Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
-- Fix bug where csv summary download fails if criteria are created after marking (#6302)
-- Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)
 - Read the MarkUs version once at initialization instead of at every request (#6305)
 - Allow spaces in file names (#6306)
 - Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
+
+## [v2.1.6]
+- Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
+- Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)
+- Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
+- Fix bug where csv summary download fails if criteria are created after marking (#6302)
 
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
