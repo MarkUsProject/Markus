@@ -11,8 +11,9 @@ class ResultPolicy < ApplicationPolicy
   authorize :from_codeviewer, :select_file, optional: true
 
   def view?
-    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) ||
-      (!record.grouping.assignment.release_with_urls && check?(:member?, record.submission.grouping))
+    check?(:manage_submissions?, role) ||
+      check?(:assigned_grader?, record.grouping) ||
+      check?(:member?, record.submission.grouping)
   end
 
   def run_tests?
