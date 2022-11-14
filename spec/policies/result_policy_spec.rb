@@ -107,8 +107,8 @@ describe ResultPolicy do
         end
         context 'with test enabled' do
           let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
-          succeed 'with test groups' do
-            let!(:test_group) { create :test_group, assignment: assignment }
+          succeed 'when remote_autotest_settings exist' do
+            before { assignment.update! remote_autotest_settings_id: 1 }
           end
           failed 'without test groups'
         end
@@ -129,8 +129,8 @@ describe ResultPolicy do
           end
           context 'with test enabled' do
             let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
-            succeed 'with test groups' do
-              let!(:test_group) { create :test_group, assignment: assignment }
+            succeed 'when remote_autotest_settings exist' do
+              before { assignment.update! remote_autotest_settings_id: 1 }
             end
             failed 'without test groups'
           end

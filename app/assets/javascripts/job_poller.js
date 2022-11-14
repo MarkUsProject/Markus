@@ -27,7 +27,7 @@ export function poll_job(job_id, onSuccess, onFailure, onComplete, interval) {
         }
       } else {
         window.setTimeout(function () {
-          poll_job(job_id, onSuccess, onComplete);
+          poll_job(job_id, onSuccess, onFailure, onComplete);
         }, interval);
       }
     },

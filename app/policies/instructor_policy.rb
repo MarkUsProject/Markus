@@ -4,7 +4,7 @@ class InstructorPolicy < RolePolicy
 
   def run_tests?
     allowed = true
-    allowed &&= (check?(:tests_enabled?, assignment) && check?(:test_groups_exist?, assignment)) unless assignment.nil?
+    allowed &&= (check?(:tests_enabled?, assignment) && check?(:tests_set_up?, assignment)) unless assignment.nil?
     allowed &&= check?(:before_release?, submission) unless submission.nil?
     allowed
   end

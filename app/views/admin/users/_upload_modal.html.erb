@@ -12,7 +12,7 @@
                              nonce: true %>
 
   <p>
-    <%= t('users.admin_csv_upload_help_html', markus_version: @markus_version) %>
+    <%= t('users.admin_csv_upload_help_html', markus_version: Rails.configuration.markus_version) %>
   </p>
   <%= form_tag upload_admin_users_path, { multipart: true } do %>
     <div>

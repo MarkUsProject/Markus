@@ -10,7 +10,7 @@
                              button_id: 'upload',
                              nonce: true %>
 
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: 'graders') %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'graders') %>
 
   <%= form_tag({ controller: 'marks_graders',
                  action: 'upload' },
