@@ -12,7 +12,7 @@
                              nonce: true %>
 
   <p>
-    <%= t('upload_help_html', markus_version: @markus_version, section_id: 'students') %>
+    <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'students') %>
   </p>
   <%= form_tag upload_course_students_path(@current_course), { multipart: true } do %>
     <div>

@@ -10,7 +10,7 @@
                              upload_id: 'upload_file',
                              button_id: 'upload', nonce: true %>
 
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: 'peer-reviews') %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'peer-reviews') %>
 
   <%= form_tag({ controller: 'peer_reviews',
                  action: 'upload' },

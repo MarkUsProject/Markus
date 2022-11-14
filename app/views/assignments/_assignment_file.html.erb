@@ -2,7 +2,7 @@
 <%= form.fields_for :assignment_files, assignment_file do |f| %>
     <%= f.label :filename, t('attributes.filename'), class: 'required' %>
     <span>
-    <%= f.text_field :filename %>
+    <%= f.text_field :filename, pattern: '^[\-\._a-zA-Z0-9][\-\/\._a-zA-Z0-9\\s]*$' %>
     <span class="small-indent">(<%= t(:delete) %> <%= f.check_box :_destroy %>)</span>
     </span>
 <% end %>

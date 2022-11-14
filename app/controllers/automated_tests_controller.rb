@@ -12,16 +12,15 @@ class AutomatedTestsController < ApplicationController
 
   def update
     assignment = Assignment.find(params[:assignment_id])
-    test_specs = params[:schema_form_data]
-    Assignment.transaction do
+    test_specs = params[:schema_form_data].permit!.to_h
+    begin
       assignment.update! assignment_params
-      update_test_groups_from_specs(assignment, test_specs)
-      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
-      session[:job_id] = @current_job.job_id
     rescue StandardError => e
       flash_message(:error, e.message)
       raise ActiveRecord::Rollback
     end
+    @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment, test_specs)
+    session[:job_id] = @current_job.job_id
     # TODO: the page is not correctly drawn when using render
     redirect_to action: 'manage', assignment_id: params[:assignment_id]
   end
@@ -29,7 +28,7 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment.test_groups.build
+    flash_message(:warning, I18n.t('automated_tests.tests_run')) if @assignment.groupings.joins(:test_runs).exists?
     render layout: 'assignment_content'
   end
 
@@ -179,7 +178,6 @@ class AutomatedTestsController < ApplicationController
       file_content = params[:specs_file].read
       begin
         test_specs = JSON.parse file_content
-        update_test_groups_from_specs(assignment, test_specs)
       rescue JSON::ParserError
         flash_now(:error, I18n.t('automated_tests.invalid_specs_file'))
         head :unprocessable_entity
@@ -187,7 +185,7 @@ class AutomatedTestsController < ApplicationController
         flash_now(:error, e.message)
         head :unprocessable_entity
       else
-        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment, test_specs)
         session[:job_id] = @current_job.job_id
         render 'shared/_poll_job'
       end
