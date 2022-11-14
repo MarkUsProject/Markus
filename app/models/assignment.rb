@@ -707,7 +707,7 @@ class Assignment < Assessment
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += self.ta_criteria.map { |crit| marks[crit.id][:mark] }
+            row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
             row << extra_marks_hash[result&.id]
           end
           csv << row

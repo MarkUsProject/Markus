@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.1.6]
+- Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
+- Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)
+- Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
+- Fix bug where csv summary download fails if criteria are created after marking (#6302)
+
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
 - Optionally log which user makes each request by tagging the log files with user_names (#6241)

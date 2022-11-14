@@ -11,7 +11,9 @@ class ResultPolicy < ApplicationPolicy
   authorize :from_codeviewer, :select_file, optional: true
 
   def view?
-    true
+    check?(:manage_submissions?, role) ||
+      check?(:assigned_grader?, record.grouping) ||
+      check?(:member?, record.submission.grouping)
   end
 
   def run_tests?
@@ -25,18 +27,18 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def grade?
-    role.instructor? || role.ta?
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping)
   end
 
   def review?
-    role.instructor? || role.ta? || (
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
       record&.submission&.assignment&.has_peer_review &&
           role.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
     )
   end
 
   def set_released_to_students?
-    check?(:review?) && check?(:manage_submissions?, role)
+    check?(:manage_submissions?, role)
   end
 
   def manage?
@@ -44,7 +46,7 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def download?
-    role.instructor? || role.ta? || (
+    check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
       from_codeviewer && role.is_reviewer_for?(record.submission.grouping.assignment.pr_assignment, record)
     ) || (
       record.submission.grouping.accepted_students.ids.include?(role.id) && (
