@@ -1,5 +1,5 @@
 <p>
-  <%= form_with local: true, url: lti_deployment_create_course_path do |f| %>
+  <%= form_with local: true, url: create_course_lti_deployment_path(session[:lti_deployment_id]) do |f| %>
     <%= f.hidden_field :display_name, value: session[:lti_course_name] %>
     <%= f.hidden_field :name, value: session[:lti_course_label] %>
     <%= f.submit t('lti.create_course'),
