@@ -1,4 +1,4 @@
-class LtiDeploymentController < ApplicationController
+class LtiDeploymentsController < ApplicationController
   skip_verify_authorized except: [:choose_course]
   skip_forgery_protection except: [:choose_course]
 
@@ -47,19 +47,19 @@ class LtiDeploymentController < ApplicationController
       return
     end
     referrer_uri = URI(request.referer)
-    # Get canvas JWK set
+    # Get LMS JWK set
     jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{self.class::LMS_JWK_ENDPOINT}"
-    # A list of public keys and associated metadata for JWTs signed by canvas
+    # A list of public keys and associated metadata for JWTs signed by the LMS
     lms_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
     begin
       decoded_token = JWT.decode(
-        params[:id_token], # Encoded JWT signed by canvas
+        params[:id_token], # Encoded JWT signed by LMS
         nil, # If the token is passphrase-protected, set the passphrase here
         true, # Verify the signature of this token
         algorithms: ['RS256'],
         iss: "#{referrer_uri.scheme}://#{referrer_uri.host}",
         verify_iss: true,
-        aud: session[:client_id], # canvas uses client ID as the aud parameter
+        aud: session[:client_id], # OpenID Connect uses client ID as the aud parameter
         verify_aud: true,
         jwks: lms_jwks # The correct JWK will be selected by matching jwk kid param with id_token kid
       )
@@ -114,7 +114,7 @@ class LtiDeploymentController < ApplicationController
           render 'choose_course'
           return
         end
-        lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
+        lti_deployment = record
         lti_deployment.update!(course: course)
       rescue StandardError
         flash_message(:error, t('lti.course_link_error'))

@@ -493,11 +493,9 @@ Rails.application.routes.draw do
   end
 
   unless Rails.env.production?
-    resources :lti_deployment, only: [] do
+    resources :lti_deployments, only: [] do
       collection do
         get 'public_jwk'
-        get 'choose_course'
-        post 'choose_course'
         post 'create_lti_grades'
         resources :canvas, only: [] do
           collection do
@@ -508,6 +506,8 @@ Rails.application.routes.draw do
         end
       end
       member do
+        get 'choose_course'
+        post 'choose_course'
         post 'create_course'
       end
     end

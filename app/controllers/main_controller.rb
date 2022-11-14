@@ -129,7 +129,7 @@ class MainController < ApplicationController
     lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
     if lti_deployment.course.nil?
       # Redirect to course picker page
-      choose_course_lti_deployment_index_path
+      choose_course_lti_deployment_path(lti_deployment)
     else
       course_path(lti_deployment.course)
     end

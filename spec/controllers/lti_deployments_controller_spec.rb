@@ -1,4 +1,4 @@
-describe LtiDeploymentController do
+describe LtiDeploymentsController do
   let(:instructor) { create :instructor }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
   before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
@@ -10,12 +10,12 @@ describe LtiDeploymentController do
 
     describe 'get' do
       it 'is inaccessible unless logged in' do
-        get :choose_course
+        get :choose_course, params: { id: lti.id }
         expect(response.status).to eq(302)
       end
       it 'is accessible when logged in' do
         session[:lti_deployment_id] = lti.id
-        get_as instructor, :choose_course
+        get_as instructor, :choose_course, params: { id: lti.id }
         expect(response.status).to eq(200)
       end
     end
@@ -25,11 +25,11 @@ describe LtiDeploymentController do
       end
       context 'when picking a course' do
         it 'redirects to a course on success' do
-          post_as instructor, :choose_course, params: { course: course.id }
+          post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
           expect(response).to redirect_to course_path(course)
         end
         it 'updates the course on the lti object' do
-          post_as instructor, :choose_course, params: { course: course.id }
+          post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
           lti.reload
           expect(lti.course).to eq(course)
         end
@@ -37,7 +37,8 @@ describe LtiDeploymentController do
           let(:course2) { create :course }
           let(:instructor2) { create :instructor, course: course2 }
           it 'does not allow users to link courses they are not instructors for' do
-            post_as instructor2, :choose_course, params: { course: course.id }
+            post_as instructor2, :choose_course, params: { id: lti.id, course: course.id }
+            post_as instructor2, :choose_course, params: { id: lti.id, course: course.id }
             expect(flash[:error]).not_to be_empty
           end
         end

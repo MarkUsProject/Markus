@@ -1,4 +1,4 @@
-class CanvasController < LtiDeploymentController
+class CanvasController < LtiDeploymentsController
   LMS_REDIRECT_ENDPOINT = '/api/lti/authorize_redirect'.freeze
   LMS_JWK_ENDPOINT = '/api/lti/security/jwks'.freeze
 
@@ -34,7 +34,7 @@ class CanvasController < LtiDeploymentController
           }
         }
       ],
-      public_jwk_url: public_jwk_lti_deployment_index_url,
+      public_jwk_url: public_jwk_lti_deployments_url,
       custom_fields: {
         user_id: '$Canvas.user.id',
         course_id: '$Canvas.course.id',
