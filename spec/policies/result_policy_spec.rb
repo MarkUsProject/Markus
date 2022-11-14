@@ -20,8 +20,15 @@ describe ResultPolicy do
         let(:role) { create(:ta) }
       end
     end
-    succeed 'role is a student' do
-      let(:role) { create(:student) }
+    failed 'role is a student who is not part of the grouping' do
+      let(:role) { create :student }
+      let(:record) { create :complete_result }
+    end
+    succeed 'role is a student who is part of the grouping' do
+      let(:role) { create :student }
+      let(:grouping) { create :grouping_with_inviter_and_submission, inviter: role }
+      let(:record) { grouping.current_result }
+      let(:assignment) { record.grouping.assignment }
     end
   end
 

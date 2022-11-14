@@ -38,7 +38,7 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def set_released_to_students?
-    check?(:review?) && check?(:manage_submissions?, role)
+    check?(:manage_submissions?, role)
   end
 
   def manage?
