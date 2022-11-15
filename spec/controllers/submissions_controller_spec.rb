@@ -941,7 +941,7 @@ describe SubmissionsController do
             @student.save
           end
 
-          it 'should get an error if it is before the section due date' do
+          it 'should get an error if it is before the section due date and collect_before_true is not selected' do
             @assessment_section_properties.update!(due_date: 1.week.from_now)
             allow(Assignment).to receive_message_chain(
               :includes, :find
@@ -954,6 +954,23 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
+
+            expect(response).to render_template(partial: 'shared/_poll_job')
+          end
+
+          it 'should succeed if it is before the section due date and collect_before_true is selected' do
+            @assessment_section_properties.update!(due_date: 1.week.from_now)
+            allow(Assignment).to receive_message_chain(
+              :includes, :find
+            ) { @assignment }
+            expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
+            allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+
+            post_as @instructor,
+                    :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              override: true, collect_before_due: true,
+                              groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(partial: 'shared/_poll_job')
           end
@@ -994,6 +1011,23 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
+
+            expect(response).to render_template(partial: 'shared/_poll_job')
+          end
+
+          it 'should succeed if it is before the global due date but collect_before_true is true' do
+            @assignment.update!(due_date: 1.week.from_now)
+            allow(Assignment).to receive_message_chain(
+              :includes, :find
+            ) { @assignment }
+            expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
+            allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+
+            post_as @instructor,
+                    :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              override: true, collect_before_due: true,
+                              groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(partial: 'shared/_poll_job')
           end

@@ -191,7 +191,7 @@ class SubmissionsController < ApplicationController
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
-      unless is_scanned_exam
+      unless is_scanned_exam || params[:collect_before_due] == 'true'
         collect_now = collection_dates[grouping.id] <= Time.current
         some_before_due = true unless collect_now
         next unless collect_now

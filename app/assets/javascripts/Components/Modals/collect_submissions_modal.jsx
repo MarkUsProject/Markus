@@ -10,6 +10,7 @@ class CollectSubmissionsModal extends React.Component {
     super(props);
     this.state = {
       override: this.props.override,
+      collect_before_due: false,
     };
   }
 
@@ -19,11 +20,15 @@ class CollectSubmissionsModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.override);
+    this.props.onSubmit(this.state.override, this.state.collect_before_due);
   };
 
   handleOverrideChange = event => {
     this.setState({override: event.target.checked});
+  };
+
+  handleCollectBeforeDueChange = event => {
+    this.setState({collect_before_due: event.target.checked});
   };
 
   warningText = () => {
@@ -55,6 +60,21 @@ class CollectSubmissionsModal extends React.Component {
                 <span
                   dangerouslySetInnerHTML={{
                     __html: I18n.t("submissions.collect.override_existing_html"),
+                  }}
+                />
+              </label>
+            </p>
+            <p>
+              <label>
+                <input
+                  type="checkbox"
+                  name="collect_before_due"
+                  onChange={this.handleCollectBeforeDueChange}
+                />
+                &nbsp;
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: I18n.t("submissions.collect.collect_before_due"),
                   }}
                 />
               </label>
