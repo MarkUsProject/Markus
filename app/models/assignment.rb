@@ -965,6 +965,8 @@ class Assignment < Assessment
     File.join(TestRun::SETTINGS_FILES_DIR, self.id.to_s)
   end
 
+  alias _file_location autotest_path
+
   def autotest_files_dir
     File.join(autotest_path, TestRun::FILES_DIR)
   end

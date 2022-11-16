@@ -83,6 +83,10 @@ class Group < ApplicationRecord
     File.join(Repository::ROOT_DIR, self.repository_relative_path)
   end
 
+  def _file_location
+    Repository.get_class.respond_to?(:bare_path) ? Repository.get_class.bare_path(repo_path) : repo_path
+  end
+
   # Yields a repository object, if possible, and closes it after it is finished
   def access_repo(&block)
     Repository.get_class.access(repo_path, &block)

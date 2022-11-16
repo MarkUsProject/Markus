@@ -212,6 +212,8 @@ class ExamTemplate < ApplicationRecord
     File.join self.assignment.scanned_exams_path, self.id.to_s
   end
 
+  alias _file_location base_path
+
   def file_path
     File.join(base_path, 'exam_template.pdf')
   end

@@ -11,6 +11,8 @@ class StarterFileEntry < ApplicationRecord
     starter_file_group.path + path
   end
 
+  alias _file_location full_path
+
   def files_and_dirs
     Dir.glob("#{full_path}/**/*", File::FNM_DOTMATCH).map do |f|
       unless %w[.. .].include?(File.basename(f))

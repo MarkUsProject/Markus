@@ -2139,7 +2139,8 @@ CREATE TABLE public.test_groups (
     updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     autotest_settings json DEFAULT '{}'::json NOT NULL,
-    "position" integer NOT NULL
+    "position" integer NOT NULL,
+    tester_index integer
 );
 
 
@@ -4689,5 +4690,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220922131809'),
 ('20221019191315'),
 ('20221111182002'),
+('20221114170146'),
 ('20221219204837'),
 ('20230109190029');
