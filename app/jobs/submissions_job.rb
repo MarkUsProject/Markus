@@ -24,7 +24,7 @@ class SubmissionsJob < ApplicationJob
       m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                    grouping.id.to_s)
       if options[:revision_identifier].nil?
-        time = if assignment.scanned_exam?
+        time = if assignment.scanned_exam? || options[:collect_current]
                  Time.current
                else
                  options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date

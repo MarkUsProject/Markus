@@ -10,7 +10,8 @@ class CollectSubmissionsModal extends React.Component {
     super(props);
     this.state = {
       override: this.props.override,
-      collect_before_due: false,
+      collect_current: false,
+      apply_late_penalty: true,
     };
   }
 
@@ -20,15 +21,23 @@ class CollectSubmissionsModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.override, this.state.collect_before_due);
+    this.props.onSubmit(
+      this.state.override,
+      this.state.collect_current,
+      this.state.apply_late_penalty
+    );
   };
 
   handleOverrideChange = event => {
     this.setState({override: event.target.checked});
   };
 
-  handleCollectBeforeDueChange = event => {
-    this.setState({collect_before_due: event.target.checked});
+  handleCollectCurrentChange = event => {
+    this.setState({collect_current: event.target.checked});
+  };
+
+  handleApplyLatePenaltyChange = event => {
+    this.setState({apply_late_penalty: event.target.checked});
   };
 
   warningText = () => {
@@ -68,17 +77,31 @@ class CollectSubmissionsModal extends React.Component {
               <label>
                 <input
                   type="checkbox"
-                  name="collect_before_due"
-                  onChange={this.handleCollectBeforeDueChange}
+                  name="collect_current"
+                  onChange={this.handleCollectCurrentChange}
                 />
                 &nbsp;
                 <span
                   dangerouslySetInnerHTML={{
-                    __html: I18n.t("submissions.collect.collect_before_due"),
+                    __html: I18n.t("submissions.collect.collect_current"),
                   }}
                 />
               </label>
             </p>
+            <p>
+              <label>
+                <input
+                  type="checkbox"
+                  defaultChecked={this.state.apply_late_penalty}
+                  name="apply_late_penalty"
+                  id="apply_late_penalty"
+                  onChange={this.handleApplyLatePenaltyChange}
+                />
+              </label>
+              &nbsp;
+              <span>{I18n.t("submissions.collect.apply_late_penalty")}</span>
+            </p>
+
             <section className={"modal-container dialog-actions"}>
               <input type="submit" value={I18n.t("submissions.collect.submit")} />
             </section>
