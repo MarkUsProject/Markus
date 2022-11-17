@@ -83,7 +83,7 @@ class CollectSubmissionsModal extends React.Component {
                 &nbsp;
                 <span
                   dangerouslySetInnerHTML={{
-                    __html: I18n.t("submissions.collect.collect_current"),
+                    __html: I18n.t("submissions.collect.collect_current_html"),
                   }}
                 />
               </label>
@@ -94,7 +94,6 @@ class CollectSubmissionsModal extends React.Component {
                   type="checkbox"
                   defaultChecked={this.state.apply_late_penalty}
                   name="apply_late_penalty"
-                  id="apply_late_penalty"
                   onChange={this.handleApplyLatePenaltyChange}
                 />
               </label>

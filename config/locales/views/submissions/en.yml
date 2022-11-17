@@ -9,7 +9,7 @@ en:
       Would you like to continue?
     collect:
       apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)
-      collect_current: 'Collect most recent submissions? <strong>Warning: This will collect the most recent submission, regardless of due date.</strong>'
+      collect_current_html: 'Collect most recent submissions? <strong>Warning: This will collect the most recent submission, regardless of due date.</strong>'
       could_not_collect_some_due: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings.
       could_not_collect_some_released: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released.
       manual_collection: Manual Collection

@@ -21,7 +21,7 @@
 - Read the MarkUs version once at initialization instead of at every request (#6305)
 - Allow spaces in file names (#6306)
 - Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
-- Bulk submission collection: allow collecting before due date and choosing whether to apply late penalties (#6341)
+- Bulk submission collection: allow collecting the most recent revision and choosing whether to apply late penalties (#6341)
 
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
