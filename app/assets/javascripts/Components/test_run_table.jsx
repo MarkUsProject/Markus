@@ -108,7 +108,7 @@ export class TestRunTable extends React.Component {
           ]}
           SubComponent={row =>
             row.original["test_runs.problems"] ? (
-              row.original["test_runs.problems"]
+              <pre>{row.original["test_runs.problems"]}</pre>
             ) : (
               <TestGroupResultTable
                 key={row.original.id_}
