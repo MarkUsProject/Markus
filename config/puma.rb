@@ -1,4 +1,5 @@
-workers 3
+workers Settings.puma.workers
+threads Settings.puma.min_threads, Settings.puma.max_threads
 preload_app!
 
 rails_env = environment ENV.fetch('RAILS_ENV') { 'development' }

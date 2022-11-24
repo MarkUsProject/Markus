@@ -28,6 +28,11 @@ rails:
       host: 'localhost'
       port: '3000'
 
+puma:
+  workers: 3
+  min_threads: 3
+  max_threads: 3
+
 queues:
   default: DEFAULT_QUEUE
 
