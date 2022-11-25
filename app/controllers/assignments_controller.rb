@@ -622,6 +622,14 @@ class AssignmentsController < ApplicationController
     redirect_to course_assignments_path(current_course)
   end
 
+  def create_lti_grades
+    assessment = Assignment.find(params[:id])
+    lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
+    @current_job = LtiSyncJob.perform_later(lti_deployments.to_a, assessment, current_course, role: current_role)
+    session[:job_id] = @current_job.job_id
+    render 'shared/_poll_job'
+  end
+
   private
 
   # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+

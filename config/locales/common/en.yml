@@ -21,12 +21,14 @@ en:
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
     course_select_instructions: Match your course with a MarkUs course.
     create_course: Create New Course
+    grade_sync_complete: Grade Sync Complete
     grade_sync_instructions: This will only synchronize grades that have been released.
     launch: Launch MarkUs
     lti_deployment: "%{lti_deployment_name} on %{lti_host}"
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
     select_course: Select the course that matches %{course_name}
+    start_grade_sync: Syncing Grades
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
   markus: MarkUs

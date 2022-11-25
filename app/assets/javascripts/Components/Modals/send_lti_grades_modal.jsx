@@ -39,7 +39,10 @@ class LtiGradeModal extends React.Component {
     );
     const deploymentsToUpdate = checked.map(deployment => deployment[0]);
     $.post({
-      url: Routes.create_lti_grades_lti_deployments_path(),
+      url: Routes.create_lti_grades_course_assignment_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {
         assessment_id: this.props.assignment_id,
         lti_deployments: deploymentsToUpdate,
