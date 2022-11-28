@@ -30,8 +30,8 @@ rails:
 
 puma:
   workers: 3
-  min_threads: 3
-  max_threads: 3
+  min_threads: 0
+  max_threads: 5
 
 queues:
   default: DEFAULT_QUEUE
