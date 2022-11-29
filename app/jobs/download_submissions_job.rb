@@ -29,7 +29,7 @@ class DownloadSubmissionsJob < ApplicationJob
         group_name = grouping.group.group_name
         grouping.access_repo do |repo|
           revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(grouping.assignment.repository_folder, zip_file, group_name, revision)
+          repo.send_tree_to_zip(grouping.assignment.repository_folder, zip_file, revision, zip_subdir: group_name)
         rescue Repository::RevisionDoesNotExist
           next
         ensure
