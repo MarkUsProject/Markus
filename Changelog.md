@@ -21,6 +21,8 @@
 - Read the MarkUs version once at initialization instead of at every request (#6305)
 - Allow spaces in file names (#6306)
 - Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
+- Downloading files from a single repository no longer adds an additional subdirectory to the zip archive (#6323)
+- Allow admins to role switch to instructors (#6353)
 - Fix bug where rubric grades could not be selected with the return key (#6354)
 
 ## [v2.1.6]
