@@ -15,7 +15,7 @@ describe LtiDeployment do
     let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
     let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH) }
     let(:jwk) { { keys: [JWT::JWK.new(pub_jwk_key).export] } }
-    let(:scope) { 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly' }
+    let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
     let(:status) { 'Active' }
     before :each do
       stub_request(:post, Settings.lti.token_endpoint)
@@ -35,7 +35,7 @@ describe LtiDeployment do
                                               expires_in: 3600 }.to_json)
       stub_request(:get, lti_service_namesrole.url).with(headers: { Authorization: 'Bearer access_token' },
                                                          query: {
-                                                           role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                           role: LtiDeployment::LTI_ROLES[:learner]
                                                          })
                                                    .to_return(status: :success, body: {
                                                      id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
@@ -51,7 +51,7 @@ describe LtiDeployment do
                                                                  lti11_legacy_user_id: 'legacy_lti_user_id',
                                                                  roles:
                                                          [
-                                                           'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                           LtiDeployment::LTI_ROLES[:learner]
                                                          ] },
                                                                { status: status, name: 'second user',
                                                                  picture: 'http://example.com/picture.png',
@@ -63,7 +63,7 @@ describe LtiDeployment do
                                                                  lti11_legacy_user_id: 'legacy_lti_user_id',
                                                                  roles:
                                                                    [
-                                                                     'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                                     LtiDeployment::LTI_ROLES[:learner]
                                                                    ] }]
                                                    }.to_json)
     end
@@ -147,7 +147,7 @@ describe LtiDeployment do
     let(:course) { create :course }
     let(:lti_deployment) { create :lti_deployment, course: course }
     let(:assessment) { create :assignment, course: course }
-    let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
+    let(:scope) { LtiDeployment::LTI_SCOPES[:ags_lineitem] }
     let(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti_deployment }
     before :each do
       stub_request(:post, Settings.lti.token_endpoint)
@@ -198,7 +198,7 @@ describe LtiDeployment do
     let(:lti_deployment) { create :lti_deployment, course: course }
     let!(:assessment) { create :assignment_with_criteria_and_results, course: course }
 
-    let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
+    let(:scope) { LtiDeployment::LTI_SCOPES[:score] }
     let(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti_deployment }
     let(:lti_line_item) { create :lti_line_item, assessment: assessment, lti_deployment: lti_deployment }
     let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
@@ -224,7 +224,7 @@ describe LtiDeployment do
                                               expires_in: 3600 }.to_json)
       stub_request(:get, lti_service_namesrole.url).with(headers: { Authorization: 'Bearer access_token' },
                                                          query: {
-                                                           role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                           role: LtiDeployment::LTI_ROLES[:learner]
                                                          })
                                                    .to_return(status: :success, body: {
                                                      id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
@@ -240,7 +240,7 @@ describe LtiDeployment do
                                                                  lti11_legacy_user_id: 'legacy_lti_user_id',
                                                                  roles:
                                                                    [
-                                                                     'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+                                                                     LtiDeployment::LTI_ROLES[:learner]
                                                                    ] }]
                                                    }.to_json)
       stub_request(:post, "#{lti_line_item.lti_line_item_id}/scores").with(headers:
@@ -263,7 +263,9 @@ describe LtiDeployment do
     let!(:assessment) { create :assignment_with_criteria_and_results, course: course }
     let!(:assessment2) { create :assignment_with_criteria_and_results, course: course }
     before :each do
-      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
+      User.all.each do |usr|
+        create :lti_user, user: usr, lti_client: lti_deployment.lti_client if LtiUser.find_by(user: usr).nil?
+      end
       Result.joins(grouping: :assignment)
             .where('assignment.id': assessment.id).update!(released_to_students: true)
     end

@@ -215,8 +215,7 @@ module Api
                          message: HttpStatusHelper::ERROR_CODE['message']['422'] },
                status: :unprocessable_entity
       else
-        update_test_groups_from_specs(assignment, content)
-        AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment)
+        AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment, content)
       end
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: :not_found

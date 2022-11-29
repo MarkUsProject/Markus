@@ -1,23 +1,14 @@
-describe LtiDeploymentController do
+shared_examples 'lti deployment controller' do
   let(:instructor) { create :instructor }
   let!(:client_id) { 'LMS defined ID' }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
-  let(:host) { 'https://canvas.instructure.com' }
+  let(:host) { 'https://example.com' }
   let(:state) { 'state_param' }
-  describe 'get_config', :get_canvas_config do
-    it 'should respond with success when not logged in' do
-      is_expected.to respond_with(:success)
-    end
-    before { get_as instructor, :get_canvas_config }
-    it 'should respond with success when logged in' do
-      is_expected.to respond_with(:success)
-    end
-  end
-  describe '#launch', :launch do
+  describe '#launch' do
     context 'when launching with invalid parameters' do
       let(:lti_message_hint) { 'opaque string' }
       let(:login_hint) { 'another opque string' }
-      let(:auth_url) { 'http://canvas.instructure.com:433/api/lti/authorize_redirect' }
+      let(:auth_url) { "http://example.com:433#{self.described_class::LMS_REDIRECT_ENDPOINT}" }
       it 'responds with unprocessable_entity if no parameters are passed' do
         post :launch, params: {}
         is_expected.to respond_with(:unprocessable_entity)
@@ -42,7 +33,7 @@ describe LtiDeploymentController do
       end
       context 'when all required params exist' do
         before :each do
-          stub_request(:post, 'http://canvas.instructure.com:443/api/lti/authorize_redirect')
+          stub_request(:post, "http://example.com:443#{self.described_class::LMS_REDIRECT_ENDPOINT}")
             .with(
               body: hash_including({ client_id: 'LMS defined ID',
                                      login_hint: 'another opque string',
@@ -85,16 +76,16 @@ describe LtiDeploymentController do
       end
     end
     context 'with correct parameters' do
-      let(:jwk_url) { 'https://canvas.instructure.com:443/api/lti/security/jwks' }
+      let(:jwk_url) { "https://example.com:443#{self.class.described_class::LMS_JWK_ENDPOINT}" }
       let(:payload) do
         { aud: client_id,
-          iss: 'https://canvas.instructure.com',
-          'https://purl.imsglobal.org/spec/lti/claim/deployment_id': 'some_deployment_id',
-          'https://purl.imsglobal.org/spec/lti/claim/context': {
+          iss: 'https://example.com',
+          LtiDeployment::LTI_CLAIMS[:deployment_id] => 'some_deployment_id',
+          LtiDeployment::LTI_CLAIMS[:context] => {
             label: 'csc108',
             title: 'test'
           },
-          'https://purl.imsglobal.org/spec/lti/claim/custom': {
+          LtiDeployment::LTI_CLAIMS[:custom] => {
             course_id: 1,
             user_id: 1
           } }
@@ -131,60 +122,15 @@ describe LtiDeploymentController do
       end
     end
   end
-  describe '#choose_course', :choose_course do
-    let!(:course) { create :course }
-    let(:instructor) { create :instructor, course: course }
-    let!(:lti) { create :lti_deployment }
-
-    before :each do
-      session[:lti_deployment_id] = lti.id
-    end
-    context 'when picking a course' do
-      it 'redirects to a course on success' do
-        post_as instructor, :choose_course, params: { course: course.id }
-        expect(response).to redirect_to course_path(course)
-      end
-      it 'updates the course on the lti object' do
-        post_as instructor, :choose_course, params: { course: course.id }
-        lti.reload
-        expect(lti.course).to eq(course)
-      end
-      context 'when the user does not have permission to link' do
-        let(:course2) { create :course }
-        let(:instructor2) { create :instructor, course: course2 }
-        it 'does not allow users to link courses they are not instructors for' do
-          post_as instructor2, :choose_course, params: { course: course.id }
-          expect(flash[:error]).not_to be_empty
-        end
-      end
-    end
-  end
   describe '#check_host' do
     it 'does not redirect to an error with a known host' do
-      get_as instructor, :get_canvas_config
+      get_as instructor, :get_config
       is_expected.to respond_with(:success)
     end
     it 'does redirect to an error with an unknown host' do
       @request.host = 'example.com'
-      get_as instructor, :get_canvas_config
-      expect(response).to render_template('shared/http_status')
-    end
-  end
-  describe '#new_course' do
-    let(:lti_deployment) { create :lti_deployment }
-    let(:course_params) { { display_name: 'Introduction to Computer Science', name: 'csc108' } }
-    before :each do
-      session[:lti_deployment_id] = lti_deployment.id
-      post_as instructor, :create_course, params: course_params
-    end
-    it 'creates a course' do
-      expect(Course.find_by(name: 'csc108')).not_to be_nil
-    end
-    it 'sets the course display name' do
-      expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
-    end
-    it 'creates an instructor role for the user' do
-      expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+      get_as instructor, :get_config
+      expect(response.status).to eq(422)
     end
   end
 end

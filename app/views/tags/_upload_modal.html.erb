@@ -11,7 +11,7 @@
                              button_id: 'submit_upload',
                              nonce: true %>
 
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: 'tags') %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'tags') %>
 
   <%= form_tag upload_course_tags_path(@current_course, assignment_id: @assignment.id),
                { multipart: true, size: 1 } do %>

@@ -3,7 +3,7 @@
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: 'marks-spreadsheet-grades') %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'marks-spreadsheet-grades') %>
 
   <%= form_tag upload_course_grade_entry_form_path(@current_course, @grade_entry_form),
                { multipart: true, size: 1 } do %>

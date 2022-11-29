@@ -5,7 +5,7 @@ class TaPolicy < RolePolicy
   def run_tests?
     allowed = record.grader_permission.run_tests
     unless assignment.nil?
-      allowed &&= check?(:tests_enabled?, assignment) && check?(:test_groups_exist?, assignment)
+      allowed &&= check?(:tests_enabled?, assignment) && check?(:tests_set_up?, assignment)
     end
     allowed &&= check?(:before_release?, submission) unless submission.nil?
     allowed
