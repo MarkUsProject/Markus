@@ -22,6 +22,7 @@
 - Allow spaces in file names (#6306)
 - Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
 - Downloading files from a single repository no longer adds an additional subdirectory to the zip archive (#6323)
+- Allow admins to role switch to instructors (#6353)
 
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
