@@ -361,11 +361,12 @@ module Repository
     # The result of the block will be written to the zip file instead of the file content.
     #
     # This can be used to modify the file content before it is written to the zip file.
-    def send_tree_to_zip(subdirectory_path, zip_file, zip_name, revision, &block)
+    def send_tree_to_zip(subdirectory_path, zip_file, revision, zip_subdir: nil, &block)
       revision.tree_at_path(subdirectory_path, with_attrs: false).each do |path, obj|
         if obj.is_a? Repository::RevisionFile
           file_contents = block_given? ? block.call(obj) : download_as_string(obj)
-          zip_file.get_output_stream(File.join(zip_name, path)) do |f|
+          full_path = zip_subdir ? File.join(zip_subdir, path) : path
+          zip_file.get_output_stream(full_path) do |f|
             f.print file_contents
           end
         end
