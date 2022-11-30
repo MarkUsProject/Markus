@@ -252,8 +252,6 @@ describe MainController do
     end
 
     it 'allows user to properly access about' do
-      @controller = CoursesController.new
-      get :show, params: { id: course1.id }
       @controller = MainController.new
       request.headers['accept'] = 'text/javascript'
       get :about, xhr: true
