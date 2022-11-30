@@ -26,6 +26,7 @@
 - Downloading files from a single repository no longer adds an additional subdirectory to the zip archive (#6323)
 - Allow admins to role switch to instructors (#6353)
 - Fix bug where rubric grades could not be selected with the return key (#6354)
+- Allow admins to set the number of puma workers and threads from the settings files (#6348)
 
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
