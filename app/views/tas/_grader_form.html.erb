@@ -9,7 +9,7 @@
           <div class='inline-labels'>
             <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
             <%= u_f.text_field :user_name %>
-            <%= f.label :hidden, t('students.status') %>
+            <%= f.label :hidden, t('roles.status') %>
             <%= f.select :hidden,
                          options_for_select([[t('roles.active'), false], [t('roles.inactive'), true]],
                                             selected: @role.hidden),

@@ -30,7 +30,6 @@ class TasController < ApplicationController
   def create
     user = EndUser.find_by(user_name: end_user_params[:user_name])
     @role = current_course.tas.create(user: user, **create_update_params)
-    update_active_status
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -41,7 +40,6 @@ class TasController < ApplicationController
   def update
     @role = record
     @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), **create_update_params)
-    update_active_status
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -93,9 +91,5 @@ class TasController < ApplicationController
   def flash_interpolation_options
     { resource_name: @role.user&.user_name.blank? ? @role.model_name.human : @role.user_name,
       errors: @role.errors.full_messages.join('; ') }
-  end
-
-  def update_active_status
-    @role.update(params.require(:role).permit(:hidden)) if allowed_to?(:manage_role_status?)
   end
 end

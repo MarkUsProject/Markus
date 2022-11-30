@@ -8,6 +8,7 @@ en:
   roles:
     active: Active
     inactive: Inactive
+    status: Status
   students:
     display_inactive: Display inactive students
     edit: Edit a Student
@@ -26,7 +27,6 @@ en:
     not_successfully_added_message_3: Student names are alphanumeric.
     not_successfully_added_message_4: Each field is separated by a comma (no spaces).
     not_successfully_added_message_5: Each line has the required fields specified near the upload form.
-    status: Status
   tas:
     display_inactive: Display inactive graders
     edit: Edit a Grader
