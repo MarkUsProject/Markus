@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.1.7]
+- Allow results to be made available only through unique tokens (#6244)
+
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
 - Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)
@@ -14,7 +17,6 @@
 - Fix bug where gzipped binary feedback files were not unzipped correctly (#6283)
 - Fix bug where remark request summary table wasn't being rendered correctly (#6284)
 - Fix bug where test results were being associated with the wrong test runs (#6287)
-- Allow results to be made available only through unique tokens (#6244)
 
 ## [v2.1.4]
 - Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
