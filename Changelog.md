@@ -3,7 +3,6 @@
 ## [unreleased]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Simplify configuration options for storing files on disk (#6157)
-- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
 - Replace yarn with npm as a package manager (#6159)
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
@@ -16,7 +15,6 @@
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Disable python features if python dependencies are not installed (#6232)
-- Allow results to be made available only through unique tokens (#6244)
 - Install system dependencies from a debian package (#6246)
 - Fix bug where assignments could not be uploaded with unexpected properties in file upload content (#6224)
 - Fix bug where tests group results associated with old test groups aren't displayed with test group information (#6285)
@@ -27,6 +25,10 @@
 - Allow admins to role switch to instructors (#6353)
 - Fix bug where rubric grades could not be selected with the return key (#6354)
 - Allow admins to set the number of puma workers and threads from the settings files (#6348)
+
+## [v2.1.7]
+- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
+- Allow results to be made available only through unique tokens (#6244)
 
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
