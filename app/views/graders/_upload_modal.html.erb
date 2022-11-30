@@ -10,7 +10,7 @@
                              upload_id: 'upload_file',
                              button_id: 'upload-groupings', nonce: true %>
 
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: 'graders') %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'graders') %>
 
   <%= form_tag upload_course_assignment_graders_path(@current_course, @assignment),
                { multipart: true } do %>

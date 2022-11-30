@@ -8,6 +8,10 @@ class ApplicationPolicy < ActionPolicy::Base
   alias_rule :index?, :create?, :new?, to: :manage?
 
   pre_check :role_exists?
+  pre_check :view_hidden_course?
+  pre_check :role_is_hidden?
+
+  skip_pre_check :role_is_hidden?, only: :role_is_switched?
 
   # unless overridden, do not allow access by default
   def manage?
@@ -18,6 +22,14 @@ class ApplicationPolicy < ActionPolicy::Base
 
   def role_exists?
     deny! if role.nil?
+  end
+
+  def view_hidden_course?
+    deny! if role&.student? && role.course.is_hidden
+  end
+
+  def role_is_hidden?
+    deny! if role&.hidden
   end
 
   # policies used to render menu bars (visible everywhere)

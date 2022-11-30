@@ -994,25 +994,27 @@ class Assignment < Assessment
                       .group('user_name')
                       .count
     graders = self.course.tas.joins(:user)
-                  .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
+                  .pluck(:user_name, :first_name, :last_name, 'roles.id',
+                         'roles.hidden').map do |user_name, first_name, last_name, id, hidden|
       {
         user_name: user_name,
         first_name: first_name,
         last_name: last_name,
         groups: grader_data[user_name] || 0,
         _id: id,
-        criteria: ta_counts[id] || 0
+        criteria: ta_counts[id] || 0,
+        hidden: hidden
       }
     end
 
     group_data = self.groupings
                      .left_outer_joins(:group, tas: :user)
-                     .pluck('groupings.id', 'groups.group_name', 'users.user_name',
+                     .pluck('groupings.id', 'groups.group_name', 'users.user_name', 'roles.hidden',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
-    group_data.each do |group_id, group_name, ta, count|
+    group_data.each do |group_id, group_name, ta, hidden, count|
       groups[[group_id, group_name, count]]
-      groups[[group_id, group_name, count]] << ta unless ta.nil?
+      groups[[group_id, group_name, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
     group_sections = {}
     self.groupings.includes(:section).find_each do |g|
@@ -1031,11 +1033,11 @@ class Assignment < Assessment
     criterion_data =
       self.criteria.left_outer_joins(tas: :user)
           .pluck('criteria.name', 'criteria.position',
-                 'criteria.assigned_groups_count', 'users.user_name')
+                 'criteria.assigned_groups_count', 'users.user_name', 'roles.hidden')
     criteria = Hash.new { |h, k| h[k] = [] }
-    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta|
+    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta, hidden|
       criteria[[name, pos, count]]
-      criteria[[name, pos, count]] << ta unless ta.nil?
+      criteria[[name, pos, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
     criteria = criteria.map do |k, v|
       {

@@ -9,6 +9,11 @@
           <div class='inline-labels'>
             <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
             <%= u_f.text_field :user_name %>
+            <%= f.label :hidden, t('roles.status') %>
+            <%= f.select :hidden,
+                         options_for_select([[t('roles.active'), false], [t('roles.inactive'), true]],
+                                            selected: @role.hidden),
+                         {}, disabled: !allowed_to?(:manage_role_status?) %>
           </div>
         <% end %>
         <%= f.fields_for :grader_permission do |ff| %>

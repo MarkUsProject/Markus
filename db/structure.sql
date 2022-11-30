@@ -25,7 +25,7 @@ BEGIN
     FROM users
         JOIN roles ON roles.user_id=users.id
         JOIN courses ON roles.course_id=courses.id
-    WHERE courses.name=course_name AND users.user_name=user_name_
+    WHERE courses.name=course_name AND users.user_name=user_name_ AND roles.hidden=false
         FETCH FIRST ROW ONLY;
 
     IF role_type IN ('Instructor', 'AdminRole') THEN
@@ -54,11 +54,13 @@ BEGIN
                     JOIN groups ON groupings.group_id=groups.id
                     JOIN assignment_properties ON assignment_properties.assessment_id=groupings.assessment_id
                     JOIN assessments ON groupings.assessment_id=assessments.id
+                    JOIN courses ON assessments.course_id=courses.id
                     LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
                 WHERE memberships.type='StudentMembership'
                   AND memberships.membership_status IN ('inviter','accepted')
                   AND assignment_properties.vcs_submit=true
                   AND roles.id=role_id_
+                  AND courses.is_hidden=false
                   AND groups.repo_name=repo_name_
                   AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
                            OR assessment_section_properties.is_hidden=false)
@@ -2095,7 +2097,7 @@ ALTER SEQUENCE public.test_batches_id_seq OWNED BY public.test_batches.id;
 
 CREATE TABLE public.test_group_results (
     id integer NOT NULL,
-    test_group_id integer,
+    test_group_id integer NOT NULL,
     marks_earned double precision DEFAULT 0.0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -3782,6 +3784,13 @@ CREATE INDEX index_test_batches_on_course_id ON public.test_batches USING btree 
 
 
 --
+-- Name: index_test_group_results_on_test_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_test_group_results_on_test_group_id ON public.test_group_results USING btree (test_group_id);
+
+
+--
 -- Name: index_test_group_results_on_test_run_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4057,6 +4066,14 @@ ALTER TABLE ONLY public.lti_line_items
 
 ALTER TABLE ONLY public.feedback_files
     ADD CONSTRAINT fk_rails_55b6a53fc7 FOREIGN KEY (test_group_result_id) REFERENCES public.test_group_results(id);
+
+
+--
+-- Name: test_group_results fk_rails_5ad5ab0a6d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_group_results
+    ADD CONSTRAINT fk_rails_5ad5ab0a6d FOREIGN KEY (test_group_id) REFERENCES public.test_groups(id);
 
 
 --
@@ -4677,6 +4694,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220726142501'),
 ('20220726201403'),
 ('20220727161425'),
+('20220815210513'),
 ('20220825171354'),
 ('20220826132206'),
-('20220922131809');
+('20220922131809'),
+('20221111182002');

@@ -11,7 +11,7 @@
                              button_id: 'upload', nonce: true %>
 
   <p>
-    <%= t('upload_help_html', markus_version: @markus_version, section_id: 'groups') %>
+    <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'groups') %>
   </p>
   <%= form_tag upload_course_assignment_groups_path(@current_course, @assignment),
                { multipart: true } do %>

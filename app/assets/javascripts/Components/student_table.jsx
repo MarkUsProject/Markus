@@ -142,9 +142,9 @@ class RawStudentTable extends React.Component {
               },
             },
             {
-              Header: I18n.t("students.active") + "?",
+              Header: I18n.t("roles.active") + "?",
               accessor: "hidden",
-              Cell: ({value}) => (value ? I18n.t("students.inactive") : I18n.t("students.active")),
+              Cell: ({value}) => (value ? I18n.t("roles.inactive") : I18n.t("roles.active")),
               filterMethod: (filter, row) => {
                 if (filter.value === "all") {
                   return true;
@@ -159,11 +159,11 @@ class RawStudentTable extends React.Component {
               filterOptions: [
                 {
                   value: "active",
-                  text: `${I18n.t("students.active")} (${this.state.data.counts.active})`,
+                  text: `${I18n.t("roles.active")} (${this.state.data.counts.active})`,
                 },
                 {
                   value: "inactive",
-                  text: `${I18n.t("students.inactive")} (${this.state.data.counts.inactive})`,
+                  text: `${I18n.t("roles.inactive")} (${this.state.data.counts.inactive})`,
                 },
               ],
               filterAllOptionText: `${I18n.t("all")} (${this.state.data.counts.all})`,

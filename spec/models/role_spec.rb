@@ -35,6 +35,40 @@ describe Role do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
         instructor.destroy
       end
+
+      context 'when updating the hidden status' do
+        it 'for a single instructor' do
+          instructor = create :instructor
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          instructor.update(hidden: true)
+        end
+
+        it 'for a single ta' do
+          grader = create :ta
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          grader.update(hidden: true)
+        end
+
+        it 'for a single student' do
+          student = create :student
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          student.update(hidden: true)
+        end
+
+        it 'after bulk hiding students' do
+          student1 = create :student
+          student2 = create :student
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          Student.hide_students([student1.id, student2.id])
+        end
+
+        it 'after bulk unhiding students' do
+          student1 = create :student, hidden: true
+          student2 = create :student, hidden: true
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          Student.unhide_students([student1.id, student2.id])
+        end
+      end
     end
     context 'should not be updated' do
       it 'when creating a ta' do
