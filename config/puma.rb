@@ -1,11 +1,8 @@
 workers Settings.puma.workers
 threads Settings.puma.min_threads, Settings.puma.max_threads
-preload_app!
+worker_timeout Settings.puma.worker_timeout
 
-rails_env = environment ENV.fetch('RAILS_ENV') { 'development' }
-if rails_env == 'development'
-  worker_timeout 100_000_000
-end
+preload_app!
 
 on_worker_boot do
   ActiveSupport.on_load(:active_record) do

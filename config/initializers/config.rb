@@ -97,6 +97,7 @@ Config.setup do |config|
         required(:workers).filled(:integer, gt?: -1)
         required(:min_threads).filled(:integer, gt?: -1)
         required(:max_threads).filled(:integer, gt?: -1)
+        required(:worker_timeout).filled(:integer, gt?: 5) # puma enforces a minimum 6 second worker timeout
       end
       required(:queues).hash do
         required(:default).filled(:string)
