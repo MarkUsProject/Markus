@@ -4,6 +4,14 @@ ARG NODE_MAJOR=18
 ARG BUNDLER_VERSION='2.3.17'
 ARG USER=markus
 
+# Required in order to ensure bind-mounts are owned by the correct user inside the container
+# this is NOT required when using docker-desktop since that handles uid mappings differently.
+# Set this to the same UID as the user that owns the Markus files on the host machine.
+ARG UID=1001
+
+# Create the user that runs the app
+RUN useradd -m -u $UID -s /bin/bash $USER
+
 # Set up the correct node version for later installation
 ADD https://deb.nodesource.com/setup_$NODE_MAJOR.x /tmp/setup_node.sh
 RUN sh /tmp/setup_node.sh
@@ -18,9 +26,6 @@ RUN apt-get update -qq && \
 
 # Enable reading of PDF files with imagemagick
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
-
-# Create the user that runs the app
-RUN useradd -m -s /bin/bash $USER
 
 ## This ssh setup is so that if git over ssh is enabled later on, by installing the openssh-server package (or similar)
 ## Then everything will just work out of the box
