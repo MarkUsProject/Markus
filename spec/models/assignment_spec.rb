@@ -2540,6 +2540,27 @@ describe Assignment do
         Grouping.assign_all_tas([grouping], [ta.id], assignment)
         expect(assignment.current_grader_data[:graders][0][:_id]).to eq(ta.id)
       end
+      it 'returns correct hidden grader info' do
+        Grouping.assign_all_tas([grouping], [ta.id], assignment)
+        received_grader_info = assignment.current_grader_data[:groups].first[:graders].first
+        expected_grader_info = {
+          grader: ta.user_name,
+          hidden: false
+        }
+        expect(received_grader_info).to eq(expected_grader_info)
+      end
+      context 'graders are hidden' do
+        it 'returns correct hidden grader info' do
+          ta.update!(hidden: true)
+          Grouping.assign_all_tas([grouping], [ta.id], assignment)
+          received_grader_info = assignment.current_grader_data[:groups].first[:graders].first
+          expected_grader_info = {
+            grader: ta.user_name,
+            hidden: true
+          }
+          expect(received_grader_info).to eq(expected_grader_info)
+        end
+      end
     end
   end
 end

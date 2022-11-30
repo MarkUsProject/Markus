@@ -231,9 +231,9 @@ module Repository
     # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
     # some students from it)
     def self.get_repo_auth_records
-      records = Assignment.joins(:assignment_properties)
+      records = Assignment.joins(:assignment_properties, :course)
                           .includes(groupings: [:group, { accepted_students: :section }])
-                          .where(assignment_properties: { vcs_submit: true })
+                          .where(assignment_properties: { vcs_submit: true }, 'courses.is_hidden': false)
                           .order(due_date: :desc)
       records.where(assignment_properties: { is_timed: false })
              .or(records.where.not(groupings: { start_time: nil }))
@@ -266,6 +266,7 @@ module Repository
       admins = AdminUser.pluck(:user_name)
       permissions['*/*'] = admins unless admins.empty?
       instructors = Instructor.joins(:course, :user)
+                              .where('roles.hidden': false)
                               .pluck('courses.name', 'users.user_name')
                               .group_by(&:first)
                               .transform_values { |val| val.map(&:second) }
@@ -276,7 +277,7 @@ module Repository
         assignment.valid_groupings.each do |valid_grouping|
           next unless visibility[assignment.id][valid_grouping.inviter&.section&.id]
           repo_name = valid_grouping.group.repository_relative_path
-          accepted_students = valid_grouping.accepted_students.map(&:user_name)
+          accepted_students = valid_grouping.accepted_students.where('roles.hidden': false).map(&:user_name)
           permissions[repo_name] = accepted_students
         end
       end
@@ -284,7 +285,7 @@ module Repository
       # even if they are the grader for only a single assignment
       graders_info = TaMembership.joins(role: [:user, :course],
                                         grouping: [:group, { assignment: :assignment_properties }])
-                                 .where('assignment_properties.anonymize_groups': false)
+                                 .where('assignment_properties.anonymize_groups': false, 'roles.hidden': false)
                                  .pluck(:repo_name, :user_name, 'courses.name')
       graders_info.each do |repo_name, user_name, course_name|
         repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path

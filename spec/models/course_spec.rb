@@ -76,6 +76,14 @@ describe Course do
         include_examples 'when not using git repos'
       end
     end
+    context 'The repository permissions file' do
+      context 'should be updated' do
+        it 'when changing toggling the hidden status for a course' do
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+          course.update(is_hidden: true)
+        end
+      end
+    end
   end
 
   describe '#get_assignment_list' do
