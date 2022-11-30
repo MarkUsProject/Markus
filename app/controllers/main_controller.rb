@@ -6,6 +6,8 @@ class MainController < ApplicationController
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
   # check for authorization
+  skip_before_action :check_course_switch, only: [:login, :page_not_found, :check_timeout, :login_remote_auth, :about,
+                                                  :logout]
   authorize :real_user, through: :real_user
   before_action(except: [:login, :page_not_found, :check_timeout, :login_remote_auth]) { authorize! }
   skip_verify_authorized only: [:login, :page_not_found, :check_timeout, :login_remote_auth]
