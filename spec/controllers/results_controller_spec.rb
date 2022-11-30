@@ -1455,7 +1455,7 @@ describe ResultsController do
         }
       end
       context 'accessing add_extra_mark' do
-        let!(:old_mark) { submission.get_latest_result.total_mark }
+        let!(:old_mark) { submission.get_latest_result.get_total_mark }
         before :each do
           post :add_extra_mark, params: { course_id: course.id,
                                           id: submission.get_latest_result.id,
@@ -1463,14 +1463,13 @@ describe ResultsController do
         end
         it { expect(response).to have_http_status(:forbidden) }
         it 'should not update the total mark' do
-          expect(old_mark).to eq(submission.get_latest_result.total_mark)
+          expect(old_mark).to eq(submission.get_latest_result.get_total_mark)
         end
       end
       context 'accessing remove_extra_mark' do
         let!(:extra_mark) { create(:extra_mark_points, result: submission.get_latest_result) }
         let!(:old_mark) do
-          submission.get_latest_result.update_total_mark
-          submission.get_latest_result.total_mark
+          submission.get_latest_result.get_total_mark
         end
         before :each do
           delete :remove_extra_mark, params: { course_id: course.id,
@@ -1480,8 +1479,7 @@ describe ResultsController do
         test_no_flash
         it { expect(response).to have_http_status(:forbidden) }
         it 'should not change the total value' do
-          submission.get_latest_result.update_total_mark
-          expect(old_mark).to eq incomplete_result.total_mark
+          expect(old_mark).to eq incomplete_result.get_total_mark
         end
       end
       context 'accessing download' do

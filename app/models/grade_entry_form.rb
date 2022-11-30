@@ -52,7 +52,6 @@ class GradeEntryForm < Assessment
     self.grade_entry_students.joins(role: :user)
         .where(roles: { hidden: false })
         .where(released_to_student: true)
-        .where.not(total_grade: nil)
   end
 
   # Determine the total mark for a particular student, as a percentage
