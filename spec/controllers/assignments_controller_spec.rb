@@ -642,6 +642,7 @@ describe AssignmentsController do
       it_behaves_like 'create assignment_properties', :allow_remarks, true
       it_behaves_like 'create assignment_properties', :group_min, 2
       it_behaves_like 'create assignment_properties', :group_min, 3
+      it_behaves_like 'create assignment_properties', :release_with_urls, true
       it_behaves_like 'create assignment', :description, 'BBB'
       it_behaves_like 'create assignment', :message, 'BBB'
       it_behaves_like 'create assignment', :due_date, 1.hour.ago.to_s

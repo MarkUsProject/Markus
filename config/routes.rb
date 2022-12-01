@@ -153,12 +153,6 @@ Rails.application.routes.draw do
         get 'collect_and_begin_grading'
         get 'get_file'
       end
-
-      resources :results, only: [:edit] do
-        collection do
-          patch 'update_remark_request'
-        end
-      end
     end
 
     resources :results, only: [:show, :edit] do
@@ -186,6 +180,8 @@ Rails.application.routes.draw do
         get 'stop_test'
         get 'get_test_runs_instructors'
         get 'get_test_runs_instructors_released'
+        get 'view_token_check'
+        patch 'update_remark_request'
       end
     end
 
@@ -358,6 +354,14 @@ Rails.application.routes.draw do
           get 'find_annotation_text'
           get 'annotation_text_uses'
           get 'uncategorized_annotations'
+        end
+      end
+
+      resources :results, only: [] do
+        collection do
+          put 'refresh_view_tokens'
+          put 'update_view_token_expiry'
+          get 'download_view_tokens'
         end
       end
     end

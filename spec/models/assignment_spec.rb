@@ -1867,6 +1867,27 @@ describe Assignment do
         expect(data.select { |h| h.key? :final_grade }.count).to eq 1
       end
 
+      context 'release_with_urls is true' do
+        before { assignment.update! release_with_urls: true }
+        it 'should include the view_token if the result exists' do
+          token = submission.current_result.view_token
+          expect(data.pluck(:result_view_token)).to include(token)
+        end
+        it 'should include the view_token_expiry if the result exists' do
+          expiry = submission.current_result.view_token_expiry
+          expect(data.pluck(:result_view_token_expiry)).to include(expiry)
+        end
+      end
+      context 'release_with_urls is false' do
+        before { assignment.update! release_with_urls: true }
+        it 'should not include the view_token if the result exists' do
+          expect(data.pluck(:result_view_token).compact).to be_empty
+        end
+        it 'should include the view_token_expiry if the result exists' do
+          expect(data.pluck(:result_view_token_expiry).compact).to be_empty
+        end
+      end
+
       context 'there is an extra mark' do
         let(:result) { create :complete_result, submission: submission }
         let!(:extra_mark) { create :extra_mark_points, result: result }

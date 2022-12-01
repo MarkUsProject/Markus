@@ -99,6 +99,14 @@ class Submission < ApplicationRecord
     end
   end
 
+  # Returns the latest result that has been released to students
+  # If no results are released (because a remark request has been submitted but not released)
+  # then return the original result instead since that one should be visible while the remark
+  # request is being processed
+  def get_visible_result
+    non_pr_results.order(id: :desc).where(released_to_students: true).first || get_original_result
+  end
+
   # Sets marks when automated tests are run
   def set_autotest_marks
     test_run = test_runs.first

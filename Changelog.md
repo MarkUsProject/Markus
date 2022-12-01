@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.1.7]
+- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
+- Allow results to be made available only through unique tokens (#6244)
+
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
 - Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)

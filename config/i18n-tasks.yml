@@ -122,6 +122,8 @@ ignore_unused:
   - 'notification_mailer.*'
   - 'durations.hours.*'  # TODO: review this
   - 'durations.minutes.*'  # TODO: review this
+  - 'date.formats.*'  # See https://github.com/glebm/i18n-tasks/issues/240
+  - 'time.formats.*'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:

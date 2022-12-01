@@ -7,12 +7,6 @@ class AssignmentsController < ApplicationController
   responders :flash
   before_action { authorize! }
 
-  content_security_policy only: [:edit, :new] do |p|
-    # required because jquery-ui-timepicker-addon inserts style
-    # dynamically. TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
-  end
-
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
@@ -851,7 +845,8 @@ class AssignmentsController < ApplicationController
         :section_due_dates_type,
         :scanned_exam,
         :is_timed,
-        :start_time
+        :start_time,
+        :release_with_urls
       ],
       assessment_section_properties_attributes: [
         :_destroy,

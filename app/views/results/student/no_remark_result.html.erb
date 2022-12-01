@@ -36,8 +36,7 @@
       <%= link_to t('results.remark.cancel'),
                   { controller: 'results',
                     action: 'cancel_remark_request',
-                    id: @result.id,
-                    submission_id: @submission.id },
+                    id: @result.id },
                   class: 'button',
                   data: { confirm: t('results.remark.cancel_confirm') },
                   method: :delete %>
