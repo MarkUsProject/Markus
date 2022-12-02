@@ -90,7 +90,7 @@ Mousetrap.bind("down", function (e) {
 Mousetrap.bind("enter", function (e) {
   if ($(".active-rubric").length) {
     e.preventDefault();
-    $(".active-rubric").trigger("onclick");
+    $(".active-rubric")[0].click();
   }
 });
 

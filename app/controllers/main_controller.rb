@@ -6,6 +6,8 @@ class MainController < ApplicationController
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
   # check for authorization
+  skip_before_action :check_course_switch, only: [:login, :page_not_found, :check_timeout, :login_remote_auth, :about,
+                                                  :logout]
   authorize :real_user, through: :real_user
   before_action(except: [:login, :page_not_found, :check_timeout, :login_remote_auth]) { authorize! }
   skip_verify_authorized only: [:login, :page_not_found, :check_timeout, :login_remote_auth]
@@ -129,7 +131,7 @@ class MainController < ApplicationController
     lti_deployment = LtiDeployment.find(session[:lti_deployment_id])
     if lti_deployment.course.nil?
       # Redirect to course picker page
-      lti_deployment_choose_course_path
+      choose_course_lti_deployment_path(lti_deployment)
     else
       course_path(lti_deployment.course)
     end

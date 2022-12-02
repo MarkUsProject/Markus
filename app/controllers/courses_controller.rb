@@ -82,10 +82,10 @@ class CoursesController < ApplicationController
     end
 
     # Otherwise, check if the current instructor is trying to role switch as other instructors
-    if found_role.instructor?
+    if found_role.admin_role? || (found_role.instructor? && !real_user.admin_user?)
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.cannot_role_switch_to_instructor') },
+             locals: { error: I18n.t('main.cannot_role_switch') },
              status: :unprocessable_entity
       return
     end

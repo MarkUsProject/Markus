@@ -58,6 +58,32 @@ describe CoursesController do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: second_instructor.user_name }
           expect(response).to have_http_status(:unprocessable_entity)
         end
+
+        it 'fails to switch to an admin' do
+          admin = create(:admin_role, course: course)
+          post_as instructor, :switch_role, params: { id: course.id, effective_user_login: admin.user_name }
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        context 'if the current user is an admin' do
+          let(:admin_role) { create :admin_role, course: course }
+
+          it 'fails the switch to the current admin' do
+            post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin_role.user_name }
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+
+          it 'switches to another instructor' do
+            post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: instructor.user_name }
+            expect(response).to have_http_status(:success)
+          end
+
+          it 'fails to switch to another admin' do
+            admin = create(:admin_role, course: course)
+            post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin.user_name }
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+        end
       end
 
       context 'when switching to a student in the course' do

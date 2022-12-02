@@ -1,4 +1,5 @@
 class AutotestResetUrlJob < ApplicationJob
+  include AutomatedTestsHelper
   include AutomatedTestsHelper::AutotestApi
 
   def self.show_status(_status)
@@ -69,11 +70,10 @@ class AutotestResetUrlJob < ApplicationJob
               .joins(:assignment_properties)
               .where.not('assignment_properties.autotest_settings': nil)
               .each do |assignment|
-          AutotestSpecsJob.perform_now(host_with_port, assignment)
+          AutotestSpecsJob.perform_now(host_with_port, assignment, autotest_settings_for(assignment))
         rescue StandardError => e
           errors << I18n.t('automated_tests.job_messages.resetting_test_settings_error',
                            short_identifier: assignment.short_identifier, error: e.to_s)
-          status.update(error_message: msg)
         end
         raise errors.join("\n") unless errors.empty?
       end

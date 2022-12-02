@@ -457,7 +457,7 @@ describe AssignmentsController do
 
         it 'responds with the correct keys' do
           expect(response.parsed_body.keys.to_set).to eq Set[
-            'data', 'criteriaColumns', 'numAssigned', 'numMarked'
+            'data', 'criteriaColumns', 'numAssigned', 'numMarked', 'ltiDeployments'
           ]
         end
       end

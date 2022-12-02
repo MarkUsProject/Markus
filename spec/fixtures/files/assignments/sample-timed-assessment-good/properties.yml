@@ -4,11 +4,14 @@ due_date: 2021-11-17 16:00:00
 message: Sample midterm to help you practice for our second midterm
 is_hidden: false
 show_total: true
+new_message: This is a new message.
 assignment_properties_attributes:
   group_min: 1
   group_max: 1
   tokens_per_period: 4
   allow_web_submits: true
+  group_name_displayed: false
+  test_additional_param: true
   student_form_groups: false
   remark_due_date:
   remark_message:
@@ -39,6 +42,7 @@ assignment_properties_attributes:
   starter_files_after_due: true
 submission_rule_attributes:
   type: PenaltyDecayPeriodSubmissionRule
+  additional_submission_rule: NoLateSubmissionRule
   periods_attributes:
     - deduction: 5
       hours: 0.1
@@ -46,6 +50,8 @@ submission_rule_attributes:
     - deduction: 15
       hours: 0.1
       interval: 0.1
+      additional_hours: 0.5
 assignment_files_attributes:
   - filename: short_answer.txt
+    additional_filename: file.txt
   - filename: mc.txt

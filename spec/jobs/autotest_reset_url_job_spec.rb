@@ -1,4 +1,5 @@
 describe AutotestResetUrlJob do
+  include AutomatedTestsHelper
   let(:host_with_port) { 'http://localhost:3000' }
   let(:url) { 'http://example.com' }
   let(:course) { create :course }
@@ -72,6 +73,12 @@ describe AutotestResetUrlJob do
           end
           it 'should update the remote_autotest_settings_id for all assignments' do
             expect(AutotestSpecsJob).to receive(:perform_now).exactly(3).times
+            subject
+          end
+          it 'should updated call AutotestSpecsJob with the right arguments' do
+            allow(AutotestSpecsJob).to receive(:perform_now) do |_url, assignment, test_specs|
+              expect(test_specs).to eq autotest_settings_for(assignment)
+            end
             subject
           end
         end

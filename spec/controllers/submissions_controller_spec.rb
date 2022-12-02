@@ -1047,17 +1047,11 @@ describe SubmissionsController do
       zip_path = "tmp/#{@assignment.short_identifier}_" \
                  "#{@grouping.group.group_name}_#{revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
-        file1_path = File.join("#{@assignment.short_identifier}-" +
-                                   @grouping.group.group_name.to_s,
-                               @file1_name)
-        file2_path = File.join("#{@assignment.short_identifier}-" +
-                                   @grouping.group.group_name.to_s,
-                               @file2_name)
-        expect(zip_file.find_entry(file1_path)).to_not be_nil
-        expect(zip_file.find_entry(file2_path)).to_not be_nil
+        expect(zip_file.find_entry(@file1_name)).to_not be_nil
+        expect(zip_file.find_entry(@file2_name)).to_not be_nil
 
-        expect(zip_file.read(file1_path)).to eq(@file1_content)
-        expect(zip_file.read(file2_path)).to eq(@file2_content)
+        expect(zip_file.read(@file1_name)).to eq(@file1_content)
+        expect(zip_file.read(@file2_name)).to eq(@file2_content)
       end
     end
 

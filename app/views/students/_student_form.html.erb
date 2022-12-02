@@ -21,10 +21,10 @@
                   remote: true,
                   class: 'button inline-button' %>
     </span>
-    <%= f.label :hidden, t('students.status') %>
+    <%= f.label :hidden, t('roles.status') %>
     <span id='set-active'>
       <%= f.select :hidden,
-                   options_for_select([[t('students.active'), false], [t('students.inactive'), true]], selected: @role.hidden) %>
+                   options_for_select([[t('roles.active'), false], [t('roles.inactive'), true]], selected: @role.hidden) %>
     </span>
   </div>
 

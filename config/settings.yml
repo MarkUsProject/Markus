@@ -25,7 +25,14 @@ rails:
     deliver_later_queue_name: ~
   action_controller:
     default_url_options:
-      host: 'localhost:3000'
+      host: 'localhost'
+      port: '3000'
+
+puma:
+  workers: 3
+  min_threads: 0
+  max_threads: 5
+  worker_timeout: 60
 
 queues:
   default: DEFAULT_QUEUE
@@ -89,8 +96,6 @@ autotest:
 
 scanned_exams:
   enable: true
-
-python: <%= ::Rails.root %>/venv/bin/python
 
 exception_notification:
   enabled: false

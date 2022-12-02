@@ -214,6 +214,10 @@
         <%= ap_f.label :release_with_urls,
                        Assignment.human_attribute_name(:release_with_urls) %>
         <%= ap_f.check_box :release_with_urls %>
+
+        <% if @lti_deployments.present? %>
+          <%= render partial: 'lti_deployments/line_items' %>
+        <% end %>
       </div>
       </fieldset>
     </fieldset>

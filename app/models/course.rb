@@ -12,6 +12,7 @@ class Course < ApplicationRecord
   has_many :marking_schemes
   has_many :tags, through: :roles
   has_many :exam_templates, through: :assignments
+  has_many :lti_deployments
   belongs_to :autotest_setting, optional: true
 
   validates :name, presence: true
@@ -23,10 +24,10 @@ class Course < ApplicationRecord
   # Note rails provides built-in sanitization via active record.
   validates :display_name, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
-
   validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
 
   after_save_commit :update_repo_max_file_size
+  after_update_commit :update_repo_permissions
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
@@ -77,13 +78,8 @@ class Course < ApplicationRecord
             row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
             row[:assignment_properties_attributes][:token_period] = 1
             row[:assignment_properties_attributes][:unlimited_tokens] = false
-            row[:submission_rule] = NoLateSubmissionRule.new
           end
           assignment.update(row)
-          unless assignment.id
-            assignment[:display_median_to_students] = false
-            assignment[:display_grader_names_to_students] = false
-          end
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e
@@ -164,5 +160,9 @@ class Course < ApplicationRecord
     return unless saved_change_to_max_file_size? || saved_change_to_id?
 
     UpdateRepoMaxFileSizeJob.perform_later(self.id)
+  end
+
+  def update_repo_permissions
+    Repository.get_class.update_permissions if saved_change_to_is_hidden?
   end
 end

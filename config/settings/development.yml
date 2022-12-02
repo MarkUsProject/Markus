@@ -11,6 +11,13 @@ rails:
     verbose_query_logs: true
   action_mailer:
     perform_deliveries: true
+  action_controller:
+    default_url_options:
+      host: 'host.docker.internal'
+      port: '3000'
+
+puma:
+  worker_timeout: 100000000
 
 i18n:
   available_locales:

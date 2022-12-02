@@ -6,6 +6,10 @@ class GroupingPolicy < ApplicationPolicy
     record.accepted_students.include?(role)
   end
 
+  def assigned_grader?
+    role.ta? && record.tas.exists?(role.id)
+  end
+
   def not_in_progress?
     !record.student_test_run_in_progress?
   end

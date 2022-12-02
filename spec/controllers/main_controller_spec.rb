@@ -26,30 +26,6 @@ describe MainController do
       end
     end
   end
-  describe 'tests for all routes' do
-    # check_timeout is used here as a basic example but any route could be used in its place
-    describe 'set_markus_version' do
-      let(:version_number) { "#{rand(0..100)}.#{rand(0..100)}.#{rand(0..100)}" }
-      it 'should allow a master version' do
-        allow_any_instance_of(File).to receive(:read).and_return('VERSION=master')
-        expect { get :check_timeout }.not_to raise_error
-      end
-      it 'should not allow a generic release version' do
-        allow_any_instance_of(File).to receive(:read).and_return('VERSION=release')
-        expect { get :check_timeout }.to raise_error(RuntimeError)
-      end
-      it 'should allow a properly formatted release version' do
-        version = "VERSION=v#{version_number}"
-        allow_any_instance_of(File).to receive(:read).and_return(version)
-        expect { get :check_timeout }.not_to raise_error
-      end
-      it 'should not allow a release version without a v prefix' do
-        version = "VERSION=#{version_number}"
-        allow_any_instance_of(File).to receive(:read).and_return(version)
-        expect { get :check_timeout }.to raise_error(RuntimeError)
-      end
-    end
-  end
   context 'An Instructor' do
     let :all_assignments do
       a2 = create(:assignment, due_date: 1.day.ago)
@@ -133,7 +109,7 @@ describe MainController do
       context 'when there is no course association' do
         it 'redirects to choose_course' do
           sign_in instructor
-          expect(response).to redirect_to action: 'choose_course', controller: 'lti_deployment'
+          expect(response).to redirect_to action: 'choose_course', controller: 'lti_deployments', id: lti.id
         end
       end
       context 'when there is a course association' do
@@ -251,6 +227,35 @@ describe MainController do
       @controller = CoursesController.new
       get :show, params: { id: course2.id }
       expect(response).to redirect_to course_assignments_path(session[:role_switch_course_id])
+    end
+    context 'when user tries to log out' do
+      before(:each) do
+        @controller = MainController.new
+        get :logout
+      end
+      it 'should unset the session real_user_name' do
+        expect(session[:real_user_name]).to be_nil
+      end
+      it 'should unset the timeout counter' do
+        expect(session[:timeout]).to be_nil
+      end
+      it 'should unset the session user_name' do
+        expect(session[:user_name]).to be_nil
+      end
+      it 'should unset the session role_switch_course_id' do
+        expect(session[:role_switch_course_id]).to be_nil
+      end
+      it 'should redirect all routes to the login page' do
+        get :about
+        expect(response).to redirect_to action: 'login', controller: 'main'
+      end
+    end
+
+    it 'allows user to properly access about' do
+      @controller = MainController.new
+      request.headers['accept'] = 'text/javascript'
+      get :about, xhr: true
+      expect(response).to have_http_status(:ok)
     end
   end
 end

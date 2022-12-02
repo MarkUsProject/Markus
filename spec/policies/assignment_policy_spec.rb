@@ -100,11 +100,11 @@ describe AssignmentPolicy do
     end
   end
 
-  describe_rule :test_groups_exist? do
-    succeed 'when test groups exist' do
-      before { create :test_group, assignment: assignment }
+  describe_rule :tests_set_up? do
+    succeed 'when remote_autotest_settings_id exist' do
+      before { assignment.update! remote_autotest_settings_id: 1 }
     end
-    failed 'when test groups do not exist'
+    failed 'when remote_autotest_settings_id do not exist'
   end
 
   describe_rule :tokens_released? do
