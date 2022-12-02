@@ -10,6 +10,7 @@
 - Prevent hidden roles from interacting with a course (#6173)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
+- Added ability to download feedback files (#6215)
 - Allow admins to set the autotester url for each course in the courses view (#6213)
 - Allow admins to test and reset the connection to the autotester in the courses view and through the API (#6213)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
