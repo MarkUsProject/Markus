@@ -417,8 +417,8 @@ class GitRepository < Repository::AbstractRepository
     end
 
     # Create auth csv file
-    FileUtils.mkdir_p(File.dirname(Repository::PERMISSION_FILE))
-    CSV.open(Repository::PERMISSION_FILE, 'wb') do |csv|
+    FileUtils.mkdir_p(File.dirname(Repository.permission_file))
+    CSV.open(Repository.permission_file, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       begin
         permissions.each do |repo_name, users|

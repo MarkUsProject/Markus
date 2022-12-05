@@ -13,8 +13,6 @@ class TestRun < ApplicationRecord
   validate :autotest_test_id_uniqueness
   before_save :unset_autotest_test_id
 
-  SETTINGS_FILES_DIR = (Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path,
-                                                                    'autotest')).freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze
 
@@ -61,6 +59,10 @@ class TestRun < ApplicationRecord
 
   def self.all_test_categories
     [Instructor.name.downcase, Student.name.downcase]
+  end
+
+  def self.settings_files_dir
+    Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path, 'autotest')
   end
 
   private

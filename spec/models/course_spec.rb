@@ -37,7 +37,7 @@ describe Course do
           allow(Settings.repository).to receive(:type).and_return('git')
           allow(GitRepository).to receive(:purge_all)
         end
-        after(:each) { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+        after(:each) { FileUtils.rm_r(Dir.glob(File.join(Repository.root_dir, '*'))) }
       end
       context 'after creation' do
         subject { course }
@@ -55,7 +55,7 @@ describe Course do
         subject { course.update! max_file_size: course.max_file_size + 10_000 }
         context 'when using git repos' do
           include_context 'git repos'
-          after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+          after { FileUtils.rm_r(Dir.glob(File.join(Repository.root_dir, '*'))) }
           it 'should schedule a background job' do
             expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later).with(course.id)
             subject

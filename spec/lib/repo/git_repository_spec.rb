@@ -5,10 +5,10 @@ describe GitRepository do
     end
 
     after :all do
-      FileUtils.rm Repository::PERMISSION_FILE
+      FileUtils.rm Repository.permission_file
     end
 
-    let(:file_contents) { File.read(Repository::PERMISSION_FILE).lines.map(&:chomp) }
+    let(:file_contents) { File.read(Repository.permission_file).lines.map(&:chomp) }
 
     it 'gives users access to specific repos' do
       expect(file_contents.first.split(',')[0]).to eq('mock_repo')

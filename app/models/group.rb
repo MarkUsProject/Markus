@@ -80,7 +80,7 @@ class Group < ApplicationRecord
   end
 
   def repo_path
-    File.join(Repository::ROOT_DIR, self.repository_relative_path)
+    File.join(Repository.root_dir, self.repository_relative_path)
   end
 
   def _file_location

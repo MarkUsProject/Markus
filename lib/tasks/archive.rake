@@ -18,7 +18,7 @@ namespace :markus do
   def copy_archive_files(archive_dir, rev: false)
     # copy repo permission file
     permission_file = archive_dir + 'permission_file'
-    archive_copy(Repository::PERMISSION_FILE, permission_file.to_s, rev: rev)
+    archive_copy(Repository.permission_file, permission_file.to_s, rev: rev)
     # copy log files
     log_dir = File.dirname(File.join(::Rails.root, Settings.logging.log_file))
     log_files_dir = archive_dir + 'log_files'
@@ -29,13 +29,13 @@ namespace :markus do
     archive_copy(error_dir, error_files_dir, rev: rev)
     # copy starter files
     starter_files_dir = archive_dir + 'starter_files'
-    archive_copy(Assignment::STARTER_FILES_DIR, starter_files_dir, rev: rev)
+    archive_copy(Assignment.starter_files_dir, starter_files_dir, rev: rev)
     # copy autotest client dir
     autotest_dir = archive_dir + 'autotest_client'
-    archive_copy(TestRun::SETTINGS_FILES_DIR, autotest_dir, rev: rev)
+    archive_copy(TestRun.settings_files_dir, autotest_dir, rev: rev)
     # copy repositories
     repos_dir = archive_dir + 'repos'
-    archive_copy(Repository::ROOT_DIR, repos_dir, rev: rev)
+    archive_copy(Repository.root_dir, repos_dir, rev: rev)
   end
 
   namespace :archive do
@@ -56,7 +56,7 @@ namespace :markus do
     task :course, [:course_name] => :environment do |_task, args|
       include ArchiveTools::CourseArchiver
       archive_file = archive(args[:course_name])
-      puts "Course #{course.name} has been archived to #{archive_file}"
+      puts "Course #{args[:course_name]} has been archived to #{archive_file}"
     end
   end
 
