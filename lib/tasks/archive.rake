@@ -74,7 +74,14 @@ namespace :markus do
     end
     task :course, [:archive_file] => :environment do |_task, args|
       include ArchiveTools::CourseArchiver
-      unarchive(args[:archive_file], tmp_db_url: ENV.fetch('TMP_DB_URL'))
+      unarchive(args[:archive_file], tmp_db_url: ENV.fetch('TMP_DB_URL', nil))
+    end
+  end
+
+  namespace :remove do
+    task :course, [:course_name] => :environment do |_task, args|
+      include ArchiveTools::CourseArchiver
+      remove_db_and_data(args[:course_name])
     end
   end
 end

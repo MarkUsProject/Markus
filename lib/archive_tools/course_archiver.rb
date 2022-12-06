@@ -18,7 +18,7 @@ module ArchiveTools
     ensure
       archive_db.connection.disconnect!
       ActiveRecord::Base.establish_connection(old_db_config)
-      ActiveRecord::Base.connection.execute("DROP DATABASE IF EXISTS #{archive_db_name}") if tmp_db_url
+      ActiveRecord::Base.connection.execute("DROP DATABASE IF EXISTS #{archive_db_name}") if tmp_db_url.nil?
     end
 
     # Change the file storage location to +tmp_dir+ for the duration of the block
@@ -134,7 +134,7 @@ module ArchiveTools
     # Y or Z.
     def association_type(klass, options = {})
       direct = klass.method_defined?(:course) || klass.reflect_on_all_associations.any? { |a| a.name == :course }
-      return true if direct && options[:direct_only]
+      return direct if options[:direct_only]
       return :d if direct
       klass.reflect_on_all_associations.each do |assoc|
         if assoc.polymorphic?
@@ -256,26 +256,28 @@ module ArchiveTools
       new_ids = Hash.new { |h, k| h[k] = {} }
       errors_reported = false
       new_file_locations = []
-      ActiveRecord.transaction do
+      ApplicationRecord.transaction do
         table_load_order.each do |table_name|
           db_file = File.join(db_dir, "#{table_name}.csv")
           next unless File.exist?(db_file)
 
-          klass = table_class_mapping[table_name]
-          reverse_enums = klass.defined_enums.transform_values { |h| h.map { |k, v| [v&.to_s, k] }.to_h }
-
-          foreign_keys = klass.reflect_on_all_associations(:belongs_to).index_by(&:foreign_key)
+          parent_class = table_class_mapping[table_name]
 
           CSV.parse(File.read(db_file), headers: true) do |row|
-            # transform columns with an enum value to the enum key so that ActiveRecord can use it
-            attributes = row.map { |k, v| [k, reverse_enums[k]&.[](v) || v] }.to_h
-            record = klass.new(attributes)
-            data_file = nil
-            if record.respond_to? :_file_location
-              data_file = temporary_file_storage(data_dir) { record._file_location }
+            if (subclass_name = row[parent_class.inheritance_column]).nil?
+              klass = parent_class
+            else
+              # Get the subclass if the current table uses single table inheritance
+              klass = parent_class.new(parent_class.inheritance_column => subclass_name).class
             end
 
+            # transform columns with an enum value to the enum key so that ActiveRecord can use it
+            reverse_enums = klass.defined_enums.transform_values { |h| h.map { |k, v| [v&.to_s, k] }.to_h }
+            attributes = row.map { |k, v| [k, reverse_enums[k]&.[](v) || v] }.to_h
+            record = klass.new(attributes)
+
             # update foreign key references
+            foreign_keys = klass.reflect_on_all_associations(:belongs_to).index_by(&:foreign_key)
             record.attributes.each do |k, v|
               association = foreign_keys[k]
               next if association.nil?
@@ -285,30 +287,38 @@ module ArchiveTools
               else
                 associated_class = association.klass
               end
-              record.assign_attributes(k => new_ids[associated_class.table_name][v])
+              record.assign_attributes(k => new_ids[associated_class.table_name][v.to_s])
             end
+
+            old_file_location = nil
+            new_file_location = nil
+            if record.respond_to? :_file_location
+              old_file_location = temporary_file_storage(data_dir) { record._file_location }
+              unless File.exist? old_file_location
+                warn "Cannot find archived data files associated with #{record.inspect}."
+                old_file_location = nil
+                errors_reported = true
+              end
+              new_file_location = record._file_location
+              if File.exist? new_file_location
+                # check this here because some files get created when the record is saved
+                warn "Cannot copy archived data files associated with #{record.inspect} to #{new_file_location}. " \
+                     'A file or directory already exists at that path.'
+                new_file_location = nil
+                errors_reported = true
+              end
+            end
+
             # nullify the id so that it can be assigned a new one on save
             record.id = nil
             if record.save
               # save the new id so that future records with associations to this record can refer to its new id
               new_ids[table_name][row['id']] = record.id
-              if record.respond_to?(:_file_location)
+              unless old_file_location.nil? || new_file_location.nil?
                 # copy any associated files from the archived location to the new location on disk
-                if !data_file.nil? && File.exist?(data_file)
-                  new_location = record._file_location
-                  if File.exist?(new_location)
-                    warn "Cannot copy archived data files associated with #{record.inspect} to #{new_location}. " \
-                         'A file or directory already exists at that path.'
-                    errors_reported = true
-                  else
-                    FileUtils.mkdir_p(File.dirname(new_location))
-                    FileUtils.cp_r(data_file, new_location)
-                    new_file_locations << new_location
-                  end
-                else
-                  warn "Cannot find archived data files associated with #{record.inspect}."
-                  errors_reported = true
-                end
+                FileUtils.mkdir_p(File.dirname(new_file_location))
+                FileUtils.cp_r(old_file_location, new_file_location)
+                new_file_locations << new_file_location
               end
             elsif record.respond_to?(:course)
               warn "Unable to create record #{record.inspect}\nError(s): #{record.errors.full_messages.join(', ')}"
@@ -345,9 +355,29 @@ module ArchiveTools
     # Only records directly associated with a given course will be removed.
     # Please archive the course first before deleting it! Course removal cannot be reversed except by
     # unarchiving a course.
-    def remove(course_name)
+    def remove_db_and_data(course_name)
       course = Course.find_by(name: course_name)
-      course.destroy
+      id_hash = Hash.new { |h, k| h[k] = Set.new }
+      table_classes(parent_only: false).each do |table_name, classes|
+        classes.each do |klass|
+          next unless klass == Course || association_type(klass, direct_only: true)
+          ids = ids_associated_to_course(course, klass)
+          id_hash[table_name] |= ids if ids.present?
+        end
+      end
+      # Delete in reverse load order so that foreign key associations are never stranded
+      table_class_mapping = table_classes(parent_only: true)
+      load_order.reverse.each do |table_name|
+        next unless id_hash.key? table_name
+        klass = table_class_mapping[table_name]
+        records = klass.where(id: id_hash[table_name])
+        if klass.method_defined? :_file_location
+          records.find_each do |record|
+            FileUtils.rm_rf record._file_location
+          end
+        end
+        records.delete_all
+      end
     end
   end
 end
