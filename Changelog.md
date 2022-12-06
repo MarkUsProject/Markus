@@ -27,6 +27,7 @@
 - Fix bug where rubric grades could not be selected with the return key (#6354)
 - Allow admins to set the number of puma workers and threads from the settings files (#6348)
 - Fix bug where a user who has switched roles could not view the about modal or log out (#6247)
+- Fix bug where emoji annotation options were available even if no text/region was selected (#6192)
 
 ## [v2.1.7]
 - Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
