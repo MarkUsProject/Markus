@@ -390,95 +390,86 @@ describe Course do
   end
 
   describe '#get_required_files' do
+    let(:actual) { assignment.course.get_required_files }
+    let(:matching) { actual.lines.select { |line| line.match(/^#{assignment.repository_folder}/) }.map(&:chomp) }
     context 'when a course has no assignments' do
-      it 'should return an empty hashmap' do
-        expected = {}
-        actual = course.get_required_files
-        expect(actual).to eq(expected)
+      it 'should return an empty string' do
+        expect(course.get_required_files).to eq('')
       end
     end
     context 'when a course has one assignment' do
-      let!(:assignment) do
-        create(:assignment, course: course, short_identifier: 'TEST', is_hidden: false, description: 'ello',
-                            due_date: 5.days.from_now)
-      end
       context 'when the result from the assignment query does not return the assignment' do
         context 'when the assignment is a scanned exam and not hidden' do
-          it 'should return an empty hashmap' do
-            assignment.assignment_properties.scanned_exam = true
-            assignment.save
-            assignment.reload
-
-            expect(assignment.assignment_properties.scanned_exam).to eq(true)
-            # ensure that the the condition assignment.is_hidden = false is not causing the query to fail
-            expect(assignment.is_hidden).to eq(false)
-            expect(course.get_required_files).to eq({})
+          let(:assignment) { create :assignment_for_scanned_exam }
+          it 'should return an empty string' do
+            expect(actual).to eq('')
           end
         end
         context 'when the assignment is hidden' do
-          it 'should return an empty hashmap' do
-            assignment.is_hidden = true
-            assignment.save
-            assignment.reload
-
-            expect(assignment.assignment_properties.scanned_exam).to eq(false)
-            expect(assignment.is_hidden).to eq(true)
-            expect(course.get_required_files).to eq({})
+          let(:assignment) { create :assignment, is_hidden: true }
+          it 'should return an empty string' do
+            expect(actual).to eq('')
           end
         end
       end
-      context 'when assignment.only_required_files is false' do
-        it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> false}' do
-          actual = course.get_required_files
-
-          expect(assignment.assignment_properties.scanned_exam).to eq(false)
-          expect(assignment.is_hidden).to eq(false)
-          expect(assignment.only_required_files).to eq(false)
-          expect(actual).to eq({ 'TEST' => { required: [], required_only: false } })
+      context 'when an assignment has no require files' do
+        context 'when assignment.only_required_files is false' do
+          let(:assignment) { create :assignment, only_required_files: false }
+          it 'should return an empty string' do
+            expect(actual).to eq('')
+          end
         end
-      end
-      context 'when only_required_files is true' do
-        it 'should return {\'<repo_folder>\' => {:required => [], :required_only=> true}' do
-          assignment.only_required_files = true
-          assignment.save
-          actual = course.get_required_files
-
-          expect(assignment.assignment_properties.scanned_exam).to eq(false)
-          expect(assignment.is_hidden).to eq(false)
-
-          expect(assignment.only_required_files).to eq(true)
-          expect(actual).to eq({ 'TEST' => { required: [], required_only: true } })
+        context 'when assignment.only_required_files is true' do
+          let(:assignment) { create :assignment, only_required_files: true }
+          it 'should return an empty string' do
+            expect(actual).to eq('')
+          end
         end
       end
       context 'when an assignment has required files' do
-        it 'should return {\'<repo_folder>\' => {:required => [\'a\', \'b\'], :required_only=> false}' do
+        before do
           create(:assignment_file, assignment: assignment, filename: 'a')
           create(:assignment_file, assignment: assignment, filename: 'b')
-          actual = course.get_required_files
-          expect(assignment.assignment_properties.scanned_exam).to eq(false)
-          expect(assignment.is_hidden).to eq(false)
-          expect(assignment.only_required_files).to eq(false)
-          expect(actual).to eq({ 'TEST' => { required: %w[a b], required_only: false } })
+        end
+        context 'when assignment.only_required_files is false' do
+          let(:assignment) do
+            create :assignment, assignment_properties_attributes: { only_required_files: false }
+          end
+          it 'should include both files in the matching lines' do
+            repo_folder = assignment.repository_folder
+            expect(matching).to contain_exactly("#{repo_folder}/a false", "#{repo_folder}/b false")
+          end
+        end
+        context 'when assignment.only_required_files is true' do
+          let(:assignment) do
+            create :assignment, assignment_properties_attributes: { only_required_files: true }
+          end
+          it 'should include both files in the matching lines' do
+            repo_folder = assignment.repository_folder
+            expect(matching).to contain_exactly("#{repo_folder}/a true", "#{repo_folder}/b true")
+          end
         end
       end
     end
     context 'when a course has multiple assignments' do
-      it 'should return a mapping from the course\'s assignments\' repository folder names to { required' \
-         ': [<filenames of required files for assignment>], required_only: <state>> }' do
-        assignments = []
-        3.times do |test_number|
-          assignment = create(:assignment, course: course, short_identifier: "TEST-#{test_number}")
-          assignments.append(assignment)
-          expect(assignment.assignment_properties.scanned_exam).to eq(false)
-          expect(assignment.is_hidden).to eq(false)
+      let(:assignments) { create_list :assignment, 2, course: course }
+      let(:expected) { assignments.map { |_| [] } }
+      before do
+        create(:assignment_file, assignment: assignments.last, filename: 'a')
+        create(:assignment_file, assignment: assignments.last, filename: 'b')
+      end
+      context 'and the assignment has no required files' do
+        let(:assignment) { assignments.first }
+        it 'should not find any matching lines for the given assignment' do
+          expect(matching).to be_empty
         end
-        create(:assignment_file, assignment: assignments[2], filename: 'a')
-        create(:assignment_file, assignment: assignments[2], filename: 'b')
-        actual = course.get_required_files
-        2.times do |test_number|
-          expect(actual[assignments[test_number].repository_folder]).to eq({ required: [], required_only: false })
+      end
+      context 'and the assignment has required files' do
+        let(:assignment) { assignments.last }
+        it 'should include both files in the matching lines' do
+          repo_folder = assignment.repository_folder
+          expect(matching).to contain_exactly("#{repo_folder}/a false", "#{repo_folder}/b false")
         end
-        expect(actual[assignments[2].repository_folder]).to eq({ required: %w[a b], required_only: false })
       end
     end
   end
