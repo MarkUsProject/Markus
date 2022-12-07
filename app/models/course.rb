@@ -24,10 +24,10 @@ class Course < ApplicationRecord
   # Note rails provides built-in sanitization via active record.
   validates :display_name, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
-
   validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
 
   after_save_commit :update_repo_max_file_size
+  after_update_commit :update_repo_permissions
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
@@ -160,5 +160,9 @@ class Course < ApplicationRecord
     return unless saved_change_to_max_file_size? || saved_change_to_id?
 
     UpdateRepoMaxFileSizeJob.perform_later(self.id)
+  end
+
+  def update_repo_permissions
+    Repository.get_class.update_permissions if saved_change_to_is_hidden?
   end
 end

@@ -79,3 +79,6 @@ config/environments/*.local.yml
 app/javascript/routes.js
 # js-routes v2.2.0 always generates a Typescript definition file, but we aren't using Typescript
 app/javascript/routes.d.ts
+
+# local docker compose overrides
+docker-compose.override.yml

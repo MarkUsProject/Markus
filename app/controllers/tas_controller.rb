@@ -9,7 +9,15 @@ class TasController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: current_course.tas.joins(:user).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+        render json: {
+          data: current_course.tas.joins(:user).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email,
+                                                              :hidden),
+          counts: {
+            all: current_course.tas.size,
+            active: current_course.tas.active.size,
+            inactive: current_course.tas.inactive.size
+          }
+        }
       end
     end
   end
@@ -21,7 +29,7 @@ class TasController < ApplicationController
 
   def create
     user = EndUser.find_by(user_name: end_user_params[:user_name])
-    @role = current_course.tas.create(user: user, **permission_params)
+    @role = current_course.tas.create(user: user, **create_update_params)
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -31,7 +39,7 @@ class TasController < ApplicationController
 
   def update
     @role = record
-    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), **permission_params)
+    @role.update(user: EndUser.find_by(user_name: end_user_params[:user_name]), **create_update_params)
     respond_with @role, location: course_tas_path(current_course)
   end
 
@@ -70,8 +78,10 @@ class TasController < ApplicationController
 
   private
 
-  def permission_params
-    params.require(:role).permit(grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
+  def create_update_params
+    keys = [{ grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests] }]
+    keys << :hidden if allowed_to?(:manage_role_status?)
+    params.require(:role).permit(*keys)
   end
 
   def end_user_params
