@@ -105,7 +105,7 @@ GEM
       smart_properties
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bootsnap (1.13.0)
+    bootsnap (1.15.0)
       msgpack (~> 1.2)
     brakeman (5.4.0)
     builder (3.2.4)
@@ -243,7 +243,7 @@ GEM
     mini_portile2 (2.8.0)
     minitest (5.16.3)
     mono_logger (1.1.1)
-    msgpack (1.5.4)
+    msgpack (1.6.0)
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
