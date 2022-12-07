@@ -21,6 +21,7 @@
 - Read the MarkUs version once at initialization instead of at every request (#6305)
 - Allow spaces in file names (#6306)
 - Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
+- Fix bug where grades summary charts flicker in some browsers (#6352)
 
 ## [v2.1.6]
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
