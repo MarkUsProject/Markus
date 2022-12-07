@@ -64,12 +64,12 @@ class MainController < ApplicationController
     uri = session[:redirect_uri]
     session[:redirect_uri] = nil
     refresh_timeout
-    if cookies.encrypted[:lti_redirect].present?
-      redirect_to cookies.encrypted[:lti_redirect]
-      return
-    end
     # redirect to last visited page or to main page
-    if uri.present?
+    if cookies.encrypted[:lti_redirect].present?
+      redirect_url = cookies.encrypted[:lti_redirect]
+      cookies.delete(:lti_redirect)
+      redirect_to redirect_url
+    elsif uri.present?
       redirect_to(uri)
     elsif found_user.admin_user?
       redirect_to(admin_path)
@@ -117,20 +117,6 @@ class MainController < ApplicationController
   def refresh_session
     refresh_timeout
     head :ok
-  end
-
-  def set_lti_user_association
-    if cookies.encrypted[:lti_user_id].present?
-      LtiUser.find_or_create_by(user: @real_user, lti_client: LtiClient.find(cookies.encrypted[:lti_client_id]),
-                                lti_user_id: cookies.encrypted[:lti_user_id])
-    end
-    lti_deployment = LtiDeployment.find(cookies.encrypted[:lti_deployment_id])
-    if lti_deployment.course.nil?
-      # Redirect to course picker page
-      choose_course_lti_deployment_path(lti_deployment)
-    else
-      course_path(lti_deployment.course)
-    end
   end
 
   private

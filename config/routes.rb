@@ -500,9 +500,9 @@ Rails.application.routes.draw do
         resources :canvas, only: [] do
           collection do
             get 'get_config'
-            get 'launch'
             post 'launch'
             post 'redirect_login'
+            get 'redirect_login'
           end
         end
       end

@@ -8,44 +8,31 @@ class LtiDeploymentsController < ApplicationController
   before_action :check_host, except: [:choose_course]
 
   def launch
-    lti_params = params[:lti_message_hint].present? ? params : JSON.parse(cookies.encrypted[:lti_params])
-    if lti_params.is_a?(Hash)
-      lti_params.symbolize_keys!
-    end
-    if lti_params[:client_id].blank? || lti_params[:login_hint].blank? ||
-      lti_params[:target_link_uri].blank? || lti_params[:lti_message_hint].blank?
+    if params[:client_id].blank? || params[:login_hint].blank? ||
+      params[:target_link_uri].blank? || params[:lti_message_hint].blank?
       head :unprocessable_entity
       return
     end
     nonce = rand(10 ** 30).to_s.rjust(30, '0')
-    unless logged_in?
-      cookies.encrypted.permanent[:lti_params] = params.to_json
-      cookies.encrypted.permanent[:lti_redirect] = request.url
-      cookies.encrypted.permanent[:lti_referrer] = request.referer
-      redirect_to root_path
-      return
-    end
-    session[:client_id] = lti_params[:client_id]
-    session[:iss] = lti_params[:iss]
+    cookies.permanent.encrypted[:client_id] = { value: params[:client_id], expires: 1.hour.from_now }
+    cookies.permanent.encrypted[:iss] = { value: params[:iss], expires: 1.hour.from_now }
+    cookies.permanent.encrypted[:nonce] = { value: nonce, expires: 1.hour.from_now }
+    cookies.permanent.encrypted[:state] = { value: session.id, expires: 1.hour.from_now }
     auth_params = {
       scope: 'openid',
       response_type: 'id_token',
-      client_id: lti_params[:client_id],
-      redirect_uri: lti_params[:target_link_uri],
-      lti_message_hint: lti_params[:lti_message_hint],
-      login_hint: lti_params[:login_hint],
+      client_id: params[:client_id],
+      redirect_uri: params[:target_link_uri],
+      lti_message_hint: params[:lti_message_hint],
+      login_hint: params[:login_hint],
       response_mode: 'form_post',
       nonce: nonce,
       prompt: 'none',
       state: session.id # Binds this request to the LTI response
     }
-    if URI(request.referer).host == request.host
-      referrer = URI(cookies.encrypted[:lti_referrer])
-    else
-      referrer = URI(request.referer)
-    end
-
-    auth_request_uri = URI("#{referrer.scheme}://#{referrer.host}:#{referrer.port}#{self.class::LMS_REDIRECT_ENDPOINT}")
+    referrer = URI(request.referer)
+    referrer = referrer.to_s.remove(referrer.path, referrer.query, '?')
+    auth_request_uri = URI("#{referrer}#{self.class::LMS_REDIRECT_ENDPOINT}")
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
     req = Net::HTTP::Post.new(auth_request_uri)
@@ -54,66 +41,104 @@ class LtiDeploymentsController < ApplicationController
     res = http.request(req)
     location = URI(res['location'])
     location.query = auth_params.to_query
-    session[:nonce] = nonce
     redirect_to location.to_s, allow_other_host: true
   end
 
   def redirect_login
-    if params[:id_token].blank? || params[:state] != session.id.to_s
-      render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
-      return
-    end
-    referrer_uri = URI(request.referer)
-    # Get LMS JWK set
-    jwk_url = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}#{self.class::LMS_JWK_ENDPOINT}"
-    # A list of public keys and associated metadata for JWTs signed by the LMS
-    lms_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
-    begin
-      decoded_token = JWT.decode(
-        params[:id_token], # Encoded JWT signed by LMS
-        nil, # If the token is passphrase-protected, set the passphrase here
-        true, # Verify the signature of this token
-        algorithms: ['RS256'],
-        iss: session[:iss],
-        verify_iss: true,
-        aud: cookies.encrypted[:client_id], # OpenID Connect uses client ID as the aud parameter
-        verify_aud: true,
-        jwks: lms_jwks # The correct JWK will be selected by matching jwk kid param with id_token kid
-      )
-    rescue JWT::DecodeError
-      render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
-      return
-    end
-    lti_params = decoded_token[0]
-    unless lti_params['nonce'] == session[:nonce]
-      render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') }, layout: false
-      return
-    end
-    cookies.encrypted[:lti_course_id] = lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id']
-    cookies.encrypted[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['user_id']
-    cookies.encrypted[:lti_course_name] = lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title']
-    cookies.encrypted[:lti_course_label] = lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label']
-    deployment_id = lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]]
-    lti_host = "#{referrer_uri.scheme}://#{referrer_uri.host}:#{referrer_uri.port}"
-    lti_client = LtiClient.find_or_create_by(client_id: session[:client_id], host: lti_host)
-    lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client, external_deployment_id: deployment_id)
-    lti_deployment.update!(lms_course_name: cookies.encrypted[:lti_course_name],
-                           lms_course_id: cookies.encrypted[:lti_course_id])
-    cookies.encrypted[:lti_client_id] = lti_client.id
-    cookies.encrypted[:lti_deployment_id] = lti_deployment.id
-    if lti_params.key?(LtiDeployment::LTI_CLAIMS[:names_role])
-      name_and_roles_endpoint = lti_params[LtiDeployment::LTI_CLAIMS[:names_role]]['context_memberships_url']
-      names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
-      names_service.update!(url: name_and_roles_endpoint)
-    end
-    if lti_params.key?(LtiDeployment::LTI_CLAIMS[:ags_lineitem])
-      grades_endpoints = lti_params[LtiDeployment::LTI_CLAIMS[:ags_lineitem]]
-      if grades_endpoints.key?('lineitems')
-        lineitem_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'agslineitem')
-        lineitem_service.update!(url: grades_endpoints['lineitems'])
+    if request.post?
+      if params[:id_token].blank? || params[:state] != session.id.to_s
+        render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
+                                     layout: false
+        return
       end
+      referrer_uri = URI(request.referer)
+      referrer_uri = referrer_uri.to_s.remove(referrer_uri.path, referrer_uri.query, '?')
+      # Get LMS JWK set
+      jwk_url = "#{referrer_uri}#{self.class::LMS_JWK_ENDPOINT}"
+      # A list of public keys and associated metadata for JWTs signed by the LMS
+      lms_jwks = JSON.parse(Net::HTTP.get_response(URI(jwk_url)).body)
+      begin
+        decoded_token = JWT.decode(
+          params[:id_token], # Encoded JWT signed by LMS
+          nil, # If the token is passphrase-protected, set the passphrase here
+          true, # Verify the signature of this token
+          algorithms: ['RS256'],
+          iss: cookies.encrypted[:iss],
+          verify_iss: true,
+          aud: cookies.encrypted[:client_id], # OpenID Connect uses client ID as the aud parameter
+          verify_aud: true,
+          jwks: lms_jwks # The correct JWK will be selected by matching jwk kid param with id_token kid
+        )
+      rescue JWT::DecodeError
+        cookies.delete(:iss)
+        cookies.delete(:client_id)
+        render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
+                                     layout: false
+        return
+      end
+      lti_params = decoded_token[0]
+      cookies.delete(:iss)
+      unless lti_params['nonce'] == cookies.encrypted[:nonce]
+        cookies.delete(:nonce)
+        render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
+                                     layout: false
+        return
+      end
+      lti_data = { host: referrer_uri,
+                   client_id: cookies.encrypted[:client_id],
+                   deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
+                   lms_course_name: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title'],
+                   lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
+                   lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'] }
+      if lti_params.key?(LtiDeployment::LTI_CLAIMS[:names_role])
+        name_and_roles_endpoint = lti_params[LtiDeployment::LTI_CLAIMS[:names_role]]['context_memberships_url']
+        lti_data[:names_role_service] = name_and_roles_endpoint
+      end
+      if lti_params.key?(LtiDeployment::LTI_CLAIMS[:ags_lineitem])
+        grades_endpoints = lti_params[LtiDeployment::LTI_CLAIMS[:ags_lineitem]]
+        if grades_endpoints.key?('lineitems')
+          lti_data[:line_items] = grades_endpoints['lineitems']
+        end
+      end
+      lti_data[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:user_launch_data]]['user_id']
+      unless logged_in?
+        cookies.encrypted.permanent[:lti_data] = { value: JSON.generate(lti_data), expires: 1.hour.from_now }
+        cookies.encrypted.permanent[:lti_redirect] = { value: request.url, expires: 1.hour.from_now }
+        redirect_to root_path
+        return
+      end
+    elsif logged_in? && cookies.encrypted[:lti_data].present?
+      lti_data = JSON.parse(cookies.encrypted[:lti_data]).symbolize_keys
+      cookies.delete(:lti_data)
+    else
+      render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
+                                   layout: false
+      return
+
     end
-    redirect_to choose_course
+
+    lti_client = LtiClient.find_or_create_by(client_id: lti_data[:client_id], host: lti_data[:host])
+    lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client,
+                                                         external_deployment_id: lti_data[:deployment_id])
+    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name],
+                           lms_course_id: lti_data[:lms_course_id])
+    session[:lti_course_label] = lti_data[:lms_course_label]
+    if lti_data.key?(:names_role_service)
+      names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
+      names_service.update!(url: lti_data[:names_role_service])
+    end
+    if lti_data.key?(:line_items)
+      lineitem_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'agslineitem')
+      lineitem_service.update!(url: lti_data[:line_items])
+    end
+    LtiUser.find_or_create_by(user: @real_user, lti_client: lti_client,
+                              lti_user_id: lti_data[:lti_user_id])
+    if lti_deployment.course.nil?
+      # Redirect to course picker page
+      redirect_to choose_course_lti_deployment_path(lti_deployment)
+    else
+      redirect_to course_path(lti_deployment.course)
+    end
   end
 
   def public_jwk
@@ -123,6 +148,7 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def choose_course
+    @lti_deployment = record
     if request.post?
       begin
         course = Course.find(params[:course])
@@ -131,8 +157,7 @@ class LtiDeploymentsController < ApplicationController
           render 'choose_course'
           return
         end
-        lti_deployment = record
-        lti_deployment.update!(course: course)
+        @lti_deployment.update!(course: course)
       rescue StandardError
         flash_message(:error, t('lti.course_link_error'))
         render 'choose_course'
