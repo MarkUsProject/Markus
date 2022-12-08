@@ -5,7 +5,7 @@ class LtiDeploymentsController < ApplicationController
   before_action :authenticate, :check_course_switch, :check_record,
                 except: [:get_config, :launch, :public_jwk, :redirect_login]
   before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
-  before_action :check_host, except: [:choose_course]
+  before_action :check_host, only: [:launch, :redirect_login]
 
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
@@ -30,9 +30,11 @@ class LtiDeploymentsController < ApplicationController
       prompt: 'none',
       state: session.id # Binds this request to the LTI response
     }
-    referrer = URI(request.referer)
-    referrer = referrer.to_s.remove(referrer.path, referrer.query, '?')
-    auth_request_uri = URI("#{referrer}#{self.class::LMS_REDIRECT_ENDPOINT}")
+    referrer_uri = URI(request.referer)
+    referrer_uri = referrer_uri.to_s.remove(referrer_uri.path) if referrer_uri.path
+    referrer_uri = referrer_uri.to_s.remove(URI(referrer_uri).query) if URI(referrer_uri).query
+    referrer_uri = referrer_uri.to_s.remove('?')
+    auth_request_uri = URI("#{referrer_uri}#{self.class::LMS_REDIRECT_ENDPOINT}")
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
     req = Net::HTTP::Post.new(auth_request_uri)
@@ -52,7 +54,9 @@ class LtiDeploymentsController < ApplicationController
         return
       end
       referrer_uri = URI(request.referer)
-      referrer_uri = referrer_uri.to_s.remove(referrer_uri.path, referrer_uri.query, '?')
+      referrer_uri = referrer_uri.to_s.remove(referrer_uri.path) if referrer_uri.path
+      referrer_uri = referrer_uri.to_s.remove(URI(referrer_uri).query) if URI(referrer_uri).query
+      referrer_uri = referrer_uri.to_s.remove('?')
       # Get LMS JWK set
       jwk_url = "#{referrer_uri}#{self.class::LMS_JWK_ENDPOINT}"
       # A list of public keys and associated metadata for JWTs signed by the LMS
@@ -193,6 +197,10 @@ class LtiDeploymentsController < ApplicationController
       lti.create_or_update_lti_assessment(assessment)
       lti.create_grades(assessment)
     end
+  end
+
+  def get_config
+    raise NotImplementedError
   end
 
   # Define default URL options to not include locale
