@@ -1,15 +1,64 @@
 describe Result do
-  it { is_expected.to belong_to(:submission) }
-  it { is_expected.to have_many(:marks) }
-  it { is_expected.to have_many(:extra_marks) }
-  it { is_expected.to have_many(:annotations) }
-  it { is_expected.to validate_presence_of(:marking_state) }
-  it { is_expected.to validate_inclusion_of(:marking_state).in_array(%w[complete incomplete]) }
-  it { is_expected.to validate_numericality_of(:total_mark).is_greater_than_or_equal_to(0) }
-  it { is_expected.to callback(:create_marks).after(:create) }
-  it { is_expected.to callback(:check_for_released).before(:update) }
-  it { is_expected.to callback(:check_for_nil_marks).before(:save) }
-  it { is_expected.to have_one(:course) }
+  describe 'callbacks and validations' do
+    it { is_expected.to belong_to(:submission) }
+    it { is_expected.to have_many(:marks) }
+    it { is_expected.to have_many(:extra_marks) }
+    it { is_expected.to have_many(:annotations) }
+    it { is_expected.to validate_presence_of(:marking_state) }
+    it { is_expected.to validate_inclusion_of(:marking_state).in_array(%w[complete incomplete]) }
+    it { is_expected.to validate_numericality_of(:total_mark).is_greater_than_or_equal_to(0) }
+    it { is_expected.to callback(:create_marks).after(:create) }
+    it { is_expected.to callback(:check_for_released).before(:update) }
+    it { is_expected.to callback(:check_for_nil_marks).before(:save) }
+    it { is_expected.to have_one(:course) }
+
+    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:result) { assignment.current_results.first }
+    context 'check_for_nil_marks' do
+      context 'when the result is complete' do
+        context 'updating the marking state' do
+          it 'should not raise a validation error' do
+            expect { result.update!(marking_state: Result::MARKING_STATES[:complete]) }.not_to raise_error
+          end
+        end
+        context 'updating something else (view_token)' do
+          it 'should not raise a validation error' do
+            expect { result.regenerate_view_token }.not_to raise_error
+          end
+        end
+      end
+      context 'when the result is incomplete' do
+        before { result.update!(marking_state: Result::MARKING_STATES[:incomplete]) }
+        context 'when all criteria have marks' do
+          context 'updating the marking state' do
+            it 'should not raise a validation error' do
+              expect { result.update!(marking_state: Result::MARKING_STATES[:complete]) }.not_to raise_error
+            end
+          end
+          context 'updating something else (view_token)' do
+            it 'should not raise a validation error' do
+              expect { result.regenerate_view_token }.not_to raise_error
+            end
+          end
+        end
+        context 'when some criteria do not have marks' do
+          before { result.marks.first.destroy }
+          context 'updating the marking state' do
+            it 'should raise a validation error' do
+              expect do
+                result.update!(marking_state: Result::MARKING_STATES[:complete])
+              end.to raise_error(ActiveRecord::RecordNotSaved)
+            end
+          end
+          context 'updating something else (view_token)' do
+            it 'should not raise a validation error' do
+              expect { result.regenerate_view_token }.not_to raise_error
+            end
+          end
+        end
+      end
+    end
+  end
 
   shared_context 'get subtotals context' do
     let!(:assignment) { create :assignment_with_criteria_and_results }
