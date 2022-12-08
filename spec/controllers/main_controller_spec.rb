@@ -98,29 +98,18 @@ describe MainController do
         expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.login_failed'))
       end
     end
-    context 'logging in after an LTI launch' do
+    context 'logging in during an LTI launch' do
       let(:lti) { create :lti_deployment }
       before :each do
-        session[:lti_deployment_id] = lti.id
-        session[:lti_client_id] = lti.lti_client.id
-        session[:lti_course_id] = 1
-        session[:lti_user_id] = 1
+        cookies.encrypted.permanent[:lti_redirect] = redirect_login_canvas_path
       end
-      context 'when there is no course association' do
-        it 'redirects to choose_course' do
-          sign_in instructor
-          expect(response).to redirect_to action: 'choose_course', controller: 'lti_deployments', id: lti.id
-        end
+      it 'redirects to redirect_login' do
+        sign_in instructor
+        expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
       end
-      context 'when there is a course association' do
-        let(:course) { create :course }
-        before :each do
-          lti.update(course: course)
-        end
-        it 'redirects to the course page' do
-          sign_in instructor
-          expect(response).to redirect_to course_path(course)
-        end
+      it 'deletes the cookie' do
+        sign_in instructor
+        expect(response.cookies).to include('lti_redirect' => nil)
       end
     end
     context 'after logging out' do
