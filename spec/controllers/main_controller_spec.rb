@@ -228,5 +228,34 @@ describe MainController do
       get :show, params: { id: course2.id }
       expect(response).to redirect_to course_assignments_path(session[:role_switch_course_id])
     end
+    context 'when user tries to log out' do
+      before(:each) do
+        @controller = MainController.new
+        get :logout
+      end
+      it 'should unset the session real_user_name' do
+        expect(session[:real_user_name]).to be_nil
+      end
+      it 'should unset the timeout counter' do
+        expect(session[:timeout]).to be_nil
+      end
+      it 'should unset the session user_name' do
+        expect(session[:user_name]).to be_nil
+      end
+      it 'should unset the session role_switch_course_id' do
+        expect(session[:role_switch_course_id]).to be_nil
+      end
+      it 'should redirect all routes to the login page' do
+        get :about
+        expect(response).to redirect_to action: 'login', controller: 'main'
+      end
+    end
+
+    it 'allows user to properly access about' do
+      @controller = MainController.new
+      request.headers['accept'] = 'text/javascript'
+      get :about, xhr: true
+      expect(response).to have_http_status(:ok)
+    end
   end
 end

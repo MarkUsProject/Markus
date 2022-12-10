@@ -4,6 +4,14 @@ ARG NODE_MAJOR=18
 ARG BUNDLER_VERSION='2.3.17'
 ARG USER=markus
 
+# Required in order to ensure bind-mounts are owned by the correct user inside the container
+# this is NOT required when using docker-desktop since that handles uid mappings differently.
+# Set this to the same UID as the user that owns the Markus files on the host machine.
+ARG UID=1001
+
+# Create the user that runs the app
+RUN useradd -m -u $UID -s /bin/bash $USER
+
 # Set up the correct node version for later installation
 ADD https://deb.nodesource.com/setup_$NODE_MAJOR.x /tmp/setup_node.sh
 RUN sh /tmp/setup_node.sh
@@ -18,9 +26,6 @@ RUN apt-get update -qq && \
 
 # Enable reading of PDF files with imagemagick
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
-
-# Create the user that runs the app
-RUN useradd -m -s /bin/bash $USER
 
 ## This ssh setup is so that if git over ssh is enabled later on, by installing the openssh-server package (or similar)
 ## Then everything will just work out of the box
@@ -71,11 +76,9 @@ RUN mkdir -p /bundle \
              /app/data/development/repos \
              /app/tmp \
              /app/node_modules \
-             /app/public/packs \
-             /app/public/packs-test \
              /app/log \
              /app/venv && \
-             chown -R $USER /bundle /app
+             chown -R ${USER}:${USER} /bundle /app
 
 USER $USER
 
@@ -86,13 +89,17 @@ RUN gem install bundler -v $BUNDLER_VERSION && bundle config set --local without
 RUN ln -s /app/.dockerfiles/git-ssh.rc /home/${USER}/.ssh/rc && \
     ln -s /app/.dockerfiles/ssh.pg_service.conf /home/${USER}/.pg_service.conf
 
+# declare all mount-points and parent directories as volumes so that ownership is preserved in containers
+VOLUME ["/app", "/bundle", "/app/data", "/app/data/development", "/app/data/development/repos", \
+        "/app/node_modules", "/app/log", "/app/venv", "/app/tmp"]
+
 FROM base AS prod
 
 ARG USER
 ARG BUNDLER_VERSION
 
 # pre-create mount-points for volumes and set ownership of these mountpoints
-RUN mkdir -p /app/public /app/log /app/data/production/repos && chown -R $USER /app
+RUN mkdir -p /app/public /app/log /app/data/production/repos && chown -R ${USER}:${USER} /app
 
 # Copy over all app files
 COPY --chown=${USER}:${USER} . /app
@@ -115,3 +122,6 @@ RUN SECRET_KEY_BASE=1 bundle install --deployment --without development test off
 
 # Precompile assets
 RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true NO_INIT_SCHEDULER=true PGDATABASE=dummy bundle exec rails assets:precompile
+
+# declare all mount-points and parent directories as volumes so that ownership and content is preserved in containers
+VOLUME ["/app/public", "/app/log", "/app", "/app/data", "/app/data/production", "/app/data/production/repos"]

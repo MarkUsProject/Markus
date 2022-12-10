@@ -78,3 +78,6 @@ __pycache__/
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
+
+# local docker compose overrides
+docker-compose.override.yml

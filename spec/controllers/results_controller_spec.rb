@@ -197,8 +197,7 @@ describe ResultsController do
         end
         @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
         @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
-        submission_file_dir = "#{assignment.repository_folder}-#{grouping.group.repo_name}"
-        @submission_file_path = File.join(submission_file_dir, SAMPLE_FILE_NAME)
+        @submission_file_path = SAMPLE_FILE_NAME
       end
       after :each do
         FileUtils.rm_f @file_path_ann

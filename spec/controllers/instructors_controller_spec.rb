@@ -23,6 +23,23 @@ describe InstructorsController do
         get_as instructor, :index, params: { course_id: course.id }
         expect(response.status).to eq(200)
       end
+      it 'retrieves correct data' do
+        get_as instructor, :index, format: 'json', params: { course_id: course.id }
+        response_data = response.parsed_body['data']
+        expected_data = course.instructors.joins(:user).where(type: Instructor.name)
+                              .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email, :hidden).as_json
+        expect(response_data).to eq(expected_data)
+      end
+      it 'retrieves correct hidden count' do
+        get_as instructor, :index, format: 'json', params: { course_id: course.id }
+        response_data = response.parsed_body['counts']
+        expected_data = {
+          all: 1,
+          active: 1,
+          inactive: 0
+        }.as_json
+        expect(response_data).to eq(expected_data)
+      end
     end
 
     context '#create' do
@@ -38,6 +55,29 @@ describe InstructorsController do
                 params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         expect(course.instructors.joins(:user).where('users.user_name': end_user.user_name)).to exist
         expect(response).to redirect_to action: 'index'
+      end
+      context 'when changing the default visibility status' do
+        let(:params) do
+          {
+            course_id: course.id,
+            role: { end_user: { user_name: end_user.user_name }, hidden: true }
+          }
+        end
+        context 'as an admin' do
+          let(:admin) { create :admin_user }
+          it 'should change the default visibility status' do
+            post_as admin, :create, params: params
+            instructor = end_user.roles.first
+            expect(instructor.hidden).to eq(true)
+          end
+        end
+        context 'as an instructor' do
+          it 'should not change the default visibility status' do
+            post_as instructor, :create, params: params
+            instructor = end_user.roles.first
+            expect(instructor.hidden).to eq(false)
+          end
+        end
       end
       context 'when a end_user does not exist' do
         let(:end_user) { build :end_user }
@@ -86,6 +126,18 @@ describe InstructorsController do
         it 'should change the user' do
           subject
           expect(role.reload.user).to eq(new_end_user)
+        end
+
+        context 'when updating user visibility' do
+          it 'should not update the user' do
+            post_as instructor, :update,
+                    params: {
+                      course_id: course.id,
+                      id: role,
+                      role: { end_user: { user_name: new_end_user.user_name }, hidden: true }
+                    }
+            expect(role.reload.hidden).to eq(false)
+          end
         end
       end
       context 'when the user does not exist' do

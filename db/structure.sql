@@ -25,7 +25,7 @@ BEGIN
     FROM users
         JOIN roles ON roles.user_id=users.id
         JOIN courses ON roles.course_id=courses.id
-    WHERE courses.name=course_name AND users.user_name=user_name_
+    WHERE courses.name=course_name AND users.user_name=user_name_ AND roles.hidden=false
         FETCH FIRST ROW ONLY;
 
     IF role_type IN ('Instructor', 'AdminRole') THEN
@@ -54,11 +54,13 @@ BEGIN
                     JOIN groups ON groupings.group_id=groups.id
                     JOIN assignment_properties ON assignment_properties.assessment_id=groupings.assessment_id
                     JOIN assessments ON groupings.assessment_id=assessments.id
+                    JOIN courses ON assessments.course_id=courses.id
                     LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
                 WHERE memberships.type='StudentMembership'
                   AND memberships.membership_status IN ('inviter','accepted')
                   AND assignment_properties.vcs_submit=true
                   AND roles.id=role_id_
+                  AND courses.is_hidden=false
                   AND groups.repo_name=repo_name_
                   AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
                            OR assessment_section_properties.is_hidden=false)
@@ -4692,6 +4694,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220726142501'),
 ('20220726201403'),
 ('20220727161425'),
+('20220815210513'),
 ('20220825171354'),
 ('20220826132206'),
 ('20220922131809'),

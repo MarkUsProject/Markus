@@ -73,4 +73,20 @@ describe StudentPolicy do
       let(:record) { create(:student) }
     end
   end
+
+  describe_rule :manage_role_status? do
+    let(:context) { { role: role, real_user: role.user, user: role.user } }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
+    end
+    failed 'role is a student' do
+      let(:role) { create(:student) }
+    end
+    succeed 'user is an admin' do
+      let(:role) { create :admin_role }
+    end
+  end
 end

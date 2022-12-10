@@ -660,7 +660,7 @@ class SubmissionsController < ApplicationController
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, create: true) do |zip_file|
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision)
       end
 
       send_file zip_path, filename: zip_name + '.zip'
