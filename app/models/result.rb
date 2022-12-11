@@ -203,8 +203,8 @@ class Result < ApplicationRecord
   end
 
   def check_for_nil_marks(user_visibility = :ta_visible)
-    # This check is only required when the marking state is complete.
-    return true unless marking_state == Result::MARKING_STATES[:complete]
+    # This check is only required when the marking state is being changed to complete.
+    return true unless marking_state_changed?(to: Result::MARKING_STATES[:complete])
 
     # peer review result is a special case because when saving a pr result
     # we can't pass in a parameter to the before_save filter, so we need

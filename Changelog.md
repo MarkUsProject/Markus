@@ -28,6 +28,7 @@
 - Allow admins to set the number of puma workers and threads from the settings files (#6348)
 - Fix bug where a user who has switched roles could not view the about modal or log out (#6356)
 - Fix bug where emoji annotation options were available even when no text/region was selected (#6384)
+- Fix bug where certain results attributes could not be updated if the result was incomplete (#6388)
 
 ## [v2.1.7]
 - Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
