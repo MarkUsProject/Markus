@@ -57,7 +57,7 @@ export class DataChart extends React.Component {
         options={options}
         width={this.props.width}
         height={this.props.height}
-        style={{display: "inline-flex", margin: "10px"}}
+        style={{margin: "10px"}}
       />
     );
   }
