@@ -43,11 +43,13 @@ RUN ln -s /app/lib/repo/markus-git-shell.sh /usr/local/bin/markus-git-shell.sh
 COPY ./lib/repo/authorized_key_command.sh /usr/local/bin/authorized_key_command.sh
 
 # Update the sshd configuration to restrict access by the $USER user
-RUN mkdir -p /etc/ssh/sshd_config.d/ && printf "Match User ${USER}\n\
- PermitRootLogin no\n\
- AuthorizedKeysFile none\n\
- AuthorizedKeysCommand /usr/local/bin/authorized_key_command.sh %%h\n\
- AuthorizedKeysCommandUser ${USER}\n"\
+# NOTE: This block can follow "Match User #{USER}" if using openssh version 8.4+ (ubuntu 22.04+)
+#       in order to make these settings specific to the $USER user. (The Match User
+#       syntax is not supported in Included files prior to this version).
+RUN mkdir -p /etc/ssh/sshd_config.d/ && printf "PermitRootLogin no\n\
+AuthorizedKeysFile none\n\
+AuthorizedKeysCommand /usr/local/bin/authorized_key_command.sh %%h\n\
+AuthorizedKeysCommandUser ${USER}\n"\
 > /etc/ssh/sshd_config.d/markus.conf
 
 WORKDIR /app
