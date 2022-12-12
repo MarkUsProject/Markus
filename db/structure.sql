@@ -2140,8 +2140,7 @@ CREATE TABLE public.test_groups (
     updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     autotest_settings json DEFAULT '{}'::json NOT NULL,
-    "position" integer NOT NULL,
-    tester_index integer
+    "position" integer NOT NULL
 );
 
 
