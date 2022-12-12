@@ -158,8 +158,8 @@ class GradeEntryFormsController < ApplicationController
         s[grade_entry_item_id] = grade
       end
       if grade_entry_form.show_total
-        total_marks = total_grades[:_id]
-        s[:total_marks] = s[:total_marks].nil? ? t(:not_applicable) : total_marks
+        total_marks = total_grades[s[:_id]]
+        s[:total_marks] = total_marks.nil? ? t(:not_applicable) : total_marks
       end
       s
     end

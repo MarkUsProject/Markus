@@ -40,7 +40,7 @@ module CriteriaHelper
 
   private
 
-  # Resets the total mark for all results for the given assignment with id +assessment_id+.
+  # Resets the marking state for all results for the given assignment with id +assessment_id+.
   def reset_marking_states(assessment_id)
     Result.joins(submission: :grouping)
           .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)

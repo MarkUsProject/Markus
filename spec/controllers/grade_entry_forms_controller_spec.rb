@@ -228,6 +228,7 @@ describe GradeEntryFormsController do
     end
 
     it 'shows Total column when show_total is true' do
+      grade_entry_form_with_data_and_total.grade_entry_items.first.grades.update!(grade: 1)
       csv_array = [
         Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
           [grade_entry_form_with_data_and_total.grade_entry_items[0].name,
@@ -236,7 +237,7 @@ describe GradeEntryFormsController do
                                                   String(grade_entry_form_with_data_and_total
                                                            .grade_entry_items[0].out_of),
                                                   grade_entry_form_with_data_and_total.max_mark],
-        [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, '', '']
+        [@user.user_name, @user.last_name, @user.first_name, nil, nil, @user.email, 1.0, 1.0]
       ]
 
       csv_data = MarkusCsv.generate(csv_array) do |data|
@@ -649,10 +650,11 @@ describe GradeEntryFormsController do
   end
 
   describe '#populate_grades_table' do
-    before(:each) do
+    subject do
       get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
     end
     context 'an instructor' do
+      before { subject }
       let(:data_fields) { %w[_id released_to_student user_name first_name last_name hidden section_id] }
       it 'returns a 200 response' do
         expect(response.status).to eq 200
@@ -667,14 +669,28 @@ describe GradeEntryFormsController do
         data_fields << grade_entry_form_with_data.grade_entry_items.first.id.to_s
         expect(response.parsed_body['data'][0].keys).to match_array(data_fields)
       end
+      it 'returns the correct grade' do
+        expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
+        gei_id = grade_entry_form_with_data.grade_entry_items.first.id.to_s
+        expect(response.parsed_body['data'][0][gei_id].round(2)).to eq(expected_grade)
+      end
+      context 'when the total grade is shown' do
+        let(:grade_entry_form_with_data) { grade_entry_form_with_data_and_total }
+        it 'returns the correct total grade' do
+          expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
+          expect(response.parsed_body['data'][0]['total_marks'].round(2)).to eq(expected_grade)
+        end
+      end
     end
     context 'a TA' do
       let(:role) { create :ta }
       it 'returns a 200 response' do
+        subject
         expect(response.status).to eq 200
       end
       context 'who has not been assigned a student' do
         it 'returns data' do
+          subject
           expect(response.parsed_body['data'].length).to eq 0
         end
       end
@@ -682,21 +698,33 @@ describe GradeEntryFormsController do
         let(:student) do
           grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
         end
-        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+        before do
+          create(:grade_entry_student_ta, ta: role, grade_entry_student: student)
+          subject
+        end
         it 'returns data' do
-          get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
           expect(response.parsed_body['data'].length).to be > 0
         end
         it 'returns the number of students assigned to the ta' do
-          get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
           expect(response.parsed_body['data'].length).to eq role.grade_entry_students.count
         end
         it 'returns the correct set of students' do
-          get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
           students = role.grade_entry_students
                          .where(grade_entry_form: grade_entry_form_with_data)
                          .joins(:user).pluck('users.user_name')
           expect(response.parsed_body['data'].map { |stu| stu['user_name'] }).to match_array(students)
+        end
+        it 'returns the correct grade' do
+          expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
+          gei_id = grade_entry_form_with_data.grade_entry_items.first.id.to_s
+          expect(response.parsed_body['data'][0][gei_id].round(2)).to eq(expected_grade)
+        end
+        context 'when the total grade is shown' do
+          let(:grade_entry_form_with_data) { grade_entry_form_with_data_and_total }
+          it 'returns the correct total grade' do
+            expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
+            expect(response.parsed_body['data'][0]['total_marks'].round(2)).to eq(expected_grade)
+          end
         end
       end
     end

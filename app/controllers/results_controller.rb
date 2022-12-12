@@ -632,7 +632,6 @@ class ResultsController < ApplicationController
     @result = record
     @extra_mark = @result.extra_marks.build(extra_mark_params.merge(unit: ExtraMark::POINTS))
     if @extra_mark.save
-      # need to re-calculate total mark
       head :ok
     else
       head :bad_request

@@ -21,11 +21,8 @@ FactoryBot.define do
     end
   end
 
-  factory :grade_entry_form_with_data_and_total, parent: :grade_entry_form do
+  factory :grade_entry_form_with_data_and_total, parent: :grade_entry_form_with_data do
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}_with_data_and_total" }
     show_total { true }
-    after(:create) do |grade_entry_form_with_data|
-      create(:grade_entry_item, grade_entry_form: grade_entry_form_with_data)
-    end
   end
 end
