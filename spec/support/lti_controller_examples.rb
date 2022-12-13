@@ -73,6 +73,13 @@ shared_examples 'lti deployment controller' do
                                     client_id: 'LMS defined ID', target_link_uri: target_link_uri }
             expect(response.status).to eq(302)
           end
+          it 'sets the lti_launch cookie' do
+            request.headers['Referer'] = host
+            post :launch, params: { lti_message_hint: lti_message_hint,
+                                    login_hint: login_hint,
+                                    client_id: 'LMS defined ID', target_link_uri: target_link_uri }
+            expect(cookies.encrypted[:lti_launch_data]).not_to be_nil
+          end
         end
       end
     end
@@ -81,10 +88,18 @@ shared_examples 'lti deployment controller' do
     let(:jwk_url) { "https://test.host:443#{self.class.described_class::LMS_JWK_ENDPOINT}" }
     let(:nonce) { rand(10 ** 30).to_s.rjust(30, '0') }
     before :each do
-      cookies.encrypted.permanent[:iss] = host
-      cookies.encrypted.permanent[:client_id] = client_id
-      cookies.encrypted.permanent[:nonce] = nonce
-      cookies.encrypted.permanent[:state] = session.id
+      lti_launch_data = {}
+      lti_launch_data[:client_id] = client_id
+      lti_launch_data[:iss] = host
+      lti_launch_data[:nonce] = nonce
+      lti_launch_data[:state] = session.id
+      cookies.permanent.encrypted[:lti_launch_data] =
+        { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now }
+    end
+    it 'deletes the lti_launch_cookie' do
+      request.headers['Referer'] = host
+      post :redirect_login, params: {}
+      expect(response.cookies).to include('lti_launch_data' => nil)
     end
     context 'post' do
       context 'with incorrect or missing parameters' do
@@ -225,6 +240,11 @@ shared_examples 'lti deployment controller' do
         request.headers['Referer'] = host
         get_as instructor, :redirect_login
         expect(LtiDeployment.count).to eq(1)
+      end
+      it 'deletes the data cookie' do
+        request.headers['Referer'] = host
+        get_as instructor, :redirect_login
+        expect(response.cookies).to include('lti_data' => nil)
       end
     end
   end

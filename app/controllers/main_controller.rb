@@ -65,9 +65,9 @@ class MainController < ApplicationController
     session[:redirect_uri] = nil
     refresh_timeout
     # redirect to last visited page or to main page
-    if cookies.encrypted[:lti_redirect].present?
-      redirect_url = cookies.encrypted[:lti_redirect]
-      cookies.delete(:lti_redirect)
+    if cookies.encrypted[:lti_data].present?
+      lti_data = JSON.parse(cookies.encrypted[:lti_data]).symbolize_keys
+      redirect_url = lti_data.key?(:lti_redirect) ? lti_data[:lti_redirect] : root_url
       redirect_to redirect_url
     elsif uri.present?
       redirect_to(uri)

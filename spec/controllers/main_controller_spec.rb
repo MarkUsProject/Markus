@@ -101,15 +101,11 @@ describe MainController do
     context 'logging in during an LTI launch' do
       let(:lti) { create :lti_deployment }
       before :each do
-        cookies.encrypted.permanent[:lti_redirect] = redirect_login_canvas_path
+        cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
       end
       it 'redirects to redirect_login' do
         sign_in instructor
         expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
-      end
-      it 'deletes the cookie' do
-        sign_in instructor
-        expect(response.cookies).to include('lti_redirect' => nil)
       end
     end
     context 'after logging out' do
