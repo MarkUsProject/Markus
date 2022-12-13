@@ -17,7 +17,7 @@ NEW_LS=$(git ls-tree --full-tree --name-only "$NEW_COMMIT")
 TOP_LEVEL_CHANGES=$(printf "%s\n%s\n" "$OLD_LS" "$NEW_LS" | sort | uniq -u)
 
 if printf '%s' "$TOP_LEVEL_CHANGES" | grep -qv -e '/' -e '.gitignore'; then
-  echo "[MARKUS] Error: creating/deleting top level files and directories is not allowed on master!"
+  echo "[MarkUs] Error: creating/deleting top level files and directories is not allowed on master!"
   exit 1
 fi
 
@@ -25,6 +25,6 @@ fi
 TOP_LEVEL_MODS=$(git diff --name-only --no-renames "$OLD_COMMIT" "$NEW_COMMIT")
 
 if printf '%s' "$TOP_LEVEL_MODS" | grep -qv -e '/' -e '.gitignore'; then
-  echo "[MARKUS] Error: modifying top level files and directories is not allowed on master!"
+  echo "[MarkUs] Error: modifying top level files and directories is not allowed on master!"
   exit 1
 fi

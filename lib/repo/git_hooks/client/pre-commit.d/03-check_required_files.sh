@@ -1,18 +1,23 @@
 #!/usr/bin/env sh
 
-CHANGED_FILES=$(git diff-index --name-status --no-renames HEAD)
+CHANGED_FILES=$(git diff-index --name-status --no-renames --cached HEAD)
 REQUIREMENTS=$(git show HEAD:.required)
 ALL_FILES=$(git ls-files)
 
 echo "$CHANGED_FILES" | while read -r status path; do
   echo "$path" | grep -q '/' || continue # ignore top level changes
 
-  assignment_requirements=$(echo "$REQUIREMENTS" | grep "^${path%/*}")
+  assignment_requirements=$(echo "$REQUIREMENTS" | grep "^${path%/${path#*/}}")
+
+  if [ -z "$assignment_requirements" ]; then
+    continue
+  fi
+
   required_files=$(echo "$assignment_requirements" | cut -d' ' -f 1)
 
   case "$status" in
     A)
-      if ! echo "$REQUIREMENTS" | grep -q "$path "; then
+      if ! echo "$assignment_requirements" | grep -q "$path "; then
         # The added file is not one of the required files
         if echo "$assignment_requirements" | cut -d' ' -f 2 | grep -q true; then
           # The assignment only allows required files to be submitted
@@ -24,13 +29,13 @@ echo "$CHANGED_FILES" | while read -r status path; do
       fi
       ;;
     D)
-      if echo "$REQUIREMENTS" | grep -q "$path "; then
+      if echo "$assignment_requirements" | grep -q "$path "; then
         # The deleted file is one of the required files
         echo "[MarkUs] Warning: You are deleting required file $path."
       fi
       ;;
     M)
-      if ! echo "$REQUIREMENTS" | grep -q "$path "; then
+      if ! echo "$assignment_requirements" | grep -q "$path "; then
         # The modified file is not one of the required files
         if echo "$assignment_requirements" | cut -d' ' -f 2 | grep -q true; then
           # The assignment only allows required files to be submitted
@@ -43,8 +48,11 @@ echo "$CHANGED_FILES" | while read -r status path; do
   esac
 done || exit 1
 
+CHANGED_ASSIGNMENT_PATTERN=$(echo "$CHANGED_FILES" | while read -r status path; do
+  printf "^%s|" "${path%/${path#*/}}"
+done)
 
-echo "$REQUIREMENTS" | while IFS= read -r line; do
+echo "$REQUIREMENTS" | grep "${CHANGED_ASSIGNMENT_PATTERN%?}" | while IFS= read -r line; do
   required_file=${line% *}
   echo "$ALL_FILES" | grep -q "$required_file" || echo "[MarkUs] Warning: required file $required_file is missing."
 done

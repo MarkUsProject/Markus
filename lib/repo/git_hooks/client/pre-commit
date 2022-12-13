@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+test -z "$(git diff-index --cached HEAD)" && exit 0 # don't run checks if no changes were made
+
 # Only perform checks when on the master branch.
 if git rev-parse --abbrev-ref HEAD | grep -vx master; then
   echo "[MarkUs] Skipping checks because you aren't on the master branch."

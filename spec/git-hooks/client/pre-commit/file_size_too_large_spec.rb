@@ -56,7 +56,7 @@ describe '04-file_size_too_large.sh client git hook' do
         rescue RuntimeError
           # do nothing
         end
-        error = 'Error: The size of the uploaded file A1/test.txt exceeds the maximum of 1 bytes'
+        error = 'Error: The size of the modified file A1/test.txt exceeds the maximum of 1 bytes'
         expect(client_hook_output.first).to include(error)
       end
     end
@@ -85,7 +85,7 @@ describe '04-file_size_too_large.sh client git hook' do
           rescue RuntimeError
             # do nothing
           end
-          error = 'Error: The size of the uploaded file A1/test.txt exceeds the maximum of 1 bytes'
+          error = 'Error: The size of the modified file A1/test.txt exceeds the maximum of 1 bytes'
           expect(client_hook_output.first).to include(error)
         end
       end

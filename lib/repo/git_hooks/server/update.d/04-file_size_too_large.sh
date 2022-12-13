@@ -11,7 +11,7 @@ echo "$CHANGED_FILES" | while read -r sha path; do
   [ "$type" = 'blob' ] || continue
   size=$(git cat-file -s "$sha")
   if [ "$size" -gt "$MAX_FILE_SIZE" ]; then
-    echo "[MARKUS] Error: The size of the uploaded file $path exceeds the maximum of $MAX_FILE_SIZE bytes."
+    echo "[MarkUs] Error: The size of the uploaded file $path exceeds the maximum of $MAX_FILE_SIZE bytes."
     exit 1
   fi
 done || exit 1
