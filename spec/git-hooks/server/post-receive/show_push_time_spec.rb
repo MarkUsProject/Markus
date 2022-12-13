@@ -2,7 +2,7 @@ describe '01-show_push_time.sh server git hook' do
   include_context 'git_hooks'
   let(:client_hooks) { [] }
   let(:server_hooks) { ['01-show_push_time.sh'] }
-  before { FileUtils.touch(File.join(repo_path, 'A1', 'test.txt')) }
+  before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt')) }
   context 'when pushing to master' do
     it 'should not raise an error' do
       expect { push_changes }.not_to raise_error

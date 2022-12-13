@@ -8,6 +8,7 @@ end
 
 shared_context 'git_hooks' do
   let!(:course) { create :course }
+  let!(:assignment) { create :assignment, course: course }
   let(:repo) { build(:git_repository) }
   let(:repo_path) { repo.tmp_repo }
   let(:repo_bare_path) { repo.get_repos_path }
@@ -29,23 +30,25 @@ shared_context 'git_hooks' do
       end
     end
     txn = repo.get_transaction('MarkUs')
-    txn.add_path('A1')
+    course.assignments.pluck(:repository_folder).each do |repo_folder|
+      txn.add_path(repo_folder)
+    end
     repo.commit(txn)
   end
   after :each do
     FileUtils.rm_r(repo_path)
     FileUtils.rm_r(repo_bare_path)
   end
-  def commit_changes
+  def commit_changes(changes: '.')
     remotes = Open3.popen3('git remote -v', chdir: repo_path)[1].read.lines.map { |line| line.split[...2] }.to_h
     unless File.realpath(remotes['origin']) == File.realpath(repo_bare_path)
-      # This is to ensure that the test isn't accidentally commiting to the MarkUs repo
+      # This is to ensure that the test isn't accidentally committing to the MarkUs repo
       raise 'ERROR: the repo under test is not a test repo'
     end
 
     Open3.capture2('git config user.email test@example.com', chdir: repo_path)
     Open3.capture2('git config user.name test', chdir: repo_path)
-    Open3.capture2('git add .', chdir: repo_path)
+    Open3.capture2("git add #{changes}", chdir: repo_path)
 
     Open3.popen2e('git commit -m "test"', chdir: repo_path) do |_stdin, out_err, wait_thr|
       output = out_err.read

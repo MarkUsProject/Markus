@@ -2,7 +2,6 @@ describe '03-check_required_files_master.sh server git hook' do
   include_context 'git_hooks'
   let(:client_hooks) { [] }
   let(:server_hooks) { ['03-check_required_files_master.sh'] }
-  let(:assignment) { create :assignment, short_identifier: 'A1' }
   let(:required_files_attrs) { {} }
   shared_context 'update_repo_with_required_files' do
     before do
@@ -20,7 +19,7 @@ describe '03-check_required_files_master.sh server git hook' do
   context 'when there are no required files' do
     context 'when adding a file' do
       it 'should not raise an error' do
-        FileUtils.touch(File.join(repo_path, 'A1', 'test.txt'))
+        FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt'))
         expect { push_changes }.not_to raise_error
       end
     end
@@ -28,19 +27,19 @@ describe '03-check_required_files_master.sh server git hook' do
       before :each do
         GitRepository.access(repo.connect_string) do |open_repo|
           txn = open_repo.get_transaction('MarkUs')
-          txn.add('A1/test.txt', 'something', 'text/plain')
+          txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
           raise txn.conflicts.join("\n") unless open_repo.commit(txn)
         end
       end
       context 'by removing it' do
         it 'should not raise an error' do
-          FileUtils.rm File.join(repo_path, 'A1', 'test.txt')
+          FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test.txt')
           expect { push_changes }.not_to raise_error
         end
       end
       context 'by updating it' do
         it 'should not raise an error' do
-          File.write(File.join(repo_path, 'A1', 'test.txt'), 'something else')
+          File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something else')
           expect { push_changes }.not_to raise_error
         end
       end
@@ -53,7 +52,7 @@ describe '03-check_required_files_master.sh server git hook' do
         { only_required_files: false, assignment_files_attributes: [{ filename: 'test.txt' }] }
       end
       context 'when creating a required file' do
-        before { FileUtils.touch(File.join(repo_path, 'A1', 'test.txt')) }
+        before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt')) }
         it 'should not raise an error' do
           expect { push_changes }.not_to raise_error
         end
@@ -63,14 +62,14 @@ describe '03-check_required_files_master.sh server git hook' do
         end
       end
       context 'when creating a non-required file' do
-        before { FileUtils.touch(File.join(repo_path, 'A1', 'other.txt')) }
+        before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'other.txt')) }
         it 'should not raise an error' do
           expect { push_changes }.not_to raise_error
         end
         it 'should write a warning to stdout' do
           push_changes
-          warning = %r{Warning:\sYou\sare\ssubmitting\sA1/other\.txt\sbut\s
-                       this\sassignment\sonly\srequires:(remote:|\s)*A1/test\.txt}x
+          warning = %r{Warning:\sYou\sare\ssubmitting\s#{assignment.repository_folder}/other\.txt\sbut\s
+                       this\sassignment\sonly\srequires:(remote:|\s)*#{assignment.repository_folder}/test\.txt}x
           expect(server_hook_output.first).to match(warning)
         end
       end
@@ -78,22 +77,23 @@ describe '03-check_required_files_master.sh server git hook' do
         before :each do
           GitRepository.access(repo.connect_string) do |open_repo|
             txn = open_repo.get_transaction('MarkUs')
-            txn.add('A1/test.txt', 'something', 'text/plain')
+            txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
             raise txn.conflicts.join("\n") unless open_repo.commit(txn)
           end
         end
         context 'by removing it' do
-          before { FileUtils.rm File.join(repo_path, 'A1', 'test.txt') }
+          before { FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test.txt') }
           it 'should not raise an error' do
             expect { push_changes }.not_to raise_error
           end
           it 'should write a warning to stdout' do
             push_changes
-            expect(server_hook_output.first).to include('Warning: You are deleting required file A1/test.txt.')
+            warning = "Warning: You are deleting required file #{assignment.repository_folder}/test.txt."
+            expect(server_hook_output.first).to include(warning)
           end
         end
         context 'by updating it' do
-          before { File.write(File.join(repo_path, 'A1', 'test.txt'), 'something else') }
+          before { File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something else') }
           it 'should not raise an error' do
             expect { push_changes }.not_to raise_error
           end
@@ -107,13 +107,13 @@ describe '03-check_required_files_master.sh server git hook' do
         before :each do
           GitRepository.access(repo.connect_string) do |open_repo|
             txn = open_repo.get_transaction('MarkUs')
-            txn.add('A1/test.txt', 'something', 'text/plain')
-            txn.add('A1/other.txt', 'something', 'text/plain')
+            txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
+            txn.add("#{assignment.repository_folder}/other.txt", 'something', 'text/plain')
             raise txn.conflicts.join("\n") unless open_repo.commit(txn)
           end
         end
         context 'by removing it' do
-          before { FileUtils.rm File.join(repo_path, 'A1', 'other.txt') }
+          before { FileUtils.rm File.join(repo_path, assignment.repository_folder, 'other.txt') }
           it 'should not raise an error' do
             expect { push_changes }.not_to raise_error
           end
@@ -123,7 +123,7 @@ describe '03-check_required_files_master.sh server git hook' do
           end
         end
         context 'by updating it' do
-          before { File.write(File.join(repo_path, 'A1', 'other.txt'), 'something else') }
+          before { File.write(File.join(repo_path, assignment.repository_folder, 'other.txt'), 'something else') }
           it 'should not raise an error' do
             expect { push_changes }.not_to raise_error
           end
@@ -139,7 +139,7 @@ describe '03-check_required_files_master.sh server git hook' do
         { only_required_files: true, assignment_files_attributes: [{ filename: 'test.txt' }] }
       end
       context 'when creating a required file' do
-        before { FileUtils.touch(File.join(repo_path, 'A1', 'test.txt')) }
+        before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt')) }
         it 'should not raise an error' do
           expect { push_changes }.not_to raise_error
         end
@@ -149,7 +149,7 @@ describe '03-check_required_files_master.sh server git hook' do
         end
       end
       context 'when creating a non-required file' do
-        before { FileUtils.touch(File.join(repo_path, 'A1', 'other.txt')) }
+        before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'other.txt')) }
         it 'should raise an error' do
           expect { push_changes }.to raise_error(RuntimeError)
         end
@@ -159,8 +159,8 @@ describe '03-check_required_files_master.sh server git hook' do
           rescue RuntimeError
             # do nothing
           end
-          error = %r{Error:\sYou\sare\ssubmitting\sA1/other\.txt\sbut\sthis\s
-                     assignment\sonly\srequires:(remote:|\s)*A1/test\.txt}x
+          error = %r{Error:\sYou\sare\ssubmitting\s#{assignment.repository_folder}/other\.txt\sbut\sthis\s
+                     assignment\sonly\srequires:(remote:|\s)*#{assignment.repository_folder}/test\.txt}x
           expect(server_hook_output.first).to match(error)
         end
         context 'on a different branch' do
@@ -179,22 +179,23 @@ describe '03-check_required_files_master.sh server git hook' do
         before :each do
           GitRepository.access(repo.connect_string) do |open_repo|
             txn = open_repo.get_transaction('MarkUs')
-            txn.add('A1/test.txt', 'something', 'text/plain')
+            txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
             raise txn.conflicts.join("\n") unless open_repo.commit(txn)
           end
         end
         context 'by removing it' do
-          before { FileUtils.rm File.join(repo_path, 'A1', 'test.txt') }
+          before { FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test.txt') }
           it 'should not raise an error' do
             expect { push_changes }.not_to raise_error
           end
           it 'should write a warning to stdout' do
             push_changes
-            expect(server_hook_output.first).to include('Warning: You are deleting required file A1/test.txt.')
+            warning = "Warning: You are deleting required file #{assignment.repository_folder}/test.txt."
+            expect(server_hook_output.first).to include(warning)
           end
         end
         context 'by updating it' do
-          before { File.write(File.join(repo_path, 'A1', 'test.txt'), 'something else') }
+          before { File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something else') }
           it 'should not raise an error' do
             expect { push_changes }.not_to raise_error
           end
@@ -205,34 +206,68 @@ describe '03-check_required_files_master.sh server git hook' do
         end
       end
       context 'when modifying a non-required file' do
-        before :each do
-          GitRepository.access(repo.connect_string) do |open_repo|
-            txn = open_repo.get_transaction('MarkUs')
-            txn.add('A1/test.txt', 'something', 'text/plain')
-            txn.add('A1/other.txt', 'something', 'text/plain')
-            raise txn.conflicts.join("\n") unless open_repo.commit(txn)
+        context 'for the current assignment' do
+          before :each do
+            GitRepository.access(repo.connect_string) do |open_repo|
+              txn = open_repo.get_transaction('MarkUs')
+              txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
+              txn.add("#{assignment.repository_folder}/other.txt", 'something', 'text/plain')
+              raise txn.conflicts.join("\n") unless open_repo.commit(txn)
+            end
+          end
+          context 'by removing it' do
+            before { FileUtils.rm File.join(repo_path, assignment.repository_folder, 'other.txt') }
+            it 'should not raise an error' do
+              expect { push_changes }.not_to raise_error
+            end
+            it 'should write a warning to stdout' do
+              push_changes
+              expect(server_hook_output.first).not_to include('Warning:')
+            end
+          end
+          context 'by updating it' do
+            before { File.write(File.join(repo_path, assignment.repository_folder, 'other.txt'), 'something else') }
+            it 'should not raise an error' do
+              expect { push_changes }.not_to raise_error
+            end
+            it 'should write a warning to stdout' do
+              push_changes
+              warning = %r{Warning:\sYou\sare\smodifying\snon-required\sfile\s#{assignment.repository_folder}/
+                           other\.txt\sbut\sthis\sassignment\sonly\srequires:(remote:|\s)*
+                           #{assignment.repository_folder}/test\.txt}x
+              expect(server_hook_output.first).to match(warning)
+            end
           end
         end
-        context 'by removing it' do
-          before { FileUtils.rm File.join(repo_path, 'A1', 'other.txt') }
-          it 'should not raise an error' do
-            expect { push_changes }.not_to raise_error
+        context 'for a different assignment' do
+          let(:assignment2) { create :assignment, course: course }
+          before :each do
+            GitRepository.access(repo.connect_string) do |open_repo|
+              txn = open_repo.get_transaction('MarkUs')
+              txn.add("#{assignment2.repository_folder}/test.txt", 'something', 'text/plain')
+              txn.add("#{assignment2.repository_folder}/other.txt", 'something', 'text/plain')
+              raise txn.conflicts.join("\n") unless open_repo.commit(txn)
+            end
           end
-          it 'should write a warning to stdout' do
-            push_changes
-            expect(server_hook_output.first).not_to include('Warning:')
+          context 'by removing it' do
+            before { FileUtils.rm File.join(repo_path, assignment2.repository_folder, 'other.txt') }
+            it 'should not raise an error' do
+              expect { push_changes }.not_to raise_error
+            end
+            it 'should write a warning to stdout' do
+              push_changes
+              expect(server_hook_output.first).not_to include('Warning:')
+            end
           end
-        end
-        context 'by updating it' do
-          before { File.write(File.join(repo_path, 'A1', 'other.txt'), 'something else') }
-          it 'should not raise an error' do
-            expect { push_changes }.not_to raise_error
-          end
-          it 'should write a warning to stdout' do
-            push_changes
-            warning = %r{Warning:\sYou\sare\smodifying\snon-required\sfile\sA1/other\.txt\sbut\sthis\s
-                         assignment\sonly\srequires:(remote:|\s)*A1/test\.txt}x
-            expect(server_hook_output.first).to match(warning)
+          context 'by updating it' do
+            before { File.write(File.join(repo_path, assignment2.repository_folder, 'other.txt'), 'something else') }
+            it 'should not raise an error' do
+              expect { push_changes }.not_to raise_error
+            end
+            it 'should write a warning to stdout' do
+              push_changes
+              expect(server_hook_output.first).not_to include('Warning:')
+            end
           end
         end
       end

@@ -2,10 +2,10 @@ describe '01-block_forced_push_master.sh server git hook' do
   include_context 'git_hooks'
   let(:client_hooks) { [] }
   let(:server_hooks) { ['01-block_forced_push_master.sh'] }
-  before { FileUtils.touch(File.join(repo_path, 'A1', 'test.txt')) }
+  before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt')) }
   context 'when pushing to master' do
     context 'not force pushing' do
-      before { FileUtils.touch(File.join(repo_path, 'A1', 'test.txt')) }
+      before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt')) }
       it 'should not raise an error' do
         expect { push_changes }.not_to raise_error
       end
@@ -34,7 +34,7 @@ describe '01-block_forced_push_master.sh server git hook' do
   context 'when pushing to a different branch' do
     before { Open3.capture3('git checkout -b other_branch', chdir: repo_path) }
     context 'not force pushing' do
-      before { FileUtils.touch(File.join(repo_path, 'A1', 'test.txt')) }
+      before { FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt')) }
       it 'should not raise an error' do
         expect { push_changes(upstream: 'other_branch') }.not_to raise_error
       end

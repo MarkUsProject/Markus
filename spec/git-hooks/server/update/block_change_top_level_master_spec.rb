@@ -3,23 +3,23 @@ describe '02-block_change_top_level_master.sh server git hook' do
   let(:client_hooks) { [] }
   let(:server_hooks) { ['02-block_change_top_level_master.sh'] }
   it 'should not raise an error when adding a non-top level file' do
-    FileUtils.touch(File.join(repo_path, 'A1', 'test.txt'))
+    FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt'))
     expect { push_changes }.not_to raise_error
   end
   context 'when an assignment file exists' do
     before :each do
       GitRepository.access(repo.connect_string) do |open_repo|
         txn = open_repo.get_transaction('MarkUs')
-        txn.add('A1/test.txt', 'something', 'text/plain')
+        txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
         raise txn.conflicts.join("\n") unless open_repo.commit(txn)
       end
     end
     it 'should not raise an error when modifying the file' do
-      File.write(File.join(repo_path, 'A1', 'test.txt'), 'something else')
+      File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something else')
       expect { push_changes }.not_to raise_error
     end
     it 'should not raise an error when deleting the file' do
-      FileUtils.rm File.join(repo_path, 'A1', 'test.txt')
+      FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test.txt')
       expect { push_changes }.not_to raise_error
     end
   end
