@@ -266,7 +266,7 @@ class ResultsController < ApplicationController
                  "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
-    if @grouping.submitted_after_collection_date?
+    if @grouping.submitted_after_collection_date? && !@assignment.scanned_exam
       flash_message(:warning,
                     t('results.late_submission_warning_html',
                       url: repo_browser_course_assignment_submissions_path(@current_course, @assignment,

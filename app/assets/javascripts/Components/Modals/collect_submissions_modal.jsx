@@ -64,33 +64,35 @@ class CollectSubmissionsModal extends React.Component {
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <p>{this.warningText()}</p>
-            <fieldset>
-              <legend>{I18n.t("submissions.collect.collection_time")}</legend>
-              <p>
-                <label htmlFor={"collect_due_date"}>
-                  <input
-                    type={"radio"}
-                    name={"collect_time"}
-                    value={"collect_due_date"}
-                    checked={this.state.collect_time === "collect_due_date"}
-                    onChange={this.handleCollectTimeChange}
-                  />
-                  {I18n.t("submissions.collect.collect_due_date")}
-                </label>
-              </p>
-              <p>
-                <label htmlFor={"collect_current"}>
-                  <input
-                    type={"radio"}
-                    name={"collect_time"}
-                    value={"collect_current"}
-                    checked={this.state.collect_time === "collect_current"}
-                    onChange={this.handleCollectTimeChange}
-                  />
-                  {I18n.t("submissions.collect.collect_current")}
-                </label>
-              </p>
-            </fieldset>
+            {!this.props.isScannedExam && (
+              <fieldset>
+                <legend>{I18n.t("submissions.collect.collection_time")}</legend>
+                <p>
+                  <label htmlFor={"collect_due_date"}>
+                    <input
+                      type={"radio"}
+                      name={"collect_time"}
+                      value={"collect_due_date"}
+                      checked={this.state.collect_time === "collect_due_date"}
+                      onChange={this.handleCollectTimeChange}
+                    />
+                    {I18n.t("submissions.collect.collect_due_date")}
+                  </label>
+                </p>
+                <p>
+                  <label htmlFor={"collect_current"}>
+                    <input
+                      type={"radio"}
+                      name={"collect_time"}
+                      value={"collect_current"}
+                      checked={this.state.collect_time === "collect_current"}
+                      onChange={this.handleCollectTimeChange}
+                    />
+                    {I18n.t("submissions.collect.collect_current")}
+                  </label>
+                </p>
+              </fieldset>
+            )}
             <fieldset>
               <legend>{I18n.t("submissions.collect.collection_options")}</legend>
               <p>
