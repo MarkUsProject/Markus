@@ -293,11 +293,11 @@ describe LtiDeployment do
       expect(lti_deployment.get_grade_entry_form_marks(assessment)).to be_empty
     end
     it 'does get released grades for an assignment with released grades' do
-      assessment.grade_entry_students.where.not(total_grade: nil).first.update!(released_to_student: true)
+      assessment.grade_entry_students.first.update!(released_to_student: true)
       expect(lti_deployment.get_grade_entry_form_marks(assessment)).not_to be_empty
     end
     it 'does get all released grades' do
-      assessment.grade_entry_students.where.not(total_grade: nil).all.update!(released_to_student: true)
+      assessment.grade_entry_students.all.update!(released_to_student: true)
       expect(lti_deployment.get_grade_entry_form_marks(assessment).length).to eq(assessment.grade_entry_students.count)
     end
   end

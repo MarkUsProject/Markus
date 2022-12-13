@@ -357,27 +357,27 @@ describe ResultsController do
         context 'but cannot save the mark' do
           before :each do
             allow_any_instance_of(ExtraMark).to receive(:save).and_return false
-            @old_mark = submission.get_latest_result.total_mark
+            @old_mark = submission.get_latest_result.get_total_mark
             post :add_extra_mark, params: { course_id: course.id,
                                             id: submission.get_latest_result.id,
                                             extra_mark: { extra_mark: 1 } }, xhr: true
           end
           it { expect(response).to have_http_status(:bad_request) }
           it 'should not update the total mark' do
-            expect(@old_mark).to eq(submission.get_latest_result.total_mark)
+            expect(@old_mark).to eq(submission.get_latest_result.get_total_mark)
           end
         end
         context 'and can save the mark' do
           before :each do
             allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
-            @old_mark = submission.get_latest_result.total_mark
+            @old_mark = submission.get_latest_result.get_total_mark
             post :add_extra_mark, params: { course_id: course.id,
                                             id: submission.get_latest_result.id,
                                             extra_mark: { extra_mark: 1 } }, xhr: true
           end
           it { expect(response).to have_http_status(:success) }
           it 'should update the total mark' do
-            expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
+            expect(@old_mark + 1).to eq(submission.get_latest_result.get_total_mark)
           end
         end
       end
@@ -385,8 +385,7 @@ describe ResultsController do
     context 'accessing remove_extra_mark' do
       before :each do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
-        submission.get_latest_result.update_total_mark
-        @old_mark = submission.get_latest_result.total_mark
+        @old_mark = submission.get_latest_result.get_total_mark
         delete :remove_extra_mark, params: { course_id: course.id,
                                              id: submission.get_latest_result.id,
                                              extra_mark_id: extra_mark.id }, xhr: true
@@ -394,8 +393,7 @@ describe ResultsController do
       test_no_flash
       it { expect(response).to have_http_status(:success) }
       it 'should change the total value' do
-        submission.get_latest_result.update_total_mark
-        expect(@old_mark).not_to eq incomplete_result.total_mark
+        expect(@old_mark).not_to eq incomplete_result.get_total_mark
       end
     end
 
@@ -1457,7 +1455,7 @@ describe ResultsController do
         }
       end
       context 'accessing add_extra_mark' do
-        let!(:old_mark) { submission.get_latest_result.total_mark }
+        let!(:old_mark) { submission.get_latest_result.get_total_mark }
         before :each do
           post :add_extra_mark, params: { course_id: course.id,
                                           id: submission.get_latest_result.id,
@@ -1465,14 +1463,13 @@ describe ResultsController do
         end
         it { expect(response).to have_http_status(:forbidden) }
         it 'should not update the total mark' do
-          expect(old_mark).to eq(submission.get_latest_result.total_mark)
+          expect(old_mark).to eq(submission.get_latest_result.get_total_mark)
         end
       end
       context 'accessing remove_extra_mark' do
         let!(:extra_mark) { create(:extra_mark_points, result: submission.get_latest_result) }
         let!(:old_mark) do
-          submission.get_latest_result.update_total_mark
-          submission.get_latest_result.total_mark
+          submission.get_latest_result.get_total_mark
         end
         before :each do
           delete :remove_extra_mark, params: { course_id: course.id,
@@ -1482,8 +1479,7 @@ describe ResultsController do
         test_no_flash
         it { expect(response).to have_http_status(:forbidden) }
         it 'should not change the total value' do
-          submission.get_latest_result.update_total_mark
-          expect(old_mark).to eq incomplete_result.total_mark
+          expect(old_mark).to eq incomplete_result.get_total_mark
         end
       end
       context 'accessing download' do

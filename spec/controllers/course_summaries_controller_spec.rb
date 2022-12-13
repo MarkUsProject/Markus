@@ -38,7 +38,7 @@ describe CourseSummariesController do
               end
             else
               grouping = student.accepted_grouping_for(assignments[index])
-              expect(final_mark.to_f.round).to eq(grouping.current_result.total_mark.to_f.round)
+              expect(final_mark.to_f.round).to eq(grouping.current_result.get_total_mark.to_f.round)
             end
           end
         end
@@ -77,7 +77,7 @@ describe CourseSummariesController do
           csv_rows = get_as(instructor, :download_csv_grades_report,
                             params: { course_id: course.id }, format: :csv).parsed_body
           csv_rows.select { |r| r.first == user_name }
-                  .map { |r| expect(r.last).to eq(grouping.current_result.total_mark.to_s) }
+                  .map { |r| expect(r.last).to eq(grouping.current_result.get_total_mark.to_s) }
         end
       end
     end
@@ -113,7 +113,7 @@ describe CourseSummariesController do
               email: student.email,
               hidden: student.hidden,
               assessment_marks: GradeEntryForm.all.map do |ges|
-                total_grade = ges.grade_entry_students.find_by(role: student).total_grade
+                total_grade = ges.grade_entry_students.find_by(role: student).get_total_grade
                 out_of = ges.grade_entry_items.sum(:out_of)
                 percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
                 [ges.id.to_s.to_sym, {
@@ -123,9 +123,10 @@ describe CourseSummariesController do
               end.to_h
             }
             student.accepted_groupings.each do |g|
+              mark = g.current_result.get_total_mark
               expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
-                mark: g.current_result.total_mark,
-                percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
+                mark: mark,
+                percentage: (mark * 100 / g.assignment.max_mark).round(2).to_s
               }
             end
             expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
@@ -160,7 +161,7 @@ describe CourseSummariesController do
           get_as instructor, :populate, params: { course_id: course.id }, format: :json
           data = response.parsed_body.deep_symbolize_keys[:data]
           data.select { |d| d[:user_name] == user_name }.map do |d|
-            expect(d[:assessment_marks][assignment.id.to_s.to_sym][:mark]).to eq(grouping.current_result.total_mark)
+            expect(d[:assessment_marks][assignment.id.to_s.to_sym][:mark]).to eq(grouping.current_result.get_total_mark)
           end
         end
       end
@@ -213,9 +214,10 @@ describe CourseSummariesController do
           gef = GradeEntryForm.all.first
           gef.update(is_hidden: false)
           expected_assessment_marks = {}
+          mark = grouping.current_result.get_total_mark
           expected_assessment_marks[assignment.id.to_s] = {
-            'mark' => grouping.current_result.total_mark,
-            'percentage' => (grouping.current_result.total_mark * 100 / grouping.assignment.max_mark).round(2).to_s
+            'mark' => mark,
+            'percentage' => (mark * 100 / grouping.assignment.max_mark).round(2).to_s
           }
           get_as student, :populate, params: { course_id: course.id }, format: :json
           r = response.parsed_body

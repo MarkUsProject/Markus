@@ -355,7 +355,7 @@ describe TestRun do
         it 'should set criteria marks' do
           criterion && assignment.ta_criteria.reload # Force ta_criterion to not be empty
           test_run.update_results!(results)
-          expect(submission.results.first.total_mark).to eq 1
+          expect(submission.results.first.get_total_mark).to eq 1
         end
       end
       context 'when it is associated with a grouping' do

@@ -74,6 +74,7 @@ en:
     subtotal: Subtotal
     summary: Summary
     total_extra_marks: Total Extra Marks
+    total_mark: Total Mark
     view_group_repo: View group repository
     view_token_submit: Please enter the unique token provided by your instructor to view the results for this assignment.
     your_mark: Your Mark

@@ -34,19 +34,18 @@ module CriteriaHelper
     unless crit_format_errors.empty?
       raise "#{I18n.t('criteria.errors.invalid_format')} #{crit_format_errors.join(', ')}"
     end
-    reset_results_total_mark(assignment.id)
+    reset_marking_states(assignment.id)
     successes
   end
 
   private
 
-  # Resets the total mark for all results for the given assignment with id +assessment_id+.
-  def reset_results_total_mark(assessment_id)
+  # Resets the marking state for all results for the given assignment with id +assessment_id+.
+  def reset_marking_states(assessment_id)
     Result.joins(submission: :grouping)
           .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)
           .each do |result|
       result.update(marking_state: Result::MARKING_STATES[:incomplete])
-      result.update_total_mark
     end
   end
 end

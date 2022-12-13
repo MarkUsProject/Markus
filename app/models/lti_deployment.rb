@@ -124,7 +124,7 @@ class LtiDeployment < ApplicationRecord
       group_students = mark.grouping.accepted_student_memberships
       group_students.each do |member|
         lti_user = lti_users.find_by(user: member.role.user)
-        mark_data[lti_user.lti_user_id] = result.total_mark unless lti_user.nil?
+        mark_data[lti_user.lti_user_id] = result.get_total_mark unless lti_user.nil?
       end
     end
     mark_data
@@ -139,7 +139,7 @@ class LtiDeployment < ApplicationRecord
     marks.each do |mark|
       lti_user = lti_users.find_by(user: mark.role.user)
       unless lti_user.nil?
-        mark_data[lti_user.lti_user_id] = mark.total_grade
+        mark_data[lti_user.lti_user_id] = mark.get_total_grade
       end
     end
     mark_data
