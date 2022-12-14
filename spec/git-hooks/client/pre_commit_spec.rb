@@ -5,7 +5,7 @@ describe 'pre-commit client git hook' do
       dummy_hook = File.join(repo_path, '.git', 'hooks', 'pre-commit.d', '01-dummy.sh')
       File.write(dummy_hook, "#!/usr/bin/env sh\nexit 1") # dummy hook that will fail if run
       FileUtils.chmod 0o755, dummy_hook
-      FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt'))
+      FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test 1.txt'))
       Open3.capture3('git checkout -b other_branch', chdir: repo_path)
     end
     it 'should not run hooks when not on the master branch' do

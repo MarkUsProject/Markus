@@ -60,7 +60,7 @@ shared_context 'git_hooks' do
   def push_changes(force: false, upstream: 'master')
     commit_changes
     cmd = "git push #{force ? '--force' : ''} --set-upstream origin #{upstream}"
-    Open3.popen2e(cmd, chdir: repo_path) do |_stdin, out_err, wait_thr|
+    Open3.popen2e({ 'SKIP_LOCAL_GIT_HOOKS' => '' }, cmd, chdir: repo_path) do |_stdin, out_err, wait_thr|
       output = out_err.read
       server_hook_output << output
       raise output unless wait_thr.value.success?

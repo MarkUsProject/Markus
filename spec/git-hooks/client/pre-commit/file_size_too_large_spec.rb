@@ -16,7 +16,7 @@ describe '04-file_size_too_large.sh client git hook' do
   context 'when the changed file is not larger than the max_file_size' do
     context 'when adding a file' do
       it 'should not raise an error' do
-        FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test.txt'))
+        FileUtils.touch(File.join(repo_path, assignment.repository_folder, 'test 1.txt'))
         expect { commit_changes }.not_to raise_error
       end
     end
@@ -24,19 +24,19 @@ describe '04-file_size_too_large.sh client git hook' do
       before :each do
         GitRepository.access(repo.connect_string) do |open_repo|
           txn = open_repo.get_transaction('MarkUs')
-          txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
+          txn.add("#{assignment.repository_folder}/test 1.txt", 'something', 'text/plain')
           raise txn.conflicts.join("\n") unless open_repo.commit(txn)
         end
       end
       context 'by removing it' do
         it 'should not raise an error' do
-          FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test.txt')
+          FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test 1.txt')
           expect { commit_changes }.not_to raise_error
         end
       end
       context 'by updating it' do
         it 'should not raise an error' do
-          File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something else')
+          File.write(File.join(repo_path, assignment.repository_folder, 'test 1.txt'), 'something else')
           expect { commit_changes }.not_to raise_error
         end
       end
@@ -46,7 +46,7 @@ describe '04-file_size_too_large.sh client git hook' do
     let(:max_file_size) { 1 }
     include_context 'update_repo_with_max_file_size'
     context 'when adding a file' do
-      before { File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something') }
+      before { File.write(File.join(repo_path, assignment.repository_folder, 'test 1.txt'), 'something') }
       it 'should raise an error' do
         expect { commit_changes }.to raise_error(RuntimeError)
       end
@@ -56,7 +56,7 @@ describe '04-file_size_too_large.sh client git hook' do
         rescue RuntimeError
           # do nothing
         end
-        error = "Error: The size of the modified file #{assignment.repository_folder}/test.txt " \
+        error = "Error: The size of the modified file #{assignment.repository_folder}/test 1.txt " \
                 'exceeds the maximum of 1 bytes'
         expect(client_hook_output.first).to include(error)
       end
@@ -65,18 +65,18 @@ describe '04-file_size_too_large.sh client git hook' do
       before :each do
         GitRepository.access(repo.connect_string) do |open_repo|
           txn = open_repo.get_transaction('MarkUs')
-          txn.add("#{assignment.repository_folder}/test.txt", 'something', 'text/plain')
+          txn.add("#{assignment.repository_folder}/test 1.txt", 'something', 'text/plain')
           raise txn.conflicts.join("\n") unless open_repo.commit(txn)
         end
       end
       context 'by removing it' do
         it 'should not raise an error' do
-          FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test.txt')
+          FileUtils.rm File.join(repo_path, assignment.repository_folder, 'test 1.txt')
           expect { commit_changes }.not_to raise_error
         end
       end
       context 'by updating it' do
-        before { File.write(File.join(repo_path, assignment.repository_folder, 'test.txt'), 'something else') }
+        before { File.write(File.join(repo_path, assignment.repository_folder, 'test 1.txt'), 'something else') }
         it 'should raise an error' do
           expect { commit_changes }.to raise_error(RuntimeError)
         end
@@ -86,7 +86,7 @@ describe '04-file_size_too_large.sh client git hook' do
           rescue RuntimeError
             # do nothing
           end
-          error = "Error: The size of the modified file #{assignment.repository_folder}/test.txt " \
+          error = "Error: The size of the modified file #{assignment.repository_folder}/test 1.txt " \
                   'exceeds the maximum of 1 bytes'
           expect(client_hook_output.first).to include(error)
         end
