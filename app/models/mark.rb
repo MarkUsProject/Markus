@@ -85,9 +85,6 @@ class Mark < ApplicationRecord
   end
 
   def update_result
-    if !mark.nil? || mark_changed?
-      result.update_total_mark
-    end
     if mark.nil?
       result.update(marking_state: Result::MARKING_STATES[:incomplete])
     end

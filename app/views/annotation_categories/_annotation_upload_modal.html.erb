@@ -4,7 +4,7 @@
 
 <%= content_for :modal_content do %>
 
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: AnnotationCategory.name.pluralize.underscore.dasherize) %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: AnnotationCategory.name.pluralize.underscore.dasherize) %>
   <%= form_tag({ action: 'upload' },
                { multipart: true }) do %>
     <!-- Script for disabling upload button. -->

@@ -15,8 +15,8 @@ describe TaPolicy do
         end
         context 'with tests enabled' do
           let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
-          succeed 'with test groups' do
-            let!(:test_group) { create :test_group, assignment: assignment }
+          succeed 'when remote_autotest_settings exist' do
+            before { assignment.update! remote_autotest_settings_id: 1 }
           end
           failed 'without test groups'
         end
@@ -48,6 +48,22 @@ describe TaPolicy do
     end
     failed 'without manage_assessments permissions' do
       let(:role) { create :ta, manage_assessments: false }
+    end
+  end
+
+  describe_rule :manage_role_status? do
+    let(:context) { { role: role, real_user: role.user, user: role.user } }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
+    end
+    failed 'role is a student' do
+      let(:role) { create(:student) }
+    end
+    succeed 'user is an admin' do
+      let(:role) { create :admin_role }
     end
   end
 end

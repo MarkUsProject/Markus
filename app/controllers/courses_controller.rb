@@ -26,7 +26,8 @@ class CoursesController < ApplicationController
   def edit; end
 
   def update
-    @current_course.update(params.require(:course).permit(:is_hidden, :display_name))
+    @current_course.update(course_params)
+    update_autotest_url if allowed_to?(:edit?, with: Admin::CoursePolicy)
     respond_with @current_course, location: -> { edit_course_path(@current_course) }
   end
 
@@ -81,10 +82,10 @@ class CoursesController < ApplicationController
     end
 
     # Otherwise, check if the current instructor is trying to role switch as other instructors
-    if found_role.instructor?
+    if found_role.admin_role? || (found_role.instructor? && !real_user.admin_user?)
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t('main.cannot_role_switch_to_instructor') },
+             locals: { error: I18n.t('main.cannot_role_switch') },
              status: :unprocessable_entity
       return
     end
@@ -168,7 +169,15 @@ class CoursesController < ApplicationController
   end
 
   def course_params
-    params.require(:course).permit(:name, :is_hidden)
+    fields = [:is_hidden, :display_name]
+    fields << :max_file_size if allowed_to?(:edit?, with: Admin::CoursePolicy)
+    params.require(:course).permit(*fields)
+  end
+
+  def update_autotest_url
+    url = params.require(:course).permit(:autotest_url)[:autotest_url]
+    @current_job = AutotestResetUrlJob.perform_later(current_course, url, request.protocol + request.host_with_port)
+    session[:job_id] = @current_job.job_id if @current_job
   end
 
   def flash_interpolation_options

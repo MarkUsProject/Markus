@@ -25,6 +25,7 @@ describe("For the InstructorTable's display of instructors", () => {
           first_name: "David",
           last_name: "Liu",
           email: "example@gmail.com",
+          hidden: false,
         },
         {
           id: 2,
@@ -32,10 +33,16 @@ describe("For the InstructorTable's display of instructors", () => {
           first_name: "Karen",
           last_name: "Reid",
           email: null,
+          hidden: true,
         },
       ];
       // Mocking the response returned by $.ajax, used in InstructorTable fetchData
-      $.ajax = jest.fn(() => Promise.resolve(instructors_sample));
+      $.ajax = jest.fn(() =>
+        Promise.resolve({
+          data: instructors_sample,
+          counts: {all: 2, active: 1, inactive: 1},
+        })
+      );
       wrapper = mount(<InstructorTable course_id={1} />);
     });
 
@@ -48,7 +55,12 @@ describe("For the InstructorTable's display of instructors", () => {
     beforeAll(() => {
       instructors_sample = [];
       // Mocking the response returned by $.ajax, used in InstructorTable fetchData
-      $.ajax = jest.fn(() => Promise.resolve(instructors_sample));
+      $.ajax = jest.fn(() =>
+        Promise.resolve({
+          data: instructors_sample,
+          counts: {all: 0, active: 0, inactive: 0},
+        })
+      );
       wrapper = mount(<InstructorTable course_id={1} />);
     });
 

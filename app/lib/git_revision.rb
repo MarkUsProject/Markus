@@ -99,7 +99,7 @@ class GitRevision < Repository::AbstractRevision
       entry_type = entry_hash[:type]
       next unless type.nil? || type == entry_type
       entry_name = entry_hash[:name]
-      # wrap in a RevisionFile or RevisionDirectory (paths without filename to be consistent with SVN)
+      # wrap in a RevisionFile or RevisionDirectory
       if entry_type == :blob
         mime_type = MiniMime.lookup_by_filename(entry_name)
         if mime_type.nil?

@@ -40,41 +40,31 @@ class GradeEntryForm < Assessment
   def completed_result_marks
     return @completed_result_marks if defined? @completed_result_marks
 
-    @completed_result_marks = self.grade_entry_students
-                                  .joins(:role)
-                                  .where(roles: { hidden: false })
-                                  .where.not(total_grade: nil)
-                                  .order(:total_grade)
-                                  .pluck(:total_grade)
+    ges_ids = self.grade_entry_students
+                  .joins(:role)
+                  .where(roles: { hidden: false })
+                  .pluck('grade_entry_students.id')
+
+    @completed_result_marks = GradeEntryStudent.get_total_grades(ges_ids).values.compact.sort
+  end
+
+  def released_marks
+    self.grade_entry_students.joins(role: :user)
+        .where(roles: { hidden: false })
+        .where(released_to_student: true)
   end
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
-    unless grade_entry_student.nil?
-      total_grades = grade_entry_student_total_grades
-      ges_total_grade = total_grades[grade_entry_student.id]
-    end
-
-    percent = BLANK_MARK
     out_of = self.max_mark
 
     # Check for NA mark f or division by 0
+    ges_total_grade = grade_entry_student&.get_total_grade
     unless ges_total_grade.nil? || out_of == 0
-      percent = (ges_total_grade / out_of) * 100
+      return (ges_total_grade / out_of) * 100
     end
 
-    percent
-  end
-
-  # Return a hash of each grade_entry_student's total_grade
-  def grade_entry_student_total_grades
-    if defined? @ges_total_grades
-      return @ges_total_grades
-    end
-
-    total_grades = grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade).to_h
-    @ges_total_grades = total_grades
-    total_grades
+    BLANK_MARK
   end
 
   # Determine the number of active grade_entry_students that have been given a mark.
@@ -97,7 +87,7 @@ class GradeEntryForm < Assessment
                         .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
                         .order(:user_name)
                         .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
-                                       :id_number, :email, 'grade_entry_students.total_grade')
+                                       :id_number, :email, 'grade_entry_students.id')
     elsif role.ta?
 
       students = role.grade_entry_students
@@ -107,7 +97,7 @@ class GradeEntryForm < Assessment
                             'grade_entry_students.assessment_id': self.id)
                      .order(:user_name)
                      .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
-                                    :id_number, :email, 'grade_entry_students.total_grade')
+                                    :id_number, :email, 'grade_entry_students.id')
 
     end
     headers = []
@@ -140,8 +130,10 @@ class GradeEntryForm < Assessment
       num_items = self.grade_entry_items.count
     end
 
+    total_grades = GradeEntryStudent.get_total_grades(students.map { |s| s['grade_entry_students.id'] })
+
     MarkusCsv.generate(students, headers) do |student|
-      total_grade = student['grade_entry_students.total_grade']
+      total_grade = total_grades[student['grade_entry_students.id']]
       row = Student::CSV_ORDER.map { |field| student[field] }
       if grade_data.key? student[:user_name]
         student_grades = Array.new(num_items, '')
@@ -209,7 +201,6 @@ class GradeEntryForm < Assessment
     unless updated_grades.empty?
       Grade.upsert_all(updated_grades, unique_by: [:grade_entry_item_id, :grade_entry_student_id])
     end
-    GradeEntryStudent.refresh_total_grades(updated_grades.pluck(:grade_entry_student_id))
     result
   end
 

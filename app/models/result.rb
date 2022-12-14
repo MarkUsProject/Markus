@@ -20,27 +20,9 @@ class Result < ApplicationRecord
   validates :marking_state, presence: true
   validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
-  validates :total_mark, numericality: { greater_than_or_equal_to: 0 }
-
   validates :released_to_students, inclusion: { in: [true, false] }
 
   before_update :check_for_released
-
-  # Update the total mark attribute
-  def update_total_mark
-    update(total_mark: get_total_mark)
-  end
-
-  # Update the total_mark attributes for the results with id in +result_ids+
-  def self.update_total_marks(result_ids, user_visibility: :ta_visible)
-    total_marks = Result.get_total_marks(result_ids, user_visibility: user_visibility)
-    view_tokens = Result.where(id: result_ids).pluck(:id, :view_token).to_h
-    unless total_marks.empty?
-      Result.upsert_all(
-        total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark, view_token: view_tokens[r_id] } }
-      )
-    end
-  end
 
   # Release or unrelease the submissions of a set of groupings.
   def self.set_release_on_results(grouping_ids, release)
@@ -178,7 +160,6 @@ class Result < ApplicationRecord
     assignment.ta_criteria.each do |criterion|
       criterion.marks.find_or_create_by(result_id: id)
     end
-    self.update_total_mark
   end
 
   # Returns a hash of all marks for this result.
@@ -203,8 +184,8 @@ class Result < ApplicationRecord
   end
 
   def check_for_nil_marks(user_visibility = :ta_visible)
-    # This check is only required when the marking state is complete.
-    return true unless marking_state == Result::MARKING_STATES[:complete]
+    # This check is only required when the marking state is being changed to complete.
+    return true unless marking_state_changed?(to: Result::MARKING_STATES[:complete])
 
     # peer review result is a special case because when saving a pr result
     # we can't pass in a parameter to the before_save filter, so we need

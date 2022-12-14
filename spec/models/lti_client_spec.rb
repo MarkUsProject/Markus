@@ -3,12 +3,10 @@ describe LtiClient do
     subject { create :lti_client }
     it { is_expected.to validate_uniqueness_of(:client_id).scoped_to(:host) }
   end
+  before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
   describe '#get_oauth_token' do
     let(:lti_client) { create :lti_client }
-    let(:lti_deployment) { create :lti_deployment, lti_client: lti_client }
-    let(:pub_jwk_key) { OpenSSL::PKey::RSA.new File.read(Settings.lti.key_path) }
-    let(:jwk) { { keys: [JWT::JWK.new(pub_jwk_key).export] } }
-    let(:scope) { 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' }
+    let(:scope) { LtiDeployment::LTI_SCOPES[:ags_lineitem] }
     before :each do
       stub_request(:post, Settings.lti.token_endpoint)
         .with(

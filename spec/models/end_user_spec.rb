@@ -6,7 +6,7 @@ describe EndUser do
     end
   end
   describe '#visible_courses' do
-    let(:course) { create :course, is_hidden: false }
+    let(:course) { create :course }
     let(:end_user) { create :end_user }
     let!(:student) { create :student, course: course, user: end_user }
     context 'when there is a visible course' do
@@ -15,21 +15,37 @@ describe EndUser do
       end
     end
     context 'when there is a hidden course' do
-      let(:course) { create :course }
+      let(:course) { create :course, is_hidden: true }
       it 'does not return the course' do
         expect(end_user.visible_courses).to be_empty
       end
+
+      context 'when the user is an instructor' do
+        let(:end_user2) { create :end_user }
+        let!(:instructor) { create :instructor, course: course, user: end_user2 }
+        it 'returns the course' do
+          expect(end_user2.visible_courses).to contain_exactly(course)
+        end
+      end
+
+      context 'when the user is a grader' do
+        let(:end_user2) { create :end_user }
+        let!(:grader) { create :ta, course: course, user: end_user2 }
+        it 'returns the course' do
+          expect(end_user2.visible_courses).to contain_exactly(course)
+        end
+      end
     end
     context 'when a student is hidden in a course' do
-      let(:end_user) { create :end_user }
-      let!(:student) { create :student, course: course, hidden: true, user: end_user }
+      let(:end_user2) { create :end_user }
+      let!(:student) { create :student, course: course, hidden: true, user: end_user2 }
       it 'does not return the course' do
-        expect(end_user.visible_courses).to be_empty
+        expect(end_user2.visible_courses).to be_empty
       end
     end
     context 'when there are multiple courses' do
       let(:end_user2) { create :end_user }
-      let(:course2) { create :course }
+      let(:course2) { create :course, is_hidden: true }
       let!(:student2) { create :student, user: end_user2, course: course2 }
       let!(:student2c1) { create :student, user: end_user2, course: course }
       let(:course3) { create :course, is_hidden: false }
@@ -52,6 +68,22 @@ describe EndUser do
       end
       it 'returns courses that are visible as a student, ta, or instructor' do
         expect(end_user4.visible_courses).to contain_exactly(course, course2, course3)
+      end
+    end
+
+    context 'when a grader is hidden in a course' do
+      let(:end_user2) { create :end_user }
+      let!(:grader) { create :ta, course: course, hidden: true, user: end_user2 }
+      it 'does not return the course' do
+        expect(end_user2.visible_courses).to be_empty
+      end
+    end
+
+    context 'when an instructor is hidden in a course' do
+      let(:end_user2) { create :end_user }
+      let!(:instructor) { create :instructor, course: course, hidden: true, user: end_user2 }
+      it 'does not return the course' do
+        expect(end_user2.visible_courses).to be_empty
       end
     end
   end

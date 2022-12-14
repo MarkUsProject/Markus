@@ -457,7 +457,7 @@ describe AssignmentsController do
 
         it 'responds with the correct keys' do
           expect(response.parsed_body.keys.to_set).to eq Set[
-            'data', 'criteriaColumns', 'numAssigned', 'numMarked'
+            'data', 'criteriaColumns', 'numAssigned', 'numMarked', 'ltiDeployments'
           ]
         end
       end
@@ -1166,7 +1166,7 @@ describe AssignmentsController do
         expected = { name: criterion.name,
                      average: criterion.average,
                      median: criterion.median || 0,
-                     max_mark: criterion.max_mark || 0,
+                     max_mark: criterion.max_mark.to_f || 0,
                      standard_deviation: criterion.standard_deviation || 0,
                      position: criterion.position,
                      num_zeros: criterion.grades_array.count(&:zero?) }

@@ -30,7 +30,7 @@ export class GraderDistributionModal extends React.Component {
           {grader.user_name}
         </label>
         <input
-          id={`input-${grader.user_name}`}
+          className={`input-${grader.user_name}`}
           type="number"
           step="0.01"
           min="0"
@@ -49,7 +49,7 @@ export class GraderDistributionModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <form id="grader-form-random" onSubmit={this.onSubmit} ref={this.input}>
+        <form onSubmit={this.onSubmit} ref={this.input}>
           <div className={"modal-container-vertical"}>
             <h2>{I18n.t("graders.weight")}</h2>
             <p className="auto-overflow" style={{maxWidth: "300px"}}>

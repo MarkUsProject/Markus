@@ -23,10 +23,13 @@ en:
     models:
       admin_user:
         one: Admin User
+        other: Admin Users
       end_user:
         one: End User
+        other: End Users
       instructor:
         one: Instructor
+        other: Instructors
       student:
         one: Student
         other: Students
@@ -35,3 +38,4 @@ en:
         other: Graders
       user:
         one: User
+        other: Users

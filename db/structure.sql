@@ -25,7 +25,7 @@ BEGIN
     FROM users
         JOIN roles ON roles.user_id=users.id
         JOIN courses ON roles.course_id=courses.id
-    WHERE courses.name=course_name AND users.user_name=user_name_
+    WHERE courses.name=course_name AND users.user_name=user_name_ AND roles.hidden=false
         FETCH FIRST ROW ONLY;
 
     IF role_type IN ('Instructor', 'AdminRole') THEN
@@ -54,11 +54,13 @@ BEGIN
                     JOIN groups ON groupings.group_id=groups.id
                     JOIN assignment_properties ON assignment_properties.assessment_id=groupings.assessment_id
                     JOIN assessments ON groupings.assessment_id=assessments.id
+                    JOIN courses ON assessments.course_id=courses.id
                     LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
                 WHERE memberships.type='StudentMembership'
                   AND memberships.membership_status IN ('inviter','accepted')
                   AND assignment_properties.vcs_submit=true
                   AND roles.id=role_id_
+                  AND courses.is_hidden=false
                   AND groups.repo_name=repo_name_
                   AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
                            OR assessment_section_properties.is_hidden=false)
@@ -73,6 +75,15 @@ $$;
 
 
 --
+-- Name: database_identifier(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.database_identifier() RETURNS text
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$SELECT CONCAT((SELECT system_identifier FROM pg_control_system()), '-', (SELECT current_database FROM current_database()));$$;
+
+
+--
 -- Name: get_authorized_keys(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -82,7 +93,7 @@ CREATE FUNCTION public.get_authorized_keys() RETURNS TABLE(authorized_keys text)
 DECLARE
   instance text;
 BEGIN
-  SELECT INTO instance relative_url_root();
+  SELECT INTO instance database_identifier();
   RETURN QUERY SELECT CONCAT(
                 'command="LOGIN_USER=',
                 users.user_name,
@@ -93,15 +104,6 @@ BEGIN
   FROM key_pairs JOIN users ON key_pairs.user_id = users.id;
 END
 $$;
-
-
---
--- Name: relative_url_root(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.relative_url_root() RETURNS text
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $$SELECT text '/'$$;
 
 
 SET default_tablespace = '';
@@ -462,7 +464,8 @@ CREATE TABLE public.courses (
     display_name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    autotest_setting_id bigint
+    autotest_setting_id bigint,
+    max_file_size bigint DEFAULT 5000000 NOT NULL
 );
 
 
@@ -816,7 +819,6 @@ CREATE TABLE public.grade_entry_students (
     released_to_student boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    total_grade double precision,
     assessment_id bigint,
     role_id bigint NOT NULL
 );
@@ -1194,7 +1196,9 @@ CREATE TABLE public.lti_deployments (
     course_id bigint,
     external_deployment_id character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    lms_course_id integer NOT NULL,
+    lms_course_name character varying NOT NULL
 );
 
 
@@ -1215,6 +1219,39 @@ CREATE SEQUENCE public.lti_deployments_id_seq
 --
 
 ALTER SEQUENCE public.lti_deployments_id_seq OWNED BY public.lti_deployments.id;
+
+
+--
+-- Name: lti_line_items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.lti_line_items (
+    id bigint NOT NULL,
+    lti_line_item_id character varying NOT NULL,
+    assessment_id bigint NOT NULL,
+    lti_deployment_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: lti_line_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.lti_line_items_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: lti_line_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.lti_line_items_id_seq OWNED BY public.lti_line_items.id;
 
 
 --
@@ -1536,7 +1573,6 @@ CREATE TABLE public.results (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     released_to_students boolean DEFAULT false NOT NULL,
-    total_mark double precision DEFAULT 0.0,
     remark_request_submitted_at timestamp without time zone,
     peer_review_id integer,
     view_token character varying NOT NULL,
@@ -2059,7 +2095,7 @@ ALTER SEQUENCE public.test_batches_id_seq OWNED BY public.test_batches.id;
 
 CREATE TABLE public.test_group_results (
     id integer NOT NULL,
-    test_group_id integer,
+    test_group_id integer NOT NULL,
     marks_earned double precision DEFAULT 0.0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -2456,6 +2492,13 @@ ALTER TABLE ONLY public.lti_clients ALTER COLUMN id SET DEFAULT nextval('public.
 --
 
 ALTER TABLE ONLY public.lti_deployments ALTER COLUMN id SET DEFAULT nextval('public.lti_deployments_id_seq'::regclass);
+
+
+--
+-- Name: lti_line_items id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_line_items ALTER COLUMN id SET DEFAULT nextval('public.lti_line_items_id_seq'::regclass);
 
 
 --
@@ -2907,6 +2950,14 @@ ALTER TABLE ONLY public.lti_clients
 
 ALTER TABLE ONLY public.lti_deployments
     ADD CONSTRAINT lti_deployments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: lti_line_items lti_line_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_line_items
+    ADD CONSTRAINT lti_line_items_pkey PRIMARY KEY (id);
 
 
 --
@@ -3416,6 +3467,27 @@ CREATE INDEX index_lti_deployments_on_lti_client_id ON public.lti_deployments US
 
 
 --
+-- Name: index_lti_line_items_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lti_line_items_on_assessment_id ON public.lti_line_items USING btree (assessment_id);
+
+
+--
+-- Name: index_lti_line_items_on_lti_deployment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_lti_line_items_on_lti_deployment_id ON public.lti_line_items USING btree (lti_deployment_id);
+
+
+--
+-- Name: index_lti_line_items_on_lti_deployment_id_and_assessment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_lti_line_items_on_lti_deployment_id_and_assessment_id ON public.lti_line_items USING btree (lti_deployment_id, assessment_id);
+
+
+--
 -- Name: index_lti_services_on_lti_deployment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3710,6 +3782,13 @@ CREATE INDEX index_test_batches_on_course_id ON public.test_batches USING btree 
 
 
 --
+-- Name: index_test_group_results_on_test_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_test_group_results_on_test_group_id ON public.test_group_results USING btree (test_group_id);
+
+
+--
 -- Name: index_test_group_results_on_test_run_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3876,6 +3955,14 @@ ALTER TABLE ONLY public.key_pairs
 
 
 --
+-- Name: lti_line_items fk_rails_0ca6350bd4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_line_items
+    ADD CONSTRAINT fk_rails_0ca6350bd4 FOREIGN KEY (lti_deployment_id) REFERENCES public.lti_deployments(id);
+
+
+--
 -- Name: groups fk_rails_0dbb68deda; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3964,11 +4051,27 @@ ALTER TABLE ONLY public.test_batches
 
 
 --
+-- Name: lti_line_items fk_rails_4ed33e5462; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_line_items
+    ADD CONSTRAINT fk_rails_4ed33e5462 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: feedback_files fk_rails_55b6a53fc7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.feedback_files
     ADD CONSTRAINT fk_rails_55b6a53fc7 FOREIGN KEY (test_group_result_id) REFERENCES public.test_group_results(id);
+
+
+--
+-- Name: test_group_results fk_rails_5ad5ab0a6d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_group_results
+    ADD CONSTRAINT fk_rails_5ad5ab0a6d FOREIGN KEY (test_group_id) REFERENCES public.test_groups(id);
 
 
 --
@@ -4588,4 +4691,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220707182822'),
 ('20220726142501'),
 ('20220726201403'),
-('20220922131809');
+('20220727161425'),
+('20220815210513'),
+('20220825171354'),
+('20220826132206'),
+('20220922131809'),
+('20221019191315'),
+('20221111182002');

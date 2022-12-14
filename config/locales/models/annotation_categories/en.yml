@@ -8,3 +8,4 @@ en:
     models:
       annotation_category:
         one: Annotation Category
+        other: Annotation Categories

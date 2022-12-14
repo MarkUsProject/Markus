@@ -327,7 +327,7 @@ describe SubmissionsController do
         end
         context 'when testing with a git repo', :keep_memory_repos do
           before(:each) { allow(Settings.repository).to receive(:type).and_return('git') }
-          after(:each) { FileUtils.rm_r(Dir.glob(File.join(Settings.repository.storage, '*'))) }
+          after(:each) { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
           it 'displays a failure message when attempting to create a subdirectory with no parent' do
             post_as @student, :update_files,
                     params: { course_id: course.id, assignment_id: @assignment.id,
@@ -565,13 +565,13 @@ describe SubmissionsController do
     end
 
     # Stopping a curious student
-    it 'should not be able download svn checkout commands' do
+    it 'should not be able download repository checkout commands' do
       get_as @student, :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: @assignment.id }
 
       is_expected.to respond_with(:forbidden)
     end
 
-    it 'should not be able to download the svn repository list' do
+    it 'should not be able to download the repository list' do
       get_as @student, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
 
       is_expected.to respond_with(:forbidden)
@@ -634,12 +634,12 @@ describe SubmissionsController do
       expect(response).to render_template('layouts/assignment_content')
     end
 
-    it 'should be able to download the svn checkout commands' do
+    it 'should be able to download the repository checkout commands' do
       get_as grader, :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:forbidden)
     end
 
-    it 'should be able to download the svn repository list' do
+    it 'should be able to download the repository list' do
       get_as grader, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:forbidden)
     end
@@ -746,13 +746,13 @@ describe SubmissionsController do
       expect(response).to render_template(layout: 'layouts/assignment_content')
     end
 
-    it 'should be able to download the svn checkout commands' do
+    it 'should be able to download the repository checkout commands' do
       get_as @instructor, :download_repo_checkout_commands,
              params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
     end
 
-    it 'should be able to download the svn repository list' do
+    it 'should be able to download the repository list' do
       get_as @instructor, :download_repo_list, params: { course_id: course.id, assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
     end
@@ -801,7 +801,9 @@ describe SubmissionsController do
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
             array_including(@grouping, uncollected_grouping),
-            collection_dates: hash_including
+            collection_dates: hash_including,
+            collect_current: false,
+            apply_late_penalty: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
@@ -814,7 +816,9 @@ describe SubmissionsController do
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
             [uncollected_grouping],
-            collection_dates: hash_including
+            collection_dates: hash_including,
+            collect_current: false,
+            apply_late_penalty: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
@@ -941,7 +945,7 @@ describe SubmissionsController do
             @student.save
           end
 
-          it 'should get an error if it is before the section due date' do
+          it 'should get an error if it is before the section due date and collect_current is not selected' do
             @assessment_section_properties.update!(due_date: 1.week.from_now)
             allow(Assignment).to receive_message_chain(
               :includes, :find
@@ -954,6 +958,35 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
+
+            expect(response).to render_template(partial: 'shared/_poll_job')
+          end
+
+          it 'should not receive an error if it is before the section due date and collect_current is selected' do
+            @assessment_section_properties.update!(due_date: 1.week.from_now)
+            allow(Assignment).to receive_message_chain(
+              :includes, :find
+            ) { @assignment }
+            allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+            post_as @instructor,
+                    :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              override: true, collect_current: true,
+                              groupings: @assignment.groupings.to_a }
+            expect(flash[:error]).to be_nil
+          end
+
+          it 'should succeed if it is before the section due date and collect_current is selected' do
+            @assessment_section_properties.update!(due_date: 1.week.from_now)
+            allow(Assignment).to receive_message_chain(
+              :includes, :find
+            ) { @assignment }
+            allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+            post_as @instructor,
+                    :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              override: true, collect_current: true,
+                              groupings: @assignment.groupings.to_a }
 
             expect(response).to render_template(partial: 'shared/_poll_job')
           end
@@ -995,6 +1028,33 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
 
+            expect(response).to render_template(partial: 'shared/_poll_job')
+          end
+
+          it 'should not return an error if it is before the global due date but collect_current is true' do
+            @assignment.update!(due_date: 1.week.from_now)
+            allow(Assignment).to receive_message_chain(
+              :includes, :find
+            ) { @assignment }
+            allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+            post_as @instructor,
+                    :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              override: true, collect_current: true,
+                              groupings: @assignment.groupings.to_a }
+            expect(flash[:error]).to be_nil
+          end
+          it 'should succeed if it is before the global due date but collect_current is true' do
+            @assignment.update!(due_date: 1.week.from_now)
+            allow(Assignment).to receive_message_chain(
+              :includes, :find
+            ) { @assignment }
+            allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+            post_as @instructor,
+                    :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              override: true, collect_current: true,
+                              groupings: @assignment.groupings.to_a }
             expect(response).to render_template(partial: 'shared/_poll_job')
           end
 
@@ -1047,17 +1107,11 @@ describe SubmissionsController do
       zip_path = "tmp/#{@assignment.short_identifier}_" \
                  "#{@grouping.group.group_name}_#{revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
-        file1_path = File.join("#{@assignment.short_identifier}-" +
-                                   @grouping.group.group_name.to_s,
-                               @file1_name)
-        file2_path = File.join("#{@assignment.short_identifier}-" +
-                                   @grouping.group.group_name.to_s,
-                               @file2_name)
-        expect(zip_file.find_entry(file1_path)).to_not be_nil
-        expect(zip_file.find_entry(file2_path)).to_not be_nil
+        expect(zip_file.find_entry(@file1_name)).to_not be_nil
+        expect(zip_file.find_entry(@file2_name)).to_not be_nil
 
-        expect(zip_file.read(file1_path)).to eq(@file1_content)
-        expect(zip_file.read(file2_path)).to eq(@file2_content)
+        expect(zip_file.read(@file1_name)).to eq(@file1_content)
+        expect(zip_file.read(@file2_name)).to eq(@file2_content)
       end
     end
 
@@ -1187,12 +1241,12 @@ describe SubmissionsController do
 
   describe 'An unauthenticated or unauthorized role' do
     let(:assignment) { create :assignment }
-    it 'should not be able to download the svn checkout commands' do
+    it 'should not be able to download the repository checkout commands' do
       get :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: assignment.id }
       is_expected.to respond_with(:redirect)
     end
 
-    it 'should not be able to download the svn repository list' do
+    it 'should not be able to download the repository list' do
       get :download_repo_list, params: { course_id: course.id, assignment_id: assignment.id }
       is_expected.to respond_with(:redirect)
     end
@@ -1233,13 +1287,23 @@ describe SubmissionsController do
                                                   preview: true,
                                                   grouping_id: grouping.id }
         end
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to redirect_to(
-            notebook_content_course_assignment_submissions_url(course_id: course.id,
-                                                               assignment_id: assignment.id,
-                                                               file_name: 'example.ipynb',
-                                                               grouping_id: grouping.id)
-          )
+        let(:redirect_location) do
+          notebook_content_course_assignment_submissions_url(course_id: course.id,
+                                                             assignment_id: assignment.id,
+                                                             file_name: 'example.ipynb',
+                                                             grouping_id: grouping.id)
+        end
+        context 'and the python dependencies are installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
+          it 'should redirect to "notebook_content"' do
+            expect(subject).to redirect_to(redirect_location)
+          end
+        end
+        context 'and the python dependencies are not installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+          it 'should redirect to "notebook_content"' do
+            expect(subject).not_to redirect_to(redirect_location)
+          end
         end
       end
       describe 'When the file is an rmarkdown file' do
@@ -1341,7 +1405,8 @@ describe SubmissionsController do
         end
       end
 
-      context 'a jupyter-notebook file' do
+      context 'a jupyter-notebook file',
+              skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
         let(:filename) { 'example.ipynb' }
         it_behaves_like 'notebook content'
       end

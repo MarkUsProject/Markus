@@ -44,16 +44,16 @@ describe("SubmissionSelector", () => {
 
   it("should call nextSubmission when the next-button is pressed", () => {
     wrapper = getWrapper(props);
-    expect(wrapper.find("#next-button").exists()).toBeTruthy();
-    wrapper.find("#next-button").simulate("click");
+    expect(wrapper.find(".next").exists()).toBeTruthy();
+    wrapper.find(".next").simulate("click");
 
     expect(props.nextSubmission).toHaveBeenCalled();
   });
 
   it("should call previousSubmission when the next-button is pressed", () => {
     wrapper = getWrapper(props);
-    expect(wrapper.find("#previous-button").exists()).toBeTruthy();
-    wrapper.find("#previous-button").simulate("click");
+    expect(wrapper.find(".previous").exists()).toBeTruthy();
+    wrapper.find(".previous").simulate("click");
 
     expect(props.previousSubmission).toHaveBeenCalled();
   });
@@ -67,7 +67,7 @@ describe("SubmissionSelector", () => {
     props.num_marked = 50;
     props.num_collected = 100;
     wrapper = getWrapper(props);
-    const meter = wrapper.find("#progress-meter");
+    const meter = wrapper.find("meter");
 
     expect(meter.props().value).toBe(props.num_marked);
     expect(meter.props().min).toBe(0);

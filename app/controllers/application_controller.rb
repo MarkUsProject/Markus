@@ -25,10 +25,11 @@ class ApplicationController < ActionController::Base
   # set user time zone based on their settings
   around_action :use_time_zone, if: :current_user
   # activate i18n for renaming constants in views
-  before_action :set_locale, :set_markus_version, :get_file_encodings
+  before_action :set_locale, :get_file_encodings
   # check for active session on every page
-  before_action :authenticate, :check_course_switch, :check_record,
+  before_action :authenticate, :check_record,
                 except: [:login, :page_not_found, :check_timeout, :login_remote_auth]
+  before_action :check_course_switch
   # check for AJAX requests
   after_action :flash_to_headers
 
@@ -57,24 +58,6 @@ class ApplicationController < ActionController::Base
 
   def use_time_zone(&block)
     Time.use_zone(current_user.time_zone, &block)
-  end
-
-  # Set version for MarkUs to be available in
-  # any view
-  def set_markus_version
-    version_file = File.expand_path(File.join(::Rails.root.to_s, 'app', 'MARKUS_VERSION'))
-    unless File.exist?(version_file)
-      @markus_version = 'unknown'
-      return
-    end
-    content = File.new(version_file).read
-    version_info = {}
-    content.split(',').each do |token|
-      k, v = token.split('=')
-      version_info[k.downcase] = v
-    end
-    @markus_version = version_info['version']
-    raise "Invalid Version: #{@markus_version}" unless @markus_version.match(/master|v\d+\.\d+\.\d+/)
   end
 
   # Set locale according to URL parameter. If unknown parameter is

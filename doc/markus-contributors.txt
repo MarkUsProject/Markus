@@ -51,6 +51,7 @@ Claire Mayer
 Clément Delafargue
 Clément Schiano
 Danesh Dadachanji
+Daniel Dervishi
 Daniel St. Jules
 Daniyal Liaqat
 Daryn Lam
@@ -71,6 +72,7 @@ Evan Browning
 Farah Juma
 Fernando Garces
 François Neber
+Gabriel Anover
 Gabriel Roy-Lortie
 Gaëtan Girin
 Geoffrey Flores
@@ -84,6 +86,7 @@ Horatiu Halmaghi
 Huiyu Sun
 Ian Smith
 Ibrahim Shahin
+Ido Ben Haim
 Ignas Panero Armoska
 Irene Fung
 Isabelle Chan

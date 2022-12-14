@@ -1,5 +1,6 @@
 module Admin
   class CoursesController < ApplicationController
+    include AutomatedTestsHelper::AutotestApi
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
     before_action { authorize! }
 
@@ -18,21 +19,58 @@ module Admin
     end
 
     def create
-      @current_course = Course.create(course_params)
+      @current_course = Course.create(course_create_params)
+      update_autotest_url if @current_course.persisted?
       respond_with @current_course, location: -> { admin_courses_path }
     end
 
     def edit; end
 
     def update
-      current_course.update(params.require(:course).permit(:is_hidden, :display_name))
+      current_course.update(course_update_params)
+      update_autotest_url
       respond_with @current_course, location: -> { edit_admin_course_path(@current_course) }
+    end
+
+    def test_autotest_connection
+      settings = current_course.autotest_setting
+      return head :unprocessable_entity unless settings&.url
+      begin
+        get_schema(current_course.autotest_setting)
+        flash_now(:success, I18n.t('automated_tests.manage_connection.test_success', url: settings.url))
+      rescue JSON::ParserError
+        flash_now(:error, I18n.t('automated_tests.manage_connection.test_schema_failure', url: settings.url))
+      rescue StandardError => e
+        flash_now(:error, I18n.t('automated_tests.manage_connection.test_failure', url: settings.url, error: e.to_s))
+      end
+      head :ok
+    end
+
+    def reset_autotest_connection
+      settings = current_course.autotest_setting
+      return head :unprocessable_entity unless settings&.url
+      @current_job = AutotestResetUrlJob.perform_later(current_course,
+                                                       settings.url,
+                                                       request.protocol + request.host_with_port,
+                                                       refresh: true)
+      session[:job_id] = @current_job.job_id if @current_job
+      respond_with current_course, location: -> { edit_admin_course_path(current_course) }
     end
 
     private
 
-    def course_params
-      params.require(:course).permit(:name, :is_hidden, :display_name)
+    def course_create_params
+      params.require(:course).permit(:name, :is_hidden, :display_name, :max_file_size)
+    end
+
+    def course_update_params
+      params.require(:course).permit(:is_hidden, :display_name, :max_file_size)
+    end
+
+    def update_autotest_url
+      url = params.require(:course).permit(:autotest_url)[:autotest_url]
+      @current_job = AutotestResetUrlJob.perform_later(current_course, url, request.protocol + request.host_with_port)
+      session[:job_id] = @current_job.job_id if @current_job
     end
 
     def flash_interpolation_options

@@ -146,6 +146,19 @@ describe TasController do
             expect(ta.grader_permission.run_tests).to be false
           end
         end
+
+        context 'when changing the default role' do
+          let(:params) do
+            {
+              course_id: course.id,
+              role: { end_user: { user_name: end_user.user_name }, hidden: true }
+            }
+          end
+          it 'should change the default visibility status' do
+            grader = end_user.roles.first
+            expect(grader.hidden).to eq(true)
+          end
+        end
       end
       it_behaves_like 'role is from a different course' do
         let(:role) { instructor }
@@ -160,6 +173,65 @@ describe TasController do
       end
       it 'should display an error message' do
         expect(flash[:error]).not_to be_empty
+      end
+    end
+  end
+
+  context '#index' do
+    it 'respond with success on index' do
+      get_as instructor, :index, params: { course_id: course.id }
+      expect(response.status).to eq(200)
+    end
+    it 'retrieves correct data' do
+      get_as instructor, :index, format: 'json', params: { course_id: course.id }
+      response_data = response.parsed_body['data']
+      expected_data = course.tas.joins(:user)
+                            .pluck_to_hash(:id, :user_name, :first_name,
+                                           :last_name, :email, :hidden).as_json
+      expect(response_data).to eq(expected_data)
+    end
+    it 'retrieves correct hidden count' do
+      get_as instructor, :index, format: 'json', params: { course_id: course.id }
+      response_data = response.parsed_body['counts']
+      expected_data = {
+        all: course.tas.size,
+        active: course.tas.active.size,
+        inactive: course.tas.inactive.size
+      }.as_json
+      expect(response_data).to eq(expected_data)
+    end
+  end
+
+  context '#update' do
+    let(:grader) { create(:ta, course: course) }
+    subject { post_as grader, :update, params: params }
+    context 'when updating user visibility' do
+      let(:new_end_user) { create :end_user }
+      context 'as an instructor' do
+        let(:params) do
+          {
+            course_id: course.id,
+            id: grader.id,
+            role: { end_user: { user_name: grader.user_name }, hidden: true }
+          }
+        end
+        it 'should update the user' do
+          post_as instructor, :update, params: params
+          expect(grader.reload.hidden).to eq(true)
+        end
+      end
+      context 'as a grader' do
+        let(:params) do
+          {
+            course_id: course.id,
+            id: grader.id,
+            role: { end_user: { user_name: grader.user_name }, hidden: true }
+          }
+        end
+        it 'should not update the user' do
+          subject
+          expect(grader.reload.hidden).to eq(false)
+        end
       end
     end
   end

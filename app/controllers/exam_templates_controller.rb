@@ -56,7 +56,7 @@ class ExamTemplatesController < ApplicationController
   def download
     exam_template = record
     filename = exam_template.filename
-    send_file(File.join(exam_template.base_path, filename),
+    send_file(exam_template.file_path,
               filename: filename.to_s,
               type: 'application/pdf')
   end
@@ -94,12 +94,7 @@ class ExamTemplatesController < ApplicationController
     copies = params[:exam_template][:num_copies].to_i
     index = params[:exam_template][:start_index].to_i
     exam_template = record
-    assignment = exam_template.assignment
-
-    current_job = exam_template.generate_copies(copies, index)
-    current_job.status.update(file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf")
-    current_job.status.update(exam_id: exam_template.id)
-    current_job.status.update(course_id: assignment.course.id)
+    current_job = GenerateJob.perform_later(exam_template, copies, index)
     session[:job_id] = current_job.job_id
 
     respond_to do |format|
@@ -109,7 +104,7 @@ class ExamTemplatesController < ApplicationController
 
   def download_generate
     exam_template = record
-    send_file(File.join(exam_template.base_path, params[:file_name]),
+    send_file(File.join(exam_template.tmp_path, params[:file_name]),
               filename: params[:file_name],
               type: 'application/pdf')
   end

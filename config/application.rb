@@ -6,6 +6,10 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# This environment variable is used in server-side git hooks to determine whether the change
+# is being sent locally (from MarkUs itself) or remotely (from a user accessing git over ssh or https).
+ENV['SKIP_LOCAL_GIT_HOOKS'] = 'true'
+
 # Settings in config/environments/* take precedence over those specified here.
 # Application configuration can go into files in config/initializers
 # -- all .rb files in that directory are automatically loaded after loading
@@ -36,7 +40,7 @@ module Markus
     config.assets.enabled = true
     # Suppress logger output for asset requests.
     config.assets.quiet = true
-    # Add Yarn node_modules folder to the asset load path.
+    # Add node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
 
     # Ensure form_with calls generate remote forms by

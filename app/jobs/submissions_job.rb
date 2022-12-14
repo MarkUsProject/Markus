@@ -13,7 +13,7 @@ class SubmissionsJob < ApplicationJob
     Rails.logger.error msg
   end
 
-  def perform(groupings, options = {})
+  def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
 
     m_logger = MarkusLogger.instance
@@ -24,7 +24,7 @@ class SubmissionsJob < ApplicationJob
       m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                    grouping.id.to_s)
       if options[:revision_identifier].nil?
-        time = if assignment.scanned_exam?
+        time = if assignment.scanned_exam? || options[:collect_current]
                  Time.current
                else
                  options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
@@ -39,7 +39,7 @@ class SubmissionsJob < ApplicationJob
         assignment.submission_rule.remove_deductions(grouping)
       end
 
-      if options[:apply_late_penalty].nil? || options[:apply_late_penalty]
+      if apply_late_penalty
         assignment.submission_rule.apply_submission_rule(new_submission)
       end
 

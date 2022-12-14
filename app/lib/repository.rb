@@ -23,7 +23,8 @@ module Repository
     end
   end
 
-  PERMISSION_FILE = File.join(Settings.repository.storage, '.access').freeze
+  ROOT_DIR = (Settings.file_storage.repos || File.join(Settings.file_storage.default_root_path, 'repos')).freeze
+  PERMISSION_FILE = File.join(ROOT_DIR, '.access').freeze
 
   # Exceptions for repositories
   class ConnectionError < StandardError; end
@@ -113,7 +114,7 @@ module Repository
       raise NotImplementedError
     end
 
-    # Static method: Deletes an existing Subversion repository
+    # Static method: Deletes an existing repository
     def self.delete(connect_string)
       raise NotImplementedError
     end
@@ -222,7 +223,7 @@ module Repository
     # Repository authentication subtleties:
     # 1) a repository is associated with a Group, but..
     # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
-    # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
+    # That creates a problem since authentication in git is at the repository level, while Markus handles it at
     # the assignment level, allowing the same Group repo to have different students according to the assignment.
     # The two extremes to implement it are using the union of all students (permissive) or the intersection
     # (restrictive). Instead, we are going to take a last-deadline approach, where we assume that the valid students at
@@ -230,9 +231,9 @@ module Repository
     # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
     # some students from it)
     def self.get_repo_auth_records
-      records = Assignment.joins(:assignment_properties)
+      records = Assignment.joins(:assignment_properties, :course)
                           .includes(groupings: [:group, { accepted_students: :section }])
-                          .where(assignment_properties: { vcs_submit: true })
+                          .where(assignment_properties: { vcs_submit: true }, 'courses.is_hidden': false)
                           .order(due_date: :desc)
       records.where(assignment_properties: { is_timed: false })
              .or(records.where.not(groupings: { start_time: nil }))
@@ -265,6 +266,7 @@ module Repository
       admins = AdminUser.pluck(:user_name)
       permissions['*/*'] = admins unless admins.empty?
       instructors = Instructor.joins(:course, :user)
+                              .where('roles.hidden': false)
                               .pluck('courses.name', 'users.user_name')
                               .group_by(&:first)
                               .transform_values { |val| val.map(&:second) }
@@ -275,7 +277,7 @@ module Repository
         assignment.valid_groupings.each do |valid_grouping|
           next unless visibility[assignment.id][valid_grouping.inviter&.section&.id]
           repo_name = valid_grouping.group.repository_relative_path
-          accepted_students = valid_grouping.accepted_students.map(&:user_name)
+          accepted_students = valid_grouping.accepted_students.where('roles.hidden': false).map(&:user_name)
           permissions[repo_name] = accepted_students
         end
       end
@@ -283,7 +285,7 @@ module Repository
       # even if they are the grader for only a single assignment
       graders_info = TaMembership.joins(role: [:user, :course],
                                         grouping: [:group, { assignment: :assignment_properties }])
-                                 .where('assignment_properties.anonymize_groups': false)
+                                 .where('assignment_properties.anonymize_groups': false, 'roles.hidden': false)
                                  .pluck(:repo_name, :user_name, 'courses.name')
       graders_info.each do |repo_name, user_name, course_name|
         repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path
@@ -360,11 +362,12 @@ module Repository
     # The result of the block will be written to the zip file instead of the file content.
     #
     # This can be used to modify the file content before it is written to the zip file.
-    def send_tree_to_zip(subdirectory_path, zip_file, zip_name, revision, &block)
+    def send_tree_to_zip(subdirectory_path, zip_file, revision, zip_subdir: nil, &block)
       revision.tree_at_path(subdirectory_path, with_attrs: false).each do |path, obj|
         if obj.is_a? Repository::RevisionFile
           file_contents = block_given? ? block.call(obj) : download_as_string(obj)
-          zip_file.get_output_stream(File.join(zip_name, path)) do |f|
+          full_path = zip_subdir ? File.join(zip_subdir, path) : path
+          zip_file.get_output_stream(full_path) do |f|
             f.print file_contents
           end
         end
@@ -519,8 +522,6 @@ module Repository
       GitRepository
     when 'mem'
       MemoryRepository
-    when 'svn'
-      SubversionRepository
     else
       raise "Repository implementation not found: #{repo_type}"
     end

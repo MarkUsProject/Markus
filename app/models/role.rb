@@ -1,5 +1,7 @@
 # Model representing a user's role in a given course.
 class Role < ApplicationRecord
+  scope :active, -> { where(hidden: false) }
+  scope :inactive, -> { where(hidden: true) }
   belongs_to :user, inverse_of: :roles
   belongs_to :course, inverse_of: :roles
   accepts_nested_attributes_for :user
@@ -17,6 +19,7 @@ class Role < ApplicationRecord
 
   validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
   validates :user_id, uniqueness: { scope: :course_id }
+  after_update_commit :update_repo_permissions
 
   # Helper methods -----------------------------------------------------
 
@@ -82,5 +85,9 @@ class Role < ApplicationRecord
     unless self.user.nil? || self.user.end_user?
       errors.add(:base, "non end users cannot be assigned the #{self.model_name.human} role")
     end
+  end
+
+  def update_repo_permissions
+    Repository.get_class.update_permissions if saved_change_to_hidden?
   end
 end

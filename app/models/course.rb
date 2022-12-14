@@ -12,6 +12,7 @@ class Course < ApplicationRecord
   has_many :marking_schemes
   has_many :tags, through: :roles
   has_many :exam_templates, through: :assignments
+  has_many :lti_deployments
   belongs_to :autotest_setting, optional: true
 
   validates :name, presence: true
@@ -23,6 +24,10 @@ class Course < ApplicationRecord
   # Note rails provides built-in sanitization via active record.
   validates :display_name, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
+  validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
+
+  after_save_commit :update_repo_max_file_size
+  after_update_commit :update_repo_permissions
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
@@ -73,13 +78,8 @@ class Course < ApplicationRecord
             row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
             row[:assignment_properties_attributes][:token_period] = 1
             row[:assignment_properties_attributes][:unlimited_tokens] = false
-            row[:submission_rule] = NoLateSubmissionRule.new
           end
           assignment.update(row)
-          unless assignment.id
-            assignment[:display_median_to_students] = false
-            assignment[:display_grader_names_to_students] = false
-          end
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e
@@ -93,32 +93,23 @@ class Course < ApplicationRecord
         self.assignments.reorder(:due_date).first
   end
 
+  # Return a string where each line contains a required file for this course and a boolean string ('true' or 'false')
+  # indicating whether the assignment this required file belongs to has the only_required_files attribute set to true
+  # of false. For example:
+  #
+  # A0/submission.py true
+  # A0/submission2.py true
+  # A0/data.txt true
+  # A5/something.hs false
   def get_required_files
     assignments = self.assignments.includes(:assignment_files, :assignment_properties)
                       .where(assignment_properties: { scanned_exam: false }, is_hidden: false)
-    required = {}
-    assignments.each do |assignment|
-      files = assignment.assignment_files.map(&:filename)
-      if assignment.only_required_files.nil?
-        required_only = false
-      else
-        required_only = assignment.only_required_files
+    assignments.map do |assignment|
+      assignment.assignment_files.map do |file|
+        filename = File.join(assignment.repository_folder, file.filename)
+        "#{filename} #{assignment.only_required_files ? true : false}"
       end
-      required[assignment.repository_folder] = { required: files, required_only: required_only }
-    end
-    required
-  end
-
-  def max_file_size_settings
-    Settings[self.name]&.max_file_size || Settings.max_file_size
-  end
-
-  def update_autotest_url(url)
-    autotest_setting = AutotestSetting.find_or_create_by!(url: url)
-    if autotest_setting.id != self.autotest_setting&.id
-      self.update!(autotest_setting_id: autotest_setting.id)
-      AssignmentProperties.where(assessment_id: self.assignments.ids).update_all(remote_autotest_settings_id: nil)
-    end
+    end.flatten.join("\n")
   end
 
   def export_student_data_csv
@@ -146,5 +137,35 @@ class Course < ApplicationRecord
                   section_name: student.section&.name)
     end
     output.to_yaml
+  end
+
+  # Yield an open repo for each group of this course, then yield again for each repo that raised an exception, to
+  # try to mitigate concurrent accesses to those repos.
+  def each_group_repo(&block)
+    failed_groups = []
+    self.groups.each do |group|
+      group.access_repo(&block)
+    rescue StandardError
+      # in the event of a concurrent repo modification, retry later
+      failed_groups << group
+    end
+    failed_groups.each do |grouping|
+      grouping.access_repo(&block)
+    rescue StandardError
+      # give up
+    end
+  end
+
+  private
+
+  def update_repo_max_file_size
+    return unless Settings.repository.type == 'git'
+    return unless saved_change_to_max_file_size? || saved_change_to_id?
+
+    UpdateRepoMaxFileSizeJob.perform_later(self.id)
+  end
+
+  def update_repo_permissions
+    Repository.get_class.update_permissions if saved_change_to_is_hidden?
   end
 end

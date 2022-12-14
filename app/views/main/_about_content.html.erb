@@ -2,7 +2,7 @@
   <h1><%= t(:about_markus) %></h1>
   <h2><%= t('about.version') %></h2>
 
-  <p><%= t('about.markus_version') %><strong><%= @markus_version %></strong></p>
+  <p><%= t('about.markus_version') %><strong><%= Rails.configuration.markus_version %></strong></p>
   <p><%= t('about.ruby_version') %><strong><%= RUBY_VERSION %></strong> </p>
   <p><%= t('about.rails_version') %><strong><%= Rails::VERSION::STRING %></strong> </p>
 

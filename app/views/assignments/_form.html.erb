@@ -85,7 +85,6 @@
         <%= f.label :due_date,
                     @assignment.is_timed ? I18n.t('assignments.timed.end_time') : Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
-        <%# byebug %>
         <%= f.text_field :due_date,
                          value: @assignment.due_date.nil? ? '' : l(@assignment.due_date, format: :flatpickr),
                          size: 35,
@@ -215,6 +214,10 @@
         <%= ap_f.label :release_with_urls,
                        Assignment.human_attribute_name(:release_with_urls) %>
         <%= ap_f.check_box :release_with_urls %>
+
+        <% if @lti_deployments.present? %>
+          <%= render partial: 'lti_deployments/line_items' %>
+        <% end %>
       </div>
       </fieldset>
     </fieldset>

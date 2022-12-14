@@ -12,39 +12,49 @@ module CourseSummariesHelper
       released = [true, false]
     end
 
-    student_data = students.map do |student|
-      [student.id,
-       {
-         id: student.id,
-         id_number: student.id_number,
-         user_name: student.user_name,
-         first_name: student.first_name,
-         last_name: student.last_name,
-         section_name: student.section_name,
-         email: student.email,
-         hidden: student.hidden,
-         assessment_marks: {}
-       }]
-    end.to_h
+    student_data = students.left_outer_joins(:user, :section)
+                           .pluck_to_hash('roles.id',
+                                          :id_number,
+                                          :user_name,
+                                          :first_name,
+                                          :last_name,
+                                          'sections.name',
+                                          :email,
+                                          :hidden)
+                           .group_by { |h| h['roles.id'] }
+
+    student_data.transform_values! do |val|
+      target = val.first
+      target.update(assessment_marks: {})
+      target[:id] = target.delete('roles.id')
+      target[:section_name] = target.delete('sections.name')
+      target
+    end
+
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
                                 .order(:'results.created_at')
-                                .pluck('role_id', 'groupings.assessment_id', 'results.total_mark')
-    assignment_grades.each do |role_id, assessment_id, mark|
+                                .pluck('roles.id', 'groupings.assessment_id', 'results.id')
+    result_marks = Result.get_total_marks(assignment_grades.map(&:third))
+    assignment_grades.each do |role_id, assessment_id, result_id|
       max_mark = @max_marks[assessment_id]
-      student_data[role_id][:assessment_marks][assessment_id] = {
+      mark = result_marks[result_id]
+      student_data[role_id]['assessment_marks'][assessment_id] = {
         mark: mark,
         percentage: mark.nil? || max_mark.nil? ? nil : (mark * 100 / max_mark).round(2)
       }
     end
-    gef_grades = students.joins(:grade_entry_students)
-                         .where('grade_entry_students.released_to_student': released)
-                         .pluck('role_id',
-                                'grade_entry_students.assessment_id',
-                                'grade_entry_students.total_grade')
+    gef_students = students.joins(:grade_entry_students)
+                           .where('grade_entry_students.released_to_student': released)
+                           .pluck('role_id',
+                                  'grade_entry_students.assessment_id',
+                                  'grade_entry_students.id')
 
-    gef_grades.each do |role_id, assessment_id, mark|
+    ges_marks = GradeEntryStudent.get_total_grades(gef_students.map(&:third))
+    gef_students.each do |role_id, assessment_id, grade_entry_student_id|
       max_mark = @gef_max_marks[assessment_id]
+
+      mark = ges_marks[grade_entry_student_id]
       student_data[role_id][:assessment_marks][assessment_id] = {
         mark: mark,
         percentage: mark.nil? || max_mark.nil? ? nil : (mark * 100 / max_mark).round(2)

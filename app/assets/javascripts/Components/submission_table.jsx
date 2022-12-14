@@ -175,7 +175,7 @@ class RawSubmissionTable extends React.Component {
     },
     markingStateColumn(this.state.marking_states, this.state.markingStateFilter, {minWidth: 70}),
     {
-      Header: I18n.t("activerecord.attributes.result.total_mark"),
+      Header: I18n.t("results.total_mark"),
       accessor: "final_grade",
       Cell: row => {
         const value =
@@ -226,14 +226,19 @@ class RawSubmissionTable extends React.Component {
   };
 
   // Submission table actions
-  collectSubmissions = override => {
+  collectSubmissions = (override, collect_current, apply_late_penalty) => {
     this.setState({showCollectSubmissionsModal: false});
     $.post({
       url: Routes.collect_submissions_course_assignment_submissions_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      data: {groupings: this.props.selection, override: override},
+      data: {
+        groupings: this.props.selection,
+        override: override,
+        collect_current: collect_current,
+        apply_late_penalty: apply_late_penalty,
+      },
     });
   };
 
