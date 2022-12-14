@@ -10,9 +10,8 @@ class CollectSubmissionsModal extends React.Component {
     super(props);
     this.state = {
       override: this.props.override,
-      collect_time: "collect_due_date",
-      collect_current: false,
-      apply_late_penalty: true,
+      collect_time: this.props.isScannedExam ? "collect_current" : "collect_due_date",
+      apply_late_penalty: !this.props.isScannedExam,
     };
   }
 
@@ -106,7 +105,7 @@ class CollectSubmissionsModal extends React.Component {
                   />
                 </label>
               </p>
-              {this.state.collect_time === "collect_current" && (
+              {this.state.collect_time === "collect_current" && !this.props.isScannedExam && (
                 <p>
                   <label>
                     <input
