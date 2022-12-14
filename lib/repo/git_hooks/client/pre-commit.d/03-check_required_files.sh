@@ -13,13 +13,13 @@ echo "$CHANGED_FILES" | while read -r status path; do
     continue
   fi
 
-  required_files=$(echo "$assignment_requirements" | cut -d' ' -f 1)
+  required_files=$(echo "$assignment_requirements" | sed 's/true$\|false$//g')
 
   case "$status" in
     A)
-      if ! echo "$assignment_requirements" | grep -q "$path "; then
+      if ! echo "$assignment_requirements" | grep -q "^$path"; then
         # The added file is not one of the required files
-        if echo "$assignment_requirements" | cut -d' ' -f 2 | grep -q true; then
+        if echo "$assignment_requirements" | grep -q 'true$'; then
           # The assignment only allows required files to be submitted
           printf "[MarkUs] Error: You are submitting %s but this assignment only requires:\n\n%s\n" "$path" "$required_files"
           exit 1
@@ -29,15 +29,15 @@ echo "$CHANGED_FILES" | while read -r status path; do
       fi
       ;;
     D)
-      if echo "$assignment_requirements" | grep -q "$path "; then
+      if echo "$assignment_requirements" | grep -q "^$path"; then
         # The deleted file is one of the required files
         echo "[MarkUs] Warning: You are deleting required file $path."
       fi
       ;;
     M)
-      if ! echo "$assignment_requirements" | grep -q "$path "; then
+      if ! echo "$assignment_requirements" | grep -q "^$path"; then
         # The modified file is not one of the required files
-        if echo "$assignment_requirements" | cut -d' ' -f 2 | grep -q true; then
+        if echo "$assignment_requirements" | grep -q 'true$'; then
           # The assignment only allows required files to be submitted
           printf "[MarkUs] Warning: You are modifying non-required file %s but this assignment only requires:\n\n%s\n" "$path" "$required_files"
         fi
@@ -54,5 +54,5 @@ done)
 
 echo "$REQUIREMENTS" | grep "${CHANGED_ASSIGNMENT_PATTERN%?}" | while IFS= read -r line; do
   required_file=${line% *}
-  echo "$ALL_FILES" | grep -q "$required_file" || echo "[MarkUs] Warning: required file $required_file is missing."
+  echo "$ALL_FILES" | grep -q "^$required_file$" || echo "[MarkUs] Warning: required file $required_file is missing."
 done

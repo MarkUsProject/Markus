@@ -8,7 +8,7 @@ NEW_COMMIT=$3
 [ "$REF_NAME" = 'refs/heads/master' ] || exit 0
 
 # allow MarkUs itself to make top level changes (see config/application.rb)
-[ -n "$SKIP_LOCAL_GIT_HOOKS" ] || exit 0
+[ -n "$SKIP_LOCAL_GIT_HOOKS" ] && exit 0
 
 OLD_LS=$(git ls-tree --full-tree --name-only "$OLD_COMMIT")
 NEW_LS=$(git ls-tree --full-tree --name-only "$NEW_COMMIT")
