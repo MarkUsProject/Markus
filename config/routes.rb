@@ -502,6 +502,7 @@ Rails.application.routes.draw do
             get 'get_config'
             post 'launch'
             post 'redirect_login'
+            get 'redirect_login'
           end
         end
       end

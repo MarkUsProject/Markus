@@ -13,7 +13,8 @@ class LtiDeployment < ApplicationRecord
                  custom: 'https://purl.imsglobal.org/spec/lti/claim/custom',
                  names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
                  ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
-                 deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id' }.freeze
+                 deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id',
+                 user_launch_data: 'https://purl.imsglobal.org/spec/lti/claim/lti1p1' }.freeze
   LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner' }.freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
