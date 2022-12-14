@@ -118,7 +118,7 @@ export class SummaryPanel extends React.Component {
     }
     let currentTotal = (
       <div className="highlight-bar">
-        <span>{I18n.t("activerecord.attributes.result.total_mark")}</span>
+        <span>{I18n.t("results.total_mark")}</span>
         <span className="float-right">
           <span>{this.props.total}</span>
           &nbsp;/&nbsp;

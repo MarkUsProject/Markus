@@ -34,8 +34,7 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.server_hooks
-    { update: "#{::Rails.root}/lib/repo/git_hooks/multihook.py",
-      'post-receive': "#{::Rails.root}/lib/repo/git_hooks/multihook.py" }
+    "#{::Rails.root}/lib/repo/git_hooks/server"
   end
 
   def self.client_hooks
@@ -55,6 +54,7 @@ class GitRepository < Repository::AbstractRepository
     # Repo is created bare, then clone it in the repository storage location
     barepath = bare_path(connect_string)
     self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
+      FileUtils.mkdir_p(File.dirname(barepath))
       Rugged::Repository.init_at(barepath, :bare)
       bare_config = Rugged::Config.new(File.join(barepath, 'config'))
       bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
@@ -63,32 +63,29 @@ class GitRepository < Repository::AbstractRepository
       FileUtils.rm_rf(tmp_repo_path)
       repo = Rugged::Repository.clone_at(barepath, tmp_repo_path)
 
-      # Do an initial commit with the .required_files.json
+      # Do an initial commit with the .required file
       required = course.get_required_files
-      required_path = File.join(tmp_repo_path, '.required.json')
-      File.write(required_path, required.to_json)
-      repo.index.add('.required.json')
+      required_path = File.join(tmp_repo_path, '.required')
+      File.write(required_path, required)
+      repo.index.add('.required')
+
+      # Do an initial commit with the .max_file_size file
+      max_file_size_path = File.join(tmp_repo_path, '.max_file_size')
+      File.write(max_file_size_path, course.max_file_size.to_s)
+      repo.index.add('.max_file_size')
 
       # Add client-side hooks
       dest = File.join(tmp_repo_path, 'markus-hooks')
       FileUtils.copy_entry client_hooks, dest
-      too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
-      content = File.open(too_large_hook) do |f|
-        f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{course.max_file_size_settings}")
-      end
-      File.write(too_large_hook, content)
-      FileUtils.chmod 0o755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
+
+      FileUtils.chmod(0o755, Dir.glob(File.join(tmp_repo_path, 'markus-hooks', '**', '*')).select { |f| File.file?(f) })
       repo.index.add_all('markus-hooks')
 
       # Set up server-side hooks
-      server_hooks.each do |hook_symbol, hook_script|
-        FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
-      end
-      max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size' + course.name
-      unless File.exist?(max_file_size_file)
-        max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size' + '.default'
-      end
-      FileUtils.ln_s(max_file_size_file, File.join(barepath, 'hooks', 'max_file_size'))
+      dest = File.join(barepath, 'hooks')
+      FileUtils.rm_rf dest
+      FileUtils.copy_entry server_hooks, dest
+      FileUtils.chmod(0o755, Dir.glob(File.join(dest, '**', '*')).select { |f| File.file?(f) })
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
     rescue StandardError
@@ -297,6 +294,9 @@ class GitRepository < Repository::AbstractRepository
     @connect_string.rpartition(File::SEPARATOR)[2]
   end
 
+  # Gets the repository connection string
+  attr_reader :connect_string
+
   # Given a RevisionFile object, returns its content as a string.
   def stringify(file)
     revision = get_revision(file.from_revision)
@@ -409,8 +409,7 @@ class GitRepository < Repository::AbstractRepository
   ####################################################################
 
   # Helper method to generate all the permissions for students for all groupings in all assignments.
-  # This is done as a single operation to mirror the SVN repo code. We found
-  # a substantial performance improvement by writing the auth file only once in the SVN case.
+  # This is done as a single operation to mirror the SVN repo code.
   def self.update_permissions_file(permissions)
     # If we're not in authoritative mode, bail out
     unless Settings.repository.is_repository_admin

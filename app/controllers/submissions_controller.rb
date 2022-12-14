@@ -140,7 +140,7 @@ class SubmissionsController < ApplicationController
       entries: entries,
       only_required_files: assignment.only_required_files,
       required_files: assignment.assignment_files.pluck(:filename).sort,
-      max_file_size: assignment.course.max_file_size_settings / 1_000_000,
+      max_file_size: assignment.course.max_file_size / 1_000_000,
       number_of_missing_files: grouping.missing_assignment_files(@revision).length
     }
 
@@ -180,6 +180,8 @@ class SubmissionsController < ApplicationController
       head :bad_request
       return
     end
+    collect_current = params[:collect_current] == 'true'
+    apply_late_penalty = params[:apply_late_penalty] == 'true'
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     collectable = []
@@ -191,7 +193,7 @@ class SubmissionsController < ApplicationController
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
-      unless is_scanned_exam
+      unless is_scanned_exam || collect_current
         collect_now = collection_dates[grouping.id] <= Time.current
         some_before_due = true unless collect_now
         next unless collect_now
@@ -203,7 +205,9 @@ class SubmissionsController < ApplicationController
     end
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
-                                                  collection_dates: collection_dates.transform_keys(&:to_s))
+                                                  collection_dates: collection_dates.transform_keys(&:to_s),
+                                                  collect_current: collect_current,
+                                                  apply_late_penalty: apply_late_penalty)
       session[:job_id] = @current_job.job_id
     end
     if some_before_due
@@ -467,8 +471,9 @@ class SubmissionsController < ApplicationController
 
   def download
     preview = params[:preview] == 'true'
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
 
-    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview
+    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
       redirect_to action: :notebook_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -530,7 +535,7 @@ class SubmissionsController < ApplicationController
       submission_time: t('submissions.commit_date'),
       grace_credits_used: t('submissions.grace_credits_used'),
       marking_state: t('activerecord.attributes.result.marking_state'),
-      final_grade: t('activerecord.attributes.result.total_mark'),
+      final_grade: t('results.total_mark'),
       tags: t('activerecord.models.tag.other')
     }
     header.delete(:start_time) unless assignment.is_timed
@@ -655,7 +660,7 @@ class SubmissionsController < ApplicationController
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, create: true) do |zip_file|
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision)
       end
 
       send_file zip_path, filename: zip_name + '.zip'
@@ -712,8 +717,8 @@ class SubmissionsController < ApplicationController
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
     ssh_url = allowed_to?(:view?, with: KeyPairPolicy) && params[:url_type] == 'ssh'
-    svn_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
-    send_data svn_commands.join("\n"),
+    checkout_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
+    send_data checkout_commands.join("\n"),
               disposition: 'attachment',
               type: 'text/plain',
               filename: "#{assignment.short_identifier}_repo_checkouts"
@@ -765,7 +770,7 @@ class SubmissionsController < ApplicationController
       FileUtils.mkdir_p(cache_file.dirname)
       if type == 'jupyter-notebook'
         args = [
-          File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
+          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s
         ]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)

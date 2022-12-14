@@ -21,7 +21,7 @@ describe Ta do
       context 'when TAs are not assigned criteria' do
         it 'returns the grades for their assigned groupings based on total marks' do
           expected = ta.groupings.where(assessment_id: assignment.id).map do |g|
-            g.current_result.total_mark / assignment.max_mark * 100
+            g.current_result.get_total_mark / assignment.max_mark * 100
           end
 
           actual = ta.percentage_grades_array(assignment)

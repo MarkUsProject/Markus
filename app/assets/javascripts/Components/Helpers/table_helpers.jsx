@@ -1,6 +1,4 @@
 import React from "react";
-import * as I18n from "i18n-js";
-import "translations";
 
 /**
  * @file

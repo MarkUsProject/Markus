@@ -1,0 +1,53 @@
+<%= javascript_tag nonce: true do %>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('lti-selector').addEventListener('click', () => {
+      const formElem = document.getElementById('lti-course-table');
+      if (getComputedStyle(formElem).display === 'none') {
+        formElem.style.display = 'block';
+      } else {
+        formElem.style.display = 'none';
+      }
+    })
+  })
+<% end %>
+<div class="lti-flash">
+  <%= render partial: 'shared/flash_message' %>
+</div>
+<div class="course-selector">
+  <% if @real_user.admin_courses.empty? %>
+    <div id="no-courses-available"><h3><%= t('lti.no_courses') %></h3></div>
+  <% else %>
+    <div id="lti-course-info">
+      <h3><%=t('lti.course_select_instructions') %></h3>
+    </div>
+    <div class="lti-course-selector">
+      <a class="button" id="lti-selector"><%=t('lti.select_course', course_name: @lti_deployment.lms_course_name) %></a>
+    </div>
+    <div id="lti-course-table" class="no-display">
+    <%= form_with(local:true) do |f| %>
+      <div class="table">
+        <table>
+          <thead>
+          <tr>
+            <th><%= Course.model_name.human %></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @real_user.admin_courses.each do |course| %>
+            <tr>
+              <td>
+                <%= f.label :course, "#{course.name}: #{course.display_name}", value: course.id %>
+                <%= f.radio_button 'course', course.id %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div><%= f.submit t('save'), class: 'button' %></div>
+    <% end %>
+    </div>
+    <div id='selector-or-container' class=""><h4 id="selector-or"><%= I18n.t('or').upcase %></h4></div>
+    <%= render partial: 'new_course' %>
+  <% end %>
+</div>

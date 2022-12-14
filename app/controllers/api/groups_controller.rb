@@ -96,8 +96,6 @@ module Api
           return
         end
       end
-      result.reload
-      result.update_total_mark
       result.save
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
@@ -116,7 +114,6 @@ module Api
             e.message }, status: :internal_server_error
         return
       end
-      result.update_total_mark
       render 'shared/http_status', locals: { code: '200', message:
           'Extra mark created successfully' }, status: :ok
     end
@@ -140,7 +137,6 @@ module Api
             e.message }, status: :internal_server_error
         return
       end
-      result.update_total_mark
       # Successfully deleted the Extra Mark; render success
       render 'shared/http_status', locals: { code: '200', message:
           'Extra mark removed successfully' }, status: :ok

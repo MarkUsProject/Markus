@@ -3,20 +3,26 @@
 # install bundle gems if not up to date with the Gemfile.lock file
 bundle check 2>/dev/null || bundle install --without unicorn
 
-# install yarn packages
-yarn install
+# install node packages
+npm list &> /dev/null || npm ci
 
 # install python packages
-python3 -m venv ./venv
-./venv/bin/pip install -r requirements.txt
+[ -f ./venv/bin/python3 ] || python3 -m venv ./venv
+./venv/bin/python3 -m pip install --upgrade pip > /dev/null
+./venv/bin/python3 -m pip install -r requirements-jupyter.txt -r requirements-scanner.txt > /dev/null
 
 # setup the database (checks for db existence first)
-cp .dockerfiles/database.yml.postgresql config/database.yml
-until psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/postgres" -lqt &>/dev/null; do
+until pg_isready -q; do
   echo "waiting for database to start up"
   sleep 5
 done
-psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}" -lqt 2> /dev/null | cut -d \| -f 1 | grep -wq "${PGDATABASE}" || rails db:setup
+
+# sets up the database if it doesn't exist
+cp .dockerfiles/database.yml.postgresql config/database.yml
+bundle exec rails db:prepare
+
+# strip newlines from end of structure.sql (revert when/if https://github.com/rails/rails/pull/46454 is implemented)
+sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' /app/db/structure.sql
 
 rm -f ./tmp/pids/server.pid
 

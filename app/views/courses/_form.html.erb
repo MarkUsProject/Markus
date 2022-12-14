@@ -16,6 +16,18 @@
                      size: 35,
                      required: true,
                      readonly: !allowed_to?(:edit?) %>
+    <%= f.label :max_file_size, Course.human_attribute_name(:max_file_size) %>
+    <%= f.number_field :max_file_size,
+                       size: 35,
+                       min: 0,
+                       class: 'fixed-width',
+                       readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
+    <%= f.label :autotest_url,
+                AutotestSetting.human_attribute_name(:url) %>
+    <%= f.text_field :autotest_url,
+                     size: 35,
+                     value: @current_course.autotest_setting&.url,
+                     readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
     <%= f.label :is_hidden, Course.human_attribute_name(:is_hidden) %>
     <span>
       <%= f.label :is_hidden, I18n.t('courses.hidden'), value: 'true' %>
@@ -28,4 +40,34 @@
     <%= f.submit t(:save),
                  data: { disable_with: t('working') } %>
   </p>
+<% end %>
+<% if @current_course.persisted? && allowed_to?(:edit?, with: Admin::CoursePolicy) %>
+  <fieldset id="manage-connection" class="<%= @current_course.autotest_setting_id ? '' : 'no-display' %>">
+    <legend><span><%= t('automated_tests.manage_connection.title') %></span></legend>
+    <div>
+      <%= link_to I18n.t('automated_tests.manage_connection.test'),
+                  test_autotest_connection_admin_course_path(@current_course),
+                  method: :get,
+                  class: 'button',
+                  remote: true %>
+      <div class='inline-help'>
+        <p>
+          <%= I18n.t('automated_tests.manage_connection.test_tooltip', url: @current_course.autotest_setting&.url) %>
+        </p>
+      </div>
+    </div>
+    <br>
+    <div>
+      <%= link_to I18n.t('automated_tests.manage_connection.refresh'),
+                  reset_autotest_connection_admin_course_path(@current_course),
+                  method: :put,
+                  class: 'button',
+                  data: { confirm: I18n.t('automated_tests.manage_connection.warning_test_cancel') } %>
+      <div class='inline-help'>
+        <p>
+          <%= I18n.t('automated_tests.manage_connection.refresh_tooltip', url: @current_course.autotest_setting&.url) %>
+        </p>
+      </div>
+    </div>
+  </fieldset>
 <% end %>

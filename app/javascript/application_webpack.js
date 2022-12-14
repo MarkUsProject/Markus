@@ -35,9 +35,9 @@ Rails.start();
 window.Rails = Rails;
 
 // i18n-js
-import * as I18n from "i18n-js";
-import "translations";
-window.I18n = I18n;
+import {I18n} from "i18n-js";
+import translations from "translations.json";
+window.I18n = new I18n(translations);
 
 // JCrop
 import Jcrop from "jcrop";

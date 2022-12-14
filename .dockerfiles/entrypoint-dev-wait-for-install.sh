@@ -6,9 +6,9 @@ until bundle check &> /dev/null; do
   sleep 5
 done
 
-# wait until yarn packages are installed
-until yarn install --immutable --immutable-cache &>/dev/null; do
-  echo "waiting for yarn packages to be installed"
+# wait until npm packages are installed
+until npm list &>/dev/null; do
+  echo "waiting for npm packages to be installed"
   sleep 5
 done
 

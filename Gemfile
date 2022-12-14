@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.3'
+gem 'rails', '~> 7.0.4'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -19,7 +19,6 @@ gem 'pluck_to_hash'
 gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'libv8'
 gem 'sass-rails'
 gem 'terser'
 
@@ -79,7 +78,7 @@ group :development do
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
   gem 'bullet'
-  gem 'rails-erd'
+  gem 'listen' # to listen for changes in i18n-js files
 end
 
 group :test do
@@ -101,7 +100,7 @@ group :development, :test do
   gem 'byebug'
   gem 'capybara'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 5.1.2'
+  gem 'rspec-rails', '~> 6.0.1'
   gem 'selenium-webdriver'
 end
 

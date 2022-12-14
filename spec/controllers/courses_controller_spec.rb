@@ -58,6 +58,32 @@ describe CoursesController do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: second_instructor.user_name }
           expect(response).to have_http_status(:unprocessable_entity)
         end
+
+        it 'fails to switch to an admin' do
+          admin = create(:admin_role, course: course)
+          post_as instructor, :switch_role, params: { id: course.id, effective_user_login: admin.user_name }
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        context 'if the current user is an admin' do
+          let(:admin_role) { create :admin_role, course: course }
+
+          it 'fails the switch to the current admin' do
+            post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin_role.user_name }
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+
+          it 'switches to another instructor' do
+            post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: instructor.user_name }
+            expect(response).to have_http_status(:success)
+          end
+
+          it 'fails to switch to another admin' do
+            admin = create(:admin_role, course: course)
+            post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin.user_name }
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+        end
       end
 
       context 'when switching to a student in the course' do
@@ -208,6 +234,31 @@ describe CoursesController do
                  params: { id: course.id, course: { name: 'CS101' } }
           updated_course = Course.find(course.id)
           expect(updated_course.name).not_to eq('CS101')
+        end
+        context 'updating the autotest_url' do
+          it 'does not update the autotest_url as an instructor' do
+            expect(AutotestResetUrlJob).not_to receive(:perform_later)
+            put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end
+          it 'does update the autotest_url as an admin' do
+            expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+              expect(course_).to eq course
+              expect(url).to eq 'http://example.com'
+              nil # mocked return value
+            end
+            put_as create(:admin_role), :update,
+                   params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end
+        end
+        it 'does not update the max_file_size as an instructor' do
+          put_as instructor, :update, params: { id: course.id, course: { max_file_size: 200 } }
+          updated_course = Course.find(course.id)
+          expect(updated_course.max_file_size).not_to eq(200)
+        end
+        it 'does update the max_file_size as an admin' do
+          put_as create(:admin_role), :update, params: { id: course.id, course: { max_file_size: 200 } }
+          updated_course = Course.find(course.id)
+          expect(updated_course.max_file_size).to eq(200)
         end
         it 'does not update when parameters are invalid' do
           expected_course_data = {

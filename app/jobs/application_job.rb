@@ -7,6 +7,14 @@ class ApplicationJob < ActiveJob::Base
     '() => {}'
   end
 
+  def self.on_success_js(_status)
+    '() => {}'
+  end
+
+  def self.on_failure_js(_status)
+    '() => {}'
+  end
+
   def self.show_status(status)
     I18n.t('poll_job.working_message', progress: status[:progress], total: status[:total])
   end

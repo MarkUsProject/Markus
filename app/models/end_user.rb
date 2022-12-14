@@ -5,7 +5,7 @@ class EndUser < User
   ).map(&:to_sym).freeze
 
   def visible_courses
-    self.courses.where.not('roles.type': 'Student')
-        .or(self.courses.where('courses.is_hidden': false, 'roles.hidden': false))
+    self.courses.where('roles.hidden': false)
+        .where.not('courses.is_hidden': true, 'roles.type': 'Student')
   end
 end

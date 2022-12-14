@@ -1,7 +1,7 @@
 describe TestGroupResult do
   subject { create :test_group_result }
   it { is_expected.to have_many(:test_results) }
-  it { is_expected.to belong_to(:test_group).optional }
+  it { is_expected.to belong_to(:test_group) }
   it { is_expected.to belong_to(:test_run) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }

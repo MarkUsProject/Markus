@@ -137,14 +137,12 @@ class AnnotationCategory < ApplicationRecord
     unless new_criterion.nil?
       results_to_update.each do |result|
         result.marks.find_or_create_by(criterion_id: new_criterion.id).update_deduction
-        result.update_total_mark
       end
     end
 
     unless prev_criterion.nil?
       results_to_update.each do |result|
         result.marks.find_or_create_by(criterion_id: prev_criterion.id).update_deduction
-        result.update_total_mark
       end
     end
   end

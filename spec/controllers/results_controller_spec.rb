@@ -107,12 +107,22 @@ describe ResultsController do
       end
       context 'file is a jupyter-notebook file' do
         let(:filename) { 'example.ipynb' }
-        it 'should redirect to "notebook_content"' do
-          expect(subject).to(
-            redirect_to(notebook_content_course_assignment_submissions_path(course,
-                                                                            assignment,
-                                                                            select_file_id: submission_file.id))
-          )
+        let(:redirect_location) do
+          notebook_content_course_assignment_submissions_path(course,
+                                                              assignment,
+                                                              select_file_id: submission_file.id)
+        end
+        context 'and the python dependencies are installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
+          it 'should redirect to "notebook_content"' do
+            expect(subject).to(redirect_to(redirect_location))
+          end
+        end
+        context 'and the python dependencies are not installed' do
+          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+          it 'should not redirect to "notebook_content"' do
+            expect(subject).not_to(redirect_to(redirect_location))
+          end
         end
       end
       context 'file is a rmarkdown file' do
@@ -187,8 +197,7 @@ describe ResultsController do
         end
         @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
         @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
-        submission_file_dir = "#{assignment.repository_folder}-#{grouping.group.repo_name}"
-        @submission_file_path = File.join(submission_file_dir, SAMPLE_FILE_NAME)
+        @submission_file_path = SAMPLE_FILE_NAME
       end
       after :each do
         FileUtils.rm_f @file_path_ann
@@ -348,27 +357,27 @@ describe ResultsController do
         context 'but cannot save the mark' do
           before :each do
             allow_any_instance_of(ExtraMark).to receive(:save).and_return false
-            @old_mark = submission.get_latest_result.total_mark
+            @old_mark = submission.get_latest_result.get_total_mark
             post :add_extra_mark, params: { course_id: course.id,
                                             id: submission.get_latest_result.id,
                                             extra_mark: { extra_mark: 1 } }, xhr: true
           end
           it { expect(response).to have_http_status(:bad_request) }
           it 'should not update the total mark' do
-            expect(@old_mark).to eq(submission.get_latest_result.total_mark)
+            expect(@old_mark).to eq(submission.get_latest_result.get_total_mark)
           end
         end
         context 'and can save the mark' do
           before :each do
             allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
-            @old_mark = submission.get_latest_result.total_mark
+            @old_mark = submission.get_latest_result.get_total_mark
             post :add_extra_mark, params: { course_id: course.id,
                                             id: submission.get_latest_result.id,
                                             extra_mark: { extra_mark: 1 } }, xhr: true
           end
           it { expect(response).to have_http_status(:success) }
           it 'should update the total mark' do
-            expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
+            expect(@old_mark + 1).to eq(submission.get_latest_result.get_total_mark)
           end
         end
       end
@@ -376,8 +385,7 @@ describe ResultsController do
     context 'accessing remove_extra_mark' do
       before :each do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
-        submission.get_latest_result.update_total_mark
-        @old_mark = submission.get_latest_result.total_mark
+        @old_mark = submission.get_latest_result.get_total_mark
         delete :remove_extra_mark, params: { course_id: course.id,
                                              id: submission.get_latest_result.id,
                                              extra_mark_id: extra_mark.id }, xhr: true
@@ -385,8 +393,7 @@ describe ResultsController do
       test_no_flash
       it { expect(response).to have_http_status(:success) }
       it 'should change the total value' do
-        submission.get_latest_result.update_total_mark
-        expect(@old_mark).not_to eq incomplete_result.total_mark
+        expect(@old_mark).not_to eq incomplete_result.get_total_mark
       end
     end
 
@@ -961,6 +968,7 @@ describe ResultsController do
         expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
       end
     end
+
     describe '#refresh_view_tokens' do
       let(:assignment) { create :assignment_with_criteria_and_results }
       let(:results) { assignment.current_results }
@@ -1053,6 +1061,7 @@ describe ResultsController do
         end
       end
     end
+
     describe '#download_view_tokens' do
       let(:assignment) { create :assignment_with_criteria_and_results }
       let(:results) { assignment.current_results }
@@ -1446,7 +1455,7 @@ describe ResultsController do
         }
       end
       context 'accessing add_extra_mark' do
-        let!(:old_mark) { submission.get_latest_result.total_mark }
+        let!(:old_mark) { submission.get_latest_result.get_total_mark }
         before :each do
           post :add_extra_mark, params: { course_id: course.id,
                                           id: submission.get_latest_result.id,
@@ -1454,14 +1463,13 @@ describe ResultsController do
         end
         it { expect(response).to have_http_status(:forbidden) }
         it 'should not update the total mark' do
-          expect(old_mark).to eq(submission.get_latest_result.total_mark)
+          expect(old_mark).to eq(submission.get_latest_result.get_total_mark)
         end
       end
       context 'accessing remove_extra_mark' do
         let!(:extra_mark) { create(:extra_mark_points, result: submission.get_latest_result) }
         let!(:old_mark) do
-          submission.get_latest_result.update_total_mark
-          submission.get_latest_result.total_mark
+          submission.get_latest_result.get_total_mark
         end
         before :each do
           delete :remove_extra_mark, params: { course_id: course.id,
@@ -1471,8 +1479,7 @@ describe ResultsController do
         test_no_flash
         it { expect(response).to have_http_status(:forbidden) }
         it 'should not change the total value' do
-          submission.get_latest_result.update_total_mark
-          expect(old_mark).to eq incomplete_result.total_mark
+          expect(old_mark).to eq incomplete_result.get_total_mark
         end
       end
       context 'accessing download' do

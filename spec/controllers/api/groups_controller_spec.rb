@@ -322,7 +322,7 @@ describe Api::GroupsController do
     context 'POST add_extra_marks' do
       let(:submission) { create(:version_used_submission, grouping: grouping) }
       context 'add extra_mark' do
-        let(:old_mark) { submission.get_latest_result.total_mark }
+        let(:old_mark) { submission.get_latest_result.get_total_mark }
         before :each do
           old_mark
           post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
@@ -338,17 +338,12 @@ describe Api::GroupsController do
           added_extra_mark = result.extra_marks.last
           expect(added_extra_mark.extra_mark).to eq(10.0)
         end
-        it 'should update total_mark' do
-          result = submission.get_latest_result
-          new_total_mark = result.total_mark
-          expect(old_mark + 10.0).to eq(new_total_mark)
-        end
         it 'should respond with 200' do
           expect(response.status).to eq(200)
         end
       end
       context 'add wrong extra_mark' do
-        let(:old_mark) { submission.get_latest_result.total_mark }
+        let(:old_mark) { submission.get_latest_result.get_total_mark }
         before :each do
           old_mark
           post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
@@ -364,7 +359,7 @@ describe Api::GroupsController do
         end
         it 'should not update the total mark' do
           result = submission.get_latest_result
-          new_total_mark = result.total_mark
+          new_total_mark = result.get_total_mark
           expect(old_mark).to eq(new_total_mark)
         end
       end
@@ -428,7 +423,7 @@ describe Api::GroupsController do
           create(:extra_mark_points, description: 'sample', extra_mark: 10.0, result: submission.get_latest_result)
         end
         context 'remove extra_mark' do
-          let(:old_mark) { submission.get_latest_result.total_mark + extra_mark.extra_mark }
+          let(:old_mark) { submission.get_latest_result.get_total_mark + extra_mark.extra_mark }
           before :each do
             old_mark
             delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
@@ -440,7 +435,7 @@ describe Api::GroupsController do
           end
           it 'should update total mark' do
             result = submission.get_latest_result
-            new_total_mark = result.total_mark
+            new_total_mark = result.get_total_mark
             expect(old_mark - 10.0).to eq(new_total_mark)
           end
           it 'should respond with 200' do
@@ -448,7 +443,7 @@ describe Api::GroupsController do
           end
         end
         context 'remove extra_mark which does not exist' do
-          let(:old_mark) { submission.get_latest_result.total_mark }
+          let(:old_mark) { submission.get_latest_result.get_total_mark }
           before :each do
             old_mark
             delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
@@ -463,7 +458,7 @@ describe Api::GroupsController do
           end
           it 'should not update the total mark' do
             result = submission.get_latest_result
-            new_total_mark = result.total_mark
+            new_total_mark = result.get_total_mark
             expect(old_mark).to eq(new_total_mark)
           end
         end

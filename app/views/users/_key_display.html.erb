@@ -3,7 +3,7 @@
     <%= User.human_attribute_name(:api_key) %>
     <div class='help'>
       <p>
-        <%= t('users.api_key.help_html', markus_version: @markus_version,) %>
+        <%= t('users.api_key.help_html', markus_version: Rails.configuration.markus_version,) %>
       </p>
     </div>
   </h2>

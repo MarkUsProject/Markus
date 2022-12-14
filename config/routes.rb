@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resources :courses, only: [:index, :show, :create, :update] do
       member do
         put 'update_autotest_url'
+        get 'test_autotest_connection'
+        put 'reset_autotest_connection'
       end
       resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
@@ -89,7 +91,12 @@ Rails.application.routes.draw do
         post 'upload'
       end
     end
-    resources :courses, only: [:index, :new, :create, :edit, :update]
+    resources :courses, only: [:index, :new, :create, :edit, :update] do
+      member do
+        get 'test_autotest_connection'
+        put 'reset_autotest_connection'
+      end
+    end
     get '/', controller: 'main_admin', action: 'index'
 
     mount Resque::Server.new, at: '/resque', as: 'resque'
@@ -298,7 +305,6 @@ Rails.application.routes.draw do
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           post 'run_tests'
-          get 'download_svn_export_list'
           get 'download_repo_checkout_commands'
           get 'download_repo_list'
           post 'set_result_marking_state'
@@ -487,14 +493,24 @@ Rails.application.routes.draw do
   end
 
   unless Rails.env.production?
-    namespace :lti_deployment do
-      get 'get_canvas_config'
-      post 'launch'
-      get 'public_jwk'
-      post 'redirect_login'
-      get 'choose_course'
-      post 'choose_course'
-      post 'create_course'
+    resources :lti_deployments, only: [] do
+      collection do
+        get 'public_jwk'
+        post 'create_lti_grades'
+        resources :canvas, only: [] do
+          collection do
+            get 'get_config'
+            post 'launch'
+            post 'redirect_login'
+            get 'redirect_login'
+          end
+        end
+      end
+      member do
+        get 'choose_course'
+        post 'choose_course'
+        post 'create_course'
+      end
     end
   end
 

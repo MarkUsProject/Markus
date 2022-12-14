@@ -2,11 +2,10 @@ namespace :db do
   desc 'Sets up environment to test the autotester'
   task autotest: :environment do
     include AutomatedTestsHelper
-    FileUtils.mkdir_p Settings.autotest.client_dir
     puts 'Set up testing environment for autotest'
-    autotest_setting = AutotestSetting.find_or_create_by!(url: ENV.fetch('AUTOTEST_URL', nil))
-    Course.first.update!(autotest_setting_id: autotest_setting.id)
-
+    markus_url = ENV.fetch('MARKUS_URL', nil) || raise('no MARKUS_URL environment variable is set')
+    autotest_url = ENV.fetch('AUTOTEST_URL', nil)
+    AutotestResetUrlJob.perform_now(Course.first, autotest_url, markus_url)
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|
       setup = AutotestSetup.new dir_path
@@ -52,7 +51,7 @@ class AutotestSetup
     @schema_data = JSON.parse(@assignment.course.autotest_setting.schema)
     fill_in_schema_data!(@schema_data, @test_scripts, @assignment)
 
-    @markus_url = ENV.fetch('MARKUS_URL', nil) || 'http://host.docker.internal:3000'
+    @markus_url = ENV.fetch('MARKUS_URL', nil) || raise('no MARKUS_URL environment variable is set')
   end
 
   # Setup seed data for this autotest assignment
@@ -157,7 +156,7 @@ class AutotestSetup
   def process_schema_data
     # Reload the data so the in memory collection proxy is updated.
     @assignment.reload
-    Assignment.transaction do
+    ApplicationRecord.transaction do
       update_test_groups_from_specs(@assignment, @specs_data)
 
       # Manually associate one of the test groups with the assignment's criterion
@@ -168,7 +167,9 @@ class AutotestSetup
   # Send +@assignment+'s specs to the autotester.
   # Note: the MarkUs server MUST be running before calling this method.
   def upload_specs
-    AutotestSpecsJob.perform_now(@markus_url, @assignment)
+    AutotestSpecsJob.perform_now(@markus_url, @assignment, @specs_data)
+    # Manually associate one of the test groups with the assignment's criterion
+    @assignment.test_groups.order(:name).first.update(criterion: @assignment.criteria.first)
   end
 
   # Send run tests for +@assignment+.

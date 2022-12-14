@@ -37,7 +37,7 @@ jobs:
       RSPEC_RENDER_VIEWS: true
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -47,28 +47,28 @@ jobs:
         with:
           ruby-version: ruby-2.7
           bundler-cache: true
-      - name: Set up node/yarn and cache packages
-        uses: actions/setup-node@v2
+      - name: Set up node and cache packages
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: yarn
-      - name: Install yarn packages
-        run: yarn install
+          cache: npm
+      - name: Install npm packages
+        run: npm ci
       - name: Install python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Install python packages
         run: |
           python3.9 -m venv venv
-          ./venv/bin/pip install -r requirements.txt
+          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt
       - name: Configure server
         run: |
           sudo rm -f /etc/localtime
@@ -83,10 +83,10 @@ jobs:
         uses: nanasess/setup-chromedriver@v1
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
-      - name: Create LTI key
-        run: bundle exec rails markus:lti_key
       - name: Run rspec tests
         run: bundle exec rspec
+        env:
+          MARKUS__PYTHON: ./venv/bin/python3
       - name: Run rspec system tests
         run: bundle exec rspec spec/system
       - name: Coveralls Parallel (rspec)
@@ -96,7 +96,7 @@ jobs:
           flag-name: rspec
           parallel: true
       - name: Run jest tests
-        run: yarn test-cov
+        run: npm run test-cov
       - name: Coveralls Parallel (jest)
         uses: coverallsapp/github-action@1.1.3
         with:

@@ -8,9 +8,26 @@ en:
     display_output_title: Display test output to students?
     files: Test Files
     invalid_specs_file: Settings file is not a valid json file
+    job_messages:
+      resetting_test_settings: Resetting test settings
+      resetting_test_settings_error: |-
+        Unable to update test settings for assignment %{short_identifier}: %{error}
+
+        Please try saving the settings again from the Automated Testing page.
+    manage_connection:
+      refresh: Refresh Settings
+      refresh_tooltip: Resend all test settings to the automated tester at %{url}. This should be used when the automated tester has been reset.
+      test: Test Connection
+      test_failure: 'Connection to %{url} failed with the following error: %{error}'
+      test_schema_failure: Connection to %{url} is successful but no test settings are available. Please refresh the settings and try again.
+      test_success: Connection to %{url} is successful
+      test_tooltip: Check if MarkUs can successfully connect the automated tester at %{url} and check if the settings are up to date.
+      title: Manage Connection To Automated Tester
+      warning_test_cancel: 'Warning: this will cancel any tests in progress. Do you want to continue?'
     need_group_for_test: You must have a group to run tests.
     need_one_file: You must submit at least one file in order to run tests.
     need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.
+    no_autotest_settings: No automated tester settings exist for this course. Please update the automated tester settings and try again.
     no_criteria: Unable to find a criterion with name "%{name}".
     no_results: No test results to display
     results:
@@ -29,5 +46,6 @@ en:
       failed: error
       in_progress: in progress
     testing_disabled: Automated testing is not enabled for this assignment.
+    tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     tests_running: Running tests. Please refresh this page in a bit to view the results.
     title: Automated Testing

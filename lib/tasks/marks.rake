@@ -160,8 +160,6 @@ namespace :db do
       }
 
       # Generate grades for the submission
-      total_mark = 0
-
       criteria[assignment_id].each do |criterion|
         override = false
         if criterion[:type] == 'RubricCriterion'
@@ -176,7 +174,6 @@ namespace :db do
         else
           random_mark = rand(0..criterion[:max_mark])
         end
-        total_mark += random_mark
         marks << {
           result_id: result_id,
           criterion_id: criterion[:id],
@@ -188,7 +185,6 @@ namespace :db do
       end
       results << {
         id: result_id,
-        total_mark: total_mark,
         marking_state: Result::MARKING_STATES[:complete],
         released_to_students: true,
         view_token: Result.generate_unique_secure_token
@@ -210,17 +206,15 @@ namespace :db do
     # Add marks to every student
     grade_entry_form.grade_entry_students.find_each do |student|
       # For each question, assign a random mark based on its out_of value
-      total_grade = 0
       grade_entry_form.grade_entry_items.each do |grade_entry_item|
         random_grade = 1 + rand(0...Integer(grade_entry_item.out_of))
-        total_grade += random_grade
         grades << {
           grade_entry_student_id: student.id,
           grade_entry_item_id: grade_entry_item.id,
           grade: random_grade
         }
       end
-      students << { id: student.id, role_id: student.role.id, total_grade: total_grade, released_to_student: true }
+      students << { id: student.id, role_id: student.role.id, released_to_student: true }
     end
 
     Grade.insert_all grades

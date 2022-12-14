@@ -13,3 +13,4 @@ en:
     models:
       grade_entry_form:
         one: Marks Spreadsheet
+        other: Marks Spreadsheets

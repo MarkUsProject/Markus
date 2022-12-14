@@ -35,9 +35,6 @@ describe AutomatedTestsController do
         file = fixture_file_upload('automated_tests/minimal_testers.json')
         assignment.course.autotest_setting.update!(schema: file.read)
       end
-      after do
-        FileUtils.rm_f File.join(Settings.autotest.client_dir, 'testers.json')
-      end
       it 'should respond with success' do
         subject
         expect(response.status).to eq 200
@@ -274,9 +271,6 @@ describe AutomatedTestsController do
       end
       context 'a valid json file' do
         let(:file) { fixture_file_upload 'automated_tests/valid_json.json' }
-        it 'should upload the file content' do
-          expect(autotest_settings_for(assignment)).to eq JSON.parse(file.read)
-        end
         it 'should return a success http status' do
           expect(response.status).to eq 200
         end

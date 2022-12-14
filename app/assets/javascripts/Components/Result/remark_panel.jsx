@@ -40,7 +40,6 @@ export class RemarkPanel extends React.Component {
         <TextForm
           initialValue={this.props.overallComment}
           persistChanges={value => this.props.updateOverallComment(value, true)}
-          previewId={"overall_remark_comment_preview"}
         />
       );
     }

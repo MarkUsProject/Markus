@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-until psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/postgres" -lqt &>/dev/null; do
+until pg_isready -q; do
   echo "waiting for database to start up"
   sleep 5
 done
-psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}" -lqt 2> /dev/null | cut -d \| -f 1 | grep -wq "${PGDATABASE}" || bundle exec rails db:create db:migrate
+
+bundle exec rails db:prepare
 
 rm -f ./tmp/pids/server.pid
 

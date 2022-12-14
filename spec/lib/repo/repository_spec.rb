@@ -181,6 +181,15 @@ describe Repository::AbstractRepository do
           expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
         end
       end
+      context 'when the assignment belongs to a hidden course' do
+        let(:assignment1) do
+          course = create(:course, is_hidden: true)
+          create :assignment, assignment_properties_attributes: { vcs_submit: true }, course: course
+        end
+        it 'should be empty' do
+          expect(Repository.get_class.get_repo_auth_records).to be_empty
+        end
+      end
     end
     context 'both assignments with vcs_submit == true and is_timed == true' do
       let(:assignment1) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
@@ -206,6 +215,85 @@ describe Repository::AbstractRepository do
             expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*inviter_ids)
           end
         end
+      end
+    end
+  end
+
+  describe '#get_all_permissions' do
+    let!(:course) { create :course }
+    let(:assignment) { create(:assignment_with_criteria_and_results_and_tas) }
+
+    context 'instructor permissions' do
+      let!(:instructor) { create :instructor, hidden: false }
+      it 'correctly retrieves permissions for instructors' do
+        instructor2 = create :instructor
+        accessible_path = File.join(course.name, '*')
+        expect(Repository.get_class.get_all_permissions[accessible_path]).to(
+          match_array([instructor.user_name, instructor2.user_name])
+        )
+      end
+      it 'does not retrieve permissions for inactive instructors' do
+        create :instructor, hidden: true
+        accessible_path = File.join(course.name, '*')
+        expect(Repository.get_class.get_all_permissions[accessible_path]).to(
+          match_array([instructor.user_name])
+        )
+      end
+    end
+
+    context 'ta permissions' do
+      let(:received_grader_permissions) do
+        grader_info = {}
+        permissions = Repository.get_class.get_all_permissions
+        assignment.ta_memberships.each do |membership|
+          repo_path = File.join(course.name, membership.grouping.group.repo_name)
+          grader_info[repo_path] = permissions[repo_path] if permissions[repo_path].present?
+        end
+        grader_info
+      end
+
+      it 'correctly retrieves permissions for graders' do
+        expected_grader_permissions = {}
+        assignment.ta_memberships.each do |membership|
+          repo_path = File.join(course.name, membership.grouping.group.repo_name)
+          expected_grader_permissions[repo_path] = [] if expected_grader_permissions[repo_path].blank?
+          expected_grader_permissions[repo_path] << membership.role.user_name
+        end
+        expect(received_grader_permissions).to eq(expected_grader_permissions)
+      end
+      it 'does not retrieve permissions for inactive graders' do
+        assignment.ta_memberships.each { |membership| membership.role.update(hidden: true) }
+        expect(received_grader_permissions).to eq({})
+      end
+    end
+
+    context 'student permissions' do
+      let(:assignment) do
+        create(:assignment_with_criteria_and_results, assignment_properties_attributes: { vcs_submit: true })
+      end
+
+      let(:received_student_permissions) do
+        student_info = {}
+        permissions = Repository.get_class.get_all_permissions
+        assignment.valid_groupings.each do |valid_grouping|
+          repo_name = valid_grouping.group.repository_relative_path
+          student_info[repo_name] = permissions[repo_name] if permissions[repo_name].present?
+        end
+        student_info
+      end
+
+      it 'correctly retrieves permissions for students' do
+        expected_student_permissions = {}
+        assignment.valid_groupings.each do |valid_grouping|
+          repo_name = valid_grouping.group.repository_relative_path
+          expected_student_permissions[repo_name] = valid_grouping.accepted_students
+                                                                  .where('roles.hidden': false).map(&:user_name)
+        end
+        expect(received_student_permissions).to eq(expected_student_permissions)
+      end
+      it 'does not retrieve permissions for inactive students' do
+        assignment.student_memberships.each { |membership| membership.role.update(hidden: true) }
+        expect(received_student_permissions).to eq({})
       end
     end
   end

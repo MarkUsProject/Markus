@@ -66,7 +66,7 @@ module Api
             else
               revision = repo.get_latest_revision
             end
-            repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
+            repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision)
           end
         end
 

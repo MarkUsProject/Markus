@@ -58,12 +58,13 @@ class PeerReviewsController < ApplicationController
                                    'results.id as result_id',
                                    'results.marking_state',
                                    'results.released_to_students',
-                                   'results.total_mark as final_grade',
                                    'groups.group_name as reviewer_name',
                                    'groups_groupings.group_name as reviewee_name'
                                  )
 
+    total_marks = Result.get_total_marks(peer_review_data.map { |data| data['result_id'] })
     peer_review_data.each do |data|
+      data[:final_grade] = total_marks['result_id']
       data[:marking_state] = data['results.released_to_students'] ? 'released' : data['results.marking_state']
       data[:max_mark] = assignment.peer_criteria.sum(&:max_mark)
     end

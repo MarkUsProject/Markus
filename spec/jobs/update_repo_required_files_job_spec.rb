@@ -2,12 +2,13 @@ describe UpdateRepoRequiredFilesJob do
   let(:assignment) { create :assignment }
   let(:user) { create :instructor }
   context 'when running as a background job' do
-    let(:job_args) { [assignment.id, user.user_name] }
+    let(:job_args) { [assignment.id] }
     include_examples 'background job'
   end
 
   context 'updating required files' do
-    # TODO: when we update tests to use in-memory git repos, actually test for presence/content of .required.json
+    include_context 'git'
+
     let!(:groupings) { create_list :grouping, 3, assignment: assignment }
     it 'should update every repo' do
       count = 0
@@ -15,16 +16,16 @@ describe UpdateRepoRequiredFilesJob do
       UpdateRepoRequiredFilesJob.perform_now(assignment.id)
       expect(count).to eq groupings.length
     end
-    it 'should update the .required.json file' do
+    it 'should update the .required file' do
       allow_any_instance_of(Repository::Transaction).to receive(:replace) do |_txn, *args|
-        expect(args[0]).to eq '.required.json'
+        expect(args[0]).to eq '.required'
       end
       UpdateRepoRequiredFilesJob.perform_now(assignment.id)
     end
     it 'should send the correct file content' do
-      required_files = assignment.course.get_required_files.stringify_keys.transform_values(&:stringify_keys)
+      required_files = assignment.course.get_required_files
       allow_any_instance_of(Repository::Transaction).to receive(:replace) do |_txn, *args|
-        expect(JSON.parse(args[1])).to eq required_files
+        expect(args[1]).to eq required_files
       end
       UpdateRepoRequiredFilesJob.perform_now(assignment.id)
     end

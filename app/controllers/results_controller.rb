@@ -266,7 +266,7 @@ class ResultsController < ApplicationController
                  "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
-    if @grouping.submitted_after_collection_date?
+    if @grouping.submitted_after_collection_date? && !@assignment.scanned_exam
       flash_message(:warning,
                     t('results.late_submission_warning_html',
                       url: repo_browser_course_assignment_submissions_path(@current_course, @assignment,
@@ -376,7 +376,7 @@ class ResultsController < ApplicationController
     end
 
     file = select_file
-    if params[:show_in_browser] == 'true' && file.is_pynb?
+    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
       redirect_to notebook_content_course_assignment_submissions_url(current_course,
                                                                      record.submission.grouping.assignment,
                                                                      select_file_id: params[:select_file_id])
@@ -431,7 +431,7 @@ class ResultsController < ApplicationController
     Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
           submission_file&.retrieve_file(
             include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
@@ -632,8 +632,6 @@ class ResultsController < ApplicationController
     @result = record
     @extra_mark = @result.extra_marks.build(extra_mark_params.merge(unit: ExtraMark::POINTS))
     if @extra_mark.save
-      # need to re-calculate total mark
-      @result.update_total_mark
       head :ok
     else
       head :bad_request
@@ -645,7 +643,6 @@ class ResultsController < ApplicationController
     extra_mark = result.extra_marks.find(params[:extra_mark_id])
 
     extra_mark.destroy
-    result.update_total_mark
     head :ok
   end
 

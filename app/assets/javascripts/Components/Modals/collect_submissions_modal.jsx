@@ -10,6 +10,8 @@ class CollectSubmissionsModal extends React.Component {
     super(props);
     this.state = {
       override: this.props.override,
+      collect_time: this.props.isScannedExam ? "collect_current" : "collect_due_date",
+      apply_late_penalty: !this.props.isScannedExam,
     };
   }
 
@@ -19,11 +21,24 @@ class CollectSubmissionsModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.override);
+    this.props.onSubmit(
+      this.state.override,
+      this.state.collect_time === "collect_current",
+      // Always apply late penalty when collecting based on due date
+      this.state.apply_late_penalty || this.state.collect_time === "collect_due_date"
+    );
   };
 
   handleOverrideChange = event => {
     this.setState({override: event.target.checked});
+  };
+
+  handleCollectTimeChange = event => {
+    this.setState({collect_time: event.target.value});
+  };
+
+  handleApplyLatePenaltyChange = event => {
+    this.setState({apply_late_penalty: event.target.checked});
   };
 
   warningText = () => {
@@ -48,17 +63,63 @@ class CollectSubmissionsModal extends React.Component {
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-vertical"}>
             <p>{this.warningText()}</p>
-            <p>
-              <label>
-                <input type="checkbox" name="override" onChange={this.handleOverrideChange} />
-                &nbsp;
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: I18n.t("submissions.collect.override_existing_html"),
-                  }}
-                />
-              </label>
-            </p>
+            {!this.props.isScannedExam && (
+              <fieldset>
+                <legend>{I18n.t("submissions.collect.collection_time")}</legend>
+                <p>
+                  <label htmlFor={"collect_due_date"}>
+                    <input
+                      type={"radio"}
+                      name={"collect_time"}
+                      value={"collect_due_date"}
+                      checked={this.state.collect_time === "collect_due_date"}
+                      onChange={this.handleCollectTimeChange}
+                    />
+                    {I18n.t("submissions.collect.collect_due_date")}
+                  </label>
+                </p>
+                <p>
+                  <label htmlFor={"collect_current"}>
+                    <input
+                      type={"radio"}
+                      name={"collect_time"}
+                      value={"collect_current"}
+                      checked={this.state.collect_time === "collect_current"}
+                      onChange={this.handleCollectTimeChange}
+                    />
+                    {I18n.t("submissions.collect.collect_current")}
+                  </label>
+                </p>
+              </fieldset>
+            )}
+            <fieldset>
+              <legend>{I18n.t("submissions.collect.collection_options")}</legend>
+              <p>
+                <label>
+                  <input type="checkbox" name="override" onChange={this.handleOverrideChange} />
+                  &nbsp;
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: I18n.t("submissions.collect.override_existing_html"),
+                    }}
+                  />
+                </label>
+              </p>
+              {this.state.collect_time === "collect_current" && !this.props.isScannedExam && (
+                <p>
+                  <label>
+                    <input
+                      type="checkbox"
+                      defaultChecked={this.state.apply_late_penalty}
+                      name="apply_late_penalty"
+                      onChange={this.handleApplyLatePenaltyChange}
+                    />
+                  </label>
+                  &nbsp;
+                  <span>{I18n.t("submissions.collect.apply_late_penalty")}</span>
+                </p>
+              )}
+            </fieldset>
             <section className={"modal-container dialog-actions"}>
               <input type="submit" value={I18n.t("submissions.collect.submit")} />
             </section>

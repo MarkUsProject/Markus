@@ -116,6 +116,47 @@ describe SubmissionsJob do
     end
   end
 
+  context 'when collecting submissions with collect_current set to true' do
+    let(:assignment) { create :assignment }
+    before :each do
+      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', submission_date, 'test.txt', 'aaa') }
+      SubmissionsJob.perform_now(groupings, collect_current: true)
+    end
+    context 'when submitted before collecting' do
+      let(:submission_date) { Time.current.to_s }
+      it 'collects the latest revision' do
+        groupings.each do |g|
+          g.reload
+          latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+          expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
+        end
+      end
+    end
+
+    context 'when collected after due date' do
+      let(:assignment) { create :assignment, due_date: 1.week.ago }
+      let(:submission_date) { Time.current.to_s }
+      it 'collects the most recent revision' do
+        groupings.each do |g|
+          g.reload
+          latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+          expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
+        end
+      end
+    end
+    context 'when collected before due date' do
+      let(:assignment) { create :assignment, due_date: 1.hour.from_now }
+      let(:submission_date) { Time.current.to_s }
+      it 'collects the latest revision' do
+        groupings.each do |g|
+          g.reload
+          latest_revision = g.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+          expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
+        end
+      end
+    end
+  end
+
   xcontext 'when applying a late penalty' do
     # TODO: the following tests are failing on travis occasionally. Figure out why and re-enable them.
     let!(:period) { create :period, submission_rule: submission_rule, hours: 2 }

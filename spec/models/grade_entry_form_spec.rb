@@ -46,7 +46,7 @@ describe GradeEntryForm do
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
       grade_entry_student_with_some_grades.save
-      expect(grade_entry_student_with_some_grades.total_grade).to eq 0.7
+      expect(grade_entry_student_with_some_grades.get_total_grade).to eq 0.7
     end
 
     it 'when the student has grades for all of the questions' do
@@ -56,13 +56,13 @@ describe GradeEntryForm do
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[2], grade: 60.5)
       grade_entry_student_with_some_grades.save
-      expect(grade_entry_student_with_some_grades.total_grade).to eq 61.2
+      expect(grade_entry_student_with_some_grades.get_total_grade).to eq 61.2
     end
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
       student1 = create(:student)
       grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(role: student1)
-      expect(grade_entry_student_with_no_grades.total_grade).to be_nil
+      expect(grade_entry_student_with_no_grades.get_total_grade).to be_nil
     end
 
     it 'verify the correct value is returned when the student has zero for all of the questions' do
@@ -72,7 +72,7 @@ describe GradeEntryForm do
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
       end
       grade_entry_student_with_all_zeros.save
-      expect(grade_entry_student_with_all_zeros.total_grade).to eq 0.0
+      expect(grade_entry_student_with_all_zeros.get_total_grade).to eq 0.0
     end
   end
 

@@ -3,9 +3,6 @@ namespace :db do
   task scanned_exam: :environment do
     puts 'Assignment 6: Scanned Exam'
 
-    # remove previously existing pdfs to create room for new ones
-    FileUtils.rm_rf(Dir.glob('data/dev/exam_templates/*'))
-
     a = Assignment.create(
       course: Course.first,
       short_identifier: 'midterm',

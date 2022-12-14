@@ -22,8 +22,6 @@ class GradeEntryStudent < ApplicationRecord
 
   validates :released_to_student, inclusion: { in: [true, false] }
 
-  before_save :refresh_total_grade
-
   validate :courses_should_match
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
@@ -156,7 +154,7 @@ class GradeEntryStudent < ApplicationRecord
       end
     end
 
-    grade_entry_student.total_grade
+    grade_entry_student.get_total_grade
   end
 
   # Return whether or not the given student's grades are all blank
@@ -171,40 +169,19 @@ class GradeEntryStudent < ApplicationRecord
     grades_without_nils.blank?
   end
 
-  # Calculate and set the total grade for all grade entry students with
-  # an id in +grade_entry_student_ids+.
-  # This should be run whenever grade entry students are created/updated
-  # as an upsert/import operation since refresh_total_grade will not
-  # be run as an after_save callback in that case.
-  def self.refresh_total_grades(grade_entry_student_ids)
-    grades = Grade.joins(:grade_entry_student)
-                  .where(grade_entry_student_id: grade_entry_student_ids)
-                  .pluck(:grade_entry_student_id, :role_id, :grade)
-                  .group_by(&:first)
-                  .map { |k, v| { id: k, role_id: v.first.second, total_grade: v.map(&:last) } }
-    total_grades = grades.map do |h|
-      if h[:total_grade].all?(&:nil?)
-        h[:total_grade] = nil
-      else
-        h[:total_grade] = h[:total_grade].compact.sum
-      end
-      h
-    end
-    return if total_grades.empty?
-
-    GradeEntryStudent.upsert_all total_grades
+  def self.get_total_grades(ges_ids)
+    grades = GradeEntryStudent.left_outer_joins(:grades)
+                              .where('grade_entry_students.id': ges_ids)
+                              .pluck('grade_entry_students.id', :grade)
+                              .group_by(&:first)
+    grades.map do |k, v|
+      ges_grades = v.map(&:last)
+      ges_grades = ges_grades.all?(&:nil?) ? nil : ges_grades.compact.sum
+      [k, ges_grades]
+    end.to_h
   end
 
-  private
-
-  # Calculate and set the total grade
-  def refresh_total_grade
-    total = grades.sum(:grade).round(2)
-
-    if total == 0 && self.all_blank_grades?
-      total = nil
-    end
-
-    self.total_grade = total
+  def get_total_grade
+    GradeEntryStudent.get_total_grades([self.id])[self.id]
   end
 end

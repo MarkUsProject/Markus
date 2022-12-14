@@ -1,6 +1,8 @@
 import React from "react";
 import {render} from "react-dom";
 
+import MarkdownEditor from "../markdown_editor";
+
 // We attempt to autosave once [saveAfterMs] has elapsed from the last user action
 const saveAfterMs = 1500;
 
@@ -45,15 +47,9 @@ export class TextForm extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.updatePreview();
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.initialValue !== this.props.initialValue) {
       this.setState({value: this.props.initialValue});
-    } else if (prevState.initialValue !== this.state.value) {
-      this.updatePreview();
     }
   }
 
@@ -69,30 +65,21 @@ export class TextForm extends React.Component {
 
   updateValue = event => {
     const value = event.target.value;
-    this.setState({value, unsavedChanges: true}, this.updatePreview);
+    this.setState({value, unsavedChanges: true});
     this.handlePersist();
-  };
-
-  updatePreview = () => {
-    if (this.props.previewId) {
-      document.getElementById(this.props.previewId).innerHTML = safe_marked(this.state.value);
-      MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.props.previewId]);
-    }
   };
 
   render() {
     return (
       <div className={this.props.className || ""}>
         <form onSubmit={this.onSubmit}>
-          <textarea value={this.state.value} onChange={this.updateValue} rows={5} />
+          <MarkdownEditor
+            content={this.state.value}
+            handleChange={this.updateValue}
+            show_autocomplete={false}
+          />
           <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
-        {this.props.previewId && (
-          <div>
-            <h3>{I18n.t("preview")}</h3>
-            <div id={this.props.previewId} className="preview" />
-          </div>
-        )}
       </div>
     );
   }

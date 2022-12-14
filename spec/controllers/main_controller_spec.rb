@@ -26,30 +26,6 @@ describe MainController do
       end
     end
   end
-  describe 'tests for all routes' do
-    # check_timeout is used here as a basic example but any route could be used in its place
-    describe 'set_markus_version' do
-      let(:version_number) { "#{rand(0..100)}.#{rand(0..100)}.#{rand(0..100)}" }
-      it 'should allow a master version' do
-        allow_any_instance_of(File).to receive(:read).and_return('VERSION=master')
-        expect { get :check_timeout }.not_to raise_error
-      end
-      it 'should not allow a generic release version' do
-        allow_any_instance_of(File).to receive(:read).and_return('VERSION=release')
-        expect { get :check_timeout }.to raise_error(RuntimeError)
-      end
-      it 'should allow a properly formatted release version' do
-        version = "VERSION=v#{version_number}"
-        allow_any_instance_of(File).to receive(:read).and_return(version)
-        expect { get :check_timeout }.not_to raise_error
-      end
-      it 'should not allow a release version without a v prefix' do
-        version = "VERSION=#{version_number}"
-        allow_any_instance_of(File).to receive(:read).and_return(version)
-        expect { get :check_timeout }.to raise_error(RuntimeError)
-      end
-    end
-  end
   context 'An Instructor' do
     let :all_assignments do
       a2 = create(:assignment, due_date: 1.day.ago)
@@ -122,29 +98,14 @@ describe MainController do
         expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.login_failed'))
       end
     end
-    context 'logging in after an LTI launch' do
+    context 'logging in during an LTI launch' do
       let(:lti) { create :lti_deployment }
       before :each do
-        session[:lti_deployment_id] = lti.id
-        session[:lti_client_id] = lti.lti_client.id
-        session[:lti_course_id] = 1
-        session[:lti_user_id] = 1
+        cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
       end
-      context 'when there is no course association' do
-        it 'redirects to choose_course' do
-          sign_in instructor
-          expect(response).to redirect_to action: 'choose_course', controller: 'lti_deployment'
-        end
-      end
-      context 'when there is a course association' do
-        let(:course) { create :course }
-        before :each do
-          lti.update(course: course)
-        end
-        it 'redirects to the course page' do
-          sign_in instructor
-          expect(response).to redirect_to course_path(course)
-        end
+      it 'redirects to redirect_login' do
+        sign_in instructor
+        expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
       end
     end
     context 'after logging out' do
@@ -251,6 +212,35 @@ describe MainController do
       @controller = CoursesController.new
       get :show, params: { id: course2.id }
       expect(response).to redirect_to course_assignments_path(session[:role_switch_course_id])
+    end
+    context 'when user tries to log out' do
+      before(:each) do
+        @controller = MainController.new
+        get :logout
+      end
+      it 'should unset the session real_user_name' do
+        expect(session[:real_user_name]).to be_nil
+      end
+      it 'should unset the timeout counter' do
+        expect(session[:timeout]).to be_nil
+      end
+      it 'should unset the session user_name' do
+        expect(session[:user_name]).to be_nil
+      end
+      it 'should unset the session role_switch_course_id' do
+        expect(session[:role_switch_course_id]).to be_nil
+      end
+      it 'should redirect all routes to the login page' do
+        get :about
+        expect(response).to redirect_to action: 'login', controller: 'main'
+      end
+    end
+
+    it 'allows user to properly access about' do
+      @controller = MainController.new
+      request.headers['accept'] = 'text/javascript'
+      get :about, xhr: true
+      expect(response).to have_http_status(:ok)
     end
   end
 end
