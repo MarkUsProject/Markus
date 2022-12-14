@@ -1,6 +1,8 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.2.0]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Simplify configuration options for storing files on disk (#6157)
 - Replace yarn with npm as a package manager (#6159)
