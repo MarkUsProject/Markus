@@ -9,6 +9,7 @@
 - Allow graders and instructors to be set to hidden status (#6173)
 - Prevent hidden roles from interacting with a course (#6173)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
+- Make git hooks more portable by converting them to shell scripts (#6196)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
 - Added ability to download feedback files (#6215)
 - Allow admins to set the autotester url for each course in the courses view (#6213)
