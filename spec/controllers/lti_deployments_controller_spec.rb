@@ -156,7 +156,7 @@ describe LtiDeploymentsController do
       stub_request(:post, "#{lti_service_lineitem.url}/1/scores").with(headers:
                                                                              { Authorization: 'Bearer access_token' },
                                                                        body: hash_including({
-                                                                         scoreGiven: /\d+\.?\d+/,
+                                                                         scoreGiven: /\d+(\.\d+)?/,
                                                                          scoreMaximum: assignment.max_mark.to_s,
                                                                          activityProgress: 'Completed',
                                                                          gradingProgress: 'FullyGraded'

@@ -246,7 +246,7 @@ describe LtiDeployment do
       stub_request(:post, "#{lti_line_item.lti_line_item_id}/scores").with(headers:
                                                                             { Authorization: 'Bearer access_token' },
                                                                            body: hash_including({
-                                                                             scoreGiven: /\d+\.?\d+/,
+                                                                             scoreGiven: /\d+(\.\d+)?/,
                                                                              scoreMaximum: assessment.max_mark.to_s,
                                                                              activityProgress: 'Completed',
                                                                              gradingProgress: 'FullyGraded'
