@@ -9,13 +9,17 @@ en:
       Would you like to continue?
     collect:
       apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)
+      collect_current: Collect most recent files submitted, regardless of assignment due date or late period.
+      collect_due_date: Collect most recent files submitted before the due date, including any late period.
+      collection_options: Collection options
+      collection_time: Collection time
       could_not_collect_some_due: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings.
       could_not_collect_some_released: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released.
       manual_collection: Manual Collection
       override_existing_html: 'Recollect previously collected submissions? <strong>Warning: any previous grading work will be lost.</strong>'
       overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
       progress: "%{count}/%{size} submissions collected"
-      results_loss_warning: This action identifies the file version for each selected group that meets the assignment due date and/or late penalty, and creates the views for grading each selected group.
+      results_loss_warning: This action identifies the version of files to grade for each selected group. Instructors and TAs can begin grading after files are collected.
       scanned_exam_latest_warning: For scanned exams, the latest submitted file version for each selected group is used regardless of the due date.
       submit: Collect Submissions
       this_revision: Collect and Grade This Revision
