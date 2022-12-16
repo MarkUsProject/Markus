@@ -60,6 +60,7 @@ Config.setup do |config|
         end
         optional(:action_controller).hash do
           optional(:perform_caching).filled(:bool)
+          optional(:default_url_options).hash
         end
         optional(:cache_store).filled(:string)
         required(:active_record).hash do
