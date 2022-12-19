@@ -4,6 +4,10 @@ class AutotestSetting < ApplicationRecord
   validates :url, presence: true
   before_create :register_autotester
 
+  # Column name used to identify this record if the primary identifier (id) cannot be relied on.
+  # For example, when unarchiving courses.
+  IDENTIFIER = 'url'.freeze
+
   private
 
   def register_autotester

@@ -53,11 +53,11 @@ module ArchiveTools
     # This method may raise an error if no defined order can be determined, ie. if there is a dependency cycle
     def load_order
       Rails.application.eager_load!
-      dependencies = ApplicationRecord.descendants.reject(&:abstract_class).map do |r|
-        [r.table_name,
-         r.reflect_on_all_associations(:belongs_to).map do |a|
+      dependencies = ApplicationRecord.descendants.reject(&:abstract_class).map do |klass|
+        [klass.table_name,
+         klass.reflect_on_all_associations(:belongs_to).map do |a|
            if a.polymorphic?
-             r.pluck(a.foreign_type).map(&:constantize).map(&:table_name)
+             klass.pluck(a.foreign_type).map(&:constantize).map(&:table_name)
            else
              a.klass.table_name
            end
@@ -190,7 +190,10 @@ module ArchiveTools
           end
           next if ids.empty?
           File.open(archive_dir + "db/#{table_name}.csv", 'w') do |f|
-            query = "COPY (SELECT * FROM #{table_name} WHERE id IN (#{ids.to_a.join(', ')})) TO STDOUT CSV HEADER"
+            # Order by id to ensure that rows with foreign key references to other rows in the same table get
+            # created in the right order.
+            query = "COPY (SELECT * FROM #{table_name} WHERE id IN (#{ids.to_a.join(', ')}) ORDER BY id) " \
+                    'TO STDOUT CSV HEADER'
             ActiveRecord::Base.connection.raw_connection.copy_data(query) do
               while (row = ActiveRecord::Base.connection.raw_connection.get_copy_data)
                 f.write row
@@ -268,7 +271,7 @@ module ArchiveTools
               klass = parent_class
             else
               # Get the subclass if the current table uses single table inheritance
-              klass = parent_class.new(parent_class.inheritance_column => subclass_name).class
+              klass = subclass_name.constantize
             end
 
             # transform columns with an enum value to the enum key so that ActiveRecord can use it
@@ -309,11 +312,14 @@ module ArchiveTools
               end
             end
 
-            # nullify the id so that it can be assigned a new one on save
-            record.id = nil
-            if record.save
-              # save the new id so that future records with associations to this record can refer to its new id
-              new_ids[table_name][row['id']] = record.id
+            # nullify the id so that it can be assigned a new one.
+            # insert is used so that callbacks and validations are not run
+            result = klass.insert(record.attributes.except('id'),
+                                  returning: :id,
+                                  record_timestamps: false)
+            new_id = result.rows.flatten.first
+            if !new_id.nil?
+              new_ids[table_name][row['id']] = new_id
               unless old_file_location.nil? || new_file_location.nil?
                 # copy any associated files from the archived location to the new location on disk
                 FileUtils.mkdir_p(File.dirname(new_file_location))
@@ -321,20 +327,30 @@ module ArchiveTools
                 new_file_locations << new_file_location
               end
             elsif record.respond_to?(:course)
-              warn "Unable to create record #{record.inspect}\nError(s): #{record.errors.full_messages.join(', ')}"
+              warn "Unable to create record due to database conflict: #{record.inspect}"
               errors_reported = true
             else
-              taken_attrs = record.errors
-                                  .select { |e| e.type == :taken }
-                                  .map { |e| [e.attribute, e.options[:value]] }
-                                  .to_h
-              old_record = record.class.find_by(taken_attrs)
+              if klass.const_defined?(:IDENTIFIER)
+                old_record = klass.find_by(record.attributes.slice(klass::IDENTIFIER))
+              else
+                old_record = nil
+              end
               if old_record.nil?
-                warn "Unable to create record #{record.inspect}\nError(s): #{record.errors.full_messages.join(', ')}"
+                warn "Unable to create record due to database conflict: #{record.inspect}"
                 errors_reported = true
               else
                 new_ids[table_name][row['id']] = old_record.id
               end
+            end
+          end
+        end
+        # validate all new records now that everything has been created
+        new_ids.each do |table_name, ids|
+          ids.each_value do |id|
+            record = table_class_mapping[table_name].find(id)
+            unless record.validate
+              warn "Record #{record.inspect} is invalid\nError(s): #{record.errors.full_messages.join(', ')}"
+              errors_reported = true
             end
           end
         end

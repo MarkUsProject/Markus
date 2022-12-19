@@ -38,6 +38,10 @@ class User < ApplicationRecord
   AUTHENTICATE_BAD_PLATFORM = 'bad_platform'.freeze
   AUTHENTICATE_BAD_CHAR = 'bad_char'.freeze
 
+  # Column name used to identify this record if the primary identifier (id) cannot be relied on.
+  # For example, when unarchiving courses.
+  IDENTIFIER = 'user_name'.freeze
+
   # Authenticates login against its password
   # through a script specified by Settings.validate_file
   def self.authenticate(login, password, ip: nil)
