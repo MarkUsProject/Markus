@@ -15,14 +15,11 @@ class Submission < ApplicationRecord
            dependent: :destroy,
            inverse_of: :submission
 
-  has_many :non_pr_results, -> { left_outer_joins(:peer_reviews).where('peer_reviews.id': nil).order(:created_at) },
+  has_many :non_pr_results, -> { where(peer_review_id: nil).order(:created_at) },
            class_name: 'Result',
            inverse_of: :submission
 
-  has_one :current_result, -> {
-                             left_outer_joins(:peer_reviews).where('peer_reviews.id': nil)
-                                                            .order(created_at: :desc)
-                           },
+  has_one :current_result, -> { where(peer_review_id: nil).order(created_at: :desc) },
           class_name: 'Result',
           inverse_of: :submission
 

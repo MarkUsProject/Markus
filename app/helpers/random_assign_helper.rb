@@ -190,9 +190,16 @@ module RandomAssignHelper
       )
     end
 
-    PeerReview.insert_all(
+    # Peer reviews require IDs to have been made, so they come last.
+    pr_ids = PeerReview.insert_all(
       results.zip(@reviewers).map do |result, reviewer_id|
         { reviewer_id: reviewer_id, result_id: result.id, created_at: now, updated_at: now }
+      end
+    )
+
+    Result.upsert_all(
+      results.zip(pr_ids).map do |result, pr_id|
+        { id: result.id, peer_review_id: pr_id['id'], view_token: result.view_token }
       end
     )
   end

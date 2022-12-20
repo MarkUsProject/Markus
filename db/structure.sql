@@ -1574,6 +1574,7 @@ CREATE TABLE public.results (
     updated_at timestamp without time zone,
     released_to_students boolean DEFAULT false NOT NULL,
     remark_request_submitted_at timestamp without time zone,
+    peer_review_id integer,
     view_token character varying NOT NULL,
     view_token_expiry timestamp without time zone
 );
@@ -3607,6 +3608,13 @@ CREATE INDEX index_periods_on_submission_rule_id ON public.periods USING btree (
 
 
 --
+-- Name: index_results_on_peer_review_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_results_on_peer_review_id ON public.results USING btree (peer_review_id);
+
+
+--
 -- Name: index_results_on_view_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4136,6 +4144,14 @@ ALTER TABLE ONLY public.tags
 
 ALTER TABLE ONLY public.levels
     ADD CONSTRAINT fk_rails_7d6e4d7d84 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
+
+
+--
+-- Name: results fk_rails_81dcc9eed0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.results
+    ADD CONSTRAINT fk_rails_81dcc9eed0 FOREIGN KEY (peer_review_id) REFERENCES public.peer_reviews(id) ON DELETE CASCADE;
 
 
 --
