@@ -38,7 +38,6 @@ class PeerReview < ApplicationRecord
       result = Result.create!(submission: reviewee.current_submission_used,
                               marking_state: Result::MARKING_STATES[:incomplete])
       peer_review = PeerReview.create!(reviewer: reviewer, result: result)
-      result.peer_review_id = peer_review.id
       result.save!
       peer_review
     end
