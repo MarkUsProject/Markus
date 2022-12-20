@@ -377,9 +377,12 @@ module ArchiveTools
         next unless id_hash.key? table_name
         klass = table_class_mapping[table_name]
         records = klass.where(id: id_hash[table_name])
-        if klass.method_defined? :_file_location
-          records.find_each do |record|
-            FileUtils.rm_rf record._file_location
+        records.each { |record| FileUtils.rm_rf record._file_location } if klass.method_defined? :_file_location
+        klass.descendants.each do |subclass|
+          if subclass.method_defined? :_file_location
+            records.where(klass.inheritance_column => subclass.name).each do |record|
+              FileUtils.rm_rf record._file_location
+            end
           end
         end
         records.delete_all
