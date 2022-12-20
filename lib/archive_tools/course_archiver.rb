@@ -344,16 +344,6 @@ module ArchiveTools
             end
           end
         end
-        # validate all new records now that everything has been created
-        new_ids.each do |table_name, ids|
-          ids.each_value do |id|
-            record = table_class_mapping[table_name].find(id)
-            unless record.validate
-              warn "Record #{record.inspect} is invalid\nError(s): #{record.errors.full_messages.join(', ')}"
-              errors_reported = true
-            end
-          end
-        end
       ensure
         if errors_reported
           warn "Do you want to commit all changes even though there were some errors reported? Type 'yes' to confirm."
