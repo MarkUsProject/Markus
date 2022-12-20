@@ -1263,11 +1263,6 @@ class Assignment < Assessment
   def automated_test_config_to_zip(zip_file, zip_dir, specs_file_path)
     self.add_test_files_to_zip(zip_file, zip_dir)
     test_specs = autotest_settings_for(self)
-    test_specs['testers']&.each do |tester_info|
-      tester_info['test_data']&.each do |test_info|
-        test_info['extra_info']&.delete('test_group_id')
-      end
-    end
     zip_file.get_output_stream(specs_file_path) do |f|
       f.write(test_specs.to_json)
     end

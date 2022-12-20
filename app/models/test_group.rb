@@ -16,7 +16,6 @@ class TestGroup < ApplicationRecord
     result['extra_info'] = {
       'name' => name,
       'display_output' => display_output,
-      'test_group_id' => id,
       'criterion' => criterion&.name
     }
     result
