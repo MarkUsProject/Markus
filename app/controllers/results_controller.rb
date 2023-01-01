@@ -142,7 +142,7 @@ class ResultsController < ApplicationController
           reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
-          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_review_id}"
+          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_reviews.ids.first}"
           data[:members] = []
         end
 
@@ -315,10 +315,11 @@ class ResultsController < ApplicationController
 
     if result.is_a_review? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
       assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
+      peer_review_ids = result.peer_reviews.order(id: :asc).ids
       if params[:direction] == '1'
-        next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+        next_grouping = assigned_prs.where('peer_reviews.id > ?', peer_review_ids.last).first
       else
-        next_grouping = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+        next_grouping = assigned_prs.where('peer_reviews.id < ?', peer_review_ids.first).last
       end
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
