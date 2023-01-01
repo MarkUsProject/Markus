@@ -196,7 +196,7 @@ GEM
     fuubar (2.5.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
-    glob (0.3.0)
+    glob (0.4.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
     hashdiff (1.0.1)
@@ -204,8 +204,8 @@ GEM
     histogram (0.2.4.1)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    i18n-js (4.0.1)
-      glob
+    i18n-js (4.2.2)
+      glob (>= 0.4.0)
       i18n
     i18n-tasks (1.0.12)
       activesupport (>= 4.0.2)
