@@ -2,6 +2,10 @@
 require 'open3'
 
 Rails.application.config.after_initialize do
+  # Initialize this as explicitly false
+  Rails.application.config.scanner_enabled = false
+  Rails.application.config.nbconvert_enabled = false
+
   if Settings.python
     Rails.application.config.python = Settings.python
   else
