@@ -97,27 +97,33 @@ module ArchiveTools
     # Records are associated with a given course if they have an association with the course either directly
     # or through another association.
     def ids_associated_to_course(course, klass)
+      return [course.id] if klass == Course
       # classes that have a has_one, has_many, or belongs_to association with Course
       klass.joins(:course).where(courses: course).ids
     rescue ActiveRecord::ConfigurationError
-      class_ids = Set.new
-      klass.reflect_on_all_associations.each do |assoc|
-        if assoc.polymorphic?
-          foreign_ids = klass.unscoped.distinct.pluck(assoc.foreign_type).map do |foreign_klass|
-            foreign_klass.constantize.joins(:course).where(courses: course).ids
-          rescue ActiveRecord::ConfigurationError
-            # no association between the foreign class and course
-          end.flatten
-          class_ids |= klass.where(assoc.foreign_key => foreign_ids).ids
-        else
-          begin
-            class_ids |= klass.joins(assoc.name => :course).where(assoc.name => { courses: course }).ids
-          rescue ActiveRecord::ConfigurationError
-            # no association between this class's associations and the course
+      begin
+        # classes that course has a has_many association to
+        klass.joins(:courses).where(courses: course).ids
+      rescue ActiveRecord::ConfigurationError
+        class_ids = Set.new
+        klass.reflect_on_all_associations.each do |assoc|
+          if assoc.polymorphic?
+            foreign_ids = klass.unscoped.distinct.pluck(assoc.foreign_type).map do |foreign_klass|
+              foreign_klass.constantize.joins(:course).where(courses: course).ids
+            rescue ActiveRecord::ConfigurationError
+              # no association between the foreign class and course
+            end.flatten
+            class_ids |= klass.where(assoc.foreign_key => foreign_ids).ids
+          else
+            begin
+              class_ids |= klass.joins(assoc.name => :course).where(assoc.name => { courses: course }).ids
+            rescue ActiveRecord::ConfigurationError
+              # no association between this class's associations and the course
+            end
           end
         end
+        class_ids.to_a
       end
-      class_ids.to_a
     end
 
     # Return :d, :i, or nil indicating:
@@ -169,6 +175,16 @@ module ArchiveTools
       table_names
     end
 
+    # Extract the tar.gz archive in +archive_file+ to the +destination+ directory.
+    # If the destination already exists it will be cleared before the archive
+    # is extracted.
+    # Note that this has been created to facilitate testing of the unarchive function.
+    def extract_archive(archive_file, destination)
+      FileUtils.rm_rf destination
+      FileUtils.mkdir_p destination
+      Open3.capture2('tar', '-xzvf', archive_file, '-C', destination.to_s)
+    end
+
     # Archive the course named +course_name+. Return the absolute path to the tar.gz file
     # that contains the archived course data.
     def archive(course_name)
@@ -189,7 +205,7 @@ module ArchiveTools
             archive_data_files(klass, class_ids, archive_dir + 'data')
           end
           next if ids.empty?
-          File.open(archive_dir + "db/#{table_name}.csv", 'w') do |f|
+          File.open(archive_dir + "db/#{table_name}.csv", 'wb') do |f|
             # Order by id to ensure that rows with foreign key references to other rows in the same table get
             # created in the right order.
             query = "COPY (SELECT * FROM #{table_name} WHERE id IN (#{ids.to_a.join(', ')}) ORDER BY id) " \
@@ -215,9 +231,7 @@ module ArchiveTools
     # data. If unspecified, a new temporary database will be created instead.
     def unarchive(archive_file, tmp_db_url: nil)
       archive_dir = Rails.root.join('tmp/unarchive-workspace')
-      FileUtils.rm_rf archive_dir
-      FileUtils.mkdir_p archive_dir
-      Open3.capture2('tar', '-xzvf', archive_file, '-C', archive_dir.to_s)
+      extract_archive(archive_file, archive_dir)
 
       db_dir = Dir[File.join(archive_dir, '*', 'db')].first
       raise 'db directory not found in tar file' if db_dir.nil?
@@ -244,7 +258,7 @@ module ArchiveTools
         # Copy files out of the temporary database back to csv files in the data dir now that all the data has
         # been migrated to the current migration
         table_names.each do |table_name|
-          File.open(File.join(db_dir, "#{table_name}.csv"), 'w') do |f|
+          File.open(File.join(db_dir, "#{table_name}.csv"), 'wb') do |f|
             query = "COPY (SELECT * FROM #{table_name}) TO STDOUT CSV HEADER"
             raw_connection.copy_data(query) do
               while (row = raw_connection.get_copy_data)
@@ -279,6 +293,14 @@ module ArchiveTools
             attributes = row.map { |k, v| [k, reverse_enums[k]&.[](v) || v] }.to_h
             record = klass.new(attributes)
 
+            # Get the old file location before updating foreign keys so that file locations dependant on
+            # associated records are calculated correctly.
+            old_file_location = nil
+            new_file_location = nil
+            if record.respond_to? :_file_location
+              old_file_location = temporary_file_storage(data_dir) { record._file_location }
+            end
+
             # update foreign key references
             foreign_keys = klass.reflect_on_all_associations(:belongs_to).index_by(&:foreign_key)
             record.attributes.each do |k, v|
@@ -293,25 +315,6 @@ module ArchiveTools
               record.assign_attributes(k => new_ids[associated_class.table_name][v.to_s])
             end
 
-            old_file_location = nil
-            new_file_location = nil
-            if record.respond_to? :_file_location
-              old_file_location = temporary_file_storage(data_dir) { record._file_location }
-              unless File.exist? old_file_location
-                warn "Cannot find archived data files associated with #{record.inspect}."
-                old_file_location = nil
-                errors_reported = true
-              end
-              new_file_location = record._file_location
-              if File.exist? new_file_location
-                # check this here because some files get created when the record is saved
-                warn "Cannot copy archived data files associated with #{record.inspect} to #{new_file_location}. " \
-                     'A file or directory already exists at that path.'
-                new_file_location = nil
-                errors_reported = true
-              end
-            end
-
             # nullify the id so that it can be assigned a new one.
             # insert is used so that callbacks and validations are not run
             result = klass.insert(record.attributes.except('id'),
@@ -320,11 +323,25 @@ module ArchiveTools
             new_id = result.rows.flatten.first
             if !new_id.nil?
               new_ids[table_name][row['id']] = new_id
-              unless old_file_location.nil? || new_file_location.nil?
-                # copy any associated files from the archived location to the new location on disk
-                FileUtils.mkdir_p(File.dirname(new_file_location))
-                FileUtils.cp_r(old_file_location, new_file_location)
-                new_file_locations << new_file_location
+              unless old_file_location.nil?
+                if File.exist? old_file_location
+                  record = record.class.find(new_id)
+                  new_file_location = record._file_location
+                  if File.exist? new_file_location
+                    # check this here because some files get created when the record is saved
+                    warn "Cannot copy archived data files associated with #{record.inspect} to #{new_file_location}. " \
+                         'A file or directory already exists at that path.'
+                    errors_reported = true
+                  else
+                    # copy any associated files from the archived location to the new location on disk
+                    FileUtils.mkdir_p(File.dirname(new_file_location))
+                    FileUtils.cp_r(old_file_location, new_file_location)
+                    new_file_locations << new_file_location
+                  end
+                else
+                  warn "Cannot find archived data files associated with #{record.inspect}."
+                  errors_reported = true
+                end
               end
             elsif record.respond_to?(:course)
               warn "Unable to create record due to database conflict: #{record.inspect}"
@@ -344,12 +361,20 @@ module ArchiveTools
             end
           end
         end
+      rescue StandardError => e
+        warn e.to_s
+        errors_reported = true
       ensure
         if errors_reported
-          warn "Do you want to commit all changes even though there were some errors reported? Type 'yes' to confirm."
-          unless gets.chomp == 'yes'
+          begin
+            if block_given?
+              yield
+            else
+              raise ActiveRecord::Rollback
+            end
+          rescue ActiveRecord::Rollback
             new_file_locations.each { |loc| FileUtils.rm_rf loc }
-            raise ActiveRecord::Rollback
+            raise
           end
         end
       end

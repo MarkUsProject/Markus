@@ -74,7 +74,12 @@ namespace :markus do
     end
     task :course, [:archive_file] => :environment do |_task, args|
       include ArchiveTools::CourseArchiver
-      unarchive(args[:archive_file], tmp_db_url: ENV.fetch('TMP_DB_URL', nil))
+      unarchive(args[:archive_file], tmp_db_url: ENV.fetch('TMP_DB_URL', nil)) do
+        warn "Do you want to commit all changes even though there were some errors reported? Type 'yes' to confirm."
+        unless gets.chomp == 'yes'
+          raise ActiveRecord::Rollback
+        end
+      end
     end
   end
 

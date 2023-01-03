@@ -21,7 +21,13 @@ class StarterFileGroup < ApplicationRecord
   validates :entry_rename, presence: { if: -> { self.use_rename } }
 
   def path
-    Pathname.new(assignment.starter_file_path) + id.to_s
+    Pathname.new(self.class.starter_files_dir) + self.assessment_id.to_s + id.to_s
+  end
+
+  alias _file_location path
+
+  def self.starter_files_dir
+    Settings.file_storage.starter_files || File.join(Settings.file_storage.default_root_path, 'starter_files')
   end
 
   def files_and_dirs

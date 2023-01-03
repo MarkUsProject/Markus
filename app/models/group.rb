@@ -83,8 +83,11 @@ class Group < ApplicationRecord
     File.join(Repository.root_dir, self.repository_relative_path)
   end
 
-  def _file_location
-    Repository.get_class.respond_to?(:bare_path) ? Repository.get_class.bare_path(repo_path) : repo_path
+  # Git repos are stored on disk but not other types of repo (ie. memory)
+  if Settings.repository.type == 'git'
+    def _file_location
+      Repository.get_class.respond_to?(:bare_path) ? Repository.get_class.bare_path(repo_path) : repo_path
+    end
   end
 
   # Yields a repository object, if possible, and closes it after it is finished

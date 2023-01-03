@@ -116,10 +116,6 @@ class Assignment < Assessment
   # Set the default order of assignments: in ascending order of date (due_date)
   default_scope { order(:due_date, :id) }
 
-  def self.starter_files_dir
-    Settings.file_storage.starter_files || File.join(Settings.file_storage.default_root_path, 'starter_files')
-  end
-
   # Are we past all due_dates and section due_dates for this assignment?
   # This does not take extensions into consideration.
   def past_all_due_dates?
@@ -906,10 +902,6 @@ class Assignment < Assessment
   end
 
   ### REPO ###
-
-  def starter_file_path
-    File.join(self.class.starter_files_dir, self.id.to_s)
-  end
 
   def default_starter_file_group
     default = starter_file_groups.find_by(id: self.default_starter_file_group_id)
