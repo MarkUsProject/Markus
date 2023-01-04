@@ -105,8 +105,8 @@ describe StarterFileGroup do
   describe '#path' do
     let(:starter_file_group) { create :starter_file_group }
     it 'should return an absolute path to an entry on disk' do
-      id = starter_file_group.id.to_s
-      expect(starter_file_group.path).to eq Pathname.new(starter_file_group.assignment.starter_file_path) + id
+      id_suffix = "#{starter_file_group.assignment.id}/#{starter_file_group.id}"
+      expect(starter_file_group.path).to eq Pathname.new(StarterFileGroup.starter_files_dir) + id_suffix
       expect(starter_file_group.path).to exist
     end
   end
