@@ -1,6 +1,8 @@
 class AutotestSetting < ApplicationRecord
   include AutomatedTestsHelper::AutotestApi
 
+  has_many :courses
+
   validates :url, presence: true
   before_create :register_autotester
 
