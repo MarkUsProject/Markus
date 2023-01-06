@@ -33,6 +33,7 @@ en:
   not_applicable: N/A
   or: Or
   other_info: Other Info
+  oversize_feedback_file: "Error: feedback file was %{file_size} larger than the maximum file size of %{max_file_size} MB"
   please_wait: Please wait…
   preview: Preview
   refresh: Refresh
