@@ -166,9 +166,7 @@ Rails.application.routes.draw do
       member do
         get 'get_annotations'
         get 'add_extra_marks'
-        get 'download'
         post 'download'
-        get 'download_zip'
         delete 'cancel_remark_request'
         post 'add_extra_mark'
         delete 'delete_grace_period_deduction'
@@ -322,6 +320,10 @@ Rails.application.routes.draw do
           post 'repo_browser'
           post 'manually_collect_and_begin_grading'
           get 'downloads'
+        end
+        member do
+          get 'download_file'
+          get 'download_file_zip'
         end
       end
 

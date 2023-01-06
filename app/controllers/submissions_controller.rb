@@ -3,6 +3,9 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  authorize :select_file, through: :select_file
+  authorize :from_codeviewer, through: :from_codeviewer_param
+
   PERMITTED_IFRAME_SRC = ([:self] + %w[https://www.youtube.com https://drive.google.com https://docs.google.com]).freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
@@ -469,6 +472,80 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def download_file
+    if params[:download_zip_button]
+      download_file_zip
+      return
+    end
+
+    file = select_file
+    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
+      redirect_to notebook_content_course_assignment_submissions_url(current_course,
+                                                                     record.grouping.assignment,
+                                                                     select_file_id: params[:select_file_id])
+      return
+    end
+
+    begin
+      if params[:include_annotations] == 'true' && !file.is_supported_image?
+        file_contents = file.retrieve_file(include_annotations: true)
+      else
+        file_contents = file.retrieve_file
+      end
+    rescue StandardError => e
+      flash_message(:error, e.message)
+      redirect_to edit_course_result_path(current_course, record.current_result)
+      return
+    end
+    filename = file.filename
+    # Display the file in the page if it is an image/pdf, and download button
+    # was not explicitly pressed
+    if file.is_supported_image? && !params[:show_in_browser].nil?
+      send_data file_contents, type: 'image', disposition: 'inline',
+                               filename: filename
+    else
+      send_data_download file_contents, filename: filename
+    end
+  end
+
+  def download_file_zip
+    submission = record
+    if submission.revision_identifier.nil?
+      render plain: t('submissions.no_files_available')
+      return
+    end
+
+    grouping = submission.grouping
+    assignment = grouping.assignment
+    revision_identifier = submission.revision_identifier
+    repo_folder = assignment.repository_folder
+    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
+
+    zip_path = if params[:include_annotations] == 'true'
+                 "tmp/#{assignment.short_identifier}_" \
+                   "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
+               else
+                 "tmp/#{assignment.short_identifier}_" \
+                   "#{grouping.group.group_name}_r#{revision_identifier}.zip"
+               end
+
+    files = submission.submission_files
+    Zip::File.open(zip_path, create: true) do |zip_file|
+      grouping.access_repo do |repo|
+        revision = repo.get_revision(revision_identifier)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision) do |file|
+          submission_file = files.find_by(filename: file.name, path: file.path)
+          submission_file&.retrieve_file(
+            include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
+          )
+        end
+      end
+    end
+    # Send the Zip file
+    send_file zip_path, disposition: 'inline',
+                        filename: zip_name + '.zip'
+  end
+
   def download
     preview = params[:preview] == 'true'
     nbconvert_enabled = Rails.application.config.nbconvert_enabled
@@ -873,5 +950,13 @@ class SubmissionsController < ApplicationController
     uri.is_a?(URI::HTTP) && uri.host.present?
   rescue URI::InvalidURIError
     false
+  end
+
+  def select_file
+    params[:select_file_id] && SubmissionFile.find_by(id: params[:select_file_id])
+  end
+
+  def from_codeviewer_param
+    params[:from_codeviewer] == 'true'
   end
 end

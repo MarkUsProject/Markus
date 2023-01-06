@@ -285,59 +285,6 @@ describe ResultPolicy do
     end
   end
 
-  describe_rule :download? do
-    succeed 'role is an instructor' do
-      let(:role) { create(:instructor) }
-    end
-    context 'role is a ta' do
-      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
-      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
-      let(:assignment) { create :assignment_with_peer_review }
-      succeed 'when they can manage submissions' do
-        let!(:role) { create(:ta, manage_submissions: true) }
-      end
-      succeed 'when they are assigned to grade the given group\'s submission' do
-        let!(:role) { create(:ta) }
-        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
-      end
-      failed 'when they aren\'t assigned to grade the given group\'s submission' do
-        let(:role) { create(:ta) }
-      end
-    end
-    context 'role is a student' do
-      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
-      let(:record) { assignment.groupings.first.current_result }
-      context 'role is a reviewer for the current result' do
-        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
-        let(:role) { reviewer_grouping.accepted_students.first }
-        before { create :peer_review, reviewer: reviewer_grouping, result: record }
-        succeed 'from_codeviewer is true' do
-          let(:context) { { role: role, real_user: role.user, from_codeviewer: true } }
-        end
-        failed 'from_codeviewer is false' do
-          let(:context) { { role: role, real_user: role.user, from_codeviewer: false } }
-        end
-      end
-      context 'role is not a reviewer for the current result' do
-        context 'role is an accepted member of the results grouping' do
-          let(:role) { record.grouping.accepted_students.first }
-          succeed 'and there is no file selected'
-          succeed 'and the selected file is associated with the current submission' do
-            let(:select_file) { create(:submission_file, submission: record.submission) }
-            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
-          end
-          failed 'and the selected file is associated with a different submission' do
-            let(:select_file) { create(:submission_file) }
-            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
-          end
-        end
-        failed 'role is not an accepted member of the results grouping' do
-          let(:role) { create(:student) }
-        end
-      end
-    end
-  end
-
   describe_rule :view_token_check? do
     let(:record) { create :complete_result }
     failed 'role is an instructor' do

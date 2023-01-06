@@ -1639,4 +1639,318 @@ describe SubmissionsController do
       end
     end
   end
+  def self.test_assigns_not_nil(key)
+    it "should assign #{key}" do
+      expect(assigns(key)).not_to be_nil
+    end
+  end
+
+  def self.test_no_flash
+    it 'should not display any flash messages' do
+      expect(flash).to be_empty
+    end
+  end
+  SAMPLE_FILE_CONTENT = 'sample file content'.freeze
+  SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
+  SAMPLE_COMMENT = 'sample comment'.freeze
+  SAMPLE_FILE_NAME = 'file.java'.freeze
+  after(:each) do
+    destroy_repos
+  end
+  context 'file downloading tests' do
+    let(:course) { assignment.course }
+    let(:assignment) { create :assignment }
+    let(:student) { create :student, grace_credits: 2 }
+    let(:instructor) { create :instructor }
+    let(:ta) { create :ta }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+    let(:submission) { create :version_used_submission, grouping: grouping }
+    let(:incomplete_result) { submission.current_result }
+    let(:complete_result) { create :complete_result, submission: submission }
+    let(:submission_file) { create :submission_file, submission: submission }
+    let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
+    let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+    let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
+    let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+    let(:from_codeviewer) { nil }
+
+    shared_examples 'download files' do
+      context 'and without any file errors' do
+        before :each do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id, assignment_id: assignment.id }
+        end
+        it { expect(response).to have_http_status(:success) }
+        test_no_flash
+        it 'should have the correct content type' do
+          expect(response.header['Content-Type']).to eq 'text/plain'
+        end
+        it 'should show the file content in the response body' do
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
+        end
+      end
+      context 'and with a file error' do
+        before :each do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_raise SAMPLE_ERROR_MESSAGE
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id, assignment_id: assignment.id }
+        end
+        it { expect(response).to have_http_status(:redirect) }
+        it 'should display a flash error' do
+          expect(extract_text(flash[:error][0])).to eq SAMPLE_ERROR_MESSAGE
+        end
+      end
+      context 'and with a supported image file shown in browser' do
+        before :each do
+          allow_any_instance_of(SubmissionFile).to receive(:is_supported_image?).and_return true
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        from_codeviewer: from_codeviewer,
+                                        show_in_browser: true }
+        end
+        it { expect(response).to have_http_status(:success) }
+        test_no_flash
+        it 'should have the correct content type' do
+          expect(response.header['Content-Type']).to eq 'image'
+        end
+        it 'should show the file content in the response body' do
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
+        end
+      end
+      context 'show in browser is true' do
+        let(:submission_file) { create :submission_file, filename: filename, submission: submission }
+        subject do
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        id: submission.id, assignment_id: assignment.id,
+                                        from_codeviewer: from_codeviewer,
+                                        show_in_browser: true }
+        end
+        context 'file is a jupyter-notebook file' do
+          let(:filename) { 'example.ipynb' }
+          let(:redirect_location) do
+            notebook_content_course_assignment_submissions_path(course,
+                                                                assignment,
+                                                                select_file_id: submission_file.id)
+          end
+          context 'and the python dependencies are installed' do
+            before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
+            it 'should redirect to "notebook_content"' do
+              expect(subject).to(redirect_to(redirect_location))
+            end
+          end
+          context 'and the python dependencies are not installed' do
+            before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+            it 'should not redirect to "notebook_content"' do
+              expect(subject).not_to(redirect_to(redirect_location))
+            end
+          end
+        end
+        context 'file is a rmarkdown file' do
+          let(:filename) { 'example.Rmd' }
+          it 'should show the file content in the response body' do
+            allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+            subject
+            expect(response.body).to eq SAMPLE_FILE_CONTENT
+          end
+        end
+      end
+    end
+    shared_examples 'shared ta and instructor tests' do
+      include_examples 'download files'
+      context 'accessing download_zip' do
+        before :each do
+          grouping.group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
+            txn.add(path, SAMPLE_FILE_CONTENT, '')
+            repo.commit(txn)
+            @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
+          end
+          file = SubmissionFile.find_by(submission_id: @submission.id)
+          @annotation = TextAnnotation.create line_start: 1,
+                                              line_end: 2,
+                                              column_start: 1,
+                                              column_end: 2,
+                                              submission_file_id: file.id,
+                                              is_remark: false,
+                                              annotation_number: @submission.annotations.count + 1,
+                                              annotation_text: create(:annotation_text, creator: instructor),
+                                              result: complete_result,
+                                              creator: instructor
+          file_name_snippet = grouping.group.access_repo do |repo|
+            "#{assignment.short_identifier}_#{grouping.group.group_name}" \
+              "_r#{repo.get_latest_revision.revision_identifier}"
+          end
+          @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
+          @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
+          @submission_file_path = SAMPLE_FILE_NAME
+        end
+        after :each do
+          FileUtils.rm_f @file_path_ann
+          FileUtils.rm_f @file_path
+        end
+        context 'and including annotations' do
+          before :each do
+            get :download_file_zip, params: { course_id: course.id,
+                                              id: @submission.id,
+                                              assignment_id: assignment.id,
+                                              grouping_id: grouping.id,
+                                              include_annotations: 'true' }
+          end
+          after :each do
+            FileUtils.rm_f @file_path_ann
+          end
+          it { expect(response).to have_http_status(:success) }
+          it 'should have make the correct content type' do
+            expect(response.header['Content-Type']).to eq 'application/zip'
+          end
+          it 'should create a zip file' do
+            File.exist? @file_path_ann
+          end
+          it 'should create a zip file containing the submission file' do
+            Zip::File.open(@file_path_ann) do |zip_file|
+              expect(zip_file.find_entry(@submission_file_path)).not_to be_nil
+            end
+          end
+          it 'should include the annotations in the file output' do
+            Zip::File.open(@file_path_ann) do |zip_file|
+              expect(zip_file.read(@submission_file_path)).to include(@annotation.annotation_text.content)
+            end
+          end
+        end
+        context 'and not including annotations' do
+          before :each do
+            get :download_file_zip, params: { course_id: course.id,
+                                              id: @submission.id,
+                                              assignment_id: assignment.id,
+                                              grouping_id: grouping.id,
+                                              include_annotations: 'false' }
+          end
+          after :each do
+            FileUtils.rm_f @file_path
+          end
+          it { expect(response).to have_http_status(:success) }
+          it 'should have make the correct content type' do
+            expect(response.header['Content-Type']).to eq 'application/zip'
+          end
+          it 'should create a zip file' do
+            File.exist? @file_path
+          end
+          it 'should create a zip file containing the submission file' do
+            Zip::File.open(@file_path) do |zip_file|
+              expect(zip_file.find_entry(@submission_file_path)).not_to be_nil
+            end
+          end
+          it 'should not include the annotations in the file output' do
+            Zip::File.open(@file_path) do |zip_file|
+              expect(zip_file.read(@submission_file_path)).not_to include(@annotation.annotation_text.content)
+            end
+          end
+        end
+      end
+    end
+    context 'An Instructor' do
+      before(:each) { sign_in instructor }
+      include_examples 'shared ta and instructor tests'
+    end
+    context 'A TA' do
+      before(:each) { sign_in ta }
+      context 'that cannot manage submissions and is not assigned to grade this groups submission' do
+        context 'accessing download' do
+          it {
+            get :download_file, params: { course_id: course.id,
+                                          select_file_id: submission_file.id,
+                                          from_codeviewer: from_codeviewer,
+                                          id: incomplete_result.submission.id,
+                                          assignment_id: assignment.id }
+            expect(response).to have_http_status(:forbidden)
+          }
+        end
+        context 'accessing download_zip' do
+          it {
+            grouping.group.access_repo do |repo|
+              txn = repo.get_transaction('test')
+              path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
+              txn.add(path, SAMPLE_FILE_CONTENT, '')
+              repo.commit(txn)
+              @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
+            end
+            get :download_file_zip, params: { course_id: course.id,
+                                              id: @submission.id,
+                                              assignment_id: assignment.id,
+                                              grouping_id: grouping.id,
+                                              include_annotations: 'true' }
+            expect(response).to have_http_status(:forbidden)
+          }
+        end
+      end
+      context 'that has been assigned to grade the group\'s result' do
+        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+        include_examples 'shared ta and instructor tests'
+      end
+      context 'that can manage submissions' do
+        let(:ta) { create :ta, manage_submissions: true }
+        include_examples 'shared ta and instructor tests'
+      end
+    end
+    context 'A Student' do
+      before(:each) { sign_in student }
+      context 'downloading files' do
+        shared_examples 'without permission' do
+          before :each do
+            get :download_file, params: { course_id: course.id,
+                                          id: incomplete_result.submission.id,
+                                          assignment_id: assignment.id,
+                                          from_codeviewer: from_codeviewer,
+                                          select_file_id: submission_file.id }
+          end
+          it { expect(response).to have_http_status(:forbidden) }
+        end
+
+        let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
+        let(:incomplete_result) { assignment.groupings.first.current_result }
+        let(:submission) { incomplete_result.submission }
+        context 'role is a reviewer for the current result' do
+          let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
+          let(:student) { reviewer_grouping.accepted_students.first }
+          before { create :peer_review, reviewer: reviewer_grouping, result: incomplete_result }
+          context 'from_codeviewer is true' do
+            let(:from_codeviewer) { true }
+            include_examples 'download files'
+          end
+          context 'from_codeviewer is nil' do
+            include_examples 'without permission'
+          end
+        end
+        context 'role is not a reviewer for the current result' do
+          context 'role is an accepted member of the results grouping' do
+            let(:student) { incomplete_result.grouping.accepted_students.first }
+            context 'and the selected file is associated with the current submission' do
+              let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
+              let(:grouping) { incomplete_result.grouping }
+              include_examples 'download files'
+            end
+            context 'and the selected file is associated with a different submission' do
+              let(:submission_file) { create(:submission_file) }
+              include_examples 'without permission'
+            end
+          end
+          context 'role is not an accepted member of the results grouping' do
+            let(:student) { create(:student) }
+            include_examples 'without permission'
+          end
+        end
+      end
+      include_examples 'download files'
+    end
+  end
 end
