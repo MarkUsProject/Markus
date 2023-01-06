@@ -294,9 +294,11 @@ module ArchiveTools
             record = klass.new(attributes)
 
             # Get the old file location before updating foreign keys so that file locations dependant on
-            # associated records are calculated correctly.
+            # foreign key values are calculated correctly. This works for files whose location is dependant
+            # on foreign keys (eg: starter file group files), but not for files whose location is dependant
+            # on associated records themselves (eg: group repositories); these are discovered after the new
+            # record is created in the database.
             old_file_location = nil
-            new_file_location = nil
             if record.respond_to? :_file_location
               old_file_location = temporary_file_storage(data_dir) { record._file_location }
             end
@@ -313,6 +315,14 @@ module ArchiveTools
                 associated_class = association.klass
               end
               record.assign_attributes(k => new_ids[associated_class.table_name][v.to_s])
+            end
+
+            if record.respond_to?(:_file_location) && !File.exist?(old_file_location.to_s)
+              # The file may not exist if the location is dependant on the existence of an
+              # associated object in the database (eg: group repositories' locations depend on
+              # the course name). That object may not have existed yet the last time that
+              # old_file_location was calculated
+              old_file_location = temporary_file_storage(data_dir) { record._file_location }
             end
 
             # nullify the id so that it can be assigned a new one.

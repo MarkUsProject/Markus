@@ -86,6 +86,8 @@ class Group < ApplicationRecord
   # Git repos are stored on disk but not other types of repo (ie. memory)
   if Settings.repository.type == 'git'
     def _file_location
+      return if self.course.nil?
+
       Repository.get_class.respond_to?(:bare_path) ? Repository.get_class.bare_path(repo_path) : repo_path
     end
   end

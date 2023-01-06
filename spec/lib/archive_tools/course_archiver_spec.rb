@@ -2,6 +2,9 @@ require 'archive_tools/course_archiver'
 
 describe ArchiveTools::CourseArchiver do
   include ArchiveTools::CourseArchiver
+  let(:repo_type) { 'mem' }
+  before { allow(Settings.repository).to receive(:type).and_return(repo_type) }
+
   let(:full_course) do
     course = create :course
     create :assignment_with_criteria_and_test_results, course: course
@@ -51,7 +54,6 @@ describe ArchiveTools::CourseArchiver do
         expect(archived_course_id).to eq course.id.to_s
       end
       it 'contains the expected db files' do
-        subject
         Rails.application.eager_load!
         files = ApplicationRecord.descendants
                                  .reject { |klass| ids_associated_to_course(course, klass).empty? }
@@ -60,7 +62,6 @@ describe ArchiveTools::CourseArchiver do
         expect(archived_db_data.map { |f| File.basename(f) }).to contain_exactly(*files)
       end
       it 'contains the expected data files' do
-        subject
         Rails.application.eager_load!
         allow(Settings).to receive(:file_storage).and_return Config::Options.new(default_root_path: archived_file_loc)
         files = ApplicationRecord.descendants
@@ -78,6 +79,11 @@ describe ArchiveTools::CourseArchiver do
     context 'a full course' do
       let(:course) { full_course }
       it_behaves_like 'archive course'
+      context 'with git repositories', :keep_memory_repos do
+        let(:repo_type) { 'git' }
+        after { FileUtils.rm_r(Dir.glob(File.join(Repository.root_dir, '*'))) }
+        it_behaves_like 'archive course'
+      end
     end
     context 'when other courses exist' do
       let(:course) { create :course }
@@ -169,6 +175,13 @@ describe ArchiveTools::CourseArchiver do
     context 'using a full valid archive file' do
       it_behaves_like 'unarchive course'
       it_behaves_like 'cleanup after'
+      context 'with git repositories', :keep_memory_repos do
+        let(:archive_file) { Rails.root.join('spec/fixtures/files/unarchive/good_full_git.tar.gz') }
+        let(:repo_type) { 'git' }
+        after { FileUtils.rm_r(Dir.glob(File.join(Repository.root_dir, '*'))) }
+        it_behaves_like 'unarchive course'
+        it_behaves_like 'cleanup after'
+      end
     end
     context 'using an archive file with missing data' do
       before do
