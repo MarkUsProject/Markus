@@ -3298,6 +3298,13 @@ CREATE INDEX index_courses_on_autotest_setting_id ON public.courses USING btree 
 
 
 --
+-- Name: index_courses_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_courses_on_name ON public.courses USING btree (name);
+
+
+--
 -- Name: index_criteria_on_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4682,4 +4689,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220922131809'),
 ('20221019191315'),
 ('20221111182002'),
-('20221219204837');
+('20221219204837'),
+('20230109190029');
