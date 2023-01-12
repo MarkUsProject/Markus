@@ -31,4 +31,6 @@ Depends:
 # ruby-dev: required to run rails
   ruby-dev (>= 1:2.7) | ruby2.7-dev, ruby-dev (<< 1:3) | ruby2.7-dev,
 # rubygems-integration: required to install ruby gems
-  rubygems-integration
+  rubygems-integration,
+# tesseract-ocr: required for scanned exams
+  tesseract-ocr (>= 4.1.1-2build2)

@@ -42,30 +42,15 @@ class SplitPdfJob < ApplicationJob
         original_pdf = File.binread(File.join(raw_dir, "#{split_page.id}.pdf"))
 
         # convert PDF to an image
-        imglist = Magick::Image.from_blob(original_pdf) do
+        img = Magick::Image.from_blob(original_pdf) do
           self.quality = 100
-          self.density = '83'
-        end
-        imglist.each do |img|
-          # Snip out the top left corner of PDF that contains the QR code
-          top_left_qr_img = img.crop 20, 25, img.columns / 3.8, img.rows / 5.0
-          top_left_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
-        end
-        qrcode_regex = /\A(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)\Z/
-        left_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
-        left_m = qrcode_regex.match left_qr_code_string
-        if !left_m.nil?
-          m = left_m
-        else # if parsing fails, try the top right corner of the PDF
-          imglist.each do |img|
-            # Snip out the top right corner of PDF that contains the QR code
-            top_right_qr_img = img.crop 510, 25, img.columns / 3.8, img.rows / 5.0
-            top_right_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
-            right_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
-            right_m = qrcode_regex.match right_qr_code_string
-            m = right_m
-          end
-        end
+          self.density = '200'
+        end.first
+
+        qr_file_location = File.join(raw_dir, "#{split_page.id}.jpg")
+        img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
+        code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
+        m = code_regex.match(ZXing.decode(qr_file_location)) || code_regex.match(RTesseract.new(qr_file_location).to_s)
         status = ''
 
         if m.nil?
