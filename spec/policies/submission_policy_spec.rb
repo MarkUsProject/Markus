@@ -124,4 +124,43 @@ describe SubmissionPolicy do
       end
     end
   end
+  describe_rule :change_remark_status? do
+    let(:record) { create :complete_result }
+    failed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    failed 'role is a ta' do
+      let(:role) { create(:ta) }
+    end
+    failed 'role is a student who is not part of the grouping' do
+      let(:role) { create :student }
+    end
+    describe 'role is a student who is part of the grouping' do
+      let(:role) { create :student }
+      let(:grouping) { create :grouping_with_inviter_and_submission, inviter: role }
+      let(:result) { grouping.current_result }
+      let(:record) { result.submission }
+      let(:assignment) { record.grouping.assignment }
+      succeed 'assignment.release_with_urls is false' do
+        before { assignment.update! release_with_urls: false }
+      end
+      context 'assignment.release_with_urls is true' do
+        before { assignment.update! release_with_urls: true }
+        let(:context) { { role: role, real_user: role.user, view_token: view_token } }
+        failed 'the view token does not match the record token' do
+          let(:view_token) { "#{result.view_token}abc123" }
+        end
+        context 'the view token matches the record token' do
+          let(:view_token) { result.view_token }
+          succeed 'the token does not have an expiry set'
+          succeed 'the record has a token expiry set in the future' do
+            before { result.update! view_token_expiry: 1.hour.from_now }
+          end
+          failed 'the record has a token expiry set in the past' do
+            before { result.update! view_token_expiry: 1.hour.ago }
+          end
+        end
+      end
+    end
+  end
 end

@@ -5,6 +5,7 @@ class SubmissionsController < ApplicationController
 
   authorize :select_file, through: :select_file
   authorize :from_codeviewer, through: :from_codeviewer_param
+  authorize :view_token, through: :view_token_param
 
   PERMITTED_IFRAME_SRC = ([:self] + %w[https://www.youtube.com https://drive.google.com https://docs.google.com]).freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
@@ -837,7 +838,56 @@ class SubmissionsController < ApplicationController
     head :ok
   end
 
+  # Allows student to cancel a remark request.
+  def cancel_remark_request
+    @submission = record
+    @assignment = record.grouping.assignment
+    @course = record.course
+    record.remark_result.destroy
+    record.get_original_result.update(released_to_students: true)
+
+    redirect_to controller: 'results',
+                action: 'view_marks',
+                course_id: current_course.id,
+                id: record.get_original_result.id
+  end
+
+  def update_remark_request
+    @submission = record
+    @assignment = record.grouping.assignment
+    @course = record.course
+    if @assignment.past_remark_due_date?
+      head :bad_request
+    else
+      record.update(
+        remark_request: params[:submission][:remark_request],
+        remark_request_timestamp: Time.current
+      )
+      if params[:save]
+        head :ok
+      elsif params[:submit]
+        unless record.remark_result
+          record.make_remark_result
+          record.non_pr_results.reload
+        end
+        record.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+        record.get_original_result.update(released_to_students: false)
+        render js: 'location.reload();'
+      else
+        head :bad_request
+      end
+    end
+  end
+
   private
+
+  def view_token_param
+    if !record.nil?
+      params[:view_token] || session['view_token']&.[](record.current_result&.id&.to_s)
+    else
+      false
+    end
+  end
 
   def notebook_to_html(file_contents, unique_path, type)
     return file_contents unless type == 'jupyter-notebook'

@@ -1,7 +1,7 @@
 # Result policy class
 class ResultPolicy < ApplicationPolicy
   default_rule :manage?
-  alias_rule :update_remark_request?, :cancel_remark_request?, :get_test_runs_instructors_released?, to: :view_marks?
+  alias_rule :get_test_runs_instructors_released?, to: :view_marks?
   alias_rule :create?, :add_extra_mark?, :remove_extra_mark?, :get_test_runs_instructors?,
              :add_tag?, :remove_tag?, :revert_to_automatic_deductions?, to: :grade?
   alias_rule :show?, :get_annotations?, to: :view?

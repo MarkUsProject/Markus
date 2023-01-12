@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import {TextForm} from "./autosave_text_form";
+import {update_remark_request_course_assignment_submission_path} from "../../../../javascript/routes";
 
 export class RemarkPanel extends React.Component {
   componentDidMount() {
@@ -22,9 +23,10 @@ export class RemarkPanel extends React.Component {
     let data = {submission: {remark_request: value}};
     data[name] = "true";
     return $.ajax({
-      url: Routes.update_remark_request_course_result_path(
+      url: Routes.update_remark_request_course_assignment_submission_path(
         this.props.course_id,
-        this.props.result_id
+        this.props.assignment_id,
+        this.props.submission_id
       ),
       method: "PATCH",
       data: data,

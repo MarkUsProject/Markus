@@ -5,8 +5,9 @@ class SubmissionPolicy < ApplicationPolicy
              :zip_groupings_files?, :download_zipped_file?, :download_summary?, to: :manage_files?
   alias_rule :download?, :downloads?, :get_file?, :populate_file_manager?, :update_files?, to: :view_files?
   alias_rule :download_file_zip?, to: :download_file?
+  alias_rule :update_remark_request?, :cancel_remark_request?, to: :change_remark_status?
 
-  authorize :from_codeviewer, :select_file, optional: true
+  authorize :from_codeviewer, :select_file, :view_token, optional: true
 
   def manage?
     check?(:manage_submissions?, role)
@@ -44,6 +45,18 @@ class SubmissionPolicy < ApplicationPolicy
         select_file.nil? || select_file.submission == record
       )
     )
+  end
+
+  def change_remark_status?
+    check?(:member?, record.grouping) &&
+      (!record.grouping.assignment.release_with_urls || check?(:view_with_result_token?))
+  end
+
+  # This is a separate policy function because it reports a specific error message on failure
+  def view_with_result_token?
+    check?(:member?,
+           record.current_result.grouping) && record.current_result.view_token == view_token &&
+      !record.current_result.view_token_expired?
   end
 
   def before_release?

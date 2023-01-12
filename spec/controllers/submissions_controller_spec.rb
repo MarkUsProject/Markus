@@ -1657,7 +1657,7 @@ describe SubmissionsController do
   after(:each) do
     destroy_repos
   end
-  context 'file downloading tests' do
+  context 'file_download tests' do
     let(:course) { assignment.course }
     let(:assignment) { create :assignment }
     let(:student) { create :student, grace_credits: 2 }
@@ -1951,6 +1951,121 @@ describe SubmissionsController do
         end
       end
       include_examples 'download files'
+    end
+  end
+  context 'editing remark request status' do
+    let(:course) { assignment.course }
+    let(:assignment) { create :assignment }
+    let(:student) { create :student, grace_credits: 2 }
+    let(:instructor) { create :instructor }
+    let(:ta) { create :ta }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
+    let(:submission) { create :version_used_submission, grouping: grouping }
+    let(:incomplete_result) { submission.current_result }
+    let(:complete_result) { create :complete_result, submission: submission }
+    let(:submission_file) { create :submission_file, submission: submission }
+    let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
+    let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+    let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
+    let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+    let(:from_codeviewer) { nil }
+    describe '#update_remark_request' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:student) { grouping.inviter }
+      let(:submission) do
+        s = create :submission, grouping: grouping
+        s.get_original_result.update!(released_to_students: true)
+        s
+      end
+      let(:result) { submission.get_original_result }
+
+      context 'when saving a remark request message' do
+        let(:subject) do
+          patch_as student,
+                   :update_remark_request,
+                   params: { course_id: assignment.course_id,
+                             id: submission.id,
+                             assignment_id: assignment.id,
+                             submission: { remark_request: 'Message' },
+                             save: true }
+        end
+
+        before { subject }
+
+        it 'updates the submission remark request message' do
+          expect(submission.reload.remark_request).to eq 'Message'
+        end
+
+        it 'does not submit the remark request' do
+          expect(submission.reload.remark_result).to be_nil
+        end
+      end
+
+      context 'when submitting a remark request' do
+        let(:subject) do
+          patch_as student,
+                   :update_remark_request,
+                   params: { course_id: assignment.course_id,
+                             id: submission.id,
+                             assignment_id: assignment.id,
+                             submission: { remark_request: 'Message' },
+                             submit: true }
+        end
+
+        before { subject }
+
+        it 'updates the submission remark request message' do
+          expect(submission.reload.remark_request).to eq 'Message'
+        end
+
+        it 'submits the remark request' do
+          expect(submission.reload.remark_result).to_not be_nil
+        end
+
+        it 'unreleases the original result' do
+          expect(submission.get_original_result.reload.released_to_students).to be false
+        end
+      end
+    end
+
+    describe '#cancel_remark_request' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:student) { grouping.inviter }
+      let(:submission) do
+        s = create :submission, grouping: grouping, remark_request: 'original message',
+                                remark_request_timestamp: Time.current
+        s.make_remark_result
+        s.results.reload
+        s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
+        s.get_original_result.update!(released_to_students: false)
+
+        s
+      end
+
+      let(:subject) do
+        delete_as student,
+                  :cancel_remark_request,
+                  params: { course_id: assignment.course_id,
+                            id: submission.id,
+                            assignment_id: assignment.id }
+      end
+      before { subject }
+
+      it 'destroys the remark result' do
+        submission.non_pr_results.reload
+        expect(submission.remark_result).to be_nil
+      end
+
+      it 'releases the original result' do
+        expect(submission.get_original_result.reload.released_to_students).to be true
+      end
+
+      it 'redirects to the original result view' do
+        expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
+                                                                      id: submission.get_original_result.id)
+      end
     end
   end
 end

@@ -416,7 +416,6 @@ describe ResultsController do
              download: :post,
              get_annotations: :get,
              add_extra_mark: :post,
-             cancel_remark_request: :delete,
              delete_grace_period_deduction: :delete,
              next_grouping: :get,
              remove_extra_mark: :post,
@@ -424,7 +423,6 @@ describe ResultsController do
              set_released_to_students: :post,
              update_overall_comment: :post,
              toggle_marking_state: :post,
-             update_remark_request: :patch,
              update_positions: :get,
              view_marks: :get,
              add_tag: :post,
@@ -616,103 +614,6 @@ describe ResultsController do
             end
           end
         end
-      end
-    end
-
-    describe '#update_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-      let(:student) { grouping.inviter }
-      let(:submission) do
-        s = create :submission, grouping: grouping
-        s.get_original_result.update!(released_to_students: true)
-        s
-      end
-      let(:result) { submission.get_original_result }
-
-      context 'when saving a remark request message' do
-        let(:subject) do
-          patch_as student,
-                   :update_remark_request,
-                   params: { course_id: assignment.course_id,
-                             id: result.id,
-                             submission: { remark_request: 'Message' },
-                             save: true }
-        end
-
-        before { subject }
-
-        it 'updates the submission remark request message' do
-          expect(submission.reload.remark_request).to eq 'Message'
-        end
-
-        it 'does not submit the remark request' do
-          expect(submission.reload.remark_result).to be_nil
-        end
-      end
-
-      context 'when submitting a remark request' do
-        let(:subject) do
-          patch_as student,
-                   :update_remark_request,
-                   params: { course_id: assignment.course_id,
-                             id: result.id,
-                             submission: { remark_request: 'Message' },
-                             submit: true }
-        end
-
-        before { subject }
-
-        it 'updates the submission remark request message' do
-          expect(submission.reload.remark_request).to eq 'Message'
-        end
-
-        it 'submits the remark request' do
-          expect(submission.reload.remark_result).to_not be_nil
-        end
-
-        it 'unreleases the original result' do
-          expect(submission.get_original_result.reload.released_to_students).to be false
-        end
-      end
-    end
-
-    describe '#cancel_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-      let(:student) { grouping.inviter }
-      let(:submission) do
-        s = create :submission, grouping: grouping, remark_request: 'original message',
-                                remark_request_timestamp: Time.current
-        s.make_remark_result
-        s.results.reload
-        s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
-        s.get_original_result.update!(released_to_students: false)
-
-        s
-      end
-
-      let(:subject) do
-        delete_as student,
-                  :cancel_remark_request,
-                  params: { course_id: assignment.course_id,
-                            id: submission.remark_result.id }
-      end
-
-      before { subject }
-
-      it 'destroys the remark result' do
-        submission.non_pr_results.reload
-        expect(submission.remark_result).to be_nil
-      end
-
-      it 'releases the original result' do
-        expect(submission.get_original_result.reload.released_to_students).to be true
-      end
-
-      it 'redirects to the original result view' do
-        expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
-                                                                      id: submission.get_original_result.id)
       end
     end
   end

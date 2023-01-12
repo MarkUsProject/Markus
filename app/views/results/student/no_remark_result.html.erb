@@ -34,9 +34,11 @@
     <p class="notice"><%= t('results.remark.cancel_remark_to_change') %></p>
     <p>
       <%= link_to t('results.remark.cancel'),
-                  { controller: 'results',
+                  { controller: 'submissions',
                     action: 'cancel_remark_request',
-                    id: @result.id },
+                    course_id: @course.id,
+                    assignment_id: @assignment.id,
+                    id: @submission.id },
                   class: 'button',
                   data: { confirm: t('results.remark.cancel_confirm') },
                   method: :delete %>

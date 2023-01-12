@@ -526,6 +526,7 @@ class ResultsController < ApplicationController
 
     if !is_review && @submission.remark_submitted?
       remark_result = @submission.remark_result
+      @course = @submission.course
       # Check if remark request has been submitted but not released yet
       if !remark_result.remark_request_submitted_at.nil? && !remark_result.released_to_students
         render 'results/student/no_remark_result'
@@ -571,45 +572,6 @@ class ResultsController < ApplicationController
   def update_overall_comment
     record.update(overall_comment: params[:result][:overall_comment])
     head :ok
-  end
-
-  def update_remark_request
-    @submission = record.submission
-    @assignment = @submission.grouping.assignment
-    if @assignment.past_remark_due_date?
-      head :bad_request
-    else
-      @submission.update(
-        remark_request: params[:submission][:remark_request],
-        remark_request_timestamp: Time.current
-      )
-      if params[:save]
-        head :ok
-      elsif params[:submit]
-        unless @submission.remark_result
-          @submission.make_remark_result
-          @submission.non_pr_results.reload
-        end
-        @submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
-        @submission.get_original_result.update(released_to_students: false)
-        render js: 'location.reload();'
-      else
-        head :bad_request
-      end
-    end
-  end
-
-  # Allows student to cancel a remark request.
-  def cancel_remark_request
-    submission = record.submission
-
-    submission.remark_result.destroy
-    submission.get_original_result.update(released_to_students: true)
-
-    redirect_to controller: 'results',
-                action: 'view_marks',
-                course_id: current_course.id,
-                id: submission.get_original_result.id
   end
 
   def delete_grace_period_deduction
