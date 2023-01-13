@@ -161,12 +161,19 @@ describe ArchiveTools::CourseArchiver do
       end
     end
     shared_examples 'fail to unarchive a course' do
-      it 'should not create a course' do
-        expect { subject }.not_to(change { Course.count })
+      context do
+        # suppress error messages
+        before { allow(self).to receive(:warn) }
+        it 'should not create a course' do
+          expect { subject }.not_to(change { Course.count })
+        end
+        it 'should create no records' do
+          subject
+          expect(ApplicationRecord.descendants.map(&:count).all?(&:zero?)).to be_truthy
+        end
       end
-      it 'should create no records' do
-        subject
-        expect(ApplicationRecord.descendants.map(&:count).all?(&:zero?)).to be_truthy
+      it 'should output some error messages on stderr' do
+        expect { subject }.to output.to_stderr
       end
     end
     context 'using a minimal archive file' do
