@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
+- Move ResultsController routes to the SubmissionsController (#6434)
 
 ## [v2.2.0]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
