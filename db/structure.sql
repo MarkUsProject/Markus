@@ -1574,7 +1574,6 @@ CREATE TABLE public.results (
     updated_at timestamp without time zone,
     released_to_students boolean DEFAULT false NOT NULL,
     remark_request_submitted_at timestamp without time zone,
-    peer_review_id integer,
     view_token character varying NOT NULL,
     view_token_expiry timestamp without time zone
 );
@@ -3299,6 +3298,13 @@ CREATE INDEX index_courses_on_autotest_setting_id ON public.courses USING btree 
 
 
 --
+-- Name: index_courses_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_courses_on_name ON public.courses USING btree (name);
+
+
+--
 -- Name: index_criteria_on_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3597,13 +3603,6 @@ CREATE INDEX index_peer_reviews_on_reviewer_id ON public.peer_reviews USING btre
 --
 
 CREATE INDEX index_periods_on_submission_rule_id ON public.periods USING btree (submission_rule_id);
-
-
---
--- Name: index_results_on_peer_review_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_results_on_peer_review_id ON public.results USING btree (peer_review_id);
 
 
 --
@@ -4136,14 +4135,6 @@ ALTER TABLE ONLY public.tags
 
 ALTER TABLE ONLY public.levels
     ADD CONSTRAINT fk_rails_7d6e4d7d84 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
-
-
---
--- Name: results fk_rails_81dcc9eed0; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.results
-    ADD CONSTRAINT fk_rails_81dcc9eed0 FOREIGN KEY (peer_review_id) REFERENCES public.peer_reviews(id) ON DELETE CASCADE;
 
 
 --
@@ -4697,4 +4688,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220826132206'),
 ('20220922131809'),
 ('20221019191315'),
-('20221111182002');
+('20221111182002'),
+('20221219204837'),
+('20230109190029');

@@ -146,7 +146,7 @@ class Result < ApplicationRecord
   end
 
   def is_a_review?
-    !peer_review_id.nil?
+    peer_reviews.exists?
   end
 
   def is_review_for?(user, assignment)
