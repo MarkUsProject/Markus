@@ -1,6 +1,6 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
 opencv-python==4.5.2.54
-torch==1.9.0
+torch==1.13.1
 torchvision==0.10.0
 Pillow==9.3.0
 numpy==1.22.0
