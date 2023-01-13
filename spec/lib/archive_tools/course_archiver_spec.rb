@@ -5,6 +5,7 @@ describe ArchiveTools::CourseArchiver do
   let(:repo_type) { 'mem' }
   before { allow(Settings.repository).to receive(:type).and_return(repo_type) }
 
+  let(:exam_template_content) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf').read }
   let(:full_course) do
     course = create :course
     create :assignment_with_criteria_and_test_results, course: course
@@ -13,8 +14,9 @@ describe ArchiveTools::CourseArchiver do
     create :assignment_with_deductive_annotations, course: course
     create :assignment_with_peer_review_and_groupings_results, course: course
     create :assignment_for_student_tests, course: course
-    create :assignment_for_scanned_exam, course: course
     create :timed_assignment, course: course
+    scanned_assignment = create :assignment_for_scanned_exam, course: course
+    create :exam_template_midterm_with_file, assignment: scanned_assignment, file_content: exam_template_content
     assignment = create :assignment, course: course
     create_list :starter_file_group_with_entries, 3, assignment: assignment
     create :key_pair, user: course.roles.first.user
@@ -197,7 +199,7 @@ describe ArchiveTools::CourseArchiver do
         it_behaves_like 'fail to unarchive a course'
       end
       context 'missing file data' do
-        let(:exclude_pattern) { '*/data/autotest/1772' } # there is an assignment with id = 1772 in the archive
+        let(:exclude_pattern) { '*/data/autotest/1748' } # there is an assignment with id = 1748 in the archive
         it_behaves_like 'cleanup after'
         it_behaves_like 'fail to unarchive a course'
       end

@@ -974,11 +974,6 @@ class Assignment < Assessment
     end.compact
   end
 
-  def scanned_exams_path
-    dir = Settings.file_storage.scanned_exams || File.join(Settings.file_storage.default_root_path, 'scanned_exams')
-    Rails.root.join(File.join(dir, self.id.to_s))
-  end
-
   # Retrieve current grader data.
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count

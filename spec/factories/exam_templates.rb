@@ -11,6 +11,16 @@ FactoryBot.define do
     end
   end
 
+  factory :exam_template_midterm_with_file, parent: :exam_template_midterm do
+    transient do
+      file_content { nil }
+    end
+    after(:create) do |exam_template, options|
+      raise 'file_content is required for this factory' unless options.file_content
+      exam_template.replace_with_file(options.file_content, new_filename: exam_template.filename)
+    end
+  end
+
   factory :exam_template_with_automatic_parsing, parent: :exam_template_midterm do
     automatic_parsing { true }
     cover_fields { 'id_number' }

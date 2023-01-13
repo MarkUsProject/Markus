@@ -209,7 +209,8 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join self.assignment.scanned_exams_path, self.id.to_s
+    dir = Settings.file_storage.scanned_exams || File.join(Settings.file_storage.default_root_path, 'scanned_exams')
+    Rails.root.join(File.join(dir, self.assessment_id.to_s, self.id.to_s))
   end
 
   alias _file_location base_path
