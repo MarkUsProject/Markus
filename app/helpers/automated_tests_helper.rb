@@ -36,9 +36,11 @@ module AutomatedTestsHelper
 
   def autotest_settings_for(assignment)
     test_specs = assignment.autotest_settings&.deep_dup || {}
-    test_specs['testers']&.each do |tester_specs|
-      test_group_ids = tester_specs['test_data'] || []
-      tester_specs['test_data'] = assignment.test_groups.where(id: test_group_ids).order(:position).map(&:to_json)
+    test_specs['testers']&.each_with_index do |tester_specs, i|
+      tester_specs['test_data'] = assignment.test_groups
+                                            .where(tester_index: i)
+                                            .order(:position)
+                                            .map(&:to_json)
     end
     test_specs
   end
@@ -48,12 +50,10 @@ module AutomatedTestsHelper
     test_group_ids = []
 
     test_group_position = 1
-    test_specs['testers']&.each do |tester_specs|
-      current_test_group_ids = []
+    test_specs['testers']&.each_with_index do |tester_specs, i|
       tester_specs['test_data']&.each do |test_group_specs|
         test_group_specs['extra_info'] ||= {}
         extra_data_specs = test_group_specs['extra_info']
-        test_group_id = extra_data_specs['test_group_id']
         display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
         test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
         criterion_name = extra_data_specs['criterion']
@@ -61,22 +61,26 @@ module AutomatedTestsHelper
         if criterion_name.present? && criterion.nil?
           flash_message(:warning, I18n.t('automated_tests.no_criteria', name: criterion_name))
         end
-        fields = { name: test_group_name, display_output: display_output,
-                   criterion_id: criterion&.id, autotest_settings: test_group_specs,
-                   position: test_group_position }
+        attrs = {
+          name: test_group_name,
+          display_output: display_output,
+          criterion_id: criterion&.id,
+          tester_index: i,
+          position: test_group_position,
+          autotest_settings: test_group_specs.except('extra_info')
+        }
         test_group_position += 1
-        if test_group_id.nil?
-          test_group = assignment.test_groups.create!(fields)
-          test_group_id = test_group.id
-          extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
-        else
-          test_group = assignment.test_groups.find(test_group_id)
-          test_group.update!(fields)
-        end
-        test_group_ids << test_group_id
-        current_test_group_ids << test_group_id
+        old_test_group = assignment.test_groups.find_by(attrs.except(:autotest_settings))
+        identical = old_test_group&.autotest_settings == attrs[:autotest_settings]
+        test_group_ids << if identical
+                            old_test_group.id
+                          else
+                            new_test_group = assignment.test_groups.create(attrs)
+                            new_test_group.id
+                          end
       end
-      tester_specs['test_data'] = current_test_group_ids
+      assignment.test_groups.where.not(id: test_group_ids).update!(tester_index: nil)
+      tester_specs.delete('test_data')
     end
 
     # Save test specs

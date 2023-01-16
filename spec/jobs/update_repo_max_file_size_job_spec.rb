@@ -10,7 +10,7 @@ describe UpdateRepoMaxFileSizeJob do
       allow(Settings.repository).to receive(:type).and_return('git')
       allow(Repository.get_class).to receive(:purge_all).and_return nil
     end
-    after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+    after { FileUtils.rm_r(Dir.glob(File.join(Repository.root_dir, '*'))) }
 
     let!(:groups) { create_list :group, 3, course: course }
     it 'should update every repo' do

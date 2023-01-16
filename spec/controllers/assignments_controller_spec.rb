@@ -1888,7 +1888,6 @@ describe AssignmentsController do
           autotest_files: uploaded_assignment.autotest_files.to_set
         }
         sample_spec_file = create_sample_spec_file(uploaded_criterion)
-        sample_spec_file['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = uploaded_test_groups.first.id
         expected_automated_test_data = {
           uploaded_a_test_group: true,
           spec_file: sample_spec_file,

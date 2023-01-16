@@ -97,6 +97,7 @@ module Helpers
     specs = create_sample_spec_file(criterion)
     new_test_group = assignment.test_groups.create!(
       name: specs['testers'][0]['test_data'][0]['extra_info']['name'],
+      tester_index: 0,
       position: 1
     )
     specs['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = new_test_group.id

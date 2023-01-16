@@ -234,17 +234,6 @@ describe AutomatedTestsController do
           get_as role, :download_specs, params: params
           expect(response.status).to eq 200
         end
-        context 'when there is a test_group_id specified' do
-          let(:content) { { testers: [{ test_data: [10] }] } }
-          before do
-            create(:test_group, assignment: assignment, id: 10)
-          end
-          it 'should remove the test_group_id' do
-            get_as role, :download_specs, params: params
-            test_group_settings = JSON.parse(response.body)['testers'].first['test_data'].first['extra_info']
-            expect(test_group_settings).to_not have_key('test_group_id')
-          end
-        end
       end
       context 'when the assignment does not have test settings' do
         before :each do

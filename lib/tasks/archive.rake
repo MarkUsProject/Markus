@@ -1,3 +1,5 @@
+require 'archive_tools/course_archiver'
+
 namespace :markus do
   # Copy directory +src+ to +dest+. If +rev+ is true, instead
   # copy +dest+ to +src+. If +remove_dest+ is true, remove +dest+
@@ -16,7 +18,7 @@ namespace :markus do
   def copy_archive_files(archive_dir, rev: false)
     # copy repo permission file
     permission_file = archive_dir + 'permission_file'
-    archive_copy(Repository::PERMISSION_FILE, permission_file.to_s, rev: rev)
+    archive_copy(Repository.permission_file, permission_file.to_s, rev: rev)
     # copy log files
     log_dir = File.dirname(File.join(::Rails.root, Settings.logging.log_file))
     log_files_dir = archive_dir + 'log_files'
@@ -27,38 +29,64 @@ namespace :markus do
     archive_copy(error_dir, error_files_dir, rev: rev)
     # copy starter files
     starter_files_dir = archive_dir + 'starter_files'
-    archive_copy(Assignment::STARTER_FILES_DIR, starter_files_dir, rev: rev)
+    archive_copy(Assignment.starter_files_dir, starter_files_dir, rev: rev)
     # copy autotest client dir
     autotest_dir = archive_dir + 'autotest_client'
-    archive_copy(TestRun::SETTINGS_FILES_DIR, autotest_dir, rev: rev)
+    archive_copy(TestRun.settings_files_dir, autotest_dir, rev: rev)
     # copy repositories
     repos_dir = archive_dir + 'repos'
-    archive_copy(Repository::ROOT_DIR, repos_dir, rev: rev)
+    archive_copy(Repository.root_dir, repos_dir, rev: rev)
   end
 
-  # Copy all stateful MarkUs files to +archive_dir+
-  task :archive, [:archive_file] => :environment do |_task, args|
-    archive_dir = Pathname.new("#{::Rails.root}/tmp/archive")
-    FileUtils.rm_rf(archive_dir)
-    FileUtils.mkdir_p(archive_dir)
-    puts 'Copying files on disk'
-    copy_archive_files(archive_dir)
-    zip_file = File.expand_path(args[:archive_file])
-    puts "Archiving all repositories and files to #{zip_file}"
-    FileUtils.rm_f(zip_file)
-    zip_cmd = ['tar', '-czvf', zip_file.to_s, '.']
-    Open3.popen3(*zip_cmd, chdir: archive_dir)
+  namespace :archive do
+    # Copy all stateful MarkUs files to +archive_dir+
+    task :files, [:archive_file] => :environment do |_task, args|
+      archive_dir = Pathname.new("#{::Rails.root}/tmp/archive")
+      FileUtils.rm_rf(archive_dir)
+      FileUtils.mkdir_p(archive_dir)
+      puts 'Copying files on disk'
+      copy_archive_files(archive_dir)
+      zip_file = File.expand_path(args[:archive_file])
+      puts "Archiving all repositories and files to #{zip_file}"
+      FileUtils.rm_f(zip_file)
+      zip_cmd = ['tar', '-czvf', zip_file.to_s, '.']
+      Open3.popen3(*zip_cmd, chdir: archive_dir)
+    end
+
+    task :course, [:course_name] => :environment do |_task, args|
+      include ArchiveTools::CourseArchiver
+      archive_file = archive(args[:course_name])
+      puts "Course #{args[:course_name]} has been archived to #{archive_file}"
+    end
   end
 
-  # Copy all stateful MarkUs files from +archive_dir+
-  task :unarchive, [:archive_file] => :environment do |_task, args|
-    archive_dir = Pathname.new("#{::Rails.root}/tmp/archive")
-    FileUtils.rm_rf(archive_dir)
-    zip_file = args[:archive_file]
-    puts "Unarchiving file #{zip_file}"
-    zip_cmd = ['tar', '-xzvf', zip_file.to_s, '-C', archive_dir.to_s]
-    Open3.popen3(*zip_cmd)
-    puts 'Copying archived files to the app'
-    copy_archive_files(archive_dir, rev: true)
+  namespace :unarchive do
+    # Copy all stateful MarkUs files from +archive_dir+
+    task :files, [:archive_file] => :environment do |_task, args|
+      archive_dir = Pathname.new("#{::Rails.root}/tmp/archive")
+      FileUtils.rm_rf(archive_dir)
+      zip_file = args[:archive_file]
+      puts "Unarchiving file #{zip_file}"
+      zip_cmd = ['tar', '-xzvf', zip_file.to_s, '-C', archive_dir.to_s]
+      Open3.popen3(*zip_cmd)
+      puts 'Copying archived files to the app'
+      copy_archive_files(archive_dir, rev: true)
+    end
+    task :course, [:archive_file] => :environment do |_task, args|
+      include ArchiveTools::CourseArchiver
+      unarchive(args[:archive_file], tmp_db_url: ENV.fetch('TMP_DB_URL', nil)) do
+        warn "Do you want to commit all changes even though there were some errors reported? Type 'yes' to confirm."
+        unless gets.chomp == 'yes'
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+  end
+
+  namespace :remove do
+    task :course, [:course_name] => :environment do |_task, args|
+      include ArchiveTools::CourseArchiver
+      remove_db_and_data(args[:course_name])
+    end
   end
 end

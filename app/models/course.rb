@@ -13,7 +13,7 @@ class Course < ApplicationRecord
   has_many :tags, through: :roles
   has_many :exam_templates, through: :assignments
   has_many :lti_deployments
-  belongs_to :autotest_setting, optional: true
+  belongs_to :autotest_setting, optional: true, inverse_of: :courses
 
   validates :name, presence: true
   validates :name, uniqueness: true

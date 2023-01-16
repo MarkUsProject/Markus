@@ -100,6 +100,23 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Use the following metadata option to skip transactional fixtures for some tests.
+  # This is slower than using transactional fixtures but ensures that tests are not
+  # run in a single transaction.
+  config.around(:each, use_transactional_fixtures: false) do |example|
+    prev_setting = self.use_transactional_tests
+    self.use_transactional_tests = false
+    example.run
+    self.use_transactional_tests = prev_setting
+    Rails.application.eager_load!
+    tables = ApplicationRecord.descendants.map(&:table_name)
+    ActiveRecord::Base.connection.execute(tables.map { |t| "ALTER TABLE \"#{t}\" DISABLE TRIGGER ALL;" }.join)
+    all_tables_str = tables.map { |t| "\"#{t}\"" }.join(', ')
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{all_tables_str}")
+  ensure
+    ActiveRecord::Base.connection.execute(tables.map { |t| "ALTER TABLE \"#{t}\" ENABLE TRIGGER ALL;" }.join)
+  end
+
   config.before type: :system do
     # Override the default driver used by rspec system tests
     driven_by :selenium_remote_chrome

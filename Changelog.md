@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Allow admins to archive, unarchive, and delete a course (#6342)
 - Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
 
 ## [v2.2.0]

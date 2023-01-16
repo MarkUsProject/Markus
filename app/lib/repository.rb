@@ -23,8 +23,13 @@ module Repository
     end
   end
 
-  ROOT_DIR = (Settings.file_storage.repos || File.join(Settings.file_storage.default_root_path, 'repos')).freeze
-  PERMISSION_FILE = File.join(ROOT_DIR, '.access').freeze
+  def self.root_dir
+    Settings.file_storage.repos || File.join(Settings.file_storage.default_root_path, 'repos')
+  end
+
+  def self.permission_file
+    File.join(self.root_dir, '.access')
+  end
 
   # Exceptions for repositories
   class ConnectionError < StandardError; end

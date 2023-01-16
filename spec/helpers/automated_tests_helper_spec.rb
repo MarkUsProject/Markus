@@ -8,8 +8,9 @@ describe AutomatedTestsHelper do
         {
           'test_data' => [{
             'extra_info' => {
-              'test_group_id' => test_group_id,
-              'criterion' => criterion.name
+              'name' => test_group&.name,
+              'display_output' => test_group&.display_output,
+              'criterion' => test_group&.criterion&.name
             }
           }]
         }
@@ -18,35 +19,26 @@ describe AutomatedTestsHelper do
     subject { update_test_groups_from_specs assignment, specs }
     before { allow(AutomatedTestsHelper).to receive(:flash_message) }
     context 'when the test group exists' do
-      let!(:test_group_id) { create(:test_group, assignment: assignment).id }
+      let!(:test_group) { create(:test_group, assignment: assignment, tester_index: 0) }
       it 'should not create a new test group' do
         expect { subject }.not_to(change { assignment.test_groups.count })
       end
-      it 'should use the existing test group id' do
-        subject
-        expect(specs['testers'][0]['test_data'][0]).to eq test_group_id
-      end
     end
     context 'when the test group does not exist' do
-      let(:test_group_id) { nil }
+      let(:test_group) { nil }
       it 'should create a new test group' do
         expect { subject }.to change { assignment.test_groups.count }.from(0).to(1)
       end
-      it 'should use the newly created test group id' do
-        subject
-        expect(specs['testers'][0]['test_data'][0]).to eq assignment.test_groups.first.id
-      end
     end
     context 'when the criterion exists' do
-      let(:test_group_id) { create(:test_group, assignment: assignment).id }
-      before { criterion.save }
+      let(:test_group) { create(:test_group, assignment: assignment, criterion: criterion) }
       it 'should use the criterion' do
         subject
         expect(assignment.test_groups.first.criterion).to eq criterion
       end
     end
     context 'when the criterion does not exist' do
-      let(:test_group_id) { create(:test_group, assignment: assignment).id }
+      let(:test_group) { create(:test_group, assignment: assignment) }
       before { subject }
       it 'should not set the criterion on the test group' do
         expect(assignment.test_groups.first.criterion).to be_nil
