@@ -1654,9 +1654,6 @@ describe SubmissionsController do
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
   SAMPLE_COMMENT = 'sample comment'.freeze
   SAMPLE_FILE_NAME = 'file.java'.freeze
-  after(:each) do
-    destroy_repos
-  end
   context 'file_download tests' do
     let(:course) { assignment.course }
     let(:assignment) { create :assignment }
