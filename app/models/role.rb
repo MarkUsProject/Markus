@@ -71,6 +71,28 @@ class Role < ApplicationRecord
     is_a?(Student) && !pr.nil?
   end
 
+  def is_a_reviewer_for_submission?(assignment, submission)
+    # aid is the peer review assignment id, and result_id
+    # is the peer review result
+    if assignment.nil?
+      return false
+    end
+
+    group = grouping_for(Integer(assignment.id))
+    if group.nil?
+      return false
+    end
+
+    prs = PeerReview.where(reviewer_id: group.id)
+    if prs.first.nil?
+      return false
+    end
+
+    pr = prs.find { |p| p.result.submission.id == submission.id }
+
+    is_a?(Student) && !pr.nil?
+  end
+
   def visible_assessments(assessment_type: nil, assessment_id: nil)
     visible = self.assessments.where(type: assessment_type || Assessment.type)
     return visible.where(id: assessment_id) if assessment_id

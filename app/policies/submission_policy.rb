@@ -39,7 +39,7 @@ class SubmissionPolicy < ApplicationPolicy
 
   def download_file?
     check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
-      from_codeviewer && role.is_reviewer_for?(record.grouping.assignment.pr_assignment, record.current_result)
+      from_codeviewer && role.is_a_reviewer_for_submission?(record.grouping.assignment.pr_assignment, record)
     ) || (
       record.grouping.accepted_students.ids.include?(role.id) && (
         select_file.nil? || select_file.submission == record
