@@ -29,6 +29,7 @@ gem 'resque-scheduler'
 
 # Authorization
 gem 'action_policy'
+gem 'rack-cors'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
