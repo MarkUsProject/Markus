@@ -40,3 +40,6 @@ working code, which you can see in our [Contributors list](doc/markus-contributo
 **Supervisors:** Karen Reid, David Liu
 
 **Former supervisors:** Morgan Magnin, Benjamin Vialle
+
+The web interface uses icons from the silk icon Copyright (c) 2005-2006 Mark James, licensed under the Creative Commons Attribution 2.5 Generic (CC BY 2.5).
+The source for the silk icons is available at https://github.com/markjames/famfamfam-silk-icons
