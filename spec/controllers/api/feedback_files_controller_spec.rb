@@ -146,6 +146,15 @@ describe Api::FeedbackFilesController do
           expect(response).to have_http_status :conflict
         end
       end
+      context 'when trying to create a feedback file larger than the course size limit' do
+        let(:file_content) { SecureRandom.alphanumeric(course.max_file_size + 10) }
+        it 'should raise a 413 error' do
+          post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
+                                  filename: filename, mime_type: 'text/plain',
+                                  file_content: file_content, course_id: course.id }
+          expect(response).to have_http_status :payload_too_large
+        end
+      end
     end
 
     context 'PUT update' do
