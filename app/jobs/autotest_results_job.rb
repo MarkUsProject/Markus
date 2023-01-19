@@ -2,7 +2,7 @@
 # of completed tests
 class AutotestResultsJob < AutotestJob
   around_enqueue do |job, block|
-    redis = Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
+    redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
     block.call if redis.setnx('autotest_results', job.job_id)
     redis.expire('autotest_results', 300) # expire the key just in case
   end
@@ -45,7 +45,7 @@ class AutotestResultsJob < AutotestJob
     end
     outstanding_results
   ensure
-    redis = Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
+    redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
     if redis.get('autotest_results') == self.job_id
       redis.del('autotest_results')
     end
