@@ -100,6 +100,9 @@ Config.setup do |config|
         required(:max_threads).filled(:integer, gt?: -1)
         required(:worker_timeout).filled(:integer, gt?: 5) # puma enforces a minimum 6 second worker timeout
       end
+      required(:jupyter_server).hash do
+        required(:hosts).array(:string)
+      end
       required(:queues).hash do
         required(:default).filled(:string)
         optional(:autotest_cancel_job).filled(:string)
