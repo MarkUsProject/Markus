@@ -1,8 +1,11 @@
 require 'mono_logger'
 module LtiHelper
   # Synchronize LMS user with MarkUs users.
-  # if role is not nil, attempt to create users.
-  def roster_sync(lti_deployment, course, role)
+  # if role is not nil, attempt to create users
+  # based on the values of can_create_users and
+  # can_create_roles.
+  def roster_sync(lti_deployment, course, can_create_users: false, can_create_roles: false)
+    errors = []
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
@@ -11,15 +14,13 @@ module LtiHelper
     res = lti_deployment.send_lti_request!(req, membership_uri, auth_data, [LtiDeployment::LTI_SCOPES[:names_role]])
     member_info = JSON.parse(res.body)
     user_data = member_info['members'].filter_map do |user|
-      unless user['status'] == 'Inactive'
-        { user_name: user['lis_person_sourcedid'],
+      unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user'])
+        { user_name: user['lis_person_sourcedid'].nil? ? user['name'] : user['lis_person_sourcedid'],
           first_name: user['given_name'],
           last_name: user['family_name'],
           display_name: user['name'],
           email: user['email'],
-          lti_user_id: user['user_id'],
-          time_zone: Time.zone.name,
-          type: 'EndUser' }
+          lti_user_id: user['user_id'] }
       end
     end
     if user_data.empty?
@@ -27,16 +28,21 @@ module LtiHelper
     end
     user_data.each do |lms_user|
       markus_user = EndUser.find_by(user_name: lms_user[:user_name])
-      if markus_user.nil? && allowed_to?(:manage?, role, with: Admin::UserPolicy)
-        EndUser.create(lms_user)
+      if markus_user.nil? && can_create_users # allowed_to?(:manage?, current_user, with: Admin::UserPolicy)
+        markus_user = EndUser.create!(lms_user.except(:lti_user_id))
+      elsif markus_user.nil? && !can_create_users
+        errors.append("MarkUs user #{lms_user[:user_name]} not found")
+        next
       end
       course_role = Student.find_by(user: markus_user, course: course)
-      if course_role.nil? && allowed_to?(:manage?, role, with: RolePolicy)
-        Student.create(user: markus_user, course: lti_deployment.course)
+      if course_role.nil? && can_create_roles # allowed_to?(:manage?, role, with: RolePolicy)
+        course_role = Student.create!(user: markus_user, course: lti_deployment.course)
       end
+      next if course_role.nil?
       lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
       lti_user.update!(lti_user_id: lms_user[:lti_user_id])
     end
+    errors
   end
 
   def grade_sync(lti_deployment, assessment)

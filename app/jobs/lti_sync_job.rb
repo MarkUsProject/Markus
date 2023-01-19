@@ -11,9 +11,9 @@ class LtiSyncJob < ApplicationJob
     I18n.t('lti.grade_sync_complete')
   end
 
-  def perform(lti_deployments, assessment, course, role: nil)
+  def perform(lti_deployments, assessment, course, can_create_users: false, can_create_roles: false)
     lti_deployments.each do |deployment|
-      roster_sync(deployment, course, role)
+      roster_sync(deployment, course, can_create_users: can_create_users, can_create_roles: can_create_roles)
       grade_sync(deployment, assessment)
     end
   end
