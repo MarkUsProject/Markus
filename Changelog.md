@@ -1,8 +1,6 @@
 # Changelog
 
 
-## [unreleased]
-- Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
 
 ## [v2.2.1]
 - Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
