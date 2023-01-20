@@ -1,5 +1,12 @@
 # Changelog
 
+
+
+## [v2.2.1]
+- Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
+- Fix bug where peer reviewers could not view results they are assigned to review (#6439)
+- Make fewer connections when connecting to redis (#6443)
+
 ## [v2.2.0]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Simplify configuration options for storing files on disk (#6157)
