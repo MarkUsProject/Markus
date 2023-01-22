@@ -27,16 +27,7 @@ class ResultsController < ApplicationController
         is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
         pr_assignment = is_review ? assignment.pr_assignment : nil
 
-        if current_role.student? && !current_role.is_reviewer_for?(assignment.pr_assignment, result)
-          grouping = current_role.accepted_grouping_for(assignment.id)
-          if submission.grouping_id != grouping&.id ||
-              !result.released_to_students?
-            head :forbidden
-            return
-          end
-        else
-          grouping = submission.grouping
-        end
+        grouping = submission.grouping
 
         data = {
           grouping_id: is_reviewer ? nil : submission.grouping_id,

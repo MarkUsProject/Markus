@@ -50,6 +50,16 @@ describe ResultPolicy do
         end
       end
     end
+    succeed 'role is a student who is a reviewer' do
+      let(:role) { create(:student) }
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment }
+      let(:assignment) { create :assignment_with_peer_review }
+      let(:record) { create :complete_result, submission: create(:submission, grouping: review_grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment.pr_assignment }
+      let(:review_grouping) { create :grouping_with_inviter, assignment: assignment }
+      before { create :peer_review, reviewer: grouping, result: record }
+    end
   end
 
   describe_rule :view_marks? do

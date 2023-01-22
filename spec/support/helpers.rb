@@ -144,6 +144,6 @@ module Helpers
   end
 
   def redis
-    Redis::Namespace.new(Rails.root.to_s, redis: Redis.new(url: Settings.redis.url))
+    Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
   end
 end
