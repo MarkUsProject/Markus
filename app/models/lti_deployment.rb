@@ -24,29 +24,7 @@ class LtiDeployment < ApplicationRecord
   class LimitExceededException < StandardError; end
   class UnauthorizedException < StandardError; end
 
-  class CannotSyncGradesException < StandardError; end
-
-  # Creates or updates an assignment in the LMS gradebook for a given assessment.
-  def create_or_update_lti_assessment(assessment)
-    payload = {
-      label: assessment.description,
-      resourceId: assessment.short_identifier,
-      scoreMaximum: assessment.max_mark.to_f
-    }
-    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:ags_lineitem]])
-    lineitem_service = self.lti_services.find_by!(service_type: 'agslineitem')
-    lineitem_uri = URI(lineitem_service.url)
-    line_item = self.lti_line_items.find_or_initialize_by(assessment: assessment)
-    if line_item.lti_line_item_id?
-      req = Net::HTTP::Put.new(line_item.lti_line_item_id)
-    else
-      req = Net::HTTP::Post.new(lineitem_uri)
-    end
-    req.set_form_data(payload)
-    res = send_lti_request!(req, lineitem_uri, auth_data, [LTI_SCOPES[:ags_lineitem]])
-    line_item_data = JSON.parse(res.body)
-    line_item.update!(lti_line_item_id: line_item_data['id'])
-  end
+  class LtiCannotConnectException < StandardError; end
 
   def send_lti_request(req, uri, auth_data)
     req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
@@ -67,12 +45,12 @@ class LtiDeployment < ApplicationRecord
     res
   rescue LimitExceededException
     conn_attempts += 1
-    raise CannotSyncGradesException if conn_attempts >= 5
+    raise LtiCannotConnectException if conn_attempts >= 5
     sleep(10)
     retry
   rescue UnauthorizedException
     token_resets += 1
-    raise CannotSyncGradesException if token_resets >= 5
+    raise LtiCannotConnectException if token_resets >= 5
     lti_client.get_oauth_token(scopes)
     retry
   end

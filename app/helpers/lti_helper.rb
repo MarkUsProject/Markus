@@ -9,7 +9,7 @@ module LtiHelper
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
-    membership_uri.query = URI.encode_www_form(role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner')
+    membership_uri.query = URI.encode_www_form(role: LtiDeployment::LTI_ROLES[:learner])
     req = Net::HTTP::Get.new(membership_uri)
     res = lti_deployment.send_lti_request!(req, membership_uri, auth_data, [LtiDeployment::LTI_SCOPES[:names_role]])
     member_info = JSON.parse(res.body)
@@ -24,18 +24,22 @@ module LtiHelper
       end
     end
     if user_data.empty?
-      raise 'No user data returned from lms'
+      raise I18n.t('lti.no_users')
     end
     user_data.each do |lms_user|
       markus_user = EndUser.find_by(user_name: lms_user[:user_name])
-      if markus_user.nil? && can_create_users # allowed_to?(:manage?, current_user, with: Admin::UserPolicy)
-        markus_user = EndUser.create!(lms_user.except(:lti_user_id))
+      if markus_user.nil? && can_create_users
+        markus_user = EndUser.create(lms_user.except(:lti_user_id))
+        if markus_user.nil?
+          errors.append(I18n.t('lti.user_not_created', lms_user[:user_name]))
+          next
+        end
       elsif markus_user.nil? && !can_create_users
-        errors.append("MarkUs user #{lms_user[:user_name]} not found")
+        errors.append(I18n.t('lti.user_not_found', lms_user[:user_name]))
         next
       end
       course_role = Student.find_by(user: markus_user, course: course)
-      if course_role.nil? && can_create_roles # allowed_to?(:manage?, role, with: RolePolicy)
+      if course_role.nil? && can_create_roles
         course_role = Student.create!(user: markus_user, course: lti_deployment.course)
       end
       next if course_role.nil?
@@ -88,7 +92,7 @@ module LtiHelper
     mark_data = {}
     lti_users = LtiUser.where(lti_client: lti_deployment.lti_client)
     marks.each do |mark|
-      result = mark.results.first
+      result = mark.result
       group_students = mark.grouping.accepted_student_memberships
       group_students.each do |member|
         lti_user = lti_users.find_by(user: member.role.user)
@@ -111,5 +115,27 @@ module LtiHelper
       end
     end
     mark_data
+  end
+
+  # Creates or updates an assignment in the LMS gradebook for a given assessment.
+  def create_or_update_lti_assessment(lti_deployment, assessment)
+    payload = {
+      label: assessment.description,
+      resourceId: assessment.short_identifier,
+      scoreMaximum: assessment.max_mark.to_f
+    }
+    auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:ags_lineitem]])
+    lineitem_service = lti_deployment.lti_services.find_by!(service_type: 'agslineitem')
+    lineitem_uri = URI(lineitem_service.url)
+    line_item = lti_deployment.lti_line_items.find_or_initialize_by(assessment: assessment)
+    if line_item.lti_line_item_id?
+      req = Net::HTTP::Put.new(line_item.lti_line_item_id)
+    else
+      req = Net::HTTP::Post.new(lineitem_uri)
+    end
+    req.set_form_data(payload)
+    res = lti_deployment.send_lti_request!(req, lineitem_uri, auth_data, [LtiDeployment::LTI_SCOPES[:ags_lineitem]])
+    line_item_data = JSON.parse(res.body)
+    line_item.update!(lti_line_item_id: line_item_data['id'])
   end
 end
