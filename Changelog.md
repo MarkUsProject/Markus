@@ -1,6 +1,8 @@
 # Changelog
 
 
+## [v2.2.2]
+- Apply course maximum file size to feedback files (#6430)
 
 ## [v2.2.1]
 - Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)

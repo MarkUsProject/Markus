@@ -99,10 +99,11 @@ class TestRun < ApplicationRecord
   def create_feedback_file(feedback_data, test_group_result)
     return if feedback_data.nil? || test_group_result.nil?
 
+    unzipped_feedback_data = unzip_file_data(feedback_data)
     test_group_result.feedback_files.create(
-      filename: feedback_data['filename'],
-      mime_type: feedback_data['mime_type'],
-      file_content: unzip_file_data(feedback_data)
+      filename: unzipped_feedback_data['filename'],
+      mime_type: unzipped_feedback_data['mime_type'],
+      file_content: unzipped_feedback_data['content']
     )
   end
 
@@ -135,8 +136,15 @@ class TestRun < ApplicationRecord
   end
 
   def unzip_file_data(file_data)
-    return Zlib.gunzip(file_data['content']) if file_data['compression'] == 'gzip'
-    file_data['content']
+    file_data['content'] = Zlib.gunzip(file_data['content']) if file_data['compression'] == 'gzip'
+    if file_data['content'].size > self.course.max_file_size
+      size_diff = file_data['content'].size - self.course.max_file_size
+      file_data['mime_type'] = 'text'
+      file_data['content'] = I18n.t('oversize_feedback_file',
+                                    file_size: ActiveSupport::NumberHelper.number_to_human_size(size_diff),
+                                    max_file_size: self.course.max_file_size / 1_000_000)
+    end
+    file_data
   end
 
   def unset_autotest_test_id
