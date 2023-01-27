@@ -527,7 +527,6 @@ class ResultsController < ApplicationController
 
     if !is_review && @submission.remark_submitted?
       remark_result = @submission.remark_result
-      @course = @submission.course
       # Check if remark request has been submitted but not released yet
       if !remark_result.remark_request_submitted_at.nil? && !remark_result.released_to_students
         render 'results/student/no_remark_result'

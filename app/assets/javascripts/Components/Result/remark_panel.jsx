@@ -1,7 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
 import {TextForm} from "./autosave_text_form";
-import {update_remark_request_course_assignment_submission_path} from "../../../../javascript/routes";
 
 export class RemarkPanel extends React.Component {
   componentDidMount() {

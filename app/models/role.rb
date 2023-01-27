@@ -71,10 +71,12 @@ class Role < ApplicationRecord
     is_a?(Student) && !pr.nil?
   end
 
-  def is_a_reviewer_for_submission?(assignment, submission)
+  def is_a_reviewer_for_submission?(submission)
     # aid is the peer review assignment id, and result_id
     # is the peer review result
-    if assignment.nil?
+
+    # Check that the peer reviewed assignment exists
+    if submission.assignment.pr_assignment.nil?
       return false
     end
 
@@ -84,13 +86,8 @@ class Role < ApplicationRecord
     end
 
     prs = PeerReview.where(reviewer_id: group.id)
-    if prs.first.nil?
-      return false
-    end
 
-    pr = prs.find { |p| p.result.submission.id == submission.id }
-
-    is_a?(Student) && !pr.nil?
+    is_a?(Student) && !prs.joins(:result).where(reviewer_id: group.id, submission_id: submission.id).empty?
   end
 
   def visible_assessments(assessment_type: nil, assessment_id: nil)

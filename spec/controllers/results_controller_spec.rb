@@ -16,10 +16,8 @@ describe ResultsController do
   let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
   let(:from_codeviewer) { nil }
 
-  SAMPLE_FILE_CONTENT = 'sample file content'.freeze
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
   SAMPLE_COMMENT = 'sample comment'.freeze
-  SAMPLE_FILE_NAME = 'file.java'.freeze
 
   after(:each) do
     destroy_repos
@@ -619,6 +617,7 @@ describe ResultsController do
   end
   context 'An instructor' do
     before(:each) { sign_in instructor }
+
     context 'accessing set_released_to_students' do
       before :each do
         get :set_released_to_students, params: { course_id: course.id,

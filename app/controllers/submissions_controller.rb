@@ -1003,7 +1003,7 @@ class SubmissionsController < ApplicationController
   end
 
   def select_file
-    params[:select_file_id] && SubmissionFile.find_by(id: params[:select_file_id])
+    params[:select_file_id] && record.submission_files.find_by(id: params[:select_file_id])
   end
 
   def from_codeviewer_param
