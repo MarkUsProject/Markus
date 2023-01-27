@@ -2,6 +2,10 @@
 
 ## [unreleased]
 - Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
+- Apply course maximum file size to feedback files (#6430)
+- Fix bug where peer reviewers could not view results they are assigned to review (#6439)
+- Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
+- Make fewer connections when connecting to redis (#6443)
 - Move ResultsController routes to the SubmissionsController (#6434)
 
 ## [v2.2.0]

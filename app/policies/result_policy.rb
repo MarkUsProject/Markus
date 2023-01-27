@@ -13,7 +13,8 @@ class ResultPolicy < ApplicationPolicy
   def view?
     check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) ||
       (!record.grouping.assignment.release_with_urls && check?(:member?, record.submission.grouping)) ||
-      check?(:view_with_result_token?)
+      check?(:view_with_result_token?) ||
+      role.is_reviewer_for?(record.grouping.assignment.pr_assignment, record)
   end
 
   def view_marks?
