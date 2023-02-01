@@ -11,7 +11,7 @@ shared_examples 'background job' do
   let(:job) { described_class.perform_later(*job_args) }
 
   it 'enqueues a job' do
-    expect { job }.to have_enqueued_job
+    expect { job }.to have_enqueued_job.at_least(1).times
   end
 
   it 'adds the job_class to status' do

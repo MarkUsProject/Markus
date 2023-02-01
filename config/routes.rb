@@ -227,6 +227,8 @@ Rails.application.routes.draw do
         get 'download_config_files'
         get 'download_test_results'
         post 'create_lti_grades'
+        get 'create_lti_line_items'
+        post 'create_lti_line_items'
       end
 
       resources :starter_file_groups, only: [:create]

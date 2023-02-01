@@ -21,6 +21,7 @@ en:
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
     course_select_instructions: Match your course with a MarkUs course.
     create_course: Create New Course
+    create_new_line_items: Create new gradebook item
     create_line_item: Creating gradebook item.
     grade_sync_complete: Grade Sync Complete
     grade_sync_instructions: This will only synchronize grades that have been released.

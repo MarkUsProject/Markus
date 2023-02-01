@@ -31,11 +31,11 @@ module LtiHelper
       if markus_user.nil? && can_create_users
         markus_user = EndUser.create(lms_user.except(:lti_user_id))
         if markus_user.nil?
-          errors.append(I18n.t('lti.user_not_created', lms_user[:user_name]))
+          errors.append(I18n.t('lti.user_not_created', { user_name: lms_user[:user_name] }))
           next
         end
       elsif markus_user.nil? && !can_create_users
-        errors.append(I18n.t('lti.user_not_found', lms_user[:user_name]))
+        errors.append(I18n.t('lti.user_not_found', { user_name: lms_user[:user_name] }))
         next
       end
       course_role = Student.find_by(user: markus_user, course: course)
@@ -51,13 +51,10 @@ module LtiHelper
 
   def grade_sync(lti_deployment, assessment)
     scopes = [LtiDeployment::LTI_SCOPES[:score], LtiDeployment::LTI_SCOPES[:results]]
-    lti_deployment.create_or_update_lti_assessment(assessment)
+    create_or_update_lti_assessment(lti_deployment, assessment)
     auth_data = lti_deployment.lti_client.get_oauth_token(scopes)
     line_item = lti_deployment.lti_line_items.find_by!(assessment: assessment)
-    results_uri = URI("#{line_item.lti_line_item_id}/results")
-    result_req = Net::HTTP::Get.new(results_uri)
-    curr_results = lti_deployment.send_lti_request!(result_req, results_uri, auth_data, scopes)
-    curr_results = JSON.parse(curr_results.body)
+    curr_results = get_current_results(line_item, auth_data, scopes)
     score_uri = URI("#{line_item.lti_line_item_id}/scores")
     req = Net::HTTP::Post.new(score_uri)
 
@@ -92,11 +89,11 @@ module LtiHelper
     mark_data = {}
     lti_users = LtiUser.where(lti_client: lti_deployment.lti_client)
     marks.each do |mark|
-      result = mark.result
+      result = mark.results.first
       group_students = mark.grouping.accepted_student_memberships
       group_students.each do |member|
         lti_user = lti_users.find_by(user: member.role.user)
-        mark_data[lti_user.lti_user_id] = result.total_mark unless lti_user.nil?
+        mark_data[lti_user.lti_user_id] = result.get_total_mark unless lti_user.nil?
       end
     end
     mark_data
@@ -111,7 +108,7 @@ module LtiHelper
     marks.each do |mark|
       lti_user = lti_users.find_by(user: mark.role.user)
       unless lti_user.nil?
-        mark_data[lti_user.lti_user_id] = mark.total_grade
+        mark_data[lti_user.lti_user_id] = mark.get_total_grade
       end
     end
     mark_data
@@ -137,5 +134,12 @@ module LtiHelper
     res = lti_deployment.send_lti_request!(req, lineitem_uri, auth_data, [LtiDeployment::LTI_SCOPES[:ags_lineitem]])
     line_item_data = JSON.parse(res.body)
     line_item.update!(lti_line_item_id: line_item_data['id'])
+  end
+
+  def get_current_results(lti_line_item, auth_data, scopes)
+    results_uri = URI("#{lti_line_item.lti_line_item_id}/results")
+    result_req = Net::HTTP::Get.new(results_uri)
+    curr_results = lti_deployment.send_lti_request!(result_req, results_uri, auth_data, scopes)
+    JSON.parse(curr_results.body)
   end
 end
