@@ -18,7 +18,7 @@
     "pdfjs-dist": "2.6.347",
     "prop-types": "^15.8.1",
     "react": "^16.14.0",
-    "react-chartjs-2": "^4.2.0",
+    "react-chartjs-2": "^5.0.0",
     "react-dom": "^16.14.0",
     "react-flatpickr": "^3.10.13",
     "react-keyed-file-browser": "^1.14.0",
