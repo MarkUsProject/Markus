@@ -9,7 +9,7 @@ describe AnnotationCategoriesController do
       before { create(:annotation_category, assignment: assignment) }
       it 'should respond with 200' do
         get_as role, :index, params: { course_id: course.id, assignment_id: assignment.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it_behaves_like 'role is from a different course' do
         subject { get_as new_role, :index, params: { course_id: course.id, assignment_id: assignment.id } }
@@ -61,7 +61,7 @@ describe AnnotationCategoriesController do
     describe '#show' do
       it 'should respond with 200' do
         get_as role, :show, params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it_behaves_like 'role is from a different course' do
         subject do
@@ -74,7 +74,7 @@ describe AnnotationCategoriesController do
     describe '#new' do
       it 'should respond with 200' do
         get_as role, :new, params: { course_id: course.id, assignment_id: assignment.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it_behaves_like 'role is from a different course' do
         subject do
@@ -88,7 +88,7 @@ describe AnnotationCategoriesController do
         get_as role, :new_annotation_text,
                params: { course_id: course.id, assignment_id: assignment.id,
                          annotation_category_id: annotation_category.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it_behaves_like 'role is from a different course' do
         subject do
@@ -672,7 +672,7 @@ describe AnnotationCategoriesController do
         file_good = fixture_file_upload('annotation_categories/form_good.csv', 'text/csv')
         post_as role, :upload, params: { course_id: course.id, assignment_id: assignment.id, upload_file: file_good }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         expect(flash[:error]).to be_nil
         expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                          count: 2)].map { |f| extract_text f })
@@ -722,7 +722,7 @@ describe AnnotationCategoriesController do
                 :upload,
                 params: { course_id: course.id, assignment_id: assignment.id, upload_file: @file_invalid_column }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         # One annotation category was created, and one has an error.
         expect(AnnotationCategory.all.size).to eq(0)
         expect(flash[:error].size).to eq(1)
@@ -735,7 +735,7 @@ describe AnnotationCategoriesController do
                 :upload,
                 params: { course_id: course.id, assignment_id: assignment.id, upload_file: @valid_yml_file }
         expect(flash[:success].size).to eq(1)
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
 
         annotation_category_list = AnnotationCategory.order(:annotation_category_name)
         index = 0
@@ -779,7 +779,7 @@ describe AnnotationCategoriesController do
         post_as role,
                 :upload,
                 params: { course_id: course.id, assignment_id: assignment.id, upload_file: @yml_with_invalid_category }
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         expect(flash[:error].size).to eq(1)
         expect(AnnotationCategory.all.size).to eq(0)
         expect(response).to redirect_to action: 'index', assignment_id: assignment.id
@@ -837,7 +837,7 @@ describe AnnotationCategoriesController do
       it 'responds with appropriate status' do
         get_as role, :uncategorized_annotations,
                params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
@@ -884,7 +884,7 @@ describe AnnotationCategoriesController do
       it 'responds with appropriate status' do
         get_as role, :download,
                params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do

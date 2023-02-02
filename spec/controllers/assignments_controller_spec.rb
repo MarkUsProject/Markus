@@ -330,7 +330,7 @@ describe AssignmentsController do
 
       shared_examples 'successful tests' do
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should update the attribute' do
           expect(assignment.assignment_properties[attribute]).to eq(value)
@@ -356,7 +356,7 @@ describe AssignmentsController do
         let(:attribute) { :this_is_not_a_real_attribute }
         let(:value) { true }
         it 'should respond with 400' do
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
         end
       end
     end
@@ -1591,7 +1591,7 @@ describe AssignmentsController do
     shared_examples 'check valid assignment config files' do
       it 'gives the appropriate response status' do
         subject
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
       end
 
       it 'uploads with no errors' do

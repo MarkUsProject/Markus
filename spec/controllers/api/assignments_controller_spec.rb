@@ -48,7 +48,7 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return xml content' do
             expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment.id.to_s)
@@ -64,7 +64,7 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
             expect(Hash.from_xml(response.body)['assignments']).to be_nil
@@ -89,7 +89,7 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
             expect(Hash.from_xml(response.body)['assignments']).to be_nil
@@ -106,7 +106,7 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return json content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(assignment.id)
@@ -122,7 +122,7 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
@@ -147,7 +147,7 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
@@ -162,7 +162,7 @@ describe Api::AssignmentsController do
           get :show, params: { id: assignment.id, course_id: course.id }
         end
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return xml content' do
           expect(Hash.from_xml(response.body).dig('assignment', 'id')).to eq(assignment.id.to_s)
@@ -178,7 +178,7 @@ describe Api::AssignmentsController do
           get :show, params: { id: assignment.id, course_id: course.id }
         end
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return json content' do
           expect(JSON.parse(response.body)&.dig('id')).to eq(assignment.id)
@@ -191,14 +191,14 @@ describe Api::AssignmentsController do
       context 'requesting a non-existant assignment' do
         it 'should respond with 404' do
           get :show, params: { id: -1, course_id: course.id }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
       context 'requesting an assignment in a different course' do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :show, params: { id: assignment.id, course_id: assignment.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -226,7 +226,7 @@ describe Api::AssignmentsController do
       context 'with minimal required params' do
         it 'should respond with 201' do
           post :create, params: params
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status(201)
         end
         it 'should create an assignment' do
           expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
@@ -236,14 +236,14 @@ describe Api::AssignmentsController do
         context 'for a different course' do
           it 'should response with 403' do
             post :create, params: { **params, course_id: create(:course).id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
       end
       context 'with all params' do
         it 'should respond with 201' do
           post :create, params: params
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status(201)
         end
         it 'should create an assignment' do
           expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
@@ -255,7 +255,7 @@ describe Api::AssignmentsController do
         context 'missing short_id' do
           it 'should respond with 422' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:description, :due_date, :course_id)
@@ -265,7 +265,7 @@ describe Api::AssignmentsController do
         context 'missing description' do
           it 'should respond with 404' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
@@ -275,7 +275,7 @@ describe Api::AssignmentsController do
         context 'missing due_date' do
           it 'should respond with 404' do
             post :create, params: params.slice(:short_identifier, :description, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :description, :course_id)
@@ -286,19 +286,19 @@ describe Api::AssignmentsController do
       context 'where short_identifier is already taken' do
         it 'should respond with 409' do
           post :create, params: { **params, short_identifier: (create :assignment, course: course).short_identifier }
-          expect(response.status).to eq(409)
+          expect(response).to have_http_status(409)
         end
       end
       context 'where due_date is invalid' do
         it 'should respond with 500' do
           post :create, params: { **params, due_date: 'not a real date' }
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
       context 'where submission rule is invalid' do
         it 'should respond with 500' do
           post :create, params: { **full_params, submission_rule_interval: 'not a real interval' }
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
     end
@@ -306,24 +306,24 @@ describe Api::AssignmentsController do
       it 'should update an existing assignment' do
         new_desc = assignment.description + 'more!'
         put :update, params: { id: assignment.id, course_id: course.id, description: new_desc }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'should not update a short identifier' do
         new_short_id = assignment.short_identifier + 'more!'
         put :update, params: { id: assignment.id, course_id: course.id, short_identifier: new_short_id }
-        expect(response.status).to eq(500)
+        expect(response).to have_http_status(500)
       end
       it 'should not update an assignment that does not exist' do
         new_desc = assignment.description + 'more!'
         put :update, params: { id: -1, course_id: course.id, description: new_desc }
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
       context 'for a different course' do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           new_desc = assignment.description + 'more!'
           put :update, params: { id: assignment.id, course_id: assignment.course.id, description: new_desc }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -333,13 +333,13 @@ describe Api::AssignmentsController do
       it_behaves_like 'zip file download'
       it 'should be successful' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       context 'for a different course' do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :test_files, params: { id: assignment.id, course_id: assignment.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -375,7 +375,7 @@ describe Api::AssignmentsController do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :test_specs, params: { id: assignment.id, course_id: assignment.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -422,7 +422,7 @@ describe Api::AssignmentsController do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           post :update_test_specs, params: { id: assignment.id, course_id: assignment.course.id, specs: '{}' }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
