@@ -181,16 +181,6 @@ class LtiDeploymentsController < ApplicationController
     redirect_to edit_course_path(new_course)
   end
 
-  def create_lti_grades
-    assessment = Assessment.find(params[:assessment_id])
-    lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
-    lti_deployments.each do |lti|
-      lti.get_students
-      lti.create_or_update_lti_assessment(assessment)
-      lti.create_grades(assessment)
-    end
-  end
-
   def get_config
     raise NotImplementedError
   end

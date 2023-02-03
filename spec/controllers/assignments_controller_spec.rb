@@ -1956,4 +1956,29 @@ describe AssignmentsController do
       include_examples 'assignment content is copied over'
     end
   end
+
+  describe '#create_lti_grades' do
+    let!(:course) { create :course }
+    let(:instructor) { create :instructor, course: course }
+    let!(:lti) { create :lti_deployment, course: course }
+    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:scope) { LtiDeployment::LTI_SCOPES['names_role'] }
+    let!(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti }
+    let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti }
+    let(:status) { 'Active' }
+    before :each do
+      Result.joins(grouping: :assignment)
+            .where('assignment.id': assignment.id).update!(released_to_students: true)
+      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti.lti_client }
+    end
+    it 'redirects if not logged in' do
+      post :create_lti_grades, params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
+      expect(response).to have_http_status(302)
+    end
+    it 'returns successfully when logged in' do
+      post_as instructor, :create_lti_grades,
+              params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
+      expect(response).to have_http_status(200)
+    end
+  end
 end

@@ -499,7 +499,6 @@ Rails.application.routes.draw do
     resources :lti_deployments, only: [] do
       collection do
         get 'public_jwk'
-        post 'create_lti_grades'
         resources :canvas, only: [] do
           collection do
             get 'get_config'

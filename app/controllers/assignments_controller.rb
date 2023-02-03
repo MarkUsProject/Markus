@@ -640,6 +640,7 @@ class AssignmentsController < ApplicationController
       unless items_to_create.empty?
         @current_job = LtiLineItemJob.perform_later(items_to_create, @assignment)
         session[:job_id] = @current_job.job_id
+        render 'shared/_poll_job'
       end
     end
     render 'lti_deployments/create_lti_line_items'
