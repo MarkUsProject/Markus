@@ -1,7 +1,5 @@
-require 'mono_logger'
 class LtiSyncJob < ApplicationJob
   include LtiHelper
-  queue_as :lti_sync
 
   def self.show_status(_status)
     I18n.t('lti.start_grade_sync')
@@ -12,8 +10,16 @@ class LtiSyncJob < ApplicationJob
   end
 
   def perform(lti_deployments, assessment, course, can_create_users: false, can_create_roles: false)
+    if lti_deployments.empty?
+      raise I18n.t('lti.no_platform')
+    end
     lti_deployments.each do |deployment|
-      roster_sync(deployment, course, can_create_users: can_create_users, can_create_roles: can_create_roles)
+      roster_error = roster_sync(deployment, course, can_create_users: can_create_users,
+                                                     can_create_roles: can_create_roles)
+      if roster_error
+        status.update(warning_message: [status[:warning_message], I18n.t('lti.roster_sync_errors')].compact
+                                                                                                   .join("\n"))
+      end
       grade_sync(deployment, assessment)
     end
   end

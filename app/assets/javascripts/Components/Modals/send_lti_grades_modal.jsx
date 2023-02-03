@@ -6,11 +6,8 @@ class LtiGradeModal extends React.Component {
 
   constructor(props) {
     super(props);
-    const deploymentsMapped = Object.fromEntries(
-      this.props.lti_deployments.map(deployment => [deployment.id, true])
-    );
     this.state = {
-      deploymentsChecked: deploymentsMapped,
+      deploymentsChecked: {},
     };
   }
 
@@ -68,7 +65,6 @@ class LtiGradeModal extends React.Component {
                       type="checkbox"
                       name={deployment.id}
                       key={deployment.id}
-                      defaultChecked="true"
                       onChange={this.handleChange}
                     />
                     {I18n.t("lti.lti_deployment", {

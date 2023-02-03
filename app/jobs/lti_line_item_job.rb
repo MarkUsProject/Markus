@@ -1,9 +1,8 @@
-require 'mono_logger'
 class LtiLineItemJob < ApplicationJob
   include LtiHelper
 
   def self.show_status(_status)
-    I18n.t('lti.create_line_item')
+    I18n.t('lti.create_line_item_in_progress')
   end
 
   def self.completed_message(_status)

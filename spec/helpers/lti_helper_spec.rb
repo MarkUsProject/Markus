@@ -99,41 +99,83 @@ describe LtiHelper do
     let(:student1) { create :student, course: course }
     let!(:assessment) { create :assignment_with_criteria_and_results, course: course }
     let!(:assessment2) { create :assignment_with_criteria_and_results, course: course }
-    before :each do
-      User.all.each do |usr|
-        create :lti_user, user: usr, lti_client: lti_deployment.lti_client if LtiUser.find_by(user: usr).nil?
+    context 'with lti user ids' do
+      before :each do
+        User.all.each do |usr|
+          create :lti_user, user: usr, lti_client: lti_deployment.lti_client if LtiUser.find_by(user: usr).nil?
+        end
+        Result.joins(grouping: :assignment)
+              .where('assignment.id': assessment.id).update!(released_to_students: true)
       end
-      Result.joins(grouping: :assignment)
-            .where('assignment.id': assessment.id).update!(released_to_students: true)
+      it 'successfully gets grades for an assignment with released grades' do
+        expect(get_assignment_marks(lti_deployment, assessment)).not_to be_empty
+      end
+      it 'does not get unreleased grades' do
+        expect(get_assignment_marks(lti_deployment, assessment2)).to be_empty
+      end
+      it 'does not get unreleased grades for an assignment with released grades' do
+        Result.joins(grouping: :assignment)
+              .where('assignment.id': assessment2.id).first.update!(released_to_students: true)
+        expect(get_assignment_marks(lti_deployment, assessment2)).not_to be_empty
+      end
+      it 'does return a hash' do
+        expect(get_assignment_marks(lti_deployment, assessment)).to be_instance_of(Hash)
+      end
+      it 'has float values' do
+        expect(get_assignment_marks(lti_deployment, assessment).first[1]).to be_instance_of(Float)
+      end
     end
-    it 'successfully gets grades for an assignment with released grades' do
-      expect(get_assignment_marks(lti_deployment, assessment)).not_to be_empty
-    end
-    it 'does not get unreleased grades' do
-      expect(get_assignment_marks(lti_deployment, assessment2)).to be_empty
-    end
-    it 'does not get unreleased grades for an assignment with released grades' do
-      Result.joins(grouping: :assignment)
-            .where('assignment.id': assessment2.id).first.update!(released_to_students: true)
-      expect(get_assignment_marks(lti_deployment, assessment2)).not_to be_empty
+    context 'with some lti users' do
+      let!(:lti_user) { create :lti_user, user: User.first, lti_client: lti_deployment.lti_client }
+      before :each do
+        Result.joins(grouping: :assignment)
+              .where('assignment.id': assessment.id).update!(released_to_students: true)
+      end
+      it 'does get grades for a user with an lti id' do
+        expect(get_assignment_marks(lti_deployment, assessment)).not_to be_empty
+      end
     end
   end
   describe '#get_grade_entry_form_marks' do
     let!(:student1) { create :student, course: course }
     let!(:assessment) { create :grade_entry_form_with_data, course: course }
-    before :each do
-      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
+    context 'with lti user ids' do
+      before :each do
+        User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
+      end
+      it 'does not get unreleased grades' do
+        expect(get_grade_entry_form_marks(lti_deployment, assessment)).to be_empty
+      end
+      it 'does get released grades for an assignment with released grades' do
+        assessment.grade_entry_students.first.update!(released_to_student: true)
+        expect(get_grade_entry_form_marks(lti_deployment, assessment)).not_to be_empty
+      end
+      it 'does get all released grades' do
+        assessment.grade_entry_students.all.update!(released_to_student: true)
+        expect(get_grade_entry_form_marks(lti_deployment,
+                                          assessment).length).to eq(assessment.grade_entry_students.count)
+      end
+      it 'does return a hash' do
+        assessment.grade_entry_students.all.update!(released_to_student: true)
+        expect(get_grade_entry_form_marks(lti_deployment, assessment)).to be_instance_of(Hash)
+      end
+      it 'has float values' do
+        assessment.grade_entry_students.all.update!(released_to_student: true)
+        expect(get_grade_entry_form_marks(lti_deployment, assessment).first[1]).to be_instance_of(Float)
+      end
     end
-    it 'does not get unreleased grades' do
-      expect(get_grade_entry_form_marks(lti_deployment, assessment)).to be_empty
+    context 'with students with no lti user' do
+      it 'does not return any grades' do
+        assessment.grade_entry_students.first.update!(released_to_student: true)
+        expect(get_grade_entry_form_marks(lti_deployment, assessment)).to be_empty
+      end
     end
-    it 'does get released grades for an assignment with released grades' do
-      assessment.grade_entry_students.first.update!(released_to_student: true)
-      expect(get_grade_entry_form_marks(lti_deployment, assessment)).not_to be_empty
-    end
-    it 'does get all released grades' do
-      assessment.grade_entry_students.all.update!(released_to_student: true)
-      expect(get_grade_entry_form_marks(lti_deployment, assessment).length).to eq(assessment.grade_entry_students.count)
+    context 'with some lti users' do
+      let!(:lti_user) { create :lti_user, user: User.first, lti_client: lti_deployment.lti_client }
+      it 'does get grades for a user with an lti id' do
+        assessment.grade_entry_students.first.update!(released_to_student: true)
+        expect(get_grade_entry_form_marks(lti_deployment, assessment)).not_to be_empty
+      end
     end
   end
   describe 'grade_sync' do
@@ -179,7 +221,7 @@ describe LtiHelper do
       let!(:user_id) { lti_user.lti_user_id }
       let!(:result_max) { assessment.max_mark }
       it 'does not send grades that are the same' do
-        expect(lti_deployment).to receive(:send_lti_request!).twice
+        expect(lti_deployment).to receive(:send_lti_request!).exactly(3).times
         grade_sync(lti_deployment, assessment)
       end
     end

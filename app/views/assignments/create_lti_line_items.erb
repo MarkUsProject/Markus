@@ -1,0 +1,36 @@
+<div class="table lti-table">
+  <table>
+    <thead>
+    <tr>
+      <th><%= t("lti.lti_settings") %></th>
+      <th><%= t("lti.create_line_item_checkbox")%></th>
+    </tr>
+    </thead>
+    <tbody>
+    <%= form_with local: true, url: create_lti_line_items_course_assignment_path(@current_course, @assignment) %>
+    <%= fields_for :lti_deployment do |f|  %>
+      <% @lti_deployments.each do |deployment| %>
+        <tr>
+          <td>
+            <%= f.label deployment.id, I18n.t("lti.lti_deployment", {
+              lti_deployment_name: deployment.lms_course_name,
+              lti_host: URI(deployment.lti_client.host).host,
+            })%>
+          <td>
+            <% if deployment.lti_line_items.where(assessment: @assignment).exists? %>
+              <%= f.check_box deployment.id, checked: true, disabled: true, class: 'lti-checkbox' %>
+            <% else %>
+              <%= f.button deployment.id, checked: false, class: 'lti-checkbox' %>
+            <% end  %>
+          </td>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+      </table>
+      </div>
+      <div>
+        <%= f.button t('lti.create_new_line_items'), class: 'large-button',
+                 data: { disable_with: t('working') } %>
+    <% end %>
+    </div>

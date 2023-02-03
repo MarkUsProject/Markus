@@ -21,8 +21,9 @@ en:
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
     course_select_instructions: Match your course with a MarkUs course.
     create_course: Create New Course
-    create_new_line_items: Create new gradebook item
-    create_line_item: Creating gradebook item.
+    create_line_item_checkbox: Create gradebook item?
+    create_line_item_in_progress: Creating gradebook item.
+    create_new_line_items: Create new gradebook items
     grade_sync_complete: Grade Sync Complete
     grade_sync_instructions: This will only synchronize grades that have been released.
     launch: Launch MarkUs
@@ -30,13 +31,14 @@ en:
     lti_deployment: "%{lti_deployment_name} on %{lti_host}"
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
+    no_grades: No grades to sync
+    no_platform: No platforms selected
     no_users: No user data returned from LMS
+    roster_sync_errors: Some students could not be synced.
     select_course: Select the course that matches %{course_name}
     start_grade_sync: Syncing Grades
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
-    user_not_created: "Could not create user %{user_name}"
-    user_not_found: "MarkUs user %{user_name} not found"
   markus: MarkUs
   not_applicable: N/A
   or: Or

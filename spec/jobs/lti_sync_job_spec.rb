@@ -24,4 +24,15 @@ describe LtiSyncJob do
   let!(:student) { create :student, course: course }
   let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
   let(:assessment) { create :assignment_with_criteria_and_results, course: course }
+
+  context 'when running as a background job' do
+    let(:job_args) { [[lti_deployment.id], assessment, course] }
+    include_examples 'background job'
+  end
+  context 'with no lti deployments' do
+    let(:job_args) { [[], assessment, course] }
+    it 'should raise an error' do
+      expect { described_class.perform_now(*job_args) }.to raise_error
+    end
+  end
 end

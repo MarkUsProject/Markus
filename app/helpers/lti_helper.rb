@@ -1,11 +1,10 @@
-require 'mono_logger'
 module LtiHelper
   # Synchronize LMS user with MarkUs users.
   # if role is not nil, attempt to create users
   # based on the values of can_create_users and
   # can_create_roles.
   def roster_sync(lti_deployment, course, can_create_users: false, can_create_roles: false)
-    errors = []
+    error = false
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
@@ -31,11 +30,11 @@ module LtiHelper
       if markus_user.nil? && can_create_users
         markus_user = EndUser.create(lms_user.except(:lti_user_id))
         if markus_user.nil?
-          errors.append(I18n.t('lti.user_not_created', { user_name: lms_user[:user_name] }))
+          error = true
           next
         end
       elsif markus_user.nil? && !can_create_users
-        errors.append(I18n.t('lti.user_not_found', { user_name: lms_user[:user_name] }))
+        error = true
         next
       end
       course_role = Student.find_by(user: markus_user, course: course)
@@ -46,7 +45,7 @@ module LtiHelper
       lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
       lti_user.update!(lti_user_id: lms_user[:lti_user_id])
     end
-    errors
+    error
   end
 
   def grade_sync(lti_deployment, assessment)
@@ -62,6 +61,9 @@ module LtiHelper
       marks = get_assignment_marks(lti_deployment, assessment)
     else
       marks = get_grade_entry_form_marks(lti_deployment, assessment)
+    end
+    if marks.empty?
+      raise I18n.t('lti.no_grades')
     end
     marks.each do |lti_user_id, mark|
       # Only send if the mark has not been previously sent to the LMS
@@ -85,33 +87,37 @@ module LtiHelper
   # Returns a hash mapping lti_user_id to marks
   # for each released mark where the user has an lti_user_id
   def get_assignment_marks(lti_deployment, assignment)
-    marks = assignment.released_marks
-    mark_data = {}
-    lti_users = LtiUser.where(lti_client: lti_deployment.lti_client)
-    marks.each do |mark|
-      result = mark.results.first
-      group_students = mark.grouping.accepted_student_memberships
-      group_students.each do |member|
-        lti_user = lti_users.find_by(user: member.role.user)
-        mark_data[lti_user.lti_user_id] = result.get_total_mark unless lti_user.nil?
-      end
-    end
-    mark_data
+    released_marks = assignment.released_marks
+                               .joins(grouping: [{ group: :student_memberships }])
+                               .merge(StudentMembership.joins(role: [{ user: :lti_users }]))
+                               .where('lti_users.lti_client': lti_deployment.lti_client)
+                               .pluck('lti_users.lti_user_id', 'results.id')
+    result_ids = released_marks.map { |mark| mark[1] }
+    grades = Result.get_total_marks(result_ids)
+    grades.map do |grade|
+      student = released_marks.find { |g| g[1] == grade[0] }
+      next if student.nil?
+      [student[0], grade[1]]
+    end.to_h
   end
 
   # Returns a hash mapping lti_user_id to marks
   # for each released mark where the user has an lti_user_id
   def get_grade_entry_form_marks(lti_deployment, grade_entry_form)
-    marks = grade_entry_form.released_marks
-    mark_data = {}
-    lti_users = LtiUser.where(lti_client: lti_deployment.lti_client)
-    marks.each do |mark|
-      lti_user = lti_users.find_by(user: mark.role.user)
-      unless lti_user.nil?
-        mark_data[lti_user.lti_user_id] = mark.get_total_grade
-      end
-    end
-    mark_data
+    student_data = grade_entry_form.released_marks
+                                   .joins(role: :user)
+                                   .joins(user: :lti_users)
+                                   .where('lti_users.lti_client': lti_deployment.lti_client,
+                                          'grade_entry_students.released_to_student': true)
+                                   .pluck('lti_users.lti_user_id', 'grade_entry_students.id')
+
+    ges_ids = student_data.map { |gef_student| gef_student[1] }
+    grades = GradeEntryStudent.get_total_grades(ges_ids)
+    grades.map do |grade|
+      student = student_data.find { |g| g[1] == grade[0] }
+      next if student.nil?
+      [student[0], grade[1]]
+    end.to_h
   end
 
   # Creates or updates an assignment in the LMS gradebook for a given assessment.
@@ -139,7 +145,7 @@ module LtiHelper
   def get_current_results(lti_line_item, auth_data, scopes)
     results_uri = URI("#{lti_line_item.lti_line_item_id}/results")
     result_req = Net::HTTP::Get.new(results_uri)
-    curr_results = lti_deployment.send_lti_request!(result_req, results_uri, auth_data, scopes)
+    curr_results = lti_line_item.lti_deployment.send_lti_request!(result_req, results_uri, auth_data, scopes)
     JSON.parse(curr_results.body)
   end
 end
