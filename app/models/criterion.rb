@@ -3,8 +3,8 @@
 class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :criteria
   before_validation :update_assigned_groups_count
+  after_create :update_result_marking_states
   after_update :update_results_with_change
-  after_destroy :update_results
 
   has_one :course, through: :assignment
 
@@ -156,18 +156,10 @@ class Criterion < ApplicationRecord
     unless updated_marks.empty?
       Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
     end
-    updated_results = results.map do |result|
-      [result.id, result.get_total_mark]
-    end.to_h
-    unless updated_results.empty?
-      Result.upsert_all(
-        results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
-      )
-    end
   end
 
   def results_unreleased?
-    return true if self.marks.joins(:result).where('results.released_to_students' => true).empty?
+    return true if self.assignment&.released_marks.blank?
 
     errors.add(:base, 'Cannot update criterion once results are released.')
     false
@@ -228,8 +220,7 @@ class Criterion < ApplicationRecord
     end
   end
 
-  def update_results
-    result_ids = Result.includes(submission: :grouping).where(groupings: { assessment_id: assessment_id }).ids
-    Result.update_total_marks(result_ids)
+  def update_result_marking_states
+    UpdateResultsMarkingStatesJob.perform_later(assessment_id, :incomplete)
   end
 end

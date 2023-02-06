@@ -29,16 +29,7 @@ class ResultsController < ApplicationController
         is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
         pr_assignment = is_review ? assignment.pr_assignment : nil
 
-        if current_role.student? && !current_role.is_reviewer_for?(assignment.pr_assignment, result)
-          grouping = current_role.accepted_grouping_for(assignment.id)
-          if submission.grouping_id != grouping&.id ||
-              !result.released_to_students?
-            head :forbidden
-            return
-          end
-        else
-          grouping = submission.grouping
-        end
+        grouping = submission.grouping
 
         data = {
           grouping_id: is_reviewer ? nil : submission.grouping_id,
@@ -142,7 +133,7 @@ class ResultsController < ApplicationController
           reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
-          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_review_id}"
+          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_reviews.ids.first}"
           data[:members] = []
         end
 
@@ -266,7 +257,7 @@ class ResultsController < ApplicationController
                  "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
-    if @grouping.submitted_after_collection_date?
+    if @grouping.submitted_after_collection_date? && !@assignment.scanned_exam
       flash_message(:warning,
                     t('results.late_submission_warning_html',
                       url: repo_browser_course_assignment_submissions_path(@current_course, @assignment,
@@ -315,10 +306,11 @@ class ResultsController < ApplicationController
 
     if result.is_a_review? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
       assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
+      peer_review_ids = result.peer_reviews.order(id: :asc).ids
       if params[:direction] == '1'
-        next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+        next_grouping = assigned_prs.where('peer_reviews.id > ?', peer_review_ids.last).first
       else
-        next_grouping = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+        next_grouping = assigned_prs.where('peer_reviews.id < ?', peer_review_ids.first).last
       end
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
@@ -431,7 +423,7 @@ class ResultsController < ApplicationController
     Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
           submission_file&.retrieve_file(
             include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
@@ -632,8 +624,6 @@ class ResultsController < ApplicationController
     @result = record
     @extra_mark = @result.extra_marks.build(extra_mark_params.merge(unit: ExtraMark::POINTS))
     if @extra_mark.save
-      # need to re-calculate total mark
-      @result.update_total_mark
       head :ok
     else
       head :bad_request
@@ -645,7 +635,6 @@ class ResultsController < ApplicationController
     extra_mark = result.extra_marks.find(params[:extra_mark_id])
 
     extra_mark.destroy
-    result.update_total_mark
     head :ok
   end
 

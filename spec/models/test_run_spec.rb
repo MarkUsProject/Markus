@@ -171,6 +171,25 @@ describe TestRun do
       it 'should create a feedback file from compressed binary data' do
         expect(feedback_files.find_by(filename: 'test_compressed.png').file_content).to eq(png_file_content)
       end
+      context 'when feedback files exceed the file size limit' do
+        let(:text_file_content) { SecureRandom.alphanumeric(assignment.course.max_file_size + 10) }
+        let(:png_file_content) { text_file_content }
+        let(:size_diff) { text_file_content.size - assignment.course.max_file_size }
+        let(:expected_content) do
+          I18n.t('oversize_feedback_file',
+                 file_size: ActiveSupport::NumberHelper.number_to_human_size(size_diff),
+                 max_file_size: assignment.course.max_file_size / 1_000_000)
+        end
+        it 'should replace the content with an error message' do
+          expect(feedback_files.find_by(filename: 'test.txt').file_content).to eq(expected_content)
+        end
+        it 'should set the mime type to text' do
+          expect(feedback_files.find_by(filename: 'test.png').mime_type).to eq('text')
+        end
+        it 'should replace the content of zipped files when the unzipped file is over the limit' do
+          expect(feedback_files.find_by(filename: 'test_compressed.png').file_content).to eq(expected_content)
+        end
+      end
     end
     context 'there is a failure reported' do
       before { results['status'] = 'failed' }
@@ -355,7 +374,7 @@ describe TestRun do
         it 'should set criteria marks' do
           criterion && assignment.ta_criteria.reload # Force ta_criterion to not be empty
           test_run.update_results!(results)
-          expect(submission.results.first.total_mark).to eq 1
+          expect(submission.results.first.get_total_mark).to eq 1
         end
       end
       context 'when it is associated with a grouping' do

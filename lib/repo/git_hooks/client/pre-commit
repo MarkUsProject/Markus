@@ -1,4 +1,21 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-# OSX and Linux users: probably need to change this to python3
-python markus-hooks/multihook_client.py
+test -z "$(git diff-index --cached HEAD)" && exit 0 # don't run checks if no changes were made
+
+# Only perform checks when on the master branch.
+if git rev-parse --abbrev-ref HEAD | grep -vx master; then
+  echo "[MarkUs] Skipping checks because you aren't on the master branch."
+  echo '[MarkUs] But please remember that only files on your master branch will be graded!'
+  exit 0
+fi
+
+HOOKS_DIR="$(dirname "$0")"/pre-commit.d
+[ -d "${HOOKS_DIR}" ] && echo '[MarkUs] Running pre-commit checks...'
+
+for hook_file in "${HOOKS_DIR}"/*.sh; do
+  "$hook_file" || exit 1
+done
+
+echo "[MarkUs] Commit looks good! Don't forget to push your work to the MarkUs server."
+
+exit 0

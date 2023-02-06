@@ -5,8 +5,20 @@ describe ResultPolicy do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+      let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+      end
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
+      failed 'when they aren\'t assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
     end
     failed 'role is a student who is not part of the grouping' do
       let(:role) { create :student }
@@ -37,6 +49,16 @@ describe ResultPolicy do
           end
         end
       end
+    end
+    succeed 'role is a student who is a reviewer' do
+      let(:role) { create(:student) }
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment }
+      let(:assignment) { create :assignment_with_peer_review }
+      let(:record) { create :complete_result, submission: create(:submission, grouping: review_grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment.pr_assignment }
+      let(:review_grouping) { create :grouping_with_inviter, assignment: assignment }
+      before { create :peer_review, reviewer: grouping, result: record }
     end
   end
 
@@ -95,8 +117,8 @@ describe ResultPolicy do
         end
         context 'with test enabled' do
           let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
-          succeed 'with test groups' do
-            let!(:test_group) { create :test_group, assignment: assignment }
+          succeed 'when remote_autotest_settings exist' do
+            before { assignment.update! remote_autotest_settings_id: 1 }
           end
           failed 'without test groups'
         end
@@ -117,8 +139,8 @@ describe ResultPolicy do
           end
           context 'with test enabled' do
             let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
-            succeed 'with test groups' do
-              let!(:test_group) { create :test_group, assignment: assignment }
+            succeed 'when remote_autotest_settings exist' do
+              before { assignment.update! remote_autotest_settings_id: 1 }
             end
             failed 'without test groups'
           end
@@ -175,11 +197,23 @@ describe ResultPolicy do
   end
 
   describe_rule :grade? do
+    let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+    let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+    let(:assignment) { create :assignment_with_peer_review }
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+      end
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
+      failed 'when they aren\'t assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
     end
     failed 'role is a student' do
       let(:role) { create(:student) }
@@ -190,9 +224,23 @@ describe ResultPolicy do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
+      let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
+      failed 'when they have not been assigned to grade the given group\'s submission' do
+        # Assure the grouping used does not have any ta's assigned to grade their submission
+        let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+        let(:role) { create(:ta) }
+      end
     end
+
     context 'role is a student' do
       let(:role) { create(:student) }
       let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
@@ -220,6 +268,9 @@ describe ResultPolicy do
       let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment, tas: [role] }
+      let(:assignment) { create :assignment_with_peer_review }
       succeed 'that can manage submissions' do
         let(:role) { create :ta, manage_submissions: true }
       end
@@ -248,8 +299,20 @@ describe ResultPolicy do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
-    succeed 'role is a ta' do
-      let(:role) { create(:ta) }
+    context 'role is a ta' do
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+      let(:assignment) { create :assignment_with_peer_review }
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
+      succeed 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+      end
+      failed 'when they aren\'t assigned to grade the given group\'s submission' do
+        let(:role) { create(:ta) }
+      end
     end
     context 'role is a student' do
       let(:assignment) { create :assignment_with_peer_review_and_groupings_results }

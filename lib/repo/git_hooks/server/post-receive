@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+HOOKS_DIR="$(dirname "$0")"/post-receive.d
+
+for hook_file in "${HOOKS_DIR}"/*.sh; do
+  "$hook_file" "$@" || exit 1
+done

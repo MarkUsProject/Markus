@@ -69,7 +69,7 @@ describe FlexibleCriterion do
           create(:flexible_mark, result: result, criterion: new_criterion, mark: 1)
           result.reload
           flexible_criterion.destroy
-          expect(result.reload.total_mark).to eq 1.0
+          expect(result.reload.get_total_mark).to eq 1.0
         end
 
         it 'reassigns its annotation_category\'s flexible_criterion_id to nil if it has one' do

@@ -21,6 +21,8 @@ class GradersManager extends React.Component {
       hide_unassigned_criteria: false,
       sections: {},
       isGraderDistributionModalOpen: false,
+      show_hidden: false,
+      hidden_graders_count: 0,
     };
   }
 
@@ -66,6 +68,7 @@ class GradersManager extends React.Component {
         anonymize_groups: res.anonymize_groups,
         hide_unassigned_criteria: res.hide_unassigned_criteria,
         isGraderDistributionModalOpen: false,
+        hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
       });
     });
   };
@@ -266,6 +269,11 @@ class GradersManager extends React.Component {
     }
   };
 
+  toggleShowHidden = event => {
+    let show_hidden = event.target.checked;
+    this.setState({show_hidden});
+  };
+
   render() {
     return (
       <div>
@@ -273,6 +281,9 @@ class GradersManager extends React.Component {
           assignAll={this.assignAll}
           openGraderDistributionModal={this.openGraderDistributionModal}
           unassignAll={this.unassignAll}
+          showHidden={this.state.show_hidden}
+          updateShowHidden={this.toggleShowHidden}
+          hiddenGradersCount={this.state.loading ? null : this.state.hidden_graders_count}
         />
         <div className="mapping-tables">
           <div className="mapping-table">
@@ -282,6 +293,7 @@ class GradersManager extends React.Component {
               loading={this.state.loading}
               assign_graders_to_criteria={this.state.assign_graders_to_criteria}
               numCriteria={this.state.criteria.length}
+              showHidden={this.state.show_hidden}
             />
           </div>
           <div className="mapping-table">
@@ -371,7 +383,22 @@ class GradersManager extends React.Component {
 }
 
 class RawGradersTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filtered: [],
+    };
+  }
+
   getColumns = () => [
+    {
+      accessor: "hidden",
+      id: "hidden",
+      width: 0,
+      className: "rt-hidden",
+      headerClassName: "rt-hidden",
+      resizable: false,
+    },
     {
       show: false,
       accessor: "_id",
@@ -381,6 +408,21 @@ class RawGradersTable extends React.Component {
       Header: I18n.t("activerecord.attributes.user.user_name"),
       accessor: "user_name",
       id: "user_name",
+      Cell: props =>
+        props.original.hidden
+          ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
+          : props.value,
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          return `${row._original.user_name}${
+            row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
+          }`.includes(filter.value);
+        } else {
+          return true;
+        }
+      },
+      sortable: true,
+      minWidth: 90,
     },
     {
       Header: I18n.t("activerecord.attributes.user.full_name"),
@@ -411,6 +453,23 @@ class RawGradersTable extends React.Component {
     },
   ];
 
+  static getDerivedStateFromProps(props, state) {
+    let filtered = [];
+    for (let i = 0; i < state.filtered.length; i++) {
+      if (state.filtered[i].id !== "hidden") {
+        filtered.push(state.filtered[i]);
+      }
+    }
+    if (!props.showHidden) {
+      filtered.push({id: "hidden", value: false});
+    }
+    return {filtered};
+  }
+
+  onFilteredChange = filtered => {
+    this.setState({filtered});
+  };
+
   render() {
     return (
       <CheckboxTable
@@ -424,6 +483,8 @@ class RawGradersTable extends React.Component {
         ]}
         loading={this.props.loading}
         filterable
+        filtered={this.state.filtered}
+        onFilteredChange={this.onFilteredChange}
         {...this.props.getCheckboxProps()}
       />
     );
@@ -431,6 +492,13 @@ class RawGradersTable extends React.Component {
 }
 
 class RawGroupsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filtered: [],
+    };
+  }
+
   getColumns = () => {
     return [
       {
@@ -470,13 +538,17 @@ class RawGroupsTable extends React.Component {
         Header: I18n.t("activerecord.models.ta.other"),
         accessor: "graders",
         Cell: row => {
-          return row.value.map(ta => (
-            <div key={`${row.original._id}-${ta}`}>
-              {ta}
+          return row.value.map(ta_data => (
+            <div key={`${row.original._id}-${ta_data.grader}`}>
+              {ta_data.hidden
+                ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
+                : ta_data.grader}
               <a
                 href="#"
                 className="remove-icon"
-                onClick={() => this.props.unassignSingle(row.original._id, ta, "groups_table")}
+                onClick={() =>
+                  this.props.unassignSingle(row.original._id, ta_data.grader, "groups_table")
+                }
                 title={I18n.t("graders.actions.unassign_grader")}
               />
             </div>
@@ -537,13 +609,17 @@ class RawCriteriaTable extends React.Component {
         Header: I18n.t("activerecord.models.ta.other"),
         accessor: "graders",
         Cell: row => {
-          return row.value.map(ta => (
-            <div key={`${row.original._id}-${ta}`}>
-              {ta}
+          return row.value.map(ta_data => (
+            <div key={`${row.original._id}-${ta_data.grader}`}>
+              {ta_data.hidden
+                ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
+                : ta_data.grader}
               <a
                 href="#"
                 className="remove-icon"
-                onClick={() => this.props.unassignSingle(row.original._id, ta, "criteria_table")}
+                onClick={() =>
+                  this.props.unassignSingle(row.original._id, ta_data.grader, "criteria_table")
+                }
                 title={I18n.t("graders.actions.unassign_grader")}
               />
             </div>
@@ -596,8 +672,28 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 
 class GradersActionBox extends React.Component {
   render = () => {
+    let showHiddenTooltip = "";
+    if (this.props.hiddenGradersCount !== null) {
+      showHiddenTooltip = I18n.t("graders.inactive_graders_count", {
+        count: this.props.hiddenGradersCount || 0,
+      });
+    }
+
     return (
       <div className="rt-action-box">
+        <span className={"flex-row-expand"}>
+          <input
+            id="show_hidden"
+            name="show_hidden"
+            type="checkbox"
+            checked={this.props.showHidden}
+            onChange={this.props.updateShowHidden}
+            className={"hide-user-checkbox"}
+          />
+          <label title={showHiddenTooltip} htmlFor="show_hidden">
+            {I18n.t("tas.display_inactive")}
+          </label>
+        </span>
         <button className="assign-all-button" onClick={this.props.assignAll}>
           {I18n.t("graders.actions.assign_grader")}
         </button>

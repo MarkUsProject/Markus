@@ -125,7 +125,7 @@ export class AssignmentSummaryTable extends React.Component {
         },
       },
       {
-        Header: I18n.t("activerecord.attributes.result.total_mark"),
+        Header: I18n.t("results.total_mark"),
         accessor: "final_grade",
         Cell: row => {
           if (row.original.final_grade || row.original.final_grade === 0) {

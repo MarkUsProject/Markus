@@ -1,24 +1,58 @@
 # Changelog
 
 ## [unreleased]
+- Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
+
+## [v2.2.2]
+- Apply course maximum file size to feedback files (#6430)
+
+## [v2.2.1]
+- Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
+- Fix bug where peer reviewers could not view results they are assigned to review (#6439)
+- Make fewer connections when connecting to redis (#6443)
+
+## [v2.2.0]
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Simplify configuration options for storing files on disk (#6157)
-- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
 - Replace yarn with npm as a package manager (#6159)
 - Drop support for subversion repositories (#6160)
 - Fix undefined prop type warnings when loading assessment charts (#6172)
+- Allow graders and instructors to be set to hidden status (#6173)
+- Prevent hidden roles from interacting with a course (#6173)
 - Do not dynamically change the database schema which causes migration and installation issues (#6189)
+- Make git hooks more portable by converting them to shell scripts (#6196)
 - Don't start webpack docker service in development before the packages are fully installed (#6212)
+- Added ability to download feedback files (#6215)
 - Allow admins to set the autotester url for each course in the courses view (#6213)
 - Allow admins to test and reset the connection to the autotester in the courses view and through the API (#6213)
 - Fix bug where exam template was downloaded instead of copies with unique qr codes (#6219)
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 - Disable python features if python dependencies are not installed (#6232)
-- Allow results to be made available only through unique tokens (#6244)
+- Install system dependencies from a debian package (#6246)
 - Fix bug where assignments could not be uploaded with unexpected properties in file upload content (#6224)
+- Fix bug where tests group results associated with old test groups aren't displayed with test group information (#6285)
+- Read the MarkUs version once at initialization instead of at every request (#6305)
+- Allow spaces in file names (#6306)
+- Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
+- Downloading files from a single repository no longer adds an additional subdirectory to the zip archive (#6323)
+- Bulk submission collection: allow collecting the most recent revision and choosing whether to apply late penalties (#6341)
+- Allow admins to role switch to instructors (#6353)
+- Fix bug where rubric grades could not be selected with the return key (#6354)
+- Allow admins to set the number of puma workers and threads from the settings files (#6348)
+- Fix bug where a user who has switched roles could not view the about modal or log out (#6356)
+- Fix bug where grades summary charts flicker in some browsers (#6352)
+- Fix bug where emoji annotation options were available even when no text/region was selected (#6384)
+- Fix bug where certain results attributes could not be updated if the result was incomplete (#6388)
+
+## [v2.1.7]
+- Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
+- Allow results to be made available only through unique tokens (#6244)
+
+## [v2.1.6]
+- Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
+- Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)
 - Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
 - Fix bug where csv summary download fails if criteria are created after marking (#6302)
-- Fix bug where a request to cancel test runs failed if some test runs had already completed (#6320)
 
 ## [v2.1.5]
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)

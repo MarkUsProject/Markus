@@ -493,15 +493,24 @@ Rails.application.routes.draw do
   end
 
   unless Rails.env.production?
-    namespace :lti_deployment do
-      get 'get_canvas_config'
-      post 'launch'
-      get 'public_jwk'
-      post 'redirect_login'
-      get 'choose_course'
-      post 'choose_course'
-      post 'create_course'
-      post 'create_lti_grades'
+    resources :lti_deployments, only: [] do
+      collection do
+        get 'public_jwk'
+        post 'create_lti_grades'
+        resources :canvas, only: [] do
+          collection do
+            get 'get_config'
+            post 'launch'
+            post 'redirect_login'
+            get 'redirect_login'
+          end
+        end
+      end
+      member do
+        get 'choose_course'
+        post 'choose_course'
+        post 'create_course'
+      end
     end
   end
 

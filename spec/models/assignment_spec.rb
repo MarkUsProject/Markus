@@ -1437,7 +1437,6 @@ describe Assignment do
           s = create(:version_used_submission, grouping: g)
 
           result = s.get_latest_result
-          result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
           result.marks.each do |m|
             m.update!(mark: (total_mark * 4.0 / 20).round)
@@ -1754,7 +1753,7 @@ describe Assignment do
         let(:result) { create :complete_result, submission: submission }
         let!(:extra_mark) { create :extra_mark_points, result: result }
         it 'should include the extra mark in the total' do
-          final_grade = submission.current_result.total_mark + extra_mark.extra_mark
+          final_grade = submission.current_result.get_total_mark
           data = assignment.current_submission_data(ta)
           expect(data.pluck(:final_grade)).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
@@ -1862,7 +1861,7 @@ describe Assignment do
       end
 
       it 'should include the total mark if a result exists' do
-        final_grade = submission.current_result.total_mark
+        final_grade = submission.current_result.get_total_mark
         expect(data.pluck(:final_grade)).to include(final_grade)
         expect(data.select { |h| h.key? :final_grade }.count).to eq 1
       end
@@ -1892,7 +1891,7 @@ describe Assignment do
         let(:result) { create :complete_result, submission: submission }
         let!(:extra_mark) { create :extra_mark_points, result: result }
         it 'should include the extra mark in the total' do
-          final_grade = submission.current_result.total_mark + extra_mark.extra_mark
+          final_grade = submission.current_result.get_total_mark
           expect(data.pluck(:final_grade)).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
         end
@@ -2125,8 +2124,7 @@ describe Assignment do
           it 'should add the extra mark to the total mark' do
             data = @assignment.summary_json(instructor)[:data]
             grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
-            extra = grouping.current_result.extra_marks.pluck(:extra_mark).sum
-            expect(grouping_data[:final_grade]).to eq(grouping.current_result.total_mark + extra)
+            expect(grouping_data[:final_grade]).to eq(grouping.current_result.get_total_mark)
           end
           context 'when the extra mark has a negative value' do
             let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result, extra_mark: -100 }
@@ -2147,7 +2145,7 @@ describe Assignment do
             it 'should add both extra marks to the total mark' do
               data = @assignment.summary_json(instructor)[:data]
               grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
-              total = grouping.current_result.total_mark + extra_mark.extra_mark + percentage_extra
+              total = grouping.current_result.get_total_mark
               expect(grouping_data[:final_grade]).to eq total
             end
           end
@@ -2459,7 +2457,7 @@ describe Assignment do
             criteria.each do |criterion|
               criterion.marks.find_or_create_by(result: g.current_result).update!(mark: m)
             end
-            g.current_result.update!(total_mark: m * criteria.size, marking_state: Result::MARKING_STATES[:complete])
+            g.current_result.update!(marking_state: Result::MARKING_STATES[:complete])
           end
         end
 
@@ -2473,13 +2471,13 @@ describe Assignment do
         end
 
         it 'returns a list of sorted marks that only includes results marked as complete' do
-          result = assignment.current_results.find_by(total_mark: 2)
+          result = assignment.current_results.select { |r| r.get_total_mark == 2 }.first
           result.update!(marking_state: Result::MARKING_STATES[:incomplete])
           expect(assignment.completed_result_marks).to eq [0, 8]
         end
 
         context 'when there is a remark result' do
-          let(:original_result) { assignment.current_results.find_by(total_mark: 2) }
+          let(:original_result) { assignment.current_results.select { |r| r.get_total_mark == 2 }.first }
           let!(:remark_result) { create(:remark_result, submission: original_result.submission) }
 
           it 'does not include the original result or remark result when the latter is incomplete' do
@@ -2490,7 +2488,7 @@ describe Assignment do
             criteria.each do |c|
               c.marks.find_or_create_by(result: remark_result).update!(mark: 3)
             end
-            remark_result.update!(total_mark: 6, marking_state: Result::MARKING_STATES[:complete])
+            remark_result.update!(marking_state: Result::MARKING_STATES[:complete])
             expect(assignment.completed_result_marks).to eq [0, 6, 8]
           end
         end
@@ -2539,6 +2537,27 @@ describe Assignment do
       it 'returns correct graders' do
         Grouping.assign_all_tas([grouping], [ta.id], assignment)
         expect(assignment.current_grader_data[:graders][0][:_id]).to eq(ta.id)
+      end
+      it 'returns correct hidden grader info' do
+        Grouping.assign_all_tas([grouping], [ta.id], assignment)
+        received_grader_info = assignment.current_grader_data[:groups].first[:graders].first
+        expected_grader_info = {
+          grader: ta.user_name,
+          hidden: false
+        }
+        expect(received_grader_info).to eq(expected_grader_info)
+      end
+      context 'graders are hidden' do
+        it 'returns correct hidden grader info' do
+          ta.update!(hidden: true)
+          Grouping.assign_all_tas([grouping], [ta.id], assignment)
+          received_grader_info = assignment.current_grader_data[:groups].first[:graders].first
+          expected_grader_info = {
+            grader: ta.user_name,
+            hidden: true
+          }
+          expect(received_grader_info).to eq(expected_grader_info)
+        end
       end
     end
   end

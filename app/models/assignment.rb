@@ -294,10 +294,8 @@ class Assignment < Assessment
   def completed_result_marks
     return @completed_result_marks if defined? @completed_result_marks
 
-    @completed_result_marks = self.current_results
-                                  .where(marking_state: Result::MARKING_STATES[:complete])
-                                  .order(:total_mark)
-                                  .pluck(:total_mark)
+    completed_result_ids = self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).ids
+    @completed_result_marks = Result.get_total_marks(completed_result_ids).values.sort
   end
 
   def all_grouping_data
@@ -690,7 +688,7 @@ class Assignment < Assessment
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
-      [Result.human_attribute_name(:total_mark)]
+      [I18n.t('results.total_mark')]
 
     second_row = [' '] * Student::CSV_ORDER.length + [Assessment.human_attribute_name(:max_mark), self.max_mark]
 
@@ -704,6 +702,7 @@ class Assignment < Assessment
     headers[1] << ''
 
     result_ids = groupings.pluck('results.id').uniq.compact
+    total_marks_hash = Result.get_total_marks(result_ids)
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
     CSV.generate do |csv|
       csv << headers[0]
@@ -718,9 +717,9 @@ class Assignment < Assessment
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
-            row << result.total_mark
+            row << total_marks_hash[result.id]
             row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
-            row << extra_marks_hash[result&.id]
+            row << extra_marks_hash[result.id]
           end
           csv << row
         end
@@ -994,25 +993,27 @@ class Assignment < Assessment
                       .group('user_name')
                       .count
     graders = self.course.tas.joins(:user)
-                  .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
+                  .pluck(:user_name, :first_name, :last_name, 'roles.id',
+                         'roles.hidden').map do |user_name, first_name, last_name, id, hidden|
       {
         user_name: user_name,
         first_name: first_name,
         last_name: last_name,
         groups: grader_data[user_name] || 0,
         _id: id,
-        criteria: ta_counts[id] || 0
+        criteria: ta_counts[id] || 0,
+        hidden: hidden
       }
     end
 
     group_data = self.groupings
                      .left_outer_joins(:group, tas: :user)
-                     .pluck('groupings.id', 'groups.group_name', 'users.user_name',
+                     .pluck('groupings.id', 'groups.group_name', 'users.user_name', 'roles.hidden',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
-    group_data.each do |group_id, group_name, ta, count|
+    group_data.each do |group_id, group_name, ta, hidden, count|
       groups[[group_id, group_name, count]]
-      groups[[group_id, group_name, count]] << ta unless ta.nil?
+      groups[[group_id, group_name, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
     group_sections = {}
     self.groupings.includes(:section).find_each do |g|
@@ -1031,11 +1032,11 @@ class Assignment < Assessment
     criterion_data =
       self.criteria.left_outer_joins(tas: :user)
           .pluck('criteria.name', 'criteria.position',
-                 'criteria.assigned_groups_count', 'users.user_name')
+                 'criteria.assigned_groups_count', 'users.user_name', 'roles.hidden')
     criteria = Hash.new { |h, k| h[k] = [] }
-    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta|
+    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta, hidden|
       criteria[[name, pos, count]]
-      criteria[[name, pos, count]] << ta unless ta.nil?
+      criteria[[name, pos, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
     criteria = criteria.map do |k, v|
       {
@@ -1098,7 +1099,6 @@ class Assignment < Assessment
                   .pluck_to_hash('groupings.id',
                                  'results.id',
                                  'results.marking_state',
-                                 'results.total_mark',
                                  'results.released_to_students',
                                  'results.view_token',
                                  'results.view_token_expiry')

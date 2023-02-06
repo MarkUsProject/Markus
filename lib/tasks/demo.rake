@@ -133,7 +133,6 @@ namespace :markus do
       mark.mark = random_mark
       mark.save
     end
-    result.update_total_mark
     result.marking_state = 'complete'
     result.save
     result

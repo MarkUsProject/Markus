@@ -5,7 +5,6 @@ en:
       result:
         marking_state: Marking State
         overall_comment: Overall Comments
-        total_mark: Total Mark
     models:
       result:
         one: Result

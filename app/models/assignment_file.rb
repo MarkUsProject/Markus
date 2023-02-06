@@ -7,7 +7,7 @@ class AssignmentFile < ApplicationRecord
   before_validation :clean_filename
   validates :filename, presence: true
   validates :filename, uniqueness: { scope: :assessment_id }
-  validates :filename, format: { with: %r{\A[\-._a-zA-Z0-9][/\-._a-zA-Z0-9]*\z} }
+  validates :filename, format: { with: %r{\A[\-._a-zA-Z0-9][\-/._a-zA-Z0-9\s]*\z} }
 
   private
 

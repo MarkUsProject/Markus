@@ -37,7 +37,6 @@ FactoryBot.define do
         result.marks.each do |mark|
           mark.update(mark: rand(mark.criterion.max_mark + 1))
         end
-        result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end
     end
@@ -97,7 +96,6 @@ FactoryBot.define do
         result.marks.each do |mark|
           mark.update(mark: mark.criterion.max_mark - 1)
         end
-        result.update_total_mark
         result.update!(marking_state: Result::MARKING_STATES[:complete], created_at: 1.minute.ago)
         if i.zero?
           grouping.current_submission_used.make_remark_result
@@ -105,7 +103,6 @@ FactoryBot.define do
           remark_result.marks.each do |mark|
             mark.update!(mark: mark.criterion.max_mark)
           end
-          remark_result.update_total_mark
           remark_result.update!(marking_state: Result::MARKING_STATES[:complete])
         end
       end
@@ -126,7 +123,6 @@ FactoryBot.define do
         create(:text_annotation,
                annotation_text: a.annotation_categories.first.annotation_texts.first,
                result: result)
-        result.update_total_mark
       end
     end
   end

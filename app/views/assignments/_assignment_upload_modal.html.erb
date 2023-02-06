@@ -10,7 +10,7 @@
                              upload_id: 'upload_file',
                              button_id: 'submit_upload', nonce: true %>
 
-  <%= t('upload_help_html', markus_version: @markus_version, section_id: Assignment.name.pluralize.underscore.dasherize) %>
+  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: Assignment.name.pluralize.underscore.dasherize) %>
 
   <%= form_tag upload_assignments_course_path(@current_course),
                { multipart: true } do %>

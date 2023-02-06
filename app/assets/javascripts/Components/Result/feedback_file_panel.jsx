@@ -59,15 +59,26 @@ export class FeedbackFilePanel extends React.Component {
     }
 
     let url, file_obj;
+    let download_feedback_file = (
+      <a className="button disabled" href="#">
+        {I18n.t("download")}
+      </a>
+    );
     if (this.state.selectedFile !== null) {
       url = Routes.course_feedback_file_path(this.props.course_id, this.state.selectedFile);
       file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
+      download_feedback_file = (
+        <a className="button" href={url} download>
+          {I18n.t("download")}
+        </a>
+      );
     }
 
     return (
       <React.Fragment>
         <div className="react-tabs-panel-action-bar" key={"feedback-file-actionbar"}>
-          <div>{feedbackSelector}</div>
+          {feedbackSelector}
+          {download_feedback_file}
         </div>
         <div id="feedback_file_content" key={"feedback-file-view"}>
           <FileViewer

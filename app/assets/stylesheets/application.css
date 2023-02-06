@@ -3,13 +3,13 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require_self
+ *= require 'clickable'
+ *= require OpenSans
+ *= require react-table
+ *= require 'react-tabs/style/react-tabs'
+ *= require react-keyed-file-browser
+ *= require cookies_eu
+ *= require 'common/pdfjs_custom'
+ *= require 'common/core'
+ *= require 'flatpickr'
 */
-//= require 'clickable'
-//= require OpenSans
-//= require react-table
-//= require 'react-tabs/style/react-tabs'
-//= require react-keyed-file-browser
-//= require cookies_eu
-//= require 'common/pdfjs_custom'
-//= require 'common/core'
-//= require 'flatpickr'

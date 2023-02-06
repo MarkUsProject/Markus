@@ -136,6 +136,10 @@ var annotation_context_menu = {
       beforeOpen: function (event, ui) {
         // Enable annotation menu items only if a selection has been made
         var selection_exists = !!window.annotation_manager.getSelection(false);
+        $(document).contextmenu("enableEntry", "check_mark_annotation", selection_exists);
+        $(document).contextmenu("enableEntry", "thumbs_up_annotation", selection_exists);
+        $(document).contextmenu("enableEntry", "heart_annotation", selection_exists);
+        $(document).contextmenu("enableEntry", "smile_annotation", selection_exists);
         $(document).contextmenu("enableEntry", "new_annotation", selection_exists);
         $(document).contextmenu("enableEntry", "common_annotations", selection_exists);
         $(document).contextmenu("enableEntry", "copy", selection_exists);

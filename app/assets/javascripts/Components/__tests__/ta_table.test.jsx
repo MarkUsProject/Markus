@@ -25,6 +25,7 @@ describe("For the TATable's display of TAs", () => {
           first_name: "Mike",
           last_name: "Conley",
           email: "example@gmail.com",
+          hidden: false,
         },
         {
           id: 4,
@@ -32,6 +33,7 @@ describe("For the TATable's display of TAs", () => {
           first_name: "Severin",
           last_name: "Gehwolf",
           email: null,
+          hidden: false,
         },
         {
           id: 5,
@@ -39,6 +41,7 @@ describe("For the TATable's display of TAs", () => {
           first_name: "Nelle",
           last_name: "Varoquaux",
           email: null,
+          hidden: false,
         },
         {
           id: 6,
@@ -46,10 +49,16 @@ describe("For the TATable's display of TAs", () => {
           first_name: "Mark",
           last_name: "Rada",
           email: null,
+          hidden: true,
         },
       ];
       // Mocking the response returned by $.ajax, used in TATable fetchData
-      $.ajax = jest.fn(() => Promise.resolve(tas_sample));
+      $.ajax = jest.fn(() =>
+        Promise.resolve({
+          data: tas_sample,
+          counts: {all: 4, active: 3, inactive: 1},
+        })
+      );
       wrapper = mount(<TATable course_id={1} />);
     });
 
@@ -62,7 +71,12 @@ describe("For the TATable's display of TAs", () => {
     beforeAll(() => {
       tas_sample = [];
       // Mocking the response returned by $.ajax, used in TATable fetchData
-      $.ajax = jest.fn(() => Promise.resolve(tas_sample));
+      $.ajax = jest.fn(() =>
+        Promise.resolve({
+          data: tas_sample,
+          counts: {all: 0, active: 0, inactive: 0},
+        })
+      );
       wrapper = mount(<TATable course_id={1} />);
     });
 

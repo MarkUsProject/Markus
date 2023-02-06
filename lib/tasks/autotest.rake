@@ -156,7 +156,7 @@ class AutotestSetup
   def process_schema_data
     # Reload the data so the in memory collection proxy is updated.
     @assignment.reload
-    Assignment.transaction do
+    ApplicationRecord.transaction do
       update_test_groups_from_specs(@assignment, @specs_data)
 
       # Manually associate one of the test groups with the assignment's criterion
@@ -167,7 +167,9 @@ class AutotestSetup
   # Send +@assignment+'s specs to the autotester.
   # Note: the MarkUs server MUST be running before calling this method.
   def upload_specs
-    AutotestSpecsJob.perform_now(@markus_url, @assignment)
+    AutotestSpecsJob.perform_now(@markus_url, @assignment, @specs_data)
+    # Manually associate one of the test groups with the assignment's criterion
+    @assignment.test_groups.order(:name).first.update(criterion: @assignment.criteria.first)
   end
 
   # Send run tests for +@assignment+.

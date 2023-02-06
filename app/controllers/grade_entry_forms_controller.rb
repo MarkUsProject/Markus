@@ -35,7 +35,6 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form.update(new_params)
     respond_with(@grade_entry_form,
                  location: -> { edit_course_grade_entry_form_path current_course, @grade_entry_form })
-    GradeEntryStudent.refresh_total_grades(@grade_entry_form.grade_entry_students.ids)
   end
 
   # View/modify the grades for this grade entry form
@@ -58,7 +57,7 @@ class GradeEntryFormsController < ApplicationController
     grade.update(grade: params[:updated_grade])
     grade_entry_student.save # Refresh total grade
     grade_entry_student.reload
-    render plain: grade_entry_student.total_grade
+    render plain: grade_entry_student.get_total_grade
   end
 
   # For students
@@ -98,7 +97,7 @@ class GradeEntryFormsController < ApplicationController
     # Get data for the total marks column
     if @grade_entry_form.show_total
       @columns << "#{GradeEntryForm.human_attribute_name(:total)} (#{@grade_entry_form.max_mark})"
-      total = @grade_entry_student.total_grade
+      total = @grade_entry_student.get_total_grade
       if !total.nil?
         @data << total
       else
@@ -129,9 +128,6 @@ class GradeEntryFormsController < ApplicationController
       Arel.sql('roles.hidden as hidden'),
       Arel.sql('roles.section_id as section_id')
     ]
-    if grade_entry_form.show_total
-      student_pluck_attrs << Arel.sql('grade_entry_students.total_grade as total_marks')
-    end
 
     if current_role.instructor?
       students = grade_entry_form.grade_entry_students
@@ -153,12 +149,17 @@ class GradeEntryFormsController < ApplicationController
                            .group_by { |x| x[0] }
     end
 
+    if grade_entry_form.show_total
+      total_grades = GradeEntryStudent.get_total_grades(students.pluck(:_id))
+    end
+
     student_grades = students.map do |s|
       (grades[s[:_id]] || []).each do |_, grade_entry_item_id, grade|
         s[grade_entry_item_id] = grade
       end
-      if grade_entry_form.show_total && s[:total_marks].nil?
-        s[:total_marks] = t(:not_applicable)
+      if grade_entry_form.show_total
+        total_marks = total_grades[s[:_id]]
+        s[:total_marks] = total_marks.nil? ? t(:not_applicable) : total_marks
       end
       s
     end

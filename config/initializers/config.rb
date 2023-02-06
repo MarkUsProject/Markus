@@ -60,6 +60,7 @@ Config.setup do |config|
         end
         optional(:action_controller).hash do
           optional(:perform_caching).filled(:bool)
+          optional(:default_url_options).hash
         end
         optional(:cache_store).filled(:string)
         required(:active_record).hash do
@@ -92,6 +93,15 @@ Config.setup do |config|
           required(:perform_deliveries).filled(:bool)
           required(:deliver_later_queue_name).maybe(:string)
         end
+      end
+      required(:puma).hash do
+        required(:workers).filled(:integer, gt?: -1)
+        required(:min_threads).filled(:integer, gt?: -1)
+        required(:max_threads).filled(:integer, gt?: -1)
+        required(:worker_timeout).filled(:integer, gt?: 5) # puma enforces a minimum 6 second worker timeout
+      end
+      required(:jupyter_server).hash do
+        required(:hosts).array(:string)
       end
       required(:queues).hash do
         required(:default).filled(:string)

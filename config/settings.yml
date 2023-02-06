@@ -28,6 +28,15 @@ rails:
       host: 'localhost'
       port: '3000'
 
+puma:
+  workers: 3
+  min_threads: 0
+  max_threads: 5
+  worker_timeout: 60
+
+jupyter_server:
+  hosts: []
+
 queues:
   default: DEFAULT_QUEUE
 
@@ -90,8 +99,6 @@ autotest:
 
 scanned_exams:
   enable: true
-
-python: <%= ::Rails.root %>/venv/bin/python
 
 exception_notification:
   enabled: false

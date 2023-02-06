@@ -1,7 +1,5 @@
 # Student user for a given course.
 class Student < Role
-  scope :active, -> { where(hidden: false) }
-  scope :inactive, -> { where(hidden: true) }
   has_many :grade_entry_students, foreign_key: :role_id, inverse_of: :role
   has_many :accepted_memberships,
            -> {
@@ -199,7 +197,9 @@ class Student < Role
     student_id_list.each do |student_id|
       update_list[student_id] = { hidden: true }
     end
-    Student.update(update_list.keys, update_list.values)
+    Repository.get_class.update_permissions_after(only_on_request: true) do
+      Student.update(update_list.keys, update_list.values)
+    end
   end
 
   # "Unhides" students not visible and grants repository
@@ -209,7 +209,9 @@ class Student < Role
     student_id_list.each do |student_id|
       update_list[student_id] = { hidden: false }
     end
-    Student.update(update_list.keys, update_list.values)
+    Repository.get_class.update_permissions_after(only_on_request: true) do
+      Student.update(update_list.keys, update_list.values)
+    end
   end
 
   def self.give_grace_credits(student_ids, number_of_grace_credits)

@@ -78,6 +78,16 @@ module Api
       else
         content = params[:file_content]
       end
+      if content.size > submission.course.max_file_size
+        size_diff = content.size - submission.course.max_file_size
+        render 'shared/http_status',
+               locals: { code: '413',
+                         message: I18n.t('oversize_feedback_file',
+                                         file_size: ActiveSupport::NumberHelper.number_to_human_size(size_diff),
+                                         max_file_size: submission.course.max_file_size / 1_000_000) },
+               status: :payload_too_large
+        return
+      end
       if submission.feedback_files.create(filename: params[:filename],
                                           mime_type: params[:mime_type],
                                           file_content: content)

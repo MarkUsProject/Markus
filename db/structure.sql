@@ -25,7 +25,7 @@ BEGIN
     FROM users
         JOIN roles ON roles.user_id=users.id
         JOIN courses ON roles.course_id=courses.id
-    WHERE courses.name=course_name AND users.user_name=user_name_
+    WHERE courses.name=course_name AND users.user_name=user_name_ AND roles.hidden=false
         FETCH FIRST ROW ONLY;
 
     IF role_type IN ('Instructor', 'AdminRole') THEN
@@ -54,11 +54,13 @@ BEGIN
                     JOIN groups ON groupings.group_id=groups.id
                     JOIN assignment_properties ON assignment_properties.assessment_id=groupings.assessment_id
                     JOIN assessments ON groupings.assessment_id=assessments.id
+                    JOIN courses ON assessments.course_id=courses.id
                     LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
                 WHERE memberships.type='StudentMembership'
                   AND memberships.membership_status IN ('inviter','accepted')
                   AND assignment_properties.vcs_submit=true
                   AND roles.id=role_id_
+                  AND courses.is_hidden=false
                   AND groups.repo_name=repo_name_
                   AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
                            OR assessment_section_properties.is_hidden=false)
@@ -817,7 +819,6 @@ CREATE TABLE public.grade_entry_students (
     released_to_student boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    total_grade double precision,
     assessment_id bigint,
     role_id bigint NOT NULL
 );
@@ -1572,9 +1573,7 @@ CREATE TABLE public.results (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     released_to_students boolean DEFAULT false NOT NULL,
-    total_mark double precision DEFAULT 0.0,
     remark_request_submitted_at timestamp without time zone,
-    peer_review_id integer,
     view_token character varying NOT NULL,
     view_token_expiry timestamp without time zone
 );
@@ -2095,7 +2094,7 @@ ALTER SEQUENCE public.test_batches_id_seq OWNED BY public.test_batches.id;
 
 CREATE TABLE public.test_group_results (
     id integer NOT NULL,
-    test_group_id integer,
+    test_group_id integer NOT NULL,
     marks_earned double precision DEFAULT 0.0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -3299,6 +3298,13 @@ CREATE INDEX index_courses_on_autotest_setting_id ON public.courses USING btree 
 
 
 --
+-- Name: index_courses_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_courses_on_name ON public.courses USING btree (name);
+
+
+--
 -- Name: index_criteria_on_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3600,13 +3606,6 @@ CREATE INDEX index_periods_on_submission_rule_id ON public.periods USING btree (
 
 
 --
--- Name: index_results_on_peer_review_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_results_on_peer_review_id ON public.results USING btree (peer_review_id);
-
-
---
 -- Name: index_results_on_view_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3779,6 +3778,13 @@ CREATE INDEX index_template_divisions_on_exam_template_id ON public.template_div
 --
 
 CREATE INDEX index_test_batches_on_course_id ON public.test_batches USING btree (course_id);
+
+
+--
+-- Name: index_test_group_results_on_test_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_test_group_results_on_test_group_id ON public.test_group_results USING btree (test_group_id);
 
 
 --
@@ -4060,6 +4066,14 @@ ALTER TABLE ONLY public.feedback_files
 
 
 --
+-- Name: test_group_results fk_rails_5ad5ab0a6d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_group_results
+    ADD CONSTRAINT fk_rails_5ad5ab0a6d FOREIGN KEY (test_group_id) REFERENCES public.test_groups(id);
+
+
+--
 -- Name: split_pages fk_rails_5d57914eb6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4121,14 +4135,6 @@ ALTER TABLE ONLY public.tags
 
 ALTER TABLE ONLY public.levels
     ADD CONSTRAINT fk_rails_7d6e4d7d84 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
-
-
---
--- Name: results fk_rails_81dcc9eed0; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.results
-    ADD CONSTRAINT fk_rails_81dcc9eed0 FOREIGN KEY (peer_review_id) REFERENCES public.peer_reviews(id) ON DELETE CASCADE;
 
 
 --
@@ -4677,6 +4683,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220726142501'),
 ('20220726201403'),
 ('20220727161425'),
+('20220815210513'),
 ('20220825171354'),
 ('20220826132206'),
-('20220922131809');
+('20220922131809'),
+('20221019191315'),
+('20221111182002'),
+('20221219204837'),
+('20230109190029');

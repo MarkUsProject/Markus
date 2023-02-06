@@ -4,14 +4,26 @@ class LtiDeployment < ApplicationRecord
   has_many :lti_services, dependent: :destroy
   has_many :lti_line_items, dependent: :destroy
   validates :external_deployment_id, uniqueness: { scope: :lti_client }
+  # See LTI documentation for full lists of scopes/claims/roles
+  # https://www.imsglobal.org/spec/lti/v1p3
+  LTI_SCOPES = { names_role: 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',
+                 ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+                 score: 'https://purl.imsglobal.org/spec/lti-ags/scope/score' }.freeze
+  LTI_CLAIMS = { context: 'https://purl.imsglobal.org/spec/lti/claim/context',
+                 custom: 'https://purl.imsglobal.org/spec/lti/claim/custom',
+                 names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
+                 ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
+                 deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id',
+                 user_launch_data: 'https://purl.imsglobal.org/spec/lti/claim/lti1p1' }.freeze
+  LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner' }.freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
   # with the learner role and creates roles and LTI IDs for each user.
   def get_students
-    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'])
+    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:names_role]])
     names_service = self.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
-    membership_uri.query = URI.encode_www_form(role: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner')
+    membership_uri.query = URI.encode_www_form(role: LTI_ROLES[:learner])
     req = Net::HTTP::Get.new(membership_uri)
     req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
     http = Net::HTTP.new(membership_uri.host, membership_uri.port)
@@ -56,8 +68,8 @@ class LtiDeployment < ApplicationRecord
       resourceId: assessment.short_identifier,
       scoreMaximum: assessment.max_mark.to_f
     }
-    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'])
-    lineitem_service = self.lti_services.find_by!(lti_deployment: self, service_type: 'agslineitem')
+    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:ags_lineitem]])
+    lineitem_service = self.lti_services.find_by!(service_type: 'agslineitem')
     lineitem_uri = URI(lineitem_service.url)
     line_item = self.lti_line_items.find_or_initialize_by(assessment: assessment)
     if line_item.lti_line_item_id?
@@ -76,7 +88,7 @@ class LtiDeployment < ApplicationRecord
   # Takes as input an assessment. Sends all *released* marks to
   # the LMS associated with the assignment and the current deployment
   def create_grades(assessment)
-    auth_data = lti_client.get_oauth_token(['https://purl.imsglobal.org/spec/lti-ags/scope/score'])
+    auth_data = lti_client.get_oauth_token([LTI_SCOPES[:score]])
     line_item = self.lti_line_items.find_by!(assessment: assessment)
     score_uri = URI("#{line_item.lti_line_item_id}/scores")
     req = Net::HTTP::Post.new(score_uri)
@@ -113,7 +125,7 @@ class LtiDeployment < ApplicationRecord
       group_students = mark.grouping.accepted_student_memberships
       group_students.each do |member|
         lti_user = lti_users.find_by(user: member.role.user)
-        mark_data[lti_user.lti_user_id] = result.total_mark unless lti_user.nil?
+        mark_data[lti_user.lti_user_id] = result.get_total_mark unless lti_user.nil?
       end
     end
     mark_data
@@ -128,7 +140,7 @@ class LtiDeployment < ApplicationRecord
     marks.each do |mark|
       lti_user = lti_users.find_by(user: mark.role.user)
       unless lti_user.nil?
-        mark_data[lti_user.lti_user_id] = mark.total_grade
+        mark_data[lti_user.lti_user_id] = mark.get_total_grade
       end
     end
     mark_data
