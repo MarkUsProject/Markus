@@ -192,7 +192,7 @@ describe GroupsController do
       before :all do
         # remove a generated repo so repeated test runs function properly
         FileUtils.rm_r(
-          File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
+          File.join(Rails.root.to_s, 'data/test/repos/group_0001', '/'),
           force: true
         )
       end

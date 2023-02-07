@@ -18,11 +18,11 @@ namespace :markus do
     permission_file = archive_dir + 'permission_file'
     archive_copy(Repository::PERMISSION_FILE, permission_file.to_s, rev: rev)
     # copy log files
-    log_dir = File.dirname(File.join(::Rails.root, Settings.logging.log_file))
+    log_dir = File.dirname(File.join(Rails.root, Settings.logging.log_file))
     log_files_dir = archive_dir + 'log_files'
     archive_copy(log_dir, log_files_dir, rev: rev)
     # copy error files
-    error_dir = File.dirname(File.join(::Rails.root, Settings.logging.error_file))
+    error_dir = File.dirname(File.join(Rails.root, Settings.logging.error_file))
     error_files_dir = archive_dir + 'error_dir'
     archive_copy(error_dir, error_files_dir, rev: rev)
     # copy starter files
@@ -38,7 +38,7 @@ namespace :markus do
 
   # Copy all stateful MarkUs files to +archive_dir+
   task :archive, [:archive_file] => :environment do |_task, args|
-    archive_dir = Pathname.new("#{::Rails.root}/tmp/archive")
+    archive_dir = Pathname.new("#{Rails.root}/tmp/archive")
     FileUtils.rm_rf(archive_dir)
     FileUtils.mkdir_p(archive_dir)
     puts 'Copying files on disk'
@@ -52,7 +52,7 @@ namespace :markus do
 
   # Copy all stateful MarkUs files from +archive_dir+
   task :unarchive, [:archive_file] => :environment do |_task, args|
-    archive_dir = Pathname.new("#{::Rails.root}/tmp/archive")
+    archive_dir = Pathname.new("#{Rails.root}/tmp/archive")
     FileUtils.rm_rf(archive_dir)
     zip_file = args[:archive_file]
     puts "Unarchiving file #{zip_file}"
