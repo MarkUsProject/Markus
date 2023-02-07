@@ -1,5 +1,7 @@
 # Changelog
 
+## [v2.2.3]
+- Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
 
 ## [v2.2.2]
 - Apply course maximum file size to feedback files (#6430)
