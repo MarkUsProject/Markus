@@ -170,49 +170,6 @@ class Submission < ApplicationRecord
       .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
   end
 
-  # For group submissions, actions here must only be accessible to members
-  # that has inviter or accepted status. This check is done when fetching
-  # the user or group submission from an assignment (see controller).
-
-  # Handles file submissions. Late submissions have a status of "late"
-  def submit(user, file, submission_time, sdir = SUBMISSIONS_PATH)
-    filename = file.original_filename
-
-    # create a backup if file already exists
-    dir = submit_dir(sdir)
-    filepath = File.join(dir, filename)
-    create_backup(filename, sdir) if File.exist?(filepath)
-
-    # create a submission_file record
-    submission_file = submission_files.create do |f|
-      f.user = user
-      f.filename = file.original_filename
-      f.submitted_at = submission_time
-      f.submission_file_status = 'late' if grouping.due_date < submission_time
-    end
-
-    # upload file contents to file system
-    File.binwrite(filepath, file.read) if submission_file.save
-    submission_file
-  end
-
-  # Delete all records of filename in submissions and store in backup folder
-  # (for now, called "BACKUP")
-  def remove_file(filename)
-    # get all submissions for this filename
-    files = submission_files.where(filename: filename)
-    return if files.blank?
-    files.each(&:destroy)  # destroy all records first
-
-    adir = submit_dir
-    backup_dir = File.join(adir, 'BACKUP')
-    FileUtils.mkdir_p(backup_dir)
-
-    source_file = File.join(adir, filename)
-    dest_file = File.join(backup_dir, filename)
-    FileUtils.mv(source_file, dest_file, force: true)
-  end
-
   # Query functions -------------------------------------------------------
   # Figure out which assignment this submission is for
   def assignment
