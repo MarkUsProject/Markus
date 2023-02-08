@@ -87,17 +87,15 @@ module LtiHelper
   # Returns a hash mapping lti_user_id to marks
   # for each released mark where the user has an lti_user_id
   def get_assignment_marks(lti_deployment, assignment)
-    released_marks = assignment.released_marks
-                               .joins(grouping: [{ group: :student_memberships }])
-                               .merge(StudentMembership.joins(role: [{ user: :lti_users }]))
-                               .where('lti_users.lti_client': lti_deployment.lti_client)
-                               .pluck('lti_users.lti_user_id', 'results.id')
-    result_ids = released_marks.map { |mark| mark[1] }
+    released_results = assignment.released_marks
+                                 .joins(grouping: [{ accepted_student_memberships: { role: { user: :lti_users } } }])
+                                 .where('lti_users.lti_client': lti_deployment.lti_client)
+                                 .pluck('lti_users.lti_user_id', 'results.id')
+    result_ids = released_results.map { |result| result[1] }
     grades = Result.get_total_marks(result_ids)
-    grades.map do |grade|
-      student = released_marks.find { |g| g[1] == grade[0] }
-      next if student.nil?
-      [student[0], grade[1]]
+    released_results.map do |result|
+      next if result[0].nil?
+      [result[0], grades[result[1]]]
     end.to_h
   end
 
@@ -105,18 +103,15 @@ module LtiHelper
   # for each released mark where the user has an lti_user_id
   def get_grade_entry_form_marks(lti_deployment, grade_entry_form)
     student_data = grade_entry_form.released_marks
-                                   .joins(role: :user)
-                                   .joins(user: :lti_users)
-                                   .where('lti_users.lti_client': lti_deployment.lti_client,
-                                          'grade_entry_students.released_to_student': true)
+                                   .joins(role: { user: :lti_users })
+                                   .where('lti_users.lti_client': lti_deployment.lti_client)
                                    .pluck('lti_users.lti_user_id', 'grade_entry_students.id')
 
     ges_ids = student_data.map { |gef_student| gef_student[1] }
     grades = GradeEntryStudent.get_total_grades(ges_ids)
-    grades.map do |grade|
-      student = student_data.find { |g| g[1] == grade[0] }
-      next if student.nil?
-      [student[0], grade[1]]
+    student_data.map do |student|
+      next if student[0].nil?
+      [student[0], grades[student[1]]]
     end.to_h
   end
 

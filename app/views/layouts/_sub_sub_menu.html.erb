@@ -66,10 +66,10 @@
               </li>
             <% end %>
           <% end %>
-          <% if @lti_deployments %>
-          <li class='<%= "active" if controller.action_name == 'create_lti_line_items' %>'>
+          <% if LtiDeployment.where(course: @current_course).any? %>
+          <li class='<%= "active" if controller.action_name == 'lti_settings' %>'>
             <%= link_to I18n.t('lti.lti_settings'),
-                        create_lti_line_items_course_assignment_path(@current_course, @assignment) %>
+                        lti_settings_course_assignment_path(@current_course, @assignment) %>
           </li>
           <% end %>
         <% end %>

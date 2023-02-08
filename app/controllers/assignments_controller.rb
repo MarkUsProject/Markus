@@ -635,15 +635,21 @@ class AssignmentsController < ApplicationController
   def create_lti_line_items
     @assignment = record
     @lti_deployments = LtiDeployment.where(course: @current_course)
-    if request.post? && params.key?(:lti_deployment)
+    if params.key?(:lti_deployment)
       items_to_create = params[:lti_deployment].select { |_key, val| val == '1' }.keys.map(&:to_i)
-      unless items_to_create.empty?
+      if items_to_create.empty?
+        flash_message(:warning, 'No external platforms selected')
+      else
         @current_job = LtiLineItemJob.perform_later(items_to_create, @assignment)
         session[:job_id] = @current_job.job_id
-        render 'shared/_poll_job'
       end
     end
-    render 'lti_deployments/create_lti_line_items'
+    respond_with @assignment, location: -> { lti_settings_course_assignment_path(current_course, @assignment) }
+  end
+
+  def lti_settings
+    @assignment = record
+    @lti_deployments = LtiDeployment.where(course: @current_course)
   end
 
   private

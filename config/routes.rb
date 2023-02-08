@@ -227,7 +227,7 @@ Rails.application.routes.draw do
         get 'download_config_files'
         get 'download_test_results'
         post 'create_lti_grades'
-        get 'create_lti_line_items'
+        get 'lti_settings'
         post 'create_lti_line_items'
       end
 

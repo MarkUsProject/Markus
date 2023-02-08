@@ -1,7 +1,6 @@
 class CanvasController < LtiDeploymentsController
   LMS_REDIRECT_ENDPOINT = '/api/lti/authorize_redirect'.freeze
   LMS_JWK_ENDPOINT = '/api/lti/security/jwks'.freeze
-  LMS_ISS = 'https://canvas.instructure.com'.freeze
 
   def get_config
     # See https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html

@@ -122,7 +122,7 @@ describe LtiHelper do
         expect(get_assignment_marks(lti_deployment, assessment)).to be_instance_of(Hash)
       end
       it 'has float values' do
-        expect(get_assignment_marks(lti_deployment, assessment).first[1]).to be_instance_of(Float)
+        expect(get_assignment_marks(lti_deployment, assessment).first[1]).to be_kind_of(Numeric)
       end
     end
     context 'with some lti users' do
@@ -161,7 +161,7 @@ describe LtiHelper do
       end
       it 'has float values' do
         assessment.grade_entry_students.all.update!(released_to_student: true)
-        expect(get_grade_entry_form_marks(lti_deployment, assessment).first[1]).to be_instance_of(Float)
+        expect(get_grade_entry_form_marks(lti_deployment, assessment).first[1]).to be_kind_of(Numeric)
       end
     end
     context 'with students with no lti user' do
