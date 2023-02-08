@@ -1398,7 +1398,7 @@ describe SubmissionsController do
       shared_examples 'notebook content' do
         it 'is successful' do
           subject
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'renders the correct template' do
           expect(subject).to render_template('notebook')

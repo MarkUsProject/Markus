@@ -198,7 +198,7 @@ describe AnnotationsController do
                           result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(result.annotations.reload.size).to eq 1
       end
 
@@ -210,7 +210,7 @@ describe AnnotationsController do
                           result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(result.annotations.reload.size).to eq 1
       end
       it 'successfully creates an html annotation' do

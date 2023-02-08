@@ -46,7 +46,7 @@ describe GradeEntryFormsController do
     it 'can accept valid file without overriding existing columns, even if those columns do not appear in the file' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_good }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -66,7 +66,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good, overwrite: true }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -86,7 +86,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good_overwrite, overwrite: true }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -100,7 +100,7 @@ describe GradeEntryFormsController do
     it 'can accept valid file without overriding existing grades' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_good_overwrite }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -114,7 +114,7 @@ describe GradeEntryFormsController do
     it 'reports rows with an invalid username, but still processes the rest of the file' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_invalid_username }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -128,7 +128,7 @@ describe GradeEntryFormsController do
     it 'accepts files with additional columns, and can reorder existing columns' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_extra_column }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -146,7 +146,7 @@ describe GradeEntryFormsController do
     it 'accepts files with a different grade total' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_different_total }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(grades_course_grade_entry_form_path(course, grade_entry_form_with_data))
 
@@ -159,7 +159,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_total_included, overwrite: true }
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(grades_course_grade_entry_form_path(course, grade_entry_form_with_data))
 
@@ -183,7 +183,7 @@ describe GradeEntryFormsController do
 
     it 'returns a 200 status code' do
       get_as role, :download, params: { course_id: course.id, id: grade_entry_form }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
 
     it 'expects a call to send_data' do

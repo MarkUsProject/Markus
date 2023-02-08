@@ -224,7 +224,7 @@ describe GroupsController do
                                                  assignment_id: @assignment.id,
                                                  upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv') }
         end.to have_enqueued_job(CreateGroupsJob)
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         expect(flash[:error]).to be_blank
         expect(response).to redirect_to(action: 'index')
       end
@@ -235,7 +235,7 @@ describe GroupsController do
                                                upload_file: fixture_file_upload('groups/form_invalid_column.csv',
                                                                                 'text/csv') }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         expect(flash[:error]).to_not be_blank
         expect(response).to redirect_to(action: 'index')
       end
@@ -268,7 +268,7 @@ describe GroupsController do
       it 'responds with appropriate status' do
         get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       # parse header object to check for the right disposition
