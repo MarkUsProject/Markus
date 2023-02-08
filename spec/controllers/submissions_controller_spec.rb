@@ -1910,7 +1910,7 @@ describe SubmissionsController do
                                           from_codeviewer: from_codeviewer,
                                           select_file_id: submission_file.id }
           end
-          it { expect(response).to have_http_status(:forbidden) }
+          it { expect(response).to have_http_status(:not_found) }
         end
 
         let(:assignment) { create :assignment_with_peer_review_and_groupings_results }

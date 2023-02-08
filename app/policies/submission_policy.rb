@@ -7,7 +7,7 @@ class SubmissionPolicy < ApplicationPolicy
   alias_rule :download_file_zip?, to: :download_file?
   alias_rule :update_remark_request?, :cancel_remark_request?, to: :change_remark_status?
 
-  authorize :from_codeviewer, :select_file, :view_token, optional: true
+  authorize :from_codeviewer, :view_token, optional: true
 
   def manage?
     check?(:manage_submissions?, role)
@@ -40,11 +40,8 @@ class SubmissionPolicy < ApplicationPolicy
   def download_file?
     check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
       from_codeviewer && role.is_a_reviewer_for_submission?(record)
-    ) || (
-      record.grouping.accepted_students.ids.include?(role.id) && (
-        select_file.nil? || select_file.submission == record
-      )
-    )
+    ) ||
+      record.grouping.accepted_students.ids.include?(role.id)
   end
 
   def change_remark_status?

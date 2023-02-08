@@ -106,17 +106,8 @@ describe SubmissionPolicy do
         end
       end
       context 'role is not a reviewer for the current result' do
-        context 'role is an accepted member of the results grouping' do
+        succeed 'role is an accepted member of the results grouping' do
           let(:role) { current_result.grouping.accepted_students.first }
-          succeed 'and there is no file selected'
-          succeed 'and the selected file is associated with the current submission' do
-            let(:select_file) { create(:submission_file, submission: record) }
-            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
-          end
-          failed 'and the selected file is associated with a different submission' do
-            let(:select_file) { create(:submission_file) }
-            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
-          end
         end
         failed 'role is not an accepted member of the results grouping' do
           let(:role) { create(:student) }

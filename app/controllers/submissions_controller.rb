@@ -3,7 +3,6 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
-  authorize :select_file, through: :select_file
   authorize :from_codeviewer, through: :from_codeviewer_param
   authorize :view_token, through: :view_token_param
 
@@ -478,8 +477,11 @@ class SubmissionsController < ApplicationController
       download_file_zip
       return
     end
-
     file = select_file
+    if file.nil?
+      return head :not_found
+    end
+
     if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
       redirect_to notebook_content_course_assignment_submissions_url(current_course,
                                                                      record.grouping.assignment,

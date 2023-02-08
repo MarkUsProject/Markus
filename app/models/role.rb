@@ -80,14 +80,14 @@ class Role < ApplicationRecord
       return false
     end
 
-    group = grouping_for(Integer(assignment.id))
+    group = grouping_for(Integer(submission.assignment.pr_assignment.id))
     if group.nil?
       return false
     end
 
     prs = PeerReview.where(reviewer_id: group.id)
 
-    is_a?(Student) && !prs.joins(:result).where(reviewer_id: group.id, submission_id: submission.id).empty?
+    is_a?(Student) && !prs.joins(:result).where(results: { submission_id: submission.id }).empty?
   end
 
   def visible_assessments(assessment_type: nil, assessment_id: nil)
