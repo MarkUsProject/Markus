@@ -1910,7 +1910,7 @@ describe SubmissionsController do
                                           from_codeviewer: from_codeviewer,
                                           select_file_id: submission_file.id }
           end
-          it { expect(response).to have_http_status(:not_found) }
+          it { expect(response).to have_http_status(:forbidden) }
         end
 
         let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
@@ -1938,7 +1938,14 @@ describe SubmissionsController do
             end
             context 'and the selected file is associated with a different submission' do
               let(:submission_file) { create(:submission_file) }
-              include_examples 'without permission'
+              it {
+                get :download_file, params: { course_id: course.id,
+                                              id: incomplete_result.submission.id,
+                                              assignment_id: assignment.id,
+                                              from_codeviewer: from_codeviewer,
+                                              select_file_id: submission_file.id }
+                expect(response).to have_http_status(:not_found)
+              }
             end
           end
           context 'role is not an accepted member of the results grouping' do
