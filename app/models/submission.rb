@@ -104,7 +104,7 @@ class Submission < ApplicationRecord
   # then return the original result instead since that one should be visible while the remark
   # request is being processed
   def get_visible_result
-    non_pr_results.order(id: :desc).where(released_to_students: true).first || get_original_result
+    non_pr_results.reorder(id: :desc).where(released_to_students: true).first || get_original_result
   end
 
   # Sets marks when automated tests are run
