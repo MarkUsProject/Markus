@@ -210,15 +210,19 @@ describe AssignmentsController do
 
     context 'most recent test results with static names' do
       let(:assignment) { create(:static_assignment_with_criteria_and_test_results) }
+      let(:expected_csv_file) { fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv') }
+      let(:expected_csv_results) { CSV.parse(expected_csv_file, headers: true) }
+      let(:csv_results) { CSV.parse(response.body, headers: true) }
 
-      it 'returns the correct tests passed per group' do
+      before do
         get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      end
 
-        test_results = CSV.parse(response.body, headers: true)
-        test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
-        test_results_static = CSV.parse(test_results_fixture, headers: true)
-
-        expect(test_results).to match_array test_results_static
+      it 'returns the correct headers' do
+        expect(expected_csv_results.headers).to contain_exactly(*csv_results.headers)
+      end
+      it 'returns the correct results' do
+        expect(expected_csv_results.map(&:to_h)).to contain_exactly(*csv_results.map(&:to_h))
       end
     end
   end

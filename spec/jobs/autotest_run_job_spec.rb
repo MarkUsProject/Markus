@@ -70,7 +70,7 @@ describe AutotestRunJob do
         it 'should create test runs associated to the correct grouping and with the correct autotest_run_ids' do
           subject
           test_run_data = TestRun.joins(grouping: :group).pluck('groups.id', 'test_runs.autotest_test_id')
-          expected = groupings.map { |g| g.group.id }.zip(JSON.parse(dummy_return.body)['test_ids'])
+          expected = groups.map(&:id).zip(JSON.parse(dummy_return.body)['test_ids'])
           expect(test_run_data).to contain_exactly(*expected)
         end
       end

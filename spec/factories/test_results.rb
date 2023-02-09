@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :test_result do
-    sequence(:name) { |n| "Test Result #{n}" }
+    sequence(:name) { |n| "Test Case #{n}" }
     status { 'pass' }
     marks_earned { 1 }
     output { Faker::TvShows::HeyArnold.quote }
