@@ -69,10 +69,10 @@ FactoryBot.define do
       3.times { create(:test_group, assignment: a) }
 
       a.groupings.each do |grouping|
-        a.test_groups.each do |test_group|
-          test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
+        test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
+        a.test_groups.order(:id).each_with_index do |test_group, i|
           test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
-          create(:test_result, test_group_result: test_group_result)
+          create(:test_result, test_group_result: test_group_result, name: "Test Case #{i + 1}")
         end
       end
     end

@@ -1,6 +1,8 @@
+
 # Changelog
 
 ## [unreleased]
+- Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
 - Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
 
 ## [v2.2.2]
