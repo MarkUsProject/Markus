@@ -260,7 +260,7 @@ describe AnnotationCategoriesController do
                          course_id: course.id,
                          annotation_text_id: annotation_text.id },
                format: :json
-        assert_response 200
+        expect(response).to have_http_status(200)
         expect(response.parsed_body.size).to eq 1
         uses = response.parsed_body.first
         expect(uses['result_id']).to eq assignment.groupings.first.current_result.id
@@ -286,7 +286,7 @@ describe AnnotationCategoriesController do
                          course_id: course.id,
                          annotation_text_id: annotation_text.id },
                format: :json
-        assert_response 200
+        expect(response).to have_http_status(200)
         res = response.parsed_body
         expect(res.size).to eq 2
         results = [res.first['result_id'], res.second['result_id']].sort!
@@ -302,7 +302,7 @@ describe AnnotationCategoriesController do
                          course_id: course.id,
                          annotation_text_id: annotation_text.id },
                format: :json
-        assert_response 200
+        expect(response).to have_http_status(200)
         expect(response.parsed_body).to eq []
       end
     end
@@ -401,7 +401,7 @@ describe AnnotationCategoriesController do
                           annotation_category_id: category.id,
                           deduction: nil,
                           format: :js }
-        assert_response 400
+        expect(response).to have_http_status(400)
       end
     end
 
@@ -462,7 +462,7 @@ describe AnnotationCategoriesController do
                          deduction: nil,
                          format: :js }
 
-        assert_response 400
+        expect(response).to have_http_status(400)
         expect(text.reload.deduction).to_not be nil
       end
 
@@ -480,7 +480,7 @@ describe AnnotationCategoriesController do
                          annotation_text: { content: 'more updated content', deduction: nil },
                          format: :js }
 
-        assert_response 400
+        expect(response).to have_http_status(400)
         expect(text.reload.content).to eq(prev_content)
       end
       it 'successfully updates an annotation text\'s (not associated with an annotation category) content' do
