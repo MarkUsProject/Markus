@@ -59,7 +59,7 @@ describe Api::GroupsController do
             get :index, params: { assignment_id: grouping.assignment.id, course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return xml content' do
             expect(Hash.from_xml(response.body).dig('groups', 'group', 'id')).to eq(grouping.group.id.to_s)
@@ -90,7 +90,7 @@ describe Api::GroupsController do
             get :index, params: { assignment_id: grouping.assignment.id, course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return json content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grouping.group.id)
@@ -126,7 +126,7 @@ describe Api::GroupsController do
           it 'should reject invalid filters' do
             get :index, params: { assignment_id: groupings.first.assignment.id, course_id: course.id,
                                   filter: { bad_filter: 'something' } }
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
       end
@@ -141,7 +141,7 @@ describe Api::GroupsController do
             get :show, params: { id: grouping.group.id, assignment_id: grouping.assignment.id, course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return xml content' do
             expect(Hash.from_xml(response.body).dig('groups', 'group', 'id')).to eq(grouping.group.id.to_s)
@@ -162,7 +162,7 @@ describe Api::GroupsController do
             get :show, params: { id: grouping.group.id, assignment_id: grouping.assignment.id, course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return json content' do
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grouping.group.id)
@@ -177,7 +177,7 @@ describe Api::GroupsController do
       context 'requesting a non-existant assignment' do
         it 'should respond with 404' do
           get :show, params: { id: 9999, assignment_id: assignment.id, course_id: course.id }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
@@ -192,7 +192,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should add the student with accepted status' do
           expect(grouping.accepted_students).to include(student)
@@ -211,7 +211,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should add the student with inviter status' do
           expect(grouping.accepted_students).to include(student)
@@ -230,7 +230,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 422' do
-          expect(response.status).to eq(422)
+          expect(response).to have_http_status(422)
         end
         it 'should not add the student to the group' do
           expect(grouping.memberships).to be_empty
@@ -246,7 +246,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should add the students with accepted status' do
           statuses = grouping.accepted_student_memberships.where(role_id: students.map(&:id)).pluck(:membership_status)
@@ -267,7 +267,7 @@ describe Api::GroupsController do
           grouping.reload
         end
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should add a mark for a grouping' do
           result = submission.current_result
@@ -288,7 +288,7 @@ describe Api::GroupsController do
           submission.reload
         end
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should add a mark for a grouping' do
           result = submission.current_result
@@ -310,7 +310,7 @@ describe Api::GroupsController do
           submission.reload
         end
         it 'should respond with 404' do
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
         it 'should add a mark for a grouping' do
           result = submission.current_result
@@ -339,7 +339,7 @@ describe Api::GroupsController do
           expect(added_extra_mark.extra_mark).to eq(10.0)
         end
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
       end
       context 'add wrong extra_mark' do
@@ -355,7 +355,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 500' do
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
         it 'should not update the total mark' do
           result = submission.get_latest_result
@@ -369,7 +369,7 @@ describe Api::GroupsController do
             post :create_extra_marks,
                  params: { assignment_id: grouping.assignment.id, id: grouping.group.id, extra_marks: 10.0,
                            description: 'sample', course_id: course.id }
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
         end
         context 'when the assignment doest not exist ' do
@@ -377,7 +377,7 @@ describe Api::GroupsController do
             post :create_extra_marks,
                  params: { assignment_id: 9999, id: grouping.group.id,
                            extra_marks: 10.0, description: 'sample', course_id: course.id }
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
         end
         context 'when the group does not exist' do
@@ -385,7 +385,7 @@ describe Api::GroupsController do
             post :create_extra_marks,
                  params: { assignment_id: grouping.assignment.id, id: 9999,
                            extra_marks: 10.0, description: 'sample', course_id: course.id }
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
         end
       end
@@ -397,7 +397,7 @@ describe Api::GroupsController do
             delete :remove_extra_marks,
                    params: { assignment_id: grouping.assignment.id, id: grouping.group.id, extra_marks: 10.0,
                              description: 'sample', course_id: course.id }
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
         end
         context 'when the assignment doest not exist ' do
@@ -405,7 +405,7 @@ describe Api::GroupsController do
             delete :remove_extra_marks,
                    params: { assignment_id: 9999, id: grouping.group.id,
                              extra_marks: 10.0, description: 'sample', course_id: course.id }
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
         end
         context 'when the group does not exist' do
@@ -413,7 +413,7 @@ describe Api::GroupsController do
             delete :remove_extra_marks,
                    params: { assignment_id: grouping.assignment.id, course_id: course.id,
                              id: 9999, extra_marks: 10.0, description: 'sample' }
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
         end
       end
@@ -439,7 +439,7 @@ describe Api::GroupsController do
             expect(old_mark - 10.0).to eq(new_total_mark)
           end
           it 'should respond with 200' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
         end
         context 'remove extra_mark which does not exist' do
@@ -454,7 +454,7 @@ describe Api::GroupsController do
             grouping.reload
           end
           it 'should respond with 404' do
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(404)
           end
           it 'should not update the total mark' do
             result = submission.get_latest_result
@@ -472,7 +472,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return a mapping from group names to ids' do
           expect(JSON.parse(response.body)).to eq(grouping.group.group_name => grouping.group.id)
@@ -485,7 +485,7 @@ describe Api::GroupsController do
         end
         include_examples 'for a different course'
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return a mapping from group names to ids' do
           expect(Hash.from_xml(response.body)['groups']).to eq(grouping.group.group_name => grouping.group.id.to_s)
@@ -505,7 +505,7 @@ describe Api::GroupsController do
           submission.reload
         end
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should set the marking state to complete' do
           expect(submission.current_result.marking_state).to eq(Result::MARKING_STATES[:complete])
@@ -522,7 +522,7 @@ describe Api::GroupsController do
           submission.reload
         end
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should set the marking state to complete' do
           expect(submission.current_result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
@@ -547,7 +547,7 @@ describe Api::GroupsController do
         expect(content.dig('annotations', 'annotation', 'content')).to eq annotation.annotation_text.content
       end
       it 'should respond with 200' do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
     end
 
