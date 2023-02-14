@@ -147,5 +147,14 @@ describe Submission do
         expect(submission.get_visible_result).to eq submission.get_original_result
       end
     end
+    context 'when there are multiple results released to students' do
+      before do
+        released_result
+        released_remark_result
+      end
+      it 'should return the remark' do
+        expect(submission.get_visible_result).to eq released_remark_result
+      end
+    end
   end
 end

@@ -23,7 +23,7 @@ describe AutomatedTestsController do
         get_as role, :manage, params: params
       end
       it 'role should be able to view the Automated Testing manage page' do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'should render the assignment_content layout' do
         expect(response).to render_template('layouts/assignment_content')
@@ -129,7 +129,7 @@ describe AutomatedTestsController do
       it_behaves_like 'zip file download'
       it 'should be successful' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       context 'non empty automated test files' do
         before :each do
