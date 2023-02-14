@@ -638,7 +638,7 @@ class AssignmentsController < ApplicationController
     if params.key?(:lti_deployment)
       items_to_create = params[:lti_deployment].select { |_key, val| val == '1' }.keys.map(&:to_i)
       if items_to_create.empty?
-        flash_message(:warning, 'No external platforms selected')
+        flash_message(:warning, I18n.t('lti.no_platform'))
       else
         @current_job = LtiLineItemJob.perform_later(items_to_create, @assignment)
         session[:job_id] = @current_job.job_id
@@ -650,6 +650,7 @@ class AssignmentsController < ApplicationController
   def lti_settings
     @assignment = record
     @lti_deployments = LtiDeployment.where(course: @current_course)
+    render layout: 'assignment_content'
   end
 
   private
