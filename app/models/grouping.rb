@@ -331,7 +331,7 @@ class Grouping < ApplicationRecord
   # Returns the status of this user, or nil if user is not a member
   def membership_status(role)
     member = student_memberships.where(role_id: role.id).first
-    member ? member.membership_status : nil  # return nil if user is not a member
+    member&.membership_status
   end
 
   # returns the numbers of memberships, all includ (inviter, pending,
