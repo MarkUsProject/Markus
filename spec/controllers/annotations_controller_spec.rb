@@ -4,22 +4,22 @@ describe AnnotationsController do
     let(:annotation) { create(:text_annotation, result: result) }
     it 'on :add_existing_annotation' do
       post :add_existing_annotation, params: { course_id: course.id, submission_file_id: 1 }
-      assert_response :redirect
+      expect(response).to have_http_status(:redirect)
     end
 
     it 'on :create' do
       post :create, params: { course_id: course.id, result_id: result.id }
-      assert_response :redirect
+      expect(response).to have_http_status(:redirect)
     end
 
     it 'on :destroy' do
       delete :destroy, params: { course_id: course.id, id: annotation.id }
-      assert_response :redirect
+      expect(response).to have_http_status(:redirect)
     end
 
     it 'on :update' do
       put :update, params: { course_id: course.id, id: annotation.id }
-      assert_response :redirect
+      expect(response).to have_http_status(:redirect)
     end
   end
 
@@ -44,7 +44,7 @@ describe AnnotationsController do
                           line_end: 1, column_start: 1, column_end: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
 
@@ -55,7 +55,7 @@ describe AnnotationsController do
                           x1: 0, x2: 1, y1: 0, y2: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
       it 'successfully creates an html annotation' do
@@ -66,7 +66,7 @@ describe AnnotationsController do
                           course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
       it 'successfully creates a PDF annotation' do
@@ -76,7 +76,7 @@ describe AnnotationsController do
                           x1: 0, x2: 1, y1: 0, y2: 1, page: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
     end
@@ -90,7 +90,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
 
@@ -103,7 +103,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
         expect(AnnotationText.all.size).to eq 2
 
@@ -114,7 +114,7 @@ describe AnnotationsController do
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
                           column_end: 2, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 2
         expect(AnnotationText.all.size).to eq 3
       end
@@ -128,7 +128,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
         expect(AnnotationText.all.size).to eq 1
 
@@ -139,7 +139,7 @@ describe AnnotationsController do
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
                           column_end: 2, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 2
         expect(AnnotationText.all.size).to eq 1
       end
@@ -153,7 +153,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
         expect(annotation_text_oto.reload.annotation_category_id).to eq annotation_category.id
       end
@@ -168,7 +168,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
         expect(annotation_text.reload.annotation_category_id).to eq new_category.id
       end
@@ -182,7 +182,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
         expect(result.annotations.first.annotation_text.annotation_category_id).to be_nil
 
@@ -198,7 +198,7 @@ describe AnnotationsController do
                           result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(result.annotations.reload.size).to eq 1
       end
 
@@ -210,7 +210,7 @@ describe AnnotationsController do
                           result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         expect(result.annotations.reload.size).to eq 1
       end
       it 'successfully creates an html annotation' do
@@ -222,7 +222,7 @@ describe AnnotationsController do
                           course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
       it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do
@@ -237,7 +237,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 2
         expect(result.annotations.joins(:annotation_text).where('annotation_texts.deduction': 0).size).to eq 1
       end
@@ -258,7 +258,7 @@ describe AnnotationsController do
                             result_id: result.id, course_id: course.id },
                   format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 0
       end
 
@@ -280,7 +280,7 @@ describe AnnotationsController do
                             result_id: result.id, course_id: course.id },
                   format: :js
 
-        assert_response :success
+        expect(response).to have_http_status(:success)
 
         # Check that there are only two annotations remaining.
         expect(result.annotations.reload.size).to eq 2
@@ -338,7 +338,7 @@ describe AnnotationsController do
                params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
                          result_id: result.id, content: 'new content', course_id: course.id },
                format: :js
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(anno.annotation_text.reload.content).to eq 'new content'
       end
 
@@ -364,7 +364,7 @@ describe AnnotationsController do
                          result_id: result.id, content: 'new content', annotation_text: { change_all: '0' },
                          course_id: course.id },
                format: :js
-        assert_response :success
+        expect(response).to have_http_status(:success)
         expect(anno1.reload.annotation_text.reload.content).to eq 'new content'
         expect(anno2.reload.annotation_text.reload.content).to_not eq 'new content'
       end
@@ -403,7 +403,7 @@ describe AnnotationsController do
                           result_id: other_grouping.current_result.id,
                           assignment_id: assignment.id },
                 format: :js
-        assert_response :bad_request
+        expect(response).to have_http_status(:bad_request)
         expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
       end
 
@@ -449,7 +449,7 @@ describe AnnotationsController do
                           course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
-        assert_response :bad_request
+        expect(response).to have_http_status(:bad_request)
         expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
       end
 
@@ -466,7 +466,7 @@ describe AnnotationsController do
                           course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
-        assert_response :bad_request
+        expect(response).to have_http_status(:bad_request)
         expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
       end
 
@@ -481,7 +481,7 @@ describe AnnotationsController do
                           course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
-        assert_response :bad_request
+        expect(response).to have_http_status(:bad_request)
         expect(result.reload.annotations.size).to eq 1
       end
 
@@ -508,7 +508,7 @@ describe AnnotationsController do
                           course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
-        assert_response :bad_request
+        expect(response).to have_http_status(:bad_request)
         expect(result.reload.annotations.size).to eq 1
       end
 

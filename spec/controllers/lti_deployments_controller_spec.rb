@@ -11,12 +11,12 @@ describe LtiDeploymentsController do
     describe 'get' do
       it 'is inaccessible unless logged in' do
         get :choose_course, params: { id: lti.id }
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
       end
       it 'is accessible when logged in' do
         session[:lti_deployment_id] = lti.id
         get_as instructor, :choose_course, params: { id: lti.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
     end
     describe 'post' do
