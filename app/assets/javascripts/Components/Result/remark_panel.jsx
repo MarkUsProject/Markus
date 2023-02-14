@@ -22,9 +22,10 @@ export class RemarkPanel extends React.Component {
     let data = {submission: {remark_request: value}};
     data[name] = "true";
     return $.ajax({
-      url: Routes.update_remark_request_course_result_path(
+      url: Routes.update_remark_request_course_assignment_submission_path(
         this.props.course_id,
-        this.props.result_id
+        this.props.assignment_id,
+        this.props.submission_id
       ),
       method: "PATCH",
       data: data,

@@ -176,6 +176,7 @@ export class LeftPane extends React.Component {
               overallComment={this.props.remark_overall_comment || ""}
               studentView={this.props.student_view}
               course_id={this.props.course_id}
+              submission_id={this.props.submission_id}
             />
           </div>
         </TabPanel>
