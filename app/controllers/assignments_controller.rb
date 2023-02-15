@@ -622,6 +622,37 @@ class AssignmentsController < ApplicationController
     redirect_to course_assignments_path(current_course)
   end
 
+  def create_lti_grades
+    assessment = record
+    lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
+    @current_job = LtiSyncJob.perform_later(lti_deployments.to_a, assessment, current_course,
+                                            can_create_users: allowed_to?(:manage?, with: Admin::UserPolicy),
+                                            can_create_roles: allowed_to?(:manage?, with: RolePolicy))
+    session[:job_id] = @current_job.job_id
+    render 'shared/_poll_job'
+  end
+
+  def create_lti_line_items
+    @assignment = record
+    @lti_deployments = LtiDeployment.where(course: @current_course)
+    if params.key?(:lti_deployment)
+      items_to_create = params[:lti_deployment].select { |_key, val| val == '1' }.keys.map(&:to_i)
+      if items_to_create.empty?
+        flash_message(:warning, I18n.t('lti.no_platform'))
+      else
+        @current_job = LtiLineItemJob.perform_later(items_to_create, @assignment)
+        session[:job_id] = @current_job.job_id
+      end
+    end
+    respond_with @assignment, location: -> { lti_settings_course_assignment_path(current_course, @assignment) }
+  end
+
+  def lti_settings
+    @assignment = record
+    @lti_deployments = LtiDeployment.where(course: @current_course)
+    render layout: 'assignment_content'
+  end
+
   private
 
   # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+
@@ -799,10 +830,10 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
     if params.key?(:lti_deployment)
-      params[:lti_deployment].each do |deployment, enabled|
-        if enabled.to_i != 0
-          LtiDeployment.find(deployment).create_or_update_lti_assessment(assignment)
-        end
+      items_to_create = params[:lti_deployment].select { |_key, val| val == '1' }.keys.map(&:to_i)
+      unless items_to_create.empty?
+        @current_job = LtiLineItemJob.perform_later(items_to_create, assignment)
+        session[:job_id] = @current_job.job_id
       end
     end
     assignment
