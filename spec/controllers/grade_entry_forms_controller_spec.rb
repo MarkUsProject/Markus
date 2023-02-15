@@ -398,7 +398,7 @@ describe GradeEntryFormsController do
 
     it 'allows students to see non hidden grade entry forms' do
       get_as @student, :student_interface, params: { course_id: course.id, id: grade_entry_form.id }
-      assert_response 200
+      expect(response).to have_http_status(200)
     end
   end
 

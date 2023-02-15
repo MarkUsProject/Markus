@@ -235,7 +235,7 @@ describe AssignmentsController do
       context 'when there are no assessments' do
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -247,7 +247,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -258,7 +258,7 @@ describe AssignmentsController do
       context 'when there are no assessments' do
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -270,7 +270,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -281,7 +281,7 @@ describe AssignmentsController do
       context 'when there are no assessments' do
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -296,7 +296,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -313,7 +313,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -381,19 +381,19 @@ describe AssignmentsController do
           expect(role.student_memberships.size).to eq 1
           expect(role.groupings.first.assessment_id).to eq assignment.id
         end
-        it('should respond with success') { assert_response :success }
+        it('should respond with success') { expect(response).to have_http_status(:success) }
       end
       context 'a timed assessment' do
         context 'before the due date' do
           let(:assignment) { create :timed_assignment, due_date: 1.hour.from_now }
-          it('should respond with success') { assert_response :success }
+          it('should respond with success') { expect(response).to have_http_status(:success) }
           it 'should not create a grouping' do
             expect(role.student_memberships.size).to eq 0
           end
         end
         xcontext 'after the due date' do
           let(:assignment) { create :timed_assignment, due_date: 1.hour.ago }
-          it('should respond with success') { assert_response :success }
+          it('should respond with success') { expect(response).to have_http_status(:success) }
           it 'should create a grouping' do
             expect(role.student_memberships.size).to eq 1
             expect(role.groupings.first.assessment_id).to eq assignment.id
@@ -407,7 +407,7 @@ describe AssignmentsController do
         assignment.update!(group_min: 1, group_max: 3)
         grouping = create(:grouping_with_inviter, assignment: assignment)
         post_as grouping.inviter, :show, params: { course_id: course.id, id: assignment.id }
-        assert_response :success
+        expect(response).to have_http_status(:success)
       end
     end
 
@@ -415,7 +415,7 @@ describe AssignmentsController do
       it 'responds with a success and does not create a grouping' do
         assignment.update!(group_min: 1, group_max: 3)
         post_as role, :show, params: { course_id: course.id, id: assignment.id }
-        assert_response :success
+        expect(response).to have_http_status(:success)
 
         expect(role.groupings.size).to eq 0
       end
@@ -425,7 +425,7 @@ describe AssignmentsController do
       it 'responds with a not_found status' do
         assignment.update!(is_hidden: true)
         post_as role, :show, params: { course_id: course.id, id: assignment.id }
-        assert_response :not_found
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -447,7 +447,7 @@ describe AssignmentsController do
       context 'requests an HTML response' do
         it 'responds with a success' do
           post_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'html'
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -456,7 +456,7 @@ describe AssignmentsController do
           post_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'json'
         end
         it 'responds with a success' do
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
 
         it 'responds with the correct keys' do
@@ -471,7 +471,7 @@ describe AssignmentsController do
           post_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'csv'
         end
         it 'responds with a success' do
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
