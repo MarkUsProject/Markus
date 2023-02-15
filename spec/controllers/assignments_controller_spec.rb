@@ -3,7 +3,7 @@ describe AssignmentsController do
 
   # TODO: add 'role is from a different course' shared tests to each route test below
 
-  let(:annotation_category) { FactoryBot.create(:annotation_category) }
+  let(:annotation_category) { create(:annotation_category) }
 
   let(:example_form_params) do
     {

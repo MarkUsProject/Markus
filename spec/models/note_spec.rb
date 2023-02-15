@@ -16,9 +16,9 @@ describe Note do
     end
   end
 
-  { Grouping: -> { FactoryBot.create(:grouping) },
-    Student: -> { FactoryBot.create(:student) },
-    Assignment: -> { FactoryBot.create(:assignment) } }.each_pair do |type, noteable|
+  { Grouping: -> { create(:grouping) },
+    Student: -> { create(:student) },
+    Assignment: -> { create(:assignment) } }.each_pair do |type, noteable|
     context "when #{type} exist" do
       before do
         @noteable = noteable.call
