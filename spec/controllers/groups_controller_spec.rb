@@ -251,9 +251,9 @@ describe GroupsController do
       end
 
       before :each do
-        @assignment = FactoryBot.create(:assignment)
+        @assignment = create(:assignment)
 
-        @group = FactoryBot.create(:group, course: @assignment.course)
+        @group = create(:group, course: @assignment.course)
 
         @student1 = create(:student, user: create(:end_user, user_name: 'c8shosta'))
         @student2 = create(:student, user: create(:end_user, user_name: 'c5bennet'))

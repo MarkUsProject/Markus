@@ -16,7 +16,7 @@ shared_examples 'a criterion' do
   end
 
   describe 'assigning and unassigning TAs' do
-    let(:assignment) { FactoryBot.create(:assignment) }
+    let(:assignment) { create(:assignment) }
     let(:criteria) do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end
@@ -159,7 +159,7 @@ shared_examples 'a criterion' do
   end
 
   describe '.update_assigned_groups_counts' do
-    let(:assignment) { FactoryBot.create(:assignment) }
+    let(:assignment) { create(:assignment) }
     let(:criterion) { create(criterion_factory_name, assignment: assignment) }
 
     context 'when no criterion IDs are specified' do

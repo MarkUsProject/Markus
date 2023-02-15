@@ -2,7 +2,7 @@ describe AnnotationCategoriesController do
   include AnnotationCategoriesHelper
   let(:course) { assignment.course }
   let(:assignment) { create(:assignment) }
-  let(:annotation_category) { FactoryBot.create(:annotation_category, assignment: assignment) }
+  let(:annotation_category) { create(:annotation_category, assignment: assignment) }
 
   shared_examples 'A grader or instructor accessing the index or find_annotation_text routes' do
     describe '#index' do
