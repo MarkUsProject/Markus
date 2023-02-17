@@ -12,7 +12,8 @@ class CanvasController < LtiDeploymentsController
       target_link_uri: redirect_login_canvas_url,
       scopes: [LtiDeployment::LTI_SCOPES[:names_role],
                LtiDeployment::LTI_SCOPES[:ags_lineitem],
-               LtiDeployment::LTI_SCOPES[:score]],
+               LtiDeployment::LTI_SCOPES[:score],
+               LtiDeployment::LTI_SCOPES[:results]],
       extensions: [
         {
           domain: request.domain(3),

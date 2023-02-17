@@ -11,12 +11,12 @@ describe LtiDeploymentsController do
     describe 'get' do
       it 'is inaccessible unless logged in' do
         get :choose_course, params: { id: lti.id }
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
       end
       it 'is accessible when logged in' do
         session[:lti_deployment_id] = lti.id
         get_as instructor, :choose_course, params: { id: lti.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
     end
     describe 'post' do
@@ -102,93 +102,6 @@ describe LtiDeploymentsController do
           expect(decoded[0]['test']).to match('data')
         end
       end
-    end
-  end
-  describe '#create_lti_grades' do
-    let!(:course) { create :course }
-    let(:instructor) { create :instructor, course: course }
-    let!(:lti) { create :lti_deployment, course: course }
-    let(:assignment) { create :assignment_with_criteria_and_results }
-    let(:scope) { LtiDeployment::LTI_SCOPES['names_role'] }
-    let!(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti }
-    let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti }
-    let(:status) { 'Active' }
-    before :each do
-      Result.joins(grouping: :assignment)
-            .where('assignment.id': assignment.id).update!(released_to_students: true)
-      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti.lti_client }
-      stub_request(:post, Settings.lti.token_endpoint)
-        .with(
-          body: hash_including(
-            { grant_type: 'client_credentials',
-              client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-              scope: /.*/,
-              client_assertion: /.*/ }
-          ),
-          headers: {
-            Accept: '*/*'
-          }
-        ).to_return(status: :success, body: { access_token: 'access_token',
-                                              scope: scope,
-                                              token_type: 'Bearer',
-                                              expires_in: 3600 }.to_json)
-      stub_request(:get, lti_service_namesrole.url).with(headers: { Authorization: 'Bearer access_token' },
-                                                         query: {
-                                                           role: LtiDeployment::LTI_ROLES[:learner]
-                                                         })
-                                                   .to_return(status: :success, body: {
-                                                     id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
-                                                     context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
-                                                                label: 'tst1', title: 'test course' },
-                                                     members: [{ status: status, name: Student.first.display_name,
-                                                                 picture: 'http://example.com/picture.png',
-                                                                 given_name: Student.first.first_name,
-                                                                 family_name: Student.first.last_name,
-                                                                 lis_person_sourcedid: Student.first.user_name,
-                                                                 email: Student.first.email,
-                                                                 user_id: 'lti_user_id',
-                                                                 lti11_legacy_user_id: 'legacy_lti_user_id',
-                                                                 roles:
-                                                                   [
-                                                                     LtiDeployment::LTI_ROLES[:learner]
-                                                                   ] }]
-                                                   }.to_json)
-      stub_request(:post, "#{lti_service_lineitem.url}/1/scores").with(headers:
-                                                                             { Authorization: 'Bearer access_token' },
-                                                                       body: hash_including({
-                                                                         scoreGiven: /\d+(\.\d+)?/,
-                                                                         scoreMaximum: assignment.max_mark.to_s,
-                                                                         activityProgress: 'Completed',
-                                                                         gradingProgress: 'FullyGraded'
-                                                                       })).to_return(status: :success)
-      stub_request(:post, lti_service_lineitem.url)
-        .with(
-          body: hash_including(
-            { label: assignment.description,
-              resourceId: assignment.short_identifier,
-              scoreMaximum: assignment.max_mark.to_f.to_s }
-          ),
-          headers: {
-            Accept: '*/*',
-            'Accept-Encoding': 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            Authorization: 'Bearer access_token',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Host: URI(lti_service_lineitem.url).host,
-            'User-Agent': 'Ruby'
-          }
-        ).to_return(status: :success, body: { id: "#{lti_service_lineitem.url}/1" }.to_json)
-    end
-    it 'redirects if not logged in' do
-      post :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
-      expect(response.status).to eq(302)
-    end
-    it 'returns successfully when logged in' do
-      post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
-      expect(response.status).to eq(204)
-    end
-    it 'updates lti user name for a student' do
-      post_as instructor, :create_lti_grades, params: { lti_deployments: [lti.id], assessment_id: assignment.id }
-      expect(LtiUser.find_by(user: Student.first.user, lti_client: lti.lti_client).lti_user_id).to eq('lti_user_id')
     end
   end
 end

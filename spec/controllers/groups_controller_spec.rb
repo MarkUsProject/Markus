@@ -192,7 +192,7 @@ describe GroupsController do
       before :all do
         # remove a generated repo so repeated test runs function properly
         FileUtils.rm_r(
-          File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
+          Rails.root.join('data/test/repos/group_0001/'),
           force: true
         )
       end
@@ -224,7 +224,7 @@ describe GroupsController do
                                                  assignment_id: @assignment.id,
                                                  upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv') }
         end.to have_enqueued_job(CreateGroupsJob)
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         expect(flash[:error]).to be_blank
         expect(response).to redirect_to(action: 'index')
       end
@@ -235,7 +235,7 @@ describe GroupsController do
                                                upload_file: fixture_file_upload('groups/form_invalid_column.csv',
                                                                                 'text/csv') }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
         expect(flash[:error]).to_not be_blank
         expect(response).to redirect_to(action: 'index')
       end
@@ -268,7 +268,7 @@ describe GroupsController do
       it 'responds with appropriate status' do
         get_as instructor, :download_grouplist,
                params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       # parse header object to check for the right disposition
@@ -677,14 +677,14 @@ describe GroupsController do
       it 'fails to accept when there is no invitation' do
         post_as @current_student, :accept_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        assert_response :unprocessable_entity
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'fails to accept when the invitation has already been accepted' do
         create(:accepted_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :accept_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        assert_response :unprocessable_entity
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'fails to accept when another invitation has already been accepted' do
@@ -693,7 +693,7 @@ describe GroupsController do
         create(:accepted_student_membership, role: @current_student, grouping: grouping2)
         post_as @current_student, :accept_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        assert_response :unprocessable_entity
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'rejects other pending invitations' do
@@ -729,13 +729,13 @@ describe GroupsController do
         create(:accepted_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :decline_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        assert_response :unprocessable_entity
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'fails to reject when there is no invitation' do
         post_as @current_student, :decline_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        assert_response :unprocessable_entity
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
 
@@ -754,7 +754,7 @@ describe GroupsController do
           invitation = create(:accepted_student_membership, grouping: grouping)
           post_as @current_student, :disinvite_member,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
 
         it 'fails to cancel a pending invitation for a different grouping' do
@@ -762,7 +762,7 @@ describe GroupsController do
           invitation = create(:accepted_student_membership, grouping: grouping2)
           post_as @current_student, :disinvite_member,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
@@ -774,7 +774,7 @@ describe GroupsController do
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :disinvite_member,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
@@ -794,14 +794,14 @@ describe GroupsController do
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
 
         it 'fails to delete an accepted invitation' do
           invitation = create(:accepted_student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
 
         it 'fails to cancel a rejected invitation for a different grouping' do
@@ -809,7 +809,7 @@ describe GroupsController do
           invitation = create(:rejected_student_membership, grouping: grouping2)
           post_as @current_student, :delete_rejected,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
@@ -821,7 +821,7 @@ describe GroupsController do
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
                   params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
-          assert_response :forbidden
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end

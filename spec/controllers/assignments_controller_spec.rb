@@ -210,15 +210,19 @@ describe AssignmentsController do
 
     context 'most recent test results with static names' do
       let(:assignment) { create(:static_assignment_with_criteria_and_test_results) }
+      let(:expected_csv_file) { fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv') }
+      let(:expected_csv_results) { CSV.parse(expected_csv_file, headers: true) }
+      let(:csv_results) { CSV.parse(response.body, headers: true) }
 
-      it 'returns the correct tests passed per group' do
+      before do
         get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      end
 
-        test_results = CSV.parse(response.body, headers: true)
-        test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
-        test_results_static = CSV.parse(test_results_fixture, headers: true)
-
-        expect(test_results).to match_array test_results_static
+      it 'returns the correct headers' do
+        expect(expected_csv_results.headers).to contain_exactly(*csv_results.headers)
+      end
+      it 'returns the correct results' do
+        expect(expected_csv_results.map(&:to_h)).to contain_exactly(*csv_results.map(&:to_h))
       end
     end
   end
@@ -231,7 +235,7 @@ describe AssignmentsController do
       context 'when there are no assessments' do
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -243,7 +247,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -254,7 +258,7 @@ describe AssignmentsController do
       context 'when there are no assessments' do
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -266,7 +270,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -277,7 +281,7 @@ describe AssignmentsController do
       context 'when there are no assessments' do
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -292,7 +296,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -309,7 +313,7 @@ describe AssignmentsController do
 
         it 'responds with a success' do
           get_as role, :index, params: { course_id: course.id }
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -330,7 +334,7 @@ describe AssignmentsController do
 
       shared_examples 'successful tests' do
         it 'should respond with 200' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should update the attribute' do
           expect(assignment.assignment_properties[attribute]).to eq(value)
@@ -356,7 +360,7 @@ describe AssignmentsController do
         let(:attribute) { :this_is_not_a_real_attribute }
         let(:value) { true }
         it 'should respond with 400' do
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
         end
       end
     end
@@ -377,19 +381,19 @@ describe AssignmentsController do
           expect(role.student_memberships.size).to eq 1
           expect(role.groupings.first.assessment_id).to eq assignment.id
         end
-        it('should respond with success') { assert_response :success }
+        it('should respond with success') { expect(response).to have_http_status(:success) }
       end
       context 'a timed assessment' do
         context 'before the due date' do
           let(:assignment) { create :timed_assignment, due_date: 1.hour.from_now }
-          it('should respond with success') { assert_response :success }
+          it('should respond with success') { expect(response).to have_http_status(:success) }
           it 'should not create a grouping' do
             expect(role.student_memberships.size).to eq 0
           end
         end
         xcontext 'after the due date' do
           let(:assignment) { create :timed_assignment, due_date: 1.hour.ago }
-          it('should respond with success') { assert_response :success }
+          it('should respond with success') { expect(response).to have_http_status(:success) }
           it 'should create a grouping' do
             expect(role.student_memberships.size).to eq 1
             expect(role.groupings.first.assessment_id).to eq assignment.id
@@ -403,7 +407,7 @@ describe AssignmentsController do
         assignment.update!(group_min: 1, group_max: 3)
         grouping = create(:grouping_with_inviter, assignment: assignment)
         post_as grouping.inviter, :show, params: { course_id: course.id, id: assignment.id }
-        assert_response :success
+        expect(response).to have_http_status(:success)
       end
     end
 
@@ -411,7 +415,7 @@ describe AssignmentsController do
       it 'responds with a success and does not create a grouping' do
         assignment.update!(group_min: 1, group_max: 3)
         post_as role, :show, params: { course_id: course.id, id: assignment.id }
-        assert_response :success
+        expect(response).to have_http_status(:success)
 
         expect(role.groupings.size).to eq 0
       end
@@ -421,7 +425,7 @@ describe AssignmentsController do
       it 'responds with a not_found status' do
         assignment.update!(is_hidden: true)
         post_as role, :show, params: { course_id: course.id, id: assignment.id }
-        assert_response :not_found
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -443,7 +447,7 @@ describe AssignmentsController do
       context 'requests an HTML response' do
         it 'responds with a success' do
           post_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'html'
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
 
@@ -452,7 +456,7 @@ describe AssignmentsController do
           post_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'json'
         end
         it 'responds with a success' do
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
 
         it 'responds with the correct keys' do
@@ -467,7 +471,7 @@ describe AssignmentsController do
           post_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'csv'
         end
         it 'responds with a success' do
-          assert_response :success
+          expect(response).to have_http_status(:success)
         end
       end
     end
@@ -1591,7 +1595,7 @@ describe AssignmentsController do
     shared_examples 'check valid assignment config files' do
       it 'gives the appropriate response status' do
         subject
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status(302)
       end
 
       it 'uploads with no errors' do
@@ -1954,6 +1958,31 @@ describe AssignmentsController do
       end
 
       include_examples 'assignment content is copied over'
+    end
+  end
+
+  describe '#create_lti_grades' do
+    let!(:course) { create :course }
+    let(:instructor) { create :instructor, course: course }
+    let!(:lti) { create :lti_deployment, course: course }
+    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:scope) { LtiDeployment::LTI_SCOPES['names_role'] }
+    let!(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti }
+    let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti }
+    let(:status) { 'Active' }
+    before :each do
+      Result.joins(grouping: :assignment)
+            .where('assignment.id': assignment.id).update!(released_to_students: true)
+      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti.lti_client }
+    end
+    it 'redirects if not logged in' do
+      post :create_lti_grades, params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
+      expect(response).to have_http_status(302)
+    end
+    it 'returns successfully when logged in' do
+      post_as instructor, :create_lti_grades,
+              params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
+      expect(response).to have_http_status(200)
     end
   end
 end

@@ -53,7 +53,7 @@ describe Api::CoursesController do
         get :index
       end
       it 'should be successful' do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'should return xml content' do
         course_ids = Hash.from_xml(response.body).dig('courses', 'course').map { |course| course['id'].to_i }

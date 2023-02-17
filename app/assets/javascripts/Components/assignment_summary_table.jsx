@@ -257,6 +257,7 @@ export class AssignmentSummaryTable extends React.Component {
           onRequestClose={() => this.setState({showLtiGradeModal: false})}
           lti_deployments={this.state.lti_deployments}
           assignment_id={this.props.assignment_id}
+          course_id={this.props.course_id}
         />
       </div>
     );
