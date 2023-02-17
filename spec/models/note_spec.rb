@@ -16,9 +16,12 @@ describe Note do
     end
   end
 
-  { Grouping: -> { create(:grouping) },
-    Student: -> { create(:student) },
-    Assignment: -> { create(:assignment) } }.each_pair do |type, noteable|
+  let(:note) do
+    { Grouping: -> { create(:grouping) },
+      Student: -> { create(:student) },
+      Assignment: -> { create(:assignment) } }
+  end
+  :note.each_pair do |type, noteable|
     context "when #{type} exist" do
       before do
         @noteable = noteable.call
