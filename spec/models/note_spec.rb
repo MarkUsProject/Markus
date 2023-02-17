@@ -16,22 +16,21 @@ describe Note do
     end
   end
 
-  let(:note) do
+  context 'with NOTEABLE constant' do
     { Grouping: -> { create(:grouping) },
       Student: -> { create(:student) },
-      Assignment: -> { create(:assignment) } }
-  end
-  :note.each_pair do |type, noteable|
-    context "when #{type} exist" do
-      before do
-        @noteable = noteable.call
-      end
-      it 'returns true for the notable\'s course' do
-        expect(Note.noteables_exist?(@noteable.course.id)).to be true
-      end
-      it 'returns false for a different course' do
-        course = create(:course)
-        expect(Note.noteables_exist?(course.id)).to be false
+      Assignment: -> { create(:assignment) } }.each_pair do |type, noteable|
+      context "when #{type} exist" do
+        before do
+          @noteable = noteable.call
+        end
+        it 'returns true for the notable\'s course' do
+          expect(Note.noteables_exist?(@noteable.course.id)).to be true
+        end
+        it 'returns false for a different course' do
+          course = create(:course)
+          expect(Note.noteables_exist?(course.id)).to be false
+        end
       end
     end
   end
