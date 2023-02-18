@@ -1,4 +1,4 @@
-,Test Group 1:Test Result 1,Test Group 1:Test Result 4,Test Group 1:Test Result 7,Test Group 2:Test Result 2,Test Group 2:Test Result 5,Test Group 2:Test Result 8,Test Group 3:Test Result 3,Test Group 3:Test Result 6,Test Group 3:Test Result 9
-group1,pass,,,pass,,,pass,,
-group2,,pass,,,pass,,,pass,
-group3,,,pass,,,pass,,,pass
+,Test Group 1:Test Case 1,Test Group 2:Test Case 2,Test Group 3:Test Case 3
+group1,pass,pass,pass
+group2,pass,pass,pass
+group3,pass,pass,pass

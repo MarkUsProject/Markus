@@ -187,11 +187,11 @@ describe CoursesController do
   context 'accessing course pages' do
     it 'responds with success on index' do
       get_as instructor, :index
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
     it 'responds with success on show as an instructor' do
       get_as instructor, :show, params: { id: course }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
     it 'redirects to assignments on show as a student' do
       get_as student, :show, params: { id: course }
@@ -346,7 +346,7 @@ describe CoursesController do
     it 'accepts a valid file' do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       test1 = Assignment.find_by(short_identifier: @test_asn1)
       expect(test1).to_not be_nil
       test2 = Assignment.find_by(short_identifier: @test_asn2)
@@ -360,7 +360,7 @@ describe CoursesController do
     it 'accepts a valid YAML file' do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good_yml }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       test1 = Assignment.find_by(short_identifier: @test_asn1)
       expect(test1).to_not be_nil
       test2 = Assignment.find_by(short_identifier: @test_asn2)
@@ -372,7 +372,7 @@ describe CoursesController do
     it 'does not accept files with invalid columns' do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_invalid_column }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to_not be_empty
       test = Assignment.find_by(short_identifier: @test_asn2)
       expect(test).to be_nil
@@ -387,7 +387,7 @@ describe CoursesController do
 
     it 'responds with appropriate status' do
       get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
 
     # parse header object to check for the right disposition
@@ -432,7 +432,7 @@ describe CoursesController do
 
     it 'responds with appropriate status' do
       get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
 
     # parse header object to check for the right disposition

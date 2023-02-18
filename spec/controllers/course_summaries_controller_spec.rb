@@ -42,7 +42,7 @@ describe CourseSummariesController do
             end
           end
         end
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       context 'tests the second csv row which contains out of values' do

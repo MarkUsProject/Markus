@@ -150,6 +150,7 @@ Nick Lee
 Nicolas Bouillon
 Nicolas Carougeau
 Nikhi Bhambra
+Nina Huang
 Noé Bedetti
 Oloruntobi Ogunbiyi
 Ope Akanji
@@ -167,6 +168,7 @@ Robert Burke
 Robert Tan
 Ryan Spring
 Samuel Gougeon
+Samuel Maldonado
 Samuel Weiss
 Sean Budning
 Seung Hoon Lee

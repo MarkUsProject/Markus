@@ -86,14 +86,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -118,7 +118,7 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
         it 'should not delete the starter file group' do
           subject
@@ -129,7 +129,7 @@ describe Api::StarterFileGroupsController do
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -261,14 +261,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -297,14 +297,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -333,14 +333,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -372,14 +372,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -412,14 +412,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end
@@ -449,14 +449,14 @@ describe Api::StarterFileGroupsController do
         end
         it 'should return a 404 error' do
           subject
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
     context 'when the starter code does not exist' do
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
     end
   end

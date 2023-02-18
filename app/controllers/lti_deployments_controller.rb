@@ -18,7 +18,7 @@ class LtiDeploymentsController < ApplicationController
     lti_launch_data[:client_id] = params[:client_id]
     lti_launch_data[:iss] = params[:iss]
     lti_launch_data[:nonce] = nonce
-    lti_launch_data[:state] = session.id
+    lti_launch_data[:state] = session.id.to_s
     cookies.permanent.encrypted[:lti_launch_data] = { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now }
     auth_params = {
       scope: 'openid',
@@ -30,7 +30,7 @@ class LtiDeploymentsController < ApplicationController
       response_mode: 'form_post',
       nonce: nonce,
       prompt: 'none',
-      state: session.id # Binds this request to the LTI response
+      state: session.id.to_s # Binds this request to the LTI response
     }
     auth_request_uri = construct_redirect_with_port(request.referer, endpoint: self.class::LMS_REDIRECT_ENDPOINT)
 
@@ -47,6 +47,7 @@ class LtiDeploymentsController < ApplicationController
   def redirect_login
     if request.post?
       lti_launch_data = JSON.parse(cookies.encrypted[:lti_launch_data]).symbolize_keys
+
       if params[:id_token].blank? || params[:state] != lti_launch_data[:state]
         render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
                                      layout: false
@@ -179,16 +180,6 @@ class LtiDeploymentsController < ApplicationController
     lti_deployment = record
     lti_deployment.update!(course: new_course)
     redirect_to edit_course_path(new_course)
-  end
-
-  def create_lti_grades
-    assessment = Assessment.find(params[:assessment_id])
-    lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
-    lti_deployments.each do |lti|
-      lti.get_students
-      lti.create_or_update_lti_assessment(assessment)
-      lti.create_grades(assessment)
-    end
   end
 
   def get_config

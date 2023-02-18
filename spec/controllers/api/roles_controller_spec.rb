@@ -36,7 +36,7 @@ describe Api::RolesController do
       context 'for a non-existent course' do
         it 'should return a 404 error' do
           get :index, params: { course_id: Course.ids.max + 1 }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
 
@@ -47,7 +47,7 @@ describe Api::RolesController do
         end
         it 'should be successful' do
           get :index, params: { course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return info about a single user if a filter is used' do
           get :index, params: { filter: { user_name: students[0].user_name }, course_id: course.id }
@@ -68,7 +68,7 @@ describe Api::RolesController do
         end
         it 'should be successful' do
           get :index, params: { course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return info about a single user if a filter is used' do
           get :index, params: { filter: { user_name: students[0].user_name }, course_id: course.id }
@@ -86,7 +86,7 @@ describe Api::RolesController do
       context 'for a non-existant course' do
         it 'should return a 404 error' do
           get :show, params: { id: students[0].id, course_id: Course.ids.max + 1 }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
 
@@ -97,7 +97,7 @@ describe Api::RolesController do
         end
         it 'should be successful' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return info about the user' do
           get :show, params: { id: students[0].id, course_id: course.id }
@@ -116,7 +116,7 @@ describe Api::RolesController do
         end
         it 'should be successful' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return info about the user' do
           get :show, params: { id: students[0].id, course_id: course.id }
@@ -141,7 +141,7 @@ describe Api::RolesController do
       context 'for a non-existant course' do
         it 'should return a 404 error' do
           post method, params: { user_name: user_name, type: type, course_id: Course.ids.max + 1 }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
 
@@ -154,7 +154,7 @@ describe Api::RolesController do
         context 'when creating a new student' do
           let(:created_student) { Student.joins(:user).where('users.user_name': student.user_name).first }
           it 'should be successful' do
-            expect(response.status).to eq(201)
+            expect(response).to have_http_status(201)
           end
           it 'should create a new user' do
             expect(created_student).not_to be_nil
@@ -177,14 +177,14 @@ describe Api::RolesController do
         context 'when creating a student with an invalid user_name' do
           let(:user_name) { 'a!!' }
           it 'should raise a 422 error' do
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
 
         context 'when creating a student with an invalid type' do
           let(:type) { 'Dragon' }
           it 'should raise a 422 error' do
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
       end
@@ -197,46 +197,46 @@ describe Api::RolesController do
       context 'for a non-existant course' do
         it 'should return a 404 error' do
           put :update, params: { id: student.id, course_id: Course.ids.max + 1 }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
 
       context 'when updating an existing user' do
         it 'should not update a user name' do
           put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           student.reload
           expect(student.user_name).not_to eq(tmp_student.user_name)
         end
         it 'should not update a first name' do
           put :update, params: { id: student.id, first_name: tmp_student.first_name, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           student.reload
           expect(student.first_name).not_to eq(tmp_student.first_name)
         end
         it 'should not update a last name' do
           put :update, params: { id: student.id, last_name: tmp_student.last_name, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           student.reload
           expect(student.last_name).not_to eq(tmp_student.last_name)
         end
         it 'should update a section' do
           section = create :section
           put :update, params: { id: student.id, section_name: section.name, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           student.reload
           expect(student.section.id).to eq(section.id)
         end
         it 'should update grace credits' do
           old_credits = student.grace_credits
           put :update, params: { id: student.id, grace_credits: old_credits + 1, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           student.reload
           expect(student.grace_credits).to eq(old_credits + 1)
         end
         it 'should update hidden' do
           put :update, params: { id: student.id, hidden: true, course_id: course.id }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           student.reload
           expect(student.hidden).to eq(true)
         end
@@ -245,7 +245,7 @@ describe Api::RolesController do
       context 'when updating a user that does not exist' do
         it 'should raise a 404 error' do
           put :update, params: { id: student.id + 1, user_name: tmp_student.user_name, course_id: course.id }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end
@@ -262,7 +262,7 @@ describe Api::RolesController do
         context 'for a different course' do
           it 'should return a 403 error' do
             get :index, params: { course_id: create(:course).id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
 
@@ -292,7 +292,7 @@ describe Api::RolesController do
           let(:student) { create :student, course: create(:course) }
           it 'should return a 403 error' do
             get :show, params: { id: student.id, course_id: student.course_id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
 
@@ -316,7 +316,7 @@ describe Api::RolesController do
             post :create_or_unhide, params: { user_name: student.user_name,
                                               type: student.type,
                                               course_id: create(:course).id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
 
@@ -363,7 +363,7 @@ describe Api::RolesController do
             post :create, params: { user_name: student.user_name,
                                     type: student.type,
                                     course_id: create(:course).id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
 
@@ -371,7 +371,7 @@ describe Api::RolesController do
           it 'should raise a 422 error' do
             student = create :student, course: course
             post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
 
@@ -395,7 +395,7 @@ describe Api::RolesController do
           let(:student) { create :student, course: create(:course) }
           it 'should return a 403 error' do
             put :update, params: { id: student.id, course_id: student.course_id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
 
@@ -507,7 +507,7 @@ describe Api::RolesController do
           it 'should raise a 422 error' do
             student = create :student, course: course
             post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
 
