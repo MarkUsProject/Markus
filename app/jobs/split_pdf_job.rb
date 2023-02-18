@@ -49,6 +49,7 @@ class SplitPdfJob < ApplicationJob
 
         qr_file_location = File.join(raw_dir, "#{split_page.id}.jpg")
         img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
+        img.destroy!
         code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = code_regex.match(ZXing.decode(qr_file_location)) || code_regex.match(RTesseract.new(qr_file_location).to_s)
         status = ''
@@ -240,6 +241,8 @@ class SplitPdfJob < ApplicationJob
                                 exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
+        img.destroy!
+        student_info.destroy!
 
         python_exe = Rails.application.config.python
         read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
