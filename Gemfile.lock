@@ -218,7 +218,7 @@ GEM
       railties (>= 3.1)
     jsbundling-rails (1.1.1)
       railties (>= 6.0.0)
-    json (2.6.2)
+    json (2.6.3)
     jwt (2.5.0)
     kgio (2.11.4)
     listen (3.7.1)
