@@ -36,7 +36,7 @@ describe MarksGradersController do
                 upload_file: @file_good
               }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(action: 'index',
                                       grade_entry_form_id:
@@ -67,7 +67,7 @@ describe MarksGradersController do
                 remove_existing_mappings: true
               }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(action: 'index',
                                       grade_entry_form_id:
@@ -88,7 +88,7 @@ describe MarksGradersController do
     it 'responds with appropriate status' do
       get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
 
     # parse header object to check for the right disposition

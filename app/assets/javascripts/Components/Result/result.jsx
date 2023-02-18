@@ -139,10 +139,10 @@ class Result extends React.Component {
       this.props.course_id,
       this.state.result_id,
       this.state.assignment_id,
-      Routes.download_course_result_path(
+      Routes.download_file_course_assignment_submission_path(
         this.props.course_id,
-        this.state.submission_id,
-        this.state.result_id
+        this.state.assignment_id,
+        this.state.submission_id
       )
     );
 

@@ -67,11 +67,16 @@ export class FileViewer extends React.Component {
     if (!!this.props.selectedFileURL) {
       url = this.props.selectedFileURL;
     } else {
-      url = Routes.download_course_result_path(this.props.course_id, this.props.result_id, {
-        select_file_id: submission_file_id,
-        show_in_browser: true,
-        from_codeviewer: true,
-      });
+      url = Routes.download_file_course_assignment_submission_path(
+        this.props.course_id,
+        this.props.assignment_id,
+        this.props.submission_id,
+        {
+          select_file_id: submission_file_id,
+          show_in_browser: true,
+          from_codeviewer: true,
+        }
+      );
     }
     if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
       fetch(url)

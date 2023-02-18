@@ -87,7 +87,7 @@ describe SplitPdfJob do
     expect(error_dir_entries.length).to eq 2
   end
 
-  it 'correctly splits a PDF with one test paper with three pages having an unparseable QR code' do
+  it 'correctly splits a PDF with one test paper with three pages having an unparseable QR code but parseable text' do
     filename = 'midterm_scan_102.pdf'
     split_pdf_log = exam_template.split_pdf_logs.create(
       filename: filename,
@@ -102,14 +102,9 @@ describe SplitPdfJob do
     SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
-    expect(split_pdf_log.num_groups_in_incomplete).to eq 1
-    expect(split_pdf_log.num_pages_qr_scan_error).to eq 3
-    expect(split_pdf_log.split_pages.where(status: 'ERROR: QR code not found').count).to eq 3
-    expect(split_pdf_log.split_pages.where(status: 'Saved to incomplete directory').count).to eq 3
-
-    # Check that error pages were saved correctly.
-    error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
-    expect(error_dir_entries.length).to eq 3
+    expect(split_pdf_log.num_groups_in_complete).to eq 1
+    expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
+    expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
   end
 
   it 'correctly splits a PDF with one test paper with cover page having an unparseable QR code' do

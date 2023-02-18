@@ -1320,7 +1320,7 @@ class Assignment < Assessment
     unless difference.zero?
       max_tokens = assignment_properties.tokens_per_period
       groupings.each do |g|
-        g.test_tokens = [[g.test_tokens + difference, 0].max, max_tokens].min
+        g.test_tokens = (g.test_tokens + difference).clamp(0, max_tokens)
         g.save
       end
     end
