@@ -82,7 +82,10 @@ describe SubmissionsJob do
     end
     context 'when a revision id does not exist in the repo for the group' do
       it 'should not create a submission' do
-        SubmissionsJob.perform_now(groupings[0...1], revision_identifier: revision_ids[groupings.first.id] + 'aaaaa')
+        revision_id = revision_ids[groupings.first.id] + 'aaaaa'
+        expect { SubmissionsJob.perform_now(groupings[0...1], revision_identifier: revision_id) }
+          .to raise_error(Repository::RevisionDoesNotExist)
+
         g = groupings.first.reload
         expect(g.current_submission_used).to be_nil
       end

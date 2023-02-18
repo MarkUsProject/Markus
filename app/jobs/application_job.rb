@@ -27,12 +27,6 @@ class ApplicationJob < ActiveJob::Base
     self.status.update(job_class: job.class)
   end
 
-  rescue_from(StandardError) do |e|
-    self.status.update(error_message: e.to_s)
-    self.status.update(status: :failed)
-    raise
-  end
-
   def self.queue_name
     Settings.queues[self.name.underscore] || Settings.queues.default
   end
