@@ -45,6 +45,7 @@ gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
 gem 'rmagick'
+gem 'rtesseract'
 gem 'zxing_cpp', require: 'zxing'
 
 # Ruby miscellany
