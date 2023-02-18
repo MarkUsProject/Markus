@@ -102,7 +102,6 @@ describe SplitPdfJob do
     SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
-    # byebug
     expect(split_pdf_log.num_groups_in_complete).to eq 1
     expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
     expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
