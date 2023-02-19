@@ -1697,7 +1697,7 @@ describe SubmissionsController do
                                         from_codeviewer: from_codeviewer,
                                         id: submission.id, assignment_id: assignment.id }
         end
-        it { expect(response).to have_http_status(:redirect) }
+        it { expect(response).to have_http_status(:internal_server_error) }
         it 'should display a flash error' do
           expect(extract_text(flash[:error][0])).to eq SAMPLE_ERROR_MESSAGE
         end

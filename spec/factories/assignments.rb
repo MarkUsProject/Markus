@@ -149,7 +149,6 @@ FactoryBot.define do
 
         create(:version_used_submission, grouping: groupings[i])
         groupings[i].reload
-        # create(:result, submission: submission, marking_state: Result::MARKING_STATES[:complete])
       end
     end
   end
