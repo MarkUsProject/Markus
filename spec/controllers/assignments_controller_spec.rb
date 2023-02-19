@@ -1040,9 +1040,9 @@ describe AssignmentsController do
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
       it 'should contain mappings' do
         expect(@controller).to receive(:send_data) do |file_content|
-          mappings = file_content.split("\n")[1..-1].map { |m| m.split(',') }.sort
+          mappings = file_content.split("\n")[1..-1].map { |m| m.split(',') }
           expected = StarterFileEntry.pluck(:path).map { |p| [grouping.group.group_name, starter_file_group.name, p] }
-          expect(mappings).to eq expected.sort
+          expect(mappings).to match_array expected
         end
         subject
       end

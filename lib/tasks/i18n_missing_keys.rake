@@ -16,9 +16,9 @@ class MissingKeysFinder
 
   # Returns an array with all keys from all locales
   def all_keys
-    I18n.backend.public_send(:translations).collect do |_check_locale, translations|
+    I18n.backend.public_send(:translations).flat_map do |_check_locale, translations|
       collect_keys([], translations).sort
-    end.flatten.uniq
+    end.uniq
   end
 
   def find_missing_keys

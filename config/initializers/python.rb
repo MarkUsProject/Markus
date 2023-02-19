@@ -15,10 +15,10 @@ Rails.application.config.after_initialize do
   end
 
   def process_requirements(requirements_file)
-    File.open(requirements_file).each_line.map do |line|
+    File.open(requirements_file).each_line.filter_map do |line|
       line.strip!
       line.start_with?('#') || line.length.zero? ? nil : line
-    end.compact
+    end
   end
 
   pip = "#{Rails.application.config.python} -m pip"

@@ -211,7 +211,7 @@ describe Repository::AbstractRepository do
             create :timed_assignment, assignment_properties_attributes: { vcs_submit: true }, due_date: 1.minute.ago
           end
           it 'should contain all members of all groups' do
-            inviter_ids = groupings1.map(&:inviter).map(&:id)
+            inviter_ids = groupings1.map { |g| g.inviter.id }
             expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*inviter_ids)
           end
         end

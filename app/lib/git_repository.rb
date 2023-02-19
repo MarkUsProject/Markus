@@ -250,7 +250,7 @@ class GitRepository < Repository::AbstractRepository
   #  Converts a pathname to an absolute pathname
   def expand_path(file_name, dir_string = '/')
     expanded = File.expand_path(file_name, dir_string)
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # only if the platform is Windows
+    if RUBY_PLATFORM.match?(/(:?mswin|mingw)/)  # only if the platform is Windows
       expanded = expanded[2..-1] # remove the drive letter
     end
     expanded

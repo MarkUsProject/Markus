@@ -39,7 +39,7 @@ describe ExtensionsController do
           extension.reload
         end
         it 'time_delta' do
-          expected_duration = Extension::PARTS.map { |part| params[part].to_i.public_send(part) }.sum
+          expected_duration = Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
           expect(extension.time_delta).to eq(expected_duration)
         end
         it 'note' do
@@ -81,7 +81,7 @@ describe ExtensionsController do
           extension.reload
         end
         it 'time_delta' do
-          expected_duration = Extension::PARTS.map { |part| params[part].to_i.public_send(part) }.sum
+          expected_duration = Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
           expect(extension.time_delta.to_i).to eq(expected_duration)
         end
         it 'note' do
