@@ -6,7 +6,7 @@ export function chartScales() {
   return {
     x: {
       grid: {
-        borderColor: bars,
+        border: {color: bars},
         color: gridLineColor,
       },
       title: {
@@ -23,7 +23,7 @@ export function chartScales() {
     },
     y: {
       grid: {
-        borderColor: bars,
+        border: {color: bars},
         color: gridLineColor,
       },
       title: {
