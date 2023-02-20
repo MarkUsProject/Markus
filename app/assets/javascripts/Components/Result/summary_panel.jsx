@@ -14,8 +14,7 @@ export class SummaryPanel extends React.Component {
   markDataSet = {
     label: I18n.t("activerecord.models.mark.one"),
     backgroundColor: "rgba(58,106,179,0.35)",
-    borderColor: "#3a6ab3",
-    borderWidth: 1,
+    border: {color: "#3a6ab3", width: 1},
     hoverBackgroundColor: "rgba(58,106,179,0.75)",
   };
 
@@ -23,8 +22,7 @@ export class SummaryPanel extends React.Component {
   oldMarkDataSet = {
     label: I18n.t("results.remark.old_mark"),
     backgroundColor: "rgba(250,253,170,0.65)",
-    borderColor: "#dde426",
-    borderWidth: 1,
+    border: {color: "#dde426", width: 1},
     hoverBackgroundColor: "#dde426",
   };
 
