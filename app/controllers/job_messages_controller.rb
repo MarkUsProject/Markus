@@ -4,7 +4,7 @@ class JobMessagesController < ApplicationController
   def get
     status = ActiveJob::Status.get(params[:job_id])
     if status.failed?
-      flash_message(:error, t('poll_job.failed')) if status[:error_message].blank?
+      flash_message(:error, t('poll_job.failed')) if status[:exception].blank? || status[:exception][:message].blank?
       session[:job_id] = nil
     elsif status.completed?
       status[:progress] = status[:total]
@@ -23,7 +23,7 @@ class JobMessagesController < ApplicationController
   private
 
   def flash_job_messages(status)
-    flash_message(:error, status[:error_message]) if status[:error_message].present?
+    flash_message(:error, status[:exception][:message]) if status[:exception].present?
     flash_message(:warning, status[:warning_message]) if status[:warning_message].present?
     current_status = status[:job_class]&.show_status(status)
     if current_status.nil? || session[:job_id].nil?

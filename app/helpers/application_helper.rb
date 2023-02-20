@@ -3,6 +3,8 @@ module ApplicationHelper
   # A more robust flash method. Easier to add multiple messages of each type:
   # :error, :success, :warning and :notice
   def flash_message(type, text = '', flash_type = flash, **kwargs)
+    return if text.nil?
+
     available_types = [:error, :success, :warning, :notice]
     # If type isn't one of the four above, we display it as :notice.
     # We don't want to suppress the message, which is why we pick a
