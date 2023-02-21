@@ -6,6 +6,7 @@
 - Move submission-specific results/ routes to be under submissions/ (#6434)
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
 - Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
+- Fix error message when a file is submitted through the API that doesn't match the required file list (#6479)
 
 ## [v2.2.2]
 - Apply course maximum file size to feedback files (#6430)
