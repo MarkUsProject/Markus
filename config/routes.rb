@@ -222,6 +222,9 @@ Rails.application.routes.draw do
         get 'grade_distribution'
         get 'download_config_files'
         get 'download_test_results'
+        post 'create_lti_grades'
+        get 'lti_settings'
+        post 'create_lti_line_items'
       end
 
       resources :starter_file_groups, only: [:create]
@@ -498,7 +501,6 @@ Rails.application.routes.draw do
     resources :lti_deployments, only: [] do
       collection do
         get 'public_jwk'
-        post 'create_lti_grades'
         resources :canvas, only: [] do
           collection do
             get 'get_config'

@@ -339,7 +339,7 @@ describe ResultsController do
     context 'user has access to view the result' do
       it 'contains important basic data' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
         data = JSON.parse(response.body)
         received_data = {
           instructor_run: data['instructor_run'],

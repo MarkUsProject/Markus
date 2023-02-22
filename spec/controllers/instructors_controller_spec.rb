@@ -11,7 +11,7 @@ describe InstructorsController do
       end
       it 'be able to get :new' do
         get_as instructor, :new, params: { course_id: course.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
     end
 
@@ -21,7 +21,7 @@ describe InstructorsController do
       end
       it 'respond with success on index' do
         get_as instructor, :index, params: { course_id: course.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'retrieves correct data' do
         get_as instructor, :index, format: 'json', params: { course_id: course.id }
