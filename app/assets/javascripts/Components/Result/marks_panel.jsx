@@ -151,6 +151,15 @@ export class CheckboxCriterionInput extends React.Component {
   render() {
     const unassignedClass = this.props.unassigned ? "unassigned" : "";
     const expandedClass = this.props.expanded ? "expanded" : "collapsed";
+    let partialMarkClass = "";
+    if (
+      this.props.mark !== undefined &&
+      this.props.mark !== null &&
+      this.props.mark !== this.props.max_mark
+    ) {
+      partialMarkClass = "red-text";
+    }
+
     return (
       <li
         id={`checkbox_criterion_${this.props.id}`}
@@ -207,7 +216,7 @@ export class CheckboxCriterionInput extends React.Component {
                 </label>
               </span>
             )}
-            <span className="mark">
+            <span className={`mark ${partialMarkClass}`}>
               {this.props.mark === null ? "-" : this.props.mark}
               &nbsp;/&nbsp;
               {this.props.max_mark}
@@ -376,6 +385,14 @@ export class FlexibleCriterionInput extends React.Component {
   render() {
     const unassignedClass = this.props.unassigned ? "unassigned" : "";
     const expandedClass = this.props.expanded ? "expanded" : "collapsed";
+    let partialMarkClass = "";
+    if (
+      this.props.mark !== undefined &&
+      this.props.mark !== null &&
+      this.props.mark !== this.props.max_mark
+    ) {
+      partialMarkClass = "red-text";
+    }
 
     let markElement;
     if (this.props.released_to_students) {
@@ -413,7 +430,7 @@ export class FlexibleCriterionInput extends React.Component {
             className="criterion-description"
             dangerouslySetInnerHTML={{__html: safe_marked(this.props.description)}}
           />
-          <span className="mark">
+          <span className={`mark ${partialMarkClass}`}>
             {markElement}
             &nbsp;/&nbsp;
             {this.props.max_mark}
@@ -460,12 +477,14 @@ export class RubricCriterionInput extends React.Component {
     const levelMark = level.mark.toFixed(2);
     let selectedClass = "";
     let oldMarkClass = "";
+    let partialMarkClass = "";
     if (
       this.props.mark !== undefined &&
       this.props.mark !== null &&
       levelMark === this.props.mark.toFixed(2)
     ) {
       selectedClass = "selected";
+      partialMarkClass = this.props.mark !== this.props.max_mark ? "red-text" : "";
     }
     if (
       this.props.oldMark !== undefined &&
@@ -485,7 +504,7 @@ export class RubricCriterionInput extends React.Component {
           <strong>{level.name}</strong>
           <span dangerouslySetInnerHTML={{__html: safe_marked(level.description)}} />
         </td>
-        <td className={"mark"}>
+        <td className={`mark ${partialMarkClass}`}>
           {levelMark}
           &nbsp;/&nbsp;
           {this.props.max_mark}
