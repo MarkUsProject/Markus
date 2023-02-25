@@ -240,7 +240,7 @@ class Assignment < Assessment
 
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_max > 1
+    group_max > 1
   end
 
   # Return all released marks for this assignment
