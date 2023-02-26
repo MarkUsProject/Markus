@@ -3,7 +3,7 @@ namespace :markus do
     columns = [:course_name, :role_type] + Student::CSV_ORDER
     if args[:roles_file].nil?
       puts 'Usage: this rake task takes one argument: a path to a csv file containing the following fields:'
-      puts "\n\t#{columns.map(&:to_s).map(&:humanize).join(', ')}"
+      puts "\n\t#{columns.map { |c| c.to_s.humanize }.join(', ')}"
       puts "\nNote:\tSection name, Id number, and Email are optional fields"
       puts "\tRole Type should be one of: student, ta, instructor"
       exit

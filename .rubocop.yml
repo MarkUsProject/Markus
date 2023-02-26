@@ -1,5 +1,6 @@
 require:
   - rubocop-rails
+  - rubocop-performance
 
 AllCops:
   Exclude:
@@ -133,6 +134,10 @@ Naming/MethodParameterName:
 
 Naming/PredicateName:
   Enabled: false
+
+# Performance checks
+Performance/CollectionLiteralInLoop:
+  MinSize: 3
 
 Rails/HasAndBelongsToMany:
   Enabled: false

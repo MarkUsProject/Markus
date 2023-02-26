@@ -18,13 +18,13 @@ namespace :db do
     include AutomatedTestsHelper
 
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
-    setups = autotest_files_dirs.map do |dir_path|
+    setups = autotest_files_dirs.filter_map do |dir_path|
       setup = AutotestSetup.new dir_path
 
       puts "Sending autotest settings for autotest_#{File.basename(dir_path)}"
       setup.upload_specs
       setup
-    end.compact
+    end
 
     wait_time = 300
     puts "Waiting for #{wait_time}s for testing environments to be set up"
