@@ -20,7 +20,7 @@ describe GradeEntryForm do
 
   describe '#max_mark' do
     before(:each) do
-      @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
+      @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
     end
 
     it 'calculates the sum of the grade_entry_item out_of values' do
@@ -36,7 +36,7 @@ describe GradeEntryForm do
   # Tests for calculate_total_mark
   context 'Calculate the total mark for a student: ' do
     before(:each) do
-      @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
+      @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
       @grade_entry_items = @grade_entry_form.grade_entry_items
     end
 
@@ -79,7 +79,7 @@ describe GradeEntryForm do
   # Tests for calculate_total_percent
   context 'Calculate the total percent for a student: ' do
     before(:each) do
-      @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
+      @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
       @grade_entry_items = @grade_entry_form.grade_entry_items
     end
 
@@ -123,7 +123,7 @@ describe GradeEntryForm do
   # Tests for all_blank_grades
   context "Determine whether or not a student's grades are all blank: " do
     before(:each) do
-      @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
+      @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
       @grade_entry_items = @grade_entry_form.grade_entry_items
     end
 
@@ -282,15 +282,5 @@ describe GradeEntryForm do
         expect(form.results_median).to eq(20 * 100 / form.max_mark)
       end
     end
-  end
-
-  def make_grade_entry_form_with_multiple_grade_entry_items
-    grade_entry_form = create :grade_entry_form
-    grade_entry_items = []
-    (1..3).each do |i|
-      grade_entry_items << create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, position: i)
-    end
-    grade_entry_form.grade_entry_items = grade_entry_items
-    grade_entry_form
   end
 end
