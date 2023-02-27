@@ -336,7 +336,7 @@ module AutomatedTestsHelper
               .group_by { |val| val[...2] }
               .map do |key, val|
                 [*key,
-                 val.map { |v| { starter_file_group: v[2], starter_file_path: v[3] } if v[2] }.compact]
+                 val.filter_map { |v| { starter_file_group: v[2], starter_file_path: v[3] } if v[2] }]
               end
   end
 

@@ -1756,14 +1756,14 @@ describe Assignment do
           final_grade = submission.current_result.get_total_mark
           data = assignment.current_submission_data(ta)
           expect(data.pluck(:final_grade)).to include(final_grade)
-          expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+          expect(data.count { |h| h.key? :final_grade }).to eq 1
         end
         context 'when the extra mark has a negative value' do
           let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
           it 'should not reduce the total mark below zero' do
             data = assignment.current_submission_data(ta)
             expect(data.pluck(:final_grade)).to include(0)
-            expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+            expect(data.count { |h| h.key? :final_grade }).to eq 1
           end
         end
       end
@@ -1790,7 +1790,7 @@ describe Assignment do
       end
 
       it 'should include the group name' do
-        expect(data.pluck(:group_name)).to contain_exactly(*groupings.map(&:group).map(&:group_name))
+        expect(data.pluck(:group_name)).to match_array(groupings.map { |g| g.group.group_name })
       end
 
       it 'should include tags' do
@@ -1837,33 +1837,33 @@ describe Assignment do
 
       it 'should include a submission time if a non-empty submission exists' do
         time_stamp = I18n.l(submission.revision_timestamp.in_time_zone)
-        expect(data.select { |h| h.key? :submission_time }.count).to eq 1
+        expect(data.count { |h| h.key? :submission_time }).to eq 1
         expect(data.pluck(:submission_time)).to include(time_stamp)
       end
 
       it 'should not include a submission time if an empty submission exists' do
         submission.update(is_empty: true)
-        expect(data.select { |h| h.key? :submission_time }.count).to eq 0
+        expect(data.count { |h| h.key? :submission_time }).to eq 0
       end
 
       it 'should not include the result id if a result does not exist' do
-        expect(data.select { |h| h.key? :result_id }.count).to eq 0
+        expect(data.count { |h| h.key? :result_id }).to eq 0
       end
 
       it 'should include the result id if a result exists' do
         result_id = submission.current_result.id
         expect(data.pluck(:result_id)).to include(result_id)
-        expect(data.select { |h| h.key? :result_id }.count).to eq 1
+        expect(data.count { |h| h.key? :result_id }).to eq 1
       end
 
       it 'should not include the total mark if a result does not exist' do
-        expect(data.select { |h| h.key? :final_grade }.count).to eq 0
+        expect(data.count { |h| h.key? :final_grade }).to eq 0
       end
 
       it 'should include the total mark if a result exists' do
         final_grade = submission.current_result.get_total_mark
         expect(data.pluck(:final_grade)).to include(final_grade)
-        expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+        expect(data.count { |h| h.key? :final_grade }).to eq 1
       end
 
       context 'release_with_urls is true' do
@@ -1893,13 +1893,13 @@ describe Assignment do
         it 'should include the extra mark in the total' do
           final_grade = submission.current_result.get_total_mark
           expect(data.pluck(:final_grade)).to include(final_grade)
-          expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+          expect(data.count { |h| h.key? :final_grade }).to eq 1
         end
         context 'when the extra mark has a negative value' do
           let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
           it 'should not reduce the total mark below zero' do
             expect(data.pluck(:final_grade)).to include(0)
-            expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+            expect(data.count { |h| h.key? :final_grade }).to eq 1
           end
         end
       end
@@ -1909,7 +1909,7 @@ describe Assignment do
 
         it 'should not include member information for groups without members' do
           expect(data.count).to eq 5
-          expect(data.select { |h| h.key? :members }.count).to eq 3
+          expect(data.count { |h| h.key? :members }).to eq 3
         end
 
         it 'should include member information for groups with members' do
@@ -1929,12 +1929,12 @@ describe Assignment do
 
         it 'should not include section information for groups not in a section' do
           expect(data.count).to eq 5
-          expect(data.select { |h| h.key? :section }.count).to eq 2
+          expect(data.count { |h| h.key? :section }).to eq 2
         end
       end
 
       it 'should not include grace credit info if the submission rule is not a grace credit rule' do
-        expect(data.select { |h| h.key? :grace_credits_used }.count).to eq 0
+        expect(data.count { |h| h.key? :grace_credits_used }).to eq 0
       end
 
       context 'the assignment uses grace credit deductions' do
@@ -2118,19 +2118,19 @@ describe Assignment do
           let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result }
           it 'should included the extra mark value' do
             data = @assignment.summary_json(instructor)[:data]
-            grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+            grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
             expect(grouping_data[:total_extra_marks]).to eq extra_mark.extra_mark
           end
           it 'should add the extra mark to the total mark' do
             data = @assignment.summary_json(instructor)[:data]
-            grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+            grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
             expect(grouping_data[:final_grade]).to eq(grouping.current_result.get_total_mark)
           end
           context 'when the extra mark has a negative value' do
             let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result, extra_mark: -100 }
             it 'should not reduce the total mark below zero' do
               data = @assignment.summary_json(instructor)[:data]
-              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
               expect(grouping_data[:final_grade]).to eq(0)
             end
           end
@@ -2139,12 +2139,12 @@ describe Assignment do
             let(:percentage_extra) { (extra_mark_percentage.extra_mark * @assignment.max_mark / 100).round(2) }
             it 'should included both extra mark values' do
               data = @assignment.summary_json(instructor)[:data]
-              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
               expect(grouping_data[:total_extra_marks]).to eq(extra_mark.extra_mark + percentage_extra)
             end
             it 'should add both extra marks to the total mark' do
               data = @assignment.summary_json(instructor)[:data]
-              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
               total = grouping.current_result.get_total_mark
               expect(grouping_data[:final_grade]).to eq total
             end
@@ -2263,14 +2263,14 @@ describe Assignment do
     let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
     let!(:groupings) { create_list :grouping_with_inviter, 2, assignment: assignment }
     it 'returns the right data' do
-      expected = groupings.map do |g|
+      expected = groupings.flat_map do |g|
         %w[q1 q2.txt].map do |entry|
           { group_name: g.group.group_name,
             starter_file_group_name: starter_file_group.name,
             starter_file_entry_path: entry }.transform_keys(&:to_s)
         end
-      end.flatten.sort_by(&:values)
-      expect(assignment.starter_file_mappings.sort_by(&:values)).to eq expected
+      end
+      expect(assignment.starter_file_mappings).to match_array expected
     end
   end
 
@@ -2471,13 +2471,13 @@ describe Assignment do
         end
 
         it 'returns a list of sorted marks that only includes results marked as complete' do
-          result = assignment.current_results.select { |r| r.get_total_mark == 2 }.first
+          result = assignment.current_results.detect { |r| r.get_total_mark == 2 }
           result.update!(marking_state: Result::MARKING_STATES[:incomplete])
           expect(assignment.completed_result_marks).to eq [0, 8]
         end
 
         context 'when there is a remark result' do
-          let(:original_result) { assignment.current_results.select { |r| r.get_total_mark == 2 }.first }
+          let(:original_result) { assignment.current_results.detect { |r| r.get_total_mark == 2 } }
           let!(:remark_result) { create(:remark_result, submission: original_result.submission) }
 
           it 'does not include the original result or remark result when the latter is incomplete' do

@@ -46,6 +46,7 @@ repos:
           )$
         additional_dependencies:
           - rubocop-rails:2.13.2
+          - rubocop-performance:1.16.0
 
 exclude: vendor
 

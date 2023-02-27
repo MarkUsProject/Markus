@@ -54,8 +54,8 @@ describe Api::AssignmentsController do
             expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment.id.to_s)
           end
           it 'should return all default fields' do
-            keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym).sort
-            expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
+            keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym)
+            expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
           end
         end
         context 'with a single assignment in a different course' do
@@ -79,8 +79,8 @@ describe Api::AssignmentsController do
             expect(Hash.from_xml(response.body).dig('assignments', 'assignment').length).to eq(5)
           end
           it 'should return all default fields for all assignments' do
-            keys = Hash.from_xml(response.body).dig('assignments', 'assignment').map { |h| h.keys.map(&:to_sym).sort }
-            expect(keys).to all(eq(Api::AssignmentsController::DEFAULT_FIELDS.sort))
+            keys = Hash.from_xml(response.body).dig('assignments', 'assignment').map { |h| h.keys.map(&:to_sym) }
+            expect(keys).to all(match_array(Api::AssignmentsController::DEFAULT_FIELDS))
           end
         end
         context 'with multiple assignments in a different course' do
@@ -112,8 +112,8 @@ describe Api::AssignmentsController do
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(assignment.id)
           end
           it 'should return all default fields' do
-            keys = JSON.parse(response.body)&.first&.keys&.map(&:to_sym)&.sort
-            expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
+            keys = JSON.parse(response.body)&.first&.keys&.map(&:to_sym)
+            expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
           end
         end
         context 'with a single assignment in a different course' do
@@ -137,8 +137,8 @@ describe Api::AssignmentsController do
             expect(JSON.parse(response.body).length).to eq(5)
           end
           it 'should return all default fields for all assignments' do
-            keys = JSON.parse(response.body).map { |h| h.keys.map(&:to_sym).sort }
-            expect(keys).to all(eq(Api::AssignmentsController::DEFAULT_FIELDS.sort))
+            keys = JSON.parse(response.body).map { |h| h.keys.map(&:to_sym) }
+            expect(keys).to all(match_array(Api::AssignmentsController::DEFAULT_FIELDS))
           end
         end
         context 'with a multiple assignments in a different course' do
@@ -168,8 +168,8 @@ describe Api::AssignmentsController do
           expect(Hash.from_xml(response.body).dig('assignment', 'id')).to eq(assignment.id.to_s)
         end
         it 'should return all default fields' do
-          keys = Hash.from_xml(response.body)['assignment'].keys.map(&:to_sym).sort
-          expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
+          keys = Hash.from_xml(response.body)['assignment'].keys.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end
       context 'expecting a json response' do
@@ -184,8 +184,8 @@ describe Api::AssignmentsController do
           expect(JSON.parse(response.body)&.dig('id')).to eq(assignment.id)
         end
         it 'should return all default fields' do
-          keys = JSON.parse(response.body)&.keys&.map(&:to_sym)&.sort
-          expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
+          keys = JSON.parse(response.body)&.keys&.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end
       context 'requesting a non-existant assignment' do

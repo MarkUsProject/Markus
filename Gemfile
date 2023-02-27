@@ -79,7 +79,6 @@ group :development do
   gem 'binding_of_caller' # supplement for better_errors
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
-  gem 'bullet'
   gem 'listen' # to listen for changes in i18n-js files
 end
 
@@ -99,6 +98,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
+  gem 'bullet'
   gem 'byebug'
   gem 'capybara'
   gem 'i18n-tasks'

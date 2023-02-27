@@ -25,7 +25,9 @@ class StarterFileGroup < ApplicationRecord
   end
 
   def files_and_dirs
-    starter_file_entries.map(&:files_and_dirs).flatten.map { |f| f.relative_path_from(path).to_s }
+    result = starter_file_entries.flat_map(&:files_and_dirs)
+    result.map! { |f| f.relative_path_from(path).to_s }
+    result
   end
 
   def zip_starter_file_files(role)
@@ -57,11 +59,11 @@ class StarterFileGroup < ApplicationRecord
   def update_entries
     return [] unless Dir.exist? path
 
-    fs_entry_paths = Dir.glob("#{path}/*", File::FNM_DOTMATCH).map do |f|
+    fs_entry_paths = Dir.glob("#{path}/*", File::FNM_DOTMATCH).filter_map do |f|
       unless %w[.. .].include?(File.basename(f))
         Pathname.new(f).relative_path_from(path).to_s
       end
-    end.compact
+    end
     entry_paths = starter_file_entries.pluck(:path)
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths

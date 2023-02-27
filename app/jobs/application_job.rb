@@ -1,5 +1,6 @@
 class ApplicationJob < ActiveJob::Base
   include ActiveJob::Status
+  include Bullet::ActiveJob if Rails.env.development?
 
   queue_as queue_name
 
