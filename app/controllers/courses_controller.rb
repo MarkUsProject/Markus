@@ -23,7 +23,9 @@ class CoursesController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    @lti_deployments = LtiDeployment.where(course: @current_course)
+  end
 
   def update
     @current_course.update(course_params)
@@ -150,6 +152,12 @@ class CoursesController < ApplicationController
       end
     end
     redirect_back(fallback_location: course_assignments_path(current_course))
+  end
+
+  def destroy_lti_deployment
+    deployment = LtiDeployment.find(params[:lti_deployment_id])
+    deployment.destroy!
+    redirect_to @current_role.admin_user? ? edit_admin_courses_path(@current_course) : edit_course_path(@current_course)
   end
 
   private

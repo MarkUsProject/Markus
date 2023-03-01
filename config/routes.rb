@@ -110,6 +110,7 @@ Rails.application.routes.draw do
       post 'switch_role'
       get 'download_assignments'
       post 'upload_assignments'
+      delete 'destroy_lti_deployment'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update]

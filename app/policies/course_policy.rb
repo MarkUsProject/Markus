@@ -37,4 +37,8 @@ class CoursePolicy < ApplicationPolicy
   def upload_assignments?
     check?(:manage_assessments?, role)
   end
+
+  def destroy_lti_deployment?
+    role.instructor? || role.admin_role?
+  end
 end

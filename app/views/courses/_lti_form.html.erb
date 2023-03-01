@@ -1,0 +1,22 @@
+<div id="lti">
+  <h3>LTI configuration</h3>
+  <% unless @lti_deployments.empty? %>
+    <% @lti_deployments.each do |deployment| %>
+      <p>
+      Course linked to external course <a href=<%"#{deployment.lti_client.host}/courses/#{deployment.lms_course_id}" %>><%= deployment.lms_course_name %></a>
+      </p>
+      <%= button_to t('delete'),
+                    { action: 'destroy_lti_deployment',
+                      id: @current_course.id,
+                      lti_deployment_id: deployment.id
+                      },
+                    html: { title: t('notes.delete.link_title') },
+                    data: { confirm: t('notes.delete.link_confirm') },
+                    method: 'delete',
+                    remote: false,
+                    class: 'inline-button delete' %>
+    <% end %>
+    <% else %>
+  <p>This course has not been linked with an external course. To link this course with an external course, launch MarkUs from the external LMS.</p>
+  <% end %>
+</div>
