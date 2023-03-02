@@ -95,6 +95,7 @@ Rails.application.routes.draw do
       member do
         get 'test_autotest_connection'
         put 'reset_autotest_connection'
+        delete 'destroy_lti_deployment'
       end
     end
     get '/', controller: 'main_admin', action: 'index'

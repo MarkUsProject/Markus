@@ -1,5 +1,6 @@
 describe LtiDeploymentsController do
   let(:instructor) { create :instructor }
+  let(:admin_user) { create :admin_user }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
   before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
 
@@ -26,6 +27,10 @@ describe LtiDeploymentsController do
       context 'when picking a course' do
         it 'redirects to a course on success' do
           post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
+          expect(response).to redirect_to course_path(course)
+        end
+        it 'redirects to a course for an admin' do
+          post_as admin_user, :choose_course, params: { id: lti.id, course: course.id }
           expect(response).to redirect_to course_path(course)
         end
         it 'updates the course on the lti object' do
@@ -60,6 +65,21 @@ describe LtiDeploymentsController do
     end
     it 'creates an instructor role for the user' do
       expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+    end
+    context 'as an admin user' do
+      before :each do
+        session[:lti_deployment_id] = lti_deployment.id
+        post_as admin_user, :create_course, params: course_params
+      end
+      it 'creates a course' do
+        expect(Course.find_by(name: 'csc108')).not_to be_nil
+      end
+      it 'sets the course display name' do
+        expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
+      end
+      it 'creates an instructor role for the user' do
+        expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+      end
     end
   end
   describe '#public_jwk' do

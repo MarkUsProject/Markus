@@ -20,4 +20,16 @@ describe CoursePolicy do
       let(:role) { create :admin_role }
     end
   end
+  describe_rule :destroy_lti_deployment? do
+    succeed 'role is an instructor'
+    succeed 'role is an admin role' do
+      let(:role) { create :admin_role }
+    end
+    failed 'user is a grader' do
+      let(:role) { create :ta }
+    end
+    failed 'user is a student' do
+      let(:role) { create :student }
+    end
+  end
 end

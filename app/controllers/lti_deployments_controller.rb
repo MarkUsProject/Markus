@@ -149,7 +149,7 @@ class LtiDeploymentsController < ApplicationController
     if request.post?
       begin
         course = Course.find(params[:course])
-        unless Instructor.exists?(user: real_user, course: course)
+        unless current_user.admin_user? || Instructor.exists?(user: real_user, course: course)
           flash_message(:error, t('lti.course_link_error'))
           render 'choose_course'
           return
@@ -176,7 +176,11 @@ class LtiDeploymentsController < ApplicationController
 
   def create_course
     new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
-    Instructor.create!(user: current_user, course: new_course)
+    if current_user.admin_user?
+      AdminRole.create!(user: current_user, course: new_course)
+    else
+      Instructor.create!(user: current_user, course: new_course)
+    end
     lti_deployment = record
     lti_deployment.update!(course: new_course)
     redirect_to edit_course_path(new_course)

@@ -24,7 +24,7 @@ class CoursesController < ApplicationController
   end
 
   def edit
-    @lti_deployments = LtiDeployment.where(course: @current_course)
+    @lti_deployments = @current_course.lti_deployments
   end
 
   def update
@@ -157,7 +157,7 @@ class CoursesController < ApplicationController
   def destroy_lti_deployment
     deployment = LtiDeployment.find(params[:lti_deployment_id])
     deployment.destroy!
-    redirect_to @current_role.admin_user? ? edit_admin_courses_path(@current_course) : edit_course_path(@current_course)
+    redirect_to request.referer
   end
 
   private
