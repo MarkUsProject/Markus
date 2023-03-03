@@ -130,7 +130,7 @@
           <% # Display group properties are read only warning
              # when the due date and grace period (if any) have passed.
              if @assignment.past_collection_date?(@current_role.section) && @assignment.student_form_groups &&
-               !@assignment.invalid_override %>
+               @assignment.group_max > 1 %>
             <p class='information'>
               <%= t('groups.student_interface.modification_limited') %>
             </p>
@@ -203,15 +203,15 @@
           <% end %>
 
           <% if @assignment.student_form_groups &&
-            !@assignment.invalid_override %>
+            @assignment.group_max > 1 %>
             <li><%= Assignment.human_attribute_name(:student_form_groups) %>.</li>
             <li>
               <%= t('groups.student_interface.group_size_html',
                     group_min: @assignment.group_min,
                     group_max: @assignment.group_max) %>
             </li>
-          <% elsif @assignment.invalid_override %>
-            <li><%= Assignment.human_attribute_name(:invalid_override) %>.</li>
+          <% elsif !@assignment.student_form_groups && @assignment.group_max > 1 %>
+            <li><%= t('action_policy.policy.assignment.students_form_groups?') %></li>
           <% end %>
         </ul>
       </div>
@@ -220,7 +220,7 @@
 </div>
 
 <% # HTML for the invite dialog
-   if !@grouping.nil? && @grouping.inviter == @current_role && !@assignment.invalid_override %>
+   if !@grouping.nil? && @grouping.inviter == @current_role && @assignment.student_form_groups %>
   <aside class='dialog' id='invite_dialog'>
     <%= form_tag(invite_member_course_assignment_groups_path(course_id: @current_course.id, assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { id: 'invite-student-form' }) do %>
