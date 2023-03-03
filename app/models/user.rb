@@ -56,7 +56,7 @@ class User < ApplicationRecord
       # for that at the moment (you would do it by e.g. pipe.readlines)
 
       # External validation is supported on *NIX only
-      if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+      if RUBY_PLATFORM.match?(/(:?mswin|mingw)/) # should match for Windows only
         return AUTHENTICATE_BAD_PLATFORM
       end
 

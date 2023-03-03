@@ -96,8 +96,10 @@ describe AutotestRunJob do
                                     .joins(starter_file_entries: :starter_file_group)
                                     .where(group_id: group.id)
                                     .pluck('starter_file_entries.path', 'starter_file_groups.name')
-                                    .map { |v| { starter_file_group: v.second, starter_file_path: v.first } if v.first }
-                                    .compact
+                                    .filter_map do |v|
+            { starter_file_group: v.second, starter_file_path: v.first } if v.first
+          end
+
           {
             file_url: file_url,
             env_vars: { MARKUS_GROUP: group.group_name, MARKUS_STARTER_FILES: starter_files.to_json }

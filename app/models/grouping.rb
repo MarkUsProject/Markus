@@ -464,11 +464,11 @@ class Grouping < ApplicationRecord
       section = inviter&.section&.starter_file_group_for(assignment) || assignment.default_starter_file_group
       section&.starter_file_entries || []
     when 'shuffle'
-      assignment.starter_file_groups.includes(:starter_file_entries).map do |g|
+      assignment.starter_file_groups.includes(:starter_file_entries).filter_map do |g|
         # If this grouping has previous starter files, try to choose an entry with the same path as before
         old_entry = g.starter_file_entries.find_by(path: self.starter_file_entries.map(&:path))
         old_entry || StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
-      end.compact
+      end
     when 'group'
       # If this grouping has previous starter files, try to choose a group already assigned to the student
       group_ids = self.starter_file_entries.pluck(:starter_file_group_id).compact.sample
@@ -626,6 +626,9 @@ class Grouping < ApplicationRecord
                                  .pluck_to_hash(:id, :filename, 'test_runs.id', 'test_groups.name')
                                  .group_by { |f| [f['test_runs.id'], f['test_groups.name']] }
 
+    allowed_roles = %w[Instructor Ta AdminRole]
+    allowed_output_settings = %w[instructors_and_student_tests instructors]
+
     hash_list.each do |h|
       h['feedback_files'] = feedback_files[[h['test_runs.id'], h['test_groups.name']]] || []
       h['feedback_files'].each do |f|
@@ -636,9 +639,8 @@ class Grouping < ApplicationRecord
 
       # Hide display_output
       if filter_output && ((h['roles.type'] == 'Student' && h['test_groups.display_output'] == 'instructors') ||
-            (%w[Instructor Ta AdminRole].include?(h['roles.type']) &&
-                                                  %w[instructors_and_student_tests
-                                                     instructors].include?(h['test_groups.display_output'])))
+            (allowed_roles.include?(h['roles.type']) &&
+              allowed_output_settings.include?(h['test_groups.display_output'])))
         h.delete('test_results.output')
       end
     end
@@ -661,11 +663,11 @@ class Grouping < ApplicationRecord
                                                        'test_group_results.created_at')
                                         .group_by { |h| h['test_groups.id'] }
                                         .values
-                                        .map do |v|
+                                        .filter_map do |v|
       v.max_by do |h|
         h['test_group_results.created_at']
       end['test_group_results.id']
-    end.compact
+    end
     plucked = Grouping.pluck_test_runs(
       filtered.where('test_group_results.id': latest_test_group_results),
       filter_output: true,
@@ -753,7 +755,7 @@ class Grouping < ApplicationRecord
 
   def assignments_should_match
     return if assessment_id.nil?
-    unless self.tags.pluck(:assessment_id).compact.all? { |aid| aid == self.assessment_id }
+    unless self.tags.pluck(:assessment_id).compact.all?(self.assessment_id)
       errors.add(:base, 'tags must belong to the same assignment as this grouping')
     end
   end

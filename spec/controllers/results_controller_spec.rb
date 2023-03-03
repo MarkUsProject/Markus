@@ -855,9 +855,9 @@ describe ResultsController do
           end
           expect(returned_categories.sort!).to eq category_names
           expect(response.parsed_body['annotation_categories'].size).to eq 2
-          expect(response.parsed_body['annotation_categories'].select do |cat|
+          expect(response.parsed_body['annotation_categories'].count do |cat|
             cat['id'] == deductive_category.id
-          end.size).to eq 1
+          end).to eq 1
         end
       end
     end

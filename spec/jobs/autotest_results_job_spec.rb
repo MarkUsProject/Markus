@@ -114,7 +114,7 @@ describe AutotestResultsJob do
               it 'should add feedback content for all feedback files' do
                 expect_any_instance_of(TestRun).to receive(:update_results!) do |_test_run, result|
                   expect(
-                    result['test_groups'].map { |h| h['feedback'].map { |hh| hh['content'] } }.flatten.compact.length
+                    result['test_groups'].flat_map { |h| h['feedback'].filter_map { |hh| hh['content'] } }.length
                   ).to eq 2
                 end
                 subject

@@ -391,7 +391,7 @@ describe Course do
 
   describe '#get_required_files' do
     let(:actual) { assignment.course.get_required_files }
-    let(:matching) { actual.lines.select { |line| line.match(/^#{assignment.repository_folder}/) }.map(&:chomp) }
+    let(:matching) { actual.lines.filter_map { |line| line.chomp if /^#{assignment.repository_folder}/.match?(line) } }
     context 'when a course has no assignments' do
       it 'should return an empty string' do
         expect(course.get_required_files).to eq('')

@@ -235,7 +235,9 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
+    group_ids = groupings.filter_map do |g|
+      next unless g.has_non_empty_submission?
+
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
         head :bad_request
@@ -972,7 +974,7 @@ class SubmissionsController < ApplicationController
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
     end
-    entries.map do |file_name, file_obj|
+    entries.filter_map do |file_name, file_obj|
       if file_obj.is_a? Repository::RevisionFile
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
@@ -986,7 +988,7 @@ class SubmissionsController < ApplicationController
       else
         { key: "#{file_name}/" }
       end
-    end.compact
+    end
   end
 
   # Include grouping_id param in parent_params so that check_record can ensure that

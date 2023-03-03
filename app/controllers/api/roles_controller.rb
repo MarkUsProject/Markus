@@ -117,7 +117,7 @@ module Api
         role = Role.new(**role_params, user: user, course: @current_course)
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
-        role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
+        role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
@@ -133,7 +133,7 @@ module Api
       ApplicationRecord.transaction do
         role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
-        role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
+        role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
       end
       render 'shared/http_status', locals: { code: '200', message:

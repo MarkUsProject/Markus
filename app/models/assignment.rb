@@ -333,7 +333,7 @@ class Assignment < Assessment
       end
     end
     ids = Set.new
-    groupings = grouping_data.map do |data|
+    groupings = grouping_data.filter_map do |data|
       next if ids.include? data['groupings.id'] # distinct on the query doesn't seem to work
 
       ids << data['groupings.id']
@@ -356,7 +356,7 @@ class Assignment < Assessment
         members: members[data['groupings.id']],
         section: data['sections.name'] || ''
       }
-    end.compact
+    end
 
     {
       students: students.values,
@@ -461,14 +461,14 @@ class Assignment < Assessment
 
   # Get a list of repo checkout client commands to be used for scripting
   def get_repo_checkout_commands(ssh_url: false)
-    self.groupings.includes(:group, :current_submission_used).map do |grouping|
+    self.groupings.includes(:group, :current_submission_used).filter_map do |grouping|
       submission = grouping.current_submission_used
       next if submission&.revision_identifier.nil?
       url = ssh_url ? grouping.group.repository_ssh_access_url : grouping.group.repository_external_access_url
       Repository.get_class.get_checkout_command(url,
                                                 submission.revision_identifier,
                                                 grouping.group.group_name, repository_folder)
-    end.compact
+    end
   end
 
   # Get a list of group_name, repo-url pairs
@@ -538,7 +538,7 @@ class Assignment < Assessment
     max_mark = 0
 
     selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
-    criteria_columns = selected_criteria.map do |crit|
+    criteria_columns = selected_criteria.filter_map do |crit|
       unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
       next if hide_unassigned && unassigned
 
@@ -551,7 +551,7 @@ class Assignment < Assessment
         className: unassigned ? 'number unassigned' : 'number',
         headerClassName: unassigned ? 'unassigned' : ''
       }
-    end.compact
+    end
 
     final_data = groupings.map do |g|
       result = results_data[g.id]
@@ -778,8 +778,8 @@ class Assignment < Assessment
 
   def get_num_valid
     groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
-             .select(&:is_valid?)
-             .size
+             .to_a
+             .count(&:is_valid?)
   end
 
   def get_num_marked(ta_id = nil)
@@ -932,9 +932,9 @@ class Assignment < Assessment
       sf_group = section&.starter_file_group_for(self) || default_starter_file_group
       sf_group&.starter_file_entries || []
     when 'shuffle'
-      self.starter_file_groups.includes(:starter_file_entries).map do |g|
+      self.starter_file_groups.includes(:starter_file_entries).filter_map do |g|
         StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
-      end.compact
+      end
     when 'group'
       StarterFileGroup.find_by(id: self.starter_file_groups.ids.sample)&.starter_file_entries || []
     else
@@ -973,11 +973,11 @@ class Assignment < Assessment
     files_dir = Pathname.new autotest_files_dir
     return [] unless Dir.exist? files_dir
 
-    Dir.glob("#{files_dir}/**/*", File::FNM_DOTMATCH).map do |f|
+    Dir.glob("#{files_dir}/**/*", File::FNM_DOTMATCH).filter_map do |f|
       unless %w[.. .].include?(File.basename(f))
         Pathname.new(f).relative_path_from(files_dir).to_s
       end
-    end.compact
+    end
   end
 
   def scanned_exams_path
@@ -1130,14 +1130,14 @@ class Assignment < Assessment
       !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
     end
 
-    result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
+    result_ids = result_data.values.flat_map { |arr| arr.map { |h| h['results.id'] } }
 
     total_marks = Mark.where(criterion: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
                       .group_by(&:first)
-                      .transform_values { |arr| arr.map(&:second).compact.sum }
+                      .transform_values { |arr| arr.filter_map(&:second).sum }
 
-    max_mark = criteria.map(&:max_mark).compact.sum
+    max_mark = criteria.filter_map(&:max_mark).sum
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     collection_dates = all_grouping_collection_dates

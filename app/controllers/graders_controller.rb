@@ -124,7 +124,7 @@ class GradersController < ApplicationController
         end
         begin
           weights = params[:weightings].map { |weight| Float(weight) }
-          if weights.sum == 0 || weights.select(&:negative?).length > 0
+          if weights.sum == 0 || weights.any?(&:negative?)
             head :bad_request
             flash_now(:error, I18n.t('graders.number_error'))
             return

@@ -45,7 +45,8 @@ class GradeEntryForm < Assessment
                   .where(roles: { hidden: false })
                   .pluck('grade_entry_students.id')
 
-    @completed_result_marks = GradeEntryStudent.get_total_grades(ges_ids).values.compact.sort
+    @completed_result_marks = GradeEntryStudent.get_total_grades(ges_ids).values.compact
+    @completed_result_marks.sort!
   end
 
   def released_marks
