@@ -60,7 +60,8 @@ describe Api::CoursesController do
         expect(course_ids).to contain_exactly(*Course.ids)
       end
       it 'should return all default fields' do
-        keys = Hash.from_xml(response.body).dig('courses', 'course').first.keys.map(&:to_sym).sort
+        keys = Hash.from_xml(response.body).dig('courses', 'course').first.keys.map(&:to_sym)
+        keys.sort!
         expect(keys).to eq(Api::CoursesController::DEFAULT_FIELDS.sort)
       end
     end

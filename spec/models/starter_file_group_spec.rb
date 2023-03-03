@@ -174,8 +174,9 @@ describe StarterFileGroup do
 
   describe '#should_rename' do
     it 'should return true if use_rename is true, there is something to rename it to, and the rule is shuffle' do
+      test_names = ['', nil, 'something']
       [true, false].each do |use_rename|
-        ['', nil, 'something'].each do |entry_rename|
+        test_names.each do |entry_rename|
           AssignmentProperties::STARTER_FILE_TYPES.each do |sftype|
             grp = build(:starter_file_group,
                         use_rename: use_rename,

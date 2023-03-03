@@ -140,9 +140,9 @@ FactoryBot.define do
   # be created from this using such functions as random assignment.
   factory :assignment_with_peer_review_and_groupings_results, parent: :assignment_with_peer_review do
     after(:create) do |assign|
-      students = 6.times.map { create(:student) }
-      groupings = 3.times.map { create(:grouping, assignment: assign) }
-      pr_groupings = 3.times.map { create(:grouping, assignment: assign.pr_assignment) }
+      students = create_list(:student, 6)
+      groupings = create_list(:grouping, 3, assignment: assign)
+      pr_groupings = create_list(:grouping, 3, assignment: assign.pr_assignment)
       3.times.each do |i|
         create(:accepted_student_membership, role: students[i], grouping: groupings[i])
         create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i])

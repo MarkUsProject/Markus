@@ -64,7 +64,7 @@ describe Api::SubmissionFilesController do
           success, _messages = group.access_repo do |repo|
             file_path = Pathname.new(assignment.repository_folder).join path
             files = repo.get_latest_revision.files_at_path(file_path.to_s)
-            files.keys.include? 'test.txt'
+            files.key? 'test.txt'
           end
           expect(success).to be_truthy
         end

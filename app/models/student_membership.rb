@@ -34,7 +34,7 @@ class StudentMembership < Membership
       errors.add('base', 'User must be a student')
       return false
     end
-    unless STATUSES.values.include?(membership_status)
+    unless STATUSES.value?(membership_status)
       errors.add('base', 'Invalid membership status')
       false
     end

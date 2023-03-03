@@ -52,7 +52,7 @@ module SessionHandler
     @current_course ||= if controller_name == 'courses'
                           record
                         else
-                          parent_records.select { |r| r.is_a? Course }.first
+                          parent_records.detect { |r| r.is_a? Course }
                         end
   end
 
@@ -83,9 +83,8 @@ module SessionHandler
   def check_record
     return page_not_found if request.path_parameters[:id] && record.nil?
     return page_not_found if parent_params.length != parent_records.compact.length
-    page_not_found if [record, *parent_records].compact
-                                               .reject { |r| r.is_a? Course }
-                                               .any? { |r| r.try(:course) != current_course }
+    records = [record, *parent_records].compact
+    page_not_found if records.any? { |r| !r.is_a?(Course) && r.try(:course) != current_course }
   end
 
   # Check if there's any user associated with this session

@@ -584,14 +584,14 @@ class ResultsController < ApplicationController
 
   # Regenerate the view tokens for the results whose ids are given
   def refresh_view_tokens
-    updated = requested_results.map { |r| r.regenerate_view_token ? r.id : nil }.compact
+    updated = requested_results.filter_map { |r| r.regenerate_view_token ? r.id : nil }
     render json: Result.where(id: updated).pluck(:id, :view_token).to_h
   end
 
   # Update the view token expiry date for the results whose ids are given
   def update_view_token_expiry
     expiry = params[:expiry_datetime]
-    updated = requested_results.map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }.compact
+    updated = requested_results.filter_map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }
     render json: Result.where(id: updated).pluck(:id, :view_token_expiry).to_h
   end
 
