@@ -16,22 +16,27 @@ describe Note do
     end
   end
 
-  shared_examples 'test noteable\'s courses' do
-    { Grouping: -> { create(:grouping) },
-      Student: -> { create(:student) },
-      Assignment: -> { create(:assignment) } }.each_pair do |type, noteable|
-      context "when #{type} exist" do
-        before do
-          @noteable = noteable.call
-        end
-        it 'returns true for the notable\'s course' do
-          expect(Note.noteables_exist?(@noteable.course.id)).to be true
-        end
-        it 'returns false for a different course' do
-          course = create(:course)
-          expect(Note.noteables_exist?(course.id)).to be false
-        end
+  shared_examples 'testing noteable on different models' do |type, noteable|
+    context "when #{type} exist" do
+      before do
+        @noteable = noteable.call
+      end
+      it 'returns true for the notable\'s course' do
+        expect(Note.noteables_exist?(@noteable.course.id)).to be true
+      end
+      it 'returns false for a different course' do
+        course = create(:course)
+        expect(Note.noteables_exist?(course.id)).to be false
       end
     end
+  end
+
+  let(:grouping) { create(:grouping) }
+  let(:student) { create(:student) }
+  let(:assignment) { create(:assignment) }
+  { Grouping: -> { grouping },
+    Student: -> { student },
+    Assignment: -> { assignment } }.each_pair do
+    include_examples('testing noteable on different models')
   end
 end
