@@ -62,7 +62,7 @@ module Admin
     def destroy_lti_deployment
       deployment = LtiDeployment.find(params[:lti_deployment_id])
       deployment.destroy!
-      redirect_to request.referer
+      redirect_to edit_admin_course_path(@current_course)
     end
 
     private

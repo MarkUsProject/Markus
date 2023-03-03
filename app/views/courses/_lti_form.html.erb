@@ -1,6 +1,6 @@
 <div id="lti">
   <h3><%= t('lti.lti_configuration') %></h3>
-  <% unless @lti_deployments.empty? %>
+  <% unless @lti_deployments.nil? || @lti_deployments.empty? %>
     <% @lti_deployments.each do |deployment| %>
       <p>
         <%= t('lti.lti_course_link_html',
@@ -20,6 +20,6 @@
                     class: 'inline-button delete' %>
     <% end %>
     <% else %>
-  <p><%= t('lti.course_not_linked') %>></p>
+  <p><%= t('lti.course_not_linked') %></p>
   <% end %>
 </div>
