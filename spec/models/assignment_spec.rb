@@ -2561,4 +2561,94 @@ describe Assignment do
       end
     end
   end
+
+  describe '#current_results' do
+    let(:assignment) { create(:assignment) }
+
+    context 'when there are no results for the assignment' do
+      it 'returns no results' do
+        expect(assignment.current_results.size).to eq 0
+      end
+    end
+
+    context 'when there are results for a different assignment' do
+      it 'returns no results' do
+        create(:assignment, course: assignment.course)
+
+        expect(assignment.current_results.size).to eq 0
+      end
+    end
+
+    context 'when there are groupings with no submissions' do
+      it 'returns no results' do
+        create(:grouping, assignment: assignment)
+
+        expect(assignment.current_results.size).to eq 0
+      end
+    end
+
+    context 'when there is a grouping with a submission' do
+      let!(:grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+
+      context 'when the result is incomplete' do
+        it 'returns the result for that grouping' do
+          expect(assignment.current_results.size).to eq 1
+        end
+      end
+
+      context 'when the result is complete but unreleased' do
+        before { grouping.current_result.update(marking_state: Result::MARKING_STATES[:complete]) }
+
+        it 'returns the result for that grouping' do
+          expect(assignment.current_results.size).to eq 1
+        end
+      end
+
+      context 'when the result is released' do
+        before do
+          result = grouping.current_result
+          result.update(
+            marking_state: Result::MARKING_STATES[:complete],
+            released_to_students: true
+          )
+        end
+
+        it 'returns the result for that grouping' do
+          expect(assignment.current_results.size).to eq 1
+        end
+      end
+    end
+
+    context 'when there is a grouping with a submission with a remark request' do
+      let!(:grouping) do
+        g = create(:grouping_with_inviter_and_submission, assignment: assignment)
+        g.current_result.update!(
+          marking_state: Result::MARKING_STATES[:complete],
+          released_to_students: true
+        )
+        g
+      end
+      let!(:remark_result) { create(:remark_result, submission: grouping.current_submission_used) }
+
+      it 'returns the remark result for that grouping' do
+        expect(assignment.current_results.size).to eq 1
+        expect(assignment.current_results.first.id).to eq remark_result.id
+      end
+    end
+
+    context 'when there is an assignment with peer reviews' do
+      let(:assignment) { create(:assignment_with_peer_review_and_groupings_results) }
+      before do
+        assignment.groupings.each do |grouping|
+          create(:peer_review, result_grouping: grouping, assignment: assignment)
+        end
+      end
+
+      it 'returns the non-peer review results each grouping' do
+        expect(assignment.current_results.size).to eq assignment.groupings.size
+        expected = assignment.groupings.map { |g| g.current_result.id }
+        expect(assignment.current_results.ids).to match_array expected
+      end
+    end
+  end
 end

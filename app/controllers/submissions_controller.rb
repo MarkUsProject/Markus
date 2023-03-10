@@ -499,7 +499,7 @@ class SubmissionsController < ApplicationController
       end
     rescue StandardError => e
       flash_message(:error, e.message)
-      redirect_to edit_course_result_path(current_course, record.current_result)
+      head :internal_server_error
       return
     end
     filename = file.filename
