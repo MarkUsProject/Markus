@@ -32,13 +32,13 @@ describe Note do
     end
   end
 
-  context 'when Grouping exist' do
+  context 'when Student exist' do
     include_examples 'testing noteable on different models' do
       let(:noteable) { create(:student) }
     end
   end
 
-  context 'when Grouping exist' do
+  context 'when Assignment exist' do
     include_examples 'testing noteable on different models' do
       let(:noteable) { create(:assignment) }
     end
