@@ -52,5 +52,14 @@ describe AutomatedTestsHelper do
         expect(assignment.test_groups.first.criterion).to be_nil
       end
     end
+    context 'when there are existing additional test groups' do
+      let!(:criterion2) { build :flexible_criterion, assignment: assignment }
+      let!(:test_group_id) { create(:test_group, assignment: assignment).id }
+      let!(:test_group2) { create(:test_group, assignment: assignment, criterion: criterion2) }
+      it 'deletes the additional test group' do
+        subject
+        expect(assignment.test_groups.count).to eq(1)
+      end
+    end
   end
 end
