@@ -42,7 +42,7 @@ en:
     start_grade_sync: Syncing Grades
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
-    unlink_confirm: This will unlink the course and any assignments from this LMS. Continue?
+    unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
     unlink_courses: Unlink this course
   markus: MarkUs
   not_applicable: N/A

@@ -149,7 +149,7 @@ class LtiDeploymentsController < ApplicationController
     if request.post?
       begin
         course = Course.find(params[:course])
-        unless current_user.admin_user? || Instructor.exists?(user: real_user, course: course)
+        unless allowed_to?(:manage_lti_deployments?, course, with: CoursePolicy)
           flash_message(:error, t('lti.course_link_error'))
           render 'choose_course'
           return

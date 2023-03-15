@@ -1,6 +1,7 @@
 describe CoursePolicy do
   let(:context) { { role: role, real_user: role.user, user: role.user } }
   let(:role) { create :instructor }
+  let(:record) { role&.course }
   describe_rule :show? do
     succeed 'role is an instructor'
     succeed 'role is a ta' do
@@ -20,15 +21,15 @@ describe CoursePolicy do
       let(:role) { create :admin_role }
     end
   end
-  describe_rule :destroy_lti_deployment? do
+  describe_rule :manage_lti_deployments? do
     succeed 'role is an instructor'
-    succeed 'role is an admin role' do
+    succeed 'user is an admin' do
       let(:role) { create :admin_role }
     end
-    failed 'user is a grader' do
+    failed 'role is a grader' do
       let(:role) { create :ta }
     end
-    failed 'user is a student' do
+    failed 'role is a student' do
       let(:role) { create :student }
     end
   end

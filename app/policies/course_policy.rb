@@ -1,10 +1,11 @@
 # Policy for courses controller.
 class CoursePolicy < ApplicationPolicy
-  skip_pre_check :role_exists?, only: :index?
+  skip_pre_check :role_exists?, only: [:index?, :manage_lti_deployments?]
   skip_pre_check :role_is_hidden?, only: :clear_role_switch_session?
 
   default_rule :manage?
   alias_rule :clear_role_switch_session?, to: :role_is_switched?
+  alias_rule :destroy_lti_deployment?, to: :manage_lti_deployments?
 
   def show?
     role.instructor? || role.student? || role.ta?
@@ -38,7 +39,7 @@ class CoursePolicy < ApplicationPolicy
     check?(:manage_assessments?, role)
   end
 
-  def destroy_lti_deployment?
-    role.instructor? || role.admin_role?
+  def manage_lti_deployments?
+    user.admin_user? || Instructor.exists?(user: user, course: record)
   end
 end
