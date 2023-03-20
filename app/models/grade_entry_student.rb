@@ -177,7 +177,7 @@ class GradeEntryStudent < ApplicationRecord
     grades.map do |k, v|
       ges_grades = v.map(&:last)
       ges_grades = ges_grades.all?(&:nil?) ? nil : ges_grades.compact.sum
-      [k, ges_grades]
+      [k, ges_grades.nil? ? nil : [ges_grades, 0].max]
     end.to_h
   end
 

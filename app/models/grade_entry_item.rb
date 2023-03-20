@@ -15,7 +15,7 @@ class GradeEntryItem < ApplicationRecord
 
   validates :out_of, presence: true
   validates :out_of,
-            numericality: { greater_than_or_equal_to: 0 }
+            numericality: { greater_than_or_equal_to: 0 }, unless: :bonus?
 
   validates :position, presence: true
   validates :position, numericality: { greater_than_or_equal_to: 0 }
