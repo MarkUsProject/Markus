@@ -15,7 +15,7 @@ describe Mark do
 
   describe 'when mark belongs to rubric criterion and the max mark is exceeded' do
     let(:rubric_mark) do
-      FactoryBot.build(:rubric_mark, mark: 10)
+      build(:rubric_mark, mark: 10)
     end
     it 'should not be valid' do
       expect(rubric_mark).to_not be_valid
@@ -24,7 +24,7 @@ describe Mark do
 
   describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
     let(:flexible_mark) do
-      FactoryBot.build(:flexible_mark, mark: 10)
+      build(:flexible_mark, mark: 10)
     end
     it 'should not be valid' do
       expect(flexible_mark).to_not be_valid
@@ -33,7 +33,7 @@ describe Mark do
 
   describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
     let(:checkbox_mark) do
-      FactoryBot.build(:checkbox_mark, mark: 10)
+      build(:checkbox_mark, mark: 10)
     end
     it 'should not be valid' do
       expect(checkbox_mark).to_not be_valid
@@ -42,7 +42,7 @@ describe Mark do
 
   describe 'when mark is less than 0' do
     let(:rubric_mark) do
-      FactoryBot.build(:rubric_mark, mark: -1)
+      build(:rubric_mark, mark: -1)
     end
     it 'should not be valid' do
       expect(rubric_mark).to_not be_valid
@@ -51,7 +51,7 @@ describe Mark do
 
   describe 'mark (column in marks table)' do
     let(:rubric_mark) do
-      FactoryBot.create(:rubric_mark, mark: 4)
+      create(:rubric_mark, mark: 4)
     end
     it 'equals to mark times weight' do
       related_rubric = rubric_mark.criterion

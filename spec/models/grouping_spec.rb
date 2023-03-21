@@ -440,11 +440,11 @@ describe Grouping do
     describe '#refresh_test_tokens' do
       context 'if assignment.tokens is not nil' do
         before do
-          @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
-                                                                                           tokens_per_period: 10 })
+          @assignment = create(:assignment, assignment_properties_attributes:
+            { token_start_date: 1.day.ago, tokens_per_period: 10 })
           @grouping = create(:grouping, assignment: @assignment)
-          @student1 = FactoryBot.create(:student)
-          @student2 = FactoryBot.create(:student)
+          @student1 = create(:student)
+          @student2 = create(:student)
           @grouping.test_tokens = 0
           create(:inviter_student_membership,
                  role: @student1,

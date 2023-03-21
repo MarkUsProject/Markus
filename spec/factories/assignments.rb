@@ -147,8 +147,8 @@ FactoryBot.define do
         create(:accepted_student_membership, role: students[i], grouping: groupings[i])
         create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i])
 
-        submission = create(:version_used_submission, grouping: groupings[i])
-        create(:result, submission: submission, marking_state: Result::MARKING_STATES[:complete])
+        create(:version_used_submission, grouping: groupings[i])
+        groupings[i].reload
       end
     end
   end

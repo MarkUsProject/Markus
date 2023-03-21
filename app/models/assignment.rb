@@ -750,8 +750,7 @@ class Assignment < Assessment
   # Returns all the submissions that have not been graded (completed).
   # Note: This assumes that every submission has at least one result.
   def ungraded_submission_results
-    current_submissions_used.joins(:current_result)
-                            .where('results.marking_state': Result::MARKING_STATES[:incomplete])
+    current_results.where('results.marking_state': Result::MARKING_STATES[:incomplete])
   end
 
   def is_criteria_mark?(ta_id)
@@ -862,13 +861,25 @@ class Assignment < Assessment
 
   # Query for all current results for this assignment
   def current_results
-    # The timestamps of all current results
-    subquery = self.groupings.joins(:current_result).group(:id)
-                   .select('groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
+    # The timestamps of all current results. This duplicates #non_pr_results,
+    # except it renames the groupings table to avoid a name conflict with the second query below.
+    subquery = Result.joins('INNER JOIN submissions AS _submissions ON results.submission_id = _submissions.id ' \
+                            'INNER JOIN groupings AS _groupings ON _submissions.grouping_id = _groupings.id')
+                     .where('_groupings.assessment_id': id, '_submissions.submission_version_used': true)
+                     .where.missing(:peer_reviews)
+                     .group('_groupings.id')
+                     .select('_groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
 
     Result.joins(:grouping)
           .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND " \
                  'results.created_at = sub.results_created_at')
+  end
+
+  # Query for all non-peer review results for this assignment (for the current submissions)
+  def non_pr_results
+    Result.joins(:grouping)
+          .where('groupings.assessment_id': id, 'submissions.submission_version_used': true)
+          .where.missing(:peer_reviews)
   end
 
   # Returns true if this is a peer review, meaning it has a parent assignment,
@@ -1093,16 +1104,16 @@ class Assignment < Assessment
       deductions = {}
     end
 
-    result_data = groupings
-                  .left_outer_joins(current_submission_used: [:current_result, :submitted_remark])
-                  .order('results.created_at DESC')
-                  .pluck_to_hash('groupings.id',
-                                 'results.id',
-                                 'results.marking_state',
-                                 'results.released_to_students',
-                                 'results.view_token',
-                                 'results.view_token_expiry')
-                  .group_by { |h| h['groupings.id'] }
+    # All results for the currently-used submissions, including both remark and original results
+    result_data = self.non_pr_results.joins(:grouping)
+                      .order('results.created_at DESC')
+                      .pluck_to_hash('groupings.id',
+                                     'results.id',
+                                     'results.marking_state',
+                                     'results.released_to_students',
+                                     'results.view_token',
+                                     'results.view_token_expiry')
+                      .group_by { |h| h['groupings.id'] }
 
     if current_role.ta? && anonymize_groups
       member_data = {}
