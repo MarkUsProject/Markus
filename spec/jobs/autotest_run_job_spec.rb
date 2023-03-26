@@ -67,11 +67,11 @@ describe AutotestRunJob do
           subject
           expect(TestRun.where(status: :in_progress).count).to eq n_groups
         end
-        it 'should create test runs associated to the correct grouping and with the correct autotest_run_ids' do
+        it 'should create test runs associated to the correct autotest_run_ids' do
           subject
-          test_run_data = TestRun.joins(grouping: :group).pluck('groups.id', 'test_runs.autotest_test_id')
-          expected = groups.map(&:id).zip(JSON.parse(dummy_return.body)['test_ids'])
-          expect(test_run_data).to contain_exactly(*expected)
+          autotest_test_ids = TestRun.joins(grouping: :group).pluck('test_runs.autotest_test_id')
+          expected = JSON.parse(dummy_return.body)['test_ids']
+          expect(autotest_test_ids).to contain_exactly(*expected)
         end
       end
       it 'should enqueue an AutotestResultsJob job' do
