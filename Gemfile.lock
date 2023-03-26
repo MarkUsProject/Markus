@@ -262,7 +262,7 @@ GEM
     parser (3.2.1.0)
       ast (~> 2.4.1)
     pdf-core (0.9.0)
-    pg (1.4.5)
+    pg (1.4.6)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
