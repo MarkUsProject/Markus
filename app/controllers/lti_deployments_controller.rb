@@ -114,9 +114,9 @@ class LtiDeploymentsController < ApplicationController
     end
     lti_client = LtiClient.find_or_create_by(client_id: lti_data[:client_id], host: lti_data[:host])
     lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client,
-                                                         external_deployment_id: lti_data[:deployment_id])
-    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name],
-                           lms_course_id: lti_data[:lms_course_id])
+                                                         external_deployment_id: lti_data[:deployment_id],
+                                                         lms_course_id: lti_data[:lms_course_id])
+    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name])
     session[:lti_course_label] = lti_data[:lms_course_label]
     if lti_data.key?(:names_role_service)
       names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
@@ -149,7 +149,7 @@ class LtiDeploymentsController < ApplicationController
     if request.post?
       begin
         course = Course.find(params[:course])
-        unless Instructor.exists?(user: real_user, course: course)
+        unless allowed_to?(:manage_lti_deployments?, course, with: CoursePolicy)
           flash_message(:error, t('lti.course_link_error'))
           render 'choose_course'
           return
@@ -176,7 +176,11 @@ class LtiDeploymentsController < ApplicationController
 
   def create_course
     new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
-    Instructor.create!(user: current_user, course: new_course)
+    if current_user.admin_user?
+      AdminRole.create!(user: current_user, course: new_course)
+    else
+      Instructor.create!(user: current_user, course: new_course)
+    end
     lti_deployment = record
     lti_deployment.update!(course: new_course)
     redirect_to edit_course_path(new_course)
