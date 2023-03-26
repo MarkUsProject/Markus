@@ -122,7 +122,7 @@ GEM
     combine_pdf (1.0.22)
       matrix
       ruby-rc4 (>= 0.1.5)
-    concurrent-ruby (1.2.0)
+    concurrent-ruby (1.2.2)
     config (4.1.0)
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
@@ -182,7 +182,7 @@ GEM
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faker (3.0.0)
+    faker (3.1.1)
       i18n (>= 1.8.11, < 2)
     ffi (1.15.4)
     fugit (1.8.1)
