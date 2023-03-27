@@ -20,6 +20,16 @@ class GradeEntryItem < ApplicationRecord
   validates :position, presence: true
   validates :position, numericality: { greater_than_or_equal_to: 0 }
 
+  validates :only_negative_bonus_grades
+
+  # Returns whether a non-bonus column contains negative grade values
+  def only_negative_bonus_grades
+    return true if self.bonus?
+
+    marks = grades_array
+    marks.all? { |m| m >= 0 }
+  end
+
   BLANK_MARK = ''.freeze
 
   # Determine the total mark for a particular student, as a percentage
