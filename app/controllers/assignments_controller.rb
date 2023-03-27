@@ -626,7 +626,7 @@ class AssignmentsController < ApplicationController
     assessment = record
     lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
     @current_job = LtiSyncJob.perform_later(lti_deployments.to_a, assessment, current_course,
-                                            can_create_users: allowed_to?(:manage?, with: Admin::UserPolicy),
+                                            can_create_users: allowed_to?(:lti_manage?, with: UserPolicy),
                                             can_create_roles: allowed_to?(:manage?, with: RolePolicy))
     session[:job_id] = @current_job.job_id
     render 'shared/_poll_job'

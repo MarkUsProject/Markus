@@ -19,6 +19,7 @@ en:
     config_error: Error configuring LTI.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
+    course_not_linked: This course has not been linked with an external course. To link this course with an external course, launch MarkUs from the external LMS.
     course_select_instructions: Match your course with a MarkUs course.
     create_course: Create New Course
     create_line_item_checkbox: Create gradebook item?
@@ -28,6 +29,8 @@ en:
     grade_sync_instructions: This will only synchronize grades that have been released.
     launch: Launch MarkUs
     line_item_created: Gradebook item created.
+    lti_configuration: LTI configuration
+    lti_course_link_html: Course linked to external course <a href="%{lms_host}/courses/%{lms_course_id}">%{lms_course_name}</a>
     lti_deployment: "%{lti_deployment_name} on %{lti_host}"
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
@@ -39,6 +42,8 @@ en:
     start_grade_sync: Syncing Grades
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
+    unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
+    unlink_courses: Unlink this course
   markus: MarkUs
   not_applicable: N/A
   or: Or

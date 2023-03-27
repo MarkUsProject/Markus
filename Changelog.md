@@ -1,10 +1,11 @@
-
 # Changelog
 
 ## [unreleased]
 - Add OCR for parsing scanned exam uploads (#6433)
 - Move submission-specific results/ routes to be under submissions/ (#6434)
 - Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
+- Fix error message when a file is submitted through the API that doesn't match the required file list (#6479)
+- Improve syntax highlighting for C (#6513)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

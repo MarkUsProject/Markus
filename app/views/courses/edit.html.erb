@@ -1,2 +1,3 @@
 <% content_for :title, "#{t(:edit)} #{Course.model_name.human}: #{@current_course.name}" %>
 <%= render partial: 'form', locals: { form_url: course_path(@current_course) } %>
+<%= render partial: 'lti_form' %>

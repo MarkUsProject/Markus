@@ -47,6 +47,9 @@ class Result extends React.Component {
     document.addEventListener("fullscreenchange", () => {
       this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
     });
+
+    // Clear text selection to enable shift + arrow keyboard shortcuts
+    document.getSelection().removeAllRanges();
   }
 
   componentDidUpdate(prevProps, prevState) {
