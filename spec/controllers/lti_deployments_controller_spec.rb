@@ -2,7 +2,10 @@ describe LtiDeploymentsController do
   let(:instructor) { create :instructor }
   let(:admin_user) { create :admin_user }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
-  before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
+  before do
+    allow(File).to receive(:read).and_call_original
+    allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048))
+  end
 
   describe '#choose_course' do
     let!(:course) { create :course }
