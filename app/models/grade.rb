@@ -7,5 +7,14 @@ class Grade < ApplicationRecord
 
   validate :courses_should_match
   validates :grade,
-            numericality: { allow_nil: true }
+            numericality: { greater_than_or_equal_to: 0, allow_nil: true }, unless: :bonus_grade?
+  validates :grade,
+            numericality: { allow_nil: true }, if: :bonus_grade?
+
+  # Return true if the associated grade_entry_item is a bonus column.
+  # If grade_entry_item is NIL or a non-bonus column, return false.
+  def bonus_grade?
+    return false if grade_entry_item.nil?
+    grade_entry_item.bonus?
+  end
 end
