@@ -24,7 +24,7 @@ class Result < ApplicationRecord
 
   before_update :check_for_released
 
-  # Release or unrelease the submissions of a set of groupings.
+  # Release or unrelease the results of a set of groupings.
   def self.set_release_on_results(grouping_ids, release)
     groupings = Grouping.where(id: grouping_ids)
     without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
@@ -34,8 +34,12 @@ class Result < ApplicationRecord
       raise StandardError, I18n.t('submissions.errors.no_submission', group_name: group_names)
     end
 
-    without_complete_result = groupings.joins(:current_result)
-                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
+    assignment = groupings.first.assignment
+    results = assignment.current_results.where('groupings.id': grouping_ids)
+    incomplete_results = results.where('results.marking_state': Result::MARKING_STATES[:incomplete])
+
+    without_complete_result = groupings.joins(:current_submission_used)
+                                       .where('submissions.id': incomplete_results.pluck(:submission_id))
 
     if without_complete_result.present?
       group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
@@ -46,8 +50,7 @@ class Result < ApplicationRecord
       end
     end
 
-    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
-                   .update_all(released_to_students: release)
+    result = results.update_all(released_to_students: release)
 
     if release
       groupings.includes(:accepted_students).find_each do |grouping|

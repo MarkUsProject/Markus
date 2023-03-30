@@ -24,7 +24,9 @@ module Admin
       respond_with @current_course, location: -> { admin_courses_path }
     end
 
-    def edit; end
+    def edit
+      @lti_deployments = @current_course.lti_deployments
+    end
 
     def update
       current_course.update(course_update_params)
@@ -55,6 +57,12 @@ module Admin
                                                        refresh: true)
       session[:job_id] = @current_job.job_id if @current_job
       respond_with current_course, location: -> { edit_admin_course_path(current_course) }
+    end
+
+    def destroy_lti_deployment
+      deployment = LtiDeployment.find(params[:lti_deployment_id])
+      deployment.destroy!
+      redirect_to edit_admin_course_path(@current_course)
     end
 
     private
