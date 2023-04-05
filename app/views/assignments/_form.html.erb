@@ -279,7 +279,7 @@
                       Assignment.human_attribute_name(:allow_groups) %>
         <%= check_box_tag :is_group_assignment, true,
                           @assignment.student_form_groups ||
-                          @assignment.invalid_override %>
+                          @assignment.group_max > 1 %>
       </p>
       <fieldset class='group_properties nested-fieldset'>
         <div class='inline-labels'>
