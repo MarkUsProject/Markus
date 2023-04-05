@@ -53,17 +53,17 @@ describe GroupingPolicy do
     let(:grouping) { create :grouping, assignment: assignment }
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
     succeed 'students form groups, has no extension, before collection date' do
-      let(:properties) { { invalid_override: false } }
+      let(:properties) { { student_form_groups: true } }
     end
     failed 'students do not form groups, has no extension, before collection date' do
-      let(:properties) { { invalid_override: true } }
+      let(:properties) { { student_form_groups: false } }
     end
     failed 'students form groups, has an extension, before collection date' do
-      let(:properties) { { invalid_override: false } }
+      let(:properties) { { student_form_groups: true } }
       before { create :extension, grouping: grouping }
     end
     failed 'students form groups, has no extension, after collection date' do
-      let(:properties) { { invalid_override: false } }
+      let(:properties) { { student_form_groups: true } }
       let(:assignment) { create :assignment, due_date: 1.day.ago, assignment_properties_attributes: properties }
     end
   end
@@ -71,10 +71,10 @@ describe GroupingPolicy do
   describe_rule :students_form_groups? do
     let(:grouping) { create :grouping, assignment: assignment }
     succeed 'invalid override is false' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { invalid_override: false } }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { student_form_groups: true } }
     end
     failed 'invalid override is true' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { invalid_override: true } }
+      let(:assignment) { create :assignment, assignment_properties_attributes: { student_form_groups: false } }
     end
   end
 

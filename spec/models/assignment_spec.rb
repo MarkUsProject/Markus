@@ -251,15 +251,29 @@ describe Assignment do
   end
 
   describe '#group_assignment?' do
-    context 'when invalid_override is allowed' do
-      let(:assignment) { build(:assignment, assignment_properties_attributes: { invalid_override: true }) }
+    context 'when students are not allowed to create their own group' do
+      context 'and group_max is greater than 1' do
+        let(:assignment) do
+          build(:assignment, assignment_properties_attributes: { student_form_groups: false, group_max: 2 })
+        end
 
-      it 'returns true' do
-        expect(assignment.group_assignment?).to be true
+        it 'returns true' do
+          expect(assignment.group_assignment?).to be true
+        end
+      end
+
+      context 'and group_max is 1' do
+        let(:assignment) do
+          build(:assignment, assignment_properties_attributes: { student_form_groups: false })
+        end
+
+        it 'returns false' do
+          expect(assignment.group_assignment?).to be false
+        end
       end
     end
 
-    context 'when invalid_override is not allowed ' do
+    context 'when students can create their own group ' do
       context 'and group_max is greater than 1' do
         let(:assignment) do
           build(:assignment, assignment_properties_attributes: { group_max: 2 })
@@ -787,7 +801,7 @@ describe Assignment do
         @assignment = create(:assignment,
                              due_date: 2.days.ago,
                              created_at: 42.days.ago,
-                             assignment_properties_attributes: { invalid_override: true })
+                             assignment_properties_attributes: { student_form_groups: false, group_max: 2 })
       end
 
       def grouping_count(groupings)
