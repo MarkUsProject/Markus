@@ -14,6 +14,7 @@ class Grade < ApplicationRecord
   # Return true if the associated grade_entry_item is a bonus column.
   # If grade_entry_item is NIL or a non-bonus column, return false.
   def bonus_grade?
+    return false if grade_entry_item.nil?
     grade_entry_item.bonus?
   end
 end
