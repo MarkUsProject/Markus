@@ -84,7 +84,7 @@ namespace :markus do
             m.mark = rand(5) # assign some random mark
             m.save
           end
-          result.overall_comment = "Assignment goals pretty much met, but some things would need improvement. \
+          result.overall_comment = "Assignment goals pretty much met, but some things would need improvement.
             Other things are absolutely fantastic! Seriously, this is just some random text."
           result.marking_state = Result::MARKING_STATES[:complete]
           result.released_to_students = true
