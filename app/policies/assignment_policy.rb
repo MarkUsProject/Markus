@@ -60,7 +60,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def students_form_groups?
-    record.student_form_groups && !record.invalid_override
+    record.student_form_groups
   end
 
   def not_yet_in_group?
