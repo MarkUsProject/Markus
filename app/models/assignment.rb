@@ -612,7 +612,7 @@ class Assignment < Assessment
     self.test_groups
         .joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
         .joins("INNER JOIN (#{test_groups_query}) sub \
-                ON test_groups.id = sub.test_groups_id \
+                ON test_groups.id = sub.test_groups_id
                 AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
         .select('test_groups.name',
                 'test_groups_id',
