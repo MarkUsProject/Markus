@@ -5,7 +5,7 @@ shared_examples 'course associations' do
   end
   it 'should not be valid when one of the belongs_to associations is different from the rest' do
     set_course!(subject, create(:course))
-    expect(subject.reload).not_to be_valid
+    expect(subject.grade_entry_student.reload).not_to be_valid
   end
 end
 

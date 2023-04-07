@@ -1,9 +1,9 @@
 describe Grade do
   context 'when it is not a bonus grade' do
     subject do
-      create :grade_entry_form
+      grade_entry_form = create :grade_entry_form
       student = create :student
-      grade_entry_item = create :grade_entry_item, bonus: false
+      grade_entry_item = create :grade_entry_item, bonus: false, grade_entry_form: grade_entry_form
       create :grade, grade_entry_student: student.grade_entry_students.first, grade_entry_item: grade_entry_item
     end
 
@@ -22,9 +22,9 @@ describe Grade do
 
   context 'when it is a bonus grade' do
     subject do
-      create :grade_entry_form
+      grade_entry_form = create :grade_entry_form
       student = create :student
-      grade_entry_item = create :grade_entry_item, bonus: true
+      grade_entry_item = create :grade_entry_item, bonus: true, grade_entry_form: grade_entry_form
       create :grade, grade_entry_student: student.grade_entry_students.first, grade_entry_item: grade_entry_item
     end
 
