@@ -513,4 +513,54 @@ describe CoursesController do
       end
     end
   end
+  describe 'destroying lti deployments' do
+    let!(:lti_deployment) { create :lti_deployment, course: course }
+    let(:admin_role) { create :admin_role, course: course }
+    it 'redirects if the user is not logged in' do
+      delete :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(302)
+    end
+    it 'returns an error for students' do
+      delete_as student, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(403)
+    end
+    it 'returns an error for TAs' do
+      delete_as ta, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(403)
+    end
+    it 'redirects back as an instructor' do
+      delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(302)
+    end
+    it 'redirects back as an admin' do
+      delete_as admin_role, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(302)
+    end
+    it 'deletes the deployment' do
+      delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(LtiDeployment.all.count).to eq(0)
+    end
+    context 'with dependent line items' do
+      let!(:lti_line_item) { create :lti_line_item, lti_deployment: lti_deployment }
+      it 'deletes the line item' do
+        delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(LtiLineItem.all.count).to eq(0)
+      end
+    end
+    context 'with dependent services' do
+      let!(:lti_names_roles) { create :lti_service_namesrole, lti_deployment: lti_deployment }
+      let!(:lti_line_item_service) { create :lti_service_lineitem, lti_deployment: lti_deployment }
+      it 'deletes the dependent objects' do
+        delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(LtiService.all.count).to eq(0)
+      end
+    end
+    context 'with lti users' do
+      let!(:lti_user) { create :lti_user, user: student.user }
+      it 'does not delete users' do
+        delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(LtiUser.all.count).to eq(1)
+      end
+    end
+  end
 end

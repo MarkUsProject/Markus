@@ -196,10 +196,8 @@ describe Mark do
 
     it 'does not change the mark when there are no deductions' do
       assignment_without_deductions = create(:assignment_with_criteria_and_results)
-      grouping_with_result = assignment_without_deductions.groupings
-                                                          .joins(:current_result)
-                                                          .where.not('results.id': nil).first
-      mark_without_deductions = grouping_with_result.current_result.marks.first
+      result = assignment_without_deductions.current_results.first
+      mark_without_deductions = result.marks.first
       mark_without_deductions.update_deduction
       mark_without_deductions.reload
       expect(mark_without_deductions.mark).to eq(nil)

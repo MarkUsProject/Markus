@@ -120,7 +120,7 @@ describe AssignmentPolicy do
   describe_rule :create_group? do
     let(:role) { create :student }
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
-    let(:properties) { { student_form_groups: true, invalid_override: false } }
+    let(:properties) { { student_form_groups: true } }
     let(:past_collection_date?) { false }
     let(:has_accepted_grouping_for?) { false }
     before do
@@ -132,7 +132,7 @@ describe AssignmentPolicy do
       let(:past_collection_date?) { true }
     end
     failed 'when students cannot form groups' do
-      let(:properties) { { student_form_groups: false, invalid_override: false } }
+      let(:properties) { { student_form_groups: false, group_max: 1 } }
     end
     failed 'when the student is in a group for this assignment' do
       let(:has_accepted_grouping_for?) { true }
@@ -161,10 +161,10 @@ describe AssignmentPolicy do
   describe_rule :students_form_groups? do
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
     failed 'when students cannot form groups' do
-      let(:properties) { { student_form_groups: false, invalid_override: false } }
+      let(:properties) { { student_form_groups: false, group_max: 1 } }
     end
     succeed 'when students can form groups' do
-      let(:properties) { { student_form_groups: true, invalid_override: false } }
+      let(:properties) { { student_form_groups: true } }
     end
   end
 

@@ -827,7 +827,7 @@ class SubmissionsController < ApplicationController
     if is_review
       results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
     else
-      results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+      results = assignment.current_results.where('groupings.id': params[:groupings])
     end
 
     errors = Hash.new { |h, k| h[k] = [] }
