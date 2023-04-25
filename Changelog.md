@@ -6,6 +6,7 @@
 - Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
 - Fix error message when a file is submitted through the API that doesn't match the required file list (#6479)
 - Improve syntax highlighting for C (#6513)
+- Fix issue with test groups occasionally causing manually graded items to be set to 0 (#6519)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
