@@ -75,11 +75,10 @@ module AutomatedTestsHelper
         end
         test_group_ids << test_group_id
         current_test_group_ids << test_group_id
-        assignment.test_groups.where.not(id: current_test_group_ids).destroy_all
       end
       tester_specs['test_data'] = current_test_group_ids
     end
-
+    assignment.test_groups.where.not(id: test_group_ids).destroy_all
     # Save test specs
     assignment.update!(autotest_settings: test_specs)
   end
