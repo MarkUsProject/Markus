@@ -5,7 +5,7 @@ class LtiDeploymentsController < ApplicationController
   before_action :authenticate, :check_course_switch, :check_record,
                 except: [:get_config, :launch, :public_jwk, :redirect_login]
   before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
-  before_action :check_host, only: [:launch]
+  before_action :check_host, only: [:launch, :redirect_login]
 
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
@@ -171,6 +171,7 @@ class LtiDeploymentsController < ApplicationController
 
   def check_host
     known_lti_hosts = Settings.lti.domains
+    known_lti_hosts << URI(root_url).host
     if known_lti_hosts.exclude?(URI(request.referer).host)
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
                                    status: :unprocessable_entity, layout: false
