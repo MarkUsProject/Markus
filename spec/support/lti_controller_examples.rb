@@ -52,7 +52,7 @@ shared_examples 'lti deployment controller' do
       end
       context 'when all required params exist' do
         before :each do
-          stub_request(:post, "http://test.host:443#{self.described_class::LMS_REDIRECT_ENDPOINT}")
+          stub_request(:post, "https://test.host:443#{self.described_class::LMS_REDIRECT_ENDPOINT}")
             .with(
               body: hash_including(launch_params),
               headers: {
@@ -249,8 +249,11 @@ shared_examples 'lti deployment controller' do
     end
   end
   describe '#check_host' do
+    before :each do
+      request.env['HTTP_REFERER'] = root_url
+    end
     it 'does not redirect to an error with a known host' do
-      get_as instructor, :get_config
+      get_as instructor, :redirect_login
       is_expected.to respond_with(:success)
     end
     it 'does redirect to an error with an unknown host' do
