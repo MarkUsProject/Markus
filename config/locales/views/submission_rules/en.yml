@@ -3,8 +3,8 @@ en:
   grace_period_submission_rules:
     confirm_remove_deduction: Are you sure you want to delete this grace credit deduction?
     credit:
-      one: "%{count} credit"
-      other: "%{count} credits"
+      one: "%{count} grace credit"
+      other: "%{count} grace credits"
     deadline_html: Due date using <em>all</em> available grace credits
     group_credits_html: Your group has <strong>%{available_grace_credits}</strong> available grace credit(s)
     individual_credits_html: You have <strong>%{available_grace_credits}</strong> available grace credit(s)
@@ -23,7 +23,7 @@ en:
     overtime_message: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment.
   submission_rules:
     add_period: Add late period
-    deduct: deduct
+    deduct: deduction
     errors:
       not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
     every: every

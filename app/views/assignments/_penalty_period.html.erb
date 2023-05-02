@@ -16,9 +16,6 @@
       <%= t('submission_rules.hours') %>
     </td>
     <td>
-      <%= f.number_field :deduction, min: 0, step: :any, required: true %> %
-    </td>
-    <td>
       <span class='PeriodDeltaChain'>
         <span class='PeriodDeltaChain_FromTime'></span>
       </span>
@@ -27,6 +24,9 @@
       <span class='PeriodDeltaChain'>
         <span class='PeriodDeltaChain_ToTime'></span>
       </span>
+    </td>
+    <td>
+      <%= f.number_field :deduction, min: 0, step: :any, required: true %> %
     </td>
     <td>
       <% if !f.object.nil? && !f.object.new_record? %>
