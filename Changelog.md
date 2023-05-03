@@ -7,6 +7,7 @@
 - Fix error message when a file is submitted through the API that doesn't match the required file list (#6479)
 - Improve syntax highlighting for C (#6513)
 - Allow negative grades for bonus columns in marks spreadsheets (#6521)
+- Clarify assignment submission rule configuration labels (#6529)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
