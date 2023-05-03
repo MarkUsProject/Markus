@@ -74,6 +74,52 @@ describe GradeEntryForm do
       grade_entry_student_with_all_zeros.save
       expect(grade_entry_student_with_all_zeros.get_total_grade).to eq 0.0
     end
+
+    it 'verify the correct value is returned when the student has a positive bonus mark' do
+      student1 = create(:student)
+      grade_entry_student_with_pos_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      grade_entry_student_with_pos_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.7)
+      grade_entry_student_with_pos_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
+      grade_entry_student_with_pos_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 61.5)
+      grade_entry_student_with_pos_bonus.save
+      expect(grade_entry_student_with_pos_bonus.get_total_grade).to eq 62.5
+    end
+
+    it 'verify the correct value is returned when the student has a negative bonus mark' do
+      student1 = create(:student)
+      grade_entry_student_with_neg_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      grade_entry_student_with_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: -2.3)
+      grade_entry_student_with_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
+      grade_entry_student_with_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 61.5)
+      grade_entry_student_with_neg_bonus.save
+      expect(grade_entry_student_with_neg_bonus.get_total_grade).to eq 59.5
+    end
+
+    it 'verify the correct value is returned when the student has a negative bonus mark that exceeds the total mark' do
+      student1 = create(:student)
+      grade_entry_student_with_max_neg_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      grade_entry_student_with_max_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: -63)
+      grade_entry_student_with_max_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
+      grade_entry_student_with_max_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 61.5)
+      grade_entry_student_with_max_neg_bonus.save
+      expect(grade_entry_student_with_max_neg_bonus.get_total_grade).to eq 0
+    end
+
+    it 'verify the correct value is returned when the student has all bonus marks' do
+      student1 = create(:student)
+      grade_entry_student_with_all_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      @grade_entry_items[1].bonus = true
+      @grade_entry_items[2].bonus = true
+      grade_entry_student_with_all_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: 30)
+      grade_entry_student_with_all_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: -25)
+      grade_entry_student_with_all_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 20)
+      grade_entry_student_with_all_bonus.save
+      expect(grade_entry_student_with_all_bonus.get_total_grade).to eq 25
+    end
   end
 
   # Tests for calculate_total_percent
@@ -117,6 +163,53 @@ describe GradeEntryForm do
       end
       grade_entry_student_with_all_zeros.save
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_all_zeros)).to eq 0.0
+    end
+
+    it 'verify the correct percentage is returned when the student has a positive bonus mark' do
+      student1 = create(:student)
+      grade_entry_student_with_pos_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      grade_entry_student_with_pos_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
+      grade_entry_student_with_pos_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
+      grade_entry_student_with_pos_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 8)
+      grade_entry_student_with_pos_bonus.save
+      expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_pos_bonus)).to eq 60.00
+    end
+
+    it 'verify the correct percentage is returned when the student has a negative bonus mark' do
+      student1 = create(:student)
+      grade_entry_student_with_neg_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      grade_entry_student_with_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: -2)
+      grade_entry_student_with_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
+      grade_entry_student_with_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 10)
+      grade_entry_student_with_neg_bonus.save
+      expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_neg_bonus)).to eq 50.00
+    end
+
+    it 'verify the correct percentage is returned when the student has a negative bonus mark that exceeds the total
+        mark' do
+      student1 = create(:student)
+      grade_entry_student_with_max_neg_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      grade_entry_student_with_max_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: -10)
+      grade_entry_student_with_max_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: 2)
+      grade_entry_student_with_max_neg_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 7)
+      grade_entry_student_with_max_neg_bonus.save
+      expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_max_neg_bonus)).to eq 0.0
+    end
+
+    it 'verify the correct percentage is returned when the student has all bonus marks' do
+      student1 = create(:student)
+      grade_entry_student_with_all_bonus = @grade_entry_form.grade_entry_students.find_by(role: student1)
+      @grade_entry_items[0].bonus = true
+      @grade_entry_items[1].bonus = true
+      @grade_entry_items[2].bonus = true
+      grade_entry_student_with_all_bonus.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
+      grade_entry_student_with_all_bonus.grades.create(grade_entry_item: @grade_entry_items[1], grade: -7)
+      grade_entry_student_with_all_bonus.grades.create(grade_entry_item: @grade_entry_items[2], grade: 8)
+      grade_entry_student_with_all_bonus.save
+      expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_all_bonus).round(2)).to eq 13.33
     end
   end
 

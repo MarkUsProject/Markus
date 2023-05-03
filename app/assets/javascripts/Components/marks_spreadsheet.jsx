@@ -146,6 +146,7 @@ class RawMarksSpreadsheet extends React.Component {
         grade_entry_form_id={this.props.grade_entry_form_id}
         grade_id={"grade_" + row.original._id + "_" + row.column.id}
         grade_entry_column={row.column.id}
+        bonus={row.column.data.bonus}
         student_id={row.original._id}
         default_value={row.value}
         updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
@@ -338,7 +339,10 @@ class GradeEntryCell extends React.Component {
     let updated_grade = event.target.value === "" ? "" : Number(event.target.value);
     this.setState({value: updated_grade});
 
-    if (updated_grade !== "" && (Number.isNaN(updated_grade) || updated_grade < 0)) {
+    if (
+      updated_grade !== "" &&
+      (Number.isNaN(updated_grade) || (!this.props.bonus && updated_grade < 0))
+    ) {
       return;
     }
 
@@ -386,7 +390,7 @@ class GradeEntryCell extends React.Component {
         step="any"
         size={4}
         value={this.state.value}
-        min={0}
+        min={this.props.bonus ? "" : 0}
         onChange={this.handleChange}
       />
     );

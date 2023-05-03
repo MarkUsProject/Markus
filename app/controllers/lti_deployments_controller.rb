@@ -14,12 +14,14 @@ class LtiDeploymentsController < ApplicationController
       return
     end
     nonce = rand(10 ** 30).to_s.rjust(30, '0')
+    session_nonce = rand(10 ** 30).to_s.rjust(30, '0')
     lti_launch_data = {}
     lti_launch_data[:client_id] = params[:client_id]
     lti_launch_data[:iss] = params[:iss]
     lti_launch_data[:nonce] = nonce
-    lti_launch_data[:state] = session.id.to_s
-    cookies.permanent.encrypted[:lti_launch_data] = { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now }
+    lti_launch_data[:state] = session_nonce
+    cookies.permanent.encrypted[:lti_launch_data] =
+      { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now, same_site: :none, secure: true }
     auth_params = {
       scope: 'openid',
       response_type: 'id_token',
@@ -30,11 +32,12 @@ class LtiDeploymentsController < ApplicationController
       response_mode: 'form_post',
       nonce: nonce,
       prompt: 'none',
-      state: session.id.to_s # Binds this request to the LTI response
+      state: session_nonce
     }
     auth_request_uri = construct_redirect_with_port(request.referer, endpoint: self.class::LMS_REDIRECT_ENDPOINT)
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
+    http.use_ssl = true if auth_request_uri.instance_of? URI::HTTPS
     req = Net::HTTP::Post.new(auth_request_uri)
     req.set_form_data(auth_params)
 
@@ -100,7 +103,8 @@ class LtiDeploymentsController < ApplicationController
       lti_data[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:user_launch_data]]['user_id']
       unless logged_in?
         lti_data[:lti_redirect] = request.url
-        cookies.encrypted.permanent[:lti_data] = { value: JSON.generate(lti_data), expires: 1.hour.from_now }
+        cookies.encrypted.permanent[:lti_data] =
+          { value: JSON.generate(lti_data), expires: 1.hour.from_now, same_site: :none, secure: true }
         redirect_to root_path
         return
       end
@@ -167,6 +171,7 @@ class LtiDeploymentsController < ApplicationController
 
   def check_host
     known_lti_hosts = Settings.lti.domains
+    known_lti_hosts << URI(root_url).host
     if known_lti_hosts.exclude?(URI(request.referer).host)
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
                                    status: :unprocessable_entity, layout: false
