@@ -4,16 +4,6 @@ namespace :db do
     puts user.api_key
   end
 
-  desc 'Create a developer Admin User'
-  task developer_admin: :environment do
-    [%w[admin test admin]].each do |admin|
-      a = AdminUser.create!(user_name: admin[0],
-                            first_name: admin[1],
-                            last_name: admin[2])
-      a.reset_api_key
-    end
-  end
-
   desc 'Create a single Instructor'
   task instructor: :environment do
     puts 'Populate database with Instructors'
