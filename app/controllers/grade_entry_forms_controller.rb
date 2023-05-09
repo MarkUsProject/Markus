@@ -111,7 +111,8 @@ class GradeEntryFormsController < ApplicationController
     data = grade_entry_form.grade_entry_items.map do |column|
       {
         accessor: column.id.to_s,
-        Header: "#{column.name} (#{column.out_of})"
+        Header: "#{column.name} (#{column.out_of})",
+        data: { bonus: column.bonus }
       }
     end
     render json: data
