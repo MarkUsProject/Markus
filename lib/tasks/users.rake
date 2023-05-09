@@ -2,6 +2,10 @@ namespace :db do
   task admin: :environment do
     user = AdminUser.find_or_create
     puts user.api_key
+  end
+
+  desc 'Create a developer Admin User'
+  task developer_admin: :environment do
     [%w[admin test admin]].each do |admin|
       a = AdminUser.create!(user_name: admin[0],
                             first_name: admin[1],
