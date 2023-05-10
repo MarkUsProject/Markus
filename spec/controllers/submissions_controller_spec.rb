@@ -1459,7 +1459,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['content']).to eq(ActiveSupport::JSON.encode(File.read(file1)))
+        expect(response.parsed_body['content']).to eq(ActiveSupport::JSON.encode(File.read(file1)))
       end
     end
     describe 'When the file is a jupyter notebook file' do
@@ -1469,7 +1469,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['type']).to eq 'jupyter-notebook'
+        expect(response.parsed_body['type']).to eq 'jupyter-notebook'
       end
     end
     describe 'When the file is an rmarkdown notebook file' do
@@ -1479,7 +1479,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['type']).to eq 'rmarkdown'
+        expect(response.parsed_body['type']).to eq 'rmarkdown'
       end
     end
     describe 'When the file is a binary file' do
@@ -1490,7 +1490,7 @@ describe SubmissionsController do
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
-        expect(JSON.parse(response.body)['content']).to eq(expected)
+        expect(response.parsed_body['content']).to eq(expected)
       end
       describe 'when force_text is true' do
         it 'should download the file content' do
@@ -1500,7 +1500,7 @@ describe SubmissionsController do
                                                   force_text: true,
                                                   submission_file_id: submission_file.id }
           file2.seek(0)
-          actual = JSON.parse(JSON.parse(response.body)['content'])
+          actual = JSON.parse(response.parsed_body['content'])
           expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
           expect(actual).to eq(expected)
         end
@@ -1540,7 +1540,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['type']).to eq('image')
+        expect(response.parsed_body['type']).to eq('image')
       end
     end
     describe 'when the file is a pdf' do
@@ -1550,7 +1550,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['type']).to eq('pdf')
+        expect(response.parsed_body['type']).to eq('pdf')
       end
     end
     describe 'when the file is missing' do
@@ -1561,7 +1561,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['type']).to eq('unknown')
+        expect(response.parsed_body['type']).to eq('unknown')
       end
     end
   end

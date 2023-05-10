@@ -245,7 +245,7 @@ class SplitPdfJob < ApplicationJob
         student_info.destroy!
 
         python_exe = Rails.application.config.python
-        read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
+        read_chars_py_file = Rails.root.join('lib/scanner/read_chars.py').to_s
         stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
         next unless status.success?
 

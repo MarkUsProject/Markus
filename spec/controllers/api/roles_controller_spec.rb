@@ -72,11 +72,11 @@ describe Api::RolesController do
         end
         it 'should return info about a single user if a filter is used' do
           get :index, params: { filter: { user_name: students[0].user_name }, course_id: course.id }
-          expect(JSON.parse(response.body).map { |h| h['user_name'] }).to eq([students[0].user_name])
+          expect(response.parsed_body.pluck('user_name')).to eq([students[0].user_name])
         end
         it 'should return all information in the default fields' do
           get :index, params: { course_id: course.id }
-          info = JSON.parse(response.body)[0]
+          info = response.parsed_body[0]
           expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::RolesController::DEFAULT_FIELDS)
         end
       end
@@ -120,11 +120,11 @@ describe Api::RolesController do
         end
         it 'should return info about the user' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          expect(JSON.parse(response.body)['user_name']).to eq(students[0].user_name)
+          expect(response.parsed_body['user_name']).to eq(students[0].user_name)
         end
         it 'should return all information in the default fields' do
           get :show, params: { id: students[0].id, course_id: course.id }
-          info = JSON.parse(response.body)
+          info = response.parsed_body
           expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::RolesController::DEFAULT_FIELDS)
         end
       end
@@ -270,14 +270,14 @@ describe Api::RolesController do
           students
           request.env['HTTP_ACCEPT'] = 'application/xml'
           get :index, params: { course_id: course.id }
-          user_names = Hash.from_xml(response.body).dig('roles', 'role').map { |h| h['user_name'] }
+          user_names = Hash.from_xml(response.body).dig('roles', 'role').pluck('user_name')
           expect(user_names).to contain_exactly(*User.where.not(type: AdminUser.name).pluck(:user_name))
         end
         it 'json response returns info about all users except admins' do
           students
           request.env['HTTP_ACCEPT'] = 'application/json'
           get :index, params: { course_id: course.id }
-          expect(JSON.parse(response.body).map { |h| h['user_name'] }).to contain_exactly(
+          expect(response.parsed_body.pluck('user_name')).to contain_exactly(
             *User.where
                  .not(type: AdminUser.name)
                  .pluck(:user_name)
@@ -427,14 +427,14 @@ describe Api::RolesController do
           students
           request.env['HTTP_ACCEPT'] = 'application/xml'
           get :index, params: { course_id: course.id }
-          user_names = Hash.from_xml(response.body).dig('roles', 'role').map { |h| h['user_name'] }
+          user_names = Hash.from_xml(response.body).dig('roles', 'role').pluck('user_name')
           expect(user_names).to contain_exactly(*User.all.pluck(:user_name))
         end
         it 'json response returns info about all users' do
           students
           request.env['HTTP_ACCEPT'] = 'application/json'
           get :index, params: { course_id: course.id }
-          expect(JSON.parse(response.body).map { |h| h['user_name'] }).to contain_exactly(*User.all.pluck(:user_name))
+          expect(response.parsed_body.pluck('user_name')).to contain_exactly(*User.all.pluck(:user_name))
         end
       end
 

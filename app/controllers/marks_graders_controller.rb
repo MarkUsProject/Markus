@@ -100,7 +100,7 @@ class MarksGradersController < ApplicationController
                       .to_a
 
     file_out = MarkusCsv.generate(students) do |student, graders|
-      [student] + graders.map { |x| x[1] }
+      [student] + graders.pluck(1)
     end
 
     send_data file_out,

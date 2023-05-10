@@ -152,7 +152,7 @@ describe Api::StarterFileGroupsController do
       context 'expecting json' do
         let(:http_accept) { 'application/json' }
         it 'should contain the correct data' do
-          expect(JSON.parse(response.body)).to eq data
+          expect(response.parsed_body).to eq data
         end
       end
     end
@@ -167,7 +167,7 @@ describe Api::StarterFileGroupsController do
       context 'expecting json' do
         let(:http_accept) { 'application/json' }
         it 'should return empty data' do
-          expect(JSON.parse(response.body)).to eq []
+          expect(response.parsed_body).to eq []
         end
       end
     end
@@ -196,7 +196,7 @@ describe Api::StarterFileGroupsController do
         let(:http_accept) { 'application/json' }
         it 'should contain the correct data' do
           subject
-          expect(JSON.parse(response.body)).to eq data
+          expect(response.parsed_body).to eq data
         end
       end
     end
@@ -402,7 +402,7 @@ describe Api::StarterFileGroupsController do
           let(:http_accept) { 'application/json' }
           it 'should contain the correct data' do
             subject
-            expect(JSON.parse(response.body)).to contain_exactly('q1', 'q1/q1.txt', 'q2.txt')
+            expect(response.parsed_body).to contain_exactly('q1', 'q1/q1.txt', 'q2.txt')
           end
         end
       end

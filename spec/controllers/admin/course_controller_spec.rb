@@ -93,7 +93,7 @@ describe Admin::CoursesController do
         end
         it 'sends the appropriate data' do
           get_as admin, :index, format: 'json'
-          received_data = JSON.parse(response.body).map(&:symbolize_keys)
+          received_data = response.parsed_body.map(&:symbolize_keys)
           expected_data = [
             {
               id: course1.id,

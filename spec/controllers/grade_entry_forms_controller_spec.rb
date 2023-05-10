@@ -712,7 +712,7 @@ describe GradeEntryFormsController do
           students = role.grade_entry_students
                          .where(grade_entry_form: grade_entry_form_with_data)
                          .joins(:user).pluck('users.user_name')
-          expect(response.parsed_body['data'].map { |stu| stu['user_name'] }).to match_array(students)
+          expect(response.parsed_body['data'].pluck('user_name')).to match_array(students)
         end
         it 'returns the correct grade' do
           expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)

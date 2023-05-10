@@ -110,10 +110,10 @@ describe Api::GradeEntryFormsController do
             expect(response).to have_http_status(200)
           end
           it 'should return json content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grade_entry_form.id)
+            expect(response.parsed_body&.first&.dig('id')).to eq(grade_entry_form.id)
           end
           it 'should return all default fields' do
-            keys = JSON.parse(response.body)&.first&.keys&.map(&:to_sym)
+            keys = response.parsed_body&.first&.keys&.map(&:to_sym)
             expect(keys).to contain_exactly(:grade_entry_items, *Api::GradeEntryFormsController::DEFAULT_FIELDS)
           end
         end
@@ -126,7 +126,7 @@ describe Api::GradeEntryFormsController do
             expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
+            expect(response.parsed_body&.first&.dig('id')).to be_nil
           end
         end
         context 'with multiple grade entry forms' do
@@ -135,10 +135,10 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should return xml content about all grade entry forms' do
-            expect(JSON.parse(response.body).length).to eq(5)
+            expect(response.parsed_body.length).to eq(5)
           end
           it 'should return all default fields for all grade entry forms' do
-            keys = JSON.parse(response.body).map { |h| h.keys.map(&:to_sym) }
+            keys = response.parsed_body.map { |h| h.keys.map(&:to_sym) }
             expect(keys).to all(contain_exactly(:grade_entry_items, *Api::GradeEntryFormsController::DEFAULT_FIELDS))
           end
         end
@@ -151,7 +151,7 @@ describe Api::GradeEntryFormsController do
             expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
+            expect(response.parsed_body&.first&.dig('id')).to be_nil
           end
         end
       end

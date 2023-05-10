@@ -102,7 +102,7 @@ class PeerReview < ApplicationRecord
                          .pluck('groups_groupings.group_name', 'groups.group_name')
 
     # Group by reviewee group name, and map to just the reviewer group names.
-    mappings.group_by { |x| x[0] }.transform_values { |pairs| pairs.map { |p| p[1] } }
+    mappings.group_by { |x| x[0] }.transform_values { |pairs| pairs.pluck(1) }
   end
 
   def self.from_csv(assignment, data)

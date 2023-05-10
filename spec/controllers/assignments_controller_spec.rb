@@ -850,25 +850,25 @@ describe AssignmentsController do
                      defaultStarterFileGroup: '',
                      files: [],
                      sections: [] }
-        expect(JSON.parse(response.body)).to eq(expected.transform_keys(&:to_s))
+        expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
       end
       context 'the file data' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
         let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
         it 'should contain the right keys' do
-          file_data = JSON.parse(response.body)['files'].first.keys
+          file_data = response.parsed_body['files'].first.keys
           expect(file_data).to contain_exactly('id', 'name', 'entry_rename', 'use_rename', 'files')
         end
         it 'should contain the right values' do
-          file_data = JSON.parse(response.body)['files'].first.slice('id', 'name', 'entry_rename', 'use_rename')
+          file_data = response.parsed_body['files'].first.slice('id', 'name', 'entry_rename', 'use_rename')
           grp = starter_file_group
           expected = { id: grp.id, name: grp.name, entry_rename: grp.entry_rename, use_rename: grp.use_rename }
           expect(file_data).to eq(expected.transform_keys(&:to_s))
         end
         it 'should contain the right file data' do
-          file_names = JSON.parse(response.body)['files']
-                           .first['files']
-                           .map { |h| h['key'].split(File::Separator).first }
+          file_names = response.parsed_body['files']
+                               .first['files']
+                               .map { |h| h['key'].split(File::Separator).first }
           expected_entries = starter_file_group.starter_file_entries.pluck('path')
           expect(file_names.to_set).to contain_exactly(*expected_entries)
         end
@@ -879,7 +879,7 @@ describe AssignmentsController do
         let(:ssfg) { create :section_starter_file_group, starter_file_group: starter_file_group, section: section }
         let(:params) { { course_id: assignment.course.id, id: ssfg.starter_file_group.assignment.id } }
         it 'should contain the right values' do
-          file_data = JSON.parse(response.body)['sections'].first
+          file_data = response.parsed_body['sections'].first
           expected = { section_id: section.id,
                        section_name: section.name,
                        group_id: starter_file_group.id,
@@ -1183,9 +1183,7 @@ describe AssignmentsController do
 
       it 'should contain the right data' do
         expected_data = assignment.criteria.map(&:grade_distribution_array)
-        received_data = response.parsed_body['criteria_distributions']['datasets'].map do |data_response|
-          data_response['data']
-        end
+        received_data = response.parsed_body['criteria_distributions']['datasets'].pluck('data')
         expect(received_data).to match_array(expected_data)
       end
     end

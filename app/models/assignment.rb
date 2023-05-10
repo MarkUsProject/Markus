@@ -568,7 +568,7 @@ class Assignment < Assessment
       end
 
       tag_info = tag_data.fetch(g.id, [])
-                         .map { |a| a['tags.name'] }
+                         .pluck('tags.name')
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       criteria.transform_values! { |data| data[:mark] }
       extra_mark = extra_marks_hash[result&.id]
@@ -1141,7 +1141,7 @@ class Assignment < Assessment
       !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
     end
 
-    result_ids = result_data.values.flat_map { |arr| arr.map { |h| h['results.id'] } }
+    result_ids = result_data.values.flat_map { |arr| arr.pluck('results.id') }
 
     total_marks = Mark.where(criterion: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
@@ -1157,7 +1157,7 @@ class Assignment < Assessment
 
     # This is the submission data that's actually returned
     data.map do |grouping_id, group_name, revision_timestamp, is_empty, start_time|
-      tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
+      tag_info, result_info, member_info, section_info, collection_date = data_collections.pluck(grouping_id)
       has_remark = result_info&.count&.> 1
       result_info = result_info&.first || {}
 
@@ -1165,7 +1165,7 @@ class Assignment < Assessment
         _id: grouping_id, # Needed for checkbox version of react-table
         max_mark: max_mark,
         group_name: current_role.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
-        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
+        tags: (tag_info.nil? ? [] : tag_info.pluck('tags.name')),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
                                      result_info['results.released_to_students'],
@@ -1190,7 +1190,7 @@ class Assignment < Assessment
         end
       end
 
-      base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
+      base[:members] = member_info.pluck('users.user_name') unless member_info.nil?
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 

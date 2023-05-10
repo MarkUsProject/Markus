@@ -222,7 +222,7 @@ class ResultsController < ApplicationController
         else
           data[:assignment_max_mark] = assignment.max_mark
         end
-        data[:total] = marks_map.map { |h| h['mark'] }
+        data[:total] = marks_map.pluck('mark')
         data[:old_total] = old_marks.values_at(:mark).compact.sum
 
         # Tags
