@@ -91,7 +91,7 @@ module LtiHelper
                                  .joins(grouping: [{ accepted_student_memberships: { role: { user: :lti_users } } }])
                                  .where('lti_users.lti_client': lti_deployment.lti_client)
                                  .pluck('lti_users.lti_user_id', 'results.id')
-    result_ids = released_results.map { |result| result[1] }
+    result_ids = released_results.pluck(1)
     grades = Result.get_total_marks(result_ids)
     released_results.map do |result|
       next if result[0].nil?
@@ -107,7 +107,7 @@ module LtiHelper
                                    .where('lti_users.lti_client': lti_deployment.lti_client)
                                    .pluck('lti_users.lti_user_id', 'grade_entry_students.id')
 
-    ges_ids = student_data.map { |gef_student| gef_student[1] }
+    ges_ids = student_data.pluck(1)
     grades = GradeEntryStudent.get_total_grades(ges_ids)
     student_data.map do |student|
       next if student[0].nil?

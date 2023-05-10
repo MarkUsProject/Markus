@@ -93,10 +93,10 @@ describe Api::GroupsController do
             expect(response).to have_http_status(200)
           end
           it 'should return json content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grouping.group.id)
+            expect(response.parsed_body&.first&.dig('id')).to eq(grouping.group.id)
           end
           it 'should return the member role id' do
-            expect(JSON.parse(response.body)
+            expect(response.parsed_body
                        .first['members'].first['role_id']).to eq(grouping.student_memberships.first.role_id)
           end
           include_examples 'for a different course'
@@ -108,7 +108,7 @@ describe Api::GroupsController do
             it 'should return content about all groupings' do
               groupings
               get :index, params: { assignment_id: assignment.id, course_id: course.id }
-              expect(JSON.parse(response.body).length).to eq(5)
+              expect(response.parsed_body.length).to eq(5)
             end
             include_examples 'for a different course'
           end
@@ -116,12 +116,12 @@ describe Api::GroupsController do
             gr = groupings.first
             get :index, params: { assignment_id: gr.assignment.id, course_id: course.id,
                                   filter: { group_name: gr.group.group_name } }
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(gr.group.id)
+            expect(response.parsed_body&.first&.dig('id')).to eq(gr.group.id)
           end
           it 'should not return groups that match the filter from another assignment' do
             get :index, params: { assignment_id: create(:assignment).id, course_id: course.id,
                                   filter: { group_name: groupings.last.group.group_name } }
-            expect(JSON.parse(response.body)).to be_empty
+            expect(response.parsed_body).to be_empty
           end
           it 'should reject invalid filters' do
             get :index, params: { assignment_id: groupings.first.assignment.id, course_id: course.id,
@@ -165,10 +165,10 @@ describe Api::GroupsController do
             expect(response).to have_http_status(200)
           end
           it 'should return json content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grouping.group.id)
+            expect(response.parsed_body&.first&.dig('id')).to eq(grouping.group.id)
           end
           it 'should return the member role id' do
-            expect(JSON.parse(response.body)
+            expect(response.parsed_body
                        .first['members'].first['role_id']).to eq(grouping.student_memberships.first.role_id)
           end
           include_examples 'for a different course'
@@ -475,7 +475,7 @@ describe Api::GroupsController do
           expect(response).to have_http_status(200)
         end
         it 'should return a mapping from group names to ids' do
-          expect(JSON.parse(response.body)).to eq(grouping.group.group_name => grouping.group.id)
+          expect(response.parsed_body).to eq(grouping.group.group_name => grouping.group.id)
         end
       end
       context 'expecting a xml response' do

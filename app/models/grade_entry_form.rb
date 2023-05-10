@@ -131,7 +131,7 @@ class GradeEntryForm < Assessment
       num_items = self.grade_entry_items.count
     end
 
-    total_grades = GradeEntryStudent.get_total_grades(students.map { |s| s['grade_entry_students.id'] })
+    total_grades = GradeEntryStudent.get_total_grades(students.pluck('grade_entry_students.id'))
 
     MarkusCsv.generate(students, headers) do |student|
       total_grade = total_grades[student['grade_entry_students.id']]

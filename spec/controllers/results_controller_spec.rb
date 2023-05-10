@@ -85,7 +85,7 @@ describe ResultsController do
                                       id: incomplete_result.id,
                                       criterion_id: rubric_mark.criterion_id,
                                       mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)['num_marked']).to eq 0
+        expect(response.parsed_body['num_marked']).to eq 0
         expect(rubric_mark.reload.override).to be true
       end
       context 'setting override when annotations linked to criteria exist' do
@@ -340,7 +340,7 @@ describe ResultsController do
       it 'contains important basic data' do
         subject
         expect(response).to have_http_status(200)
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         received_data = {
           instructor_run: data['instructor_run'],
           is_reviewer: data['is_reviewer'],
@@ -358,7 +358,7 @@ describe ResultsController do
 
       it 'has submission file data' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
         file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
         expect(data['submission_files']).to eq(file_data)
@@ -366,14 +366,14 @@ describe ResultsController do
 
       it 'has no annotation categories data' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expected_data = is_student ? be_nil : eq([])
         expect(data['annotation_categories']).to expected_data
       end
 
       it 'has no grace token deduction data' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data['grace_token_deductions']).to eq([])
       end
 
@@ -386,7 +386,7 @@ describe ResultsController do
         end
         it 'sends grace token deduction data' do
           subject
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expected_deduction_data = [
             {
               id: grace_period_deduction1.id,
@@ -658,7 +658,7 @@ describe ResultsController do
       end
       it 'should return a json containing the new tokens' do
         subject
-        expect(JSON.parse(response.body)).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
+        expect(response.parsed_body).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
       end
       context 'some result ids are not associated with the assignment' do
         let(:extra_result) { create :complete_result }
@@ -677,7 +677,7 @@ describe ResultsController do
         end
         it 'should return a json containing the new tokens for the assignment (not the extra one)' do
           subject
-          expect(JSON.parse(response.body)).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
+          expect(response.parsed_body).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
         end
       end
     end
@@ -699,7 +699,7 @@ describe ResultsController do
       end
       it 'should return a json containing the new dates' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         results.pluck(:id, :view_token_expiry).each do |id, date|
           expect(Time.zone.parse(data[id.to_s])).to be_within(1.second).of(date)
         end
@@ -726,7 +726,7 @@ describe ResultsController do
         end
         it 'should return a json containing the new tokens for the assignment (not the extra one)' do
           subject
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           results.pluck(:id, :view_token_expiry).each do |id, date|
             expect(Time.zone.parse(data[id.to_s])).to be_within(1.second).of(date)
           end
@@ -833,7 +833,7 @@ describe ResultsController do
                                 format: :json }, xhr: true
 
           category_names = [first_name, second_name].sort!
-          returned_categories = response.parsed_body['annotation_categories'].map { |c| c['annotation_category_name'] }
+          returned_categories = response.parsed_body['annotation_categories'].pluck('annotation_category_name')
           expect(returned_categories.sort!).to eq category_names
           expect(response.parsed_body['annotation_categories'].size).to eq 2
         end
@@ -917,7 +917,7 @@ describe ResultsController do
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
 
     context 'when groups information is anonymized' do
-      let(:data) { JSON.parse(response.body) }
+      let(:data) { response.parsed_body }
       let!(:grace_period_deduction) do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
@@ -957,7 +957,7 @@ describe ResultsController do
     end
 
     context 'when criteria are assigned to this grader' do
-      let(:data) { JSON.parse(response.body) }
+      let(:data) { response.parsed_body }
       let(:params) { { course_id: course.id, id: incomplete_result.id } }
       let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
@@ -1029,7 +1029,7 @@ describe ResultsController do
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                         mark: 1 }, xhr: true
-          expect(JSON.parse(response.body)['num_marked']).to eq 0
+          expect(response.parsed_body['num_marked']).to eq 0
         end
       end
     end

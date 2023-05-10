@@ -622,7 +622,7 @@ class Grouping < ApplicationRecord
     # Add feedback files. This has to be done separately because there can be multiple feedback files
     # per test_group_result.
     feedback_files = FeedbackFile.joins(test_group_result: [:test_run, :test_group])
-                                 .where('test_runs.id': hash_list.map { |h| h['test_runs.id'] })
+                                 .where('test_runs.id': hash_list.pluck('test_runs.id'))
                                  .pluck_to_hash(:id, :filename, 'test_runs.id', 'test_groups.name')
                                  .group_by { |f| [f['test_runs.id'], f['test_groups.name']] }
 

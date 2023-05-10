@@ -63,7 +63,7 @@ describe Api::TagsController do
         end
 
         it 'should return json content' do
-          expect(JSON.parse(response.body)&.first&.dig('id')).to eq(tag.id)
+          expect(response.parsed_body&.first&.dig('id')).to eq(tag.id)
         end
       end
     end

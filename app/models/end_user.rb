@@ -6,6 +6,5 @@ class EndUser < User
 
   def visible_courses
     self.courses.where('roles.hidden': false)
-        .where.not('courses.is_hidden': true, 'roles.type': 'Student')
   end
 end

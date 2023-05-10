@@ -234,23 +234,23 @@ class AssignmentsController < ApplicationController
       rescue StandardError => e
         @assignment.errors.add(:base, e.message)
       end
-      unless @assignment.save
-        @assignments = current_course.assignments
-        @sections = current_course.sections
-        @clone_assignments = @assignments.joins(:assignment_properties)
-                                         .where(assignment_properties: { vcs_submit: true })
-                                         .order(:id)
-        respond_with @assignment, location: -> { new_course_assignment_path(current_course, @assignment) }
-        return
-      end
+      @assignment.save!
       if params[:persist_groups_assignment]
         clone_warnings = @assignment.clone_groupings_from(params[:persist_groups_assignment])
         unless clone_warnings.empty?
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
+      @assignments = current_course.assignments
+      @sections = current_course.sections
+      @clone_assignments = @assignments.joins(:assignment_properties)
+                                       .where(assignment_properties: { vcs_submit: true })
+                                       .order(:id)
+      respond_with @assignment, location: -> { new_course_assignment_path(current_course, @assignment) }
+    else
+      respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
     end
-    respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
   end
 
   def summary

@@ -18,11 +18,11 @@ namespace :markus do
     permission_file = archive_dir + 'permission_file'
     archive_copy(Repository::PERMISSION_FILE, permission_file.to_s, rev: rev)
     # copy log files
-    log_dir = File.dirname(Rails.root.join(Settings.logging.log_file))
+    log_dir = Rails.root.join(Settings.logging.log_file).dirname
     log_files_dir = archive_dir + 'log_files'
     archive_copy(log_dir, log_files_dir, rev: rev)
     # copy error files
-    error_dir = File.dirname(Rails.root.join(Settings.logging.error_file))
+    error_dir = Rails.root.join(Settings.logging.error_file).dirname
     error_files_dir = archive_dir + 'error_dir'
     archive_copy(error_dir, error_files_dir, rev: rev)
     # copy starter files

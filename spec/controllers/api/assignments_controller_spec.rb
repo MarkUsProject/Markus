@@ -109,10 +109,10 @@ describe Api::AssignmentsController do
             expect(response).to have_http_status(200)
           end
           it 'should return json content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(assignment.id)
+            expect(response.parsed_body&.first&.dig('id')).to eq(assignment.id)
           end
           it 'should return all default fields' do
-            keys = JSON.parse(response.body)&.first&.keys&.map(&:to_sym)
+            keys = response.parsed_body&.first&.keys&.map(&:to_sym)
             expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
           end
         end
@@ -125,7 +125,7 @@ describe Api::AssignmentsController do
             expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
+            expect(response.parsed_body&.first&.dig('id')).to be_nil
           end
         end
         context 'with multiple assignments' do
@@ -134,10 +134,10 @@ describe Api::AssignmentsController do
             get :index, params: { course_id: course.id }
           end
           it 'should return xml content about all assignments' do
-            expect(JSON.parse(response.body).length).to eq(5)
+            expect(response.parsed_body.length).to eq(5)
           end
           it 'should return all default fields for all assignments' do
-            keys = JSON.parse(response.body).map { |h| h.keys.map(&:to_sym) }
+            keys = response.parsed_body.map { |h| h.keys.map(&:to_sym) }
             expect(keys).to all(match_array(Api::AssignmentsController::DEFAULT_FIELDS))
           end
         end
@@ -150,7 +150,7 @@ describe Api::AssignmentsController do
             expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
+            expect(response.parsed_body&.first&.dig('id')).to be_nil
           end
         end
       end
@@ -181,10 +181,10 @@ describe Api::AssignmentsController do
           expect(response).to have_http_status(200)
         end
         it 'should return json content' do
-          expect(JSON.parse(response.body)&.dig('id')).to eq(assignment.id)
+          expect(response.parsed_body&.dig('id')).to eq(assignment.id)
         end
         it 'should return all default fields' do
-          keys = JSON.parse(response.body)&.keys&.map(&:to_sym)
+          keys = response.parsed_body&.keys&.map(&:to_sym)
           expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end

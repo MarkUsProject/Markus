@@ -34,11 +34,11 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.server_hooks
-    "#{::Rails.root}/lib/repo/git_hooks/server"
+    Rails.root.join('lib/repo/git_hooks/server')
   end
 
   def self.client_hooks
-    "#{::Rails.root}/lib/repo/git_hooks/client"
+    Rails.root.join('lib/repo/git_hooks/client')
   end
 
   # Static method: Creates a new Git repository at
@@ -401,7 +401,7 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.tmp_repo(connect_string)
-    File.join(::Rails.root.to_s, 'tmp', "git_repo_#{connect_string.gsub(File::Separator, '_')}")
+    Rails.root.join("tmp/git_repo_#{connect_string.gsub(File::Separator, '_')}")
   end
 
   ####################################################################

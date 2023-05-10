@@ -54,7 +54,7 @@ describe MarkingSchemesController do
         expect(response.parsed_body['data'][0]['assessment_weights'].keys).to contain_exactly(*expected_assessment_ids)
       end
       it 'should contain the correct column accessors' do
-        accessors = response.parsed_body['columns'].map { |c| c['accessor'] }
+        accessors = response.parsed_body['columns'].pluck('accessor')
         expect(accessors).to contain_exactly(*assessments.map { |a| "assessment_weights.#{a.id}" })
       end
     end

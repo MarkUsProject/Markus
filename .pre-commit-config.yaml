@@ -36,7 +36,7 @@ repos:
     rev: v1.50.2
     hooks:
       - id: rubocop
-        args: ["--autocorrect"]
+        args: [] # ["--autocorrect"]
         types: ["ruby"]
         exclude: |
           (?x)^(
@@ -45,8 +45,8 @@ repos:
             lib/repo/test/.*
           )$
         additional_dependencies:
-          - rubocop-rails:2.13.2
-          - rubocop-performance:1.16.0
+          - rubocop-rails:2.19.1
+          - rubocop-performance:1.17.1
 
 exclude: vendor
 

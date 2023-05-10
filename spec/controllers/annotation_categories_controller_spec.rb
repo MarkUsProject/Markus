@@ -556,7 +556,7 @@ describe AnnotationCategoriesController do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         get_as role, :uncategorized_annotations, format: 'json',
                                                  params: { course_id: course.id, assignment_id: assignment.id }
-        expect(JSON.parse(response.body)).not_to be_empty
+        expect(response.parsed_body).not_to be_empty
       end
 
       it 'has correct keys when responding to json format and uncategorized annotations exist' do
@@ -568,7 +568,7 @@ describe AnnotationCategoriesController do
                :uncategorized_annotations,
                format: 'json',
                params: { course_id: course.id, assignment_id: assignment.id }
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data.first.keys).to match_array expected_keys
         expect(data.second.keys).to match_array expected_keys
       end
@@ -579,7 +579,7 @@ describe AnnotationCategoriesController do
                :uncategorized_annotations,
                format: 'json',
                params: { course_id: course.id, assignment_id: assignment.id }
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data.first['group_name']).to eq(assignment.groupings.first.group.group_name)
         expect(data.first['creator']).to eq(text2.creator.user_name)
         expect(data.first['last_editor']).to eq(last_editor.user_name)

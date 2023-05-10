@@ -3,7 +3,7 @@
 class VersionReader
   VERSION_REGEX = /master|v\d+\.\d+\.\d+/.freeze
   def self.read_version
-    version_file = File.expand_path(File.join(::Rails.root.to_s, 'app', 'MARKUS_VERSION'))
+    version_file = Rails.root.join('app/MARKUS_VERSION').expand_path
     unless File.exist?(version_file)
       return 'unknown'
     end

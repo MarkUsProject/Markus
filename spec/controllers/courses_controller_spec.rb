@@ -485,7 +485,7 @@ describe CoursesController do
       let!(:student2c2) { create :student, course: course2, user: end_user }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
-        parsed_body = JSON.parse(response.body)['data']
+        parsed_body = response.parsed_body['data']
         sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
         expect(parsed_body == sorted_body)
       end
@@ -496,7 +496,7 @@ describe CoursesController do
       let!(:ta2c2) { create :ta, course: course2, user: end_user }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
-        parsed_body = JSON.parse(response.body)['data']
+        parsed_body = response.parsed_body['data']
         sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
         expect(parsed_body == sorted_body)
       end
@@ -507,7 +507,7 @@ describe CoursesController do
       let!(:instructor2c2) { create :instructor, course: course2, user: end_user }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
-        parsed_body = JSON.parse(response.body)['data']
+        parsed_body = response.parsed_body['data']
         sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
         expect(parsed_body == sorted_body)
       end
