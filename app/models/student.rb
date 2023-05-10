@@ -54,10 +54,6 @@ class Student < Role
     Settings.student_csv_order || %w[user_name section_name last_name first_name id_number email]
   ).map(&:to_sym).freeze
 
-  def visible_courses
-    super.where('courses.is_hidden': false)
-  end
-
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'
