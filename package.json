@@ -4,7 +4,7 @@
     "@rails/ujs": "^7.0.4",
     "@rjsf/core": "^4.2.0",
     "chart.js": "^4.3.0",
-    "core-js": "^3.29.1",
+    "core-js": "^3.30.1",
     "dompurify": "^3.0.0",
     "flatpickr": "^4.6.13",
     "heic2any": "^0.0.4",
