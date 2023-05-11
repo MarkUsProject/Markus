@@ -4,7 +4,7 @@ class AdminUser < User
   def self.find_or_create
     user = AdminUser.find_or_create_by!(user_name: ADMIN_USERNAME) do |admin|
       admin.first_name = 'admin'
-      admin.last_name = 'admin'
+      admin.last_name = 'user'
     end
     user.reset_api_key
     user
