@@ -1,6 +1,6 @@
-import consumer from "./consumer"
+import consumer from "./consumer";
 
-function create_collect_submissions_channel_subscription(){
+function create_collect_submissions_channel_subscription() {
   consumer.subscriptions.create("CollectSubmissionsChannel", {
     connected() {
       // Called when the subscription is ready for use on the server
@@ -18,7 +18,7 @@ function create_collect_submissions_channel_subscription(){
       window.submissionTable.wrapped.fetchData();
       console.log("did the fetch data thing");
       // Called when there's incoming data on the websocket for this channel
-    }
+    },
   });
 }
-export {create_collect_submissions_channel_subscription}
+export {create_collect_submissions_channel_subscription};

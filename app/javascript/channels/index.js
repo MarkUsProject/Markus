@@ -1,2 +1,1 @@
-
-import "./collect_submissions_channel"
+import "./collect_submissions_channel";
