@@ -81,7 +81,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    addressable (2.8.1)
+    addressable (2.8.4)
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     autoprefixer-rails (10.4.7.0)
@@ -108,7 +108,7 @@ GEM
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     byebug (11.1.3)
-    capybara (3.38.0)
+    capybara (3.39.0)
       addressable
       matrix
       mini_mime (>= 0.1.3)
@@ -274,7 +274,7 @@ GEM
       rqrcode (>= 1.0.0)
     psych (5.0.1)
       stringio
-    public_suffix (5.0.0)
+    public_suffix (5.0.1)
     puma (6.2.2)
       nio4r (~> 2.0)
     raabro (1.4.0)
@@ -339,7 +339,7 @@ GEM
       connection_pool
     redis-namespace (1.10.0)
       redis (>= 4)
-    regexp_parser (2.7.0)
+    regexp_parser (2.8.0)
     responders (3.1.0)
       actionpack (>= 5.2)
       railties (>= 5.2)
