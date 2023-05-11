@@ -63,6 +63,10 @@ import "javascripts/menu";
 import "javascripts/react_config";
 import "javascripts/redirect";
 
+// import {create_collect_submissions_channel_subscription} from "/app/javascript/channels/index";
+// window.create_collect_submissions_channel_subscription = create_collect_submissions_channel_subscription;
+import "/app/javascript/channels/index";
+
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.
 import {poll_job} from "javascripts/job_poller";

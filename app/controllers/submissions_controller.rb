@@ -160,6 +160,7 @@ class SubmissionsController < ApplicationController
                            params[:apply_late_penalty]
                          end
     SubmissionsJob.perform_now([@grouping],
+                               @current_user,
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
 
@@ -183,6 +184,7 @@ class SubmissionsController < ApplicationController
       head :bad_request
       return
     end
+    CollectSubmissionsChannel.broadcast_to(@current_user, body: 'sent')
     collect_current = params[:collect_current] == 'true'
     apply_late_penalty = params[:apply_late_penalty] == 'true'
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -208,6 +210,7 @@ class SubmissionsController < ApplicationController
     end
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
+                                                  @current_user,
                                                   collection_dates: collection_dates.transform_keys(&:to_s),
                                                   collect_current: collect_current,
                                                   apply_late_penalty: apply_late_penalty)

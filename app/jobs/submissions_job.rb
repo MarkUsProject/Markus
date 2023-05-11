@@ -1,7 +1,7 @@
 class SubmissionsJob < ApplicationJob
-  def self.on_complete_js(_status)
-    'window.submissionTable.wrapped.fetchData'
-  end
+  # def self.on_complete_js(_status)
+  #   'window.submissionTable.wrapped.fetchData'
+  # end
 
   def self.show_status(status)
     I18n.t('poll_job.submissions_job', progress: status[:progress], total: status[:total])
@@ -13,7 +13,7 @@ class SubmissionsJob < ApplicationJob
     Rails.logger.error msg
   end
 
-  def perform(groupings, apply_late_penalty: true, **options)
+  def perform(groupings, enqueuing_user, apply_late_penalty: true, **options)
     return if groupings.empty?
 
     m_logger = MarkusLogger.instance
@@ -49,6 +49,7 @@ class SubmissionsJob < ApplicationJob
       progress.increment
     end
   ensure
+    CollectSubmissionsChannel.broadcast_to(enqueuing_user, body: 'sent')
     m_logger.log('Submission collection process done')
   end
 end
