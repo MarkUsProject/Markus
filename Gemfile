@@ -119,9 +119,6 @@ end
 group :offline do
   gem 'railroady'
   gem 'rdoc'
-  gem 'rubocop'
-  gem 'rubocop-git'
-  gem 'rubocop-performance'
 end
 
 # If you  plan to use unicorn servers for production
