@@ -2,6 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import Form from "@rjsf/core";
+import validator from "@rjsf/validator-ajv8";
 import Flatpickr from "react-flatpickr";
 import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
 import FileUploadModal from "./Modals/file_upload_modal";
@@ -16,12 +17,19 @@ class AutotestManager extends React.Component {
       uiSchema: {
         testers: {
           items: {
-            classNames: "tester-item",
+            "ui:classNames": "tester-item",
             test_data: {
               items: {
                 "ui:order": ["extra_info", "*"],
+                "ui:options": {label: false},
+                feedback_file_names: {
+                  items: {
+                    "ui:options": {label: false},
+                  },
+                },
               },
             },
+            "ui:options": {label: false},
           },
         },
       },
@@ -399,6 +407,7 @@ class AutotestManager extends React.Component {
             uiSchema={this.state.uiSchema}
             formData={this.state.formData}
             onChange={this.handleFormChange}
+            validator={validator}
             noValidate={true}
           >
             <p /> {/*need something here so that the form doesn't render its own submit button*/}

@@ -12,15 +12,15 @@ module AutomatedTestsHelper
         },
         display_output: {
           type: :string,
-          enum: TestGroup.display_outputs.keys,
-          enumNames: TestGroup.display_outputs.keys.map { |k| I18n.t("automated_tests.display_output.#{k}") },
+          oneOf: TestGroup.display_outputs.keys.map do |k|
+            { const: k, title: I18n.t("automated_tests.display_output.#{k}") }
+          end,
           default: TestGroup.display_outputs.keys.first,
           title: I18n.t('automated_tests.display_output_title')
         },
         criterion: {
           type: :string,
           enum: criterion_names,
-          enumNames: criterion_names,
           title: Criterion.model_name.human
         }
       },
