@@ -242,49 +242,62 @@ describe GroupsController do
     end
 
     describe '#create_groups_when_students_work_alone' do
-      before :each do
-        @assignment = create(:assignment)
-        # Create students
-        @student_user_names = %w[c8shosta c5bennet]
-        @student_user_names.each do |name|
-          create(:student, user: create(:end_user, user_name: name))
+      # Create students
+      let!(:students) { create_list(:student, 5) }
+
+      context 'assignment.group_max = 1' do
+        let!(:assignment) { create(:assignment) }
+
+        it 'creates groups for individual students' do
+          data = []
+          students.each do |record|
+            student_mapping = [record.user_name, record.user_name]
+            data << student_mapping
+          end
+          ActiveJob::Base.queue_adapter = :test
+
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+
+          assert_enqueued_with(job: CreateGroupsJob, args: [assignment, data])
+          expect(flash[:error]).to be_blank
+        end
+
+        it 'responds with _poll_job template' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to render_template('shared/_poll_job')
+        end
+
+        it 'responds with appropriate status' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to have_http_status(200)
         end
       end
-
-      it 'creates groups for individual students' do
-        data = [%w[c8shosta c8shosta], %w[c5bennet c5bennet]]
-        ActiveJob::Base.queue_adapter = :test
-
-        get_as instructor, :create_groups_when_students_work_alone,
-               params: { course_id: course.id, assignment_id: @assignment.id },
-               format: 'js'
-
-        assert_enqueued_with(job: CreateGroupsJob, args: [@assignment, data])
-        expect(flash[:error]).to be_blank
-      end
-
-      it 'responds with _poll_job template' do
-        get_as instructor, :create_groups_when_students_work_alone,
-               params: { course_id: course.id, assignment_id: @assignment.id },
-               format: 'js'
-        expect(response).to render_template('shared/_poll_job')
-      end
-
-      it 'responds with appropriate status' do
-        get_as instructor, :create_groups_when_students_work_alone,
-               params: { course_id: course.id, assignment_id: @assignment.id },
-               format: 'js'
-        expect(response).to have_http_status(200)
-      end
-
-      it 'does not create groups if group_max > 1' do
-        @assignment.update!(group_min: 1, group_max: 3)
-        expect do
+      context 'assignment.group_max > 1' do
+        let(:assignment) { create(:assignment, assignment_properties_attributes: { group_max: 4 }) }
+        it 'does not create groups' do
+          expect do
+            get_as instructor, :create_groups_when_students_work_alone,
+                   params: { course_id: course.id, assignment_id: assignment.id }, format: 'js'
+          end.to_not have_enqueued_job(CreateGroupsJob)
+        end
+        it 'responds with appropriate status' do
           get_as instructor, :create_groups_when_students_work_alone,
-                 params: { course_id: course.id, assignment_id: @assignment.id }, format: 'js'
-        end.to_not have_enqueued_job(CreateGroupsJob)
-        expect(response).to have_http_status(200)
-        expect(response).to render_template('shared/_poll_job')
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to have_http_status(200)
+        end
+        it 'responds with _poll_job template' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to render_template('shared/_poll_job')
+        end
       end
     end
 
