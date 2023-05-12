@@ -10,7 +10,7 @@ import {
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
-import {create_collect_submissions_channel_subscription} from "/app/javascript/channels/collect_submissions_channel"
+import {create_collect_submissions_channel_subscription} from "/app/javascript/channels/collect_submissions_channel";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
