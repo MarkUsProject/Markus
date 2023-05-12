@@ -7,4 +7,3 @@ production: *redis
 development: *redis
 test:
   adapter: async
-
