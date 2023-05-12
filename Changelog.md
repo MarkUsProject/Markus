@@ -1,7 +1,7 @@
 # Changelog
 
 ## [unreleased]
-- Do not destroy pending group memberships if the group is given an extension (#)
+- Do not destroy pending group memberships if the group is given an extension (#6582)
 - Add OCR for parsing scanned exam uploads (#6433)
 - Move submission-specific results/ routes to be under submissions/ (#6434)
 - Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
