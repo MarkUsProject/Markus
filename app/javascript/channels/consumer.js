@@ -3,4 +3,4 @@
 
 import { createConsumer } from "@rails/actioncable"
 
-export default createConsumer("ws://localhost:3000/csc108/cable")
+export default createConsumer();

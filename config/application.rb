@@ -34,7 +34,6 @@ module Markus
     config.generators do |g|
       g.test_framework :rspec
     end
-
     # Assets
     # Enable the asset pipeline.
     config.assets.enabled = true
@@ -102,7 +101,7 @@ module Markus
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
     config.active_record.schema_format = :sql
-
+    
     if Settings.exception_notification.enabled
       config.middleware.use ExceptionNotification::Rack,
                             email: {
@@ -126,6 +125,7 @@ module Markus
         end
       end]
     end
+    config.action_cable.url = "ws://localhost:3000/csc108/cable"
 
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format

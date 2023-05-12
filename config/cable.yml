@@ -1,6 +1,7 @@
 redis: &redis
   adapter: redis
   url: <%= Settings.redis.url %>
+  channel_prefix: markus_production
 
 production: *redis
 development: *redis
