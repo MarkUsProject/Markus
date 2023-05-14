@@ -31,6 +31,10 @@ module AutomatedTestsHelper
     schema_data['definitions']['files_list']['enum'] = files
     schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
     schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
+
+    # TODO: remove these two lines when autotest schema is updated
+    schema_data['definitions']['tester_schemas']['discriminator'] = { propertyName: 'tester_type' }
+    schema_data['definitions']['tester_schemas']['required'] = ['tester_type']
     schema_data
   end
 
