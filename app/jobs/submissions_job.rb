@@ -45,7 +45,9 @@ class SubmissionsJob < ApplicationJob
       progress.increment
     end
   ensure
-    CollectSubmissionsChannel.broadcast_to(enqueuing_user, body: 'sent')
+    unless options[:notify_socket].nil?
+      CollectSubmissionsChannel.broadcast_to(enqueuing_user, body: 'sent')
+    end
     m_logger.log('Submission collection process done')
   end
 end

@@ -184,7 +184,6 @@ class SubmissionsController < ApplicationController
       head :bad_request
       return
     end
-    CollectSubmissionsChannel.broadcast_to(@current_user, body: 'sent')
     collect_current = params[:collect_current] == 'true'
     apply_late_penalty = params[:apply_late_penalty] == 'true'
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -213,7 +212,8 @@ class SubmissionsController < ApplicationController
                                                   @current_user,
                                                   collection_dates: collection_dates.transform_keys(&:to_s),
                                                   collect_current: collect_current,
-                                                  apply_late_penalty: apply_late_penalty)
+                                                  apply_late_penalty: apply_late_penalty,
+                                                  notify_socket: true)
       session[:job_id] = @current_job.job_id
     end
     if some_before_due

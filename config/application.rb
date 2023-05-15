@@ -101,7 +101,7 @@ module Markus
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
     config.active_record.schema_format = :sql
-    
+
     if Settings.exception_notification.enabled
       config.middleware.use ExceptionNotification::Rack,
                             email: {
@@ -125,7 +125,7 @@ module Markus
         end
       end]
     end
-    config.action_cable.url = "ws://localhost:3000/csc108/cable"
+    config.action_cable.url = "#{config.action_controller.relative_url_root}#{Settings.rails.session_store.args.path}/cable"
 
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
