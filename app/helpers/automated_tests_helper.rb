@@ -12,15 +12,15 @@ module AutomatedTestsHelper
         },
         display_output: {
           type: :string,
-          enum: TestGroup.display_outputs.keys,
-          enumNames: TestGroup.display_outputs.keys.map { |k| I18n.t("automated_tests.display_output.#{k}") },
+          oneOf: TestGroup.display_outputs.keys.map do |k|
+            { const: k, title: I18n.t("automated_tests.display_output.#{k}") }
+          end,
           default: TestGroup.display_outputs.keys.first,
           title: I18n.t('automated_tests.display_output_title')
         },
         criterion: {
           type: :string,
           enum: criterion_names,
-          enumNames: criterion_names,
           title: Criterion.model_name.human
         }
       },
@@ -31,6 +31,10 @@ module AutomatedTestsHelper
     schema_data['definitions']['files_list']['enum'] = files
     schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
     schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
+
+    # TODO: remove these two lines when autotest schema is updated
+    schema_data['definitions']['tester_schemas']['discriminator'] = { propertyName: 'tester_type' }
+    schema_data['definitions']['tester_schemas']['required'] = ['tester_type']
     schema_data
   end
 

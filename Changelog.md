@@ -9,6 +9,7 @@
 - Improve syntax highlighting for C (#6513)
 - Allow negative grades for bonus columns in marks spreadsheets (#6521)
 - Clarify assignment submission rule configuration labels (#6529)
+- Enable client-side validation of autotest settings page (#6568)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
