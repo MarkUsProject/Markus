@@ -245,15 +245,11 @@ describe GroupsController do
       # Create students
       let!(:students) { create_list(:student, 5) }
 
-      context 'assignment.group_max = 1' do
+      context 'when assignment.group_max = 1' do
         let!(:assignment) { create(:assignment) }
 
         it 'creates groups for individual students' do
-          data = []
-          students.each do |record|
-            student_mapping = [record.user_name, record.user_name]
-            data << student_mapping
-          end
+          data = students.map { |record| [record.user_name, record.user_name] }
           ActiveJob::Base.queue_adapter = :test
 
           get_as instructor, :create_groups_when_students_work_alone,
@@ -278,20 +274,24 @@ describe GroupsController do
           expect(response).to have_http_status(200)
         end
       end
-      context 'assignment.group_max > 1' do
+
+      context 'when assignment.group_max > 1' do
         let(:assignment) { create(:assignment, assignment_properties_attributes: { group_max: 4 }) }
+
         it 'does not create groups' do
           expect do
             get_as instructor, :create_groups_when_students_work_alone,
                    params: { course_id: course.id, assignment_id: assignment.id }, format: 'js'
           end.to_not have_enqueued_job(CreateGroupsJob)
         end
+
         it 'responds with appropriate status' do
           get_as instructor, :create_groups_when_students_work_alone,
                  params: { course_id: course.id, assignment_id: assignment.id },
                  format: 'js'
           expect(response).to have_http_status(200)
         end
+
         it 'responds with _poll_job template' do
           get_as instructor, :create_groups_when_students_work_alone,
                  params: { course_id: course.id, assignment_id: assignment.id },
