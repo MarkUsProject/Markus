@@ -127,3 +127,4 @@ end
 group :unicorn do
   gem 'unicorn'
 end
+gem 'action-cable-testing'

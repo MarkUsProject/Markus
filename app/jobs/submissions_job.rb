@@ -9,7 +9,7 @@ class SubmissionsJob < ApplicationJob
     Rails.logger.error msg
   end
 
-  def perform(groupings, enqueuing_user, apply_late_penalty: true, **options)
+  def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
 
     m_logger = MarkusLogger.instance
@@ -45,8 +45,8 @@ class SubmissionsJob < ApplicationJob
       progress.increment
     end
   ensure
-    unless options[:notify_socket].nil?
-      CollectSubmissionsChannel.broadcast_to(enqueuing_user, body: 'sent')
+    unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
     end
     m_logger.log('Submission collection process done')
   end

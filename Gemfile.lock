@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    action-cable-testing (0.6.1)
+      actioncable (>= 5.0)
     action_policy (0.6.5)
       ruby-next-core (>= 0.14.0)
     actioncable (7.0.4.3)
@@ -462,6 +464,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  action-cable-testing
   action_policy
   activejob-status
   activemodel-serializers-xml

@@ -160,7 +160,7 @@ class SubmissionsController < ApplicationController
                            params[:apply_late_penalty]
                          end
     SubmissionsJob.perform_now([@grouping],
-                               @current_user,
+                               enqueuing_user: @current_user,
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
 
@@ -209,7 +209,7 @@ class SubmissionsController < ApplicationController
     end
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
-                                                  @current_user,
+                                                  enqueuing_user: @current_user,
                                                   collection_dates: collection_dates.transform_keys(&:to_s),
                                                   collect_current: collect_current,
                                                   apply_late_penalty: apply_late_penalty,
