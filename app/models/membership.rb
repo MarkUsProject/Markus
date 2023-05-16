@@ -5,6 +5,8 @@ class Membership < ApplicationRecord
   belongs_to :role
   validates_associated :role
 
+  has_one :user, through: :role
+
   belongs_to :grouping
   validates_associated :grouping
 
