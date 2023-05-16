@@ -218,7 +218,7 @@ describe GroupsController do
       end
 
       it 'accepts a valid file' do
-        ActiveJob::Base.queue_adapter = :test
+        # ActiveJob::Base.queue_adapter = :test
         expect do
           post_as instructor, :upload, params: { course_id: course.id,
                                                  assignment_id: @assignment.id,
@@ -250,7 +250,7 @@ describe GroupsController do
 
         it 'creates groups for individual students' do
           data = students.map { |record| [record.user_name, record.user_name] }
-          ActiveJob::Base.queue_adapter = :test
+          # ActiveJob::Base.queue_adapter = :test
 
           get_as instructor, :create_groups_when_students_work_alone,
                  params: { course_id: course.id, assignment_id: assignment.id },
