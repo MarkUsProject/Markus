@@ -13,7 +13,6 @@ function create_collect_submissions_channel_subscription() {
     received(data) {
       // Called when there's incoming data on the websocket for this channel
       window.submissionTable.wrapped.fetchData();
-
     },
   });
 }
