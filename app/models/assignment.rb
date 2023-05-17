@@ -686,13 +686,13 @@ class Assignment < Assessment
                       .joins(:memberships)
                       .where('memberships.role_id': role.id)
     end
-    students = []
-    groupings.each do |g|
-      g.accepted_students.each do |s|
-        students << { id: s.id, user_name: s.user_name, grouping_id: g.id }
+    students = groupings.map do |g|
+      g.accepted_students.map do |s|
+        { id: s.id, user_name: s.user_name, grouping_id: g.id }
       end
     end
-    students = students.sort_by { |x| x[:user_name] }
+
+    students = students.flatten.sort_by { |x| x[:user_name] }
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
