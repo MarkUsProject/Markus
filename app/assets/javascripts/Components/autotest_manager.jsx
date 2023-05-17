@@ -2,10 +2,14 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import Form from "@rjsf/core";
+import {customizeValidator} from "@rjsf/validator-ajv8";
 import Flatpickr from "react-flatpickr";
 import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
+
+const ajvOptionsOverrides = {discriminator: true};
+const validator = customizeValidator({ajvOptionsOverrides});
 
 class AutotestManager extends React.Component {
   constructor(props) {
@@ -16,12 +20,19 @@ class AutotestManager extends React.Component {
       uiSchema: {
         testers: {
           items: {
-            classNames: "tester-item",
+            "ui:classNames": "tester-item",
             test_data: {
               items: {
                 "ui:order": ["extra_info", "*"],
+                "ui:options": {label: false},
+                feedback_file_names: {
+                  items: {
+                    "ui:options": {label: false},
+                  },
+                },
               },
             },
+            "ui:options": {label: false},
           },
         },
       },
@@ -39,6 +50,7 @@ class AutotestManager extends React.Component {
       uploadTarget: undefined,
       form_changed: false,
     };
+    this.formRef = React.createRef();
   }
 
   componentDidMount() {
@@ -184,6 +196,9 @@ class AutotestManager extends React.Component {
   };
 
   onSubmit = () => {
+    if (!this.formRef.current.validateForm()) {
+      return;
+    }
     let data = {
       assignment: {
         enable_test: this.state.enable_test,
@@ -399,7 +414,9 @@ class AutotestManager extends React.Component {
             uiSchema={this.state.uiSchema}
             formData={this.state.formData}
             onChange={this.handleFormChange}
-            noValidate={true}
+            validator={validator}
+            templates={{ErrorListTemplate: AutotestErrorList}}
+            ref={this.formRef}
           >
             <p /> {/*need something here so that the form doesn't render its own submit button*/}
           </Form>
@@ -430,6 +447,12 @@ class AutotestManager extends React.Component {
         />
       </div>
     );
+  }
+}
+
+class AutotestErrorList extends React.Component {
+  render() {
+    return <p>{I18n.t("automated_tests.errors.settings_invalid")}</p>;
   }
 }
 
