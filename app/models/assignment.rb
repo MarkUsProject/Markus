@@ -677,6 +677,7 @@ class Assignment < Assessment
                       .includes(:group,
                                 :accepted_students,
                                 current_result: :marks)
+
     else
       groupings = self.groupings
                       .includes(:group,
@@ -685,6 +686,13 @@ class Assignment < Assessment
                       .joins(:memberships)
                       .where('memberships.role_id': role.id)
     end
+    students = []
+    groupings.each do |g|
+      g.accepted_students.each do |s|
+        students << { id: s.id, user_name: s.user_name, grouping_id: g.id }
+      end
+    end
+    students = students.sort_by { |x| x[:user_name] }
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
@@ -708,21 +716,21 @@ class Assignment < Assessment
       csv << headers[0]
       csv << headers[1]
 
-      groupings.each do |g|
+      students.each do |student|
+        g = groupings.find(student[:grouping_id])
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
-        g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
-          row = [g.group.group_name] + other_info
-          if result.nil?
-            row += Array.new(2 + self.ta_criteria.count, nil)
-          else
-            row << total_marks_hash[result.id]
-            row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
-            row << extra_marks_hash[result.id]
-          end
-          csv << row
+        s = g.accepted_students.find(student[:id])
+        other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
+        row = [g.group.group_name] + other_info
+        if result.nil?
+          row += Array.new(2 + self.ta_criteria.count, nil)
+        else
+          row << total_marks_hash[result.id]
+          row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
+          row << extra_marks_hash[result.id]
         end
+        csv << row
       end
     end
   end
