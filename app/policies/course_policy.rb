@@ -6,6 +6,7 @@ class CoursePolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :clear_role_switch_session?, to: :role_is_switched?
   alias_rule :destroy_lti_deployment?, to: :manage_lti_deployments?
+  alias_rule :sync_roster?, to: :manage_lti_deployments?
 
   def show?
     role.instructor? || role.student? || role.ta?

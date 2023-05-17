@@ -112,6 +112,7 @@ Rails.application.routes.draw do
       get 'download_assignments'
       post 'upload_assignments'
       delete 'destroy_lti_deployment'
+      post 'sync_roster'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update]

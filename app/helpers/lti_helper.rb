@@ -3,23 +3,24 @@ module LtiHelper
   # if role is not nil, attempt to create users
   # based on the values of can_create_users and
   # can_create_roles.
-  def roster_sync(lti_deployment, course, can_create_users: false, can_create_roles: false)
+  def roster_sync(lti_deployment, course, role_types, can_create_users: false, can_create_roles: false)
     error = false
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
-    membership_uri.query = URI.encode_www_form(role: LtiDeployment::LTI_ROLES[:learner])
     req = Net::HTTP::Get.new(membership_uri)
     res = lti_deployment.send_lti_request!(req, membership_uri, auth_data, [LtiDeployment::LTI_SCOPES[:names_role]])
     member_info = JSON.parse(res.body)
     user_data = member_info['members'].filter_map do |user|
-      unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user'])
-        { user_name: user['lis_person_sourcedid'].nil? ? user['name'] : user['lis_person_sourcedid'],
+      unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
+        role_types.none? { |role| user['roles'].include?(role) }
+        { user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
           first_name: user['given_name'],
           last_name: user['family_name'],
           display_name: user['name'],
           email: user['email'],
-          lti_user_id: user['user_id'] }
+          lti_user_id: user['user_id'],
+          roles: user['roles'] }
       end
     end
     if user_data.empty?
@@ -28,7 +29,7 @@ module LtiHelper
     user_data.each do |lms_user|
       markus_user = EndUser.find_by(user_name: lms_user[:user_name])
       if markus_user.nil? && can_create_users
-        markus_user = EndUser.create(lms_user.except(:lti_user_id))
+        markus_user = EndUser.create(lms_user.except(:lti_user_id, :roles))
         if markus_user.nil?
           error = true
           next
@@ -37,9 +38,16 @@ module LtiHelper
         error = true
         next
       end
-      course_role = Student.find_by(user: markus_user, course: course)
+      course_role = Role.find_by(user: markus_user, course: course)
       if course_role.nil? && can_create_roles
-        course_role = Student.create!(user: markus_user, course: lti_deployment.course)
+        if lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:ta])
+          course_role = Ta.create!(user: markus_user, course: lti_deployment.course)
+        elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:learner])
+          course_role = Student.create!(user: markus_user, course: lti_deployment.course)
+        elsif lms_user[:roles] == [LtiDeployment::LTI_ROLES[:instructor]]
+          course_role = Instructor.create!(user: markus_user, course: lti_deployment.course)
+        end
+
       end
       next if course_role.nil?
       lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)

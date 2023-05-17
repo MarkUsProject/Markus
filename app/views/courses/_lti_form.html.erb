@@ -2,22 +2,28 @@
   <h3><%= t('lti.lti_configuration') %></h3>
   <% unless @lti_deployments.nil? || @lti_deployments.empty? %>
     <% @lti_deployments.each do |deployment| %>
-      <p>
+      <div>
         <%= t('lti.lti_course_link_html',
               { lms_host: deployment.lti_client.host,
                 lms_course_id: deployment.lms_course_id,
                 lms_course_name: deployment.lms_course_name }) %>
-      </p>
-      <%= button_to t('delete'),
-                    { action: 'destroy_lti_deployment',
-                      id: @current_course.id,
-                      lti_deployment_id: deployment.id
+        <%= button_to t('lti.roster_sync'),
+                      { action: 'sync_roster',
+                        id: @current_course.id,
+                        lti_deployment_id: deployment.id},
+                      html: { title: t('lti.roster_sync') },
+                      method: 'post', remote: false, class: 'inline-button'%>
+        <%= button_to t('delete'),
+                      { action: 'destroy_lti_deployment',
+                        id: @current_course.id,
+                        lti_deployment_id: deployment.id
                       },
-                    html: { title: t('lti.unlink_courses') },
-                    data: { confirm: t('lti.unlink_confirm') },
-                    method: 'delete',
-                    remote: false,
-                    class: 'inline-button delete' %>
+                      html: { title: t('lti.unlink_courses') },
+                      data: { confirm: t('lti.unlink_confirm') },
+                      method: 'delete',
+                      remote: false,
+                      class: 'inline-button delete'%>
+      </div>
     <% end %>
   <% else %>
     <p><%= t('lti.course_not_linked') %></p>

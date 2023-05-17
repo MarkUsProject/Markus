@@ -37,9 +37,12 @@ en:
     no_grades: No grades to sync
     no_platform: No platforms selected
     no_users: No user data returned from LMS
+    roster_sync: Sync Roster
+    roster_sync_complete: Roster Sync Complete
     roster_sync_errors: Some students could not be synced.
     select_course: Select the course that matches %{course_name}
     start_grade_sync: Syncing Grades
+    start_roster_sync: Syncing Roster
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
     unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
