@@ -190,7 +190,7 @@ describe GroupsController do
 
     describe '#assign_scans' do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
-      context 'when group_id is passed as argument' do
+      context 'when grouping_id is passed as argument' do
         context 'when current_submission_used is nil' do
           let!(:grouping) { create :grouping, assignment: assignment }
 
