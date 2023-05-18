@@ -34,6 +34,7 @@ module Markus
     config.generators do |g|
       g.test_framework :rspec
     end
+
     # Assets
     # Enable the asset pipeline.
     config.assets.enabled = true
@@ -125,8 +126,7 @@ module Markus
         end
       end]
     end
-    config.action_cable.url =
-      "#{config.action_controller.relative_url_root}#{Settings.rails.session_store.args.path}/cable"
+    config.action_cable.url = "#{Settings.rails.session_store.args.path}/cable"
 
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format

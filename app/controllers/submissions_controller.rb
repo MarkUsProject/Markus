@@ -160,7 +160,6 @@ class SubmissionsController < ApplicationController
                            params[:apply_late_penalty]
                          end
     SubmissionsJob.perform_now([@grouping],
-                               enqueuing_user: @current_user,
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
 
