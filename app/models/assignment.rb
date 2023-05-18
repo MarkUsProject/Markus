@@ -688,7 +688,7 @@ class Assignment < Assessment
     end
     students = groupings.map do |g|
       g.accepted_students.map do |s|
-        { id: s.id, user_name: s.user_name, grouping_id: g.id }
+        { accepted_student: s, user_name: s.user_name, grouping: g }
       end
     end
 
@@ -717,10 +717,10 @@ class Assignment < Assessment
       csv << headers[1]
 
       students.each do |student|
-        g = groupings.find(student[:grouping_id])
+        g = student[:grouping]
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
-        s = g.accepted_students.find(student[:id])
+        s = student[:accepted_student]
         other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
         row = [g.group.group_name] + other_info
         if result.nil?
