@@ -61,9 +61,12 @@ class AutomatedTestsController < ApplicationController
                                                   current_role.id,
                                                   assignment.id,
                                                   [grouping.group_id],
-                                                  collected: false)
+                                                  collected: false,
+                                                  enqueuing_user: @real_user,
+                                                  notify_socket: true)
+
       session[:job_id] = @current_job.job_id
-      flash_message(:success, I18n.t('automated_tests.tests_running'))
+      flash_message(:success, 'Running tests. The table will be updated shortly.')
     end
   rescue StandardError => e
     flash_message(:error, e.message)

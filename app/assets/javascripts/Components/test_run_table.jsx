@@ -4,6 +4,7 @@ import ReactTable from "react-table";
 import {getType} from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
+import {create_student_tests_channel_subscription} from "/app/javascript/channels/student_tests_channel";
 
 export class TestRunTable extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    create_student_tests_channel_subscription(this.fetchData);
   }
 
   componentDidUpdate(prevProps) {

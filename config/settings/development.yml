@@ -4,6 +4,7 @@ rails:
   consider_all_requests_local: true
   hosts:
     - host.docker.internal
+    - docker.for.mac.localhost
   log_level: debug
   active_support:
     deprecation: stderr

@@ -18,7 +18,7 @@ class AutotestResultsJob < AutotestJob
 
   def self.show_status(_status); end
 
-  def perform(_retry: 3)
+  def perform(_retry: 3, **options)
     outstanding_results = false
     ids = Assignment.joins(groupings: :test_runs)
                     .where('test_runs.status': TestRun.statuses[:in_progress])
@@ -48,6 +48,9 @@ class AutotestResultsJob < AutotestJob
     redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
     if redis.get('autotest_results') == self.job_id
       redis.del('autotest_results')
+    end
+    unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+      StudentTestsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
     end
   end
 end
