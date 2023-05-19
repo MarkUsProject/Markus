@@ -208,7 +208,7 @@ class SubmissionsController < ApplicationController
     end
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
-                                                  enqueuing_user: @current_user,
+                                                  enqueuing_user: @real_user,
                                                   collection_dates: collection_dates.transform_keys(&:to_s),
                                                   collect_current: collect_current,
                                                   apply_late_penalty: apply_late_penalty,
