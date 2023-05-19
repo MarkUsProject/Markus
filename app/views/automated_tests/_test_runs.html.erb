@@ -10,6 +10,10 @@
         instructor_run: <%= ran_by == 'instructor' %>,
         instructor_view: <%= !@current_role.student? %>
       });
+      const button = document.getElementById('stop_tests_button');
+      button.addEventListener('click', () => {
+        makeTestRunTable();
+      });
     })
   <% end %>
 <% end %>
@@ -20,11 +24,18 @@
 
 <%# student results page (with instructor tests released) does not need the button %>
 <% unless @current_role.student? && ran_by == 'instructor' %>
-  <% route = @current_role.instructor? ?
+  <%
+    route = @current_role.instructor? ?
     run_tests_course_result_path(@current_course, @result) :
-    execute_test_run_course_assignment_automated_tests_path(@current_course, @assignment) %>
+    execute_test_run_course_assignment_automated_tests_path(@current_course, @assignment)
+
+    test_run_id = @grouping.test_runs.find_by(status: 0)&.autotest_test_id
+    route_stop = stop_test_course_assignment_path(@current_course, @assignment)
+  %>
   <div class="rt-action-box">
     <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized, remote: true %>
+    <%= button_to "Cancel tests", route_stop, method: :get, params: {test_run_id: test_run_id},
+                  disabled: !test_run_id, remote: true, id: 'stop_tests_button' %>
   </div>
 <% end %>
 

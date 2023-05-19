@@ -4,6 +4,7 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
+  # alias_rule :stop_test?, to: :view_test_options?
   authorize :assessment, optional: true
 
   def index?
@@ -26,6 +27,10 @@ class AssignmentPolicy < ApplicationPolicy
 
   def view_test_options?
     (check?(:run_tests?, role) && check?(:tests_enabled?)) || (role.student? && check?(:student_tests_enabled?))
+  end
+
+  def stop_test?
+    (check?(:tests_enabled?) || (role.student? && check?(:student_tests_enabled?)))
   end
 
   def student_tests_enabled?
