@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ApplicationCable::Connection, type: :channel do
   context 'when attempting a connection' do
     let(:instructor) { create :instructor }

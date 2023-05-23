@@ -10,7 +10,7 @@ import {
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
-import {create_collect_submissions_channel_subscription} from "/app/javascript/channels/collect_submissions_channel";
+import consumer from "/app/javascript/channels/consumer";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -29,7 +29,7 @@ class RawSubmissionTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    create_collect_submissions_channel_subscription();
+    this.create_collect_submissions_channel_subscription(this);
   }
 
   fetchData = () => {
@@ -333,6 +333,26 @@ class RawSubmissionTable extends React.Component {
       return prevState;
     }, after_function);
   };
+
+  create_collect_submissions_channel_subscription(submissionTable) {
+    consumer.subscriptions.create(
+      {channel: "CollectSubmissionsChannel", course_id: submissionTable.props.course_id},
+      {
+        connected() {
+          // Called when the subscription is ready for use on the server
+        },
+
+        disconnected() {
+          // Called when the subscription has been terminated by the server
+        },
+
+        received(data) {
+          // Called when there's incoming data on the websocket for this channel
+          submissionTable.fetchData();
+        },
+      }
+    );
+  }
 
   render() {
     const {loading} = this.state;
