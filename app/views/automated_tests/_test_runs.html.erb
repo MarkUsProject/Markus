@@ -10,9 +10,6 @@
         instructor_run: <%= ran_by == 'instructor' %>,
         instructor_view: <%= !@current_role.student? %>
       });
-      const button = document.querySelector('#stop_tests_button');
-      console.log(window);
-      button.addEventListener('click', window.testRunTable.fetchData);
     })
   <% end %>
 <% end %>
@@ -34,7 +31,7 @@
   <div class="rt-action-box">
     <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized, remote: true %>
     <%= button_to "Cancel tests", route_stop, method: :get, params: {test_run_id: test_run_id},
-                  disabled: !test_run_id, remote: true, id: 'stop_tests_button' %>
+                  disabled: !test_run_id %>
   </div>
 <% end %>
 
