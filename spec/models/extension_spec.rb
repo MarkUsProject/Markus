@@ -14,9 +14,9 @@ describe Extension do
     end
   end
   describe 'check callbacks' do
-    it 'should remove pending memberships on creation' do
+    it 'should mark the group as instructor approved on creation' do
       create :student_membership, grouping: grouping
-      expect { extension }.to change { Membership.count }.by(-1)
+      expect { extension }.to change { grouping.instructor_approved }.to(true)
     end
   end
   describe '#to_parts' do

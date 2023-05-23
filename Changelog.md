@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Do not destroy pending group memberships if the group is given an extension (#6582)
 - Add OCR for parsing scanned exam uploads (#6433)
 - Move submission-specific results/ routes to be under submissions/ (#6434)
 - Add option to allow Cross-Origin Resource Sharing (CORS) from JupyterHub (#6442)
@@ -8,6 +9,8 @@
 - Improve syntax highlighting for C (#6513)
 - Allow negative grades for bonus columns in marks spreadsheets (#6521)
 - Clarify assignment submission rule configuration labels (#6529)
+- Enable client-side validation of autotest settings page (#6568)
+- Use web sockets instead of polling to update submissions table after collecting submissions (#6583)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

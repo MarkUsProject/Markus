@@ -103,6 +103,8 @@ RSpec.configure do |config|
   config.before type: :system do
     # Override the default driver used by rspec system tests
     driven_by :selenium_remote_chrome
+
+    SimpleCov.command_name 'system'
   end
 
   config.after :each do |test|
@@ -150,4 +152,5 @@ RSpec.configure do |config|
   #     Bullet.end_request
   #   end
   # end
+  config.include ActionCable::TestHelper
 end
