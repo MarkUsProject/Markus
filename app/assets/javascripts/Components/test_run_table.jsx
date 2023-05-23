@@ -19,7 +19,7 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    create_student_tests_channel_subscription(this.fetchData);
+    create_student_tests_channel_subscription(this);
   }
 
   componentDidUpdate(prevProps) {
