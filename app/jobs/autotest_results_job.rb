@@ -8,17 +8,28 @@ class AutotestResultsJob < AutotestJob
   end
 
   around_perform do |job, block|
-    self.class.set(wait: 5.seconds).perform_later(*job.arguments) if block.call
+    # if there are outstanding results
+    if block.call
+      self.class.set(wait: 5.seconds).perform_later(*job.arguments)
+    else
+      options = job.arguments.first
+      unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+        StudentTestsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
+      end
+    end
   rescue StandardError
     # if the job failed, retry 3 times
     kwargs = job.arguments.first || { _retry: 3 }
-    self.class.perform_later(_retry: kwargs[:_retry] - 1) if kwargs[:_retry] > 0
+    if kwargs[:_retry] > 0
+      self.class.perform_later(_retry: kwargs[:_retry] - 1, notify_socket: kwargs[:notify_socket],
+                               enqueuing_user: kwargs[:enqueuing_user])
+    end
     raise
   end
 
   def self.show_status(_status); end
 
-  def perform(_retry: 3, **options)
+  def perform(_retry: 3, **_options)
     outstanding_results = false
     ids = Assignment.joins(groupings: :test_runs)
                     .where('test_runs.status': TestRun.statuses[:in_progress])
@@ -48,9 +59,6 @@ class AutotestResultsJob < AutotestJob
     redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
     if redis.get('autotest_results') == self.job_id
       redis.del('autotest_results')
-    end
-    unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      StudentTestsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
     end
   end
 end

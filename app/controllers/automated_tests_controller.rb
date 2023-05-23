@@ -62,7 +62,7 @@ class AutomatedTestsController < ApplicationController
                                                   assignment.id,
                                                   [grouping.group_id],
                                                   collected: false,
-                                                  enqueuing_user: @real_user,
+                                                  enqueuing_user: @current_user,
                                                   notify_socket: true)
 
       session[:job_id] = @current_job.job_id

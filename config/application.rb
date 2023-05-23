@@ -127,7 +127,7 @@ module Markus
       end]
     end
 
-    config.action_cable.url = "#{Settings.rails.session_store.args.path}/cable"
+    config.action_cable.url = "#{config.relative_url_root}/cable"
 
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
