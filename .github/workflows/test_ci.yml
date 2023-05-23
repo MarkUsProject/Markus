@@ -99,6 +99,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: rspec
           parallel: true
+          file: coverage/lcov.info
       - name: Run jest tests
         run: npm run test-cov
       - name: Coveralls Parallel (jest)
@@ -107,6 +108,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: jest
           parallel: true
+          file: coverage/lcov.info
 
   finish:
     needs: test
