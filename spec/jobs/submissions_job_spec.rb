@@ -160,6 +160,38 @@ describe SubmissionsJob do
     end
   end
 
+  context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
+    let(:instructor) { create :instructor }
+    let(:instructor2) { create :instructor }
+
+    it 'broadcasts a message to the user' do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor, notify_socket: true) }
+        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).with(body: 'sent')
+    end
+    it 'broadcasts exactly one message' do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor, notify_socket: true) }
+        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).once
+    end
+    it "doesn't broadcast the message to other users" do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor, notify_socket: true) }
+        .to have_broadcasted_to(instructor2).from_channel(CollectSubmissionsChannel).exactly 0
+    end
+  end
+  context 'when notify_socket flag is not set' do
+    let(:instructor) { create :instructor }
+    it "doesn't broadcast a message" do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor) }
+        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).exactly 0
+    end
+  end
+  context 'when enqueuing user is not set' do
+    let(:instructor) { create :instructor }
+    it "doesn't broadcast a message" do
+      expect { SubmissionsJob.perform_now(groupings, notify_socket: true) }
+        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).exactly 0
+    end
+  end
+
   xcontext 'when applying a late penalty' do
     # TODO: the following tests are failing on travis occasionally. Figure out why and re-enable them.
     let!(:period) { create :period, submission_rule: submission_rule, hours: 2 }

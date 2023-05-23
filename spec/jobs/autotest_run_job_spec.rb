@@ -88,7 +88,7 @@ describe AutotestRunJob do
       end
       include_examples 'autotest jobs'
       let(:test_data) do
-        url_root = Rails.configuration.action_controller.relative_url_root
+        url_root = Rails.configuration.relative_url_root
         groups.map do |group|
           file_url = "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/" \
                      "#{assignment.id}/groups/#{group.id}/submission_files?#{collected ? 'collected=true' : ''}"

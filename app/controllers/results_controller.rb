@@ -236,7 +236,7 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    @host = Rails.application.config.action_controller.relative_url_root
+    @host = Rails.application.config.relative_url_root
     @result = record
     @submission = @result.submission
     @grouping = @submission.grouping
@@ -536,7 +536,7 @@ class ResultsController < ApplicationController
     end
     @feedback_files = @submission.feedback_files
 
-    @host = Rails.application.config.action_controller.relative_url_root
+    @host = Rails.application.config.relative_url_root
 
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_role.user_name}' viewed results for assignment '#{@assignment.short_identifier}'.")
