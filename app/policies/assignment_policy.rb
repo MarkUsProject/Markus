@@ -4,7 +4,6 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
-  # alias_rule :stop_test?, to: :view_test_options?
   authorize :assessment, optional: true
 
   def index?
