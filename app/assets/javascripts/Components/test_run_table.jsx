@@ -360,5 +360,5 @@ class TestGroupFeedbackFileTable extends React.Component {
 }
 
 export function makeTestRunTable(elem, props) {
-  render(<TestRunTable {...props} />, elem);
+  return render(<TestRunTable {...props} />, elem);
 }

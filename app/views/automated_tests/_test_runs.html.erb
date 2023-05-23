@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeTestRunTable(document.getElementById('test_run_table'), {
+      window.testRunTable = makeTestRunTable(document.getElementById('test_run_table'), {
         course_id: <%= @current_course.id %>,
         result_id: <%= @result&.id || 'null' %>,
         submission_id: <%= @result&.submission_id || 'null' %>,
@@ -10,10 +10,9 @@
         instructor_run: <%= ran_by == 'instructor' %>,
         instructor_view: <%= !@current_role.student? %>
       });
-      const button = document.getElementById('stop_tests_button');
-      button.addEventListener('click', () => {
-        makeTestRunTable();
-      });
+      const button = document.querySelector('#stop_tests_button');
+      console.log(window);
+      button.addEventListener('click', window.testRunTable.fetchData);
     })
   <% end %>
 <% end %>
