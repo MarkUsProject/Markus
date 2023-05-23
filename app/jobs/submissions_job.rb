@@ -1,8 +1,4 @@
 class SubmissionsJob < ApplicationJob
-  def self.on_complete_js(_status)
-    'window.submissionTable.wrapped.fetchData'
-  end
-
   def self.show_status(status)
     I18n.t('poll_job.submissions_job', progress: status[:progress], total: status[:total])
   end
@@ -49,6 +45,9 @@ class SubmissionsJob < ApplicationJob
       progress.increment
     end
   ensure
+    unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
+    end
     m_logger.log('Submission collection process done')
   end
 end

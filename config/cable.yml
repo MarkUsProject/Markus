@@ -1,9 +1,9 @@
 development:
-  adapter: async
-
+  adapter: redis
+  url: <%= Settings.redis.url %>
+  channel_prefix: markus_development
 test:
-  adapter: async
-
+  adapter: test
 production:
   adapter: redis
   url: <%= Settings.redis.url %>

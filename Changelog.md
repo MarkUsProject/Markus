@@ -10,6 +10,7 @@
 - Allow negative grades for bonus columns in marks spreadsheets (#6521)
 - Clarify assignment submission rule configuration labels (#6529)
 - Enable client-side validation of autotest settings page (#6568)
+- Use web sockets instead of polling to update submissions table after collecting submissions (#6583)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
