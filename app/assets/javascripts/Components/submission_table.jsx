@@ -29,7 +29,7 @@ class RawSubmissionTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    this.create_collect_submissions_channel_subscription(this);
+    this.create_collect_submissions_channel_subscription();
   }
 
   fetchData = () => {
@@ -334,25 +334,25 @@ class RawSubmissionTable extends React.Component {
     }, after_function);
   };
 
-  create_collect_submissions_channel_subscription(submissionTable) {
+  create_collect_submissions_channel_subscription = () => {
     consumer.subscriptions.create(
-      {channel: "CollectSubmissionsChannel", course_id: submissionTable.props.course_id},
+      {channel: "CollectSubmissionsChannel", course_id: this.props.course_id},
       {
-        connected() {
+        connected: () => {
           // Called when the subscription is ready for use on the server
         },
 
-        disconnected() {
+        disconnected: () => {
           // Called when the subscription has been terminated by the server
         },
 
-        received(data) {
+        received: data => {
           // Called when there's incoming data on the websocket for this channel
-          submissionTable.fetchData();
+          this.fetchData();
         },
       }
     );
-  }
+  };
 
   render() {
     const {loading} = this.state;

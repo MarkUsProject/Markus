@@ -797,7 +797,7 @@ describe SubmissionsController do
         end
 
         it 'should collect all groupings when override is true' do
-          enqueuing_user = User.find_by user_name: @instructor.user_name
+          enqueuing_user = @instructor.user
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
@@ -815,7 +815,7 @@ describe SubmissionsController do
         end
 
         it 'should collect the uncollected grouping only when override is false' do
-          enqueuing_user = User.find_by user_name: @instructor.user_name
+          enqueuing_user = @instructor.user
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(

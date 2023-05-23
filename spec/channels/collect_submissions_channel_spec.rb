@@ -1,7 +1,7 @@
 describe CollectSubmissionsChannel, type: :channel do
   context 'when a user can collect submissions' do
     let!(:instructor) { create :instructor }
-    let!(:current_user) { User.find_by user_name: instructor.user_name }
+    let!(:current_user) { instructor.user }
     context 'when a course is passed in on subscription' do
       before do
         stub_connection(current_user: current_user)
@@ -33,7 +33,7 @@ describe CollectSubmissionsChannel, type: :channel do
   end
   context 'when a user can not collect submissions' do
     let!(:student) { create :student }
-    let!(:current_user) { User.find_by user_name: student.user_name }
+    let!(:current_user) { student.user }
     it 'should reject the subscription' do
       stub_connection(current_user: current_user)
       subscribe course_id: student.course_id
