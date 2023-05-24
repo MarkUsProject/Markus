@@ -736,8 +736,11 @@ describe AssignmentsController do
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
     context '#stop_test' do
-      before { get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id } }
-      it('should respond with 302') { expect(response.status).to eq 302 }
+      it('should respond with 302') {
+        allow_any_instance_of(AutotestCancelJob).to receive(:perform_now).and_return []
+        get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id }
+        expect(response.status).to eq 302
+      }
     end
   end
 
