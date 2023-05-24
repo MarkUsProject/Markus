@@ -6,16 +6,20 @@ class StudentPolicy < RolePolicy
   authorize :assignment, :grouping, :submission, optional: true
 
   def run_tests?
+    # if none of the required context is available, deny access
     allowed = ![assignment, grouping, submission].compact.empty?
+    # if the assignment isn't nil, do some extra checks: nothing new to be added to context
     unless assignment.nil?
       allowed &&= check?(:tokens_released?, assignment) && check?(:student_tests_enabled?, assignment)
     end
+    # if the grouping isn't nil, do more checks: nothing new to be added to context
     unless grouping.nil?
       allowed &&= check?(:member?, grouping) &&
                   check?(:not_in_progress?, grouping) &&
                   check?(:tokens_available?, grouping) &&
                   check?(:before_due_date?, grouping)
     end
+    # if the submission isn't nil, do more checks: nothing new to be added to context
     allowed &&= check?(:before_release?, submission) unless submission.nil?
     allowed
   end

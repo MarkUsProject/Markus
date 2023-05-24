@@ -4,7 +4,7 @@ import ReactTable from "react-table";
 import {getType} from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
-import {create_student_tests_channel_subscription} from "/app/javascript/channels/student_tests_channel";
+import consumer from "../../../javascript/channels/consumer";
 
 export class TestRunTable extends React.Component {
   constructor(props) {
@@ -19,7 +19,13 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    create_student_tests_channel_subscription(this);
+    // If in student view
+    if (!this.props.instructor_view) {
+      console.log("Tried making subscription");
+      this.create_student_tests_channel_subscription();
+    } else {
+      console.log("Never tried making subscription");
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -72,6 +78,35 @@ export class TestRunTable extends React.Component {
 
   onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
 
+  create_student_tests_channel_subscription = () => {
+    consumer.subscriptions.create(
+      {
+        channel: "StudentTestsChannel",
+        course_id: this.props.course_id,
+        assignment_id: this.props.assignment_id,
+        grouping_id: this.props.grouping_id,
+        submission_id: this.props.submission_id,
+      },
+      {
+        connected: () => {
+          // Called when the subscription is ready for use on the server
+          console.log("Connected");
+        },
+
+        disconnected: () => {
+          // Called when the subscription has been terminated by the server
+          console.log("Disconnected");
+        },
+
+        received: data => {
+          console.log("Got it");
+          this.fetchData();
+          // Called when there's incoming data on the websocket for this channel
+          console.log("Data: " + data["body"]);
+        },
+      }
+    );
+  };
   render() {
     let height;
     if (this.props.instructor_view) {

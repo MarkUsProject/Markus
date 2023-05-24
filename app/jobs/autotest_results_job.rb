@@ -12,7 +12,9 @@ class AutotestResultsJob < AutotestJob
     if block.call
       self.class.set(wait: 5.seconds).perform_later(*job.arguments)
     else
+      # if there are not outstanding results, get the arguments from the completed job
       options = job.arguments.first
+      # check if broadcasting has been requested
       unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
         StudentTestsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
       end
@@ -30,15 +32,19 @@ class AutotestResultsJob < AutotestJob
   def self.show_status(_status); end
 
   def perform(_retry: 3, **_options)
+    # define outstanding_results variable
     outstanding_results = false
+    # get the ids of the in progress tests (according to the database)
     ids = Assignment.joins(groupings: :test_runs)
                     .where('test_runs.status': TestRun.statuses[:in_progress])
                     .pluck('assessments.id', 'test_runs.id')
                     .group_by(&:first)
                     .transform_values { |v| v.map(&:second) }
+    # for each of the in progress tests...
     ids.each do |assignment_id, test_run_ids|
       assignment = Assignment.find(assignment_id)
       test_runs = TestRun.where(id: test_run_ids)
+      # loop through the statuses
       statuses(assignment, test_runs).each do |autotest_test_id, status|
         # statuses from rq: https://python-rq.org/docs/jobs/#retrieving-a-job-from-redis
         status = 'not_found' if status.nil?
@@ -54,6 +60,7 @@ class AutotestResultsJob < AutotestJob
         end
       end
     end
+    # return whether or not there are outstanding results
     outstanding_results
   ensure
     redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)

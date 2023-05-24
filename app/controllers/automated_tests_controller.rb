@@ -66,7 +66,7 @@ class AutomatedTestsController < ApplicationController
                                                   notify_socket: true)
 
       session[:job_id] = @current_job.job_id
-      flash_message(:success, 'Running tests. The table will be updated shortly.')
+      flash_message(:success, I18n.t('automated_tests.student_tests_running'))
     end
   rescue StandardError => e
     flash_message(:error, e.message)
