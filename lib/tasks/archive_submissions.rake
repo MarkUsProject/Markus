@@ -41,7 +41,7 @@ namespace :markus do
     target_dir = Pathname.new(args[:target_dir])
     raise "Directory #{target_dir} does not exist" unless Dir.exist?(target_dir)
 
-    relative_root = Rails.application.config.action_controller.relative_url_root
+    relative_root = Rails.application.config.relative_url_root
     if relative_root
       target_dir += relative_root
       FileUtils.makedirs target_dir

@@ -188,6 +188,191 @@ describe GroupsController do
       end
     end
 
+    describe '#assign_scans' do
+      let!(:assignment) { create(:assignment_for_scanned_exam) }
+      context 'when grouping_id is passed as argument' do
+        context 'when current_submission_used is nil' do
+          let!(:grouping) { create :grouping, assignment: assignment }
+
+          it 'redirects back with a warning flash message' do
+            get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                        assignment_id: grouping.assignment.id,
+                                                        grouping_id: grouping.id }
+            expect(flash[:warning]).to_not be_blank
+            expect(response).to redirect_to(course_assignment_groups_path(assignment.course, assignment))
+          end
+        end
+
+        context 'when current submission is not nil' do
+          let!(:grouping) { create :grouping_with_inviter_and_submission, assignment: assignment }
+
+          it 'maps the data hash to correct values' do
+            names = grouping.non_rejected_student_memberships.map do |u|
+              u.user.display_name
+            end
+
+            data_expected = {
+              group_name: grouping.group.group_name,
+              grouping_id: grouping.id,
+              students: names,
+              num_total: 1,
+              num_valid: 1
+            }
+
+            get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                        assignment_id: grouping.assignment.id,
+                                                        grouping_id: grouping.id }
+
+            expect(controller.view_assigns['data']).to eq(data_expected)
+          end
+
+          context 'when valid number of groupings equal total groupings' do
+            it 'flashes a success message' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              expect(flash[:success]).to_not be_blank
+            end
+          end
+
+          context 'when valid number of groupings do not equal total groupings' do
+            let!(:submission) { create :submission, submission_version_used: true }
+            let!(:grouping) do
+              create :grouping,
+                     assignment: assignment,
+                     submissions: [submission],
+                     current_submission_used: submission
+            end
+
+            it 'does not flash a success message' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              expect(flash[:success]).to be_blank
+            end
+          end
+
+          context 'when COVER.pdf file does not exist' do
+            it 'flashes a warning' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+              expect(flash[:warning]).to_not be_blank
+            end
+          end
+
+          context 'when COVER.pdf file exists' do
+            let!(:file) { create :submission_file, submission: grouping.submissions[0], filename: 'COVER.pdf' }
+
+            it 'sets the data hash with the correct filelink' do
+              grouping.submissions[0].update!(submission_files: [file])
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              expect(controller.view_assigns['data'][:filelink]).to eq(download_course_assignment_groups_path(
+                                                                         assignment.course, assignment,
+                                                                         select_file_id: file.id,
+                                                                         show_in_browser: true
+                                                                       ))
+              expect(flash[:warning]).to be_nil
+            end
+          end
+        end
+      end
+
+      context 'when grouping_id is not passed as an argument' do
+        context 'when next_grouping is nil' do
+          let!(:grouping) { create :grouping, assignment: assignment, instructor_approved: true }
+          context 'when not all submissions collected' do
+            it 'redirects back with a warning flash message' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: assignment.id }
+              expect(flash[:warning]).to_not be_blank
+              expect(response).to redirect_to(course_assignment_groups_path(assignment.course, assignment))
+            end
+          end
+
+          context 'when all submissions collected' do
+            let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
+
+            it 'redirects to index' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping_with_submission.assignment.id }
+
+              expect(flash[:warning]).to be_nil
+              expect(response).to redirect_to(action: 'index')
+            end
+          end
+        end
+
+        context 'when current_submission_used is nil' do
+          let!(:grouping) { create :grouping, assignment: assignment }
+
+          it 'redirects back with a warning flash message' do
+            get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                        assignment_id: grouping.assignment.id }
+            expect(flash[:warning]).to_not be_blank
+            expect(response).to redirect_to(course_assignment_groups_path(assignment.course, assignment))
+          end
+        end
+
+        context 'when current_submission_used and next_grouping is not nil' do
+          let!(:submission) { create :submission, submission_version_used: true }
+          let!(:grouping) do
+            create :grouping,
+                   assignment: assignment,
+                   submissions: [submission],
+                   current_submission_used: submission
+          end
+
+          it 'maps the data hash to correct values' do
+            names = []
+
+            data_expected = {
+              group_name: grouping.group.group_name,
+              grouping_id: grouping.id,
+              students: names,
+              num_total: 1,
+              num_valid: 0
+            }
+
+            get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                        assignment_id: grouping.assignment.id }
+
+            expect(controller.view_assigns['data']).to eq(data_expected)
+          end
+
+          context 'when COVER.pdf file does not exist' do
+            it 'flashes a warning' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id }
+              expect(flash[:warning]).to_not be_blank
+            end
+          end
+
+          context 'when COVER.pdf file exists' do
+            let(:file) { create :submission_file, submission: submission, filename: 'COVER.pdf' }
+
+            it 'sets the data hash with the correct filelink' do
+              submission.update!(submission_files: [file])
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id }
+
+              expect(controller.view_assigns['data'][:filelink]).to eq(download_course_assignment_groups_path(
+                                                                         assignment.course, assignment,
+                                                                         select_file_id: file.id,
+                                                                         show_in_browser: true
+                                                                       ))
+              expect(flash[:warning]).to be_nil
+            end
+          end
+        end
+      end
+    end
+
     describe '#upload', keep_memory_repos: true do
       before :all do
         # remove a generated repo so repeated test runs function properly
@@ -218,7 +403,6 @@ describe GroupsController do
       end
 
       it 'accepts a valid file' do
-        ActiveJob::Base.queue_adapter = :test
         expect do
           post_as instructor, :upload, params: { course_id: course.id,
                                                  assignment_id: @assignment.id,
@@ -238,6 +422,65 @@ describe GroupsController do
         expect(response).to have_http_status(302)
         expect(flash[:error]).to_not be_blank
         expect(response).to redirect_to(action: 'index')
+      end
+    end
+
+    describe '#create_groups_when_students_work_alone' do
+      # Create students
+      let!(:students) { create_list(:student, 5) }
+
+      context 'when assignment.group_max = 1' do
+        let!(:assignment) { create(:assignment) }
+
+        it 'creates groups for individual students' do
+          data = students.map { |record| [record.user_name, record.user_name] }
+
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+
+          assert_enqueued_with(job: CreateGroupsJob, args: [assignment, data])
+          expect(flash[:error]).to be_blank
+        end
+
+        it 'responds with _poll_job template' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to render_template('shared/_poll_job')
+        end
+
+        it 'responds with appropriate status' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'when assignment.group_max > 1' do
+        let(:assignment) { create(:assignment, assignment_properties_attributes: { group_max: 4 }) }
+
+        it 'does not create groups' do
+          expect do
+            get_as instructor, :create_groups_when_students_work_alone,
+                   params: { course_id: course.id, assignment_id: assignment.id }, format: 'js'
+          end.to_not have_enqueued_job(CreateGroupsJob)
+        end
+
+        it 'responds with appropriate status' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to have_http_status(200)
+        end
+
+        it 'responds with _poll_job template' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).to render_template('shared/_poll_job')
+        end
       end
     end
 

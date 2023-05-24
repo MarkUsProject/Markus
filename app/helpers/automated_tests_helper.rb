@@ -105,17 +105,17 @@ module AutomatedTestsHelper
   end
 
   def get_markus_address(host_with_port)
-    if Rails.application.config.action_controller.relative_url_root.nil?
+    if Rails.application.config.relative_url_root.nil?
       host_with_port
     else
-      host_with_port + Rails.application.config.action_controller.relative_url_root
+      host_with_port + Rails.application.config.relative_url_root
     end
   end
 
   # Sends RESTful api requests to the autotester
   module AutotestApi
     include AutomatedTestsHelper
-    AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
+    AUTOTEST_USERNAME = "markus_#{Rails.application.config.relative_url_root}".freeze
 
     class LimitExceededException < StandardError; end
     class UnauthorizedException < StandardError; end
@@ -298,10 +298,10 @@ module AutomatedTestsHelper
 
     # Get the current URL for this MarkUs instance (adds the relative url root to +host_with_port+) if it exists.
     def get_markus_address(host_with_port)
-      if Rails.application.config.action_controller.relative_url_root.nil?
+      if Rails.application.config.relative_url_root.nil?
         host_with_port
       else
-        host_with_port + Rails.application.config.action_controller.relative_url_root
+        host_with_port + Rails.application.config.relative_url_root
       end
     end
 

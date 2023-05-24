@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@babel/runtime": "^7.21.0",
+    "@rails/actioncable": "^7.0.4-3",
     "@rails/ujs": "^7.0.4",
     "@rjsf/core": "^5.6.2",
     "@rjsf/validator-ajv8": "^5.6.2",
@@ -12,7 +13,7 @@
     "i18n-js": "^4.2.3",
     "jcrop": "^0.0.1",
     "jquery": "^3.6.4",
-    "marked": "^4.2.12",
+    "marked": "^5.0.2",
     "mime": "^3.0.0",
     "moment": "^2.29.3",
     "mousetrap": "^1.6.5",
