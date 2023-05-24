@@ -15,7 +15,7 @@ class AutotestResultsJob < AutotestJob
       # if there are not outstanding results, get the arguments from the completed job
       options = job.arguments.first
       # check if broadcasting has been requested
-      unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+      unless options.nil? || options[:notify_socket].nil? || options[:enqueuing_user].nil?
         StudentTestsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
       end
     end
