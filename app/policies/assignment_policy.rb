@@ -2,7 +2,7 @@
 class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?
-  alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
+  alias_rule :stop_batch_tests?, :batch_runs?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
   authorize :assessment, optional: true
 
@@ -29,7 +29,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def stop_test?
-    (role.student? && check?(:student_tests_enabled?))
+    (check?(:manage_tests?) || (role.student? && check?(:student_tests_enabled?)))
   end
 
   def student_tests_enabled?
