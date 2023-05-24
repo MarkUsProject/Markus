@@ -675,30 +675,22 @@ class Assignment < Assessment
     if role.instructor?
       groupings = self.groupings
                       .includes(:group,
-                                :accepted_students,
                                 current_result: :marks)
 
     else
       groupings = self.groupings
                       .includes(:group,
-                                :accepted_students,
                                 current_result: :marks)
                       .joins(:memberships)
                       .where('memberships.role_id': role.id)
     end
-    students = groupings.joins(accepted_students: :user)
-                        .order('users.user_name ASC')
-                        .select('user', 'group', 'current_result')
 
-    # students = groupings.joins(accepted_students: :user)
-    #                     .order('users.user_name')
-    # students = groupings.map do |g|
-    #   g.accepted_students.map do |s|
-    #     { accepted_student: s, user_name: s.user_name, grouping: g }
-    #   end
-    # end
-
-    # students = students.flatten.sort_by { |x| x[:user_name] }
+    students = Student.all
+                      .includes(accepted_groupings: :assignment)
+                      .where('accepted_groupings.assessment_id': self.id)
+                      .joins(:user)
+                      .order('users.user_name')
+                      .merge(groupings)
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
@@ -723,11 +715,10 @@ class Assignment < Assessment
       csv << headers[1]
 
       students.each do |student|
-        g = student.grouping
+        g = student.accepted_groupings.first
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
-        s = g.user
-        other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
+        other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
         row = [g.group.group_name] + other_info
         if result.nil?
           row += Array.new(2 + self.ta_criteria.count, nil)
