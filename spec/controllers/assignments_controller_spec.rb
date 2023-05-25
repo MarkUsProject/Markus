@@ -736,11 +736,8 @@ describe AssignmentsController do
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
     context '#stop_test' do
-      it('should respond with 302') {
-        allow_any_instance_of(AutotestCancelJob).to receive(:perform_now).and_return []
-        get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id }
-        expect(response.status).to eq 302
-      }
+      before { get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id } }
+      it('should respond with 302') { expect(response.status).to eq 302 }
     end
   end
 
@@ -804,6 +801,39 @@ describe AssignmentsController do
       end
     end
   end
+
+  describe 'when the role is student' do
+    let(:course) { create :course }
+    let(:assignment) { create :assignment_for_tests, course: course }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:test_run) { create(:student_test_run, grouping: grouping) }
+
+    context '#stop_test' do
+      context 'when student tests are allowed to run tests' do
+        it 'should respond with 302' do
+          assignment.assignment_properties.update!(enable_test: true,
+                                                   enable_student_tests: true,
+                                                   token_start_date: Time.current,
+                                                   unlimited_tokens: true)
+          allow_any_instance_of(AutotestCancelJob).to receive(:perform_now).and_return []
+          get_as test_run.role, :stop_test, params: { course_id: course.id,
+                                                      id: assignment.id,
+                                                      test_run_id: test_run.id }
+          expect(response.status).to eq 302
+        end
+      end
+
+      context 'when students are not allowed to run tests' do
+        it 'should respond with 403' do
+          get_as test_run.role, :stop_test, params: { course_id: course.id,
+                                                      id: assignment.id,
+                                                      test_run_id: test_run.id }
+          expect(response.status).to eq 403
+        end
+      end
+    end
+  end
+
   describe '#starter_file' do
     before(:each) { get_as role, :starter_file, params: params }
     let(:assignment) { create :assignment }

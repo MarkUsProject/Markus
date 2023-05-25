@@ -294,7 +294,12 @@ class AssignmentsController < ApplicationController
   def stop_test
     test_id = params[:test_run_id].to_i
     assignment_id = params[:id]
-    @current_job = AutotestCancelJob.perform_now(assignment_id, [test_id])
+    if current_role.student?
+      @current_job = AutotestCancelJob.perform_now(assignment_id, [test_id])
+    else
+      @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
+      session[:job_id] = @current_job.job_id
+    end
     redirect_back(fallback_location: root_path)
   end
 

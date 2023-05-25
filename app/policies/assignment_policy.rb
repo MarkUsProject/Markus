@@ -29,7 +29,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def stop_test?
-    (check?(:manage_tests?) || (role.student? && check?(:student_tests_enabled?)))
+    check?(:manage_tests?) || (role.student? && check?(:student_tests_enabled?))
   end
 
   def student_tests_enabled?

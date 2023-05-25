@@ -100,6 +100,35 @@ describe AssignmentPolicy do
     end
   end
 
+  describe_rule :stop_test? do
+    succeed 'when role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+
+    context 'when role is a ta' do
+      succeed 'that can manage assessments' do
+        let(:role) { create :ta, manage_assessments: true }
+      end
+      failed 'that cannot manage assessments' do
+        let(:role) { create :ta, manage_assessments: false }
+      end
+    end
+
+    context 'when role is a student' do
+      let(:role) { create :student }
+      succeed 'when student tests enabled' do
+        let(:assignment) do
+          build :assignment, assignment_properties_attributes: { enable_student_tests: true,
+                                                                 unlimited_tokens: true,
+                                                                 tokens_per_period: 0 }
+        end
+      end
+      failed 'when student tests disabled' do
+        let(:assignment) { build :assignment, assignment_properties_attributes: { enable_student_tests: false } }
+      end
+    end
+  end
+
   describe_rule :tests_set_up? do
     succeed 'when remote_autotest_settings_id exist' do
       before { assignment.update! remote_autotest_settings_id: 1 }
