@@ -33,21 +33,28 @@ describe AutotestResultsJob do
   end
   describe '#perform' do
     before do
+      # remove any running tests from redis
       redis.del('autotest_results')
+      # Making autotest setting a mock function
       allow_any_instance_of(AutotestSetting).to(
         receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
       )
       course = create(:course)
       course.autotest_setting = create(:autotest_setting)
       course.save
+      # we iterate through each of the test_runs and we increase each of their autotest ids by 1. This is likely so that
+      # the new test can have id 0
       test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) }
     end
+    # defining subject (just assuring that perform_now is called)
     subject { described_class.perform_now }
     context 'tests are set up for an assignment' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
       let(:dummy_return) { Net::HTTPSuccess.new(1.0, '200', 'OK') }
       let(:body) { '{}' }
+      # giving dummy_return a mock function named "body"
       before { allow(dummy_return).to receive(:body) { body } }
+      # not relevant
       context 'when getting the statuses of the tests' do
         it 'should set headers' do
           expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj|
@@ -69,9 +76,11 @@ describe AutotestResultsJob do
         include_examples 'autotest jobs'
       end
       context 'after getting the statuses of the tests' do
+        # setting up the mock statuses function
         before { allow_any_instance_of(AutotestResultsJob).to receive(:statuses).and_return(status_return) }
 
         shared_examples 'rescheduling a job' do
+          # setting up the mock results function
           before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
           it 'should schedule another job in a minute' do
             expect(AutotestResultsJob).to receive(:set).with(wait: 5.seconds).once.and_call_original
@@ -134,25 +143,92 @@ describe AutotestResultsJob do
             end
           end
         end
+        shared_examples 'web socket table update' do
+          let(:student) { create :student }
+          let(:student2) { create :student }
+          before(:each) do
+            allow_any_instance_of(TestRun).to receive(:update_results!)
+            allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
+          end
+          context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
+            it 'broadcasts a message to the user' do
+              expect { described_class.perform_now(enqueuing_user: student, notify_socket: true) }
+                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).with(body: 'sent')
+            end
+            it 'broadcasts exactly one message' do
+              expect { described_class.perform_now(enqueuing_user: student, notify_socket: true) }
+                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).once
+            end
+            it "doesn't broadcast the message to other users" do
+              expect { described_class.perform_now(enqueuing_user: student, notify_socket: true) }
+                .to have_broadcasted_to(student2).from_channel(StudentTestsChannel).exactly 0
+            end
+          end
+          context 'when notify_socket flag is not set' do
+            let(:student) { create :student }
+            it "doesn't broadcast a message" do
+              expect { described_class.perform_now(enqueuing_user: student) }
+                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).exactly 0
+            end
+          end
+          context 'when enqueuing user is not set' do
+            let(:student) { create :student }
+            it "doesn't broadcast a message" do
+              expect { described_class.perform_now(notify_socket: true) }
+                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).exactly 0
+            end
+          end
+        end
+        shared_examples 'web sockets at least one test run in progress' do
+          let(:student) { create :student }
+          before(:each) do
+            allow_any_instance_of(TestRun).to receive(:update_results!)
+            allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
+          end
+          context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
+            it 'should not broadcast anything' do
+              expect { described_class.perform_now(enqueuing_user: student, notify_socket: true) }
+                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).exactly 0
+            end
+          end
+        end
         context 'when at least one of the statuses is "started"' do
           let(:status_return) { { 1 => 'finished', 2 => 'started', 3 => 'finished' } }
           include_examples 'rescheduling a job'
+          include_examples 'web sockets at least one test run in progress'
         end
         context 'when at least one of the statuses is "queued"' do
           let(:status_return) { { 1 => 'finished', 2 => 'queued', 3 => 'finished' } }
           include_examples 'rescheduling a job'
+          include_examples 'web sockets at least one test run in progress'
         end
         context 'when at least one of the statuses is "deferred"' do
           let(:status_return) { { 1 => 'finished', 2 => 'deferred', 3 => 'finished' } }
           include_examples 'rescheduling a job'
+          include_examples 'web sockets at least one test run in progress'
         end
         context 'when at least one of the statuses is "finished"' do
           let(:status_return) { { 1 => 'started', 2 => 'finished', 3 => 'started' } }
           include_examples 'getting results'
+          include_examples 'web sockets at least one test run in progress'
         end
         context 'when at least one of the statuses is "failed"' do
           let(:status_return) { { 1 => 'started', 2 => 'failed', 3 => 'started' } }
           include_examples 'getting results'
+          include_examples 'web sockets at least one test run in progress'
+        end
+
+        context 'when all of the statuses are "failed"' do
+          let(:status_return) { { 1 => 'failed' } }
+          include_examples 'web socket table update'
+        end
+        context 'when all of the statuses are "finished"' do
+          let(:status_return) { { 1 => 'finished' } }
+          include_examples 'web socket table update'
+        end
+        context 'when all of the statuses are something else' do
+          let(:status_return) { { 1 => 'something else' } }
+          include_examples 'web socket table update'
         end
         context 'when at least one of the statuses is something else' do
           let(:status_return) { { 1 => 'started', 2 => 'something else', 3 => 'started' } }
@@ -162,6 +238,7 @@ describe AutotestResultsJob do
             end
             subject
           end
+          include_examples 'web sockets at least one test run in progress'
         end
         context 'when there is a test run with the same autotest_test_id in a different course' do
           let(:status_return) { { 1 => 'finished' } }

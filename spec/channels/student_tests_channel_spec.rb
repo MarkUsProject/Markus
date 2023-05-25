@@ -4,7 +4,7 @@ describe StudentTestsChannel, type: :channel do
   context 'when the role is a student' do
     let!(:student) { create :student }
     let!(:current_user) { student.user }
-    before do
+    before(:each) do
       stub_connection(current_user: current_user)
     end
     context 'when the student can not run tests' do
@@ -18,7 +18,7 @@ describe StudentTestsChannel, type: :channel do
         create :assignment, assignment_properties_attributes:
         { token_start_date: 1.hour.ago, enable_student_tests: true, tokens_per_period: 1 }
       end
-      before do
+      before(:each) do
         subscribe course_id: student.course_id, assignment_id: assignment.id
       end
       it 'should establish a subscription' do
@@ -29,10 +29,10 @@ describe StudentTestsChannel, type: :channel do
       end
     end
   end
-  context 'when the role is not a student' do
+  context 'when role is not a student' do
     let!(:instructor) { create :instructor }
     let!(:current_user) { instructor.user }
-    before do
+    before(:each) do
       stub_connection(current_user: current_user)
     end
     context 'when the role is an instructor' do
@@ -45,7 +45,7 @@ describe StudentTestsChannel, type: :channel do
         expect(subscription).to be_rejected
       end
     end
-    context 'when the user in conjunction with the course_id can not find a role' do
+    context 'when the user in conjunction with the course_id do not identify a role' do
       context 'when course_id is nil' do
         it 'should not establish a subscription' do
           subscribe course_id: nil
