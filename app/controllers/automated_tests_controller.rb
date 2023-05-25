@@ -61,9 +61,7 @@ class AutomatedTestsController < ApplicationController
                                                   current_role.id,
                                                   assignment.id,
                                                   [grouping.group_id],
-                                                  collected: false,
-                                                  enqueuing_user: @current_user,
-                                                  notify_socket: true)
+                                                  collected: false)
 
       session[:job_id] = @current_job.job_id
       flash_message(:success, I18n.t('automated_tests.student_tests_running'))
