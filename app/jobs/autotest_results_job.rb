@@ -11,16 +11,7 @@ class AutotestResultsJob < AutotestJob
 
   around_perform do |job, block|
     # if there are outstanding results
-    if block.call
-      self.class.set(wait: 5.seconds).perform_later(*job.arguments)
-      # else
-      # # if there are not outstanding results, get the arguments from the completed job
-      # options = job.arguments.first
-      # # check if broadcasting has been requested
-      # unless options.nil? || options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      #   StudentTestsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
-      # end
-    end
+    self.class.set(wait: 5.seconds).perform_later(*job.arguments) if block.call
   rescue StandardError
     # if the job failed, retry 3 times
     kwargs = job.arguments.first || { _retry: 3 }
