@@ -15,13 +15,7 @@ class AutotestResultsJob < AutotestJob
   rescue StandardError
     # if the job failed, retry 3 times
     kwargs = job.arguments.first || { _retry: 3 }
-    # if kwargs[:_retry] > 0
-    #   self.class.perform_later(_retry: kwargs[:_retry] - 1, notify_socket: kwargs[:notify_socket],
-    #                            enqueuing_user: kwargs[:enqueuing_user])
-    # end
-    if kwargs[:_retry] > 0
-      self.class.perform_later(_retry: kwargs[:_retry] - 1)
-    end
+    self.class.perform_later(_retry: kwargs[:_retry] - 1) if kwargs[:_retry] > 0
     raise
   end
 
