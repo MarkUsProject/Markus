@@ -177,22 +177,18 @@ describe AutotestResultsJob do
             end
           end
         end
-        shared_examples 'web sockets tests in progress' do
+        shared_examples 'web sockets test in progress' do
           let(:grouping) { create :grouping_with_inviter }
           let(:test_run1) { create :test_run, grouping: grouping, status: :in_progress }
           let(:test_run2) { create :student_test_run, grouping: grouping, status: :in_progress }
           let(:test_run3) { create :test_run, grouping: grouping, status: :in_progress }
           let(:test_runs) { [test_run1, test_run2, test_run3] }
           let(:student) { grouping.inviter.user }
-          before(:each) do
+          it 'should not broadcast anything' do
             allow_any_instance_of(TestRun).to receive(:update_results!)
             allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
-          end
-          context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
-            it 'should not broadcast anything' do
-              expect { described_class.perform_now }
-                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).exactly 0
-            end
+            expect { described_class.perform_now }
+              .to have_broadcasted_to(student).from_channel(StudentTestsChannel).exactly 0
           end
         end
         context 'when at least one of the statuses is "started"' do
