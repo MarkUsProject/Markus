@@ -9,18 +9,14 @@ class StudentTestsChannel < ApplicationCable::Channel
       reject
     end
     # Execute test run only checks if the user is a student, so checking run_tests? only ever calls the method in
-    # StudentPolicy
-    unless allowed_to?(:execute_test_run?,
-                       with: AutomatedTestPolicy,
-                       context: { real_user: current_user, role: role }) && allowed_to?(:run_tests?,
-                                                                                        role,
-                                                                                        context: {
-                                                                                          real_user: current_user,
-                                                                                          role: role,
-                                                                                          assignment: assignment,
-                                                                                          grouping: grouping,
-                                                                                          submission: submission
-                                                                                        })
+    # StudentPolicy/instructor_policy
+    unless allowed_to?(:run_tests?, role, context: {
+      real_user: current_user,
+      role: role,
+      assignment: assignment,
+      grouping: grouping,
+      submission: submission
+    })
       reject
     end
     stream_for current_user

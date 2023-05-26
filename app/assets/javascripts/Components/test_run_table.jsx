@@ -19,13 +19,7 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    // If in student view
-    if (!this.props.instructor_view) {
-      console.log("Tried making subscription");
-      this.create_student_tests_channel_subscription();
-    } else {
-      console.log("Never tried making subscription");
-    }
+    this.create_student_tests_channel_subscription();
   }
 
   componentDidUpdate(prevProps) {

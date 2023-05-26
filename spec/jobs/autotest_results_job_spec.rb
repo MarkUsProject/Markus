@@ -194,17 +194,17 @@ describe AutotestResultsJob do
         context 'when at least one of the statuses is "started"' do
           let(:status_return) { { 1 => 'finished', 2 => 'started', 3 => 'finished' } }
           include_examples 'rescheduling a job'
-          include_examples 'web sockets tests in progress'
+          include_examples 'web sockets test in progress'
         end
         context 'when at least one of the statuses is "queued"' do
           let(:status_return) { { 1 => 'finished', 2 => 'queued', 3 => 'finished' } }
           include_examples 'rescheduling a job'
-          include_examples 'web sockets tests in progress'
+          include_examples 'web sockets test in progress'
         end
         context 'when at least one of the statuses is "deferred"' do
           let(:status_return) { { 1 => 'finished', 2 => 'deferred', 3 => 'finished' } }
           include_examples 'rescheduling a job'
-          include_examples 'web sockets tests in progress'
+          include_examples 'web sockets test in progress'
         end
         context 'when at least one of the statuses is "finished"' do
           let(:status_return) { { 1 => 'started', 2 => 'finished', 3 => 'started' } }
