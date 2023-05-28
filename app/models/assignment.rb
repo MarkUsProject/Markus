@@ -676,7 +676,6 @@ class Assignment < Assessment
       groupings = self.groupings
                       .includes(:group,
                                 current_result: :marks)
-
     else
       groupings = self.groupings
                       .includes(:group,
@@ -686,11 +685,10 @@ class Assignment < Assessment
     end
 
     students = Student.all
-                      .includes(accepted_groupings: :assignment)
+                      .includes(:accepted_groupings, :section)
                       .where('accepted_groupings.assessment_id': self.id)
                       .joins(:user)
                       .order('users.user_name')
-                      .merge(groupings)
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
@@ -715,11 +713,12 @@ class Assignment < Assessment
       csv << headers[1]
 
       students.each do |student|
+        # filtered to keep only the groupings for this assignment when defining students above
         g = student.accepted_groupings.first
-        result = g.current_result
+        result = g&.current_result
         marks = result.nil? ? {} : result.mark_hash
         other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
-        row = [g.group.group_name] + other_info
+        row = [g&.group&.group_name] + other_info
         if result.nil?
           row += Array.new(2 + self.ta_criteria.count, nil)
         else
