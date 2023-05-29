@@ -34,6 +34,7 @@ describe AutotestRunJob do
         allow_any_instance_of(AutotestRunJob).to receive(:send_request!).and_return(dummy_return)
       end
       context 'if there is only one group' do
+        let(:user2) { create :instructor }
         let(:n_groups) { 1 }
         it 'should not create a batch' do
           expect { subject }.not_to(change { TestBatch.count })
@@ -41,6 +42,18 @@ describe AutotestRunJob do
         it 'should create a test run without an associated batch' do
           subject
           expect(TestRun.where(batch_id: nil)).not_to be_nil
+        end
+        it 'broadcasts a message to the user' do
+          expect { subject }
+            .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).with(body: 'sent')
+        end
+        it 'broadcasts exactly one message' do
+          expect { subject }
+            .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).once
+        end
+        it "doesn't broadcast the message to other users" do
+          expect { subject }
+            .to have_broadcasted_to(user2.user).from_channel(StudentTestsChannel).exactly 0
         end
       end
       context 'there is more than one group' do
@@ -72,6 +85,10 @@ describe AutotestRunJob do
           autotest_test_ids = TestRun.joins(grouping: :group).pluck('test_runs.autotest_test_id')
           expected = JSON.parse(dummy_return.body)['test_ids']
           expect(autotest_test_ids).to contain_exactly(*expected)
+        end
+        it "doesn't broadcast a message" do
+          expect { subject }
+            .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).exactly 0
         end
       end
       it 'should enqueue an AutotestResultsJob job' do

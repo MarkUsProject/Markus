@@ -169,8 +169,8 @@ describe AutotestResultsJob do
                 .to have_broadcasted_to(student2).from_channel(StudentTestsChannel).exactly 0
             end
           end
-          context 'when a non-student runs the tests' do
-            let(:test_run2) { create :test_run, grouping: grouping, status: :in_progress }
+          context 'when a the test was batch run' do
+            let(:test_run2) { create :batch_test_run, grouping: grouping, status: :in_progress }
             it "doesn't broadcast a message" do
               expect { described_class.perform_now }
                 .to have_broadcasted_to(test_run2.role.user).from_channel(StudentTestsChannel).exactly 0

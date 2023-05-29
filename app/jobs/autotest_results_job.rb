@@ -47,7 +47,7 @@ class AutotestResultsJob < AutotestJob
           else
             test_run&.failure(status)
           end
-          unless test_run.nil?
+          if !test_run.nil? && test_run.test_batch_id.nil?
             StudentTestsChannel.broadcast_to(test_run.role.user, body: 'sent')
           end
         end
