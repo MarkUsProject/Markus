@@ -2,14 +2,15 @@ class StudentTestsChannel < ApplicationCable::Channel
   def subscribed
     course = Course.find_by(id: params[:course_id])
     role = Role.find_by(user: current_user, course: course)
+    if role.nil?
+      reject
+      return
+    end
+
     assignment = Assignment.find_by(id: params[:assignment_id])
     grouping = Grouping.find_by(id: params[:grouping_id])
     submission = Submission.find_by(id: params[:submission_id])
-    if role.nil?
-      reject
-    end
-    # Execute test run only checks if the user is a student, so checking run_tests? only ever calls the method in
-    # StudentPolicy/instructor_policy
+
     unless allowed_to?(:run_tests?, role, context: {
       real_user: current_user,
       role: role,
@@ -18,6 +19,7 @@ class StudentTestsChannel < ApplicationCable::Channel
       submission: submission
     })
       reject
+      return
     end
     stream_for current_user
   end
