@@ -33,28 +33,21 @@ describe AutotestResultsJob do
   end
   describe '#perform' do
     before do
-      # remove any running tests from redis
       redis.del('autotest_results')
-      # Making autotest setting a mock function
       allow_any_instance_of(AutotestSetting).to(
         receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
       )
       course = create(:course)
       course.autotest_setting = create(:autotest_setting)
       course.save
-      # we iterate through each of the test_runs and we increase each of their autotest ids by 1. This is likely so that
-      # the new test can have id 0
       test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) }
     end
-    # defining subject (just assuring that perform_now is called)
     subject { described_class.perform_now }
     context 'tests are set up for an assignment' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
       let(:dummy_return) { Net::HTTPSuccess.new(1.0, '200', 'OK') }
       let(:body) { '{}' }
-      # giving dummy_return a mock function named "body"
       before { allow(dummy_return).to receive(:body) { body } }
-      # not relevant
       context 'when getting the statuses of the tests' do
         it 'should set headers' do
           expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj|
@@ -76,11 +69,9 @@ describe AutotestResultsJob do
         include_examples 'autotest jobs'
       end
       context 'after getting the statuses of the tests' do
-        # setting up the mock statuses function
         before { allow_any_instance_of(AutotestResultsJob).to receive(:statuses).and_return(status_return) }
 
         shared_examples 'rescheduling a job' do
-          # setting up the mock results function
           before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
           it 'should schedule another job in a minute' do
             expect(AutotestResultsJob).to receive(:set).with(wait: 5.seconds).once.and_call_original

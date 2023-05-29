@@ -206,10 +206,7 @@ module AutomatedTestsHelper
       res = send_request!(req, uri)
       autotest_test_ids = JSON.parse(res.body)['test_ids']
       test_id_hash = group_id_send_order.zip(autotest_test_ids).to_h
-      # up to this point we've enqueued the tests and we are getting their id back, pairing it with the id of the group
-      # it corresponds to
       groupings = Grouping.includes(:current_submission_used).where(group_id: group_ids, assignment: assignment)
-      # creates a test run with the user that enqueued it available to us
       groupings.each do |grouping|
         revision_id = collected ? nil : grouping.access_repo { |repo| repo.get_latest_revision.revision_identifier }
         TestRun.create!(
