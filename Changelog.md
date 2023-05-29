@@ -11,6 +11,7 @@
 - Clarify assignment submission rule configuration labels (#6529)
 - Enable client-side validation of autotest settings page (#6568)
 - Use web sockets instead of polling to update submissions table after collecting submissions (#6583)
+- Update TestRunTable for non-batch run tests when in progress and completed (#6591)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
