@@ -43,15 +43,15 @@ describe AutotestRunJob do
           subject
           expect(TestRun.where(batch_id: nil)).not_to be_nil
         end
-        it 'broadcasts a message to the user' do
+        it 'should broadcast a message to the user' do
           expect { subject }
             .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).with(body: 'sent')
         end
-        it 'broadcasts exactly one message' do
+        it 'should broadcast exactly one message' do
           expect { subject }
             .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).once
         end
-        it "doesn't broadcast the message to other users" do
+        it 'should not broadcast a message to other users' do
           expect { subject }
             .to have_broadcasted_to(user2.user).from_channel(StudentTestsChannel).exactly 0
         end
@@ -86,7 +86,7 @@ describe AutotestRunJob do
           expected = JSON.parse(dummy_return.body)['test_ids']
           expect(autotest_test_ids).to contain_exactly(*expected)
         end
-        it "doesn't broadcast a message" do
+        it 'should not broadcast a message' do
           expect { subject }
             .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).exactly 0
         end

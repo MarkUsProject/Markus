@@ -146,7 +146,7 @@ describe AutotestResultsJob do
             allow_any_instance_of(TestRun).to receive(:update_results!)
             allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
           end
-          context 'when a student ran a completed test' do
+          context 'when getting results for a completed test' do
             it 'broadcasts a message to the user' do
               expect { described_class.perform_now }
                 .to have_broadcasted_to(student).from_channel(StudentTestsChannel).with(body: 'sent')
