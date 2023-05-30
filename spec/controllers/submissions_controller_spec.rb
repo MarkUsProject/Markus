@@ -654,11 +654,32 @@ describe SubmissionsController do
         grader_permission.save
       end
       context '#collect_submissions' do
-        before do
+        it('should respond with 204') do
           post_as grader, :collect_submissions,
                   params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
+          expect(response.status).to eq 204
         end
-        it('should respond with 200') { expect(response.status).to eq 200 }
+        it 'broadcasts a status update' do
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+            expect(options[:update_status]).to be(true)
+            expect(options[:job_id]).not_to be_nil
+            expect(options.count).to eq(2)
+          end
+        end
+        it 'broadcasts exactly one message' do
+          expect do
+            post_as grader, :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
+          end
+            .to have_broadcasted_to(grader.user).from_channel(CollectSubmissionsChannel).exactly 1
+        end
+        it "doesn't broadcast the message to other users" do
+          expect do
+            post_as grader, :collect_submissions,
+                    params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
+          end
+            .to have_broadcasted_to(grader.user).from_channel(CollectSubmissionsChannel).exactly 0
+        end
       end
       context '#manually_collect_and_begin_grading' do
         before do
@@ -993,8 +1014,6 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, collect_current: true,
                               groupings: @assignment.groupings.to_a }
-
-            expect(response).to render_template(partial: 'shared/_poll_job')
           end
 
           it 'should succeed if it is after the section due date' do
