@@ -164,31 +164,41 @@ describe SubmissionsJob do
     let(:instructor) { create :instructor }
     let(:instructor2) { create :instructor }
 
-    it 'broadcasts a message to the user' do
-      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor, notify_socket: true) }
-        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).with(body: 'sent')
+    it 'broadcasts three status updates and once to update the table' do
+      (1..3).each do |_|
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+          expect(options[:update_status]).to be(true)
+          expect(options[:job_id]).not_to be_nil
+          expect(options.count).to eq(2)
+        end
+      end
+      expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+        expect(options[:update_table]).not_to be_nil
+        expect(options.count).to eq(1)
+      end
+      SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
     end
-    it 'broadcasts exactly one message' do
-      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor, notify_socket: true) }
-        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).once
+    it 'broadcasts exactly four messages (three status updates and one to update the table)' do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true) }
+        .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 4
     end
     it "doesn't broadcast the message to other users" do
-      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor, notify_socket: true) }
-        .to have_broadcasted_to(instructor2).from_channel(CollectSubmissionsChannel).exactly 0
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true) }
+        .to have_broadcasted_to(instructor2.user).from_channel(CollectSubmissionsChannel).exactly 0
     end
   end
   context 'when notify_socket flag is not set' do
     let(:instructor) { create :instructor }
     it "doesn't broadcast a message" do
-      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor) }
-        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).exactly 0
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user) }
+        .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
     end
   end
   context 'when enqueuing user is not set' do
     let(:instructor) { create :instructor }
     it "doesn't broadcast a message" do
       expect { SubmissionsJob.perform_now(groupings, notify_socket: true) }
-        .to have_broadcasted_to(instructor).from_channel(CollectSubmissionsChannel).exactly 0
+        .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
     end
   end
 
