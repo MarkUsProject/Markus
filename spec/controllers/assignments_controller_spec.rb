@@ -804,30 +804,28 @@ describe AssignmentsController do
 
   describe 'when the role is student' do
     let(:course) { create :course }
-    let(:assignment) { create :assignment_for_tests, course: course }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:test_run) { create(:student_test_run, grouping: grouping) }
+    let(:role) { create :student, course: course }
+    let(:assignment) { create :assignment_for_student_tests, course: course }
+    let(:grouping) { create(:grouping_with_inviter, inviter: role, assignment: assignment) }
+    let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
 
     context '#stop_test' do
-      context 'when student tests are allowed to run tests' do
+      context 'when student tests are allowed to cancel tests' do
         it 'should respond with 302' do
-          assignment.assignment_properties.update!(enable_test: true,
-                                                   enable_student_tests: true,
-                                                   token_start_date: Time.current,
-                                                   unlimited_tokens: true)
+          assignment.assignment_properties.update!(unlimited_tokens: true)
           allow_any_instance_of(AutotestCancelJob).to receive(:perform_now).and_return []
-          get_as test_run.role, :stop_test, params: { course_id: course.id,
-                                                      id: assignment.id,
-                                                      test_run_id: test_run.id }
+          get_as role, :stop_test, params: { course_id: course.id,
+                                             id: assignment.id,
+                                             test_run_id: test_run.id }
           expect(response.status).to eq 302
         end
       end
 
-      context 'when students are not allowed to run tests' do
+      context 'when students are not allowed to cancel tests' do
         it 'should respond with 403' do
-          get_as test_run.role, :stop_test, params: { course_id: course.id,
-                                                      id: assignment.id,
-                                                      test_run_id: test_run.id }
+          get_as role, :stop_test, params: { course_id: course.id,
+                                             id: assignment.id,
+                                             test_run_id: test_run.id }
           expect(response.status).to eq 403
         end
       end
