@@ -149,22 +149,22 @@ describe AutotestResultsJob do
           context 'when getting results for a completed test' do
             it 'broadcasts a message to the user' do
               expect { described_class.perform_now }
-                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).with(body: 'sent')
+                .to have_broadcasted_to(student).from_channel(TestRunsChannel).with(body: 'sent')
             end
             it 'broadcasts exactly one message' do
               expect { described_class.perform_now }
-                .to have_broadcasted_to(student).from_channel(StudentTestsChannel).once
+                .to have_broadcasted_to(student).from_channel(TestRunsChannel).once
             end
             it "doesn't broadcast the message to other users" do
               expect { described_class.perform_now }
-                .to have_broadcasted_to(student2).from_channel(StudentTestsChannel).exactly 0
+                .to have_broadcasted_to(student2).from_channel(TestRunsChannel).exactly 0
             end
           end
           context 'when a the test was batch run' do
             let(:test_run2) { create :batch_test_run, grouping: grouping, status: :in_progress }
             it "doesn't broadcast a message" do
               expect { described_class.perform_now }
-                .to have_broadcasted_to(test_run2.role.user).from_channel(StudentTestsChannel).exactly 0
+                .to have_broadcasted_to(test_run2.role.user).from_channel(TestRunsChannel).exactly 0
             end
           end
         end
@@ -179,7 +179,7 @@ describe AutotestResultsJob do
             allow_any_instance_of(TestRun).to receive(:update_results!)
             allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
             expect { described_class.perform_now }
-              .to have_broadcasted_to(student).from_channel(StudentTestsChannel).exactly 0
+              .to have_broadcasted_to(student).from_channel(TestRunsChannel).exactly 0
           end
         end
         context 'when at least one of the statuses is "started"' do

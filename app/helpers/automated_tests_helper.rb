@@ -219,7 +219,7 @@ module AutomatedTestsHelper
           status: :in_progress
         )
         if batch.nil?
-          StudentTestsChannel.broadcast_to(role.user, body: 'sent')
+          TestRunsChannel.broadcast_to(role.user, body: 'sent')
         end
       end
     end

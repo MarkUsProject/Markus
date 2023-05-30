@@ -10,9 +10,6 @@ FactoryBot.define do
     end
     factory :batch_test_run do
       association :test_batch, factory: :test_batch
-      before(:create) do |test_run|
-        test_run.test_batch.update!(course: test_run.grouping.course)
-      end
     end
   end
 end

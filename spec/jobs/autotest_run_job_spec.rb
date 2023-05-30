@@ -45,15 +45,15 @@ describe AutotestRunJob do
         end
         it 'should broadcast a message to the user' do
           expect { subject }
-            .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).with(body: 'sent')
+            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).with(body: 'sent')
         end
         it 'should broadcast exactly one message' do
           expect { subject }
-            .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).once
+            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).once
         end
         it 'should not broadcast a message to other users' do
           expect { subject }
-            .to have_broadcasted_to(user2.user).from_channel(StudentTestsChannel).exactly 0
+            .to have_broadcasted_to(user2.user).from_channel(TestRunsChannel).exactly 0
         end
       end
       context 'there is more than one group' do
@@ -88,7 +88,7 @@ describe AutotestRunJob do
         end
         it 'should not broadcast a message' do
           expect { subject }
-            .to have_broadcasted_to(user.user).from_channel(StudentTestsChannel).exactly 0
+            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).exactly 0
         end
       end
       it 'should enqueue an AutotestResultsJob job' do

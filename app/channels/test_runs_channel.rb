@@ -1,4 +1,4 @@
-class StudentTestsChannel < ApplicationCable::Channel
+class TestRunsChannel < ApplicationCable::Channel
   def subscribed
     course = Course.find_by(id: params[:course_id])
     role = Role.find_by(user: current_user, course: course)
@@ -6,10 +6,9 @@ class StudentTestsChannel < ApplicationCable::Channel
       reject
       return
     end
-
-    assignment = Assignment.find_by(id: params[:assignment_id])
-    grouping = Grouping.find_by(id: params[:grouping_id])
-    submission = Submission.find_by(id: params[:submission_id])
+    assignment = course&.assignments&.find_by(id: params[:assignment_id])
+    grouping = assignment&.groupings&.find_by(id: params[:grouping_id])
+    submission = grouping&.submissions&.find_by(id: params[:submission_id])
 
     unless allowed_to?(:run_tests?, role, context: {
       real_user: current_user,

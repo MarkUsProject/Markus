@@ -19,7 +19,7 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    this.create_student_tests_channel_subscription();
+    this.create_test_runs_channel_subscription();
   }
 
   componentDidUpdate(prevProps) {
@@ -72,10 +72,10 @@ export class TestRunTable extends React.Component {
 
   onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
 
-  create_student_tests_channel_subscription = () => {
+  create_test_runs_channel_subscription = () => {
     consumer.subscriptions.create(
       {
-        channel: "StudentTestsChannel",
+        channel: "TestRunsChannel",
         course_id: this.props.course_id,
         assignment_id: this.props.assignment_id,
         grouping_id: this.props.grouping_id,
@@ -92,6 +92,7 @@ export class TestRunTable extends React.Component {
       }
     );
   };
+
   render() {
     let height;
     if (this.props.instructor_view) {

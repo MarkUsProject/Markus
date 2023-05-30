@@ -1,4 +1,4 @@
-describe StudentTestsChannel, type: :channel do
+describe TestRunsChannel, type: :channel do
   shared_examples 'can subscribe' do
     let(:assignment) do
       create :assignment_for_student_tests, assignment_properties_attributes:
@@ -21,7 +21,7 @@ describe StudentTestsChannel, type: :channel do
     before(:each) do
       stub_connection(current_user: current_user)
     end
-    context 'when the student can not run tests' do
+    context 'when the student cannot run tests' do
       it 'should not establish a subscription' do
         subscribe course_id: role.course_id
         expect(subscription).to be_rejected
@@ -37,7 +37,7 @@ describe StudentTestsChannel, type: :channel do
     before(:each) do
       stub_connection(current_user: current_user)
     end
-    context 'when the ta can not run tests' do
+    context 'when the ta cannot run tests' do
       let(:role) { create :ta, run_tests: false }
       it 'should not establish a subscription' do
         subscribe course_id: role.course_id
@@ -54,7 +54,7 @@ describe StudentTestsChannel, type: :channel do
     before(:each) do
       stub_connection(current_user: current_user)
     end
-    context 'when the instructor can not run tests' do
+    context 'when the instructor cannot run tests' do
       let(:assignment) do
         create :assignment, assignment_properties_attributes: { enable_test: false }
       end
