@@ -257,10 +257,6 @@ Rails.application.routes.draw do
           get 'student_interface'
           post 'execute_test_run'
         end
-
-        member do
-          get 'stop_test'
-        end
       end
 
       resources :exam_templates, only: [:index, :create] do

@@ -25,12 +25,12 @@
     run_tests_course_result_path(@current_course, @result) :
     execute_test_run_course_assignment_automated_tests_path(@current_course, @assignment)
 
-    test_run_id = @grouping.test_runs.find_by(status: 0)&.autotest_test_id
+    test_run_id = @grouping.test_runs.where(role: @current_role).in_progress.first&.id
     route_stop = stop_test_course_assignment_path(@current_course, @assignment)
   %>
   <div class="rt-action-box">
     <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized, remote: true %>
-    <%= button_to "Cancel tests", route_stop, method: :get, params: {test_run_id: test_run_id},
+    <%= button_to t('automated_tests.cancel_tests'), route_stop, method: :get, params: {test_run_id: test_run_id},
                   disabled: !test_run_id %>
   </div>
 <% end %>

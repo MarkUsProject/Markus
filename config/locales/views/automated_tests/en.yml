@@ -36,6 +36,7 @@ en:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
     run_tests: Run tests
+    cancel_tests: Cancel tests
     settings_not_setup: 'Cannot find test script files: please upload some before running tests'
     specs_file_upload_message: File must be a valid json file
     stop_batch: Stop batch
