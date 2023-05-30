@@ -567,11 +567,11 @@ describe CoursesController do
     let!(:lti_deployment) { create :lti_deployment, course: course }
     it 'returns the deployment' do
       get_as instructor, :lti_deployments, params: { id: course.id }
-      expect(JSON.parse(response.body)[0]['id']).to eq(lti_deployment.id)
+      expect(response.parsed_body[0]['id']).to eq(lti_deployment.id)
     end
     it 'returns the nested lti client' do
       get_as instructor, :lti_deployments, params: { id: course.id }
-      expect(JSON.parse(response.body)[0]).to have_key('lti_client')
+      expect(response.parsed_body[0]).to have_key('lti_client')
     end
   end
 end
