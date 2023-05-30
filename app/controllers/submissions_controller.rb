@@ -214,6 +214,7 @@ class SubmissionsController < ApplicationController
                                                   apply_late_penalty: apply_late_penalty,
                                                   notify_socket: true)
       session[:job_id] = @current_job.job_id
+      CollectSubmissionsChannel.broadcast_to(@current_user, { update_status: true, job_id: @current_job.job_id })
     end
     if some_before_due
       error = I18n.t('submissions.collect.could_not_collect_some_due',
@@ -225,7 +226,6 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    render 'shared/_poll_job'
   end
 
   def run_tests

@@ -43,10 +43,13 @@ class SubmissionsJob < ApplicationJob
       grouping.save
       add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
       progress.increment
+      unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], { update_status: true, job_id: job_id })
+      end
     end
   ensure
     unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
     end
     m_logger.log('Submission collection process done')
   end

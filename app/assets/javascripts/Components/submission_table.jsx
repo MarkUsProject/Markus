@@ -348,7 +348,12 @@ class RawSubmissionTable extends React.Component {
 
         received: data => {
           // Called when there's incoming data on the websocket for this channel
-          this.fetchData();
+          if (data["update_status"] != null && data["job_id"] != null) {
+            $.ajax(Routes.get_job_message_path(`${data["job_id"]}`));
+          }
+          if (data["update_table"] != null) {
+            this.fetchData();
+          }
         },
       }
     );
