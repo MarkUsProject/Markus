@@ -44,10 +44,7 @@ module LtiHelper
           course_role = Ta.create!(user: markus_user, course: lti_deployment.course)
         elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:learner])
           course_role = Student.create!(user: markus_user, course: lti_deployment.course)
-        elsif lms_user[:roles] == [LtiDeployment::LTI_ROLES[:instructor]]
-          course_role = Instructor.create!(user: markus_user, course: lti_deployment.course)
         end
-
       end
       next if course_role.nil?
       lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)

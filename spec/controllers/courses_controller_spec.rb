@@ -530,11 +530,11 @@ describe CoursesController do
     end
     it 'redirects back as an instructor' do
       delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(303)
     end
     it 'redirects back as an admin' do
       delete_as admin_role, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(303)
     end
     it 'deletes the deployment' do
       delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
@@ -561,6 +561,17 @@ describe CoursesController do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
         expect(LtiUser.all.count).to eq(1)
       end
+    end
+  end
+  describe 'get lti deployments' do
+    let!(:lti_deployment) { create :lti_deployment, course: course }
+    it 'returns the deployment' do
+      get_as instructor, :lti_deployments, params: { id: course.id }
+      expect(JSON.parse(response.body)[0]['id']).to eq(lti_deployment.id)
+    end
+    it 'returns the nested lti client' do
+      get_as instructor, :lti_deployments, params: { id: course.id }
+      expect(JSON.parse(response.body)[0]).to have_key('lti_client')
     end
   end
 end

@@ -30,7 +30,7 @@ en:
     launch: Launch MarkUs
     line_item_created: Gradebook item created.
     lti_configuration: LTI configuration
-    lti_course_link_html: Course linked to external course <a href="%{lms_host}/courses/%{lms_course_id}">%{lms_course_name}</a>
+    lti_course_link_html: Course linked to external course
     lti_deployment: "%{lti_deployment_name} on %{lti_host}"
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
