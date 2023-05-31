@@ -385,8 +385,12 @@ dp.sh.Highlighter.prototype.SwitchToList = function() {
     var li = this.CreateElement('LI');
     var span = this.CreateElement('SPAN');
 
-    if(lines[i] === "") { span.innerHTML = lines[i] + '&nbsp;'; }
-    else span.innerHTML = lines[i]
+    if(lines[i] === "") {
+      span.innerHTML = '&nbsp;';
+    }
+    else {
+      span.innerHTML = lines[i];
+    }
 
     li.appendChild(span);
     this.ol.appendChild(li);
