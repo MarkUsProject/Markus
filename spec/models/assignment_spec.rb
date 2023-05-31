@@ -2206,6 +2206,12 @@ describe Assignment do
                                         User.human_attribute_name(:id_number),
                                         User.human_attribute_name(:email))
         end
+
+        it 'sorts students in alphabetical order of user_names' do
+          user_names = summary.pluck(1)
+                              .drop(2)
+          expect(user_names).to eq(user_names.sort)
+        end
       end
       context 'when all criteria are pre-created' do
         include_examples 'check csv content'
