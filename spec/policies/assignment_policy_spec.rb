@@ -115,12 +115,12 @@ describe AssignmentPolicy do
     end
 
     context 'when role is a student' do
-      let(:context) { { role: role, real_user: role.user, test_id: test_id } }
+      let(:context) { { role: role, real_user: role.user, test_run_id: test_run_id } }
       let(:role) { create :student }
       succeed 'when student can cancel test' do
         let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
-        let(:test_id) { test_run.id }
+        let(:test_run_id) { test_run.id }
         let(:assignment) do
           build :assignment_for_student_tests,
                 assignment_properties_attributes: { enable_student_tests: true,
@@ -132,7 +132,7 @@ describe AssignmentPolicy do
       failed 'when student cannot cancel test' do
         let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
-        let(:test_id) { test_run.id + 1 }
+        let(:test_run_id) { test_run.id + 1 }
         let(:assignment) do
           build :assignment_for_student_tests,
                 assignment_properties_attributes: { enable_student_tests: true,
@@ -143,7 +143,7 @@ describe AssignmentPolicy do
       context 'when authorized with an assignment' do
         let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
-        let(:test_id) { test_run.id }
+        let(:test_run_id) { test_run.id }
         succeed 'when student tests enabled' do
           let(:assignment) do
             build :assignment_for_student_tests, assignment_properties_attributes: { enable_student_tests: true,
@@ -157,7 +157,7 @@ describe AssignmentPolicy do
       end
       context 'when authorized with a grouping' do
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
-        let(:test_id) { test_run.id }
+        let(:test_run_id) { test_run.id }
 
         let(:assignment) do
           create :assignment_for_student_tests, assignment_properties_attributes: { unlimited_tokens: true }
