@@ -12,6 +12,7 @@
 - Enable client-side validation of autotest settings page (#6568)
 - Use web sockets instead of polling to update submissions table after collecting submissions (#6583)
 - Order students by username when downloading the CSV grades breakdown for an assignment from Summary tab  (#6589)
+- Use web sockets instead of polling to update submission collection status (#6597)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
