@@ -784,6 +784,7 @@ describe SubmissionsController do
         let(:grouping) { @grouping }
         include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
       end
+
       context 'at least one submission can be collected' do
         let(:instructor2) { create :instructor }
         let(:params) do
@@ -813,6 +814,7 @@ describe SubmissionsController do
             .to have_broadcasted_to(instructor2.user).from_channel(CollectSubmissionsChannel).exactly 0
         end
       end
+
       context 'no submissions can be collected' do
         it 'broadcasts no messages' do
           @assignment.update!(due_date: 1.week.ago)
@@ -839,6 +841,7 @@ describe SubmissionsController do
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
         end
+
         it 'should collect all groupings when override is true' do
           enqueuing_user = @instructor.user
           expect(SubmissionsJob).to receive(:perform_later).with(
@@ -854,6 +857,7 @@ describe SubmissionsController do
                                                                groupings: [@grouping.id, uncollected_grouping.id],
                                                                override: true }
         end
+
         it 'should collect the uncollected grouping only when override is false' do
           enqueuing_user = @instructor.user
           expect(SubmissionsJob).to receive(:perform_later).with(
@@ -1030,6 +1034,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, collect_current: true,
                               groupings: @assignment.groupings.to_a }
+            expect(response.status).to eq 204
           end
 
           it 'should succeed if it is after the section due date' do
