@@ -675,16 +675,20 @@ class Assignment < Assessment
     if role.instructor?
       groupings = self.groupings
                       .includes(:group,
-                                :accepted_students,
                                 current_result: :marks)
     else
       groupings = self.groupings
                       .includes(:group,
-                                :accepted_students,
                                 current_result: :marks)
                       .joins(:memberships)
                       .where('memberships.role_id': role.id)
     end
+
+    students = Student.all
+                      .includes(:accepted_groupings, :section)
+                      .where('accepted_groupings.assessment_id': self.id)
+                      .joins(:user)
+                      .order('users.user_name')
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
@@ -708,21 +712,21 @@ class Assignment < Assessment
       csv << headers[0]
       csv << headers[1]
 
-      groupings.each do |g|
-        result = g.current_result
+      students.each do |student|
+        # filtered to keep only the groupings for this assignment when defining students above
+        g = student.accepted_groupings.first
+        result = g&.current_result
         marks = result.nil? ? {} : result.mark_hash
-        g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
-          row = [g.group.group_name] + other_info
-          if result.nil?
-            row += Array.new(2 + self.ta_criteria.count, nil)
-          else
-            row << total_marks_hash[result.id]
-            row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
-            row << extra_marks_hash[result.id]
-          end
-          csv << row
+        other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
+        row = [g&.group&.group_name] + other_info
+        if result.nil?
+          row += Array.new(2 + self.ta_criteria.count, nil)
+        else
+          row << total_marks_hash[result.id]
+          row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
+          row << extra_marks_hash[result.id]
         end
+        csv << row
       end
     end
   end
