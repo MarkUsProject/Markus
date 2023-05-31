@@ -39,7 +39,6 @@ class StudentPolicy < RolePolicy
   # helper policies
 
   def can_cancel_test?
-    test_run = role.test_runs.in_progress.where(id: test_run_id).first
-    !test_run.nil?
+    role.test_runs.exists?(status: :in_progress, id: test_run_id)
   end
 end

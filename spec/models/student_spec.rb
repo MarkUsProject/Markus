@@ -198,17 +198,6 @@ describe Student do
           @assignment = @membership.grouping.assignment
         end
 
-        it 'should assert student can cancel test' do
-          test_run = create(:student_test_run, role: @student, status: :in_progress)
-          test_id = test_run.id
-
-          expect(@student.can_cancel_test?(test_id)).to be_truthy
-        end
-
-        it 'should assert student cannot cancel test' do
-          expect(@student.can_cancel_test?(1)).to be_falsey
-        end
-
         it 'can destroy all pending memberships' do
           @student.destroy_all_pending_memberships(@assignment.id)
           expect(@student.student_memberships

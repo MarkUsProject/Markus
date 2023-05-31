@@ -797,7 +797,7 @@ describe AssignmentsController do
         before do
           get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id }
         end
-        it('should respond with 403') { expect(response.status).to eq 403 }
+        it('should respond with 403') { expect(response).to have_http_status(403) }
       end
     end
   end
@@ -817,7 +817,7 @@ describe AssignmentsController do
           get_as role, :stop_test, params: { course_id: course.id,
                                              id: assignment.id,
                                              test_run_id: test_run.id }
-          expect(response.status).to eq 302
+          expect(response).to have_http_status(302)
         end
       end
 
@@ -826,7 +826,7 @@ describe AssignmentsController do
           get_as role, :stop_test, params: { course_id: course.id,
                                              id: assignment.id,
                                              test_run_id: test_run.id }
-          expect(response.status).to eq 403
+          expect(response).to have_http_status(403)
         end
       end
     end
