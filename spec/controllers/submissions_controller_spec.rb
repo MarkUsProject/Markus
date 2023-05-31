@@ -659,27 +659,6 @@ describe SubmissionsController do
                   params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
           expect(response.status).to eq 204
         end
-        it 'broadcasts a status update' do
-          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
-            expect(options[:update_status]).to be(true)
-            expect(options[:job_id]).not_to be_nil
-            expect(options.count).to eq(2)
-          end
-        end
-        it 'broadcasts exactly one message' do
-          expect do
-            post_as grader, :collect_submissions,
-                    params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
-          end
-            .to have_broadcasted_to(grader.user).from_channel(CollectSubmissionsChannel).exactly 1
-        end
-        it "doesn't broadcast the message to other users" do
-          expect do
-            post_as grader, :collect_submissions,
-                    params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
-          end
-            .to have_broadcasted_to(grader.user).from_channel(CollectSubmissionsChannel).exactly 0
-        end
       end
       context '#manually_collect_and_begin_grading' do
         before do
@@ -805,6 +784,48 @@ describe SubmissionsController do
         let(:grouping) { @grouping }
         include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
       end
+      context 'at least one submission can be collected' do
+        let(:instructor2) { create :instructor }
+        let(:params) do
+          { course_id: course.id,
+            assignment_id: @assignment.id,
+            groupings: [@grouping.id],
+            override: true }
+        end
+        before(:each) do
+          @assignment.update!(due_date: 1.week.ago)
+          allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+        end
+        it 'broadcasts a status update' do
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+            expect(options[:update_status]).to be(true)
+            expect(options[:job_id]).not_to be_nil
+            expect(options.count).to eq(2)
+          end
+          post_as @instructor, :collect_submissions, params: params
+        end
+        it 'broadcasts exactly one message' do
+          expect { post_as @instructor, :collect_submissions, params: params }
+            .to have_broadcasted_to(@instructor.user).from_channel(CollectSubmissionsChannel).exactly 1
+        end
+        it "doesn't broadcast the message to other users" do
+          expect { post_as @instructor, :collect_submissions, params: params }
+            .to have_broadcasted_to(instructor2.user).from_channel(CollectSubmissionsChannel).exactly 0
+        end
+      end
+      context 'no submissions can be collected' do
+        it 'broadcasts no messages' do
+          @assignment.update!(due_date: 1.week.ago)
+          allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+          expect do
+            post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                                 assignment_id: @assignment.id,
+                                                                 groupings: [@grouping.id],
+                                                                 override: false }
+          end
+            .to have_broadcasted_to(@instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
+        end
+      end
 
       context 'where a grouping does not have a previously collected submission' do
         let(:uncollected_grouping) { create(:grouping, assignment: @assignment) }
@@ -815,12 +836,11 @@ describe SubmissionsController do
             txn.add(path, 'file1 content', '')
             repo.commit(txn)
           end
-        end
-
-        it 'should collect all groupings when override is true' do
-          enqueuing_user = @instructor.user
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+        end
+        it 'should collect all groupings when override is true' do
+          enqueuing_user = @instructor.user
           expect(SubmissionsJob).to receive(:perform_later).with(
             array_including(@grouping, uncollected_grouping),
             enqueuing_user: enqueuing_user,
@@ -834,11 +854,8 @@ describe SubmissionsController do
                                                                groupings: [@grouping.id, uncollected_grouping.id],
                                                                override: true }
         end
-
         it 'should collect the uncollected grouping only when override is false' do
           enqueuing_user = @instructor.user
-          @assignment.update!(due_date: 1.week.ago)
-          allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
             [uncollected_grouping],
             enqueuing_user: enqueuing_user,
@@ -985,8 +1002,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-
-            expect(response).to render_template(partial: 'shared/_poll_job')
+            expect(response.status).to eq 204
           end
 
           it 'should not receive an error if it is before the section due date and collect_current is selected' do
@@ -1028,8 +1044,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-
-            expect(response).to render_template(partial: 'shared/_poll_job')
+            expect(response.status).to eq 204
           end
         end
 
@@ -1052,8 +1067,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-
-            expect(response).to render_template(partial: 'shared/_poll_job')
+            expect(response.status).to eq 204
           end
 
           it 'should not return an error if it is before the global due date but collect_current is true' do
@@ -1080,7 +1094,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, collect_current: true,
                               groupings: @assignment.groupings.to_a }
-            expect(response).to render_template(partial: 'shared/_poll_job')
+            expect(response.status).to eq 204
           end
 
           it 'should succeed if it is after the global due date' do
@@ -1095,8 +1109,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-
-            expect(response).to render_template(partial: 'shared/_poll_job')
+            expect(response.status).to eq 204
           end
         end
       end
