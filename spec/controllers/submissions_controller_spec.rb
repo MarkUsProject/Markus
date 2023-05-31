@@ -785,7 +785,7 @@ describe SubmissionsController do
         include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
       end
 
-      context 'at least one submission can be collected' do
+      context 'when at least one submission can be collected' do
         let(:instructor2) { create :instructor }
         let(:params) do
           { course_id: course.id,
@@ -815,7 +815,7 @@ describe SubmissionsController do
         end
       end
 
-      context 'no submissions can be collected' do
+      context 'when no submissions can be collected' do
         it 'broadcasts no messages' do
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
