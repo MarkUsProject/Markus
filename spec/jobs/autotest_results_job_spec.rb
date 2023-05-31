@@ -134,26 +134,80 @@ describe AutotestResultsJob do
             end
           end
         end
+        shared_examples 'web socket table update' do
+          let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+          let(:test_run1) { create :test_run, grouping: grouping, status: :in_progress }
+          let(:test_run2) { create :student_test_run, grouping: grouping, status: :in_progress }
+          let(:test_run3) { create :test_run, grouping: grouping, status: :in_progress }
+          let(:test_runs) { [test_run1, test_run2, test_run3] }
+          let(:student) { grouping.inviter.user }
+          let(:student2) { (create :student).user }
+          before(:each) do
+            allow_any_instance_of(TestRun).to receive(:update_results!)
+            allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
+          end
+          context 'when getting results for a completed test' do
+            it 'broadcasts a message to the user' do
+              expect { described_class.perform_now }
+                .to have_broadcasted_to(student).from_channel(TestRunsChannel).with(body: 'sent')
+            end
+            it 'broadcasts exactly one message' do
+              expect { described_class.perform_now }
+                .to have_broadcasted_to(student).from_channel(TestRunsChannel).once
+            end
+            it "doesn't broadcast the message to other users" do
+              expect { described_class.perform_now }
+                .to have_broadcasted_to(student2).from_channel(TestRunsChannel).exactly 0
+            end
+          end
+          context 'when a the test was batch run' do
+            let(:test_run2) { create :batch_test_run, grouping: grouping, status: :in_progress }
+            it "doesn't broadcast a message" do
+              expect { described_class.perform_now }
+                .to have_broadcasted_to(test_run2.role.user).from_channel(TestRunsChannel).exactly 0
+            end
+          end
+        end
+        shared_examples 'web sockets test in progress' do
+          let(:grouping) { create :grouping_with_inviter }
+          let(:test_run1) { create :test_run, grouping: grouping, status: :in_progress }
+          let(:test_run2) { create :student_test_run, grouping: grouping, status: :in_progress }
+          let(:test_run3) { create :test_run, grouping: grouping, status: :in_progress }
+          let(:test_runs) { [test_run1, test_run2, test_run3] }
+          let(:student) { grouping.inviter.user }
+          it 'should not broadcast anything' do
+            allow_any_instance_of(TestRun).to receive(:update_results!)
+            allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
+            expect { described_class.perform_now }
+              .to have_broadcasted_to(student).from_channel(TestRunsChannel).exactly 0
+          end
+        end
         context 'when at least one of the statuses is "started"' do
           let(:status_return) { { 1 => 'finished', 2 => 'started', 3 => 'finished' } }
           include_examples 'rescheduling a job'
+          include_examples 'web sockets test in progress'
         end
         context 'when at least one of the statuses is "queued"' do
           let(:status_return) { { 1 => 'finished', 2 => 'queued', 3 => 'finished' } }
           include_examples 'rescheduling a job'
+          include_examples 'web sockets test in progress'
         end
         context 'when at least one of the statuses is "deferred"' do
           let(:status_return) { { 1 => 'finished', 2 => 'deferred', 3 => 'finished' } }
           include_examples 'rescheduling a job'
+          include_examples 'web sockets test in progress'
         end
         context 'when at least one of the statuses is "finished"' do
           let(:status_return) { { 1 => 'started', 2 => 'finished', 3 => 'started' } }
           include_examples 'getting results'
+          include_examples 'web socket table update'
         end
         context 'when at least one of the statuses is "failed"' do
           let(:status_return) { { 1 => 'started', 2 => 'failed', 3 => 'started' } }
           include_examples 'getting results'
+          include_examples 'web socket table update'
         end
+
         context 'when at least one of the statuses is something else' do
           let(:status_return) { { 1 => 'started', 2 => 'something else', 3 => 'started' } }
           it 'should call failure for the test_run' do
@@ -162,6 +216,7 @@ describe AutotestResultsJob do
             end
             subject
           end
+          include_examples 'web socket table update'
         end
         context 'when there is a test run with the same autotest_test_id in a different course' do
           let(:status_return) { { 1 => 'finished' } }
