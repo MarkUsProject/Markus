@@ -54,11 +54,6 @@ class Student < Role
     Settings.student_csv_order || %w[user_name section_name last_name first_name id_number email]
   ).map(&:to_sym).freeze
 
-  def can_cancel_test?(test_run_id)
-    test_run = test_runs.in_progress.where(id: test_run_id).first
-    !test_run.nil?
-  end
-
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'

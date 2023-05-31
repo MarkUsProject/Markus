@@ -4,7 +4,7 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
-  authorize :assessment, :test_id, optional: true
+  authorize :assessment, :test_run_id, optional: true
 
   def index?
     true
@@ -30,7 +30,7 @@ class AssignmentPolicy < ApplicationPolicy
         allowed &&= check?(:member?, grouping) &&
           check?(:before_due_date?, grouping)
       end
-      allowed && role.can_cancel_test?(test_id)
+      allowed && check?(:can_cancel_test?, role, context: { test_run_id: test_run_id })
     else
       check?(:manage_tests?)
     end
