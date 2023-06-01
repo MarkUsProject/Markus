@@ -8,9 +8,10 @@ module Api
       if current_user.admin_user?
         courses = get_collection(Course)
       else
-        courses = get_collection(
-          Course.joins(:roles).where('roles.type': 'Instructor', 'roles.user_id': current_user.id)
-        )
+        courses = get_collection(current_user.visible_courses)
+        # courses = get_collection(
+        #   Course.joins(:roles).where('roles.type': 'Instructor', 'roles.user_id': current_user.id)
+        # )
       end
       respond_to do |format|
         format.xml { render xml: courses.to_xml(only: DEFAULT_FIELDS, root: 'courses', skip_types: 'true') }

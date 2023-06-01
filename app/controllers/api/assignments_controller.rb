@@ -18,7 +18,7 @@ module Api
     # Returns a list of assignments and their attributes
     # Optional: filter, fields
     def index
-      assignments = get_collection(current_course.assessments) || return
+      assignments = get_collection(current_role&.visible_assessments&.assignments) || return
 
       respond_to do |format|
         json_response = "[#{assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',')}]"

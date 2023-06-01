@@ -14,10 +14,10 @@ describe Api::CoursePolicy do
     succeed 'role is an instructor' do
       let(:role) { create :instructor }
     end
-    failed 'role is a ta' do
+    succeed 'role is a ta' do
       let(:role) { create :ta }
     end
-    failed 'role is a student' do
+    succeed 'role is a student' do
       let(:role) { create :student }
     end
     context 'user has multiple roles' do
@@ -33,7 +33,7 @@ describe Api::CoursePolicy do
           create :student, user: user, course: course3
         end
       end
-      failed 'and none are instructor roles' do
+      succeed 'and none are instructor roles' do
         before do
           create :ta, user: user, course: course1
           create :ta, user: user, course: course2

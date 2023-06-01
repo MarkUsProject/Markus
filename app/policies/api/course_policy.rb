@@ -6,7 +6,7 @@ module Api
 
     def index?
       # has at least one instructor role
-      real_user.is_a?(EndUser) && real_user.roles.pluck(:type).include?('Instructor')
+      real_user.is_a?(EndUser) && real_user.roles.exists?
     end
   end
 end
