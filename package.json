@@ -26,7 +26,7 @@
     "react-keyed-file-browser": "^1.14.0",
     "react-modal": "^3.16.1",
     "react-table": "^6.11.5",
-    "react-tabs": "^4.2.1"
+    "react-tabs": "^4.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.5",
