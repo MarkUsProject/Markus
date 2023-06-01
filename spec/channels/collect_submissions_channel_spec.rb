@@ -31,7 +31,7 @@ describe CollectSubmissionsChannel, type: :channel do
       end
     end
   end
-  context 'when a user can not collect submissions' do
+  context 'when a user cannot collect submissions' do
     let!(:student) { create :student }
     let!(:current_user) { student.user }
     it 'should reject the subscription' do

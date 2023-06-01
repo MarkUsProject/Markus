@@ -42,6 +42,8 @@ en:
     stop_batch: Stop batch
     stop_test: Stop test
     student_tests: Student-Run Tests
+    test_run_table:
+      tests_running: Running tests.
     test_runs_status: Test Runs Status
     test_runs_statuses:
       cancelled: cancelled

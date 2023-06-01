@@ -218,6 +218,9 @@ module AutomatedTestsHelper
           autotest_test_id: test_id_hash[grouping.group.id],
           status: :in_progress
         )
+        if batch.nil?
+          TestRunsChannel.broadcast_to(role.user, body: 'sent')
+        end
       end
     end
 

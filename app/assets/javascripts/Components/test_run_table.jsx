@@ -4,6 +4,7 @@ import ReactTable from "react-table";
 import {getType} from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
+import consumer from "../../../javascript/channels/consumer";
 
 export class TestRunTable extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    this.create_test_runs_channel_subscription();
   }
 
   componentDidUpdate(prevProps) {
@@ -69,6 +71,27 @@ export class TestRunTable extends React.Component {
   };
 
   onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
+
+  create_test_runs_channel_subscription = () => {
+    consumer.subscriptions.create(
+      {
+        channel: "TestRunsChannel",
+        course_id: this.props.course_id,
+        assignment_id: this.props.assignment_id,
+        grouping_id: this.props.grouping_id,
+        submission_id: this.props.submission_id,
+      },
+      {
+        connected: () => {},
+
+        disconnected: () => {},
+
+        received: data => {
+          this.fetchData();
+        },
+      }
+    );
+  };
 
   render() {
     let height;
