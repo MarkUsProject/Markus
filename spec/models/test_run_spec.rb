@@ -331,7 +331,7 @@ describe TestRun do
           expect(test_group_result).not_to be_nil
         end
         it 'should create a test group result with the error message as extra_info' do
-          expect(test_group_result.extra_info).to eq 'error msg'
+          expect(test_group_result.extra_info).to eq "test1 - error msg\ntest2 - error msg"
         end
         it 'should create a test group result with the marks_total as 0' do
           expect(test_group_result.marks_total).to eq 0
@@ -375,6 +375,14 @@ describe TestRun do
           criterion && assignment.ta_criteria.reload # Force ta_criterion to not be empty
           test_run.update_results!(results)
           expect(submission.results.first.get_total_mark).to eq 1
+        end
+        context 'when one of the tests fail' do
+          it 'should not set criteria marks' do
+            criterion && assignment.ta_criteria.reload
+            allow_any_instance_of(TestGroupResult).to receive(:test_results).and_raise(StandardError, 'error msg')
+            test_run.update_results!(results)
+            expect(submission.results.first.get_total_mark).to eq 0
+          end
         end
       end
       context 'when it is associated with a grouping' do

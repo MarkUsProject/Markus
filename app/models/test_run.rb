@@ -52,7 +52,7 @@ class TestRun < ApplicationRecord
             )
             # add to the total marks and marks earned (only if the record was saved to db)
             marks_earned += test['marks_earned']
-            marks_total += test['marks_earned']
+            marks_total += test['marks_total']
           rescue StandardError => e
             # if the test fails, update extra info with error message and set error type for the test
             # results group
