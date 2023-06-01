@@ -31,12 +31,16 @@ class TestRun < ApplicationRecord
       failure(results['error'])
     else
       self.update!(status: :complete, problems: results['error'])
+      # for each test group
       results['test_groups'].each do |result|
-        error = nil
-        test_group_result = nil
-        ApplicationRecord.transaction do
-          test_group_result = create_test_group_result(result)
-          result['tests'].each_with_index do |test, i|
+        # create a result for the test group
+        test_group_result = create_test_group_result(result)
+        # maintain the total marks and the marks earned
+        marks_total, marks_earned = 0, 0
+        # for each test within this group
+        result['tests'].each_with_index do |test, i|
+          # try creating a test_result
+          ApplicationRecord.transaction do
             test_group_result.test_results.create!(
               name: test['name'],
               status: test['status'],
@@ -46,15 +50,29 @@ class TestRun < ApplicationRecord
               time: test['time'],
               position: i + 1
             )
+            # add to the total marks and marks earned (only if the record was saved to db)
+            marks_earned += test['marks_earned']
+            marks_total += test['marks_earned']
+          rescue StandardError => e
+            # if the test fails, update extra info with error message and set error type for the test
+            # results group
+            extra_info = test_group_result.extra_info
+            test_name = test['status'].nil? ? '' : "#{test['name']} - "
+            test_group_result.update(extra_info: if extra_info.nil?
+                                                   test_name + e.message
+                                                 else
+                                                   extra_info + "\n" +
+                                                               test_name + e.message
+                                                 end, error_type: TestGroupResult::ERROR_TYPE[:test_error])
           end
-        rescue StandardError => e
-          error = e
-          raise ActiveRecord::Rollback
         end
-        test_group_result = create_test_group_result(result, error: error) unless error.nil?
+        # update the marks earned and total_marks for this test_group_result
+        test_group_result.update(marks_earned: marks_earned,
+                                 marks_total: marks_total)
         create_annotations(result['annotations'])
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
+      # set_autotest_marks based off of this test run
       self.submission&.set_autotest_marks
     end
   end
@@ -88,11 +106,9 @@ class TestRun < ApplicationRecord
     test_group = TestGroup.find_by(id: test_group_id)
     test_group.test_group_results.create(
       test_run_id: self.id,
-      extra_info: error.nil? ? extra_info_string(result) : error.message,
-      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.compact&.sum || 0 : 0,
-      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.compact&.sum || 0 : 0,
+      extra_info: extra_info_string(result),
       time: result['time'] || 0,
-      error_type: error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
+      error_type: error_type(result)
     )
   end
 
