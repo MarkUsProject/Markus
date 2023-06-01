@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@babel/runtime": "^7.21.0",
+    "@babel/runtime": "^7.22.3",
     "@rails/actioncable": "^7.0.4-3",
     "@rails/ujs": "^7.0.4",
     "@rjsf/core": "^5.6.2",
