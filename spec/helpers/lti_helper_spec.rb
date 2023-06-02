@@ -52,6 +52,30 @@ describe LtiHelper do
                     roles:
                       [
                         LtiDeployment::LTI_ROLES[:learner]
+                      ] },
+                  { status: 'Active', name: 'third user',
+                    picture: 'http://example.com/picture.png',
+                    given_name: 'student.first_name',
+                    family_name: 'student.last_name',
+                    lis_person_sourcedid: 'third_username',
+                    email: 'test2@example.com',
+                    user_id: 'third_user_id',
+                    lti11_legacy_user_id: 'legacy_lti_user_id',
+                    roles:
+                      [
+                        LtiDeployment::LTI_ROLES[:ta]
+                      ] },
+                  { status: 'Active', name: 'fourth user',
+                    picture: 'http://example.com/picture.png',
+                    given_name: 'student.first_name',
+                    family_name: 'student.last_name',
+                    lis_person_sourcedid: 'fourth_username',
+                    email: 'test3@example.com',
+                    user_id: 'fourth_user_id',
+                    lti11_legacy_user_id: 'legacy_lti_user_id',
+                    roles:
+                      [
+                        LtiDeployment::LTI_ROLES[:instructor]
                       ] }]
       }.to_json
     end
@@ -61,36 +85,117 @@ describe LtiHelper do
         receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_students))
       )
     end
-    context 'when run by an admin user' do
-      subject { roster_sync lti_deployment, course, can_create_users: true, can_create_roles: true }
-      it 'creates a new user' do
-        subject
-        expect(EndUser.all.count).to eq(2)
-      end
-      it 'creates roles with an admin role' do
-        subject
-        expect(Student.all.count).to eq(2)
-      end
-      it 'creates lti users' do
-        subject
-        expect(LtiUser.all.count).to eq(2)
-      end
-    end
-    context 'when run by an instructor' do
-      subject { roster_sync lti_deployment, course, can_create_users: false, can_create_roles: true }
-      it 'does not create users' do
-        subject
-        expect(EndUser.all.count).to eq(1)
-      end
-      context 'with a new enduser' do
-        let!(:new_user) { create :end_user, user_name: 'second_username' }
-        it 'creates roles' do
+    context 'when syncing only learners' do
+      context 'when run by an admin user' do
+        subject do
+          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
+                                                                                    can_create_roles: true
+        end
+        it 'creates a new user' do
+          subject
+          expect(EndUser.all.count).to eq(2)
+        end
+        it 'does not create tas' do
+          subject
+          expect(Ta.all.count).to eq(0)
+        end
+        it 'does not create instructors' do
+          subject
+          expect(Instructor.all.count).to eq(0)
+        end
+        it 'creates roles with an admin role' do
           subject
           expect(Student.all.count).to eq(2)
         end
         it 'creates lti users' do
           subject
           expect(LtiUser.all.count).to eq(2)
+        end
+      end
+      context 'when run by an instructor' do
+        subject do
+          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
+                                                                                    can_create_roles: true
+        end
+        it 'does create users' do
+          subject
+          expect(EndUser.all.count).to eq(2)
+        end
+        it 'does not create tas' do
+          subject
+          expect(Ta.all.count).to eq(0)
+        end
+        it 'does not create instructors' do
+          subject
+          expect(Instructor.all.count).to eq(0)
+        end
+        context 'with a new enduser' do
+          let!(:new_user) { create :end_user, user_name: 'second_username' }
+          it 'creates roles' do
+            subject
+            expect(Student.all.count).to eq(2)
+          end
+          it 'creates lti users' do
+            subject
+            expect(LtiUser.all.count).to eq(2)
+          end
+        end
+      end
+    end
+    context 'when syncing learners and TAs' do
+      context 'when run by an admin user' do
+        subject do
+          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
+                      can_create_users: true, can_create_roles: true
+        end
+        it 'creates a new user' do
+          subject
+          expect(EndUser.all.count).to eq(3)
+        end
+        it 'does create tas' do
+          subject
+          expect(Ta.all.count).to eq(1)
+        end
+        it 'does not create instructors' do
+          subject
+          expect(Instructor.all.count).to eq(0)
+        end
+        it 'creates roles with an admin role' do
+          subject
+          expect(Student.all.count).to eq(2)
+        end
+        it 'creates lti users' do
+          subject
+          expect(LtiUser.all.count).to eq(3)
+        end
+      end
+      context 'when run by an instructor' do
+        subject do
+          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
+                      can_create_users: true, can_create_roles: true
+        end
+        it 'does create users' do
+          subject
+          expect(EndUser.all.count).to eq(3)
+        end
+        it 'does create tas' do
+          subject
+          expect(Ta.all.count).to eq(1)
+        end
+        it 'does not create instructors' do
+          subject
+          expect(Instructor.all.count).to eq(0)
+        end
+        context 'with a new enduser' do
+          let!(:new_user) { create :end_user, user_name: 'second_username' }
+          it 'creates roles' do
+            subject
+            expect(Student.all.count).to eq(2)
+          end
+          it 'creates lti users' do
+            subject
+            expect(LtiUser.all.count).to eq(3)
+          end
         end
       end
     end

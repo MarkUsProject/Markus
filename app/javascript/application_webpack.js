@@ -137,3 +137,5 @@ import {makeCourseList} from "javascripts/Components/course_list";
 window.makeCourseList = makeCourseList;
 import {makeSubmitViewTokenModal} from "javascripts/Components/Modals/submit_view_token_modal";
 window.makeSubmitViewTokenModal = makeSubmitViewTokenModal;
+import {makeLtiSettings} from "javascripts/Components/lti_settings";
+window.makeLtiSettings = makeLtiSettings;
