@@ -1,6 +1,7 @@
 ---
 en:
   automated_tests:
+    cancel_tests: Cancel tests
     display_output:
       instructors: Never display test output to students
       instructors_and_student_tests: Only display test output to students for student-run tests

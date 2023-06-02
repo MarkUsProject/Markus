@@ -2,9 +2,9 @@
 class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?
-  alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
+  alias_rule :stop_batch_tests?, :batch_runs?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
-  authorize :assessment, optional: true
+  authorize :assessment, :test_run_id, optional: true
 
   def index?
     true
@@ -20,6 +20,20 @@ class AssignmentPolicy < ApplicationPolicy
 
   def see_hidden?
     role.instructor? || role.ta? || role.visible_assessments(assessment_id: record.id).exists?
+  end
+
+  def stop_test?
+    if role.student?
+      allowed = check?(:student_tests_enabled?)
+      grouping = role.accepted_grouping_for(record.id)
+      unless grouping.nil?
+        allowed &&= check?(:member?, grouping) &&
+          check?(:before_due_date?, grouping)
+      end
+      allowed && check?(:can_cancel_test?, role, context: { test_run_id: test_run_id })
+    else
+      check?(:manage_tests?)
+    end
   end
 
   # helper policies
