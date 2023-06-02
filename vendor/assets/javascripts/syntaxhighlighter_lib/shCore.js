@@ -253,13 +253,13 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css) {
   str = str.replace(/</g, '&lt;');
 //  str = str.replace(/&lt;/g, '<');
 //  str = str.replace(/>/g, '&gt;');
-  str = str.replace(/\n/gm, '&nbsp;<br>');
+  str = str.replace(/\n/gm, '<br>');
 
   // when adding a piece of code, check to see if it has line breaks in it
   // and if it does, wrap individual line breaks with span tags
   if(css != null) {
     if((/br/gi).test(str)) {
-      var lines = str.split('&nbsp;<br>');
+      var lines = str.split('<br>');
 
       for(var i = 0; i < lines.length; i++) {
         span = this.CreateElement('SPAN');
@@ -385,7 +385,12 @@ dp.sh.Highlighter.prototype.SwitchToList = function() {
     var li = this.CreateElement('LI');
     var span = this.CreateElement('SPAN');
 
-    span.innerHTML = lines[i] + '&nbsp;';
+    if(lines[i] === "") {
+      span.innerHTML = '&nbsp;';
+    }
+    else {
+      span.innerHTML = lines[i];
+    }
 
     li.appendChild(span);
     this.ol.appendChild(li);
