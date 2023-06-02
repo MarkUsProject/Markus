@@ -7,6 +7,8 @@ class AssignmentsController < ApplicationController
   responders :flash
   before_action { authorize! }
 
+  authorize :test_run_id, through: :test_run_id_param
+
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
@@ -292,10 +294,14 @@ class AssignmentsController < ApplicationController
   end
 
   def stop_test
-    test_id = params[:test_run_id].to_i
+    test_run_id = test_run_id_param
     assignment_id = params[:id]
-    @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
-    session[:job_id] = @current_job.job_id
+    if current_role.student?
+      AutotestCancelJob.perform_now(assignment_id, [test_run_id])
+    else
+      @current_job = AutotestCancelJob.perform_later(assignment_id, [test_run_id])
+      session[:job_id] = @current_job.job_id
+    end
     redirect_back(fallback_location: root_path)
   end
 
@@ -984,5 +990,9 @@ class AssignmentsController < ApplicationController
       return false
     end
     true
+  end
+
+  def test_run_id_param
+    params[:test_run_id].to_i
   end
 end

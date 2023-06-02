@@ -12,6 +12,9 @@
 - Enable client-side validation of autotest settings page (#6568)
 - Use web sockets instead of polling to update submissions table after collecting submissions (#6583)
 - Order students by username when downloading the CSV grades breakdown for an assignment from Summary tab  (#6589)
+- Use web sockets to update TestRunTable for non-batch run tests when a test run is in progress or completed (#6591)
+- Add button to allow students to cancel automated test runs (#6596)
+- Removed trailing spaces at end of every line when viewing a file (#6598)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

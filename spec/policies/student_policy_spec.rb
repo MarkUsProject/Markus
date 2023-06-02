@@ -89,4 +89,23 @@ describe StudentPolicy do
       let(:role) { create :admin_role }
     end
   end
+
+  describe_rule :can_cancel_test? do
+    let(:context) { { role: role, test_run_id: test_run_id, real_user: role.user } }
+    context 'when test run created by student' do
+      let(:role) { create(:student) }
+      succeed 'test in progress' do
+        let(:test_run) { create(:student_test_run, role: role, status: :in_progress) }
+        let(:test_run_id) { test_run.id }
+      end
+      failed 'test not in progress' do
+        let(:test_run) { create(:student_test_run, role: role, status: :complete) }
+        let(:test_run_id) { test_run.id }
+      end
+    end
+    failed 'test not created by student' do
+      let(:test_run) { create(:student_test_run, status: :in_progress) }
+      let(:test_run_id) { test_run.id }
+    end
+  end
 end
