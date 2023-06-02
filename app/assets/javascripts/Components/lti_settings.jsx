@@ -62,7 +62,11 @@ class LtiSettings extends React.Component {
               >
                 {I18n.t("lti.roster_sync")}
               </button>
-              <button type="submit" name="delete" onClick={() => this.deleteDeployment(deployment.id)}>
+              <button
+                type="submit"
+                name="delete"
+                onClick={() => this.deleteDeployment(deployment.id)}
+              >
                 {I18n.t("lti.unlink_courses")}
               </button>
             </div>
@@ -78,7 +82,9 @@ class LtiSettings extends React.Component {
         {ltiDeployments}
         <RosterSyncModal
           isOpen={this.state.showLtiRosterModal}
-          onRequestClose={() => this.setState({showLtiRosterModal: false, roster_deployment_id: null})}
+          onRequestClose={() =>
+            this.setState({showLtiRosterModal: false, roster_deployment_id: null})
+          }
           course_id={this.props.course_id}
           roster_deployment_id={this.state.roster_deployment_id}
         />
