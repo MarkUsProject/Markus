@@ -277,7 +277,7 @@ class ResultsController < ApplicationController
                                                 submission.assignment.id,
                                                 [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
-    flash_message(:success, I18n.t('automated_tests.tests_running'))
+    flash_message(:success, I18n.t('automated_tests.test_run_table.tests_running'))
   end
 
   ##  Tag Methods  ##

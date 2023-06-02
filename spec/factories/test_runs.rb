@@ -8,5 +8,8 @@ FactoryBot.define do
       association :grouping, factory: :grouping_with_inviter
       role { grouping.inviter }
     end
+    factory :batch_test_run do
+      association :test_batch, factory: :test_batch
+    end
   end
 end
