@@ -15,8 +15,8 @@
 - Use web sockets to update TestRunTable for non-batch run tests when a test run is in progress or completed (#6591)
 - Add button to allow students to cancel automated test runs (#6596)
 - Removed trailing spaces at end of every line when viewing a file (#6598)
-- Modify the CoursesController#index route to accept requests from all types of roles (#6619)
-- Modify the AssignmentsController#index route to accept requests from all types of roles (#6619)
+- Modify MarkUs API to allow the CoursesController#index route to accept requests from all types of roles (#6619)
+- Modify MarkUs API to allow the AssignmentsController#index route to accept requests from all types of roles (#6619)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
