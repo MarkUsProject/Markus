@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import ReactDomServer from "react-dom/server";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {
@@ -11,6 +12,8 @@ import {
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
 import consumer from "/app/javascript/channels/consumer";
+
+const FLASH_KEYS = ["notice", "warning", "success", "error"];
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -29,7 +32,7 @@ class RawSubmissionTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    this.create_collect_submissions_channel_subscription();
+    this.createCollectSubmissionsChannelSubscription();
   }
 
   fetchData = () => {
@@ -334,7 +337,7 @@ class RawSubmissionTable extends React.Component {
     }, after_function);
   };
 
-  create_collect_submissions_channel_subscription = () => {
+  createCollectSubmissionsChannelSubscription = () => {
     consumer.subscriptions.create(
       {channel: "CollectSubmissionsChannel", course_id: this.props.course_id},
       {
@@ -348,8 +351,10 @@ class RawSubmissionTable extends React.Component {
 
         received: data => {
           // Called when there's incoming data on the websocket for this channel
-          if (data["update_status"] != null && data["job_id"] != null) {
-            $.ajax(Routes.get_job_message_path(`${data["job_id"]}`));
+          if (data["status"] != null) {
+            let message_data = this.generateFlashMessageContentsUsingStatus(data);
+            console.log(message_data);
+            this.renderFlashMessages(message_data);
           }
           if (data["update_table"] != null) {
             this.fetchData();
@@ -357,6 +362,60 @@ class RawSubmissionTable extends React.Component {
         },
       }
     );
+  };
+
+  generateFlashMessageContentsUsingStatus = status_data => {
+    let message_data = {};
+
+    switch (status_data["status"]) {
+      case "failed":
+        if (status_data["exception"] == null || status_data["exception"]["message"] === null) {
+          message_data["error"] = "Failed";
+        } else {
+          message_data["error"] = status_data["exception"]["message"];
+        }
+        break;
+      case "completed":
+        message_data["success"] = "Completed";
+        break;
+      case "queued":
+        message_data["notice"] = "Queued";
+        break;
+      default:
+        let progress = status_data["progress"];
+        let total = status_data["total"];
+        message_data["notice"] = `${progress}/${total} Submissions collected`;
+    }
+    if (status_data["warning_message"] != null) {
+      message_data["warning"] = status_data["warning_message"];
+    }
+    return message_data;
+  };
+  renderFlashMessages = message_data => {
+    this.hideFlashMessages();
+    FLASH_KEYS.forEach(key => {
+      let message = message_data[key];
+      if (message) {
+        console.log("before: " + message);
+        message = `<p>${message.replaceAll("\n", "<br/>")}</p>`;
+        console.log("after: " + message);
+        const flashDiv = document.getElementsByClassName(key)[0];
+        const contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
+        contents.innerHTML = "";
+        contents.insertAdjacentHTML("beforeend", message);
+        flashDiv.style.display = "block";
+      }
+    });
+  };
+
+  hideFlashMessages = () => {
+    FLASH_KEYS.forEach(key => {
+      for (let elem of document.getElementsByClassName(key)) {
+        elem.style.display = "none";
+        const contents = elem.getElementsByClassName("flash-content")[0] || elem;
+        contents.innerHTML = "";
+      }
+    });
   };
 
   render() {

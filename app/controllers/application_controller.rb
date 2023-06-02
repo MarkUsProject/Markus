@@ -83,27 +83,32 @@ class ApplicationController < ActionController::Base
   # add flash message to AJAX response headers
   def flash_to_headers
     return unless request.xhr?
+    # Iterate through the flash types
     [:error, :success, :warning, :notice].each do |key|
+      # if there is a flash message set
       unless flash[key].nil?
         if flash[key].is_a?(Array)
           str = flash[key].join(';')
         else
           str = flash[key]
         end
+        # set x-message-(error | success | warning | notice)
         response.headers["X-Message-#{key}"] = str
       end
     end
+    # discard flash messages set
     flash.discard
   end
 
   # dynamically hide a flash message (for AJAX requests only)
   def hide_flash(key)
     return unless request.xhr?
-
     discard_header = response.headers['X-Message-Discard']
     if discard_header.nil?
+      # add a new discard header with the given key (error | success | warning | notice)
       response.headers['X-Message-Discard'] = key.to_s
     else
+      # add to the discard headers
       response.headers['X-Message-Discard'] = "#{key};#{discard_header}"
     end
   end

@@ -213,8 +213,7 @@ class SubmissionsController < ApplicationController
                                                   collect_current: collect_current,
                                                   apply_late_penalty: apply_late_penalty,
                                                   notify_socket: true)
-      session[:job_id] = @current_job.job_id
-      CollectSubmissionsChannel.broadcast_to(@current_user, { update_status: true, job_id: @current_job.job_id })
+      CollectSubmissionsChannel.broadcast_to(@current_user, ActiveJob::Status.get(@current_job).to_h)
     end
     if some_before_due
       error = I18n.t('submissions.collect.could_not_collect_some_due',

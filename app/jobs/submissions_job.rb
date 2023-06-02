@@ -1,8 +1,4 @@
 class SubmissionsJob < ApplicationJob
-  def self.show_status(status)
-    I18n.t('poll_job.submissions_job', progress: status[:progress], total: status[:total])
-  end
-
   def add_warning_messages(messages)
     msg = [status[:warning_message], *messages].compact.join("\n")
     status.update(warning_message: msg)
@@ -11,10 +7,8 @@ class SubmissionsJob < ApplicationJob
 
   def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
-
     m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
-
     progress.total = groupings.size
     groupings.each do |grouping|
       m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
@@ -44,12 +38,25 @@ class SubmissionsJob < ApplicationJob
       add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
       progress.increment
       unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], { update_status: true, job_id: job_id })
+        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], ActiveJob::Status.get(job_id).to_h)
       end
     end
+  rescue StandardError => e
+    # status wasn't updating on exception when it was supposed to, so I decided to catch and update manually.
+    status.catch_exception(e)
+    raise e
   ensure
     unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
+      message = if status&.progress == 1
+                  { status: 'completed',
+                    warning_message: status[:warning_message] }
+                else
+                  ActiveJob::Status.get(job_id).to_h
+                end
+      unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message)
+        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
+      end
     end
     m_logger.log('Submission collection process done')
   end
