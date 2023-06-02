@@ -163,10 +163,10 @@ class CoursesController < ApplicationController
   def sync_roster
     deployment = LtiDeployment.find(params[:lti_deployment_id])
     roles = []
-    if params[:tas] == 'true'
+    if params[:include_tas] == 'true'
       roles.append(LtiDeployment::LTI_ROLES[:ta])
     end
-    if params[:students] == 'true'
+    if params[:include_students] == 'true'
       roles.append(LtiDeployment::LTI_ROLES[:learner])
     end
     @current_job = LtiRosterSyncJob.perform_later(deployment, @current_course,

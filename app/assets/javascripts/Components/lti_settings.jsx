@@ -3,12 +3,12 @@ import {render} from "react-dom";
 import RosterSyncModal from "./Modals/roster_sync_modal";
 
 class LtiSettings extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       deployments: [],
       showLtiRosterModal: false,
-      external_roster_id: null,
+      roster_deployment_id: null,
     };
   }
 
@@ -39,16 +39,14 @@ class LtiSettings extends React.Component {
     }
   };
 
-  onLtiRosterModal = deployment_id => {
-    this.setState({showLtiRosterModal: true, external_roster_id: deployment_id});
+  onOpenLtiRosterModal = deployment_id => {
+    this.setState({showLtiRosterModal: true, roster_deployment_id: deployment_id});
   };
 
   render() {
     let ltiDeployments;
-    let deleteDeployment = this.deleteDeployment.bind(this);
-    let onLtiRosterModal = this.onLtiRosterModal.bind(this);
     if (this.state.deployments.length > 0) {
-      ltiDeployments = this.state.deployments.map(function (deployment, i) {
+      ltiDeployments = this.state.deployments.map((deployment, i) => {
         return (
           <div key={i}>
             {I18n.t("lti.lti_course_link_html")}{" "}
@@ -60,11 +58,11 @@ class LtiSettings extends React.Component {
               <button
                 type="submit"
                 name="sync_roster"
-                onClick={() => onLtiRosterModal(deployment.id)}
+                onClick={() => this.onOpenLtiRosterModal(deployment.id)}
               >
                 {I18n.t("lti.roster_sync")}
               </button>
-              <button type="submit" name="delete" onClick={() => deleteDeployment(deployment.id)}>
+              <button type="submit" name="delete" onClick={() => this.deleteDeployment(deployment.id)}>
                 {I18n.t("lti.unlink_courses")}
               </button>
             </div>
@@ -80,9 +78,9 @@ class LtiSettings extends React.Component {
         {ltiDeployments}
         <RosterSyncModal
           isOpen={this.state.showLtiRosterModal}
-          onRequestClose={() => this.setState({showLtiRosterModal: false})}
+          onRequestClose={() => this.setState({showLtiRosterModal: false, roster_deployment_id: null})}
           course_id={this.props.course_id}
-          roster_id={this.state.external_roster_id}
+          roster_deployment_id={this.state.roster_deployment_id}
         />
       </div>
     );

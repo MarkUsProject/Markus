@@ -1,12 +1,12 @@
 <% content_for :head do %>
-<%= javascript_tag nonce: true do %>
-  document.addEventListener('DOMContentLoaded', () => {
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
     makeLtiSettings(document.getElementById('lti-settings'),
     {
     course_id: <%= @current_course.id %>,
     }
     );
-  });
-<% end %>
+    });
+  <% end %>
 <% end %>
 <div id="lti-settings"></div>
