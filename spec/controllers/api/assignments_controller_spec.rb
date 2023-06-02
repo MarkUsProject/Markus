@@ -6,7 +6,7 @@ describe Api::AssignmentsController do
 
   shared_examples 'GET #index' do
     context 'when expecting an xml response' do
-      before :each do
+      before do
         request.env['HTTP_ACCEPT'] = 'application/xml'
       end
 
@@ -95,7 +95,7 @@ describe Api::AssignmentsController do
     end
 
     context 'expecting a json response' do
-      before :each do
+      before do
         request.env['HTTP_ACCEPT'] = 'application/json'
       end
 
@@ -213,7 +213,7 @@ describe Api::AssignmentsController do
   end
   context 'An authenticated instructor request requesting' do
     let!(:instructor) { create :instructor, course: course }
-    before :each do
+    before do
       instructor.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
@@ -502,7 +502,7 @@ describe Api::AssignmentsController do
 
   context 'An authenticated student request' do
     let(:student) { create :student, course: course }
-    before :each do
+    before do
       student.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
     end
@@ -511,7 +511,7 @@ describe Api::AssignmentsController do
 
     context 'POST submit_file' do
       let(:student) { create(:grouping_with_inviter, assignment: assignment).inviter }
-      before :each do
+      before do
         assignment.update(api_submit: true)
       end
 
@@ -652,7 +652,7 @@ describe Api::AssignmentsController do
 
   context 'An authenticated ta request' do
     let!(:ta) { create :ta, course: course }
-    before :each do
+    before do
       ta.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{ta.api_key.strip}"
     end

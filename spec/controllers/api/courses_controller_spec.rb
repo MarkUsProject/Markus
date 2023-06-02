@@ -1,13 +1,7 @@
 describe Api::CoursesController do
   let(:course) { create :course }
 
-  shared_examples 'Get #index' do |user_type, role|
-    let!(:user) { create(user_type) }
-    before :each do
-      user.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
-    end
-
+  shared_examples 'Get #index' do |role|
     context 'when expecting xml response' do
       context 'with no courses' do
         it 'should be successful' do
@@ -65,7 +59,7 @@ describe Api::CoursesController do
     end
 
     context 'expecting a json response' do
-      before :each do
+      before do
         request.env['HTTP_ACCEPT'] = 'application/json'
       end
 
@@ -101,7 +95,7 @@ describe Api::CoursesController do
         end
       end
 
-      context 'with multiple courses as ta' do
+      context 'with multiple courses' do
         let!(:roles) { create_list(role, 4, user: user) { |r| r.update(course_id: create(:course).id) } }
 
         it 'should be successful' do
@@ -124,7 +118,7 @@ describe Api::CoursesController do
   end
 
   context 'An unauthenticated request' do
-    before :each do
+    before do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
       request.env['HTTP_ACCEPT'] = 'application/xml'
     end
@@ -166,43 +160,51 @@ describe Api::CoursesController do
   end
 
   context 'An instructor user in the course' do
-    let(:end_user) { build :end_user }
+    let!(:user) { build :end_user }
+    before do
+      user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
+    end
 
-    include_examples 'Get #index', :end_user, :instructor
+    include_examples 'Get #index', :instructor
 
     it 'should fail to authenticate a POST create request' do
-      end_user.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{end_user.api_key.strip}"
       get :create
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
-      end_user.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{end_user.api_key.strip}"
       get :update, params: { id: course.id }
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a PUT update_autotest_url request' do
-      end_user.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{end_user.api_key.strip}"
       get :update_autotest_url, params: { id: course.id }
       expect(response).to have_http_status(403)
     end
   end
 
   context 'An authenticated student request' do
-    include_examples 'Get #index', :end_user, :student
+    let(:user) { build :end_user }
+    before do
+      user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
+    end
+    include_examples 'Get #index', :student
   end
 
   context 'An authenticated TA request' do
-    include_examples 'Get #index', :end_user, :ta
+    let(:user) { build :end_user }
+    before do
+      user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
+    end
+    include_examples 'Get #index', :ta
   end
 
   context 'an admin user' do
     let(:admin_user) { create :admin_user }
-    before :each do
+    before do
       admin_user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin_user.api_key.strip}"
     end
@@ -265,7 +267,7 @@ describe Api::CoursesController do
       end
 
       context 'expecting a json response' do
-        before :each do
+        before do
           request.env['HTTP_ACCEPT'] = 'application/json'
         end
 

@@ -40,4 +40,23 @@ describe Api::AssignmentPolicy do
       let(:role) { build :student }
     end
   end
+
+  describe_rule :index? do
+    succeed 'user is an admin user' do
+      let(:user) { build :admin_user }
+    end
+    succeed 'role is an instructor' do
+      let(:role) { create :instructor }
+    end
+    failed 'user is a test server' do
+      let(:role) { nil }
+      let(:user) { create :autotest_user }
+    end
+    succeed 'role is a ta' do
+      let(:role) { create :ta }
+    end
+    succeed 'role is a student' do
+      let(:role) { create :student }
+    end
+  end
 end
