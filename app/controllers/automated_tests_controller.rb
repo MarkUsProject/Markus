@@ -91,6 +91,7 @@ class AutomatedTestsController < ApplicationController
           url: download_file_course_assignment_automated_tests_url(assignment.course, assignment, file_name: file) }
       end
     end
+    file_keys.sort!
 
     schema_data = JSON.parse(assignment.course.autotest_setting.schema)
     fill_in_schema_data!(schema_data, file_keys, assignment)

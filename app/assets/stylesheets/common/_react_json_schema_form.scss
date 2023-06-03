@@ -78,9 +78,15 @@
     font-size: 1.4em;
   }
 
+  select[multiple] > option:checked {
+    background-color: $primary-two;
+    color: $sharp-line;
+  }
+
   input,
   textarea {
     margin: 5px;
+    padding: 0.25em;
   }
 
   input[type='checkbox'] {
@@ -94,9 +100,27 @@
   .form-control {
     min-width: 75pt;
 
+    &[type='text'] {
+      min-width: 150pt;
+    }
+
     &[multiple=''] {
       vertical-align: middle;
     }
+  }
+
+  select.form-control {
+    min-width: 150pt;
+  }
+
+  textarea.form-control {
+    height: 5em;
+    min-width: 400pt;
+  }
+
+  .control-label {
+    padding-top: 5px;
+    vertical-align: top;
   }
 
   /* stylelint-disable property-no-vendor-prefix */
@@ -115,5 +139,33 @@
   fieldset > legend[id$='extra_info__title'],
   #root_testers__title {
     display: none;
+  }
+
+  .feedback-file-names {
+    fieldset {
+      border: 1px solid $primary-two;
+      border-radius: $radius;
+      margin: 10px 0;
+      padding: 10px;
+    }
+
+    legend {
+      width: initial;
+    }
+
+    .array-item {
+      border: 0;
+    }
+  }
+
+  // Error messages
+  .error-detail {
+    background: $light-error asset-url('icons/exclamation.png') no-repeat 5px center;
+    border: 1px solid $severe-error;
+    border-radius: $radius;
+    list-style: none;
+    margin-bottom: 1em;
+    margin-left: 170px;
+    padding: 0.25em 0.5em 0.25em 2em;
   }
 }
