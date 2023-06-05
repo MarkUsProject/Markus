@@ -19,7 +19,6 @@ module Api
     # Optional: filter, fields
     def index
       assignments = get_collection(current_role&.visible_assessments
-                                     &.assignments
                                      &.where(course: current_course)) || return
 
       respond_to do |format|
