@@ -32,7 +32,7 @@ class JobMessagesController < ApplicationController
     flash_message(:warning, status[:warning_message]) if status[:warning_message].present?
     current_status = status[:job_class]&.show_status(status)
     if current_status.nil? || session[:job_id].nil?
-      # why are we hiding the notice flashes, we haven't flashed a notice up to this point
+      # hide the previously flashed notices
       hide_flash :notice
     else
       # yes handle this case

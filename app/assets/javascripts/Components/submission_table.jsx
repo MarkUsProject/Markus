@@ -369,7 +369,7 @@ class RawSubmissionTable extends React.Component {
 
     switch (status_data["status"]) {
       case "failed":
-        if (status_data["exception"] == null || status_data["exception"]["message"] === null) {
+        if (status_data["exception"] === null || status_data["exception"]["message"] === null) {
           message_data["error"] = "Failed";
         } else {
           message_data["error"] = status_data["exception"]["message"];
@@ -396,9 +396,7 @@ class RawSubmissionTable extends React.Component {
     FLASH_KEYS.forEach(key => {
       let message = message_data[key];
       if (message) {
-        console.log("before: " + message);
         message = `<p>${message.replaceAll("\n", "<br/>")}</p>`;
-        console.log("after: " + message);
         const flashDiv = document.getElementsByClassName(key)[0];
         const contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
         contents.innerHTML = "";
