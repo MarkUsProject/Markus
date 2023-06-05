@@ -32,8 +32,8 @@ class DownloadTestResultsModal extends React.Component {
               name="download-test-results-json"
               onClick={this.props.onRequestClose}
             >
-              <i className="fa fa-download-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("download_json")}
+              <i className="fa-solid fa-download" aria-hidden="true" />
+              {I18n.t("download_json")}
             </button>
           </a>
           <a
@@ -49,7 +49,7 @@ class DownloadTestResultsModal extends React.Component {
               name="download-test-results-csv"
               onClick={this.props.onRequestClose}
             >
-              <i className="fa fa-download-file-o" aria-hidden="true" />
+              <i className="fa-solid fa-download" aria-hidden="true" />
               &nbsp;{I18n.t("download_csv")}
             </button>
           </a>

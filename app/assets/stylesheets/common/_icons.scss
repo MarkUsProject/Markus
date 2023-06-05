@@ -1,182 +1,41 @@
-.add-new-button::before {
-  content: asset-url('icons/add.png');
+.icon-left {
+  margin-right: 5px;
+}
+
+.icon-right {
+  margin-left: 5px;
+}
+
+button > .svg-inline--fa,
+.button > .svg-inline--fa,
+a[role='button'] > .svg-inline--fa {
   padding-right: 5px;
-  vertical-align: text-top;
+
+  &.no-padding {
+    padding-right: 0;
+  }
 }
 
-.assign-all-button::before {
-  content: asset-url('add_arrow.png');
-  padding-right: 5px;
-  vertical-align: text-top;
+.fa-triangle-exclamation {
+  color: $severe-alert;
 }
 
-.assign-randomly-button::before {
-  content: asset-url('random_arrow.png');
-  padding-right: 5px;
-  vertical-align: text-top;
+.fa-circle-check {
+  color: $severe-success;
 }
 
-.unassign-all-button::before {
-  content: asset-url('remove_arrow.png');
-  padding-right: 5px;
-  vertical-align: text-top;
+.fa-circle-exclamation {
+  color: $severe-error;
 }
 
-.download-button::before {
-  content: asset-url('icons/disk.png');
-  padding-right: 5px;
-  vertical-align: middle;
+.fa-circle-info {
+  color: $primary-one;
 }
 
-.upload-button::before {
-  content: asset-url('icons/page_white_add.png');
-  padding-right: 5px;
-  vertical-align: middle;
-}
-
-.add-icon::after {
-  content: asset-url('icons/add.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.edit-icon::after {
-  content: asset-url('icons/pencil.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.remove-icon::after {
-  content: asset-url('icons/cross.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.valid-icon::after {
-  content: asset-url('icons/tick.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.invalid-icon::after {
-  content: asset-url('icons/cross.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.button.previous {
-  background: asset-url('icons/arrow_left.png') no-repeat 0 0;
-  background-size: 100%;
-}
-
-.button.next {
-  background: asset-url('icons/arrow_right.png') no-repeat 0 0;
-  background-size: 100%;
-}
-
-.set-complete::before {
-  content: asset-url('icons/accept.png');
-  padding-right: 5px;
-  vertical-align: text-top;
-}
-
-.set-incomplete::before {
-  content: asset-url('icons/pencil.png');
-  padding-right: 5px;
-  vertical-align: text-top;
-}
-
-.release::before {
-  content: asset-url('icons/email_go.png');
-  padding-right: 5px;
-  vertical-align: text-top;
-}
-
-.fullscreen-enter::before {
-  content: asset-url('icons/fullscreen_enter.png');
-  padding-right: 5px;
-  vertical-align: text-top;
-}
-
-.fullscreen-exit::before {
-  content: asset-url('icons/fullscreen_exit.png');
-  padding-right: 5px;
-  vertical-align: text-top;
-}
-
-.mark-chart::before {
-  content: asset-url('icons/chart_bar.png');
-  padding-right: 5px;
-  vertical-align: text-top;
-}
-
-// Miscellaneous icons
-.flexible-criteria-icon {
-  font-size: 11.3pt;
-  font-weight: bolder;
-}
-
-.settings::before {
-  content: asset-url('icons/settings.png');
-  padding-right: 5px;
-  vertical-align: sub;
-}
-
-.color-dark .settings::before {
-  content: asset-url('icons/settings_dark.png');
-}
-
-.switch-role::before {
-  content: asset-url('icons/group_go.png');
-  padding-right: 5px;
-  vertical-align: sub;
-}
-
-.about-markus::before {
-  content: asset-url('icons/information.png');
-  padding-right: 5px;
-  vertical-align: sub;
-}
-
-.github::before {
-  content: asset-url('icons/github.png');
-  padding-right: 5px;
-  vertical-align: sub;
-}
-
-.color-dark .github::before {
-  content: asset-url('icons/github_dark.png');
-}
-
-.logout::before {
-  content: asset-url('icons/logout.png');
-  padding-right: 5px;
-  vertical-align: sub;
-}
-
-.color-dark .logout::before {
-  content: asset-url('icons/logout_dark.png');
-}
-
-// Icons for react-json-schema-forms
-.btn-danger::after {
-  content: asset-url('icons/cross.png');
-}
-
-.btn-add::after {
-  content: asset-url('icons/add.png');
-}
-
-.array-item-move-up::after {
-  content: asset-url('icons/arrow_up.png');
-}
-
-.array-item-move-down::after {
-  content: asset-url('icons/arrow_down.png');
-}
-
-.refresh::after {
-  content: asset-url('icons/arrow_refresh.png');
-  padding-right: 5px;
-  vertical-align: text-top;
+.sortable .fa-grip-vertical {
+  color: $disabled-text;
+  cursor: grab;
+  float: left;
+  height: 20px;
+  margin-right: 1em;
 }

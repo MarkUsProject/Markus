@@ -78,6 +78,7 @@ en:
     repo_browser:
       client_time: 'commit:'
       collected: collected
+      confirm_deletion: Confirm Deletion
       repository: Repository
       repository_name: 'Repository: %{repository}'
       revised_by: Revised By
