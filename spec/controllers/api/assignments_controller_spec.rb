@@ -146,7 +146,7 @@ describe Api::AssignmentsController do
         end
       end
 
-      context 'with a multiple assignments in a different course' do
+      context 'with multiple assignments in a different course' do
         it 'should be successful' do
           assignment_different_course
           get :index, params: { course_id: course.id }
