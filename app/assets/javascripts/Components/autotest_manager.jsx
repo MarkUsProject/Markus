@@ -21,14 +21,40 @@ class AutotestManager extends React.Component {
         testers: {
           items: {
             "ui:classNames": "tester-item",
+            env_data: {
+              pip_requirements: {
+                "ui:widget": "textarea",
+              },
+            },
             test_data: {
               items: {
                 "ui:order": ["extra_info", "*"],
                 "ui:options": {label: false},
+                category: {
+                  "ui:title": I18n.t("automated_tests.category"),
+                },
                 feedback_file_names: {
+                  "ui:classNames": "feedback-file-names",
+                  "ui:options": {orderable: false},
+                  items: {
+                    "ui:placeholder": I18n.t("attributes.filename"),
+                    "ui:options": {label: false},
+                    "ui:title": I18n.t("attributes.filename"),
+                  },
+                },
+                script_files: {
                   items: {
                     "ui:options": {label: false},
                   },
+                },
+                student_files: {
+                  items: {
+                    "ui:options": {label: false},
+                  },
+                },
+                timeout: {
+                  "ui:title": I18n.t("automated_tests.timeout"),
+                  "ui:widget": "updown",
                 },
               },
             },
@@ -371,12 +397,14 @@ class AutotestManager extends React.Component {
     return (
       <div>
         <div className="inline-labels">
-          <input
-            type="checkbox"
-            checked={this.state.enable_test}
-            onChange={this.toggleEnableTest}
-          />
-          <label>{I18n.t("activerecord.attributes.assignment.enable_test")}</label>
+          <label>
+            <input
+              type="checkbox"
+              checked={this.state.enable_test}
+              onChange={this.toggleEnableTest}
+            />
+            {I18n.t("activerecord.attributes.assignment.enable_test")}
+          </label>
         </div>
         <fieldset>
           <legend>
@@ -401,8 +429,9 @@ class AutotestManager extends React.Component {
             <span>{"Testers"}</span>
           </legend>
           <div className={"rt-action-box upload-download"}>
-            <a href={this.specsDownloadURL()} className={"button download-button"}>
-              {I18n.t("download")}
+            <a href={this.specsDownloadURL()} className={"button"}>
+              <i className="fa fa-download-file-o" aria-hidden="true" />
+              &nbsp;{I18n.t("download")}
             </a>
             <a onClick={this.onSpecUploadModal} className={"button upload-button"}>
               {I18n.t("upload")}
@@ -452,7 +481,7 @@ class AutotestManager extends React.Component {
 
 class AutotestErrorList extends React.Component {
   render() {
-    return <p>{I18n.t("automated_tests.errors.settings_invalid")}</p>;
+    return <p className={"error"}>{I18n.t("automated_tests.errors.settings_invalid")}</p>;
   }
 }
 
