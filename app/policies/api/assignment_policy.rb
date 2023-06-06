@@ -1,6 +1,7 @@
 module Api
   # Policies for Api::AssignmentsController
   class AssignmentPolicy < MainApiPolicy
+    authorize :course, optional: true
     def test_files?
       real_user.autotest_user? || check?(:manage?)
     end
@@ -14,7 +15,7 @@ module Api
     end
 
     def index?
-      real_user.is_a?(EndUser) && real_user.roles.exists?
+      real_user.is_a?(EndUser) && role.course.id == course.id
     end
   end
 end

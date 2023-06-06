@@ -42,21 +42,39 @@ describe Api::AssignmentPolicy do
   end
 
   describe_rule :index? do
+    let(:course) { nil }
+    let(:context) { { role: role, real_user: user, course: course } }
     succeed 'user is an admin user' do
       let(:user) { build :admin_user }
-    end
-    succeed 'role is an instructor' do
-      let(:role) { create :instructor }
     end
     failed 'user is a test server' do
       let(:role) { nil }
       let(:user) { create :autotest_user }
     end
-    succeed 'role is a ta' do
-      let(:role) { create :ta }
+
+    context 'role belongs to course' do
+      let(:course) { role.course }
+      succeed 'role is an instructor' do
+        let(:role) { create :instructor }
+      end
+      succeed 'role is a ta' do
+        let(:role) { create :ta }
+      end
+      succeed 'role is a student' do
+        let(:role) { create :student }
+      end
     end
-    succeed 'role is a student' do
-      let(:role) { create :student }
+    context 'role does not belong to course' do
+      let(:course) { build :course }
+      failed 'role is an instructor' do
+        let(:role) { create :instructor }
+      end
+      failed 'role is a ta' do
+        let(:role) { create :ta }
+      end
+      failed 'role is a student' do
+        let(:role) { create :student }
+      end
     end
   end
 end

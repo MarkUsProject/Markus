@@ -5,6 +5,8 @@ module Api
     include AutomatedTestsHelper
     include SubmissionsHelper
 
+    authorize :course, through: :current_course
+
     # Define default fields to display for index and show methods
     DEFAULT_FIELDS = [:id, :description, :short_identifier, :message, :due_date,
                       :group_min, :group_max, :tokens_per_period, :allow_web_submits,
@@ -18,8 +20,7 @@ module Api
     # Returns a list of assignments and their attributes
     # Optional: filter, fields
     def index
-      assignments = get_collection(current_role&.visible_assessments
-                                     &.where(course: current_course)) || return
+      assignments = get_collection(current_role.visible_assessments) || return
 
       respond_to do |format|
         json_response = "[#{assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',')}]"
