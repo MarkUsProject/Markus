@@ -44,7 +44,7 @@ class User < ApplicationRecord
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
-    not_allowed_regexp = Regexp.new(/[\n\0]+/)
+    not_allowed_regexp = /[\n\0]+/
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
       m_logger = MarkusLogger.instance
       m_logger.log("User '#{login}' failed to log in. Username/password contained " \
