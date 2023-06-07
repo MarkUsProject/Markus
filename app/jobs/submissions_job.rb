@@ -41,22 +41,16 @@ class SubmissionsJob < ApplicationJob
         CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], ActiveJob::Status.get(job_id).to_h)
       end
     end
-  rescue StandardError => e
-    # status wasn't updating on exception when it was supposed to, so I decided to catch and update manually.
-    status.catch_exception(e)
-    raise e
   ensure
     unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      message = if status&.progress == 1
-                  { status: 'completed',
-                    warning_message: status[:warning_message] }
+      message = if status[:warning_message].nil?
+                  { status: 'completed' }
                 else
-                  ActiveJob::Status.get(job_id).to_h
+                  { status: 'completed', warning_message:
+                        status[:warning_message] }
                 end
-      unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message)
-        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
-      end
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message)
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
     end
     m_logger.log('Submission collection process done')
   end

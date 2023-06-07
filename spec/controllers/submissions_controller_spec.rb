@@ -797,21 +797,21 @@ describe SubmissionsController do
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
         end
-        it 'broadcasts a status update' do
-          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
-            expect(options[:update_status]).to be(true)
-            expect(options[:job_id]).not_to be_nil
-            expect(options.count).to eq(2)
+        it 'broadcasts a status update to the correct user' do
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |enqueuing_user, _|
+            expect(enqueuing_user).to eq(@instructor.user)
           end
           post_as @instructor, :collect_submissions, params: params
         end
         it 'broadcasts exactly one message' do
-          expect { post_as @instructor, :collect_submissions, params: params }
-            .to have_broadcasted_to(@instructor.user).from_channel(CollectSubmissionsChannel).exactly 1
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to).exactly(1).times
+          post_as @instructor, :collect_submissions, params: params
         end
         it "doesn't broadcast the message to other users" do
-          expect { post_as @instructor, :collect_submissions, params: params }
-            .to have_broadcasted_to(instructor2.user).from_channel(CollectSubmissionsChannel).exactly 0
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |enqueuing_user, _|
+            expect(enqueuing_user).not_to eq(instructor2.user)
+          end
+          post_as @instructor, :collect_submissions, params: params
         end
       end
 
@@ -819,16 +819,13 @@ describe SubmissionsController do
         it 'broadcasts no messages' do
           @assignment.update!(due_date: 1.week.ago)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
-          expect do
-            post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                                 assignment_id: @assignment.id,
-                                                                 groupings: [@grouping.id],
-                                                                 override: false }
-          end
-            .to have_broadcasted_to(@instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to).exactly(0).times
+          post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                               assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id],
+                                                               override: false }
         end
       end
-
       context 'where a grouping does not have a previously collected submission' do
         let(:uncollected_grouping) { create(:grouping, assignment: @assignment) }
         before(:each) do
