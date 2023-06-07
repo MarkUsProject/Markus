@@ -5,8 +5,6 @@ module Api
     include AutomatedTestsHelper
     include SubmissionsHelper
 
-    authorize :course, through: :current_course
-
     # Define default fields to display for index and show methods
     DEFAULT_FIELDS = [:id, :description, :short_identifier, :message, :due_date,
                       :group_min, :group_max, :tokens_per_period, :allow_web_submits,
