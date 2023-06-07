@@ -193,14 +193,10 @@ describe SubmissionsJob do
       expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
         expect(options[:warning_message]).to eq('Is collected is invalid')
       end
-      expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
-        expect(options[:warning_message]).to eq("Is collected is invalid\nIs collected is invalid")
-      end
-      expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
-        expect(options[:warning_message]).to eq("Is collected is invalid\nIs collected is invalid")
-      end
-      expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
-        expect(options[:warning_message]).to eq("Is collected is invalid\nIs collected is invalid")
+      3.times do |_|
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+          expect(options[:warning_message]).to eq("Is collected is invalid\nIs collected is invalid")
+        end
       end
       expect(CollectSubmissionsChannel).to receive(:broadcast_to)
       SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
