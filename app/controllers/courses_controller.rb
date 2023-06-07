@@ -157,7 +157,28 @@ class CoursesController < ApplicationController
   def destroy_lti_deployment
     deployment = LtiDeployment.find(params[:lti_deployment_id])
     deployment.destroy!
+    redirect_to edit_course_path(@current_course), status: :see_other
+  end
+
+  def sync_roster
+    deployment = LtiDeployment.find(params[:lti_deployment_id])
+    roles = []
+    if params[:include_tas] == 'true'
+      roles.append(LtiDeployment::LTI_ROLES[:ta])
+    end
+    if params[:include_students] == 'true'
+      roles.append(LtiDeployment::LTI_ROLES[:learner])
+    end
+    @current_job = LtiRosterSyncJob.perform_later(deployment, @current_course,
+                                                  roles,
+                                                  can_create_users: allowed_to?(:lti_manage?, with: UserPolicy),
+                                                  can_create_roles: allowed_to?(:manage?, with: RolePolicy))
+    session[:job_id] = @current_job.job_id
     redirect_to edit_course_path(@current_course)
+  end
+
+  def lti_deployments
+    render json: @current_course.lti_deployments.to_json(include: :lti_client)
   end
 
   private
