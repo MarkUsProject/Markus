@@ -18,21 +18,32 @@ class MarksGradersManager extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_grade_entry_form_marks_graders_path(
+    fetch(
+      Routes.course_grade_entry_form_marks_graders_path(
         this.props.course_id,
         this.props.grade_entry_form_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.studentsTable.resetSelection();
-      this.gradersTable.resetSelection();
-      this.setState({
-        graders: res.graders,
-        students: res.students || [],
-        loading: false,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json(); // Parse the response as JSON
+        }
+      })
+      .then(res => {
+        this.studentsTable.resetSelection();
+        this.gradersTable.resetSelection();
+        this.setState({
+          graders: res.graders,
+          students: res.students || [],
+          loading: false,
+        });
       });
-    });
   };
 
   assignAll = () => {

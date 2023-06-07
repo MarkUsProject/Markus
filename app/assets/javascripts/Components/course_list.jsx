@@ -25,8 +25,6 @@ class CourseList extends React.Component {
       .then(response => {
         if (response.ok) {
           return response.json(); // Parse the response as JSON
-        } else {
-          throw new Error("Request failed");
         }
       })
       .then(response => {
@@ -34,9 +32,6 @@ class CourseList extends React.Component {
           courses: response.data,
           loading: false,
         });
-      })
-      .catch(error => {
-        console.error(error);
       });
   };
 

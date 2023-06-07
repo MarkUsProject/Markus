@@ -34,40 +34,51 @@ export class TestRunTable extends React.Component {
 
   fetchData = () => {
     let ajaxDetails = {};
+    let url;
     if (this.props.instructor_run) {
       if (this.props.instructor_view) {
-        ajaxDetails = {
-          url: Routes.get_test_runs_instructors_course_result_path(
-            this.props.course_id,
-            this.props.result_id
-          ),
-          dataType: "json",
-        };
+        url = Routes.get_test_runs_instructors_course_result_path(
+          this.props.course_id,
+          this.props.result_id
+        );
+        ajaxDetails = {method: "GET"};
       } else {
+        url = Routes.get_test_runs_instructors_released_course_result_path(
+          this.props.course_id,
+          this.props.result_id
+        );
         ajaxDetails = {
-          url: Routes.get_test_runs_instructors_released_course_result_path(
-            this.props.course_id,
-            this.props.result_id
-          ),
-          dataType: "json",
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
         };
       }
     } else {
+      url = Routes.get_test_runs_students_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      );
       ajaxDetails = {
-        url: Routes.get_test_runs_students_course_assignment_automated_tests_path(
-          this.props.course_id,
-          this.props.assignment_id
-        ),
-        dataType: "json",
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
       };
     }
-    $.ajax(ajaxDetails).then(res => {
-      this.setState({
-        data: res,
-        loading: false,
-        expanded: res.length > 0 ? {0: true} : {},
+    fetch(url, ajaxDetails)
+      .then(response => {
+        if (response.ok) {
+          return response.json(); // Parse the response as JSON
+        }
+      })
+      .then(data => {
+        this.setState({
+          data: data,
+          loading: false,
+          expanded: data.length > 0 ? {0: true} : {},
+        });
       });
-    });
   };
 
   onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
