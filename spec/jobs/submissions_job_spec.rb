@@ -174,7 +174,7 @@ describe SubmissionsJob do
         end
       end
       expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
-        expect(options[:status]).to eq('completed')
+        expect(options[:status]).to be(:completed)
         expect(options.count).to eq(1)
       end
       expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|

@@ -1,6 +1,5 @@
 import React from "react";
 import {render} from "react-dom";
-import ReactDomServer from "react-dom/server";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {
@@ -353,7 +352,6 @@ class RawSubmissionTable extends React.Component {
           // Called when there's incoming data on the websocket for this channel
           if (data["status"] != null) {
             let message_data = this.generateFlashMessageContentsUsingStatus(data);
-            console.log(message_data);
             this.renderFlashMessages(message_data);
           }
           if (data["update_table"] != null) {

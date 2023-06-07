@@ -41,13 +41,20 @@ class SubmissionsJob < ApplicationJob
         CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], ActiveJob::Status.get(job_id).to_h)
       end
     end
+  rescue StandardError => e
+    status.catch_exception(e)
+    raise e
   ensure
     unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      message = if status[:warning_message].nil?
-                  { status: 'completed' }
+      message = if status&.progress == 1
+                  if status[:warning_message].nil?
+                    { status: :completed }
+                  else
+                    { status: :completed, warning_message:
+                      status[:warning_message] }
+                  end
                 else
-                  { status: 'completed', warning_message:
-                        status[:warning_message] }
+                  ActiveJob::Status.get(job_id).to_h
                 end
       CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message)
       CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
