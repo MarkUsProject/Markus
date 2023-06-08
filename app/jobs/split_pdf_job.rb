@@ -248,9 +248,11 @@ class SplitPdfJob < ApplicationJob
         read_chars_py_file = Rails.root.join('lib/scanner/run_scanner.py').to_s
         char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
         stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file, char_type)
-        next unless status.success?
+        parsed = stdout.strip.split("\n")
 
-        student = match_student(stdout.strip.split("\n"), exam_template)
+        next unless status.success? && parsed.length == 1
+
+        student = match_student(parsed[0], exam_template)
 
         unless student.nil?
           StudentMembership.find_or_create_by(role: student,
