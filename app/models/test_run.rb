@@ -91,7 +91,7 @@ class TestRun < ApplicationRecord
     TestGroupResult::ERROR_TYPE[:no_results]
   end
 
-  def create_test_group_result(result, error: nil)
+  def create_test_group_result(result)
     test_group_id = result.dig('extra_info', 'test_group_id')
     test_group = TestGroup.find_by(id: test_group_id)
     test_group.test_group_results.create(
