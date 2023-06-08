@@ -36,17 +36,28 @@ class TagTable extends React.Component {
       })
       .then(res => {
         this.setState({
-          tags: res.data,
+          tags: res,
           loading: false,
         });
       });
   };
 
   edit = tag_id => {
-    $.get({
-      url: Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id),
-      dataType: "script",
-    });
+    //not opening modal
+    fetch(Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id), {
+      method: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+      .then(response => {
+        return response.text();
+      })
+      .then(script => {
+        const scriptElement = document.createElement("script");
+        scriptElement.innerHTML = script;
+        document.body.appendChild(scriptElement);
+      });
   };
 
   delete = tag_id => {
