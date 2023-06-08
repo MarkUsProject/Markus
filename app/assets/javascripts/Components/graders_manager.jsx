@@ -50,27 +50,34 @@ class GradersManager extends React.Component {
   };
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_assignment_graders_path(this.props.course_id, this.props.assignment_id),
-      dataType: "json",
-    }).then(res => {
-      if (this.gradersTable) this.gradersTable.resetSelection();
-      if (this.groupsTable) this.groupsTable.resetSelection();
-      if (this.criteriaTable) this.criteriaTable.resetSelection();
+    fetch(Routes.course_assignment_graders_path(this.props.course_id, this.props.assignment_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        if (this.gradersTable) this.gradersTable.resetSelection();
+        if (this.groupsTable) this.groupsTable.resetSelection();
+        if (this.criteriaTable) this.criteriaTable.resetSelection();
 
-      this.setState({
-        graders: res.graders,
-        groups: res.groups,
-        criteria: res.criteria,
-        assign_graders_to_criteria: res.assign_graders_to_criteria,
-        loading: false,
-        sections: res.sections,
-        anonymize_groups: res.anonymize_groups,
-        hide_unassigned_criteria: res.hide_unassigned_criteria,
-        isGraderDistributionModalOpen: false,
-        hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
+        this.setState({
+          graders: res.graders,
+          groups: res.groups,
+          criteria: res.criteria,
+          assign_graders_to_criteria: res.assign_graders_to_criteria,
+          loading: false,
+          sections: res.sections,
+          anonymize_groups: res.anonymize_groups,
+          hide_unassigned_criteria: res.hide_unassigned_criteria,
+          isGraderDistributionModalOpen: false,
+          hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
+        });
       });
-    });
   };
 
   assignAll = () => {
