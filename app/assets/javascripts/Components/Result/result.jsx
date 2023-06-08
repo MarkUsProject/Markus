@@ -59,20 +59,25 @@ class Result extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_result_path(this.props.course_id, this.state.result_id),
-      dataType: "json",
-    }).then(res => {
-      if (res.submission_files) {
-        res.submission_files = this.processSubmissionFiles(res.submission_files);
-      }
-      const markData = this.processMarks(res);
-      this.setState({...res, ...markData, loading: false}, () => {
-        initializePanes();
-        fix_panes();
-        this.updateContextMenu();
+    fetch(Routes.course_result_path(this.props.course_id, this.state.result_id), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        if (res.submission_files) {
+          res.submission_files = this.processSubmissionFiles(res.submission_files);
+        }
+        const markData = this.processMarks(res);
+        this.setState({...res, ...markData, loading: false}, () => {
+          initializePanes();
+          fix_panes();
+          this.updateContextMenu();
+        });
       });
-    });
   };
 
   /* Processing result data */
@@ -333,24 +338,35 @@ class Result extends React.Component {
   };
 
   refreshAnnotationCategories = () => {
-    $.get({
-      url: Routes.course_assignment_annotation_categories_path(
+    fetch(
+      Routes.course_assignment_annotation_categories_path(
         this.props.course_id,
         this.state.parent_assignment_id || this.state.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.setState({annotation_categories: res});
-    });
+      {headers: {Accept: "application/json"}}
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({annotation_categories: res});
+      });
   };
 
   refreshAnnotations = () => {
-    $.ajax({
-      url: Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id),
-      dataType: "json",
-    }).then(res => {
-      this.setState({annotations: res});
-    });
+    fetch(Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({annotations: res});
+      });
   };
 
   editAnnotation = annot_id => {
