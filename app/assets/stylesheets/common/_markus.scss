@@ -238,6 +238,10 @@ select {
   padding-left: 5px;
 }
 
+select[multiple] {
+  padding-left: 0;
+}
+
 /** Buttons */
 
 input[type='button'],

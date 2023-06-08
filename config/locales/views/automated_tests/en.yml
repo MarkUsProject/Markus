@@ -1,6 +1,8 @@
 ---
 en:
   automated_tests:
+    cancel_tests: Cancel tests
+    category: Run by
     display_output:
       instructors: Never display test output to students
       instructors_and_student_tests: Only display test output to students for student-run tests
@@ -52,4 +54,5 @@ en:
     testing_disabled: Automated testing is not enabled for this assignment.
     tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     tests_running: Running tests. Please refresh this page in a bit to view the results.
+    timeout: Timeout (s)
     title: Automated Testing

@@ -112,6 +112,8 @@ Rails.application.routes.draw do
       get 'download_assignments'
       post 'upload_assignments'
       delete 'destroy_lti_deployment'
+      post 'sync_roster'
+      get 'lti_deployments'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update]
@@ -225,7 +227,6 @@ Rails.application.routes.draw do
         get 'download_config_files'
         get 'download_test_results'
         post 'create_lti_grades'
-        get 'lti_settings'
         post 'create_lti_line_items'
       end
 

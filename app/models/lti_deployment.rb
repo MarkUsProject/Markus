@@ -17,7 +17,9 @@ class LtiDeployment < ApplicationRecord
                  deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id',
                  user_launch_data: 'https://purl.imsglobal.org/spec/lti/claim/lti1p1' }.freeze
   LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner',
-                test_user: 'http://purl.imsglobal.org/vocab/lti/system/person#TestUser' }.freeze
+                test_user: 'http://purl.imsglobal.org/vocab/lti/system/person#TestUser',
+                ta: 'http://purl.imsglobal.org/vocab/lis/v2/membership/Instructor#TeachingAssistant',
+                instructor: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' }.freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
   # with the learner role and creates roles and LTI IDs for each user.

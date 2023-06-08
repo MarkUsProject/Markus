@@ -797,10 +797,41 @@ describe AssignmentsController do
         before do
           get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id }
         end
-        it('should respond with 403') { expect(response.status).to eq 403 }
+        it('should respond with 403') { expect(response).to have_http_status(403) }
       end
     end
   end
+
+  describe 'when the role is student' do
+    let(:course) { create :course }
+    let(:role) { create :student, course: course }
+    let(:assignment) { create :assignment_for_student_tests, course: course }
+    let(:grouping) { create(:grouping_with_inviter, inviter: role, assignment: assignment) }
+    let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+
+    context '#stop_test' do
+      context 'when student tests are allowed to cancel tests' do
+        it 'should respond with 302' do
+          assignment.assignment_properties.update!(unlimited_tokens: true)
+          allow_any_instance_of(AutotestCancelJob).to receive(:perform_now).and_return []
+          get_as role, :stop_test, params: { course_id: course.id,
+                                             id: assignment.id,
+                                             test_run_id: test_run.id }
+          expect(response).to have_http_status(302)
+        end
+      end
+
+      context 'when students are not allowed to cancel tests' do
+        it 'should respond with 403' do
+          get_as role, :stop_test, params: { course_id: course.id,
+                                             id: assignment.id,
+                                             test_run_id: test_run.id }
+          expect(response).to have_http_status(403)
+        end
+      end
+    end
+  end
+
   describe '#starter_file' do
     before(:each) { get_as role, :starter_file, params: params }
     let(:assignment) { create :assignment }

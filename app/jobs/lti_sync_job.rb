@@ -14,8 +14,9 @@ class LtiSyncJob < ApplicationJob
       raise I18n.t('lti.no_platform')
     end
     lti_deployments.each do |deployment|
-      roster_error = roster_sync(deployment, course, can_create_users: can_create_users,
-                                                     can_create_roles: can_create_roles)
+      roster_error = roster_sync(deployment, course,
+                                 [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
+                                 can_create_users: can_create_users, can_create_roles: can_create_roles)
       if roster_error
         status.update(warning_message: [status[:warning_message], I18n.t('lti.roster_sync_errors')].compact
                                                                                                    .join("\n"))
