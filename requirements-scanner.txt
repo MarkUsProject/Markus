@@ -1,2 +1,2 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
-markus_exam_matcher @ git+https://github.com/MarkUsProject/markus-exam-matcher.git
+markus_exam_matcher @ git+https://github.com/MarkUsProject/markus-exam-matcher.git@main
