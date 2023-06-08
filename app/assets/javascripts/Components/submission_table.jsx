@@ -367,7 +367,7 @@ class RawSubmissionTable extends React.Component {
 
     switch (status_data["status"]) {
       case "failed":
-        if (status_data["exception"] === null || status_data["exception"]["message"] === null) {
+        if (status_data["exception"] == null || status_data["exception"]["message"] == null) {
           message_data["error"] = "Failed";
         } else {
           message_data["error"] = status_data["exception"]["message"];

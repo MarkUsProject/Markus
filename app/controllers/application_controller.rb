@@ -99,6 +99,7 @@ class ApplicationController < ActionController::Base
   # dynamically hide a flash message (for AJAX requests only)
   def hide_flash(key)
     return unless request.xhr?
+
     discard_header = response.headers['X-Message-Discard']
     if discard_header.nil?
       response.headers['X-Message-Discard'] = key.to_s

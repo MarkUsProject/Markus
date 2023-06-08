@@ -7,8 +7,10 @@ class SubmissionsJob < ApplicationJob
 
   def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
+
     m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
+
     progress.total = groupings.size
     groupings.each do |grouping|
       m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
