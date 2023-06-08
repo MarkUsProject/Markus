@@ -15,6 +15,7 @@
 - Use web sockets to update TestRunTable for non-batch run tests when a test run is in progress or completed (#6591)
 - Add button to allow students to cancel automated test runs (#6596)
 - Removed trailing spaces at end of every line when viewing a file (#6598)
+- A user can't run tests with the same names / Single test error does not spoil the whole test batch (#6620)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
