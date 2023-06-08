@@ -82,7 +82,6 @@ class ApplicationController < ActionController::Base
 
   # add flash message to AJAX response headers
   def flash_to_headers
-    return unless request.xhr?
     [:error, :success, :warning, :notice].each do |key|
       unless flash[key].nil?
         if flash[key].is_a?(Array)
