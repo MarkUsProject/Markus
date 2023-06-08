@@ -28,7 +28,11 @@ module AutomatedTestsHelper
   end
 
   def fill_in_schema_data!(schema_data, files, assignment)
-    schema_data['definitions']['files_list']['enum'] = files
+    if files.present?
+      schema_data['definitions']['files_list']['enum'] = files
+    else
+      schema_data['definitions']['files_list']['enum'] = ['']
+    end
     schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
     schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
 
