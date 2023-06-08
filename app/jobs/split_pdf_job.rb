@@ -245,8 +245,9 @@ class SplitPdfJob < ApplicationJob
         student_info.destroy!
 
         python_exe = Rails.application.config.python
-        read_chars_py_file = Rails.root.join('lib/scanner/read_chars.py').to_s
-        stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
+        read_chars_py_file = Rails.root.join('lib/scanner/run_scanner.py').to_s
+        char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
+        stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file, char_type)
         next unless status.success?
 
         student = match_student(stdout.strip.split("\n"), exam_template)
@@ -262,17 +263,15 @@ class SplitPdfJob < ApplicationJob
   end
 
   # Determine a match using the parsed handwritten text and the user identifying field (+exam_template.cover_fields+).
-  # If the parsing was successful, +parsed+ is a list of two strings parsed from the handwritten text:
-  # the first is the result of attempting to parse alphabetic characters, and the second is the result of
-  # attempting to parse numeric digits.
+  # If the parsing was successful, +parsed+ is a string parsed from the handwritten text: if
+  # +exam_template.cover_fields+ is 'id_number', it is the result of attempting to parse numeric digits, and if
+  # +exam_template.cover_fields+ is 'user_name', it is the result of attempting to parse alphanumeric characters.
   def match_student(parsed, exam_template)
-    return if parsed.size < 2
-
     case exam_template.cover_fields
     when 'id_number'
-      Student.joins(:user).find_by('user.id_number': parsed[1])
+      Student.joins(:user).find_by('user.id_number': parsed)
     when 'user_name'
-      Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed[0]))
+      Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed))
     end
   end
 
