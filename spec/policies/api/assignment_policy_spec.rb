@@ -53,7 +53,6 @@ describe Api::AssignmentPolicy do
     end
 
     context 'role belongs to course' do
-      let(:course) { role.course }
       succeed 'role is an instructor' do
         let(:role) { create :instructor }
       end
@@ -66,15 +65,15 @@ describe Api::AssignmentPolicy do
     end
 
     context 'role does not belong to course' do
-      let(:course) { build :course }
+      let(:user) { create :end_user }
       failed 'role is an instructor' do
-        let(:role) { create :instructor }
+        let(:role_other) { create :instructor, user: user }
       end
       failed 'role is a ta' do
-        let(:role) { create :ta }
+        let(:role_other) { create :ta, user: user }
       end
       failed 'role is a student' do
-        let(:role) { create :student }
+        let(:role_other) { create :student, user: user }
       end
     end
   end
