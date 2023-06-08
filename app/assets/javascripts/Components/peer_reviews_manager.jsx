@@ -25,25 +25,31 @@ class PeerReviewsManager extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.populate_course_assignment_peer_reviews_path(
+    fetch(
+      Routes.populate_course_assignment_peer_reviews_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.studentsTable.resetSelection();
-      this.reviewersTable.resetSelection();
-      this.setState({
-        reviewerGroups: res.reviewer_groups.groups,
-        revieweeGroups: res.reviewee_groups.groups || [],
-        revieweeToReviewers: res.reviewee_to_reviewers_map,
-        groupIdToName: res.id_to_group_names_map,
-        reviewerToNumReviews: res.num_reviews_map,
-        sections: res.sections,
-        loading: false,
+      {headers: {Accept: "application/json"}}
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.studentsTable.resetSelection();
+        this.reviewersTable.resetSelection();
+        this.setState({
+          reviewerGroups: res.reviewer_groups.groups,
+          revieweeGroups: res.reviewee_groups.groups || [],
+          revieweeToReviewers: res.reviewee_to_reviewers_map,
+          groupIdToName: res.id_to_group_names_map,
+          reviewerToNumReviews: res.num_reviews_map,
+          sections: res.sections,
+          loading: false,
+        });
       });
-    });
   };
 
   updateNumReviewers = num => {
