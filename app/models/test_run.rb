@@ -63,7 +63,7 @@ class TestRun < ApplicationRecord
                                                  else
                                                    extra_info + "\n" +
                                                                test_name + e.message
-                                                 end, error_type: TestGroupResult::ERROR_TYPE[:test_error])
+                                                 end)
           end
         end
         # update the marks earned and total_marks for this test_group_result

@@ -341,9 +341,6 @@ describe TestRun do
         it 'should still create test results for the passing tests' do
           expect(test_group_result.test_results.size).to eq 1
         end
-        it 'should create a test group result with the error_type as test_error' do
-          expect(test_group_result.error_type).to eq TestGroupResult::ERROR_TYPE[:test_error].to_s
-        end
         context 'when multiple errors occur' do
           let(:test3) do
             {
@@ -359,9 +356,6 @@ describe TestRun do
           it 'should create a test_group_result with extra_info listing the errors of all failing tests' do
             expect(test_group_result.extra_info).to eq "test1 - Validation failed: Test Name has already been taken\n" \
                                                        'test1 - Validation failed: Test Name has already been taken'
-          end
-          it 'should create a test_group_result with the error_type as test_error' do
-            expect(test_group_result.error_type).to eq TestGroupResult::ERROR_TYPE[:test_error].to_s
           end
           context 'when stderr is set' do
             let(:stderr) { 'error' }
@@ -408,12 +402,13 @@ describe TestRun do
           test_run.update_results!(results)
           expect(submission.results.first.get_total_mark).to eq 1
         end
-        context 'when one of the tests fail' do
-          it 'should not set criteria marks' do
+        context 'when one of the tests produce an error' do
+          let(:test2) { { name: :test1, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
+          let(:tests) { [test1, test2] }
+          it 'should not affect the total mark' do
             criterion && assignment.ta_criteria.reload
-            allow_any_instance_of(TestGroupResult).to receive(:test_results).and_raise(StandardError, 'error msg')
             test_run.update_results!(results)
-            expect(submission.results.first.get_total_mark).to eq 0
+            expect(submission.results.first.get_total_mark).to eq 2
           end
         end
       end
