@@ -367,7 +367,7 @@ class RawSubmissionTable extends React.Component {
 
     switch (status_data["status"]) {
       case "failed":
-        if (status_data["exception"] == null || status_data["exception"]["message"] == null) {
+        if (!status_data["exception"] || !status_data["exception"]["message"]) {
           message_data["error"] = "Failed";
         } else {
           message_data["error"] = status_data["exception"]["message"];
@@ -384,7 +384,7 @@ class RawSubmissionTable extends React.Component {
         let total = status_data["total"];
         message_data["notice"] = `${progress}/${total} Submissions collected`;
     }
-    if (status_data["warning_message"] != null) {
+    if (status_data["warning_message"]) {
       message_data["warning"] = status_data["warning_message"];
     }
     return message_data;
