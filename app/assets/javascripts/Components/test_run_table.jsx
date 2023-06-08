@@ -167,6 +167,9 @@ class TestGroupResultTable extends React.Component {
       filteredData: props.data,
     };
   }
+  static getDerivedStateFromProps(props, _) {
+    return {filteredData: props.data};
+  }
 
   computeExpanded = data => {
     let expanded = {};
