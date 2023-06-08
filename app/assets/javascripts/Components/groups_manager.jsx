@@ -97,22 +97,12 @@ class GroupsManager extends React.Component {
   };
 
   createAllGroups = () => {
-    fetch(
-      Routes.create_groups_when_students_work_alone_course_assignment_groups_path(
+    $.get({
+      url: Routes.create_groups_when_students_work_alone_course_assignment_groups_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      {headers: {"X-Requested-With": "XMLHttpRequest"}}
-    )
-      .then(response => {
-        return response.text();
-      })
-      // .then(script => {
-      //   const scriptElement = document.createElement("script");
-      //   scriptElement.innerHTML = script;
-      //   document.body.appendChild(scriptElement);
-      // })
-      .then(this.fetchData);
+    }).then(this.fetchData);
   };
 
   deleteGroups = () => {
