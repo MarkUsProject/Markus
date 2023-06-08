@@ -36,13 +36,19 @@ class StarterFileManager extends React.Component {
   };
 
   fetchData = () => {
-    $.get({
-      url: Routes.populate_starter_file_manager_course_assignment_path(
+    fetch(
+      Routes.populate_starter_file_manager_course_assignment_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => this.setState({loading: false, ...res}));
+      {headers: {Accept: "aaplication/json"}}
+    )
+      .then(reponse => {
+        if (reponse.ok) {
+          return reponse.json();
+        }
+      })
+      .then(res => this.setState({loading: false, ...res}));
   };
 
   createStarterFileGroup = () => {
