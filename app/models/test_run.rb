@@ -31,15 +31,10 @@ class TestRun < ApplicationRecord
       failure(results['error'])
     else
       self.update!(status: :complete, problems: results['error'])
-      # for each test group
       results['test_groups'].each do |result|
-        # create a result for the test group
         test_group_result = create_test_group_result(result)
-        # maintain the total marks and the marks earned
         marks_total, marks_earned = 0, 0
-        # for each test within this group
         result['tests'].each_with_index do |test, i|
-          # try creating a test_result
           ApplicationRecord.transaction do
             test_group_result.test_results.create!(
               name: test['name'],
@@ -50,14 +45,11 @@ class TestRun < ApplicationRecord
               time: test['time'],
               position: i + 1
             )
-            # add to the total marks and marks earned (only if the record was saved to db)
             marks_earned += test['marks_earned']
             marks_total += test['marks_total']
           rescue StandardError => e
-            # if the test fails, update extra info with error message and set error type for the test
-            # results group
             extra_info = test_group_result.extra_info
-            test_name = test['status'].nil? ? '' : "#{test['name']} - "
+            test_name = test['name'].nil? ? '' : "#{test['name']} - "
             test_group_result.update(extra_info: if extra_info.nil?
                                                    test_name + e.message
                                                  else
@@ -66,13 +58,11 @@ class TestRun < ApplicationRecord
                                                  end)
           end
         end
-        # update the marks earned and total_marks for this test_group_result
         test_group_result.update(marks_earned: marks_earned,
                                  marks_total: marks_total)
         create_annotations(result['annotations'])
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
-      # set_autotest_marks based off of this test run
       self.submission&.set_autotest_marks
     end
   end
