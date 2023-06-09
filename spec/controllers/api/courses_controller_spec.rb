@@ -1,7 +1,124 @@
 describe Api::CoursesController do
   let(:course) { create :course }
+
+  shared_examples 'Get #index' do |role|
+    context 'when expecting xml response' do
+      context 'with no courses' do
+        it 'should be successful' do
+          get :index
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          get :index
+          expect(Hash.from_xml(response.body)['courses']).to be_nil
+        end
+      end
+
+      context 'with a single course' do
+        let!(:role) { create(role, user: user, course: course) }
+
+        it 'should be successful' do
+          get :index
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return xml content' do
+          get :index
+          expect(Hash.from_xml(response.body).dig('courses', 'course', 'id')).to eq(course.id.to_s)
+        end
+
+        it 'should return all default fields' do
+          get :index
+          keys = Hash.from_xml(response.body).dig('courses', 'course').keys.map(&:to_sym)
+          expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
+        end
+      end
+
+      context 'with multiple courses' do
+        let!(:roles) { create_list(role, 4, user: user) { |r| r.update(course_id: create(:course).id) } }
+
+        it 'should be successful' do
+          get :index
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return xml content' do
+          get :index
+          course_ids = Hash.from_xml(response.body).dig('courses', 'course').map { |course| course['id'].to_i }
+          expect(course_ids).to contain_exactly(*user.courses.ids)
+        end
+
+        it 'should return all default fields' do
+          get :index
+          keys = Hash.from_xml(response.body).dig('courses', 'course').first.keys.map(&:to_sym)
+          keys.sort!
+          expect(keys).to eq(Api::CoursesController::DEFAULT_FIELDS.sort)
+        end
+      end
+    end
+
+    context 'expecting a json response' do
+      before do
+        request.env['HTTP_ACCEPT'] = 'application/json'
+      end
+
+      context 'with no courses' do
+        it 'should be successful' do
+          get :index
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          get :index
+          expect(response.parsed_body).to be_empty
+        end
+      end
+
+      context 'with a single course' do
+        let!(:role) { create role, user: user, course: course }
+
+        it 'should be successful' do
+          get :index
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return json content' do
+          get :index
+          expect(response.parsed_body&.first&.dig('id')).to eq(course.id)
+        end
+
+        it 'should return all default fields' do
+          get :index
+          keys = response.parsed_body&.first&.keys&.map(&:to_sym)
+          expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
+        end
+      end
+
+      context 'with multiple courses' do
+        let!(:roles) { create_list(role, 4, user: user) { |r| r.update(course_id: create(:course).id) } }
+
+        it 'should be successful' do
+          get :index
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return json content' do
+          get :index
+          expect(response.parsed_body.length).to eq(*user.courses.ids.count)
+        end
+
+        it 'should return all default fields' do
+          get :index
+          keys = response.parsed_body.map { |h| h.keys.map(&:to_sym) }
+          expect(keys).to all(match_array(Api::CoursesController::DEFAULT_FIELDS))
+        end
+      end
+    end
+  end
+
   context 'An unauthenticated request' do
-    before :each do
+    before do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
       request.env['HTTP_ACCEPT'] = 'application/xml'
     end
@@ -41,30 +158,16 @@ describe Api::CoursesController do
       expect(response).to have_http_status(403)
     end
   end
+
   context 'An instructor user in the course' do
-    let(:end_user) { build :end_user }
-    before :each do
-      end_user.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{end_user.api_key.strip}"
+    let!(:user) { build :end_user }
+    before do
+      user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
     end
-    context 'with multiple courses as instructor' do
-      before :each do
-        build_list(:instructor, 4, user: end_user) { |instructor| instructor.update(course_id: create(:course).id) }
-        get :index
-      end
-      it 'should be successful' do
-        expect(response).to have_http_status(200)
-      end
-      it 'should return xml content' do
-        course_ids = Hash.from_xml(response.body).dig('courses', 'course').map { |course| course['id'].to_i }
-        expect(course_ids).to contain_exactly(*Course.ids)
-      end
-      it 'should return all default fields' do
-        keys = Hash.from_xml(response.body).dig('courses', 'course').first.keys.map(&:to_sym)
-        keys.sort!
-        expect(keys).to eq(Api::CoursesController::DEFAULT_FIELDS.sort)
-      end
-    end
+
+    include_examples 'Get #index', :instructor
+
     it 'should fail to authenticate a POST create request' do
       get :create
       expect(response).to have_http_status(403)
@@ -80,12 +183,148 @@ describe Api::CoursesController do
       expect(response).to have_http_status(403)
     end
   end
+
+  context 'An authenticated student request' do
+    let(:user) { build :end_user }
+    before do
+      user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
+    end
+    include_examples 'Get #index', :student
+  end
+
+  context 'An authenticated TA request' do
+    let(:user) { build :end_user }
+    before do
+      user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
+    end
+    include_examples 'Get #index', :ta
+  end
+
   context 'an admin user' do
     let(:admin_user) { create :admin_user }
-    before :each do
+    before do
       admin_user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin_user.api_key.strip}"
     end
+
+    context 'GET #index' do
+      context 'when expecting an xml response' do
+        context 'with no courses' do
+          it 'should be successful' do
+            get :index
+            expect(response).to have_http_status(200)
+          end
+
+          it 'should return empty content' do
+            get :index
+            expect(Hash.from_xml(response.body)['courses']).to be_nil
+          end
+        end
+
+        context 'with a single course' do
+          let!(:course) { create :course }
+
+          it 'should be successful' do
+            get :index
+            expect(response).to have_http_status(200)
+          end
+
+          it 'should return xml content' do
+            get :index
+            expect(Hash.from_xml(response.body).dig('courses', 'course', 'id')).to eq(course.id.to_s)
+          end
+
+          it 'should return all default fields' do
+            get :index
+            keys = Hash.from_xml(response.body).dig('courses', 'course').keys.map(&:to_sym)
+            expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
+          end
+        end
+
+        context 'with multiple courses' do
+          let!(:courses) { create_list(:course, 4) }
+
+          it 'should be successful' do
+            get :index
+            expect(response).to have_http_status(200)
+          end
+
+          it 'should return xml content' do
+            get :index
+            course_ids = Hash.from_xml(response.body).dig('courses', 'course').map { |course| course['id'].to_i }
+            expect(course_ids).to contain_exactly(*Course.ids)
+          end
+
+          it 'should return all default fields' do
+            get :index
+            keys = Hash.from_xml(response.body).dig('courses', 'course').first.keys.map(&:to_sym)
+            keys.sort!
+            expect(keys).to eq(Api::CoursesController::DEFAULT_FIELDS.sort)
+          end
+        end
+      end
+
+      context 'expecting a json response' do
+        before do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+        end
+
+        context 'with no courses' do
+          it 'should be successful' do
+            get :index
+            expect(response).to have_http_status(200)
+          end
+
+          it 'should return empty content' do
+            get :index
+            expect(response.parsed_body).to be_empty
+          end
+        end
+
+        context 'with a single course' do
+          let!(:course) { create :course }
+
+          it 'should be successful' do
+            get :index
+            expect(response).to have_http_status(200)
+          end
+
+          it 'should return json content' do
+            get :index
+            expect(response.parsed_body&.first&.dig('id')).to eq(course.id)
+          end
+
+          it 'should return all default fields' do
+            get :index
+            keys = response.parsed_body&.first&.keys&.map(&:to_sym)
+            expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
+          end
+        end
+
+        context 'with multiple courses ' do
+          let!(:courses) { create_list(:course, 4) }
+
+          it 'should be successful' do
+            get :index
+            expect(response).to have_http_status(200)
+          end
+
+          it 'should return json content' do
+            get :index
+            expect(response.parsed_body.length).to eq(*Course.ids.count)
+          end
+
+          it 'should return all default fields' do
+            get :index
+            keys = response.parsed_body.map { |h| h.keys.map(&:to_sym) }
+            expect(keys).to all(match_array(Api::CoursesController::DEFAULT_FIELDS))
+          end
+        end
+      end
+    end
+
     context '#create' do
       let(:params) { { name: 'test', display_name: 'test', is_hidden: true } }
       before { get :create, params: params }
