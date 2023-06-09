@@ -145,17 +145,27 @@ export class FileViewer extends React.Component {
             this.setFileUrl();
           });
         } else {
-          $.ajax({
-            url: this.props.selectedFileURL,
-            data: {preview: true, force_text: force_text},
+          const requestData = {preview: true, force_text: force_text};
+          const url = this.props.selectedFileURL;
+          const queryString = Object.keys(requestData)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
+            .join("&");
+          const requestUrl = `${url}&${queryString}`;
+          fetch(requestUrl, {
             method: "GET",
-          }).then(res => {
-            this.setState({
-              content: res.replace(/\r?\n/gm, "\n"),
-              type: this.props.selectedFileType,
-              loading: false,
+          })
+            .then(response => {
+              if (response.ok) {
+                return response.text();
+              }
+            })
+            .then(res => {
+              this.setState({
+                content: res.replace(/\r?\n/gm, "\n"),
+                type: this.props.selectedFileType,
+                loading: false,
+              });
             });
-          });
         }
       }
     });
