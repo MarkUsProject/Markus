@@ -222,8 +222,8 @@ describe("For the StudentTable's display of students", () => {
           remaining_grace_credits: 4,
         },
       ];
-      // Mocking the response returned by $.ajax, used in StudentTable fetchData
-      $.ajax = jest.fn(() =>
+      // Mocking the response returned by fetch, used in StudentTable fetchData
+      fetch = jest.fn(() =>
         Promise.resolve({
           students: students_sample,
           sections: {1: "LEC0101"},
@@ -241,8 +241,8 @@ describe("For the StudentTable's display of students", () => {
   describe("when no students are fetched", () => {
     beforeAll(() => {
       students_sample = [];
-      // Mocking the response returned by $.ajax, used in StudentTable fetchData
-      $.ajax = jest.fn(() =>
+      // Mocking the response returned by fetch, used in StudentTable fetchData
+      fetch = jest.fn(() =>
         Promise.resolve({
           students: students_sample,
           sections: {},
