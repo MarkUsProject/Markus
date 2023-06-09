@@ -36,8 +36,8 @@ describe("For the InstructorTable's display of instructors", () => {
           hidden: true,
         },
       ];
-      // Mocking the response returned by $.ajax, used in InstructorTable fetchData
-      $.ajax = jest.fn(() =>
+      // Mocking the response returned by fetch, used in InstructorTable fetchData
+      fetch = jest.fn(() =>
         Promise.resolve({
           data: instructors_sample,
           counts: {all: 2, active: 1, inactive: 1},
@@ -54,8 +54,8 @@ describe("For the InstructorTable's display of instructors", () => {
   describe("when no instructors are fetched", () => {
     beforeAll(() => {
       instructors_sample = [];
-      // Mocking the response returned by $.ajax, used in InstructorTable fetchData
-      $.ajax = jest.fn(() =>
+      // Mocking the response returned by fetch, used in InstructorTable fetchData
+      fetch = jest.fn(() =>
         Promise.resolve({
           data: instructors_sample,
           counts: {all: 0, active: 0, inactive: 0},

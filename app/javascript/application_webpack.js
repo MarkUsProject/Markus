@@ -15,6 +15,9 @@ window.$ = window.jQuery = $;
 import * as ajax_events from "javascripts/ajax_events";
 window.ajax_events = ajax_events;
 
+import * as fetch_event from "javascripts/fetch_event";
+window.fetch_event = fetch_event;
+
 // vendor libraries
 import "javascripts/jquery.easyModal";
 
