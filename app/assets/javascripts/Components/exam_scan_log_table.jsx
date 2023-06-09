@@ -18,15 +18,26 @@ class ExamScanLogTable extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.view_logs_course_assignment_exam_templates_path(
+    fetch(
+      Routes.view_logs_course_assignment_exam_templates_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(data => {
-      this.setState({data: data, loading: false});
-    });
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(data => {
+        this.setState({data: data, loading: false});
+      });
   };
 
   columns = [
