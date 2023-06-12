@@ -17,12 +17,20 @@ class LtiSettings extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.lti_deployments_course_path(this.props.course_id),
-      dataType: "json",
-    }).then(data => {
-      this.setState({deployments: data});
-    });
+    fetch(Routes.lti_deployments_course_path(this.props.course_id), {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json(); // Parse the response as JSON
+        }
+      })
+      .then(data => {
+        this.setState({deployments: data});
+      });
   };
 
   deleteDeployment = deployment_id => {
