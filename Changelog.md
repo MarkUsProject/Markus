@@ -16,6 +16,8 @@
 - Add button to allow students to cancel automated test runs (#6596)
 - Use web sockets instead of polling to update submission collection status (#6597)
 - Removed trailing spaces at end of every line when viewing a file (#6598)
+- Modify MarkUs API to allow the CoursesController#index route to accept requests from all types of roles (#6619)
+- Modify MarkUs API to allow the AssignmentsController#index route to accept requests from all types of roles (#6619)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
