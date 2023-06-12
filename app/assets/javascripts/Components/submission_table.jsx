@@ -11,6 +11,7 @@ import {
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
 import consumer from "/app/javascript/channels/consumer";
+import {generateFlashMessageContentsUsingStatus, renderFlashMessages} from "../flash";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -29,7 +30,7 @@ class RawSubmissionTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    this.create_collect_submissions_channel_subscription();
+    this.createCollectSubmissionsChannelSubscription();
   }
 
   fetchData = () => {
@@ -334,7 +335,7 @@ class RawSubmissionTable extends React.Component {
     }, after_function);
   };
 
-  create_collect_submissions_channel_subscription = () => {
+  createCollectSubmissionsChannelSubscription = () => {
     consumer.subscriptions.create(
       {channel: "CollectSubmissionsChannel", course_id: this.props.course_id},
       {
@@ -348,7 +349,13 @@ class RawSubmissionTable extends React.Component {
 
         received: data => {
           // Called when there's incoming data on the websocket for this channel
-          this.fetchData();
+          if (data["status"] != null) {
+            let message_data = generateFlashMessageContentsUsingStatus(data);
+            renderFlashMessages(message_data);
+          }
+          if (data["update_table"] != null) {
+            this.fetchData();
+          }
         },
       }
     );

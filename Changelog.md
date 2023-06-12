@@ -14,6 +14,7 @@
 - Order students by username when downloading the CSV grades breakdown for an assignment from Summary tab  (#6589)
 - Use web sockets to update TestRunTable for non-batch run tests when a test run is in progress or completed (#6591)
 - Add button to allow students to cancel automated test runs (#6596)
+- Use web sockets instead of polling to update submission collection status (#6597)
 - Removed trailing spaces at end of every line when viewing a file (#6598)
 - Modify MarkUs API to allow the CoursesController#index route to accept requests from all types of roles (#6619)
 - Modify MarkUs API to allow the AssignmentsController#index route to accept requests from all types of roles (#6619)
