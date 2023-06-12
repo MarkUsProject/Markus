@@ -225,7 +225,7 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    head :success
+    head :ok
   end
 
   def run_tests

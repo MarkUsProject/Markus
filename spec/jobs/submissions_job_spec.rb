@@ -177,11 +177,8 @@ describe SubmissionsJob do
         end
         expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
           expect(options[:status]).to be(:completed)
-          expect(options.count).to eq(1)
-        end
-        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
           expect(options[:update_table]).not_to be_nil
-          expect(options.count).to eq(1)
+          expect(options.count).to eq(2)
         end
         SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
       end
@@ -200,12 +197,11 @@ describe SubmissionsJob do
             expect(options[:warning_message]).to eq("Is collected is invalid\nIs collected is invalid")
           end
         end
-        expect(CollectSubmissionsChannel).to receive(:broadcast_to)
         SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
       end
-      it 'broadcasts exactly five messages (four status updates and one to update the table)' do
+      it 'broadcasts exactly four messages (three status updates and one joint status and table update)' do
         expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true) }
-          .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 5
+          .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 4
       end
     end
     context 'with errors when collecting submissions' do
@@ -226,16 +222,13 @@ describe SubmissionsJob do
         end
         expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
           expect(options[:status]).to be(:failed)
-        end
-        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
           expect(options[:update_table]).not_to be_nil
-          expect(options.count).to eq(1)
         end
       end
 
-      it 'sends exactly three status updates (one when the first submission is collected, one for the error and one ' \
-         'for table update)' do
-        expect(CollectSubmissionsChannel).to receive(:broadcast_to).exactly(3).times
+      it 'sends exactly two status updates (one when the first submission is collected and a joint one for the error' \
+         'and table update)' do
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to).exactly(2).times
       end
       it 'broadcasts a warning message if present' do
         allow(groupings[0]).to receive(:save) do
@@ -246,7 +239,6 @@ describe SubmissionsJob do
             expect(options[:warning_message]).to eq('Is collected is invalid')
           end
         end
-        expect(CollectSubmissionsChannel).to receive(:broadcast_to)
       end
     end
     it "doesn't broadcast the message to other users" do
