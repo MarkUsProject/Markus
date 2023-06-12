@@ -48,18 +48,17 @@ class SubmissionsJob < ApplicationJob
     raise e
   ensure
     unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      message = if status&.progress == 1
-                  if status[:warning_message].nil?
-                    { status: :completed }
-                  else
-                    { status: :completed, warning_message:
-                      status[:warning_message] }
-                  end
-                else
-                  ActiveJob::Status.get(job_id).to_h
-                end
-      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message)
-      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], update_table: true)
+      if status&.progress == 1
+        if status[:warning_message].nil?
+          message = { status: :completed }
+        else
+          message = { status: :completed, warning_message:
+            status[:warning_message] }
+        end
+      else
+        message = ActiveJob::Status.get(job_id).to_h
+      end
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message.merge({ update_table: true }))
     end
     m_logger.log('Submission collection process done')
   end

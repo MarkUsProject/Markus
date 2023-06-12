@@ -11,8 +11,7 @@ import {
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
 import consumer from "/app/javascript/channels/consumer";
-
-const FLASH_KEYS = ["notice", "warning", "success", "error"];
+import {generateFlashMessageContentsUsingStatus, renderFlashMessages} from "../flash";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -351,8 +350,8 @@ class RawSubmissionTable extends React.Component {
         received: data => {
           // Called when there's incoming data on the websocket for this channel
           if (data["status"] != null) {
-            let message_data = this.generateFlashMessageContentsUsingStatus(data);
-            this.renderFlashMessages(message_data);
+            let message_data = generateFlashMessageContentsUsingStatus(data);
+            renderFlashMessages(message_data);
           }
           if (data["update_table"] != null) {
             this.fetchData();
@@ -360,58 +359,6 @@ class RawSubmissionTable extends React.Component {
         },
       }
     );
-  };
-
-  generateFlashMessageContentsUsingStatus = status_data => {
-    let message_data = {};
-
-    switch (status_data["status"]) {
-      case "failed":
-        if (!status_data["exception"] || !status_data["exception"]["message"]) {
-          message_data["error"] = "Failed";
-        } else {
-          message_data["error"] = status_data["exception"]["message"];
-        }
-        break;
-      case "completed":
-        message_data["success"] = "Completed";
-        break;
-      case "queued":
-        message_data["notice"] = "Queued";
-        break;
-      default:
-        let progress = status_data["progress"];
-        let total = status_data["total"];
-        message_data["notice"] = `${progress}/${total} Submissions collected`;
-    }
-    if (status_data["warning_message"]) {
-      message_data["warning"] = status_data["warning_message"];
-    }
-    return message_data;
-  };
-  renderFlashMessages = message_data => {
-    this.hideFlashMessages();
-    FLASH_KEYS.forEach(key => {
-      let message = message_data[key];
-      if (message) {
-        message = `<p>${message.replaceAll("\n", "<br/>")}</p>`;
-        const flashDiv = document.getElementsByClassName(key)[0];
-        const contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
-        contents.innerHTML = "";
-        contents.insertAdjacentHTML("beforeend", message);
-        flashDiv.style.display = "block";
-      }
-    });
-  };
-
-  hideFlashMessages = () => {
-    FLASH_KEYS.forEach(key => {
-      for (let elem of document.getElementsByClassName(key)) {
-        elem.style.display = "none";
-        const contents = elem.getElementsByClassName("flash-content")[0] || elem;
-        contents.innerHTML = "";
-      }
-    });
   };
 
   render() {

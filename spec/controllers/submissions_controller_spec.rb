@@ -86,7 +86,7 @@ describe SubmissionsController do
       assignment = create(:timed_assignment)
       create(:grouping_with_inviter, inviter: @student, assignment: assignment, start_time: 10.minutes.ago)
       get_as @student, :file_manager, params: { course_id: course.id, assignment_id: assignment.id }
-      expect(response).to have_http_status 200
+      expect(response).to have_http_status(:success)
     end
 
     it 'should be able to add and access files' do
@@ -654,10 +654,10 @@ describe SubmissionsController do
         grader_permission.save
       end
       context '#collect_submissions' do
-        it('should respond with 204') do
+        it('should respond with success status') do
           post_as grader, :collect_submissions,
                   params: { course_id: course.id, assignment_id: @assignment.id, groupings: [@grouping.id] }
-          expect(response.status).to eq 204
+          expect(response).to have_http_status(:success)
         end
       end
       context '#manually_collect_and_begin_grading' do
@@ -1003,7 +1003,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-            expect(response.status).to eq 204
+            expect(response).to have_http_status(:success)
           end
 
           it 'should not receive an error if it is before the section due date and collect_current is selected' do
@@ -1031,7 +1031,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, collect_current: true,
                               groupings: @assignment.groupings.to_a }
-            expect(response.status).to eq 204
+            expect(response).to have_http_status(:success)
           end
 
           it 'should succeed if it is after the section due date' do
@@ -1046,7 +1046,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-            expect(response.status).to eq 204
+            expect(response).to have_http_status(:success)
           end
         end
 
@@ -1069,7 +1069,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-            expect(response.status).to eq 204
+            expect(response).to have_http_status(:success)
           end
 
           it 'should not return an error if it is before the global due date but collect_current is true' do
@@ -1096,7 +1096,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, collect_current: true,
                               groupings: @assignment.groupings.to_a }
-            expect(response.status).to eq 204
+            expect(response).to have_http_status(:success)
           end
 
           it 'should succeed if it is after the global due date' do
@@ -1111,7 +1111,7 @@ describe SubmissionsController do
                     :collect_submissions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               override: true, groupings: ([] << @assignment.groupings).flatten }
-            expect(response.status).to eq 204
+            expect(response).to have_http_status(:success)
           end
         end
       end
@@ -1438,7 +1438,7 @@ describe SubmissionsController do
       shared_examples 'notebook content' do
         it 'is successful' do
           subject
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:success)
         end
         it 'renders the correct template' do
           expect(subject).to render_template('notebook')
@@ -1625,7 +1625,7 @@ describe SubmissionsController do
       before { subject }
       let(:role) { create :instructor }
       it 'should be allowed' do
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:success)
       end
       it 'should download submission info for all groupings' do
         expect(returned_group_names).to contain_exactly(*groupings.map { |g| g.group.group_name })
@@ -1641,7 +1641,7 @@ describe SubmissionsController do
       let(:role) { create :ta }
       it 'should be allowed' do
         subject
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:success)
       end
       context 'who has not been assigned any groupings' do
         it 'should download an empty csv' do
