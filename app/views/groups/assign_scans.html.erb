@@ -40,7 +40,11 @@
           Accept: "application/json",
         }
       })
-      .then((response) =>{if(response.ok) {return response.json();}})
+      .then((response) =>{
+        if(response.ok) {
+          return response.json();
+        }
+      })
       .then((data) => parseNextScan(data));
     });
 
