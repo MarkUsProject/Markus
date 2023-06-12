@@ -33,7 +33,7 @@ export class TestRunTable extends React.Component {
   }
 
   fetchData = () => {
-    let ajaxDetails = {};
+    let fetchDetails = {};
     let url;
     if (this.props.instructor_run) {
       if (this.props.instructor_view) {
@@ -41,13 +41,13 @@ export class TestRunTable extends React.Component {
           this.props.course_id,
           this.props.result_id
         );
-        ajaxDetails = {method: "GET"};
+        fetchDetails = {method: "GET"};
       } else {
         url = Routes.get_test_runs_instructors_released_course_result_path(
           this.props.course_id,
           this.props.result_id
         );
-        ajaxDetails = {
+        fetchDetails = {
           method: "GET",
           headers: {
             Accept: "application/json",
@@ -59,14 +59,14 @@ export class TestRunTable extends React.Component {
         this.props.course_id,
         this.props.assignment_id
       );
-      ajaxDetails = {
+      fetchDetails = {
         method: "GET",
         headers: {
           Accept: "application/json",
         },
       };
     }
-    fetch(url, ajaxDetails)
+    fetch(url, fetchDetails)
       .then(response => {
         if (response.ok) {
           return response.json(); // Parse the response as JSON
