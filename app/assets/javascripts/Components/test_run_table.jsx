@@ -168,8 +168,10 @@ class TestGroupResultTable extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps(props, _) {
-    return {filteredData: props.data};
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({filteredData: this.props.data, filtered: []});
+    }
   }
 
   computeExpanded = data => {
