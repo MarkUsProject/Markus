@@ -22,12 +22,23 @@ class BatchTestRunTable extends React.Component {
   }
 
   fetchData() {
-    $.ajax({
-      url: Routes.batch_runs_course_assignment_path(this.props.course_id, this.props.assignment_id),
-      dataType: "json",
-    }).then(res => {
-      this.processData(res);
-    });
+    fetch(
+      Routes.batch_runs_course_assignment_path(this.props.course_id, this.props.assignment_id),
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json(); // Parse the response as JSON
+        }
+      })
+      .then(res => {
+        this.processData(res);
+      });
   }
 
   processData(data) {
