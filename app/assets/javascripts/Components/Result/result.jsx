@@ -669,26 +669,28 @@ class Result extends React.Component {
       );
 
       this.setState({loading: true}, () => {
-        $.ajax({
-          url: url,
-          data: {
-            direction: direction,
-          },
-        }).then(result => {
-          if (!result.next_result || !result.next_grouping) {
-            alert(I18n.t("results.no_results_in_direction"));
-            return;
-          }
+        const requestUrl = `${url}?direction=${direction}`;
+        fetch(requestUrl)
+          .then(response => {
+            if (response.ok) {
+              return response.json;
+            }
+          })
+          .then(result => {
+            if (!result.next_result || !result.next_grouping) {
+              alert(I18n.t("results.no_results_in_direction"));
+              return;
+            }
 
-          const result_obj = {
-            result_id: result.next_result.id,
-            submission_id: result.next_result.submission_id,
-            grouping_id: result.next_grouping.id,
-          };
-          this.setState(prevState => ({...prevState, ...result_obj}));
-          let new_url = Routes.edit_course_result_url(this.props.course_id, this.state.result_id);
-          history.pushState({}, document.title, new_url);
-        });
+            const result_obj = {
+              result_id: result.next_result.id,
+              submission_id: result.next_result.submission_id,
+              grouping_id: result.next_grouping.id,
+            };
+            this.setState(prevState => ({...prevState, ...result_obj}));
+            let new_url = Routes.edit_course_result_url(this.props.course_id, this.state.result_id);
+            history.pushState({}, document.title, new_url);
+          });
       });
     };
   };
