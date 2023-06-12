@@ -30,13 +30,18 @@
     };
     $("#assign_student").submit(function (e) {
       e.preventDefault();
-      $.ajax({
+      const queryString = $("#assign_student").serialize();
+      console.log($("#assign_student").serialize());
+      const url = "assign_student_and_next";
+      const requestUrl = `${url}?${queryString}`;
+      fetch(requestUrl, {
         method: "GET",
-        url: "assign_student_and_next",
-        dataType: "json",
-        data: $("#assign_student").serialize(),
-        success: parseNextScan
-      });
+        headers: {
+          Accept: "application/json",
+        }
+      })
+      .then((response) =>{if(response.ok) {return response.json();}})
+      .then((data) => parseNextScan(data));
     });
 
     function parseNextScan(data) {
