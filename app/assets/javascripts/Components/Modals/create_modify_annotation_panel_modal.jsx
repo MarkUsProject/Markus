@@ -29,17 +29,23 @@ class CreateModifyAnnotationPanel extends React.Component {
       return;
     }
 
-    $.ajax({
-      method: "get",
-      url: Routes.find_annotation_text_course_assignment_annotation_categories_url(
-        this.props.course_id,
-        this.props.assignment_id
-      ),
-      dataType: "json",
-      data: {
-        string: value,
+    const url = Routes.find_annotation_text_course_assignment_annotation_categories_url(
+      this.props.course_id,
+      this.props.assignment_id
+    );
+    const requestUrl = `${url}?string=${value}`;
+
+    fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
       },
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json(); // Parse the response as JSON
+        }
+      })
       .then(res => {
         if (res.length === 0) {
           this.setState({show_autocomplete: false});
