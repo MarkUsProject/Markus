@@ -58,7 +58,7 @@ class Course < ApplicationRecord
       MarkusCsv.parse(assignment_data) do |row|
         assignment = self.assignments.find_or_create_by(short_identifier: row[0])
         attrs = Assignment::DEFAULT_FIELDS.zip(row).to_h
-        attrs.delete_if { |_, v| v.nil? }
+        attrs.compact!
         if assignment.new_record?
           assignment.assignment_properties.repository_folder = row[0]
           assignment.assignment_properties.token_period = 1
