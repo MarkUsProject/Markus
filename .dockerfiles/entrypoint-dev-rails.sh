@@ -10,7 +10,6 @@ npm list &> /dev/null || npm ci
 [ -f ./venv/bin/python3 ] || python3 -m venv ./venv
 ./venv/bin/python3 -m pip install --upgrade pip > /dev/null
 ./venv/bin/python3 -m pip install -r requirements-jupyter.txt > /dev/null
-./venv/bin/python3 -m pip uninstall -y -r requirements-scanner.txt > /dev/null
 ./venv/bin/python3 -m pip install -r requirements-scanner.txt > /dev/null
 
 # setup the database (checks for db existence first)
