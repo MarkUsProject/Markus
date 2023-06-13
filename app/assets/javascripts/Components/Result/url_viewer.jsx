@@ -84,14 +84,30 @@ export class URLViewer extends React.Component {
   configureOEmbedPreview = (url, oembedUrl) => {
     // Request is of the form <oembedUrl>?format=json&url=<url>
     // For more information about the format of this request see https://oembed.com/
-    $.get(oembedUrl, {format: "json", url: url}).then(res => {
-      const match = res.html.match(/src="(\S+)"/);
-      if (match.length === 2) {
-        this.setState({
-          embeddedURL: match[1],
-        });
-      }
-    });
+    const requestData = {format: "json", url: url};
+    const queryString = Object.keys(requestData)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
+      .join("&");
+    const requestUrl = `${oembedUrl}?${queryString}`;
+    fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        const match = res.html.match(/src="(\S+)"/);
+        if (match.length === 2) {
+          this.setState({
+            embeddedURL: match[1],
+          });
+        }
+      });
   };
 
   renderPreviewDisplay = () => {
