@@ -2,6 +2,17 @@ import {mount} from "enzyme";
 
 import {InstructorTable} from "../instructor_table";
 
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        data: [],
+        counts: {},
+      }),
+  })
+);
+
 describe("For the InstructorTable's display of instructors", () => {
   let wrapper, instructors_sample;
 
@@ -37,12 +48,14 @@ describe("For the InstructorTable's display of instructors", () => {
         },
       ];
       // Mocking the response returned by fetch, used in InstructorTable fetchData
-      fetch = jest.fn(() =>
-        Promise.resolve({
+      fetch.mockReset();
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
           data: instructors_sample,
           counts: {all: 2, active: 1, inactive: 1},
-        })
-      );
+        }),
+      });
       wrapper = mount(<InstructorTable course_id={1} />);
     });
 
@@ -55,12 +68,14 @@ describe("For the InstructorTable's display of instructors", () => {
     beforeAll(() => {
       instructors_sample = [];
       // Mocking the response returned by fetch, used in InstructorTable fetchData
-      fetch = jest.fn(() =>
-        Promise.resolve({
+      fetch.mockReset();
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
           data: instructors_sample,
           counts: {all: 0, active: 0, inactive: 0},
-        })
-      );
+        }),
+      });
       wrapper = mount(<InstructorTable course_id={1} />);
     });
 

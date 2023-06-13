@@ -21,12 +21,20 @@ class TATable extends React.Component {
   }
 
   fetchData() {
-    $.ajax({
-      url: Routes.course_tas_path(this.props.course_id),
-      dataType: "json",
-    }).then(res => {
-      this.setState({data: res.data, counts: res.counts, loading: false});
-    });
+    fetch(Routes.course_tas_path(this.props.course_id), {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({data: res.data, counts: res.counts, loading: false});
+      });
   }
 
   render() {
