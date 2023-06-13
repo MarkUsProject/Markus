@@ -139,7 +139,7 @@
     }
   }
 
-  $(document).ready(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
       create_grace_periods();

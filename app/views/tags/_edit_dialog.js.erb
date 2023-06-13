@@ -1,8 +1,8 @@
 $('#edit_tags_dialog').html("<%= escape_javascript(render('tags/edit')) %>");
 modal_edit.open();
-$(function() {
+document.addEventListener("DOMContentLoaded", function() {
   $('#edit-tag-dialog-cancel').click(function(e) {
     modal_edit.close();
     e.preventDefault();
   })
-})
+});

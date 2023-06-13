@@ -1,4 +1,4 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   // Change repo folder to be same as short identifier
 
   $("#assignment_due_date").change(function () {

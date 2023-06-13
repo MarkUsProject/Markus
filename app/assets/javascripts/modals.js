@@ -40,7 +40,7 @@ export class ModalMarkus {
   }
 }
 
-$(document).ready(() => {
+document.addEventListener("DOMContentLoaded", () => {
   $(".dialog").each((_, dialog) => {
     let open_link = dialog.getAttribute("data-open-link") || undefined;
     new ModalMarkus("#" + dialog.id, open_link);

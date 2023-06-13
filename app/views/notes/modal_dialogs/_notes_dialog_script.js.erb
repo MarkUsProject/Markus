@@ -12,11 +12,11 @@ if ($('#notes_dialog .inline-button.delete').length) {
     }
   });
 }
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
   $('#notes_submit').click(function() {
     modalNotesGroup.close()
   })
   $('#notes-cancel').click(function() {
     modalNotesGroup.close()
   })
-})
+});

@@ -17,9 +17,9 @@
     onbeforeunload_flag = true
   })
 
-  $(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     $('input[type="submit"]').click(function () {
       submit_clicked = true;
     });
-  })
+  });
 <% end %>

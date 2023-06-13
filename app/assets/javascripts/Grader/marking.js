@@ -1,4 +1,4 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   // Handle indenting in the new annotation textarea (2 spaces)
   $("#new_annotation_content").keydown(function (e) {
     var keyCode = e.keyCode || e.which;

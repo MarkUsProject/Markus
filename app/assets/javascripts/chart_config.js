@@ -1,5 +1,5 @@
 // Requires Chart.js to have been loaded.
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   let bars = document.documentElement.style.getPropertyValue("--primary_one");
   let ticksColor = document.documentElement.style.getPropertyValue("--line");
   let labelColor = document.documentElement.style.getPropertyValue("--line");

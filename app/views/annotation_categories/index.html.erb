@@ -6,7 +6,7 @@
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
   <%= javascript_tag nonce: true do %>
-    $(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       $('#add-annotation-category').click(function(e) {
         add_annotation_category('<%= new_course_assignment_annotation_category_path(@current_course, @assignment) %>');
         e.preventDefault();

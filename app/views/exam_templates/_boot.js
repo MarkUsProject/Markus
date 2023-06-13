@@ -1,4 +1,4 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   window.modal_create_new = new ModalMarkus("#create_new_template");
   $("#generate_exam_modal_submit").click(() => {
     $("#generate_exam_dialog").trigger("closeModal");

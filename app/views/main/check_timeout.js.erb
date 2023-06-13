@@ -1,8 +1,7 @@
 timeout_imminent_modal.open();
-
-$(function() {
+document.addEventListener("DOMContentLoaded", function() {
   $('#timeout-imminent-modal-close').click(function() {
     refreshOrLogout();
     timeout_imminent_modal.close();
   })
-})
+});

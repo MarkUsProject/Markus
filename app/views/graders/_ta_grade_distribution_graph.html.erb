@@ -4,7 +4,7 @@
 <canvas id='<%= "a#{assignment.id}_ta_#{ta_id}" %>' width='400' height='350'></canvas>
 <%= javascript_tag nonce: true do %>
   // Set up graph
-  $(document).ready(function () {
+  document.addEventListener("DOMContentLoaded", function () {
     var ctx = document.getElementById('<%= "a#{assignment.id}_ta_#{ta_id}" %>').getContext('2d');
     // Set up data
 

@@ -8,7 +8,7 @@
     annotation_category_id: annotation_category
   ) %>
   <%= javascript_tag nonce: true do %>
-    $(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       $('#add-annotation').click(function(e) {
         add_annotation_prompt('<%= path %>');
         e.preventDefault();

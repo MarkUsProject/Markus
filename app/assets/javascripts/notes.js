@@ -1,6 +1,6 @@
 /** Page-specific event handlers for notes/new.html.erb */
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   $("#noteable_type select").change(function () {
     document.getElementById("working").style.display = "";
 

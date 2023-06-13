@@ -7,7 +7,7 @@
 <%= javascript_tag nonce: true do %>
   pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
 
-  $(document).ready(function () {
+  document.addEventListener("DOMContentLoaded", function () {
     $("#names").autocomplete({
       source: function (request, response) {
         $.getJSON("get_names",

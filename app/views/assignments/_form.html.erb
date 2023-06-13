@@ -8,7 +8,7 @@
              handlers: [:erb] %>
 
   <%= javascript_tag nonce: true do %>
-    $(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       $('#grace-period-add').click(function(e) {
         add_period("grace_periods", grace_periods);
         e.preventDefault();

@@ -24,7 +24,7 @@ class GroupsManager extends React.Component {
   componentDidMount() {
     this.fetchData();
     // TODO: Remove reliance on global modal
-    $(document).ready(() => {
+    document.addEventListener("DOMContentLoaded", () => {
       $("#create_group_dialog form").on("ajax:success", () => {
         modalCreate.close();
         this.fetchData();
@@ -84,7 +84,7 @@ class GroupsManager extends React.Component {
     } else {
       modalCreate.open();
       $("#new_group_name").val("");
-      $(function () {
+      document.addEventListener("DOMContentLoaded", function () {
         $("#modal-create-close").click(function () {
           modalCreate.close();
         });

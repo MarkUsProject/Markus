@@ -1,4 +1,4 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   var MAX_SIZE = 120;
   var current_char = 0;
 

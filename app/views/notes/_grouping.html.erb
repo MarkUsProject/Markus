@@ -9,7 +9,7 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
-  $(() => {
+  document.addEventListener("DOMContentLoaded", () => {
     $('#assignment_id').on("change", (evt) => {
         document.getElementById('working').style.display = '';
         document.getElementById('new-note-save').disabled = true;

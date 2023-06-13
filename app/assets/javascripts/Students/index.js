@@ -1,5 +1,5 @@
 var modalNotesGroup = null;
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   modalNotesGroup = new ModalMarkus("#notes_dialog");
 });

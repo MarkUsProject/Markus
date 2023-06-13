@@ -1,4 +1,4 @@
-$(document).ready(() => {
+document.addEventListener("DOMContentLoaded", () => {
   $(document).ajaxError((event, xhr) => {
     if (xhr.status === 403) {
       session_expired_modal.open();

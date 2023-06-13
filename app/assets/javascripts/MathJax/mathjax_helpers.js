@@ -20,7 +20,7 @@ function updatePreview(source, destination) {
   }
 }
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   $(document).on("keyup", "#new_annotation_content", function () {
     updatePreview("new_annotation_content", "annotation_preview");
   });

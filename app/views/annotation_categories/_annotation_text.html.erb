@@ -1,5 +1,5 @@
 <%= javascript_tag nonce: true do %>
-  $(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     $('#annotation-text-details-edit-<%= annotation_text[:id] %>').click(function(e) {
       $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').hide();
       $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').show();
