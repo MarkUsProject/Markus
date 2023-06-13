@@ -1,4 +1,4 @@
-const FLASH_KEYS = ["notice", "warning", "success", "error"];
+import {FLASH_KEYS} from "./flash";
 
 /*
  * Display flash messages sent in response to an AJAX request.
