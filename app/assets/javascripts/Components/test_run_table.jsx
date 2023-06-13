@@ -179,6 +179,12 @@ class TestGroupResultTable extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({filteredData: this.props.data, filtered: []});
+    }
+  }
+
   computeExpanded = data => {
     let expanded = {};
     let i = 0;
