@@ -50,12 +50,11 @@ class TestRun < ApplicationRecord
           rescue StandardError => e
             extra_info = test_group_result.extra_info
             test_name = test['name'].nil? ? '' : "#{test['name']} - "
-            test_group_result.update(extra_info: if extra_info.nil?
-                                                   test_name + e.message
-                                                 else
-                                                   extra_info + "\n" +
-                                                               test_name + e.message
-                                                 end)
+            if extra_info.nil?
+              test_group_result.update(extra_info: test_name + e.message)
+            else
+              test_group_result.update(extra_info: extra_info + "\n" + test_name + e.message)
+            end
           end
         end
         test_group_result.update(marks_earned: marks_earned,
