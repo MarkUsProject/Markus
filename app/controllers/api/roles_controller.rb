@@ -161,7 +161,7 @@ module Api
     def filtered_roles
       collection = Role.includes(:user).where(params.permit(:course_id)).order(:id)
       collection = collection.where.not(type: AdminRole.name) unless @real_user.admin_user?
-      if params[:filter]&.present?
+      if params[:filter].present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
         user_filter = params[:filter].permit(*USER_FIELDS).to_h.transform_keys { |k| "users.#{k}" }
         filter_params = { **role_filter, **user_filter }

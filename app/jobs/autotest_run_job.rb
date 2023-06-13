@@ -4,10 +4,6 @@ class AutotestRunJob < AutotestJob
     I18n.t('poll_job.autotest_run_job_enqueuing')
   end
 
-  def self.completed_message(_status)
-    I18n.t('automated_tests.tests_running')
-  end
-
   def perform(host_with_port, role_id, assignment_id, group_ids, collected: true)
     # create and enqueue test runs
     role = Role.find(role_id)
