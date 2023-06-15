@@ -248,4 +248,82 @@ describe Result do
       expect(result.released_to_students).to be(false)
     end
   end
+
+  describe '#generate_print_pdf' do
+    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:result) { assignment.current_results.first }
+
+    context 'when the result has marks and no PDF submission files' do
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+    end
+
+    context 'when the result has no marks and no PDF submission files' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:submission) { create(:submission, grouping: grouping) }
+      let(:result) { create(:incomplete_result, submission: submission) }
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+    end
+
+    context 'when the result has a PDF submission_file' do
+      let!(:submission_file) { create(:pdf_submission_file, submission: result.submission) }
+      before do
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return(
+          file_fixture('submission_files/pdf.pdf').read
+        )
+      end
+
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+
+      context 'when the result also has annotations' do
+        let!(:annotation) { create(:pdf_annotation, result: result, submission_file: submission_file) }
+
+        it 'successfully creates a PDF' do
+          pdf_file = result.generate_print_pdf
+          expect(pdf_file).to be_a CombinePDF::PDF
+        end
+      end
+    end
+
+    context 'when the result has extra marks' do
+      let!(:extra_mark) { create(:extra_mark, result: result) }
+
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+    end
+
+    context 'whe the result has an overall comment' do
+      before do
+        result.update(overall_comment: 'My comment')
+      end
+
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+    end
+
+    context 'when the assignment has rubric criteria' do
+      before do
+        assignment.current_results.each(&:mark_as_partial)
+        create(:rubric_criterion, assignment: assignment)
+      end
+
+      it 'successfully creates a PDF' do
+        expect(assignment.ta_criteria.size).to eq 4
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+    end
+  end
 end

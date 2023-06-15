@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.4]
+- Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
+
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
 

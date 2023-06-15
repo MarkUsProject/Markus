@@ -1239,6 +1239,26 @@ describe ResultsController do
         end
       end
     end
+
+    describe '#print' do
+      before do
+        get :print, params: { course_id: course.id, id: complete_result.id }
+      end
+
+      it 'responds with a success HTTP status' do
+        expect(response).to have_http_status :success
+      end
+
+      it 'responds with the correct Content-Type' do
+        expect(response.header['Content-Type']).to eq('application/pdf')
+      end
+
+      it 'responds with the correct filename' do
+        filename = response.header['Content-Disposition']
+                           .split[1].split('"').second
+        expect(filename).to eq "#{assignment.short_identifier}_#{complete_result.grouping.group.group_name}.pdf"
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
