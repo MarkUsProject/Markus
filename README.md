@@ -42,3 +42,5 @@ working code, which you can see in our [Contributors list](doc/markus-contributo
 **Former supervisors:** Morgan Magnin, Benjamin Vialle
 
 The web interface uses [Font Awesome Free icons](https://fontawesome.com/start), licensed under the [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).
+
+Fonts used are [Open Sans](www.google.com/fonts/specimen/Open+Sans) and [OpenSansEmoji](https://github.com/MorbZ/OpenSansEmoji).
