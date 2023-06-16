@@ -11,13 +11,21 @@
              formats: [:js],
              handlers: [:erb] %>
   <%= javascript_tag nonce: true do %>
-    document.addEventListener("DOMContentLoaded", function() {
-      $('#add-new-column').click(function(e) {
-        add_column();
-        e.preventDefault();
-      })
-      refresh_event_listeners();
-    })
+    (function(){
+      const domContentLoadedCB = function() {
+          $('#add-new-column').click(function(e) {
+              add_column();
+              e.preventDefault();
+          })
+          refresh_event_listeners();
+      }
+
+      if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+      }else{
+          domContentLoadedCB()
+      }
+    })();
   <% end %>
 <% end %>
 

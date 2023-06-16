@@ -20,8 +20,16 @@ function updatePreview(source, destination) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  $(document).on("keyup", "#new_annotation_content", function () {
-    updatePreview("new_annotation_content", "annotation_preview");
-  });
-});
+(function () {
+  const domContentLoadedCB = function () {
+    $(document).on("keyup", "#new_annotation_content", function () {
+      updatePreview("new_annotation_content", "annotation_preview");
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  } else {
+    domContentLoadedCB();
+  }
+})();

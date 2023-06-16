@@ -3,15 +3,23 @@
                formats: [:js],
                handlers: [:erb] %>
   <%= javascript_tag nonce: true do %>
-    document.addEventListener('DOMContentLoaded', () => {
-      makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
-    });
-    document.addEventListener("DOMContentLoaded", function() {
-      $('#add-tag').click(function(e) {
-        modal_create_new.open();
-        e.preventDefault();
-      })
-    });
+    (function(){
+      document.addEventListener('DOMContentLoaded', () => {
+        makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
+      });
+      const domContentLoadedCB = function() {
+        $('#add-tag').click(function(e) {
+          modal_create_new.open();
+          e.preventDefault();
+        })
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+      }else{
+        domContentLoadedCB()
+      }
+    })();
   <% end %>
 <% end %>
 

@@ -9,18 +9,26 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
-  document.addEventListener("DOMContentLoaded", () => {
-    $('#assignment_id').on("change", (evt) => {
+  (function(){
+    const domContentLoadedCB = function() {
+      $('#assignment_id').on("change", (evt) => {
         document.getElementById('working').style.display = '';
         document.getElementById('new-note-save').disabled = true;
-      $.ajax({
-        url:  Routes.new_update_groupings_course_notes_path(<%= @current_course.id %>, evt.target.value),
-        type: 'POST',
-        data: $(evt.target).serialize() + '&authenticity_token=' + AUTH_TOKEN
-      }).done(function() {
-        document.getElementById('working').style.display = 'none';
-        document.getElementById('new-note-save').disabled = false;
-      });
-    })
-  })
+        $.ajax({
+            url:  Routes.new_update_groupings_course_notes_path(<%= @current_course.id %>, evt.target.value),
+            type: 'POST',
+            data: $(evt.target).serialize() + '&authenticity_token=' + AUTH_TOKEN
+        }).done(function() {
+            document.getElementById('working').style.display = 'none';
+            document.getElementById('new-note-save').disabled = false;
+        });
+      })
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+    }else{
+      domContentLoadedCB()
+    }
+  })();
 <% end %>

@@ -6,76 +6,83 @@
 
 <%= javascript_tag nonce: true do %>
   pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
-
-  document.addEventListener("DOMContentLoaded", function () {
-    $("#names").autocomplete({
-      source: function (request, response) {
-        $.getJSON("get_names",
-          {
-            assignment_id: <%= @assignment.id %>,
-            term: $("#names").val()
-          },
-          response);
-      },
-      minLength: 1,
-      select: function (event, ui) {
-        $("#student_id").val(ui.item.id);
-      }
-    }).data("ui-autocomplete")._renderItem = function (ul, item) {
-      return $("<li>")
-        .data("ui-autocomplete-item", item)
-        .append(`<div><strong>${item.label}</strong><br>` +
-          `<span>${item.id_number} | ${item.user_name}</span></div>`)
-        .appendTo(ul);
-    };
-    $("#assign_student").submit(function (e) {
-      e.preventDefault();
-      $.ajax({
-        method: "GET",
-        url: "assign_student_and_next",
-        dataType: "json",
-        data: $("#assign_student").serialize(),
-        success: parseNextScan
-      });
-    });
-
-    function parseNextScan(data) {
-      $("#group_members").empty();
-      for (var i = 0; i < data.students.length; i++) {
-        $("#group_members").append("<p>" + data.students[i] + "</p>")
-      }
-      $("#assign_student").find("input").val("");
-      $("#assign_student").find("#skip").val("1").prop('checked', false);
-      let current_group = $("#grouping_id").val();
-      update_bar(data.num_valid, data.num_total);
-      // Anytime we advance to another assignment
-      if (data.grouping_id !== current_group) {
-        $("#grouping_id").val(data.grouping_id);
-        $("#group_name").html(data.group_name);
-        if (data.filelink) {
-          pdfjs.getDocument({url: data.filelink}).promise.then(function (pdfDocument) {
-            pdfViewer.setDocument(pdfDocument);
-          });
+  (function(){
+    const domContentLoadedCB = function() {
+          $("#names").autocomplete({
+        source: function (request, response) {
+          $.getJSON("get_names",
+            {
+              assignment_id: <%= @assignment.id %>,
+              term: $("#names").val()
+            },
+            response);
+        },
+        minLength: 1,
+        select: function (event, ui) {
+          $("#student_id").val(ui.item.id);
         }
-        // When an assignment needs to reload because not meeting minimum group members
-        // or when all assignments are already assigned
-      } else {
-        $("#grouping_id").val(current_group);
+      }).data("ui-autocomplete")._renderItem = function (ul, item) {
+        return $("<li>")
+          .data("ui-autocomplete-item", item)
+          .append(`<div><strong>${item.label}</strong><br>` +
+            `<span>${item.id_number} | ${item.user_name}</span></div>`)
+          .appendTo(ul);
+      };
+      $("#assign_student").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+          method: "GET",
+          url: "assign_student_and_next",
+          dataType: "json",
+          data: $("#assign_student").serialize(),
+          success: parseNextScan
+        });
+      });
+
+      function parseNextScan(data) {
+        $("#group_members").empty();
+        for (var i = 0; i < data.students.length; i++) {
+          $("#group_members").append("<p>" + data.students[i] + "</p>")
+        }
+        $("#assign_student").find("input").val("");
+        $("#assign_student").find("#skip").val("1").prop('checked', false);
+        let current_group = $("#grouping_id").val();
+        update_bar(data.num_valid, data.num_total);
+        // Anytime we advance to another assignment
+        if (data.grouping_id !== current_group) {
+          $("#grouping_id").val(data.grouping_id);
+          $("#group_name").html(data.group_name);
+          if (data.filelink) {
+            pdfjs.getDocument({url: data.filelink}).promise.then(function (pdfDocument) {
+              pdfViewer.setDocument(pdfDocument);
+            });
+          }
+          // When an assignment needs to reload because not meeting minimum group members
+          // or when all assignments are already assigned
+        } else {
+          $("#grouping_id").val(current_group);
+        }
       }
+
+      let container = document.getElementById('pdfContainer');
+      let eventBus = new pdfjsViewer.EventBus();
+      let pdfViewer = new pdfjsViewer.PDFViewer({
+        eventBus: eventBus,
+        container: container,
+        renderer: 'svg'
+      });
+      eventBus.on('pagesinit', function() {
+        pdfViewer.currentScaleValue = 'page-fit';
+      });
+      parseNextScan(<%= raw @data.to_json %>);
     }
 
-    let container = document.getElementById('pdfContainer');
-    let eventBus = new pdfjsViewer.EventBus();
-    let pdfViewer = new pdfjsViewer.PDFViewer({
-      eventBus: eventBus,
-      container: container,
-      renderer: 'svg'
-    });
-    eventBus.on('pagesinit', function() {
-      pdfViewer.currentScaleValue = 'page-fit';
-    });
-    parseNextScan(<%= raw @data.to_json %>);
-  });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+    }else{
+      domContentLoadedCB()
+    }
+  })();
 
   function update_bar(v) {
     $('#progress-meter').attr('value', v);

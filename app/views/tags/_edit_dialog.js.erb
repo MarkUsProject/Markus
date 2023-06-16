@@ -1,8 +1,16 @@
 $('#edit_tags_dialog').html("<%= escape_javascript(render('tags/edit')) %>");
 modal_edit.open();
-document.addEventListener("DOMContentLoaded", function() {
-  $('#edit-tag-dialog-cancel').click(function(e) {
-    modal_edit.close();
-    e.preventDefault();
-  })
-});
+(function(){
+  const domContentLoadedCB = function() {
+    $('#edit-tag-dialog-cancel').click(function(e) {
+      modal_edit.close();
+      e.preventDefault();
+    })
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  }else{
+    domContentLoadedCB()
+  }
+})();

@@ -24,18 +24,24 @@ class GroupsManager extends React.Component {
   componentDidMount() {
     this.fetchData();
     // TODO: Remove reliance on global modal
-    document.addEventListener("DOMContentLoaded", () => {
-      $("#create_group_dialog form").on("ajax:success", () => {
-        modalCreate.close();
-        this.fetchData();
-      });
-
-      $("#rename_group_dialog form").on("ajax:success", () => {
-        modal_rename.close();
-        this.fetchData();
-      });
-    });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", this.componentDidMountCB);
+    } else {
+      this.componentDidMountCB();
+    }
   }
+
+  componentDidMountCB = () => {
+    $("#create_group_dialog form").on("ajax:success", () => {
+      modalCreate.close();
+      this.fetchData();
+    });
+
+    $("#rename_group_dialog form").on("ajax:success", () => {
+      modal_rename.close();
+      this.fetchData();
+    });
+  };
 
   fetchData = () => {
     $.get({
@@ -84,12 +90,19 @@ class GroupsManager extends React.Component {
     } else {
       modalCreate.open();
       $("#new_group_name").val("");
-      document.addEventListener("DOMContentLoaded", function () {
-        $("#modal-create-close").click(function () {
-          modalCreate.close();
-        });
-      });
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", this.createGroupCB);
+      } else {
+        this.createGroupCB();
+      }
     }
+  };
+
+  createGroupCB = () => {
+    $("#modal-create-close").click(function () {
+      modalCreate.close();
+    });
   };
 
   createAllGroups = () => {

@@ -14,13 +14,21 @@
         document.getElementById('working').style.display = '';
       })
     }
-    document.addEventListener("DOMContentLoaded", function() {
-      invite_modal = new ModalMarkus('#invite_dialog');
-      $('#invite-student').click(function(e) {
-        invite();
-        e.preventDefault();
-      })
-    });
+    (function(){
+      const domContentLoadedCB = function() {
+          invite_modal = new ModalMarkus('#invite_dialog');
+          $('#invite-student').click(function(e) {
+              invite();
+              e.preventDefault();
+          })
+      }
+
+      if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+      }else{
+          domContentLoadedCB()
+      }
+    })();
   <% end %>
 <% end %>
 

@@ -4,51 +4,59 @@
 <canvas id='<%= "a#{assignment.id}_ta_#{ta_id}" %>' width='400' height='350'></canvas>
 <%= javascript_tag nonce: true do %>
   // Set up graph
-  document.addEventListener("DOMContentLoaded", function () {
-    var ctx = document.getElementById('<%= "a#{assignment.id}_ta_#{ta_id}" %>').getContext('2d');
-    // Set up data
+  (function(){
+    const domContentLoadedCB = function() {
+      var ctx = document.getElementById('<%= "a#{assignment.id}_ta_#{ta_id}" %>').getContext('2d');
+      // Set up data
 
-    var data = {
-      // Set up labels [0, 5, ..., 100]
-      labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
-      datasets: [
-        <% tas.each_with_index do |ta, index| %>
-          {
-            label: "<%= ta.display_name + ' ' + t('submissions.how_many_marked',
-              num_marked: assignment.get_num_marked(ta.id),
-              num_assigned: assignment.get_num_assigned(ta.id)) %>",
-            backgroundColor: colours[<%= index %>],
-            data: <%= ta.grade_distribution_array(assignment, 20) %>
-          },
-        <% end %>
-      ]
-    };
+      var data = {
+        // Set up labels [0, 5, ..., 100]
+        labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
+        datasets: [
+          <% tas.each_with_index do |ta, index| %>
+            {
+              label: "<%= ta.display_name + ' ' + t('submissions.how_many_marked',
+                num_marked: assignment.get_num_marked(ta.id),
+                num_assigned: assignment.get_num_assigned(ta.id)) %>",
+              backgroundColor: colours[<%= index %>],
+              data: <%= ta.grade_distribution_array(assignment, 20) %>
+            },
+          <% end %>
+        ]
+      };
 
-    var options = {
-      plugins: {
-        tooltip: {
-          callbacks: {
-            title: function (tooltipItems) {
-              var baseNum = parseInt(tooltipItems[0].label);
-              if (baseNum === 0) {
-                return '0-5';
-              } else {
-                return (baseNum + 1) + '-' + (baseNum + 5);
+      var options = {
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: function (tooltipItems) {
+                var baseNum = parseInt(tooltipItems[0].label);
+                if (baseNum === 0) {
+                  return '0-5';
+                } else {
+                  return (baseNum + 1) + '-' + (baseNum + 5);
+                }
               }
             }
+          },
+          legend: {
+            display: true
           }
-        },
-        legend: {
-          display: true
         }
-      }
-    };
+      };
 
-    // Draw it
-    new Chart(ctx, {
-      type: 'bar',
-      data: data,
-      options: options
-    });
-  });
+      // Draw it
+      new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: options
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+    }else{
+      domContentLoadedCB()
+    }
+  })();
 <% end %>

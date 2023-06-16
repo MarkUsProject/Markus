@@ -1,8 +1,17 @@
 $("#role_switch_dialog").html("<%= escape_javascript(render(partial: 'role_switch_content')) %>");
 role_switch_modal.open();
 $('#effective_user_login').focus();
-document.addEventListener("DOMContentLoaded", function() {
-  $('#role-switch-modal-cancel').click(function() {
-    role_switch_modal.close();
-  })
-});
+
+(function(){
+  const domContentLoadedCB = function() {
+    $('#role-switch-modal-cancel').click(function() {
+      role_switch_modal.close();
+    })
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  }else{
+    domContentLoadedCB()
+  }
+})();

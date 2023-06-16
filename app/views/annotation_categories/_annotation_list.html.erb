@@ -8,12 +8,19 @@
     annotation_category_id: annotation_category
   ) %>
   <%= javascript_tag nonce: true do %>
-    document.addEventListener("DOMContentLoaded", function() {
-      $('#add-annotation').click(function(e) {
-        add_annotation_prompt('<%= path %>');
-        e.preventDefault();
-      })
-    })
+    (function(){
+      const domContentLoadedCB = function() {
+        $('#add-annotation').click(function(e) {
+          add_annotation_prompt('<%= path %>');
+          e.preventDefault();
+        })
+      }
+      if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+      }else{
+          domContentLoadedCB()
+      }
+    })();
   <% end %>
   <div class='float-right'>
     <%= link_to t('annotation_categories.add_annotation'),

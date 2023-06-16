@@ -16,10 +16,17 @@
   addEventListener("change", () => {
     onbeforeunload_flag = true
   })
+  (function(){
+    const domContentLoadedCB = function() {
+      $('input[type="submit"]').click(function () {
+        submit_clicked = true;
+      });
+    }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    $('input[type="submit"]').click(function () {
-      submit_clicked = true;
-    });
-  });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+    }else{
+      domContentLoadedCB()
+    }
+  })();
 <% end %>

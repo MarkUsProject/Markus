@@ -48,38 +48,46 @@ function getErrorPages(value) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  var container = document.getElementById('pdfContainer');
-  let eventBus = new pdfjsViewer.EventBus();
-  var pdfViewer = new pdfjsViewer.PDFViewer({
-    eventBus: eventBus,
-    container: container,
-    renderer: 'svg'
-  });
-  eventBus.on('pagesinit', function () {
-    pdfViewer.currentScaleValue = 'page-fit';
-  });
+(function(){
+  const domContentLoadedCB = function() {
+    var container = document.getElementById('pdfContainer');
+    let eventBus = new pdfjsViewer.EventBus();
+    var pdfViewer = new pdfjsViewer.PDFViewer({
+      eventBus: eventBus,
+      container: container,
+      renderer: 'svg'
+    });
+    eventBus.on('pagesinit', function () {
+      pdfViewer.currentScaleValue = 'page-fit';
+    });
 
-  $('#upside_down').click(function () {
-    pdfViewer.pagesRotation = (pdfViewer.pagesRotation + 180) % 360;
-  });
+    $('#upside_down').click(function () {
+      pdfViewer.pagesRotation = (pdfViewer.pagesRotation + 180) % 360;
+    });
 
-  $('#copy_number').on('keyup', function () {
-    getErrorPages($('#copy_number').val());
-  });
+    $('#copy_number').on('keyup', function () {
+      getErrorPages($('#copy_number').val());
+    });
 
-  $('#info_form').on('ajax:success', function (event) {
-    let filename = event.detail[0];
-    if (filename) {
-      getFile(filename, pdfViewer);
-    } else {
-      window.location = '<%= course_assignment_exam_templates_path(@current_course, @assignment) %>';
-    }
-  });
+    $('#info_form').on('ajax:success', function (event) {
+      let filename = event.detail[0];
+      if (filename) {
+        getFile(filename, pdfViewer);
+      } else {
+        window.location = '<%= course_assignment_exam_templates_path(@current_course, @assignment) %>';
+      }
+    });
 
-  <% if @next_error.nil? %>
+    <% if @next_error.nil? %>
     getFile('', pdfViewer);
-  <% else %>
+    <% else %>
     getFile('<%= "#{@next_error.id}.pdf" -%>', pdfViewer);
-  <% end %>
-});
+    <% end %>
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  }else{
+    domContentLoadedCB()
+  }
+})();

@@ -1,33 +1,41 @@
 <%= javascript_tag nonce: true do %>
-  document.addEventListener("DOMContentLoaded", function() {
-    bindSortable();
+  (function(){
+    const domContentLoadedCB = function() {
+      bindSortable();
 
-    var ajaxRequest;
-    function bindSortable() {
-      $('.sortable ul').sortable({
-        axis:   'y',
-        cursor: 'move',
-        update: function() {
-          // Cancel any previous requests
-          if (typeof ajaxRequest !== 'undefined') {
-            ajaxRequest.abort();
-          }
-
-          ajaxRequest = $.ajax({
-            url:  '<%= update_positions_course_assignment_criteria_path(@current_course, @assignment) %>',
-            type: 'POST',
-            data: $('.sortable ul').sortable('serialize'),
-            dataType: 'script',
-            success: function(response) {
-              ajaxRequest = undefined;
-              bindSortable();
+      var ajaxRequest;
+      function bindSortable() {
+        $('.sortable ul').sortable({
+          axis:   'y',
+          cursor: 'move',
+          update: function() {
+            // Cancel any previous requests
+            if (typeof ajaxRequest !== 'undefined') {
+              ajaxRequest.abort();
             }
-          });
-        },
-        cancel: '#new_criterion'
-      });
+
+            ajaxRequest = $.ajax({
+              url:  '<%= update_positions_course_assignment_criteria_path(@current_course, @assignment) %>',
+              type: 'POST',
+              data: $('.sortable ul').sortable('serialize'),
+              dataType: 'script',
+              success: function(response) {
+                ajaxRequest = undefined;
+                bindSortable();
+              }
+            });
+          },
+          cancel: '#new_criterion'
+        });
+      }
     }
-  });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+    }else{
+      domContentLoadedCB()
+    }
+  })();
 
   function add_level(id) {
     let rubric_form = $('#' + id);

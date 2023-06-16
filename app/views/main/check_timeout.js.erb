@@ -1,7 +1,15 @@
 timeout_imminent_modal.open();
-document.addEventListener("DOMContentLoaded", function() {
-  $('#timeout-imminent-modal-close').click(function() {
-    refreshOrLogout();
-    timeout_imminent_modal.close();
-  })
-});
+(function(){
+  const domContentLoadedCB = function() {
+    $('#timeout-imminent-modal-close').click(function() {
+      refreshOrLogout();
+      timeout_imminent_modal.close();
+    })
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  }else{
+    domContentLoadedCB()
+  }
+})();

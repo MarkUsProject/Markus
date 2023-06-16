@@ -12,11 +12,20 @@ if ($('#notes_dialog .inline-button.delete').length) {
     }
   });
 }
-document.addEventListener("DOMContentLoaded", function () {
-  $('#notes_submit').click(function() {
-    modalNotesGroup.close()
-  })
-  $('#notes-cancel').click(function() {
-    modalNotesGroup.close()
-  })
-});
+
+(function(){
+  const domContentLoadedCB = function() {
+    $('#notes_submit').click(function() {
+      modalNotesGroup.close()
+    })
+    $('#notes-cancel').click(function() {
+      modalNotesGroup.close()
+    })
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  }else{
+    domContentLoadedCB()
+  }
+})();

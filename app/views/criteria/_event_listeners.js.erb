@@ -1,6 +1,14 @@
-document.addEventListener("DOMContentLoaded", () => {
-  $('#add-criterion-level').click((e) => {
-    add_level("rubric_form");
-    e.preventDefault();
-  })
-});
+(function(){
+  const domContentLoadedCB = () => {
+    $('#add-criterion-level').click((e) => {
+      add_level("rubric_form");
+      e.preventDefault();
+    })
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  }else{
+    domContentLoadedCB()
+  }
+})();

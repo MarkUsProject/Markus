@@ -22,16 +22,24 @@
         }
       );
     });
-    document.addEventListener("DOMContentLoaded", function() {
-      $('#assignment-group-use').click(function(e) {
-        modalAssignmentGroupReUse.open();
-        $('#assignment-group-use-close').click(function(e) {
-          modalAssignmentGroupReUse.close();
+    (function(){
+      const domContentLoadedCB = function() {
+        $('#assignment-group-use').click(function(e) {
+          modalAssignmentGroupReUse.open();
+          $('#assignment-group-use-close').click(function(e) {
+            modalAssignmentGroupReUse.close();
+            e.preventDefault();
+          })
           e.preventDefault();
         })
-        e.preventDefault();
-      })
-    });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+      }else{
+        domContentLoadedCB()
+      }
+    })();
   <% end %>
 <% end %>
 

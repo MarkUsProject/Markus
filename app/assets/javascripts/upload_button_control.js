@@ -31,11 +31,14 @@ var Function_List = {
   },
 };
 
-// Finally, executes the jQuery ready command.
-document.addEventListener(
-  "DOMContentLoaded",
-  Function_List.onDOMContentLoaded(upload_id, button_id)
-);
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    Function_List.onDOMContentLoaded(upload_id, button_id)
+  );
+} else {
+  Function_List.onDOMContentLoaded(upload_id, button_id)();
+}
 
 function _get(param_name) {
   // Gets the correct attribute from the script.
