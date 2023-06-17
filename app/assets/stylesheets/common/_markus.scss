@@ -1372,8 +1372,33 @@ canvas {
   width: 50%;
 }
 
-.exam-crop-container {
+.exam-crop-img-container {
+  margin-right: 3px;
+  max-width: 80%;
   overflow-x: auto;
   overflow-y: hidden;
-  width: 400px;
+}
+
+.exam-crop-container {
+  display: flex;
+  width: 500px;
+}
+
+.exam-crop-button-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 20%;
+  overflow: hidden;
+}
+
+#increase-crop-scale {
+  margin-bottom: 2px;
+}
+
+.crop-scale-button {
+  border-radius: 50px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  width: 40px;
 }
