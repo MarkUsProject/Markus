@@ -1,3 +1,7 @@
+let crop_scale = 400;
+const SCALE_CHANGE = 100;
+const MIN_SIZE = 200;
+
 $(document).ready(function () {
   window.modal_create_new = new ModalMarkus("#create_new_template");
   $("#generate_exam_modal_submit").click(() => {
@@ -74,8 +78,10 @@ function attach_crop_box(id) {
         form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
       },
       keySupport: false,
-      boxWidth: $("#scalex").val(),
-      boxHeight: $("#scaley").val(),
+      // boxWidth: $("#scalex").val(),
+      // boxHeight: $("#scaley").val(),
+      boxWidth: crop_scale,
+      boxHeight: crop_scale,
     },
     function () {
       jcrop_api = this;
@@ -99,10 +105,16 @@ function attach_crop_box(id) {
     jcrop_api.setSelect([x, y, x + width, y + height]);
   }
 
-  $("#target").on("click", function () {
+  $("#decrease-crop-scale").on("click", function () {
+    if (crop_scale - SCALE_CHANGE < MIN_SIZE) {
+      crop_scale = MIN_SIZE;
+    } else {
+      crop_scale -= SCALE_CHANGE;
+    }
+
+    // TODO: Preserve crop on re-size
     jcrop_api.destroy();
-    scalex = $("#scalex").val();
-    scaley = $("#scaley").val();
+
     $(crop_target).Jcrop(
       {
         onChange: pos => {
@@ -120,8 +132,40 @@ function attach_crop_box(id) {
           form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
         },
         keySupport: false,
-        boxWidth: $("#scalex").val(),
-        boxHeight: $("#scaley").val(),
+        boxWidth: crop_scale,
+        boxHeight: crop_scale,
+      },
+      function () {
+        jcrop_api = this;
+      }
+    );
+  });
+
+  $("#increase-crop-scale").on("click", function () {
+    crop_scale += SCALE_CHANGE;
+
+    // TODO: Preserve crop on re-size
+    jcrop_api.destroy();
+
+    $(crop_target).Jcrop(
+      {
+        onChange: pos => {
+          const stageHeight = parseFloat(
+            getComputedStyle(crop_target, null).height.replace("px", "")
+          );
+          const stageWidth = parseFloat(
+            getComputedStyle(crop_target, null).width.replace("px", "")
+          );
+          const {x, y, w, h} = pos;
+
+          form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
+          form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
+          form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
+          form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
+        },
+        keySupport: false,
+        boxWidth: crop_scale,
+        boxHeight: crop_scale,
       },
       function () {
         jcrop_api = this;
