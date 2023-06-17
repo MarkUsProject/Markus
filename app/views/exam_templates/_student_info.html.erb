@@ -18,15 +18,17 @@
              html: { id: "add_fields_exam_template_form_#{exam_template.id}" } do |f| %>
 
   <p>
-    <%= f.check_box :automatic_parsing, value: exam_template.automatic_parsing %>
+    <%= f.check_box :automatic_parsing, value: exam_template.automatic_parsing%>
     <%= f.label :automatic_parsing, t('exam_templates.parsing.general') %>
   </p>
 
   <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
     <div id="exam_cover-<%= exam_template.id %>">
-      <img src="<%= show_cover_course_exam_template_path(@current_course, exam_template) %>" class="crop-target"
-           alt="<%= t(:'exam_templates.parsing.cover_page_for', id: exam_template.id) %>"
-           loading="lazy">
+      <div class="exam-crop-container">
+        <img src="<%= show_cover_course_exam_template_path(@current_course, exam_template) %>" class="crop-target"
+             alt="<%= t(:'exam_templates.parsing.cover_page_for', id: exam_template.id) %>"
+             loading="lazy">
+      </div>
     </div>
 
     <div class="table-with-add">
@@ -44,3 +46,7 @@
 
   <p><%= submit_tag t('exam_templates.parsing.save') %></p>
 <% end %>
+
+Scale X:<input type="text" id="scalex" value="400" style="width:50px;"></input>
+Scale Y:<input type="text" id="scaley" value="400" style="width:50px;"></input>
+<button id="target" type="button">Resize Image</button>

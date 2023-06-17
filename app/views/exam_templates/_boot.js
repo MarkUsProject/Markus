@@ -74,6 +74,8 @@ function attach_crop_box(id) {
         form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
       },
       keySupport: false,
+      boxWidth: $("#scalex").val(),
+      boxHeight: $("#scaley").val(),
     },
     function () {
       jcrop_api = this;
@@ -96,4 +98,34 @@ function attach_crop_box(id) {
 
     jcrop_api.setSelect([x, y, x + width, y + height]);
   }
+
+  $("#target").on("click", function () {
+    jcrop_api.destroy();
+    scalex = $("#scalex").val();
+    scaley = $("#scaley").val();
+    $(crop_target).Jcrop(
+      {
+        onChange: pos => {
+          const stageHeight = parseFloat(
+            getComputedStyle(crop_target, null).height.replace("px", "")
+          );
+          const stageWidth = parseFloat(
+            getComputedStyle(crop_target, null).width.replace("px", "")
+          );
+          const {x, y, w, h} = pos;
+
+          form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
+          form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
+          form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
+          form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
+        },
+        keySupport: false,
+        boxWidth: $("#scalex").val(),
+        boxHeight: $("#scaley").val(),
+      },
+      function () {
+        jcrop_api = this;
+      }
+    );
+  });
 }

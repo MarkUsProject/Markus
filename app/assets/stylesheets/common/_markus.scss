@@ -1140,7 +1140,7 @@ nav {
 
 .crop-target {
   border: 1px solid $gridline;
-  max-width: 400px;
+  // max-width: 400px;
 }
 
 // Text editing and previews
@@ -1370,4 +1370,10 @@ canvas {
 .lti-table {
   min-width: 250px;
   width: 50%;
+}
+
+.exam-crop-container {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  width: 400px;
 }
