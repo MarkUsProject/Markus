@@ -44,7 +44,6 @@ module.exports = function (api) {
           helpers: false,
           regenerator: true,
         },
-        "macros",
       ],
     ].filter(Boolean),
     sourceType: "unambiguous",

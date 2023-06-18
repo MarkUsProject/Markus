@@ -50,7 +50,7 @@ class DownloadTestResultsModal extends React.Component {
               onClick={this.props.onRequestClose}
             >
               <i className="fa-solid fa-download" aria-hidden="true" />
-              &nbsp;{I18n.t("download_csv")}
+              {I18n.t("download_csv")}
             </button>
           </a>
           <section className="dialog-actions">
