@@ -89,6 +89,7 @@ export class SubmissionSelector extends React.Component {
         href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
         style={{alignSelf: "flex-end"}}
       >
+        <FontAwesomeIcon icon={"fa-solid fa-print"} />
         {I18n.t("results.print")}
       </a>
     );
