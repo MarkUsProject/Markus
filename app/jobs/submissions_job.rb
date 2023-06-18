@@ -40,7 +40,7 @@ class SubmissionsJob < ApplicationJob
       add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
       progress.increment
       unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], ActiveJob::Status.get(job_id).to_h)
+        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], status.to_h)
       end
     end
   rescue StandardError => e
@@ -56,7 +56,7 @@ class SubmissionsJob < ApplicationJob
             status[:warning_message] }
         end
       else
-        message = ActiveJob::Status.get(job_id).to_h
+        message = status.to_h
       end
       CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message.merge({ update_table: true }))
     end
