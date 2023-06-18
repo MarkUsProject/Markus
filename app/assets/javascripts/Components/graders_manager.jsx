@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
@@ -545,12 +546,13 @@ class RawGroupsTable extends React.Component {
                 : ta_data.grader}
               <a
                 href="#"
-                className="remove-icon"
                 onClick={() =>
                   this.props.unassignSingle(row.original._id, ta_data.grader, "groups_table")
                 }
                 title={I18n.t("graders.actions.unassign_grader")}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+              </a>
             </div>
           ));
         },
@@ -616,12 +618,13 @@ class RawCriteriaTable extends React.Component {
                 : ta_data.grader}
               <a
                 href="#"
-                className="remove-icon"
                 onClick={() =>
                   this.props.unassignSingle(row.original._id, ta_data.grader, "criteria_table")
                 }
                 title={I18n.t("graders.actions.unassign_grader")}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+              </a>
             </div>
           ));
         },
@@ -694,13 +697,16 @@ class GradersActionBox extends React.Component {
             {I18n.t("tas.display_inactive")}
           </label>
         </span>
-        <button className="assign-all-button" onClick={this.props.assignAll}>
+        <button onClick={this.props.assignAll}>
+          <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("graders.actions.assign_grader")}
         </button>
-        <button className="assign-randomly-button" onClick={this.props.openGraderDistributionModal}>
+        <button onClick={this.props.openGraderDistributionModal}>
+          <FontAwesomeIcon icon="fa-solid fa-dice" />
           {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
-        <button className="unassign-all-button" onClick={this.props.unassignAll}>
+        <button onClick={this.props.unassignAll}>
+          <FontAwesomeIcon icon="fa-solid fa-user-minus" />
           {I18n.t("graders.actions.unassign_grader")}
         </button>
       </div>

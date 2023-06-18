@@ -135,6 +135,7 @@
     <% else %>
       <% unless @grouping.is_valid? %>
         <p class='warning'>
+          <i class="fa-solid fa-warning icon-left"></i>
           <%= t('submissions.student.invalid_group_cannot_submit') %>
         </p>
       <% end %>

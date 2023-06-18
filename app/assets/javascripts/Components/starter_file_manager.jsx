@@ -3,6 +3,7 @@ import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function blurOnEnter(event) {
   if (event.key === "Enter") {
@@ -230,9 +231,11 @@ class StarterFileManager extends React.Component {
               />
               <button
                 key={"delete_starter_file_group_button"}
-                className={"button remove-icon"}
+                className={"button"}
                 onClick={() => this.deleteStarterFileGroup(id)}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" />
+              </button>
             </fieldset>
           );
         })}
@@ -463,9 +466,11 @@ class StarterFileManager extends React.Component {
           {this.renderFileManagers()}
           <button
             key={"create_starter_file_group_button"}
-            className={"button add-new-button"}
+            className={"button"}
             onClick={this.createStarterFileGroup}
-          />
+          >
+            <FontAwesomeIcon icon="fa-solid fa-add" />
+          </button>
           <StarterFileFileUploadModal
             groupUploadTarget={this.state.groupUploadTarget}
             isOpen={this.state.showFileUploadModal}
