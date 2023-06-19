@@ -787,10 +787,11 @@ describe GroupsController do
                  user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
         end
         let!(:grouping1) { create :grouping, assignment: assignment }
-        let!(:grouping2) { create :grouping, assignment: assignment }
+        let(:grouping2) { create :grouping, assignment: assignment }
         let!(:submission1) { create :version_used_submission, grouping: grouping1 }
-        let!(:submission2) { create :version_used_submission, grouping: grouping2 }
+        let(:submission2) { create :version_used_submission, grouping: grouping2 }
         it 'assigns a student to the grouping and returns the next one' do
+          submission2
           post_as instructor, :assign_student_and_next, params: { course_id: course.id,
                                                                   assignment_id: assignment.id,
                                                                   assignment: assignment.id,
@@ -801,6 +802,7 @@ describe GroupsController do
           expect(grouping1.memberships.first.role).to eq student1
         end
         it 'assigns a student to the grouping and returns the next one based on names' do
+          submission2
           post_as instructor, :assign_student_and_next, params: { course_id: course.id,
                                                                   assignment_id: assignment.id,
                                                                   assignment: assignment.id,
@@ -823,6 +825,16 @@ describe GroupsController do
                                                                   assignment_id: assignment.id,
                                                                   assignment: assignment.id,
                                                                   names: 'Student Whodoesntexist',
+                                                                  g_id: grouping1.id,
+                                                                  format: :json }
+          expect(response).to have_http_status(404)
+        end
+        it 'returns a not_found status if next grouping is nil' do
+          post_as instructor, :assign_student_and_next, params: { course_id: course.id,
+                                                                  assignment_id: assignment.id,
+                                                                  assignment: assignment.id,
+                                                                  names: "#{student1.first_name} #{student1.last_name}",
+                                                                  s_id: student1.id,
                                                                   g_id: grouping1.id,
                                                                   format: :json }
           expect(response).to have_http_status(404)
