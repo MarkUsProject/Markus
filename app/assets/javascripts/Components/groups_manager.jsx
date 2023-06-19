@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
@@ -346,10 +347,11 @@ class RawGroupsTable extends React.Component {
             <span>{row.value}</span>
             <a
               href="#"
-              className="edit-icon"
               onClick={() => this.props.renameGroup(row.original._id)}
               title={I18n.t("groups.rename_group")}
-            />
+            >
+              <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-right" />
+            </a>
           </span>
         );
       },
@@ -371,10 +373,11 @@ class RawGroupsTable extends React.Component {
                 {member[0]} {status}
                 <a
                   href="#"
-                  className="remove-icon"
                   onClick={() => this.props.unassign(row.original._id, member[0])}
                   title={I18n.t("delete")}
-                />
+                >
+                  <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+                </a>
               </div>
             );
           });
@@ -416,10 +419,11 @@ class RawGroupsTable extends React.Component {
           return (
             <a
               href="#"
-              className="invalid-icon"
               title={I18n.t("groups.is_not_valid")}
               onClick={() => this.props.validate(row.original._id)}
-            />
+            >
+              <FontAwesomeIcon icon="fa-solid fa-close" />
+            </a>
           );
         }
       },
@@ -483,10 +487,11 @@ class RawGroupsTable extends React.Component {
           return (
             <a
               href="#"
-              className="add-icon"
               onClick={() => this.props.onExtensionModal(row.original.extension, false)}
               title={I18n.t("add")}
-            />
+            >
+              <FontAwesomeIcon icon="fa-solid fa-add" />
+            </a>
           );
         }
       },
@@ -657,7 +662,7 @@ class GroupsActionBox extends React.Component {
         count: this.props.hiddenGroupsCount,
       })}`;
     }
-    // TODO: 'icons/bin_closed.png' for Group deletion icon
+
     return (
       <div className="rt-action-box">
         <span>
@@ -674,19 +679,23 @@ class GroupsActionBox extends React.Component {
           </label>
         </span>
         <button className="" onClick={this.props.assign}>
+          <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("groups.add_to_group")}
         </button>
         {this.props.can_create_all_groups ? (
           <button className="" onClick={this.props.createAllGroups}>
+            <FontAwesomeIcon icon="fa-solid fa-people-group" />
             {I18n.t("groups.add_all_groups")}
           </button>
         ) : undefined}
         <button className="" onClick={this.props.createGroup}>
+          <FontAwesomeIcon icon="fa-solid fa-circle-plus" />
           {I18n.t("helpers.submit.create", {
             model: I18n.t("activerecord.models.group.one"),
           })}
         </button>
         <button className="" onClick={this.props.deleteGroups}>
+          <FontAwesomeIcon icon="fa-solid fa-trash" />
           {I18n.t("groups.delete")}
         </button>
       </div>

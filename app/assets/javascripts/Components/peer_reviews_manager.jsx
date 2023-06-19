@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
@@ -380,25 +381,19 @@ class GradersActionBox extends React.Component {
           />
           <button
             id="random_assign"
-            className="assign-randomly-button"
             onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
           >
+            <FontAwesomeIcon icon="fa-solid fa-dice" />
             {I18n.t("peer_reviews.action.random_assign")}
           </button>
         </div>
-        <button
-          id="assign"
-          className="assign-all-button"
-          onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
-        >
+        <button id="assign" onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}>
+          <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("peer_reviews.action.assign")}
         </button>
 
-        <button
-          id="unassign"
-          className="unassign-all-button"
-          onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
-        >
+        <button id="unassign" onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}>
+          <FontAwesomeIcon icon="fa-solid fa-user-minus" />
           {I18n.t("peer_reviews.action.unassign")}
         </button>
       </div>

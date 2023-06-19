@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {DataChart} from "../Helpers/data_chart";
 
 export class SummaryPanel extends React.Component {
@@ -293,11 +294,8 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <p style={{textAlign: "center"}}>
-          <button
-            onClick={() => this.toggleMarksChart()}
-            className={"mark-chart"}
-            style={{width: "85%"}}
-          >
+          <button onClick={() => this.toggleMarksChart()} style={{width: "85%"}}>
+            <FontAwesomeIcon icon="fa-solid fa-chart-column" />
             {I18n.t("results.marks_chart")}
           </button>
         </p>
