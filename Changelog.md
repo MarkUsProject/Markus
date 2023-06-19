@@ -20,6 +20,7 @@
 - Modify MarkUs API to allow the AssignmentsController#index route to accept requests from all types of roles (#6619)
 - A user can't run tests with the same names / Single test error does not spoil the whole test batch (#6620)
 - Change icon set to Font Awesome (Free) (#6627)
+- Refactored GET requests to use fetch API instead of jQuery (#6622)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
