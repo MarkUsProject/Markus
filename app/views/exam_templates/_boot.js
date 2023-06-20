@@ -1,6 +1,7 @@
 let crop_scale = 400;
 const SCALE_CHANGE = 100;
 const MIN_SIZE = 200;
+var jcrop_api;
 
 $(document).ready(function () {
   window.modal_create_new = new ModalMarkus("#create_new_template");
@@ -58,12 +59,10 @@ function toggle_cover_page(id) {
 }
 
 function attach_crop_box(id) {
-  var jcrop_api;
-
   const form = document.getElementById(`add_fields_exam_template_form_${id}`);
   const crop_target = form.getElementsByClassName("crop-target")[0];
 
-  jcrop_api = config_jcrop_api(crop_target, form, id);
+  config_jcrop_api(crop_target, form, id);
 
   // Set crop selection if values exist.
   set_crop_selection(crop_target, form, id);
@@ -76,7 +75,7 @@ function attach_crop_box(id) {
     }
 
     jcrop_api.destroy();
-    jcrop_api = config_jcrop_api(crop_target, form, id);
+    config_jcrop_api(crop_target, form, id);
     set_crop_selection(crop_target, form, id);
   });
 
@@ -84,7 +83,7 @@ function attach_crop_box(id) {
     crop_scale += SCALE_CHANGE;
 
     jcrop_api.destroy();
-    jcrop_api = config_jcrop_api(crop_target, form, id);
+    config_jcrop_api(crop_target, form, id);
     set_crop_selection(crop_target, form, id);
   });
 }
@@ -105,8 +104,6 @@ function config_jcrop_api(crop_target, form, id) {
     boxWidth: crop_scale,
     boxHeight: crop_scale,
   });
-
-  return jcrop_api;
 }
 
 function set_crop_selection(crop_target, form, id) {
