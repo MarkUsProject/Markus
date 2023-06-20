@@ -63,30 +63,7 @@ function attach_crop_box(id) {
   const form = document.getElementById(`add_fields_exam_template_form_${id}`);
   const crop_target = form.getElementsByClassName("crop-target")[0];
 
-  $(crop_target).Jcrop(
-    {
-      onChange: pos => {
-        const stageHeight = parseFloat(
-          getComputedStyle(crop_target, null).height.replace("px", "")
-        );
-        const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
-        const {x, y, w, h} = pos;
-
-        form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
-        form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
-        form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
-        form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
-      },
-      keySupport: false,
-      // boxWidth: $("#scalex").val(),
-      // boxHeight: $("#scaley").val(),
-      boxWidth: crop_scale,
-      boxHeight: crop_scale,
-    },
-    function () {
-      jcrop_api = this;
-    }
-  );
+  jcrop_api = config_jcrop_api(crop_target, form, id);
 
   // Set crop selection if values exist.
   if (
@@ -112,64 +89,36 @@ function attach_crop_box(id) {
       crop_scale -= SCALE_CHANGE;
     }
 
-    // TODO: Preserve crop on re-size
+    // TODO: Preserve crop on re-size?
     jcrop_api.destroy();
-
-    $(crop_target).Jcrop(
-      {
-        onChange: pos => {
-          const stageHeight = parseFloat(
-            getComputedStyle(crop_target, null).height.replace("px", "")
-          );
-          const stageWidth = parseFloat(
-            getComputedStyle(crop_target, null).width.replace("px", "")
-          );
-          const {x, y, w, h} = pos;
-
-          form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
-          form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
-          form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
-          form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
-        },
-        keySupport: false,
-        boxWidth: crop_scale,
-        boxHeight: crop_scale,
-      },
-      function () {
-        jcrop_api = this;
-      }
-    );
+    jcrop_api = config_jcrop_api(crop_target, form, id);
   });
 
   $("#increase-crop-scale").on("click", function () {
     crop_scale += SCALE_CHANGE;
 
-    // TODO: Preserve crop on re-size
+    // TODO: Preserve crop on re-size?
     jcrop_api.destroy();
-
-    $(crop_target).Jcrop(
-      {
-        onChange: pos => {
-          const stageHeight = parseFloat(
-            getComputedStyle(crop_target, null).height.replace("px", "")
-          );
-          const stageWidth = parseFloat(
-            getComputedStyle(crop_target, null).width.replace("px", "")
-          );
-          const {x, y, w, h} = pos;
-
-          form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
-          form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
-          form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
-          form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
-        },
-        keySupport: false,
-        boxWidth: crop_scale,
-        boxHeight: crop_scale,
-      },
-      function () {
-        jcrop_api = this;
-      }
-    );
+    jcrop_api = config_jcrop_api(crop_target, form, id);
   });
+}
+
+function config_jcrop_api(crop_target, form, id) {
+  jcrop_api = $.Jcrop(crop_target, {
+    onChange: pos => {
+      const stageHeight = parseFloat(getComputedStyle(crop_target, null).height.replace("px", ""));
+      const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
+      const {x, y, w, h} = pos;
+
+      form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
+      form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
+      form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
+      form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
+    },
+    keySupport: false,
+    boxWidth: crop_scale,
+    boxHeight: crop_scale,
+  });
+
+  return jcrop_api;
 }
