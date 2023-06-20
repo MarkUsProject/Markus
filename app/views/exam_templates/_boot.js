@@ -53,6 +53,7 @@ function toggle_cover_page(id) {
   if (parsing_input.checked) {
     $("#exam-cover-display-" + id).css("display", "flex");
     attach_crop_box(id);
+    toggle_crop_scale_buttons(id);
   } else {
     $("#exam-cover-display-" + id).css("display", "none");
   }
@@ -66,6 +67,11 @@ function attach_crop_box(id) {
 
   // Set crop selection if values exist.
   set_crop_selection(crop_target, form, id);
+}
+
+function toggle_crop_scale_buttons(id) {
+  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
+  const crop_target = form.getElementsByClassName("crop-target")[0];
 
   $("#decrease-crop-scale").on("click", function () {
     if (crop_scale - SCALE_CHANGE < MIN_SIZE) {
