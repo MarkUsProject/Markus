@@ -66,21 +66,7 @@ function attach_crop_box(id) {
   jcrop_api = config_jcrop_api(crop_target, form, id);
 
   // Set crop selection if values exist.
-  if (
-    form.elements[`${id}_exam_template_crop_x`].value &&
-    form.elements[`${id}_exam_template_crop_y`].value &&
-    form.elements[`${id}_exam_template_crop_width`].value &&
-    form.elements[`${id}_exam_template_crop_height`].value
-  ) {
-    const stageHeight = parseFloat(getComputedStyle(crop_target, null).height.replace("px", ""));
-    const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
-    const x = parseFloat(form.elements[`${id}_exam_template_crop_x`].value) * stageWidth;
-    const y = parseFloat(form.elements[`${id}_exam_template_crop_y`].value) * stageHeight;
-    const width = parseFloat(form.elements[`${id}_exam_template_crop_width`].value) * stageWidth;
-    const height = parseFloat(form.elements[`${id}_exam_template_crop_height`].value) * stageHeight;
-
-    jcrop_api.setSelect([x, y, x + width, y + height]);
-  }
+  set_crop_selection(crop_target, form, id);
 
   $("#decrease-crop-scale").on("click", function () {
     if (crop_scale - SCALE_CHANGE < MIN_SIZE) {
@@ -89,17 +75,17 @@ function attach_crop_box(id) {
       crop_scale -= SCALE_CHANGE;
     }
 
-    // TODO: Preserve crop on re-size?
     jcrop_api.destroy();
     jcrop_api = config_jcrop_api(crop_target, form, id);
+    set_crop_selection(crop_target, form, id);
   });
 
   $("#increase-crop-scale").on("click", function () {
     crop_scale += SCALE_CHANGE;
 
-    // TODO: Preserve crop on re-size?
     jcrop_api.destroy();
     jcrop_api = config_jcrop_api(crop_target, form, id);
+    set_crop_selection(crop_target, form, id);
   });
 }
 
@@ -121,4 +107,22 @@ function config_jcrop_api(crop_target, form, id) {
   });
 
   return jcrop_api;
+}
+
+function set_crop_selection(crop_target, form, id) {
+  if (
+    form.elements[`${id}_exam_template_crop_x`].value &&
+    form.elements[`${id}_exam_template_crop_y`].value &&
+    form.elements[`${id}_exam_template_crop_width`].value &&
+    form.elements[`${id}_exam_template_crop_height`].value
+  ) {
+    const stageHeight = parseFloat(getComputedStyle(crop_target, null).height.replace("px", ""));
+    const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
+    const x = parseFloat(form.elements[`${id}_exam_template_crop_x`].value) * stageWidth;
+    const y = parseFloat(form.elements[`${id}_exam_template_crop_y`].value) * stageHeight;
+    const width = parseFloat(form.elements[`${id}_exam_template_crop_width`].value) * stageWidth;
+    const height = parseFloat(form.elements[`${id}_exam_template_crop_height`].value) * stageHeight;
+
+    jcrop_api.setSelect([x, y, x + width, y + height]);
+  }
 }
