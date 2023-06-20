@@ -37,6 +37,7 @@
       <% # If student has no group, inform them
          if @grouping.nil? %>
           <p class='notice'>
+            <i class="fa-solid fa-circle-info left-icon"></i>
             <%= t('groups.student_interface.no_group_yet') %>.
             <% if @assignment.past_collection_date?(@student.section) %>
               <%= t('assignments.due_date.final_due_date_passed') %>
@@ -50,6 +51,7 @@
 
           <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
               <div class='notice'>
+                <i class="fa-solid fa-circle-info left-icon"></i>
                 <% if flash[:fail_notice].is_a?(Array) %>
                     <ul>
                       <% flash[:fail_notice].each do |message| %>

@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import ReactTable from "react-table";
 import {dateSort} from "./Helpers/table_helpers";
@@ -70,7 +71,16 @@ class ExamScanLogTable extends React.Component {
           Header: I18n.t("split_pdf_logs.pages_error"),
           Cell: row => {
             let errors = row.original.page_data.filter(p => p.status.startsWith("ERROR")).length;
-            return <span className={errors ? "error-with-icon" : ""}>{errors}</span>;
+            if (errors > 0) {
+              return (
+                <span className={"error-with-icon"}>
+                  <FontAwesomeIcon icon="fa-solid fa-warning" className="icon-left" />
+                  {errors}
+                </span>
+              );
+            } else {
+              return <span></span>;
+            }
           },
           className: "number",
         },

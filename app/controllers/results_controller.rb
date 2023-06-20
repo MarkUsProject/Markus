@@ -629,6 +629,13 @@ class ResultsController < ApplicationController
               filename: "#{assignment.short_identifier}_release_view_tokens.csv"
   end
 
+  def print
+    pdf_report = record.generate_print_pdf
+    send_data pdf_report.to_pdf,
+              filename: "#{record.submission.assignment.short_identifier}_#{record.grouping.group.group_name}.pdf",
+              type: 'application/pdf'
+  end
+
   private
 
   def extra_mark_params

@@ -1,18 +1,21 @@
 import React from "react";
 import {render} from "react-dom";
 import PropTypes from "prop-types";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class SubmissionSelector extends React.Component {
   renderToggleMarkingStateButton = () => {
-    let buttonText, className, disabled;
+    let buttonText, className, disabled, icon;
     if (this.props.marking_state === "complete") {
       buttonText = I18n.t("results.set_to_incomplete");
       className = "set-incomplete";
       disabled = this.props.released_to_students;
+      icon = <FontAwesomeIcon icon="fa-solid fa-pen" />;
     } else {
       buttonText = I18n.t("results.set_to_complete");
       className = "set-complete";
       disabled = this.props.marks.some(mark => mark.mark === null || mark.mark === undefined);
+      icon = <FontAwesomeIcon icon="fa-solid fa-circle-check" />;
     }
     return (
       <button
@@ -21,6 +24,7 @@ export class SubmissionSelector extends React.Component {
         disabled={disabled}
         style={{alignSelf: "flex-end", width: "140px"}}
       >
+        {icon}
         {buttonText}
       </button>
     );
@@ -44,6 +48,7 @@ export class SubmissionSelector extends React.Component {
         disabled={disabled}
         style={{alignSelf: "flex-end"}}
       >
+        <FontAwesomeIcon icon="fa-solid fa-envelope-circle-check" />
         {buttonText}
       </button>
     );
@@ -58,6 +63,7 @@ export class SubmissionSelector extends React.Component {
           style={{alignSelf: "flex-end"}}
           title="Alt + Enter"
         >
+          <FontAwesomeIcon icon="fa-solid fa-compress" />
           {I18n.t("results.fullscreen_exit")}
         </button>
       );
@@ -69,10 +75,24 @@ export class SubmissionSelector extends React.Component {
           style={{alignSelf: "flex-end"}}
           title="Alt + Enter"
         >
+          <FontAwesomeIcon icon="fa-solid fa-expand" />
           {I18n.t("results.fullscreen_enter")}
         </button>
       );
     }
+  }
+
+  renderPrintButton() {
+    return (
+      <a
+        className={"button"}
+        href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
+        style={{alignSelf: "flex-end"}}
+      >
+        <FontAwesomeIcon icon={"fa-solid fa-print"} />
+        {I18n.t("results.print")}
+      </a>
+    );
   }
 
   render() {
@@ -107,13 +127,17 @@ export class SubmissionSelector extends React.Component {
             className="button previous"
             onClick={this.props.previousSubmission}
             title={`${I18n.t("results.previous_submission")} (Shift + ⇦)`}
-          />
+          >
+            <FontAwesomeIcon icon="fa-solid fa-arrow-left" className="no-padding" />
+          </button>
           <h3 className="group-name">{this.props.group_name}</h3>
           <button
             className="button next"
             onClick={this.props.nextSubmission}
             title={`${I18n.t("results.next_submission")} (Shift + ⇨)`}
-          />
+          >
+            <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
+          </button>
           <div className="progress">
             <meter
               value={this.props.num_marked}
@@ -133,6 +157,7 @@ export class SubmissionSelector extends React.Component {
           <h2 className="total">
             {+(Math.round(this.props.total * 100) / 100)} / {+this.props.assignment_max_mark}
           </h2>
+          {this.renderPrintButton()}
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}

@@ -3,11 +3,11 @@ document.getElementById('criterion_title_<%= @criterion.class %><%= @criterion.i
 document.getElementById('criterion_max_mark_<%= @criterion.class %><%= @criterion.id %>').innerHTML = '<%= @criterion.max_mark %>';
 document.getElementById('visibility_indicator_<%= @criterion.class %><%= @criterion.id %>').innerHTML =
   <% if @criterion.ta_visible && @criterion.peer_visible %>
-    '<%= image_tag 'icons/user_suit.png' %><%= image_tag 'icons/group.png' %>'
+    '<i class="fa-solid fa-chalkboard-user icon-left"></i><i class="fa-solid fa-comments"></i>'
   <% elsif @criterion.ta_visible %>
-    '<%= image_tag 'icons/user_suit.png' %>'
+    '<i class="fa-solid fa-chalkboard-user"></i>'
   <% else %>
-    '<%= image_tag 'icons/empty.png' %><%= image_tag 'icons/group.png' %>'
+    '<span class="empty-16px icon-left"></span><i class="fa-solid fa-comments"></i>'
   <% end %>;
 // Update the general max_mark accounting for all ta visible criteria
 document.getElementById('criteria_total_max_mark').innerHTML = '<%= @criterion.assignment.max_mark %>';
