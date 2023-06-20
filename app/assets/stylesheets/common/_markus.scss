@@ -1376,11 +1376,12 @@ canvas {
   margin-right: 3px;
   max-width: 80%;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 .exam-crop-container {
   display: flex;
+  height: 600px;
   width: 500px;
 }
 

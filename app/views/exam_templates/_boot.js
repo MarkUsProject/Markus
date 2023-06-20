@@ -1,6 +1,6 @@
-let crop_scale = 400;
+let crop_scale = 600;
 const SCALE_CHANGE = 100;
-const MIN_SIZE = 200;
+const MIN_SIZE = 600;
 var jcrop_api;
 
 $(document).ready(function () {
