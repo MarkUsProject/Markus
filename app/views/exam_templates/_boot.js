@@ -1,4 +1,4 @@
-let crop_scale = 1000;
+let crop_scale = 1300;
 const SCALE_CHANGE = 100;
 const MIN_SIZE = 1000;
 var jcrop_api;
