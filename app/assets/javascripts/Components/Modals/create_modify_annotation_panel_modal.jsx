@@ -29,7 +29,7 @@ class CreateModifyAnnotationPanel extends React.Component {
       return;
     }
 
-    const url = Routes.find_annotation_text_course_assignment_annotation_categories_url(
+    const url = Routes.find_annotation_text_course_assignment_annotation_categories_path(
       this.props.course_id,
       this.props.assignment_id
     );
