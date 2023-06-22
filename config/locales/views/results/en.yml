@@ -51,6 +51,7 @@ en:
     no_results_in_direction: There are no more results in this direction!
     overridden_deductions: Overridden
     previous_submission: Previous Submission
+    print: Print
     remark:
       about_remark_save: Please note that the instructor will be unaware of your saved request unless it has been submitted.
       about_remark_submission: Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request.

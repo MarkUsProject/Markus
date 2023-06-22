@@ -82,6 +82,19 @@ export class SubmissionSelector extends React.Component {
     }
   }
 
+  renderPrintButton() {
+    return (
+      <a
+        className={"button"}
+        href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
+        style={{alignSelf: "flex-end"}}
+      >
+        <FontAwesomeIcon icon={"fa-solid fa-print"} />
+        {I18n.t("results.print")}
+      </a>
+    );
+  }
+
   render() {
     if (this.props.role === "Student" && !this.props.is_reviewer) {
       return "";
@@ -144,6 +157,7 @@ export class SubmissionSelector extends React.Component {
           <h2 className="total">
             {+(Math.round(this.props.total * 100) / 100)} / {+this.props.assignment_max_mark}
           </h2>
+          {this.renderPrintButton()}
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}
