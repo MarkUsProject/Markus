@@ -18,7 +18,6 @@ class LtiSettings extends React.Component {
 
   fetchData = () => {
     fetch(Routes.lti_deployments_course_path(this.props.course_id), {
-      method: "GET",
       headers: {
         Accept: "application/json",
       },

@@ -688,7 +688,10 @@ class Result extends React.Component {
               grouping_id: result.next_grouping.id,
             };
             this.setState(prevState => ({...prevState, ...result_obj}));
-            let new_url = Routes.edit_course_result_url(this.props.course_id, this.state.result_id);
+            let new_url = Routes.edit_course_result_path(
+              this.props.course_id,
+              this.state.result_id
+            );
             history.pushState({}, document.title, new_url);
           });
       });

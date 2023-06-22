@@ -25,7 +25,6 @@ class ExamScanLogTable extends React.Component {
         this.props.assignment_id
       ),
       {
-        method: "GET",
         headers: {
           Accept: "application/json",
         },

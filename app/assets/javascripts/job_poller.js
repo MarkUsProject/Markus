@@ -9,7 +9,6 @@
 export function poll_job(job_id, onSuccess, onFailure, onComplete, interval) {
   interval = interval || 1000;
   fetch(Routes.get_job_message_path(job_id), {
-    method: "Get",
     headers: {
       Accept: "application/json",
     },

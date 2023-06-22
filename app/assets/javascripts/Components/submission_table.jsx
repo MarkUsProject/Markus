@@ -37,7 +37,6 @@ class RawSubmissionTable extends React.Component {
     fetch(
       Routes.course_assignment_submissions_path(this.props.course_id, this.props.assignment_id),
       {
-        method: "GET",
         headers: {
           Accept: "application/json",
         },

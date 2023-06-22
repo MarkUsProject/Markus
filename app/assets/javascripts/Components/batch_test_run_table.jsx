@@ -25,7 +25,6 @@ class BatchTestRunTable extends React.Component {
     fetch(
       Routes.batch_runs_course_assignment_path(this.props.course_id, this.props.assignment_id),
       {
-        method: "GET",
         headers: {
           Accept: "application/json",
         },

@@ -25,7 +25,6 @@ class MarksGradersManager extends React.Component {
         this.props.grade_entry_form_id
       ),
       {
-        method: "GET",
         headers: {
           Accept: "application/json",
         },

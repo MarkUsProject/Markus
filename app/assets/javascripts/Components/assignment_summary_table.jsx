@@ -29,7 +29,6 @@ export class AssignmentSummaryTable extends React.Component {
 
   fetchData = () => {
     fetch(Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id), {
-      method: "GET",
       headers: {
         Accept: "application/json",
       },

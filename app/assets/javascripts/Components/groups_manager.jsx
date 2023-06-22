@@ -187,18 +187,13 @@ class GroupsManager extends React.Component {
       return;
     }
 
-    const requestData = {grouping_id: grouping_id};
     const url = Routes.valid_grouping_course_assignment_groups_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
+      {grouping_id: grouping_id}
     );
-    const queryString = Object.keys(requestData)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
-      .join("&");
-    const requestUrl = `${url}?${queryString}`;
-    fetch(requestUrl, {
-      method: "GET",
-    }).then(this.fetchData);
+
+    fetch(url).then(this.fetchData);
   };
 
   invalidate = grouping_id => {
@@ -206,18 +201,12 @@ class GroupsManager extends React.Component {
       return;
     }
 
-    const requestData = {grouping_id: grouping_id};
     const url = Routes.invalid_grouping_course_assignment_groups_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
+      {grouping_id: grouping_id}
     );
-    const queryString = Object.keys(requestData)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
-      .join("&");
-    const requestUrl = `${url}?${queryString}`;
-    fetch(requestUrl, {
-      method: "GET",
-    }).then(this.fetchData);
+    fetch(url).then(this.fetchData);
   };
 
   handleShowModal = (extension_data, updating) => {

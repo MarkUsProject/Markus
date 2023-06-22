@@ -17,14 +17,11 @@ class TagTable extends React.Component {
   }
 
   fetchData = () => {
-    const requestData = {assignment_id: this.props.assignment_id};
-    const url = Routes.course_tags_path(this.props.course_id);
-    const queryString = Object.keys(requestData)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
-      .join("&");
-    const requestUrl = `${url}?${queryString}`;
-    fetch(requestUrl, {
-      method: "GET",
+    const url = Routes.course_tags_path(this.props.course_id, {
+      assignment_id: this.props.assignment_id,
+    });
+
+    fetch(url, {
       headers: {
         Accept: "application/json",
       },

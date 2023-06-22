@@ -58,19 +58,14 @@ class AnnotationUsagePanel extends React.Component {
   ];
 
   fetchData = () => {
-    const requestData = {
-      annotation_text_id: this.props.annotation_id,
-    };
     const url = Routes.annotation_text_uses_course_assignment_annotation_categories_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
+      {
+        annotation_text_id: this.props.annotation_id,
+      }
     );
-    const queryString = Object.keys(requestData)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
-      .join("&");
-    const requestUrl = `${url}?${queryString}`;
-    fetch(requestUrl, {
-      method: "GET",
+    fetch(url, {
       headers: {
         Accept: "application/json",
       },

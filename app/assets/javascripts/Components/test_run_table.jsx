@@ -41,14 +41,12 @@ export class TestRunTable extends React.Component {
           this.props.course_id,
           this.props.result_id
         );
-        fetchDetails = {method: "GET"};
       } else {
         url = Routes.get_test_runs_instructors_released_course_result_path(
           this.props.course_id,
           this.props.result_id
         );
         fetchDetails = {
-          method: "GET",
           headers: {
             Accept: "application/json",
           },
@@ -60,7 +58,6 @@ export class TestRunTable extends React.Component {
         this.props.assignment_id
       );
       fetchDetails = {
-        method: "GET",
         headers: {
           Accept: "application/json",
         },

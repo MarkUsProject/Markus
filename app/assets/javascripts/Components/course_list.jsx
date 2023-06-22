@@ -17,7 +17,6 @@ class CourseList extends React.Component {
 
   fetchData = () => {
     fetch(Routes.courses_path(), {
-      method: "GET",
       headers: {
         Accept: "application/json",
       },
