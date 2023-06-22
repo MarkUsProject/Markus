@@ -1367,8 +1367,8 @@ canvas {
 }
 
 .exam-crop-img-container {
+  flex: 1;
   margin-right: 3px;
-  max-width: 80%;
   overflow-x: auto;
   overflow-y: auto;
 }
@@ -1382,8 +1382,8 @@ canvas {
 .exam-crop-button-container {
   display: flex;
   flex-direction: column;
-  max-width: 20%;
   overflow: hidden;
+  width: 40px;
 }
 
 #increase-crop-scale {
