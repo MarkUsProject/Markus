@@ -147,13 +147,9 @@ export class FileViewer extends React.Component {
         } else {
           const requestData = {preview: true, force_text: force_text};
           const url = this.props.selectedFileURL;
-          const queryString = Object.keys(requestData)
-            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
-            .join("&");
+          const queryString = new URLSearchParams(requestData);
           const requestUrl = `${url}&${queryString}`;
-          fetch(requestUrl, {
-            method: "GET",
-          })
+          fetch(requestUrl)
             .then(response => {
               if (response.ok) {
                 return response.text();

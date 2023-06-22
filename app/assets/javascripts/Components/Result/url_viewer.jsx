@@ -85,12 +85,9 @@ export class URLViewer extends React.Component {
     // Request is of the form <oembedUrl>?format=json&url=<url>
     // For more information about the format of this request see https://oembed.com/
     const requestData = {format: "json", url: url};
-    const queryString = Object.keys(requestData)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(requestData[key])}`)
-      .join("&");
+    const queryString = new URLSearchParams(requestData).toString();
     const requestUrl = `${oembedUrl}?${queryString}`;
     fetch(requestUrl, {
-      method: "GET",
       headers: {
         Accept: "application/json",
       },
