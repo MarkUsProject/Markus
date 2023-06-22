@@ -14,6 +14,20 @@ $(document).ready(function () {
   });
 });
 
+/**
+ * Initialize an exam template form.
+ * @param id Exam template id
+ */
+const init_exam_template_form = id => {
+  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
+  const parsing_input = form && form.elements[`${id}_exam_template_automatic_parsing`];
+
+  parsing_input.addEventListener("change", () => toggle_cover_page(id));
+
+  const crop_target = form.getElementsByClassName("crop-target")[0];
+  crop_target.onload = () => toggle_cover_page(id);
+};
+
 function add_template_division(target) {
   var new_id = new Date().getTime();
   var nested_form_path = `exam_template[template_divisions_attributes][${new_id}]`;

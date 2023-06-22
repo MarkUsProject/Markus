@@ -1,13 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById("add_fields_exam_template_form_<%= exam_template.id %>");
-      const parsing_input = form && form.elements["<%= exam_template.id %>_exam_template_automatic_parsing"];
-
-      parsing_input.addEventListener('change', () => toggle_cover_page(<%= exam_template.id %>));
-
-      const crop_target = form.getElementsByClassName("crop-target")[0];
-      crop_target.onload = () => toggle_cover_page(<%= exam_template.id %>);
+      init_exam_template_form(<%= exam_template.id %>)
     })
   <% end %>
 <% end %>
