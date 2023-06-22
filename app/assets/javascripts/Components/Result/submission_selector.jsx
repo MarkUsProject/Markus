@@ -1,9 +1,15 @@
 import React from "react";
-import {render} from "react-dom";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import FilterModal from "../Modals/filter_modal";
 
 export class SubmissionSelector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showFilterModal: false,
+    };
+  }
   renderToggleMarkingStateButton = () => {
     let buttonText, className, disabled, icon;
     if (this.props.marking_state === "complete") {
@@ -95,6 +101,10 @@ export class SubmissionSelector extends React.Component {
     );
   }
 
+  onOpenFilterModal = () => {
+    this.setState({showFilterModal: true});
+  };
+
   render() {
     if (this.props.role === "Student" && !this.props.is_reviewer) {
       return "";
@@ -138,6 +148,11 @@ export class SubmissionSelector extends React.Component {
           >
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
+
+          <button className="button filter" onClick={this.onOpenFilterModal}>
+            <FontAwesomeIcon icon="fa-solid fa-filter" className="no-padding" />
+          </button>
+
           <div className="progress">
             <meter
               value={this.props.num_marked}
@@ -161,6 +176,12 @@ export class SubmissionSelector extends React.Component {
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}
+        </div>
+        <div>
+          <FilterModal
+            isOpen={this.state.showFilterModal}
+            onRequestClose={() => this.setState({showFilterModal: false})}
+          />
         </div>
       </div>
     );
