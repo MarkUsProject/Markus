@@ -149,7 +149,11 @@ export class SubmissionSelector extends React.Component {
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
 
-          <button className="button filter" onClick={this.onOpenFilterModal}>
+          <button
+            className="button filter"
+            onClick={this.onOpenFilterModal}
+            title={I18n.t("results.filters.filter_modal")}
+          >
             <FontAwesomeIcon icon="fa-solid fa-filter" className="no-padding" />
           </button>
 
