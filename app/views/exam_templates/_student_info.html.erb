@@ -17,8 +17,7 @@
   </p>
 
   <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
-    <div id="exam_cover-<%= exam_template.id %>">
-      <div class="exam-crop-container">
+    <div id="exam_cover-<%= exam_template.id %>" class="exam-crop-container">
         <div class="exam-crop-img-container">
           <img src="<%= show_cover_course_exam_template_path(@current_course, exam_template) %>" class="crop-target"
                alt="<%= t(:'exam_templates.parsing.cover_page_for', id: exam_template.id) %>"
@@ -28,7 +27,6 @@
           <button id="increase-crop-scale" class="crop-scale-button" type="button">+</button>
           <button id="decrease-crop-scale" class="crop-scale-button" type="button">-</button>
         </div>
-      </div>
     </div>
 
     <div class="table-with-add">
