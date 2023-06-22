@@ -16,7 +16,19 @@
     <%= f.label :automatic_parsing, t('exam_templates.parsing.general') %>
   </p>
 
-  <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
+  <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-col' : 'no-display' %>">
+    <div class="table-with-add">
+      <%= f.label :cover_fields, t('activerecord.attributes.exam_template.cover_fields') %>
+      <%= f.select :cover_fields,
+                   options_for_select([[t('activerecord.attributes.user.id_number'), "id_number"],
+                                       [t('activerecord.attributes.user.user_name'), "user_name"]],
+                                      selected: exam_template.cover_fields || "id_number") %>
+      <%= f.hidden_field :crop_x, value: exam_template.crop_x %>
+      <%= f.hidden_field :crop_y, value: exam_template.crop_y %>
+      <%= f.hidden_field :crop_width, value: exam_template.crop_width %>
+      <%= f.hidden_field :crop_height, value: exam_template.crop_height %>
+    </div>
+
     <div id="exam_cover-<%= exam_template.id %>" class="exam-crop-container">
         <div class="exam-crop-img-container">
           <img src="<%= show_cover_course_exam_template_path(@current_course, exam_template) %>" class="crop-target"
@@ -29,18 +41,6 @@
           <button id="decrease-crop-scale" class="crop-scale-button"
                   type="button" title="<%= I18n.t("results.zoom_out_image") %>">-</button>
         </div>
-    </div>
-
-    <div class="table-with-add">
-      <%= f.label :cover_fields, t('activerecord.attributes.exam_template.cover_fields') %>
-      <%= f.select :cover_fields,
-                   options_for_select([[t('activerecord.attributes.user.id_number'), "id_number"],
-                                       [t('activerecord.attributes.user.user_name'), "user_name"]],
-                                      selected: exam_template.cover_fields || "id_number") %>
-      <%= f.hidden_field :crop_x, value: exam_template.crop_x %>
-      <%= f.hidden_field :crop_y, value: exam_template.crop_y %>
-      <%= f.hidden_field :crop_width, value: exam_template.crop_width %>
-      <%= f.hidden_field :crop_height, value: exam_template.crop_height %>
     </div>
   </div>
 

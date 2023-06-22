@@ -454,10 +454,6 @@ fieldset {
 }
 
 .table-with-add {
-  margin-left: 2.5em;
-  min-width: 500px;
-  width: 70%;
-
   > a {
     background-color: $background-support;
     display: block;
@@ -1369,7 +1365,7 @@ canvas {
 .exam-crop-container {
   display: flex;
   height: 600px;
-  width: 500px;
+  width: 1000px;
 }
 
 .exam-crop-img-container {
@@ -1380,9 +1376,11 @@ canvas {
 }
 
 .exam-crop-button-container {
+  border-left: 1px solid $gridline;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  margin-left: 5px;
+  padding-left: 5px;
   width: 40px;
 }
 
