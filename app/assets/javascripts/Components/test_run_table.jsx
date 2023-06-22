@@ -69,7 +69,7 @@ export class TestRunTable extends React.Component {
     fetch(url, fetchDetails)
       .then(response => {
         if (response.ok) {
-          return response.json(); // Parse the response as JSON
+          return response.json();
         }
       })
       .then(data => {

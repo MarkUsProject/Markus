@@ -31,7 +31,7 @@ class TagTable extends React.Component {
     })
       .then(response => {
         if (response.ok) {
-          return response.json(); // Parse the response as JSON
+          return response.json();
         }
       })
       .then(res => {
