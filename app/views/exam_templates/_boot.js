@@ -80,6 +80,17 @@ function toggle_cover_page(id) {
   }
 }
 
+/**
+ * TODO: Refactor below functions so there are no hard dependencies on the crop_target having
+ *  a certain class name, and relying on a form to grab widths and heights.
+ */
+
+/**
+ * Initialize a crop object and attach a crop box to an exam template with class crop-target, using
+ * form data to specify the dimensions of the crop box. If the form data does not exist, no crop
+ * selection is displayed.
+ * @param id Exam template identifier.
+ */
 function attach_crop_box(id) {
   const form = document.getElementById(`add_fields_exam_template_form_${id}`);
   const crop_target = form.getElementsByClassName("crop-target")[0];
@@ -94,6 +105,10 @@ function attach_crop_box(id) {
   set_crop_selection(crop_target, form, id, jcrop_api);
 }
 
+/**
+ * Initialize event listeners for the crop zoom buttons on the exam template.
+ * @param id Exam template identifier.
+ */
 function toggle_crop_scale_buttons(id) {
   $("#decrease-crop-scale").on("click", function () {
     if (crop_scale - SCALE_CHANGE < MIN_SIZE) {
@@ -111,6 +126,13 @@ function toggle_crop_scale_buttons(id) {
   });
 }
 
+/**
+ * Configure a Jcrop object and attach it to a target.
+ * @param crop_target Target to attach crop box to. Must be an exam template.
+ * @param form Form containing information of the crop selection for the target (exam template).
+ * @param id Exam template identifier.
+ * @returns Configured Jcrop object.
+ */
 function config_jcrop_api(crop_target, form, id) {
   return $.Jcrop(crop_target, {
     onChange: pos => {
@@ -130,6 +152,13 @@ function config_jcrop_api(crop_target, form, id) {
   });
 }
 
+/**
+ * Display a crop selection onto a target image, given a selection has been saved.
+ * @param crop_target Target to display crop selection onto. Must be an exam template.
+ * @param form Form containing information of the crop selection for the target (exam template).
+ * @param id Exam template identifier.
+ * @param jcrop_api Configured Jcrop object that has been attached to crop_target already.
+ */
 function set_crop_selection(crop_target, form, id, jcrop_api) {
   if (
     form.elements[`${id}_exam_template_crop_x`].value &&
@@ -148,6 +177,12 @@ function set_crop_selection(crop_target, form, id, jcrop_api) {
   }
 }
 
+/**
+ * Round a number down to the nearest hundred.
+ * @param num Number to round down.
+ * @returns {number} Number rounded down to the nearest hundred.
+ * @private
+ */
 function _round_down_to_nearest_hundred(num) {
   return Math.floor(num / 100) * 100;
 }
