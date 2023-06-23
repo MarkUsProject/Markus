@@ -32,7 +32,7 @@ class FilterModal extends React.Component {
     return (
       <div>
         <Modal
-          className="react-modal dialog"
+          className="filter-modal dialog"
           isOpen={this.props.isOpen}
           onRequestClose={() => {
             this.setState({currentAnnotationValue: this.state.savedAnnotationValue});
@@ -53,14 +53,16 @@ class FilterModal extends React.Component {
                 />
               </label>
               <div>
-                <section className={"modal-container dialog-actions"}>
-                  <input
-                    type="button"
-                    value={I18n.t("results.filters.clear_all")}
-                    onClick={this.clearFilters}
-                  />
-                  <input type="submit" value={I18n.t("results.filters.save")} />
-                </section>
+                <div className="modal-footer" id="modal-footer">
+                  <section className={"modal-container dialog-actions"}>
+                    <input
+                      type="button"
+                      value={I18n.t("results.filters.clear_all")}
+                      onClick={this.clearFilters}
+                    />
+                    <input type="submit" value={I18n.t("results.filters.save")} />
+                  </section>
+                </div>
               </div>
             </form>
           </div>
