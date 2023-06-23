@@ -1,6 +1,6 @@
-let crop_scale = 1300;
+let crop_scale = 600;
 const SCALE_CHANGE = 100;
-const MIN_SIZE = 1000;
+let MIN_SIZE = 600;
 var jcrop_api;
 
 $(document).ready(function () {
@@ -66,6 +66,13 @@ function toggle_cover_page(id) {
 
   if (parsing_input.checked) {
     $("#exam-cover-display-" + id).css("display", "flex");
+
+    const image_container_width = $("#exam-crop-img-container").width();
+    const image_container_width_rounded_down =
+      _round_down_to_nearest_hundred(image_container_width);
+    crop_scale = image_container_width_rounded_down;
+    MIN_SIZE = image_container_width_rounded_down;
+
     attach_crop_box(id);
     toggle_crop_scale_buttons(id);
   } else {
@@ -123,6 +130,7 @@ function config_jcrop_api(crop_target, form, id) {
     keySupport: false,
     boxWidth: crop_scale,
     boxHeight: crop_scale,
+    addClass: "jcrop-centered",
   });
 }
 
@@ -142,4 +150,8 @@ function set_crop_selection(crop_target, form, id) {
 
     jcrop_api.setSelect([x, y, x + width, y + height]);
   }
+}
+
+function _round_down_to_nearest_hundred(num) {
+  return Math.floor(num / 100) * 100;
 }
