@@ -1380,10 +1380,11 @@ canvas {
 }
 
 .exam-crop-button-container {
-  border-left: 1px solid $gridline;
+  //border-left: 1px solid $gridline;
   display: flex;
   flex-direction: column;
   padding-left: 5px;
+  padding-top: 5px;
   width: 40px;
 }
 
@@ -1393,9 +1394,19 @@ canvas {
 
 .crop-scale-button {
   height: 40px;
+  margin-top: 2px;
   min-width: 40px;
   padding: 0;
+  //transform: translateX(-70px);
+  transform: translate(-70px, 0);
   width: 40px;
+  z-index: 800; // jcrop uses z-index of 690
+}
+
+.crop-scale-button:hover {
+  height: 42px;
+  transform: translate(-70px, -2px);
+  width: 42px;
 }
 
 .crop-scale-button > svg {
