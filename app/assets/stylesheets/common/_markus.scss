@@ -1401,12 +1401,6 @@ canvas {
   z-index: 800; // jcrop uses z-index of 690
 }
 
-.crop-scale-button:hover {
-  height: 42px;
-  transform: translate(-70px, -2px);
-  width: 42px;
-}
-
 .crop-scale-button > svg {
   padding-right: 0;
 }
