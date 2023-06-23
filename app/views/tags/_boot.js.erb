@@ -1,14 +1,6 @@
 <%= javascript_tag nonce: true do %>
-  (function(){
-    const domContentLoadedCB = function() {
+    document.addEventListener("DOMContentLoaded", function() {
       window.modal_create_new   = new ModalMarkus('#create_new_dialog');
       window.modal_edit         = new ModalMarkus('#edit_tags_dialog');
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    }else{
-      domContentLoadedCB()
-    }
-  })();
+    });
 <% end %>

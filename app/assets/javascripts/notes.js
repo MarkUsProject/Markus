@@ -2,7 +2,7 @@
 
 (function () {
   const domContentLoadedCB = function () {
-    $("#noteable_type select").change(function () {
+    $("#noteable_type").change(function () {
       document.getElementById("working").style.display = "";
 
       var params = {
@@ -20,9 +20,5 @@
     });
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-  } else {
-    domContentLoadedCB();
-  }
+  document.addEventListener("DOMContentLoaded", domContentLoadedCB);
 })();

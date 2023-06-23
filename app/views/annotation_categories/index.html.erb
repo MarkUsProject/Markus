@@ -6,20 +6,12 @@
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
   <%= javascript_tag nonce: true do %>
-    (function(){
-      const domContentLoadedCB = function() {
-        $('#add-annotation-category').click(function(e) {
-          add_annotation_category('<%= new_course_assignment_annotation_category_path(@current_course, @assignment) %>');
-          e.preventDefault();
-        })
-      }
-
-      if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-      }else{
-          domContentLoadedCB()
-      }
-    })();
+    document.addEventListener("DOMContentLoaded", function() {
+      $('#add-annotation-category').click(function(e) {
+        add_annotation_category('<%= new_course_assignment_annotation_category_path(@current_course, @assignment) %>');
+        e.preventDefault();
+      })
+    });
   <% end %>
 <% end %>
 

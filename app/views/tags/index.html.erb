@@ -3,22 +3,17 @@
                formats: [:js],
                handlers: [:erb] %>
   <%= javascript_tag nonce: true do %>
-    (function(){
-      document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
-      });
+    });
+    (function(){
       const domContentLoadedCB = function() {
         $('#add-tag').click(function(e) {
           modal_create_new.open();
           e.preventDefault();
         })
       }
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-      }else{
-        domContentLoadedCB()
-      }
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
     })();
   <% end %>
 <% end %>

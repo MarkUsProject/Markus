@@ -15,7 +15,8 @@
 
   addEventListener("change", () => {
     onbeforeunload_flag = true
-  })
+  });
+
   (function(){
     const domContentLoadedCB = function() {
       $('input[type="submit"]').click(function () {

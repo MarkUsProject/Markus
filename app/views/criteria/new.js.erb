@@ -4,26 +4,17 @@ $('#criteria_pane_list').prepend(
 
 document.getElementById('new_criterion_prompt').focus();
 
-(function(){
-  const domContentLoadedCB = function() {
-    $('input[name=criterion_type]:radio').change(function () {
-      const max_mark = document.getElementById('max_mark_prompt');
-      if (this.value === 'RubricCriterion') {
-        max_mark.defaultValue = <%= RubricCriterion::DEFAULT_MAX_MARK -%>;
-      } else if (this.value === 'FlexibleCriterion') {
-        max_mark.defaultValue = <%= FlexibleCriterion::DEFAULT_MAX_MARK -%>;
-      } else if (this.value === 'CheckboxCriterion') {
-        max_mark.defaultValue = <%= CheckboxCriterion::DEFAULT_MAX_MARK -%>;
-      }
-    });
-  }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-  }else{
-    domContentLoadedCB()
+$('input[name=criterion_type]:radio').change(function () {
+  const max_mark = document.getElementById('max_mark_prompt');
+  if (this.value === 'RubricCriterion') {
+    max_mark.defaultValue = <%= RubricCriterion::DEFAULT_MAX_MARK -%>;
+  } else if (this.value === 'FlexibleCriterion') {
+    max_mark.defaultValue = <%= FlexibleCriterion::DEFAULT_MAX_MARK -%>;
+  } else if (this.value === 'CheckboxCriterion') {
+    max_mark.defaultValue = <%= CheckboxCriterion::DEFAULT_MAX_MARK -%>;
   }
-})();
+});
 
 document.getElementById('new_criterion').addEventListener('ajax:success', event => {
   ajax_events.renderFlash(event, event.detail[2]);

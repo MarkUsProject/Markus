@@ -1,9 +1,7 @@
 (function () {
   const domContentLoadedCB = function () {
-    console.log("did the thing");
     // Handle indenting in the new annotation textarea (2 spaces)
     $("#new_annotation_content").keydown(function (e) {
-      console.log("handled");
       var keyCode = e.keyCode || e.which;
 
       if (keyCode == 9) {

@@ -1,17 +1,6 @@
 document.getElementById('about_dialog').innerHTML = "<%= escape_javascript(render partial: 'about_content') %>";
 about_modal.open();
 
-(function() {
-  const domContentLoadedCB = function() {
-    console.log("did the thing")
-    $('#about-modal-close').click(function() {
-      about_modal.close();
-    })
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-  }else{
-    domContentLoadedCB()
-  }
-})();
+$('#about-modal-close').click(function() {
+  about_modal.close();
+})

@@ -3,20 +3,12 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     <%= render partial: 'boot', formats: [:js] %>
-    (function(){
-      const domContentLoadedCB = function() {
+      document.addEventListener("DOMContentLoaded", function() {
         $('#add-exam-template').click(function(e) {
           modal_create_new.open();
           e.preventDefault();
         })
-      }
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-      }else{
-        domContentLoadedCB()
-      }
-    })();
+      });
   <% end %>
 <% end %>
 

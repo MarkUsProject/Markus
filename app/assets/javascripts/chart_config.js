@@ -45,9 +45,5 @@
     Chart.defaults.animation.duration = 0;
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-  } else {
-    domContentLoadedCB();
-  }
+  document.addEventListener("DOMContentLoaded", domContentLoadedCB);
 })();

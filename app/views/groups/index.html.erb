@@ -22,8 +22,7 @@
         }
       );
     });
-    (function(){
-      const domContentLoadedCB = function() {
+      document.addEventListener("DOMContentLoaded", function() {
         $('#assignment-group-use').click(function(e) {
           modalAssignmentGroupReUse.open();
           $('#assignment-group-use-close').click(function(e) {
@@ -32,14 +31,7 @@
           })
           e.preventDefault();
         })
-      }
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-      }else{
-        domContentLoadedCB()
-      }
-    })();
+      });
   <% end %>
 <% end %>
 

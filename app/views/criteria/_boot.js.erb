@@ -1,6 +1,5 @@
 <%= javascript_tag nonce: true do %>
-  (function(){
-    const domContentLoadedCB = function() {
+    document.addEventListener("DOMContentLoaded", function() {
       bindSortable();
 
       var ajaxRequest;
@@ -28,14 +27,7 @@
           cancel: '#new_criterion'
         });
       }
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    }else{
-      domContentLoadedCB()
-    }
-  })();
+    });
 
   function add_level(id) {
     let rubric_form = $('#' + id);

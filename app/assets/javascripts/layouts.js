@@ -6,9 +6,5 @@
     window.session_expired_modal = new ModalMarkus("#session_expired_dialog");
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-  } else {
-    domContentLoadedCB();
-  }
+  document.addEventListener("DOMContentLoaded", domContentLoadedCB);
 })();

@@ -42,15 +42,7 @@
       e.preventDefault();
     })
   }
-  (function(){
-    const domContentLoadedCB = function() {
-      flatpickr(".datepicker", {enableTime: false, dateFormat: I18n.t('date.format_string.flatpickr')})
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    }else{
-      domContentLoadedCB()
-  }
-  })();
+  document.addEventListener("DOMContentLoaded", function() {
+    flatpickr(".datepicker", {enableTime: false, dateFormat: I18n.t('date.format_string.flatpickr')})
+  });
 <% end %>

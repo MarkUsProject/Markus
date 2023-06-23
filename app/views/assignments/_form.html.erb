@@ -8,8 +8,7 @@
              handlers: [:erb] %>
 
   <%= javascript_tag nonce: true do %>
-    (function(){
-      const domContentLoadedCB = function() {
+      document.addEventListener("DOMContentLoaded", function() {
         $('#grace-period-add').click(function(e) {
           add_period("grace_periods", grace_periods);
           e.preventDefault();
@@ -27,14 +26,7 @@
           e.preventDefault();
         })
         refresh_event_listeners();
-      }
-
-      if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-      }else{
-          domContentLoadedCB()
-      }
-    })();
+      });
   <% end %>
 <% end %>
 

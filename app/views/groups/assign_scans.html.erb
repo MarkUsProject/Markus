@@ -77,11 +77,8 @@
       parseNextScan(<%= raw @data.to_json %>);
     }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    }else{
-      domContentLoadedCB()
-    }
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+
   })();
 
   function update_bar(v) {
