@@ -1,7 +1,7 @@
 let crop_scale = 600;
 const SCALE_CHANGE = 100;
 let MIN_SIZE = 600;
-var jcrop_api;
+let jcrop_api;
 
 $(document).ready(function () {
   window.modal_create_new = new ModalMarkus("#create_new_template");
@@ -84,16 +84,17 @@ function attach_crop_box(id) {
   const form = document.getElementById(`add_fields_exam_template_form_${id}`);
   const crop_target = form.getElementsByClassName("crop-target")[0];
 
-  config_jcrop_api(crop_target, form, id);
+  if (jcrop_api !== undefined) {
+    jcrop_api.destroy();
+  }
+
+  jcrop_api = config_jcrop_api(crop_target, form, id);
 
   // Set crop selection if values exist.
-  set_crop_selection(crop_target, form, id);
+  set_crop_selection(crop_target, form, id, jcrop_api);
 }
 
 function toggle_crop_scale_buttons(id) {
-  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
-  const crop_target = form.getElementsByClassName("crop-target")[0];
-
   $("#decrease-crop-scale").on("click", function () {
     if (crop_scale - SCALE_CHANGE < MIN_SIZE) {
       crop_scale = MIN_SIZE;
@@ -101,22 +102,17 @@ function toggle_crop_scale_buttons(id) {
       crop_scale -= SCALE_CHANGE;
     }
 
-    jcrop_api.destroy();
-    config_jcrop_api(crop_target, form, id);
-    set_crop_selection(crop_target, form, id);
+    attach_crop_box(id);
   });
 
   $("#increase-crop-scale").on("click", function () {
     crop_scale += SCALE_CHANGE;
-
-    jcrop_api.destroy();
-    config_jcrop_api(crop_target, form, id);
-    set_crop_selection(crop_target, form, id);
+    attach_crop_box(id);
   });
 }
 
 function config_jcrop_api(crop_target, form, id) {
-  jcrop_api = $.Jcrop(crop_target, {
+  return $.Jcrop(crop_target, {
     onChange: pos => {
       const stageHeight = parseFloat(getComputedStyle(crop_target, null).height.replace("px", ""));
       const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
@@ -134,7 +130,7 @@ function config_jcrop_api(crop_target, form, id) {
   });
 }
 
-function set_crop_selection(crop_target, form, id) {
+function set_crop_selection(crop_target, form, id, jcrop_api) {
   if (
     form.elements[`${id}_exam_template_crop_x`].value &&
     form.elements[`${id}_exam_template_crop_y`].value &&
