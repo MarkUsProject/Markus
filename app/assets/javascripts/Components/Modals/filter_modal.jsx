@@ -40,28 +40,30 @@ class FilterModal extends React.Component {
           }}
         >
           <h3>{"Filter By:"}</h3>
-          <form onSubmit={this.onSubmit}>
-            <label>
-              <p>{I18n.t("results.filters.annotation")}</p>
-              <input
-                id="annotation"
-                type="text"
-                value={this.state.currentAnnotationValue}
-                onChange={this.handleChange}
-                placeholder={"Type here"}
-              />
-            </label>
-            <div>
-              <section className={"modal-container dialog-actions"}>
+          <div className={"modal-container-vertical"}>
+            <form onSubmit={this.onSubmit}>
+              <label>
+                <p>{I18n.t("results.filters.annotation")}</p>
                 <input
-                  type="button"
-                  value={I18n.t("results.filters.clear_all")}
-                  onClick={this.clearFilters}
+                  id="annotation"
+                  type="text"
+                  value={this.state.currentAnnotationValue}
+                  onChange={this.handleChange}
+                  placeholder={"Type here"}
                 />
-                <input type="submit" value={I18n.t("results.filters.save")} />
-              </section>
-            </div>
-          </form>
+              </label>
+              <div>
+                <section className={"modal-container dialog-actions"}>
+                  <input
+                    type="button"
+                    value={I18n.t("results.filters.clear_all")}
+                    onClick={this.clearFilters}
+                  />
+                  <input type="submit" value={I18n.t("results.filters.save")} />
+                </section>
+              </div>
+            </form>
+          </div>
         </Modal>
       </div>
     );
