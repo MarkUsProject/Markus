@@ -1371,7 +1371,7 @@ canvas {
 }
 
 #exam-crop-img-container {
-  background-color: $disabled-area;
+  background-color: #f1f1f1;
   flex: 1;
   margin-right: 5px;
   overflow-x: auto;
@@ -1380,7 +1380,6 @@ canvas {
 }
 
 .exam-crop-button-container {
-  //border-left: 1px solid $gridline;
   display: flex;
   flex-direction: column;
   padding-left: 5px;
@@ -1397,7 +1396,6 @@ canvas {
   margin-top: 2px;
   min-width: 40px;
   padding: 0;
-  //transform: translateX(-70px);
   transform: translate(-70px, 0);
   width: 40px;
   z-index: 800; // jcrop uses z-index of 690
