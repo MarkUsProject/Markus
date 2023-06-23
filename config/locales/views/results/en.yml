@@ -1,6 +1,13 @@
 ---
 en:
   results:
+    filter_modal: Filter Submissions
+    filters:
+      clear_all: Clear All
+      save: Save
+      filter_by: 'Filter By:'
+      text_box_place_holder: Type here
+      annotation: Annotation
     annotation:
       across_all_submission_files: Click on the filename to jump to the annotation.
       common: Common Annotations
