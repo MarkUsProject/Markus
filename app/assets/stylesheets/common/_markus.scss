@@ -1371,7 +1371,7 @@ canvas {
 }
 
 #exam-crop-img-container {
-  background-color: #f1f1f1;
+  background-color: $disabled-area;
   flex: 1;
   margin-right: 5px;
   overflow-x: auto;
