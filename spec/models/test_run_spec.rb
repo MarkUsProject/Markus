@@ -111,13 +111,17 @@ describe TestRun do
     let(:test_group) { create :test_group, criterion: criterion, assignment: assignment }
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
+    let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
+    let(:test2) { { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
+    let(:tests) { [test1, test2] }
+    let(:stderr) { '' }
     let(:results) do
       { status: :finished,
         error: nil,
         test_groups: [{
           time: 10,
           timeout: nil,
-          stderr: '',
+          stderr: stderr,
           malformed: '',
           extra_info: { test_group_id: test_group.id },
           feedback: [
@@ -136,21 +140,7 @@ describe TestRun do
               content: Zlib.gzip(png_file_content)
             }
           ],
-          tests: [{
-            name: :test1,
-            status: :pass,
-            marks_earned: 1,
-            marks_total: 1,
-            output: 'output',
-            time: 1
-          }, {
-            name: :test2,
-            status: :fail,
-            marks_earned: 0,
-            marks_total: 1,
-            output: 'failure',
-            time: nil
-          }]
+          tests: tests
         }] }.deep_stringify_keys
     end
     context 'when there are feedback files' do
@@ -322,25 +312,61 @@ describe TestRun do
           end
         end
       end
-      context 'when an error occurs' do
+      context 'when a test produces an error' do
+        let(:test2) do
+          {
+            name: :test1,
+            status: :fail,
+            marks_earned: 1,
+            marks_total: 1,
+            output: 'failure',
+            time: nil
+          }
+        end
         before do
-          allow_any_instance_of(TestGroupResult).to receive(:test_results).and_raise(StandardError, 'error msg')
           test_run.update_results!(results)
         end
         it 'should create a test group result' do
           expect(test_group_result).not_to be_nil
         end
         it 'should create a test group result with the error message as extra_info' do
-          expect(test_group_result.extra_info).to eq 'error msg'
+          expect(test_group_result.extra_info).to eq 'test1 - Validation failed: Test Name has already been taken'
         end
-        it 'should create a test group result with the marks_total as 0' do
-          expect(test_group_result.marks_total).to eq 0
+        it 'should still add marks_total for the tests that passed' do
+          expect(test_group_result.marks_total).to eq 1
         end
-        it 'should create a test group result with the marks_earned as 0' do
-          expect(test_group_result.marks_earned).to eq 0
+        it 'should still add marks_earned for the tests that passed' do
+          expect(test_group_result.marks_earned).to eq 1
         end
-        it 'should create a test group result with the error_type as test_error' do
-          expect(test_group_result.error_type).to eq TestGroupResult::ERROR_TYPE[:test_error].to_s
+        it 'should still create test results for the passing tests' do
+          expect(test_group_result.test_results.size).to eq 1
+        end
+        context 'when multiple errors occur' do
+          let(:test3) do
+            {
+              name: :test1,
+              status: :pass,
+              marks_earned: 1,
+              marks_total: 1,
+              output: 'success',
+              time: nil
+            }
+          end
+          let(:tests) { [test1, test2, test3] }
+          it 'should create a test_group_result with extra_info listing the errors of all failing tests' do
+            expect(test_group_result.extra_info).to eq "test1 - Validation failed: Test Name has already been taken\n" \
+                                                       'test1 - Validation failed: Test Name has already been taken'
+          end
+          context 'when stderr is set' do
+            let(:stderr) { 'error' }
+            it 'should create a test_group_result with extra_info including the messages on stderr and reasons for ' \
+               'test failure' do
+              expect(test_group_result.extra_info).to eq "Messages on stderr: \nerror\n\n" \
+                                                         'test1 - Validation failed: ' \
+                                                         "Test Name has already been taken\n" \
+                                                         'test1 - Validation failed: Test Name has already been taken'
+            end
+          end
         end
       end
       context 'creating test results' do
@@ -375,6 +401,15 @@ describe TestRun do
           criterion && assignment.ta_criteria.reload # Force ta_criterion to not be empty
           test_run.update_results!(results)
           expect(submission.results.first.get_total_mark).to eq 1
+        end
+        context 'when one of the tests produce an error' do
+          let(:test2) { { name: :test1, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
+          let(:tests) { [test1, test2] }
+          it 'should not affect the total mark' do
+            criterion && assignment.ta_criteria.reload
+            test_run.update_results!(results)
+            expect(submission.results.first.get_total_mark).to eq 2
+          end
         end
       end
       context 'when it is associated with a grouping' do

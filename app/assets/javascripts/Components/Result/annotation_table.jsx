@@ -1,5 +1,6 @@
 import React from "react";
 import ReactTable from "react-table";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class AnnotationTable extends React.Component {
   deductionFilter = (filter, row) => {
@@ -19,10 +20,11 @@ export class AnnotationTable extends React.Component {
           remove_button = (
             <a
               href="#"
-              className="remove-icon"
               title={I18n.t("delete")}
               onClick={() => this.props.removeAnnotation(row.original.id)}
-            />
+            >
+              <FontAwesomeIcon icon="fa-solid fa-trash" />
+            </a>
           );
         }
         return (
@@ -77,10 +79,11 @@ export class AnnotationTable extends React.Component {
           edit_button = (
             <a
               href="#"
-              className="edit-icon"
               title={I18n.t("edit")}
               onClick={() => this.props.editAnnotation(data.original.id)}
-            />
+            >
+              <FontAwesomeIcon icon="fa-solid fa-pen" />
+            </a>
           );
         }
         return (

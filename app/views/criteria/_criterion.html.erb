@@ -1,11 +1,12 @@
 <li id='criterion_<%= criterion.id %>'>
+  <i class="fa-solid fa-grip-vertical icon-left"></i>
   <span class='left'>
     <% if criterion.class.to_s == 'RubricCriterion' %>
-      <%= image_tag('icons/table.png', title: t('criteria.rubric'))%> &nbsp
+      <i class="fa-solid fa-table"></i>
     <% elsif criterion.class.to_s == 'FlexibleCriterion' %>
-      <span class="flexible-criteria-icon" title=<%= t('criteria.flexible') %>> ⅔ &nbsp </span>
+      <span title=<%= t('criteria.flexible') %>> ⅔ </span>
     <% elsif criterion.class.to_s == 'CheckboxCriterion' %>
-      <%= image_tag('icons/check_box.png', title: t('criteria.checkbox')) %> &nbsp
+      <i class="fa-solid fa-square-check"></i>
     <% end %>
     <%= link_to truncate(criterion.name,
                          length: 27,
@@ -19,11 +20,13 @@
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.class %><%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
-      <%= image_tag 'icons/user_suit.png' %><%= image_tag 'icons/group.png' %>
+      <i class="fa-solid fa-chalkboard-user icon-left"></i>
+      <i class="fa-solid fa-comments"></i>
     <% elsif criterion.ta_visible %>
-      <%= image_tag 'icons/user_suit.png' %>
+      <i class="fa-solid fa-chalkboard-user"></i>
     <% else %>
-      <%= image_tag 'icons/empty.png' %><%= image_tag 'icons/group.png' %>
+      <span class="empty-16px icon-left">&nbsp;</span>
+      <i class="fa-solid fa-comments"></i>
     <% end %>
   </span>
 </li>

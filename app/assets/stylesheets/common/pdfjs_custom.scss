@@ -1,8 +1,7 @@
-// Overrides styling from pdfjs-dist/web/pdf_viewer.css to handle relative_url_root.
-.pdfViewer .page .loadingIcon {
-  background: asset-url('loading-icon.gif') center no-repeat !important;
+.pdfViewer .page {
+  box-shadow: -5px -5px 5px 0 #afa4a0;
 }
 
-.pdfViewer .page {
-  border-image: asset-url('shadow.png') 9 9 repeat !important;
+.pdfViewer {
+  padding-top: 5px;
 }
