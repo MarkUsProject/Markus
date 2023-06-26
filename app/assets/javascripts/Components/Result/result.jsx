@@ -665,12 +665,12 @@ class Result extends React.Component {
     return () => {
       const url = Routes.next_grouping_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
+        {direction: direction}
       );
 
       this.setState({loading: true}, () => {
-        const requestUrl = `${url}?direction=${direction}`;
-        fetch(requestUrl)
+        fetch(url)
           .then(response => {
             if (response.ok) {
               return response.json();

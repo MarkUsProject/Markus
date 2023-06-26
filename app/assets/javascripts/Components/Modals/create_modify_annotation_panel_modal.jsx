@@ -31,12 +31,11 @@ class CreateModifyAnnotationPanel extends React.Component {
 
     const url = Routes.find_annotation_text_course_assignment_annotation_categories_path(
       this.props.course_id,
-      this.props.assignment_id
+      this.props.assignment_id,
+      {string: value}
     );
-    const requestUrl = `${url}?string=${value}`;
 
-    fetch(requestUrl, {
-      method: "GET",
+    fetch(url, {
       headers: {
         Accept: "application/json",
       },

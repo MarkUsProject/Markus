@@ -31,7 +31,6 @@
     $("#assign_student").submit(function (e) {
       e.preventDefault();
       const queryString = $("#assign_student").serialize();
-      console.log($("#assign_student").serialize());
       const url = "assign_student_and_next";
       const requestUrl = `${url}?${queryString}`;
       fetch(requestUrl, {
