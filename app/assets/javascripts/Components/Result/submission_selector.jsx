@@ -185,6 +185,7 @@ export class SubmissionSelector extends React.Component {
           <FilterModal
             isOpen={this.state.showFilterModal}
             onRequestClose={() => this.setState({showFilterModal: false})}
+            filterData={this.props.filterData}
           />
         </div>
       </div>

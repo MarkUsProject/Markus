@@ -17,6 +17,10 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
+const INITIAL_FILTER_MODAL_STATE = {
+  annotationValue: "",
+};
+
 class Result extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +37,7 @@ class Result extends React.Component {
       result_id: props.result_id,
       grouping_id: props.grouping_id,
       can_release: false,
+      filterData: INITIAL_FILTER_MODAL_STATE,
     };
 
     this.leftPane = React.createRef();
@@ -733,6 +738,7 @@ class Result extends React.Component {
           nextSubmission={this.nextSubmission(1)}
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
+          filterData={this.state.filterData}
         />
         <div key="panes-content" id="panes-content">
           <div id="panes">

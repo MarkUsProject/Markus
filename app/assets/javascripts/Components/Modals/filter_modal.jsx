@@ -1,10 +1,14 @@
 import React from "react";
 import Modal from "react-modal";
 
+const INITIAL_MODAL_STATE = {
+  currentAnnotationValue: "",
+};
+
 class FilterModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {savedAnnotationValue: "", currentAnnotationValue: ""};
+    this.state = INITIAL_MODAL_STATE;
   }
 
   handleChange = event => {
@@ -17,7 +21,7 @@ class FilterModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.setState({savedAnnotationValue: event.target.annotation.value});
+    this.props.filterData.annotationValue = this.state.currentAnnotationValue;
     this.props.onRequestClose();
   };
 
@@ -33,7 +37,7 @@ class FilterModal extends React.Component {
           className="react-modal dialog"
           isOpen={this.props.isOpen}
           onRequestClose={() => {
-            this.setState({currentAnnotationValue: this.state.savedAnnotationValue});
+            this.setState({currentAnnotationValue: this.props.filterData.annotationValue});
             this.props.onRequestClose();
           }}
         >
@@ -44,10 +48,10 @@ class FilterModal extends React.Component {
                 <p>{I18n.t("results.filters.annotation")}</p>
                 <input
                   id="annotation"
-                  type="text"
+                  type={"text"}
                   value={this.state.currentAnnotationValue}
                   onChange={this.handleChange}
-                  placeholder={"Type here"}
+                  placeholder="Type here"
                 />
               </label>
               <div>
