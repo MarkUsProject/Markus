@@ -105,6 +105,34 @@ export class SubmissionSelector extends React.Component {
     this.setState({showFilterModal: true});
   };
 
+  renderFilterButton() {
+    if (this.props.role !== "Student") {
+      return (
+        <button
+          className="button filter"
+          onClick={this.onOpenFilterModal}
+          title={I18n.t("results.filter_modal")}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-filter" className="no-padding" />
+        </button>
+      );
+    }
+  }
+
+  renderFilterModal() {
+    if (this.props.role !== "Student") {
+      return (
+        <div>
+          <FilterModal
+            isOpen={this.state.showFilterModal}
+            onRequestClose={() => this.setState({showFilterModal: false})}
+            filterData={this.props.filterData}
+          />
+        </div>
+      );
+    }
+  }
+
   render() {
     if (this.props.role === "Student" && !this.props.is_reviewer) {
       return "";
@@ -148,14 +176,7 @@ export class SubmissionSelector extends React.Component {
           >
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
-
-          <button
-            className="button filter"
-            onClick={this.onOpenFilterModal}
-            title={I18n.t("results.filter_modal")}
-          >
-            <FontAwesomeIcon icon="fa-solid fa-filter" className="no-padding" />
-          </button>
+          {this.renderFilterButton()}
 
           <div className="progress">
             <meter
@@ -181,13 +202,7 @@ export class SubmissionSelector extends React.Component {
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}
         </div>
-        <div>
-          <FilterModal
-            isOpen={this.state.showFilterModal}
-            onRequestClose={() => this.setState({showFilterModal: false})}
-            filterData={this.props.filterData}
-          />
-        </div>
+        {this.renderFilterModal()}
       </div>
     );
   }
