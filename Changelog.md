@@ -21,6 +21,7 @@
 - A user can't run tests with the same names / Single test error does not spoil the whole test batch (#6620)
 - Change icon set to Font Awesome (Free) (#6627)
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
+- Add zoom feature to scanned exam template crop selection (#6640)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
