@@ -416,6 +416,7 @@ describe ResultsController do
              add_extra_mark: :post,
              delete_grace_period_deduction: :delete,
              next_grouping: :get,
+             next_random_unmarked_grouping: :get,
              remove_extra_mark: :post,
              revert_to_automatic_deductions: :patch,
              set_released_to_students: :post,
@@ -437,6 +438,7 @@ describe ResultsController do
     before(:each) { sign_in student }
     [:edit,
      :next_grouping,
+     :next_random_unmarked_grouping,
      :set_released_to_students,
      :toggle_marking_state,
      :update_overall_comment,
@@ -931,6 +933,36 @@ describe ResultsController do
         expect(filename).to eq "#{assignment.short_identifier}_#{complete_result.grouping.group.group_name}.pdf"
       end
     end
+    describe '#next_random_unmarked_grouping' do
+      it 'should receive 200 when current grouping has a submission' do
+        allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+        get :next_random_unmarked_grouping, params: { course_id: course.id, grouping_id: grouping.id,
+                                                      id: incomplete_result.id }
+        expect(response).to have_http_status(:ok)
+      end
+      it 'should receive 200 when current grouping does not have a submission' do
+        allow_any_instance_of(Grouping).to receive(:has_submission).and_return false
+        get :next_random_unmarked_grouping, params: { course_id: course.id, grouping_id: grouping.id,
+                                                      id: incomplete_result.id }
+        expect(response).to have_http_status(:ok)
+      end
+      context 'when there are no more random unmarked submissions' do
+        it 'should receive a JSON object with next_result and next_grouping as nil' do
+          a2 = create(:assignment_with_criteria_and_results)
+          a2.groupings.each do |group|
+            group.tas.push(ta)
+            group.save
+          end
+          a2.save
+          get :next_random_unmarked_grouping, params: { course_id: course.id,
+                                                        grouping_id: a2.groupings.first.id,
+                                                        id: a2.submissions.first.current_result.id }
+          expect(response).to have_http_status(:ok)
+          expect(response.parsed_body['next_result']).to eq(nil)
+          expect(response.parsed_body['next_grouping']).to eq(nil)
+        end
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
@@ -1086,6 +1118,14 @@ describe ResultsController do
         it {
           allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing next_random_unmarked_grouping' do
+        it {
+          allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+          get :next_random_unmarked_grouping,
+              params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
           expect(response).to have_http_status(:forbidden)
         }
       end
