@@ -320,6 +320,16 @@ class ResultsController < ApplicationController
     render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
+  def next_random_unmarked_grouping
+    result = record
+    grouping = result.submission.grouping
+
+    next_grouping = grouping.get_next_random_unmarked(current_role)
+    next_result = next_grouping&.current_result
+
+    render json: { next_result: next_result, next_grouping: next_grouping }
+  end
+
   def set_released_to_students
     @result = record
     released_to_students = !@result.released_to_students

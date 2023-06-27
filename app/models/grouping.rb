@@ -728,7 +728,27 @@ class Grouping < ApplicationRecord
     next_grouping
   end
 
+  def get_next_random_unmarked(current_role)
+    groupings = get_all_unmarked(current_role)
+    groupings.order('RANDOM()').first
+  end
+
   private
+
+  def get_all_unmarked(current_role)
+    if current_role.ta?
+      # Get relevant groupings for a TA
+      groupings = current_role.groupings.joins(:current_result)
+                              .where(assignment: assignment, current_result: { marking_state: 'incomplete' })
+                              .where.not(group_id: self.group_id)
+
+    else
+      # Get all groupings in an assignment -- typically for an instructor
+      groupings = assignment.groupings.joins(:current_result).where(current_result: { marking_state: 'incomplete' })
+                            .where.not(group_id: self.group_id)
+    end
+    groupings
+  end
 
   def add_assignment_folder(group_repo)
     assignment_folder = self.assignment.repository_folder
