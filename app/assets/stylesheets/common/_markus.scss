@@ -455,6 +455,8 @@ fieldset {
 
 .table-with-add {
   margin-left: 2.5em;
+  min-width: 500px;
+  width: 70%;
 
   > a {
     background-color: $background-support;
