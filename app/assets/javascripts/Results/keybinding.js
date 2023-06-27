@@ -22,6 +22,14 @@ Mousetrap.bind("shift+right", function () {
   }
 });
 
+// Go to random submission with r
+Mousetrap.bind("shift+r", function () {
+  // Don't override range selection keybindings
+  if (!is_text_selected()) {
+    $(".button.random-unmarked-submission")[0].click();
+  }
+});
+
 // Go to the previous criterion with shift + up
 Mousetrap.bind("shift+up", function (e) {
   if (!is_text_selected()) {
