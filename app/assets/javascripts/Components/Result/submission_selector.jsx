@@ -95,6 +95,20 @@ export class SubmissionSelector extends React.Component {
     );
   }
 
+  renderNextRandomUnmarkedSubmissionButton() {
+    if (this.props.role !== "Student") {
+      return (
+        <button
+          className="button random-unmarked-submission"
+          onClick={this.props.nextRandomUnmarkedSubmission}
+          title={`${I18n.t("results.next_random_unmarked_submission")} (Shift + r)`}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-dice" className="no-padding" />
+        </button>
+      );
+    }
+  }
+
   render() {
     if (this.props.role === "Student" && !this.props.is_reviewer) {
       return "";
@@ -138,6 +152,7 @@ export class SubmissionSelector extends React.Component {
           >
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
+          {this.renderNextRandomUnmarkedSubmissionButton()}
           <div className="progress">
             <meter
               value={this.props.num_marked}

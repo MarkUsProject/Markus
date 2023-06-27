@@ -45,10 +45,12 @@ en:
     late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
     marks_chart: Marks Chart
     marks_released: The marks have been released. You cannot change the grades.
+    next_random_unmarked_submission: Next Random Unmarked Submission
     next_submission: Next Submission
     no_feedback_files: "[No feedback files available]"
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
+    no_unmarked_submission: There are no more unmarked submissions!
     overridden_deductions: Overridden
     previous_submission: Previous Submission
     print: Print

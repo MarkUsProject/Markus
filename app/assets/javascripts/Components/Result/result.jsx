@@ -677,6 +677,37 @@ class Result extends React.Component {
     };
   };
 
+  nextRandomUnmarkedSubmission = () => {
+    const url = Routes.next_random_unmarked_grouping_course_result_url(
+      this.props.course_id,
+      this.state.result_id
+    );
+
+    this.setState({loading: true}, () => {
+      fetch(url)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+        })
+        .then(result => {
+          if (!result.next_result || !result.next_grouping) {
+            alert(I18n.t("results.no_unmarked_submission"));
+            return;
+          }
+
+          const result_obj = {
+            result_id: result.next_result.id,
+            submission_id: result.next_result.submission_id,
+            grouping_id: result.next_grouping.id,
+          };
+          this.setState(prevState => ({...prevState, ...result_obj}));
+          let new_url = Routes.edit_course_result_path(this.props.course_id, this.state.result_id);
+          history.pushState({}, document.title, new_url);
+        });
+    });
+  };
+
   updateOverallComment = (value, remark) => {
     return $.post({
       url: Routes.update_overall_comment_course_result_path(
@@ -731,6 +762,7 @@ class Result extends React.Component {
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
           nextSubmission={this.nextSubmission(1)}
+          nextRandomUnmarkedSubmission={this.nextRandomUnmarkedSubmission}
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
         />
