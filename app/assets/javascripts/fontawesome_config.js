@@ -27,6 +27,7 @@ import {
   faGear,
   faGripVertical,
   faLink,
+  faMinus,
   faPen,
   faPeopleGroup,
   faPrint,
@@ -41,7 +42,6 @@ import {
   faUserMinus,
   faUserPlus,
   faWarning,
-  faMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
@@ -76,6 +76,7 @@ library.add(
   faGear,
   faGripVertical,
   faLink,
+  faMinus,
   faPen,
   faPeopleGroup,
   faPrint,
@@ -89,8 +90,7 @@ library.add(
   faUserGroup,
   faUserMinus,
   faUserPlus,
-  faWarning,
-  faMinus
+  faWarning
 );
 
 library.add(faGithub);
