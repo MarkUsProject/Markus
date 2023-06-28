@@ -656,13 +656,15 @@ class Result extends React.Component {
         this.props.course_id,
         this.state.result_id
       );
+      let data = {direction: direction};
+      if (this.props.role !== "Student") {
+        data["filterData"] = this.state.filterData;
+      }
 
       this.setState({loading: true}, () => {
         $.ajax({
           url: url,
-          data: {
-            direction: direction,
-          },
+          data: data,
         }).then(result => {
           if (!result.next_result || !result.next_grouping) {
             alert(I18n.t("results.no_results_in_direction"));
