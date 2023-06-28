@@ -1138,7 +1138,6 @@ nav {
 
 .crop-target {
   border: 1px solid $gridline;
-  max-width: 400px;
 }
 
 // Text editing and previews
@@ -1365,4 +1364,49 @@ canvas {
 .lti-table {
   min-width: 250px;
   width: 50%;
+}
+
+.exam-crop-container {
+  display: flex;
+  height: 600px;
+  width: 1000px;
+}
+
+#exam-crop-img-container {
+  background-color: $disabled-area;
+  flex: 1;
+  margin-right: 5px;
+  overflow-x: auto;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.exam-crop-button-container {
+  display: flex;
+  flex-direction: column;
+  padding-left: 5px;
+  padding-top: 5px;
+  width: 40px;
+}
+
+#increase-crop-scale {
+  margin-bottom: 2px;
+}
+
+.crop-scale-button {
+  height: 40px;
+  margin-top: 2px;
+  min-width: 40px;
+  padding: 0;
+  transform: translate(-70px, 0);
+  width: 40px;
+  z-index: 800; // jcrop uses z-index of 690
+}
+
+.crop-scale-button > svg {
+  padding-right: 0;
+}
+
+.jcrop-centered {
+  display: inline-block;
 }
