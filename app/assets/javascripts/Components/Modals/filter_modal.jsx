@@ -5,7 +5,7 @@ const INITIAL_MODAL_STATE = {
   currentAnnotationValue: "",
 };
 
-class FilterModal extends React.Component {
+export class FilterModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = INITIAL_MODAL_STATE;
@@ -57,11 +57,12 @@ class FilterModal extends React.Component {
               <div>
                 <section className={"modal-container dialog-actions"}>
                   <input
+                    id={"clear_all"}
                     type="button"
                     value={I18n.t("results.filters.clear_all")}
                     onClick={this.clearFilters}
                   />
-                  <input type="submit" value={I18n.t("results.filters.save")} />
+                  <input id={"Save"} type="submit" value={I18n.t("results.filters.save")} />
                 </section>
               </div>
             </form>
@@ -71,5 +72,3 @@ class FilterModal extends React.Component {
     );
   }
 }
-
-export default FilterModal;
