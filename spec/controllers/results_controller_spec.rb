@@ -44,6 +44,79 @@ describe ResultsController do
     end
   end
 
+  shared_examples 'ta and instructor #next_grouping with filters' do
+    let!(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+    let!(:grouping2) do
+      create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+    end
+    let!(:grouping3) do
+      create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+    end
+    let!(:grouping4) { create :grouping, assignment: grouping1.assignment }
+    let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
+    let(:annotation_text) { create :annotation_text, content: 'aa_' }
+    before(:each) do
+      create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
+      create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
+      4.times do |i|
+        create :ta_membership, role: ta, grouping: groupings[i]
+      end
+    end
+    context 'when annotation text filter is applied' do
+      context 'when there are no more filtered submissions in the specified direction' do
+        it 'should return a response with next_grouping and next_result set to nil' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
+                                        id: grouping3.current_result.id,
+                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+          expect(response.parsed_body['next_grouping']).to be_nil
+          expect(response.parsed_body['next_result']).to be_nil
+        end
+      end
+      context 'when there is another filtered result after the current one' do
+        it 'should return a response with the next filtered group' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
+        end
+        it 'shouldn\'t return the next non-filtered group' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          expect(response.parsed_body['next_result']['id']).not_to eq(grouping2.current_result.id)
+        end
+      end
+      context 'when a grouping does not have a submission or annotations' do
+        it 'should avoid returning this submission' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
+                                        id: grouping3.current_result.id,
+                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+          expect(response.parsed_body['next_grouping']).to be_nil
+          expect(response.parsed_body['next_result']).to be_nil
+        end
+      end
+      context 'when annotationValue contains special characters (in the context of a like clause)' do
+        it 'should sanitize the string and return the next relevant result' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
+        end
+      end
+      context 'when we filter by a substring of the desired annotation text' do
+        it 'should return the next result containing the substring in one of its annotations' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationValue: 'a' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
+        end
+      end
+    end
+  end
   shared_examples 'shared ta and instructor tests' do
     context 'accessing next_grouping' do
       it 'should receive 200 when current grouping has a submission' do
@@ -931,6 +1004,9 @@ describe ResultsController do
         expect(filename).to eq "#{assignment.short_identifier}_#{complete_result.grouping.group.group_name}.pdf"
       end
     end
+    context 'accessing next_grouping' do
+      include_examples 'ta and instructor #next_grouping with filters'
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
@@ -1184,6 +1260,9 @@ describe ResultsController do
       end
       context 'accessing get_test_runs_instructors' do
         test_unauthorized(:get_test_runs_instructors)
+      end
+      context 'accessing next_grouping with valid permissions' do
+        include_examples 'ta and instructor #next_grouping with filters'
       end
     end
   end
