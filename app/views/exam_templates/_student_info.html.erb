@@ -1,13 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById("add_fields_exam_template_form_<%= exam_template.id %>");
-      const parsing_input = form && form.elements["<%= exam_template.id %>_exam_template_automatic_parsing"];
-
-      parsing_input.addEventListener('change', () => toggle_cover_page(<%= exam_template.id %>));
-
-      const crop_target = form.getElementsByClassName("crop-target")[0];
-      crop_target.onload = () => toggle_cover_page(<%= exam_template.id %>);
+      init_exam_template_form(<%= exam_template.id %>)
     })
   <% end %>
 <% end %>
@@ -22,14 +16,8 @@
     <%= f.label :automatic_parsing, t('exam_templates.parsing.general') %>
   </p>
 
-  <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
-    <div id="exam_cover-<%= exam_template.id %>">
-      <img src="<%= show_cover_course_exam_template_path(@current_course, exam_template) %>" class="crop-target"
-           alt="<%= t(:'exam_templates.parsing.cover_page_for', id: exam_template.id) %>"
-           loading="lazy">
-    </div>
-
-    <div class="table-with-add">
+  <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-col' : 'no-display' %>">
+    <div>
       <%= f.label :cover_fields, t('activerecord.attributes.exam_template.cover_fields') %>
       <%= f.select :cover_fields,
                    options_for_select([[t('activerecord.attributes.user.id_number'), "id_number"],
@@ -39,6 +27,20 @@
       <%= f.hidden_field :crop_y, value: exam_template.crop_y %>
       <%= f.hidden_field :crop_width, value: exam_template.crop_width %>
       <%= f.hidden_field :crop_height, value: exam_template.crop_height %>
+    </div>
+
+    <div id="exam_cover-<%= exam_template.id %>" class="exam-crop-container">
+        <div id="exam-crop-img-container">
+          <img src="<%= show_cover_course_exam_template_path(@current_course, exam_template) %>" class="crop-target"
+               alt="<%= t(:'exam_templates.parsing.cover_page_for', id: exam_template.id) %>"
+               loading="lazy">
+        </div>
+        <div class="exam-crop-button-container">
+          <button id="increase-crop-scale" class="crop-scale-button"
+                  type="button" title="<%= I18n.t("results.zoom_in_image") %>"><i class="fa-solid fa-plus"></i></button>
+          <button id="decrease-crop-scale" class="crop-scale-button"
+                  type="button" title="<%= I18n.t("results.zoom_out_image") %>"><i class="fa-solid fa-minus"></i></button>
+        </div>
     </div>
   </div>
 
