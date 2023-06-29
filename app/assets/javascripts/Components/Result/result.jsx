@@ -693,6 +693,7 @@ class Result extends React.Component {
         .then(result => {
           if (!result.next_result || !result.next_grouping) {
             alert(I18n.t("results.no_unmarked_submission"));
+            this.setState({loading: false});
             return;
           }
 
