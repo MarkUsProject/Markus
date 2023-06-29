@@ -1,0 +1,50 @@
+.c-multi-select-dropdown {
+  margin: 100px auto;
+  position: relative;
+  width: 300px;
+
+  &:hover {
+    .c-multi-select-dropdown__options {
+      display: block;
+    }
+  }
+
+  .c-multi-select-dropdown__selected {
+    align-items: center;
+    border: solid 1px #eee;
+    display: flex;
+    font-size: 14px;
+    justify-content: space-between;
+    padding: 10px;
+
+    > img {
+      height: 18px;
+    }
+  }
+
+  .c-multi-select-dropdown__options {
+    border: solid 1px #eee;
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    list-style: none;
+    padding: 5px 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  .c-multi-select-dropdown__option {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    padding: 6px 10px;
+
+    &:hover {
+      background-color: #eee;
+    }
+
+    &-checkbox {
+      margin-right: 6px;
+    }
+  }
+}
