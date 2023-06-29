@@ -2,6 +2,7 @@ class ResultsController < ApplicationController
   before_action { authorize! }
 
   authorize :view_token, through: :view_token_param
+  authorize :filter_data, through: :filter_data_param
 
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
@@ -298,6 +299,7 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
+    filter_data = params[:filterData]
     result = record
     grouping = result.submission.grouping
     assignment = grouping.assignment
@@ -313,7 +315,7 @@ class ResultsController < ApplicationController
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
       reversed = params[:direction] != '1'
-      next_grouping = grouping.get_next_grouping(current_role, reversed)
+      next_grouping = grouping.get_next_grouping(current_role, reversed, filter_data)
       next_result = next_grouping&.current_result
     end
 
@@ -646,6 +648,10 @@ class ResultsController < ApplicationController
 
   def view_token_param
     params[:view_token] || session['view_token']&.[](record&.id&.to_s)
+  end
+
+  def filter_data_param
+    params[:filterData]
   end
 
   def requested_results

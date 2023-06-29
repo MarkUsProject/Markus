@@ -707,17 +707,23 @@ class Grouping < ApplicationRecord
     end
   end
 
-  def get_next_grouping(current_role, reversed)
+  def get_next_grouping(current_role, reversed, filter_data)
     if current_role.ta?
       # Get relevant groupings for a TA
       groupings = current_role.groupings
                               .where(assignment: assignment)
                               .joins(:group)
-                              .order('group_name')
+
     else
       # Get all groupings in an assignment -- typically for an instructor
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group)
     end
+    if !filter_data.nil? && !(filter_data['annotationValue'].nil? || filter_data['annotationValue'] == '')
+      groupings = groupings.joins(current_result: { annotations: :annotation_text })
+                           .where('annotation_texts.content LIKE ?',
+                                  "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
+    end
+    groupings = groupings.order('group_name')
     if !reversed
       # get next grouping with a result
       next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first

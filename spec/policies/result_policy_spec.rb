@@ -253,6 +253,13 @@ describe ResultPolicy do
           let(:review_grouping) { create :grouping_with_inviter, assignment: assignment }
           before { create :peer_review, reviewer: grouping, result: record }
         end
+        failed 'when the role specifies filter_data' do
+          let(:record) { create :complete_result, submission: create(:submission, grouping: review_grouping) }
+          let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment.pr_assignment }
+          let(:review_grouping) { create :grouping_with_inviter, assignment: assignment }
+          let(:context) { { role: role, real_user: role.user, filter_data: {} } }
+          before { create :peer_review, reviewer: grouping, result: record }
+        end
         failed 'when the role is not a reviewer for the result' do
           before { create :peer_review }
         end
