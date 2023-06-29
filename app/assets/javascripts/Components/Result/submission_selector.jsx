@@ -101,7 +101,7 @@ export class SubmissionSelector extends React.Component {
         <button
           className="button random-unmarked-submission"
           onClick={this.props.nextRandomUnmarkedSubmission}
-          title={`${I18n.t("results.next_random_unmarked_submission")} (Shift + r)`}
+          title={`${I18n.t("results.next_random_unmarked_submission")} (Ctrl + Shift + ⇨)`}
         >
           <FontAwesomeIcon icon="fa-solid fa-dice" className="no-padding" />
         </button>

@@ -22,8 +22,8 @@ Mousetrap.bind("shift+right", function () {
   }
 });
 
-// Go to random submission with r
-Mousetrap.bind("shift+r", function () {
+// Go to random submission with ctrl + shift + right
+Mousetrap.bind("ctrl+shift+right", function () {
   // Don't override range selection keybindings
   if (!is_text_selected()) {
     $(".button.random-unmarked-submission")[0].click();
