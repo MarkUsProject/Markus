@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import FilterModal from "../Modals/filter_modal";
+import {FilterModal} from "../Modals/filter_modal";
 
 export class SubmissionSelector extends React.Component {
   constructor(props) {
