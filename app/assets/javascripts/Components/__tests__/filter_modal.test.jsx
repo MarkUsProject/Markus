@@ -19,7 +19,7 @@ describe("FilterModal", () => {
     expect(props.onRequestClose).toHaveBeenCalled();
   });
 
-  it("should renders the modal", () => {
+  it("should render the modal", () => {
     expect(screen.getByText(/Filter By:/i)).toBeInTheDocument();
     expect(screen.getByText(/Save/i)).toBeInTheDocument();
     expect(screen.getByText(/Clear All/i)).toBeInTheDocument();
