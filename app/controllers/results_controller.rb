@@ -22,6 +22,7 @@ class ResultsController < ApplicationController
         result = record
         submission = result.submission
         assignment = submission.assignment
+        course = assignment.course
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
         is_review = result.is_a_review?
@@ -118,6 +119,7 @@ class ResultsController < ApplicationController
         end
 
         if current_role.instructor? || current_role.ta?
+          data[:sections] = course.sections.pluck(:name)
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
