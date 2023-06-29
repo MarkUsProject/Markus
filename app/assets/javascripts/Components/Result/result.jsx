@@ -691,16 +691,16 @@ class Result extends React.Component {
           }
         })
         .then(result => {
-          if (!result.next_result || !result.next_grouping) {
+          if (!result.result_id || !result.submission_id || !result.grouping_id) {
             alert(I18n.t("results.no_unmarked_submission"));
             this.setState({loading: false});
             return;
           }
 
           const result_obj = {
-            result_id: result.next_result.id,
-            submission_id: result.next_result.submission_id,
-            grouping_id: result.next_grouping.id,
+            result_id: result.result_id,
+            submission_id: result.submission_id,
+            grouping_id: result.grouping_id,
           };
           this.setState(prevState => ({...prevState, ...result_obj}));
           let new_url = Routes.edit_course_result_path(this.props.course_id, this.state.result_id);

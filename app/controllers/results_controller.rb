@@ -327,7 +327,8 @@ class ResultsController < ApplicationController
     next_grouping = grouping.get_next_random_unmarked(current_role)
     next_result = next_grouping&.current_result
 
-    render json: { next_result: next_result, next_grouping: next_grouping }
+    render json: { result_id: next_result&.id, submission_id: next_result&.submission_id,
+                   grouping_id: next_grouping&.id }
   end
 
   def set_released_to_students
