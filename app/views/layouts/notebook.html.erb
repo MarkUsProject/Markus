@@ -2,7 +2,34 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <% if @notebook_type == 'jupyter-notebook' %>
-      <%= stylesheet_link_tag('jupyter-notebook') %>
+      <%= stylesheet_link_tag 'jupyterlab' %>
+      <%= stylesheet_link_tag 'jupyterlab-extra' %>
+      <%= stylesheet_link_tag 'common/jupyterlab-markus-custom' %>
+      <% if @current_user&.theme == 'dark' %>
+        <%= stylesheet_link_tag 'jupyterlab-theme-dark-extension' %>
+        <%= stylesheet_link_tag 'pygments-monokai' %>
+      <% else %>
+        <%= stylesheet_link_tag 'jupyterlab-theme-light-extension' %>
+        <%= stylesheet_link_tag 'pygments-default' %>
+      <% end %>
+      <%= javascript_tag nonce: true do %>
+        // Same as mathjax_config.js except skipStartupTypeset is false
+        window.MathJax = {
+          root: '<%= File.dirname(asset_path 'MathJax_lib/MathJax') %>',
+          messageStyle: 'none',
+          skipStartupTypeset: false,
+          ShowMathMenu: false,
+          tex2jax: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            preview: 'none',
+            processEnvironments: false,
+            processRefs: false,
+          },
+          jax: ["input/TeX", "input/MathML", "input/AsciiMath", "output/CommonHTML"],
+          extensions: ['tex2jax.js'],
+        };
+      <% end %>
+      <%= javascript_include_tag 'MathJax_lib/MathJax', nonce: true %>
     <% end %>
   </head>
   <body>

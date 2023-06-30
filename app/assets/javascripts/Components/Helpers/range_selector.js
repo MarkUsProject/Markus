@@ -112,7 +112,7 @@ function addMouseOverToNode(node, content) {
   });
 }
 
-export function markupTextInRange(range, colour, content) {
+export function markupTextInRange(range, content) {
   if (range.startContainer === range.endContainer) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
@@ -120,7 +120,6 @@ export function markupTextInRange(range, colour, content) {
     if (old_node.nodeType === Node.TEXT_NODE) {
       new_node = document.createElement("span");
       new_node.className = "markus-annotation";
-      new_node.style.backgroundColor = colour;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
       const marked = document.createTextNode(
         old_node.nodeValue.substring(range.startOffset, range.endOffset)
@@ -133,7 +132,6 @@ export function markupTextInRange(range, colour, content) {
     } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
       new_node = document.createElement("div");
       new_node.className = "markus-annotation";
-      new_node.style.border = `5px solid ${colour}`;
       new_node.appendChild(old_node.cloneNode(true));
       parent.replaceChild(new_node, old_node);
     }
@@ -146,7 +144,6 @@ export function markupTextInRange(range, colour, content) {
         if (old_node.nodeType === Node.TEXT_NODE) {
           new_node = document.createElement("span");
           new_node.className = "markus-annotation";
-          new_node.style.backgroundColor = colour;
           if (old_node === range.startContainer) {
             const unmarked = document.createTextNode(
               old_node.nodeValue.substring(0, range.startOffset)
@@ -170,7 +167,6 @@ export function markupTextInRange(range, colour, content) {
         } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
           new_node = document.createElement("div");
           new_node.className = "markus-annotation";
-          new_node.style.border = `5px solid ${colour}`;
           new_node.appendChild(old_node.cloneNode(true));
           parent.replaceChild(new_node, old_node);
         }

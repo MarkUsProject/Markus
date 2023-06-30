@@ -14,7 +14,6 @@ export class NotebookViewer extends React.Component {
 
   renderAnnotations = event => {
     const doc = event.target.contentDocument;
-    const colour = document.documentElement.style.getPropertyValue("--light_alert");
     // annotations need to be sorted in the order that they were created so that multiple
     // annotations on the same node get rendered in the order they were created. If they are
     // not, then the ranges may contain nodes/offsets that don't take the other highlighted
@@ -27,7 +26,7 @@ export class NotebookViewer extends React.Component {
         const newRange = doc.createRange();
         newRange.setStart(start_node, annotation.start_offset);
         newRange.setEnd(end_node, annotation.end_offset);
-        markupTextInRange(newRange, colour, annotation.content);
+        markupTextInRange(newRange, annotation.content);
       });
   };
 
