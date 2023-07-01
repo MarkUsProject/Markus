@@ -105,7 +105,7 @@ group :development, :test do
   gem 'byebug'
   gem 'capybara'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 6.0.1'
+  gem 'rspec-rails', '~> 6.0.3'
   gem 'selenium-webdriver'
 end
 
