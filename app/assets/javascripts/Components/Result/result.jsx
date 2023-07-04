@@ -20,6 +20,8 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 const INITIAL_FILTER_MODAL_STATE = {
   annotationValue: "",
   tas: [],
+  sectionValue: "",
+  markingStateValue: "",
 };
 
 class Result extends React.Component {
@@ -669,6 +671,7 @@ class Result extends React.Component {
         }).then(result => {
           if (!result.next_result || !result.next_grouping) {
             alert(I18n.t("results.no_results_in_direction"));
+            this.setState({loading: false});
             return;
           }
 
@@ -700,6 +703,10 @@ class Result extends React.Component {
       }
       return result;
     });
+  };
+
+  updateStateFilterData = new_filters => {
+    this.setState({filterData: new_filters});
   };
 
   render() {
@@ -742,6 +749,9 @@ class Result extends React.Component {
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
           filterData={this.state.filterData}
+          mutateFilterData={this.updateStateFilterData}
+          sections={this.state.sections}
+          loading={this.state.loading}
         />
         <div key="panes-content" id="panes-content">
           <div id="panes">

@@ -723,6 +723,23 @@ class Grouping < ApplicationRecord
                            .where('annotation_texts.content LIKE ?',
                                   "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
     end
+    if !filter_data.nil? && !(filter_data['sectionValue'].nil? || filter_data['sectionValue'] == '')
+      groupings = groupings.joins(:section).where('section.name' => filter_data['sectionValue'])
+    end
+    if !filter_data.nil? && !(filter_data['markingStateValue'].nil? || filter_data['markingStateValue'] == '')
+      case filter_data['markingStateValue']
+      when 'Remark Requested'
+        groupings = groupings.joins(:current_result).where.not('current_result.remark_request_submitted_at' => nil)
+      when 'Released'
+        groupings = groupings.joins(:current_result).where('current_result.released_to_students' => true)
+      when 'Complete'
+        groupings = groupings.joins(:current_result)
+                             .where('current_result.marking_state' => Result::MARKING_STATES[:complete])
+      when 'Partial'
+        groupings = groupings.joins(:current_result)
+                             .where('current_result.marking_state' => Result::MARKING_STATES[:incomplete])
+      end
+    end
     groupings = groupings.order('group_name')
     if !reversed
       # get next grouping with a result

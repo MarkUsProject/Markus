@@ -10,6 +10,7 @@ export class SubmissionSelector extends React.Component {
       showFilterModal: false,
     };
   }
+
   renderToggleMarkingStateButton = () => {
     let buttonText, className, disabled, icon;
     if (this.props.marking_state === "complete") {
@@ -127,6 +128,9 @@ export class SubmissionSelector extends React.Component {
             isOpen={this.state.showFilterModal}
             onRequestClose={() => this.setState({showFilterModal: false})}
             filterData={this.props.filterData}
+            mutateFilterData={this.props.mutateFilterData}
+            sections={this.props.sections}
+            loading={this.props.loading}
           />
         </div>
       );
