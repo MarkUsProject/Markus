@@ -17,7 +17,12 @@ export class MultiSelectDropdown extends React.Component {
     if (expanded) {
       return (
         <ul
-          style={{display: "block", boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.10)", borderRadius: 8}}
+          style={{
+            display: "block",
+            boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.10)",
+            borderRadius: 8,
+            gap: 1,
+          }}
         >
           {options.map(option => {
             isSelected = selected.includes(option.title);
@@ -28,7 +33,7 @@ export class MultiSelectDropdown extends React.Component {
                 onClick={e => this.select(e, option.title)}
               >
                 <input type="checkbox" checked={isSelected} onChange={() => null}></input>
-                <span>{option.title}</span>
+                <span style={{margin: "0.25em"}}>{option.title}</span>
               </li>
             );
           })}
@@ -52,22 +57,26 @@ export class MultiSelectDropdown extends React.Component {
     return (
       <div
         className="dropdown"
-        style={{boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.10)", borderRadius: 8}}
+        style={{boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.10)", borderRadius: 8, gap: 1}}
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}
       >
         <div
-          className={"tags"}
-          style={{flexWrap: "wrap", display: "inline-flex", overflow: "hidden"}}
+          style={{flexWrap: "wrap", display: "inline-flex", overflow: "hidden", padding: "0, 0"}}
         >
           {selected.map((tag, index) => (
-            <div className="tag" key={index}>
-              <span>{tag}</span>
-              <i onClick={e => this.select(e, tag)}>
-                <FontAwesomeIcon icon="fa-solid fa-xmark" className="no-padding" />
-              </i>
-            </div>
+            <tag
+              className="tag"
+              key={index}
+              onClick={e => {
+                e.preventDefault();
+                this.select(e, tag);
+              }}
+            >
+              <span style={{margin: "0.25em"}}>{tag}</span>
+              <FontAwesomeIcon icon="fa-solid fa-xmark" />
+            </tag>
           ))}
         </div>
         {arrow}

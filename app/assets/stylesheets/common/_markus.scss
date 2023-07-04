@@ -1009,6 +1009,15 @@ nav {
   padding: 0.5em;
   position: relative;
 
+  tag {
+    background: linear-gradient(to bottom, $background-main, $background-support);
+    border: 1px solid $primary-three;
+    border-radius: $radius;
+    font-size: x-small;
+    margin: 0 1pt;
+    padding: 0.2em;
+  }
+
   &:hover {
     border-radius: 0;
 
