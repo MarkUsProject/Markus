@@ -19,6 +19,7 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 
 const INITIAL_FILTER_MODAL_STATE = {
   annotationValue: "",
+  tas: [],
 };
 
 class Result extends React.Component {

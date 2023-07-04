@@ -1,17 +1,19 @@
 import React from "react";
 import Modal from "react-modal";
-import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropdown";
+
+import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 
 const INITIAL_MODAL_STATE = {
   currentAnnotationValue: "",
+  selected: [],
 };
 
 const data = [
-  {id: 1, title: "option 1"},
-  {id: 2, title: "option 2"},
-  {id: 3, title: "option 3"},
-  {id: 4, title: "option 4"},
-  {id: 5, title: "option 5"},
+  {title: "option 1"},
+  {title: "option 2"},
+  {title: "option 3"},
+  {title: "option 4"},
+  {title: "option 5"},
 ];
 
 export class FilterModal extends React.Component {
@@ -19,6 +21,27 @@ export class FilterModal extends React.Component {
     super(props);
     this.state = INITIAL_MODAL_STATE;
   }
+
+  toggleOption = ({title}) => {
+    const newArray = [...this.state.selected];
+    if (newArray.includes(title)) {
+      this.setState({selected: newArray.filter(item => item !== title)});
+      // else, add
+    } else {
+      newArray.push(title);
+      this.setState({selected: newArray});
+    }
+  };
+
+  renderSections = () => {
+    return (
+      <MultiSelectDropdown
+        options={data}
+        selected={this.state.selected}
+        toggleOption={this.toggleOption}
+      />
+    );
+  };
 
   handleChange = event => {
     this.setState({currentAnnotationValue: event.target.value});
@@ -36,7 +59,7 @@ export class FilterModal extends React.Component {
 
   clearFilters = event => {
     event.preventDefault();
-    this.setState({currentAnnotationValue: ""});
+    this.setState(INITIAL_MODAL_STATE);
   };
 
   render() {
@@ -63,12 +86,13 @@ export class FilterModal extends React.Component {
                   placeholder="Type here"
                 />
               </label>
-              <div>
-                <p>{"TAs"}</p>
-                <MultiSelectDropdown data={data} />
-              </div>
 
               <div>
+                <p>{"TAs"}</p>
+                {this.renderSections()}
+              </div>
+
+              <div className={"modal-footer"}>
                 <section className={"modal-container dialog-actions"}>
                   <input
                     id={"clear_all"}
