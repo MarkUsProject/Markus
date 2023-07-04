@@ -751,6 +751,7 @@ class Result extends React.Component {
           filterData={this.state.filterData}
           mutateFilterData={this.updateStateFilterData}
           sections={this.state.sections}
+          tas={this.state.tas}
           loading={this.state.loading}
         />
         <div key="panes-content" id="panes-content">

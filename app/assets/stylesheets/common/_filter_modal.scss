@@ -1,0 +1,23 @@
+@import 'constants';
+
+.annotation-input {
+  input[type='text'] {
+    background: $background-main;
+    border: 1px solid $primary-one;
+    border-radius: $radius;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    height: 30px;
+    width: $dropdown-horizontal;
+  }
+}
+
+.filter-modal {
+  background: $background-main;
+  border: 1px solid $primary-two;
+  left: 50%;
+  outline: none;
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

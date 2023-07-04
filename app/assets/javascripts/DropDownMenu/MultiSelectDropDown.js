@@ -7,33 +7,22 @@ export class MultiSelectDropdown extends React.Component {
     this.state = {expanded: false, tags: []};
   }
 
-  select = (e, title) => {
+  select = (e, option) => {
     e.stopPropagation();
-    this.props.toggleOption({title});
+    this.props.toggleOption(option);
   };
 
   renderDropdown = (options, selected, expanded) => {
     let isSelected;
     if (expanded) {
       return (
-        <ul
-          style={{
-            display: "block",
-            boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.10)",
-            borderRadius: 8,
-            gap: 1,
-          }}
-        >
+        <ul>
           {options.map(option => {
-            isSelected = selected.includes(option.title);
+            isSelected = selected.includes(option);
             return (
-              <li
-                key={option.title}
-                style={{alignSelf: "stretch"}}
-                onClick={e => this.select(e, option.title)}
-              >
+              <li key={option} style={{alignSelf: "stretch"}} onClick={e => this.select(e, option)}>
                 <input type="checkbox" checked={isSelected} onChange={() => null}></input>
-                <span style={{margin: "0.25em"}}>{option.title}</span>
+                <span>{option}</span>
               </li>
             );
           })}
@@ -43,7 +32,6 @@ export class MultiSelectDropdown extends React.Component {
   };
 
   render() {
-    console.log("hello");
     let selected = this.props.selected;
     let options = this.props.options;
     let expanded = this.state.expanded;
@@ -56,17 +44,14 @@ export class MultiSelectDropdown extends React.Component {
 
     return (
       <div
-        className="dropdown"
-        style={{boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.10)", borderRadius: 8, gap: 1}}
+        className="multiselect-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}
       >
-        <div
-          style={{flexWrap: "wrap", display: "inline-flex", overflow: "hidden", padding: "0, 0"}}
-        >
+        <div className={"tags-box"}>
           {selected.map((tag, index) => (
-            <tag
+            <div
               className="tag"
               key={index}
               onClick={e => {
@@ -74,9 +59,9 @@ export class MultiSelectDropdown extends React.Component {
                 this.select(e, tag);
               }}
             >
-              <span style={{margin: "0.25em"}}>{tag}</span>
+              <span>{tag}</span>
               <FontAwesomeIcon icon="fa-solid fa-xmark" />
-            </tag>
+            </div>
           ))}
         </div>
         {arrow}

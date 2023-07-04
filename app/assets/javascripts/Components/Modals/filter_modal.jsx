@@ -6,16 +6,9 @@ const INITIAL_MODAL_STATE = {
   currentAnnotationValue: "",
   currentSectionValue: "",
   currentMarkingStateValue: "",
-  selected: [],
+  currentTas: [],
 };
 
-const data = [
-  {title: "option 1"},
-  {title: "option 2"},
-  {title: "option 3"},
-  {title: "option 4"},
-  {title: "option 5"},
-];
 export class FilterModal extends React.Component {
   constructor(props) {
     super(props);
@@ -23,26 +16,27 @@ export class FilterModal extends React.Component {
       currentAnnotationValue: this.props.filterData.annotationValue,
       currentSectionValue: this.props.filterData.sectionValue,
       currentMarkingStateValue: this.props.filterData.markingStateValue,
+      currentTas: this.props.filterData.tas,
     };
   }
 
-  toggleOption = ({title}) => {
-    const newArray = [...this.state.selected];
-    if (newArray.includes(title)) {
-      this.setState({selected: newArray.filter(item => item !== title)});
+  toggleOptionTas = user_name => {
+    const newArray = [...this.state.currentTas];
+    if (newArray.includes(user_name)) {
+      this.setState({currentTas: newArray.filter(item => item !== user_name)});
       // else, add
     } else {
-      newArray.push(title);
-      this.setState({selected: newArray});
+      newArray.push(user_name);
+      this.setState({currentTas: newArray});
     }
   };
 
-  renderSections = () => {
+  renderTasDropdown = () => {
     return (
       <MultiSelectDropdown
-        options={data}
-        selected={this.state.selected}
-        toggleOption={this.toggleOption}
+        options={this.props.tas}
+        selected={this.state.currentTas}
+        toggleOption={this.toggleOptionTas}
       />
     );
   };
@@ -62,6 +56,7 @@ export class FilterModal extends React.Component {
       annotationValue: this.state.currentAnnotationValue,
       sectionValue: this.state.currentSectionValue,
       markingStateValue: this.state.currentMarkingStateValue,
+      tas: this.state.currentTas,
     });
     this.props.onRequestClose();
   };
@@ -85,6 +80,7 @@ export class FilterModal extends React.Component {
               currentAnnotationValue: this.props.filterData.annotationValue,
               currentSectionValue: this.props.filterData.sectionValue,
               currentMarkingStateValue: this.props.filterData.markingStateValue,
+              currentTas: this.props.filterData.tas,
             });
             this.props.onRequestClose();
           }}
@@ -92,7 +88,7 @@ export class FilterModal extends React.Component {
           <h3>{"Filter By:"}</h3>
           <div className={"modal-container-vertical"}>
             <form onSubmit={this.onSubmit}>
-              <label>
+              <label className={"annotation-input"}>
                 <p>{I18n.t("results.filters.annotation")}</p>
                 <input
                   id="annotation"
@@ -139,7 +135,7 @@ export class FilterModal extends React.Component {
 
               <div>
                 <p>{"TAs"}</p>
-                {this.renderSections()}
+                {this.renderTasDropdown()}
               </div>
 
               <div className={"modal-footer"}>

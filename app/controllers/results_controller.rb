@@ -138,6 +138,10 @@ class ResultsController < ApplicationController
           data[:members] = []
         end
 
+        if current_role.instructor?
+          data[:tas] = course.tas.joins(:user).pluck('users.user_name')
+        end
+
         # Marks
         fields = [:id, :name, :description, :position, :max_mark]
         criteria_query = { assessment_id: is_review ? assignment.pr_assignment.id : assignment.id }
