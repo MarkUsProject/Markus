@@ -95,13 +95,18 @@ export class SubmissionSelector extends React.Component {
     );
   }
 
-  renderNextRandomUnmarkedSubmissionButton() {
+  renderRandomIncompleteSubmissionButton() {
     if (this.props.role !== "Student") {
       return (
         <button
-          className="button random-unmarked-submission"
-          onClick={this.props.nextRandomUnmarkedSubmission}
-          title={`${I18n.t("results.next_random_unmarked_submission")} (Ctrl + Shift + ⇨)`}
+          className="button random-incomplete-submission"
+          onClick={this.props.randomIncompleteSubmission}
+          title={`${I18n.t("results.random_incomplete_submission")} (Ctrl + Shift + ⇨)`}
+          disabled={
+            this.props.num_collected === this.props.num_marked ||
+            (this.props.marking_state === "incomplete" &&
+              this.props.num_marked === this.props.num_collected - 1)
+          }
         >
           <FontAwesomeIcon icon="fa-solid fa-dice" className="no-padding" />
         </button>
@@ -152,7 +157,7 @@ export class SubmissionSelector extends React.Component {
           >
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
-          {this.renderNextRandomUnmarkedSubmissionButton()}
+          {this.renderRandomIncompleteSubmissionButton()}
           <div className="progress">
             <meter
               value={this.props.num_marked}

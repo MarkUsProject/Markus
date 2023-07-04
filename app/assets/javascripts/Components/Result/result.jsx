@@ -677,8 +677,8 @@ class Result extends React.Component {
     };
   };
 
-  nextRandomUnmarkedSubmission = () => {
-    const url = Routes.next_random_unmarked_grouping_course_result_url(
+  randomIncompleteSubmission = () => {
+    const url = Routes.random_incomplete_submission_course_result_path(
       this.props.course_id,
       this.state.result_id
     );
@@ -692,7 +692,7 @@ class Result extends React.Component {
         })
         .then(result => {
           if (!result.result_id || !result.submission_id || !result.grouping_id) {
-            alert(I18n.t("results.no_unmarked_submission"));
+            alert(I18n.t("results.no_incomplete_submission"));
             this.setState({loading: false});
             return;
           }
@@ -763,7 +763,7 @@ class Result extends React.Component {
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
           nextSubmission={this.nextSubmission(1)}
-          nextRandomUnmarkedSubmission={this.nextRandomUnmarkedSubmission}
+          randomIncompleteSubmission={this.randomIncompleteSubmission}
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
         />

@@ -1612,7 +1612,6 @@ describe Grouping do
     end
   end
   describe '#get_next_random_unmarked' do
-    # Code for intercepting the order call (this should allow us to see the value of groupings)
     let!(:grouping1) { create :grouping_with_inviter_and_submission }
     let!(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
     let!(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }

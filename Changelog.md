@@ -22,7 +22,7 @@
 - Change icon set to Font Awesome (Free) (#6627)
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 - Add zoom feature to scanned exam template crop selection (#6640)
-- Added a button allowing graders to view the next random unmarked submission (#6641)
+- Added a button allowing graders to view a random incomplete submission (#6641)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

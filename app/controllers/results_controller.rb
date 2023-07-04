@@ -320,11 +320,11 @@ class ResultsController < ApplicationController
     render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
-  def next_random_unmarked_grouping
+  def random_incomplete_submission
     result = record
     grouping = result.submission.grouping
 
-    next_grouping = grouping.get_next_random_unmarked(current_role)
+    next_grouping = grouping.get_random_incomplete(current_role)
     next_result = next_grouping&.current_result
 
     render json: { result_id: next_result&.id, submission_id: next_result&.submission_id,
