@@ -4,6 +4,8 @@ import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {Dropdown} from "../../DropDownMenu/DropDown";
 
 const INITIAL_MODAL_STATE = {
+  currentOrderBy: "Group Name",
+  currentAscBool: true,
   currentAnnotationValue: "",
   currentSectionValue: "",
   currentMarkingStateValue: "",
@@ -15,6 +17,8 @@ export class FilterModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentOrderBy: this.props.filterData.orderBy,
+      currentAscBool: this.props.filterData.ascBool,
       currentAnnotationValue: this.props.filterData.annotationValue,
       currentSectionValue: this.props.filterData.sectionValue,
       currentMarkingStateValue: this.props.filterData.markingStateValue,
@@ -94,6 +98,8 @@ export class FilterModal extends React.Component {
     event.preventDefault();
     this.props.mutateFilterData({
       ...this.props.filterData,
+      orderBy: this.state.currentOrderBy,
+      ascBool: this.state.currentAscBool,
       annotationValue: this.state.currentAnnotationValue,
       sectionValue: this.state.currentSectionValue,
       markingStateValue: this.state.currentMarkingStateValue,
@@ -131,6 +137,40 @@ export class FilterModal extends React.Component {
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container"}>
               <div className={"modal-container-vertical"}>
+                <div>
+                  <p>Order By: </p>
+                  <Dropdown
+                    options={["Group Name", "Submission Date"]}
+                    selected={this.state.currentOrderBy}
+                    select={selection => {
+                      this.setState({currentOrderBy: selection});
+                    }}
+                    defaultValue={"Group Name"}
+                  />
+                  <div
+                    className={"order"}
+                    onChange={e => {
+                      this.setState({currentAscBool: !this.state.currentAscBool});
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      checked={this.state.currentAscBool}
+                      name="order"
+                      value="Asc"
+                      onChange={() => {}}
+                    />
+                    <label htmlFor="Asc">Ascending</label>
+                    <input
+                      type="radio"
+                      checked={!this.state.currentAscBool}
+                      name="order"
+                      value="Desc"
+                      onChange={() => {}}
+                    />
+                    <label htmlFor="Desc">Descending</label>
+                  </div>
+                </div>
                 <div className={"annotation-input"}>
                   <p>{I18n.t("results.filters.annotation")}</p>
                   <input
@@ -149,6 +189,7 @@ export class FilterModal extends React.Component {
                     select={selection => {
                       this.setState({currentSectionValue: selection});
                     }}
+                    defaultValue={""}
                   />
                 </div>
                 <div>

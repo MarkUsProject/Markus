@@ -718,15 +718,27 @@ class Grouping < ApplicationRecord
       # Get all groupings in an assignment -- typically for an instructor
       groupings = assignment.groupings.joins(:group)
     end
-    if !filter_data.nil? && !(filter_data['annotationValue'].nil? || filter_data['annotationValue'] == '')
+    if !filter_data.nil?
+      groupings = filter_groupings(groupings, filter_data)
+      order_and_get_next_grouping(groupings, filter_data, reversed)
+    else
+      groupings = groupings.order('group_name')
+      next_grouping_ordered_group_name(groupings, 'ASC', reversed)
+    end
+  end
+
+  private
+
+  def filter_groupings(groupings, filter_data)
+    unless filter_data['annotationValue'].nil? || filter_data['annotationValue'] == ''
       groupings = groupings.joins(current_result: { annotations: :annotation_text })
                            .where('annotation_texts.content LIKE ?',
                                   "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
     end
-    if !filter_data.nil? && !(filter_data['sectionValue'].nil? || filter_data['sectionValue'] == '')
+    unless filter_data['sectionValue'].nil? || filter_data['sectionValue'] == ''
       groupings = groupings.joins(:section).where('section.name' => filter_data['sectionValue'])
     end
-    if !filter_data.nil? && !(filter_data['markingStateValue'].nil? || filter_data['markingStateValue'] == '')
+    unless filter_data['markingStateValue'].nil? || filter_data['markingStateValue'] == ''
       case filter_data['markingStateValue']
       when 'Remark Requested'
         groupings = groupings.joins(:current_result).where.not('current_result.remark_request_submitted_at' => nil)
@@ -740,27 +752,93 @@ class Grouping < ApplicationRecord
                              .where('current_result.marking_state' => Result::MARKING_STATES[:incomplete])
       end
     end
-
-    if !filter_data.nil? && !(filter_data['tas'].nil? || filter_data['tas'] == [])
+    unless filter_data['tas'].nil? || filter_data['tas'] == []
       groupings = groupings.joins(tas: :user).where('user.user_name': filter_data['tas'])
     end
-
-    if !filter_data.nil? && !(filter_data['tags'].nil? || filter_data['tags'] == [])
+    unless filter_data['tags'].nil? || filter_data['tags'] == []
       groupings = groupings.joins(:tags).where('tags.name': filter_data['tags'])
     end
+    groupings
+  end
 
-    groupings = groupings.order('group_name')
-    if !reversed
-      # get next grouping with a result
-      next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
+  def order_and_get_next_grouping(groupings, filter_data, reversed)
+    if filter_data['ascBool'].nil? || filter_data['orderBy'].nil?
+      groupings = groupings.order('group_name')
+      next_grouping_ordered_group_name(groupings, 'ASC', reversed)
+    else
+      order = filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
+      case filter_data['orderBy']
+      when 'Group Name'
+        groupings = groupings.order("group_name #{order}")
+        next_grouping_ordered_group_name(groupings, order, reversed)
+      when 'Submission Date'
+        groupings = groupings.joins(:current_submission_used).order("submissions.revision_timestamp #{order}",
+                                                                    "group_name #{order}")
+        next_grouping_ordered_submission_date(groupings, order, reversed)
+      else
+        groupings = groupings.order('group_name')
+        next_grouping_ordered_group_name(groupings, 'ASC', reversed)
+      end
+    end
+  end
+
+  def next_grouping_ordered_group_name(groupings, order, reversed)
+    if order == 'ASC'
+      if !reversed
+        # get next grouping with a result
+        next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
+      else
+        # get previous grouping with a result
+        next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).last
+      end
+    elsif !reversed
+      next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).first
+    # get next grouping with a result
     else
       # get previous grouping with a result
-      next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).last
+      next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).last
     end
     next_grouping
   end
 
-  private
+  def next_grouping_ordered_submission_date(groupings, order, reversed)
+    if order == 'ASC'
+      if !reversed
+        # get next grouping with a result
+        next_grouping = groupings
+                        .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
+                        .or(groupings.where('group_name > ? AND submissions.revision_timestamp = ?',
+                                            self.group.group_name,
+                                            self.current_submission_used.revision_timestamp))
+                        .where(is_collected: true).first
+      else
+        # get previous grouping with a result
+        next_grouping = groupings
+                        .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
+                        .or(groupings.where('group_name < ? AND submissions.revision_timestamp = ?',
+                                            self.group.group_name,
+                                            self.current_submission_used.revision_timestamp))
+                        .where(is_collected: true).last
+      end
+    elsif !reversed
+      next_grouping = groupings
+                      .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
+                      .or(groupings.where('group_name < ? AND submissions.revision_timestamp = ?',
+                                          self.group.group_name,
+                                          self.current_submission_used.revision_timestamp))
+                      .where(is_collected: true).first
+      # get next grouping with a result
+    else
+      # get previous grouping with a result
+      next_grouping = groupings
+                      .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
+                      .or(groupings.where('group_name > ? AND submissions.revision_timestamp = ?',
+                                          self.group.group_name,
+                                          self.current_submission_used.revision_timestamp))
+                      .where(is_collected: true).last
+    end
+    next_grouping
+  end
 
   def add_assignment_folder(group_repo)
     assignment_folder = self.assignment.repository_folder
