@@ -740,9 +740,15 @@ class Grouping < ApplicationRecord
                              .where('current_result.marking_state' => Result::MARKING_STATES[:incomplete])
       end
     end
+
     if !filter_data.nil? && !(filter_data['tas'].nil? || filter_data['tas'] == [])
       groupings = groupings.joins(tas: :user).where('user.user_name': filter_data['tas'])
     end
+
+    if !filter_data.nil? && !(filter_data['tags'].nil? || filter_data['tags'] == [])
+      groupings = groupings.joins(:tags).where('tags.name': filter_data['tags'])
+    end
+
     groupings = groupings.order('group_name')
     if !reversed
       # get next grouping with a result

@@ -131,6 +131,8 @@ export class SubmissionSelector extends React.Component {
             mutateFilterData={this.props.mutateFilterData}
             sections={this.props.sections}
             tas={this.props.tas}
+            available_tags={this.props.available_tags}
+            current_tags={this.props.current_tags}
             loading={this.props.loading}
           />
         </div>

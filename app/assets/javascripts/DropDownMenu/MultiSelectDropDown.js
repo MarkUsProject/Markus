@@ -15,19 +15,29 @@ export class MultiSelectDropdown extends React.Component {
   renderDropdown = (options, selected, expanded) => {
     let isSelected;
     if (expanded) {
-      return (
-        <ul>
-          {options.map(option => {
-            isSelected = selected.includes(option);
-            return (
-              <li key={option} style={{alignSelf: "stretch"}} onClick={e => this.select(e, option)}>
-                <input type="checkbox" checked={isSelected} onChange={() => null}></input>
-                <span>{option}</span>
-              </li>
-            );
-          })}
-        </ul>
-      );
+      if (options.length === 0) {
+        return (
+          <ul>
+            <li>
+              <span>No available options</span>
+            </li>
+          </ul>
+        );
+      } else {
+        return (
+          <ul>
+            {options.map(option => {
+              isSelected = selected.includes(option);
+              return (
+                <li key={option} onClick={e => this.select(e, option)}>
+                  <input type="checkbox" checked={isSelected} onChange={() => null}></input>
+                  <span>{option}</span>
+                </li>
+              );
+            })}
+          </ul>
+        );
+      }
     }
   };
 
