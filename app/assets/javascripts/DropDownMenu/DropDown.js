@@ -15,17 +15,31 @@ export class Dropdown extends React.Component {
 
   renderDropdown = (options, selected, expanded) => {
     if (expanded) {
-      return (
-        <ul>
-          {options.map(option => {
-            return (
-              <li key={option} style={{alignSelf: "stretch"}} onClick={e => this.select(e, option)}>
-                <span>{option}</span>
-              </li>
-            );
-          })}
-        </ul>
-      );
+      if (options.length === 0) {
+        return (
+          <ul>
+            <li>
+              <span>No available options</span>
+            </li>
+          </ul>
+        );
+      } else {
+        return (
+          <ul>
+            {options.map(option => {
+              return (
+                <li
+                  key={option}
+                  style={{alignSelf: "stretch"}}
+                  onClick={e => this.select(e, option)}
+                >
+                  <span>{option}</span>
+                </li>
+              );
+            })}
+          </ul>
+        );
+      }
     }
   };
 

@@ -22,6 +22,7 @@ const INITIAL_FILTER_MODAL_STATE = {
   orderBy: "Group Name",
   annotationValue: "",
   tas: [],
+  tags: [],
   sectionValue: "",
   markingStateValue: "",
 };
@@ -754,6 +755,8 @@ class Result extends React.Component {
           mutateFilterData={this.updateStateFilterData}
           sections={this.state.sections}
           tas={this.state.tas}
+          available_tags={this.state.available_tags}
+          current_tags={this.state.current_tags}
           loading={this.state.loading}
         />
         <div key="panes-content" id="panes-content">

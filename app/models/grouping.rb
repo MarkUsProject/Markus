@@ -755,6 +755,9 @@ class Grouping < ApplicationRecord
     unless filter_data['tas'].nil? || filter_data['tas'] == []
       groupings = groupings.joins(tas: :user).where('user.user_name': filter_data['tas'])
     end
+    unless filter_data['tags'].nil? || filter_data['tags'] == []
+      groupings = groupings.joins(:tags).where('tags.name': filter_data['tags'])
+    end
     groupings
   end
 
@@ -770,7 +773,7 @@ class Grouping < ApplicationRecord
         next_grouping_ordered_group_name(groupings, order, reversed)
       when 'Submission Date'
         groupings = groupings.joins(:current_submission_used).order("submissions.revision_timestamp #{order}",
-                                                                    'group_name')
+                                                                    "group_name #{order}")
         next_grouping_ordered_submission_date(groupings, order, reversed)
       else
         groupings = groupings.order('group_name')
@@ -824,7 +827,7 @@ class Grouping < ApplicationRecord
                                           self.group.group_name,
                                           self.current_submission_used.revision_timestamp))
                       .where(is_collected: true).first
-    # get next grouping with a result
+      # get next grouping with a result
     else
       # get previous grouping with a result
       next_grouping = groupings

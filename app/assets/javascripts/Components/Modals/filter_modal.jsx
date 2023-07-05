@@ -10,6 +10,7 @@ const INITIAL_MODAL_STATE = {
   currentSectionValue: "",
   currentMarkingStateValue: "",
   currentTas: [],
+  currentTags: [],
 };
 
 export class FilterModal extends React.Component {
@@ -22,6 +23,7 @@ export class FilterModal extends React.Component {
       currentSectionValue: this.props.filterData.sectionValue,
       currentMarkingStateValue: this.props.filterData.markingStateValue,
       currentTas: this.props.filterData.tas,
+      currentTags: this.props.filterData.tags,
     };
   }
 
@@ -36,12 +38,40 @@ export class FilterModal extends React.Component {
     }
   };
 
+  toggleOptionTags = tag => {
+    const newArray = [...this.state.currentTags];
+    if (newArray.includes(tag)) {
+      this.setState({currentTags: newArray.filter(item => item !== tag)});
+      // else, add
+    } else {
+      newArray.push(tag);
+      this.setState({currentTags: newArray});
+    }
+  };
+
   renderTasDropdown = () => {
     return (
       <MultiSelectDropdown
         options={this.props.tas}
         selected={this.state.currentTas}
         toggleOption={this.toggleOptionTas}
+      />
+    );
+  };
+
+  renderTagsDropdown = () => {
+    let options = [];
+    if (this.props.available_tags.length !== 0) {
+      options = options.concat(this.props.available_tags.map(item => item.name));
+    }
+    if (this.props.current_tags.length !== 0) {
+      options = options.concat(this.props.current_tags.map(item => item.name));
+    }
+    return (
+      <MultiSelectDropdown
+        options={options}
+        selected={this.state.currentTags}
+        toggleOption={this.toggleOptionTags}
       />
     );
   };
@@ -58,12 +88,13 @@ export class FilterModal extends React.Component {
     event.preventDefault();
     this.props.mutateFilterData({
       ...this.props.filterData,
-      orderBy: this.state.currentOrder,
+      orderBy: this.state.currentOrderBy,
       ascBool: this.state.currentAscBool,
       annotationValue: this.state.currentAnnotationValue,
       sectionValue: this.state.currentSectionValue,
       markingStateValue: this.state.currentMarkingStateValue,
       tas: this.state.currentTas,
+      tags: this.state.currentTags,
     });
     this.props.onRequestClose();
   };
@@ -93,91 +124,94 @@ export class FilterModal extends React.Component {
           }}
         >
           <h3>{"Filter By:"}</h3>
-          <div className={"modal-container-vertical"}>
-            <form onSubmit={this.onSubmit}>
-              <div>
-                <p>Order By: </p>
-                <Dropdown
-                  options={["Group Name", "Submission Date"]}
-                  selected={this.state.currentOrderBy}
-                  select={selection => {
-                    this.setState({currentOrderBy: selection});
-                  }}
-                  defaultValue={"Group Name"}
-                />
-                <div
-                  className={"order"}
-                  onChange={e => {
-                    this.setState({currentAscBool: !this.state.currentAscBool});
-                  }}
-                >
-                  <input
-                    type="radio"
-                    checked={this.state.asc}
-                    name="order"
-                    value="Asc"
-                    onChange={() => {}}
+          <form onSubmit={this.onSubmit}>
+            <div className={"modal-container"}>
+              <div className={"modal-container-vertical"}>
+                <div>
+                  <p>Order By: </p>
+                  <Dropdown
+                    options={["Group Name", "Submission Date"]}
+                    selected={this.state.currentOrderBy}
+                    select={selection => {
+                      this.setState({currentOrderBy: selection});
+                    }}
+                    defaultValue={"Group Name"}
                   />
-                  <label htmlFor="Asc">Ascending</label>
+                  <div
+                    className={"order"}
+                    onChange={e => {
+                      this.setState({currentAscBool: !this.state.currentAscBool});
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      checked={this.state.currentAscBool}
+                      name="order"
+                      value="Asc"
+                      onChange={() => {}}
+                    />
+                    <label htmlFor="Asc">Ascending</label>
+                    <input
+                      type="radio"
+                      checked={!this.state.currentAscBool}
+                      name="order"
+                      value="Desc"
+                      onChange={() => {}}
+                    />
+                    <label htmlFor="Desc">Descending</label>
+                  </div>
+                </div>
+                <label className={"annotation-input"}>
+                  <p>{I18n.t("results.filters.annotation")}</p>
                   <input
-                    type="radio"
-                    checked={!this.state.currentAscBool}
-                    name="order"
-                    value="Desc"
-                    onChange={() => {}}
+                    id="annotation"
+                    type={"text"}
+                    value={this.state.currentAnnotationValue}
+                    onChange={this.handleChange}
+                    placeholder="Type here"
                   />
-                  <label htmlFor="Desc">Descending</label>
+                </label>
+                <div>
+                  <p>Section</p>
+                  <Dropdown
+                    options={this.props.sections}
+                    selected={this.state.currentSectionValue}
+                    select={selection => {
+                      this.setState({currentSectionValue: selection});
+                    }}
+                    defaultValue={""}
+                  />
                 </div>
               </div>
-              <div className={"annotation-input"}>
-                <p>{I18n.t("results.filters.annotation")}</p>
-                <input
-                  id="annotation"
-                  type={"text"}
-                  value={this.state.currentAnnotationValue}
-                  onChange={this.handleChange}
-                  placeholder="Type here"
-                />
-              </div>
-              <p>Section</p>
-              <Dropdown
-                options={this.props.sections}
-                selected={this.state.currentSectionValue}
-                select={selection => {
-                  this.setState({currentSectionValue: selection});
-                }}
-                defaultValue={""}
-              />
-              <div>
-                <p>Marking State</p>
-                <Dropdown
-                  options={["Partial", "Complete", "Released", "Remark Requested"]}
-                  selected={this.state.currentMarkingStateValue}
-                  select={selection => {
-                    this.setState({currentMarkingStateValue: selection});
-                  }}
-                  defaultValue={""}
-                />
-              </div>
-
-              <div>
-                <p>{"TAs"}</p>
-                {this.renderTasDropdown()}
-              </div>
-
-              <div className={"modal-footer"}>
-                <section className={"modal-container dialog-actions"}>
-                  <input
-                    id={"clear_all"}
-                    type="button"
-                    value={I18n.t("results.filters.clear_all")}
-                    onClick={this.clearFilters}
+              <div className={"modal-container-vertical"}>
+                <div>
+                  <p>Marking State</p>
+                  <Dropdown
+                    options={["Partial", "Complete", "Released", "Remark Requested"]}
+                    selected={this.state.currentMarkingStateValue}
+                    select={selection => {
+                      this.setState({currentMarkingStateValue: selection});
+                    }}
                   />
-                  <input id={"Save"} type="submit" value={I18n.t("results.filters.save")} />
-                </section>
+                </div>
+                <div>
+                  <p>{"Tags"}</p>
+                  {this.renderTagsDropdown()}
+                </div>
               </div>
-            </form>
-          </div>
+            </div>
+            <div className={"modal-footer"}>
+              <section className={"modal-container dialog-actions"}>
+                <input
+                  id={"clear_all"}
+                  type="button"
+                  value={I18n.t("results.filters.clear_all")}
+                  onClick={this.clearFilters}
+                />
+                <input id={"Save"} type="submit" value={I18n.t("results.filters.save")} />
+              </section>
+            </div>
+          </form>
         </Modal>
       </div>
     );
