@@ -19,7 +19,7 @@ export class MultiSelectDropdown extends React.Component {
         return (
           <ul>
             <li>
-              <span>No available options</span>
+              <span>I18n.t("results.filters.no_options")</span>
             </li>
           </ul>
         );
@@ -75,6 +75,16 @@ export class MultiSelectDropdown extends React.Component {
           ))}
         </div>
         {arrow}
+        <div
+          className="reset"
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.props.clearSelection();
+          }}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-xmark" />
+        </div>
         {expanded && this.renderDropdown(options, selected, expanded)}
       </div>
     );

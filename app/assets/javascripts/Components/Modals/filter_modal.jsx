@@ -34,6 +34,14 @@ export class FilterModal extends React.Component {
     }
   };
 
+  clearSelectionTAs = filter => {
+    this.setState({currentTas: []});
+  };
+
+  clearSelectionTags = filter => {
+    this.setState({currentTags: []});
+  };
+
   toggleOptionTags = tag => {
     const newArray = [...this.state.currentTags];
     if (newArray.includes(tag)) {
@@ -51,6 +59,7 @@ export class FilterModal extends React.Component {
         options={this.props.tas}
         selected={this.state.currentTas}
         toggleOption={this.toggleOptionTas}
+        clearSelection={this.clearSelectionTAs}
       />
     );
   };
@@ -68,6 +77,7 @@ export class FilterModal extends React.Component {
         options={options}
         selected={this.state.currentTags}
         toggleOption={this.toggleOptionTags}
+        clearSelection={this.clearSelectionTags}
       />
     );
   };
@@ -117,30 +127,32 @@ export class FilterModal extends React.Component {
             this.props.onRequestClose();
           }}
         >
-          <h3>{"Filter By:"}</h3>
+          <h3>{I18n.t("results.filters.filter_by")}</h3>
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container"}>
               <div className={"modal-container-vertical"}>
-                <label className={"annotation-input"}>
+                <div className={"annotation-input"}>
                   <p>{I18n.t("results.filters.annotation")}</p>
                   <input
                     id="annotation"
                     type={"text"}
                     value={this.state.currentAnnotationValue}
                     onChange={this.handleChange}
-                    placeholder="Type here"
+                    placeholder={I18n.t("results.filters.text_box_placeholder")}
                   />
-                </label>
-                <p>Section</p>
-                <Dropdown
-                  options={this.props.sections}
-                  selected={this.state.currentSectionValue}
-                  select={selection => {
-                    this.setState({currentSectionValue: selection});
-                  }}
-                />
+                </div>
                 <div>
-                  <p>{"TAs"}</p>
+                  <p>Section</p>
+                  <Dropdown
+                    options={this.props.sections}
+                    selected={this.state.currentSectionValue}
+                    select={selection => {
+                      this.setState({currentSectionValue: selection});
+                    }}
+                  />
+                </div>
+                <div>
+                  <p>{I18n.t("results.filters.tas")}</p>
                   {this.renderTasDropdown()}
                 </div>
               </div>
@@ -148,16 +160,20 @@ export class FilterModal extends React.Component {
                 <div>
                   <p>Marking State</p>
                   <Dropdown
-                    options={["Partial", "Complete", "Released", "Remark Requested"]}
+                    options={[
+                      I18n.t("submissions.state.in_progress"),
+                      I18n.t("submissions.state.complete"),
+                      I18n.t("submissions.state.released"),
+                      I18n.t("submissions.state.remark_requested"),
+                    ]}
                     selected={this.state.currentMarkingStateValue}
                     select={selection => {
                       this.setState({currentMarkingStateValue: selection});
                     }}
                   />
                 </div>
-
                 <div>
-                  <p>{"Tags"}</p>
+                  <p>{I18n.t("results.filters.tags")}</p>
                   {this.renderTagsDropdown()}
                 </div>
               </div>

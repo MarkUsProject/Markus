@@ -6,8 +6,14 @@ en:
       clear_all: Clear All
       save: Save
       filter_by: 'Filter By:'
-      text_box_place_holder: Type here
+      text_box_placeholder: Type here
       annotation: Annotation
+      tas: TAs
+      tags: Tags
+      marking_state: Marking State
+      sections: Sections
+      order_by: Order By
+      no_options: No options available
     annotation:
       across_all_submission_files: Click on the filename to jump to the annotation.
       common: Common Annotations

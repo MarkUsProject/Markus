@@ -1,6 +1,7 @@
 @import 'constants';
 
 .multiselect-dropdown {
+  align-items: center;
   background: $background-main;
   border: 1px solid $primary-one;
   border-radius: $radius;
@@ -48,6 +49,14 @@
   .tags-box {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+  }
+
+  .reset {
+    float: right;
+    margin-right: 5px;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
   }
 
   ul {
@@ -109,6 +118,14 @@
       font-weight: 600;
       text-transform: uppercase;
     }
+  }
+
+  .arrow {
+    float: right;
+    margin-right: 5px;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
   }
 
   .arrow-down,
