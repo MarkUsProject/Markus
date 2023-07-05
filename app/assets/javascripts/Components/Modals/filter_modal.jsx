@@ -137,85 +137,89 @@ export class FilterModal extends React.Component {
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container"}>
               <div className={"modal-container-vertical"}>
-                <div>
-                  <p>Order By: </p>
-                  <Dropdown
-                    options={["Group Name", "Submission Date"]}
-                    selected={this.state.currentOrderBy}
-                    select={selection => {
-                      this.setState({currentOrderBy: selection});
-                    }}
-                    defaultValue={"Group Name"}
-                  />
-                  <div
-                    className={"order"}
-                    onChange={e => {
-                      this.setState({currentAscBool: !this.state.currentAscBool});
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      checked={this.state.currentAscBool}
-                      name="order"
-                      value="Asc"
-                      onChange={() => {}}
+                <div className={"modal-container"}>
+                  <div>
+                    <p>{I18n.t("results.filters.order_by")} </p>
+                    <Dropdown
+                      options={["Group Name", "Submission Date"]}
+                      selected={this.state.currentOrderBy}
+                      select={selection => {
+                        this.setState({currentOrderBy: selection});
+                      }}
+                      defaultValue={"Group Name"}
                     />
-                    <label htmlFor="Asc">Ascending</label>
-                    <input
-                      type="radio"
-                      checked={!this.state.currentAscBool}
-                      name="order"
-                      value="Desc"
-                      onChange={() => {}}
+                    <div
+                      className={"order"}
+                      onChange={e => {
+                        this.setState({currentAscBool: !this.state.currentAscBool});
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        checked={this.state.currentAscBool}
+                        name="order"
+                        value="Asc"
+                        onChange={() => {}}
+                      />
+                      <label htmlFor="Asc">Ascending</label>
+                      <input
+                        type="radio"
+                        checked={!this.state.currentAscBool}
+                        name="order"
+                        value="Desc"
+                        onChange={() => {}}
+                      />
+                      <label htmlFor="Desc">Descending</label>
+                    </div>
+                  </div>
+                  <div>
+                    <p>Marking State</p>
+                    <Dropdown
+                      options={[
+                        I18n.t("submissions.state.in_progress"),
+                        I18n.t("submissions.state.complete"),
+                        I18n.t("submissions.state.released"),
+                        I18n.t("submissions.state.remark_requested"),
+                      ]}
+                      selected={this.state.currentMarkingStateValue}
+                      select={selection => {
+                        this.setState({currentMarkingStateValue: selection});
+                      }}
                     />
-                    <label htmlFor="Desc">Descending</label>
                   </div>
                 </div>
-                <div className={"annotation-input"}>
-                  <p>{I18n.t("results.filters.annotation")}</p>
-                  <input
-                    id="annotation"
-                    type={"text"}
-                    value={this.state.currentAnnotationValue}
-                    onChange={this.handleChange}
-                    placeholder={I18n.t("results.filters.text_box_placeholder")}
-                  />
+                <div className={"modal-container"}>
+                  <div>
+                    <p>{I18n.t("results.filters.tags")}</p>
+                    {this.renderTagsDropdown()}
+                  </div>
+                  <div>
+                    <p>Section</p>
+                    <Dropdown
+                      options={this.props.sections}
+                      selected={this.state.currentSectionValue}
+                      select={selection => {
+                        this.setState({currentSectionValue: selection});
+                      }}
+                      defaultValue={""}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <p>Section</p>
-                  <Dropdown
-                    options={this.props.sections}
-                    selected={this.state.currentSectionValue}
-                    select={selection => {
-                      this.setState({currentSectionValue: selection});
-                    }}
-                    defaultValue={""}
-                  />
-                </div>
-                <div>
-                  <p>{I18n.t("results.filters.tas")}</p>
-                  {this.renderTasDropdown()}
-                </div>
-              </div>
-              <div className={"modal-container-vertical"}>
-                <div>
-                  <p>Marking State</p>
-                  <Dropdown
-                    options={[
-                      I18n.t("submissions.state.in_progress"),
-                      I18n.t("submissions.state.complete"),
-                      I18n.t("submissions.state.released"),
-                      I18n.t("submissions.state.remark_requested"),
-                    ]}
-                    selected={this.state.currentMarkingStateValue}
-                    select={selection => {
-                      this.setState({currentMarkingStateValue: selection});
-                    }}
-                  />
-                </div>
-                <div>
-                  <p>{I18n.t("results.filters.tags")}</p>
-                  {this.renderTagsDropdown()}
+                <div className={"modal-container"}>
+                  <div>
+                    <p>{I18n.t("results.filters.tas")}</p>
+                    {this.renderTasDropdown()}
+                  </div>
+                  <div className={"annotation-input"}>
+                    <p>{I18n.t("results.filters.annotation")}</p>
+                    <input
+                      id="annotation"
+                      type={"text"}
+                      value={this.state.currentAnnotationValue}
+                      onChange={this.handleChange}
+                      placeholder={I18n.t("results.filters.text_box_placeholder")}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

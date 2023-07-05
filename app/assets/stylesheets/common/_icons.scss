@@ -1,3 +1,5 @@
+@import 'constants';
+
 .icon-left {
   margin-right: 5px;
 }
@@ -38,4 +40,8 @@ a[role='button'] > .svg-inline--fa {
   float: left;
   height: 20px;
   margin-right: 1em;
+}
+
+.fa-xmark {
+  color: $primary-one;
 }

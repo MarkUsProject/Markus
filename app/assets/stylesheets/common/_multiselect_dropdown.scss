@@ -1,7 +1,6 @@
 @import 'constants';
 
 .multiselect-dropdown {
-  align-items: center;
   background: $background-main;
   border: 1px solid $primary-one;
   border-radius: $radius;
@@ -120,18 +119,13 @@
     }
   }
 
-  .arrow {
+  .arrow-down,
+  .arrow-up {
     float: right;
     margin-right: 5px;
+    margin-top: 0;
     position: relative;
     top: 50%;
     transform: translate(0, -50%);
-  }
-
-  .arrow-down,
-  .arrow-up {
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-top: 10px;
   }
 }
