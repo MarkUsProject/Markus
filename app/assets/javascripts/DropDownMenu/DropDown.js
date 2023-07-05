@@ -29,16 +29,18 @@ export class Dropdown extends React.Component {
     }
   };
 
+  renderArrow = () => {
+    if (this.state.expanded !== false) {
+      return <span className="arrow-up" />;
+    } else {
+      return <span className="arrow-down" />;
+    }
+  };
+
   render() {
     let selected = this.props.selected;
     let options = this.props.options;
     let expanded = this.state.expanded;
-    let arrow;
-    if (expanded !== false) {
-      arrow = <span className="arrow-up" />;
-    } else {
-      arrow = <span className="arrow-down" />;
-    }
 
     return (
       <div
@@ -48,16 +50,18 @@ export class Dropdown extends React.Component {
         tabIndex={-1}
       >
         <a>{this.props.selected}</a>
-        <div
-          className="reset"
-          onClick={e => {
-            e.preventDefault();
-            this.select(e, "");
-          }}
-        >
-          <FontAwesomeIcon icon="fa-solid fa-xmark" />
+        <div className="options">
+          <div
+            className="reset"
+            onClick={e => {
+              e.preventDefault();
+              this.select(e, this.props.defaultValue);
+            }}
+          >
+            <FontAwesomeIcon icon="fa-solid fa-xmark" style={{color: "#255185"}} />
+          </div>
+          {this.renderArrow()}
         </div>
-        {arrow}
         {expanded && this.renderDropdown(options, selected, expanded)}
       </div>
     );
