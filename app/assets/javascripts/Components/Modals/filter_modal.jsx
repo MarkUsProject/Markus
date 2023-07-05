@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
+import {Dropdown} from "../../DropDownMenu/DropDown";
 
 const INITIAL_MODAL_STATE = {
   currentAnnotationValue: "",
@@ -88,7 +89,7 @@ export class FilterModal extends React.Component {
           <h3>{"Filter By:"}</h3>
           <div className={"modal-container-vertical"}>
             <form onSubmit={this.onSubmit}>
-              <label className={"annotation-input"}>
+              <div className={"annotation-input"}>
                 <p>{I18n.t("results.filters.annotation")}</p>
                 <input
                   id="annotation"
@@ -97,41 +98,25 @@ export class FilterModal extends React.Component {
                   onChange={this.handleChange}
                   placeholder="Type here"
                 />
-              </label>
-              <label>
-                <p>Section</p>
-                <select
-                  onChange={event => {
-                    this.setState({currentSectionValue: event.target.value});
-                  }}
-                  value={this.state.currentSectionValue}
-                  className={"dropdown"}
-                >
-                  <option value={""} key={""}></option>
-                  {this.props.sections.map(section => (
-                    <option value={section} key={section}>
-                      {section}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
+              </div>
+              <p>Section</p>
+              <Dropdown
+                options={this.props.sections}
+                selected={this.state.currentSectionValue}
+                select={selection => {
+                  this.setState({currentSectionValue: selection});
+                }}
+              />
+              <div>
                 <p>Marking State</p>
-                <select
-                  onChange={event => {
-                    this.setState({currentMarkingStateValue: event.target.value});
+                <Dropdown
+                  options={["Partial", "Complete", "Released", "Remark Requested"]}
+                  selected={this.state.currentMarkingStateValue}
+                  select={selection => {
+                    this.setState({currentMarkingStateValue: selection});
                   }}
-                  value={this.state.currentMarkingStateValue}
-                  className={"dropdown"}
-                >
-                  <option value={""} key={""}></option>
-                  {["Partial", "Complete", "Released", "Remark Requested"].map(section => (
-                    <option value={section} key={section}>
-                      {section}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                />
+              </div>
 
               <div>
                 <p>{"TAs"}</p>
