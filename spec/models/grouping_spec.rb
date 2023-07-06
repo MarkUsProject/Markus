@@ -1620,8 +1620,8 @@ describe Grouping do
     shared_examples 'role is an instructor or ta' do
       context 'there are no more incomplete submissions accessible to role' do
         it 'returns nil' do
-          grouping1.current_result.update(marking_state: 'complete')
-          grouping2.current_result.update(marking_state: 'complete')
+          grouping1.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+          grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
           expect(grouping3.get_random_incomplete(role)).to be_nil
         end
       end
@@ -1646,7 +1646,7 @@ describe Grouping do
 
       it 'should only pick a random group from the groupings whose current result is incomplete' do
         create :ta_membership, grouping: grouping1, role: role
-        grouping3.current_result.update(marking_state: 'complete')
+        grouping3.current_result.update(marking_state: Result::MARKING_STATES[:complete])
         expect(grouping2.get_random_incomplete(role).id).to eq(grouping1.id)
       end
       include_examples 'role is an instructor or ta'
@@ -1654,7 +1654,7 @@ describe Grouping do
     context 'when role is an instructor' do
       let!(:role) { create :instructor }
       it 'should pick from all groupings with an incomplete marking_state (that isn\'t the current grouping)' do
-        grouping1.current_result.update(marking_state: 'complete')
+        grouping1.current_result.update(marking_state: Result::MARKING_STATES[:complete])
         expect(grouping2.get_random_incomplete(role).id).to eq(grouping3.id)
       end
       include_examples 'role is an instructor or ta'
