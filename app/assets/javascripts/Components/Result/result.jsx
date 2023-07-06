@@ -25,6 +25,10 @@ const INITIAL_FILTER_MODAL_STATE = {
   tags: [],
   sectionValue: "",
   markingStateValue: "",
+  totalMarkRange: {
+    min: "",
+    max: "",
+  },
 };
 
 class Result extends React.Component {

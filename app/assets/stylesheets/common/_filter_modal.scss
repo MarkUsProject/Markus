@@ -25,3 +25,24 @@
 .order {
   padding-top: 10px;
 }
+
+.range {
+  align-items: center;
+  background: $background-main;
+  display: inline-flex;
+  justify-content: left;
+  min-height: 30px;
+  min-width: $dropdown-horizontal;
+
+  > span {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  input[type='number'] {
+    border: 1px solid $primary-one;
+    border-radius: $radius;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    width: 85px;
+  }
+}

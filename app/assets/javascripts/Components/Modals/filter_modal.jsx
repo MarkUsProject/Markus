@@ -11,6 +11,10 @@ const INITIAL_MODAL_STATE = {
   currentMarkingStateValue: "",
   currentTas: [],
   currentTags: [],
+  currentTotalMarkRange: {
+    min: "",
+    max: "",
+  },
 };
 
 export class FilterModal extends React.Component {
@@ -24,6 +28,10 @@ export class FilterModal extends React.Component {
       currentMarkingStateValue: this.props.filterData.markingStateValue,
       currentTas: this.props.filterData.tas,
       currentTags: this.props.filterData.tags,
+      currentTotalMarkRange: {
+        min: this.props.filterData.totalMarkRange.min,
+        max: this.props.filterData.totalMarkRange.max,
+      },
     };
   }
 
@@ -86,9 +94,47 @@ export class FilterModal extends React.Component {
     );
   };
 
-  handleChange = event => {
-    this.setState({currentAnnotationValue: event.target.value});
+  renderRangeComponent = title => {
+    return (
+      <div>
+        <p>{title}</p>
+        <div className={"range"} onChange={e => this.handleTotalMark(e)}>
+          <input
+            className={"input-min"}
+            type="number"
+            step="0.5"
+            placeholder={"Min"}
+            value={this.state.currentTotalMarkRange.min}
+            max={this.state.currentTotalMarkRange.max}
+            onChange={() => {}}
+          />
+          <span>to</span>
+          <input
+            className={"input-max"}
+            type="number"
+            step="0.5"
+            placeholder={"Max"}
+            value={this.state.currentTotalMarkRange.max}
+            min={this.state.currentTotalMarkRange.min}
+            onChange={() => {}}
+          />
+        </div>
+      </div>
+    );
   };
+
+  handleTotalMark(e) {
+    e.preventDefault();
+    if (e.target.className === "input-min") {
+      this.setState({
+        currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
+      });
+    } else {
+      this.setState({
+        currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
+      });
+    }
+  }
 
   componentDidMount() {
     Modal.setAppElement("body");
@@ -105,6 +151,7 @@ export class FilterModal extends React.Component {
       markingStateValue: this.state.currentMarkingStateValue,
       tas: this.state.currentTas,
       tags: this.state.currentTags,
+      totalMarkRange: this.state.currentTotalMarkRange,
     });
     this.props.onRequestClose();
   };
@@ -125,10 +172,17 @@ export class FilterModal extends React.Component {
           isOpen={this.props.isOpen}
           onRequestClose={() => {
             this.setState({
+              currentOrderBy: this.props.filterData.orderBy,
+              currentAscBool: this.props.filterData.ascBool,
               currentAnnotationValue: this.props.filterData.annotationValue,
               currentSectionValue: this.props.filterData.sectionValue,
               currentMarkingStateValue: this.props.filterData.markingStateValue,
               currentTas: this.props.filterData.tas,
+              currentTags: this.props.filterData.tags,
+              currentTotalMarkRange: {
+                min: this.props.filterData.totalMarkRange.min,
+                max: this.props.filterData.totalMarkRange.max,
+              },
             });
             this.props.onRequestClose();
           }}
@@ -216,11 +270,12 @@ export class FilterModal extends React.Component {
                       id="annotation"
                       type={"text"}
                       value={this.state.currentAnnotationValue}
-                      onChange={this.handleChange}
+                      onChange={e => this.setState({currentAnnotationValue: e.target.value})}
                       placeholder={I18n.t("results.filters.text_box_placeholder")}
                     />
                   </div>
                 </div>
+                <div className={"modal-container"}>{this.renderRangeComponent("Total Mark")}</div>
               </div>
             </div>
             <div className={"modal-footer"}>
