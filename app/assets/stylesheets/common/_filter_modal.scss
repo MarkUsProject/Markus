@@ -1,6 +1,8 @@
 @import 'constants';
 
 .annotation-input {
+  margin: 5px;
+
   input[type='text'] {
     background: $background-main;
     border: 1px solid $primary-one;
@@ -9,6 +11,10 @@
     height: 30px;
     width: $dropdown-horizontal;
   }
+}
+
+.filter {
+  margin: 5px;
 }
 
 .order {

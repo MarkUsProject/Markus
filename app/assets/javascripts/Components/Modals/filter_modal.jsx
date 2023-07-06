@@ -226,10 +226,10 @@ export class FilterModal extends React.Component {
         >
           <h3>{I18n.t("results.filters.filter_by")}</h3>
           <form onSubmit={this.onSubmit}>
-            <div className={"modal-container"}>
+            <div className={"modal-container-scrollable"}>
               <div className={"modal-container-vertical"}>
                 <div className={"modal-container"}>
-                  <div>
+                  <div className={"filter"}>
                     <p>{I18n.t("results.filters.order_by")} </p>
                     <Dropdown
                       options={["Group Name", "Submission Date"]}
@@ -263,7 +263,7 @@ export class FilterModal extends React.Component {
                       <label htmlFor="Desc">Descending</label>
                     </div>
                   </div>
-                  <div>
+                  <div className={"filter"}>
                     <p>Marking State</p>
                     <Dropdown
                       options={[
@@ -280,11 +280,11 @@ export class FilterModal extends React.Component {
                   </div>
                 </div>
                 <div className={"modal-container"}>
-                  <div>
+                  <div className={"filter"}>
                     <p>{I18n.t("results.filters.tags")}</p>
                     {this.renderTagsDropdown()}
                   </div>
-                  <div>
+                  <div className={"filter"}>
                     <p>Section</p>
                     <Dropdown
                       options={this.props.sections}
@@ -297,7 +297,7 @@ export class FilterModal extends React.Component {
                   </div>
                 </div>
                 <div className={"modal-container"}>
-                  <div>
+                  <div className={"filter"}>
                     <p>{I18n.t("results.filters.tas")}</p>
                     {this.renderTasDropdown()}
                   </div>
@@ -314,11 +314,11 @@ export class FilterModal extends React.Component {
                 </div>
 
                 <div className={"modal-container"}>
-                  <div>
+                  <div className={"filter"}>
                     <p>Total Mark</p>
                     {this.renderTotalMarkRange()}
                   </div>
-                  <div>
+                  <div className={"filter"}>
                     <p>Total Extra Mark</p>
                     {this.renderTotalExtraMarkRange()}
                   </div>
