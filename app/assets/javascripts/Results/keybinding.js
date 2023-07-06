@@ -22,6 +22,14 @@ Mousetrap.bind("shift+right", function () {
   }
 });
 
+// Go to a random incomplete submission with ctrl + shift + right
+Mousetrap.bind("ctrl+shift+right", function () {
+  // Don't override range selection keybindings
+  if (!is_text_selected()) {
+    $(".button.random-incomplete-submission")[0].click();
+  }
+});
+
 // Go to the previous criterion with shift + up
 Mousetrap.bind("shift+up", function (e) {
   if (!is_text_selected()) {

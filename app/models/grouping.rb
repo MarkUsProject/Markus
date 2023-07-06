@@ -727,6 +727,23 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def get_random_incomplete(current_role)
+    if current_role.ta?
+      # Get relevant groupings for a TA
+      results = self.assignment.current_results.joins(grouping: :tas).where(
+        marking_state: Result::MARKING_STATES[:incomplete],
+        'roles.id': current_role.id
+      )
+
+    else
+      # Get all groupings in an assignment -- typically for an instructor
+      results = self.assignment.current_results.where(
+        marking_state: Result::MARKING_STATES[:incomplete]
+      )
+    end
+    results.where.not('groupings.id': self.id).order('RANDOM()').first&.grouping
+  end
+
   private
 
   def filter_groupings(groupings, filter_data)

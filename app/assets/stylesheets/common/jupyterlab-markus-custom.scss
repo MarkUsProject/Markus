@@ -1,0 +1,15 @@
+/* MarkUs custom styling */
+@import 'constants';
+
+.markus-annotation {
+  background-color: $light-alert;
+}
+
+div.markus-annotation {
+  border: 5px solid $sharp-line;
+}
+
+/* Override Jupyterlab css defaults */
+.jp-Notebook .jp-Cell .jp-InputPrompt {
+  cursor: initial !important;
+}
