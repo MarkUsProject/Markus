@@ -320,6 +320,17 @@ class ResultsController < ApplicationController
     render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
+  def random_incomplete_submission
+    result = record
+    grouping = result.submission.grouping
+
+    next_grouping = grouping.get_random_incomplete(current_role)
+    next_result = next_grouping&.current_result
+
+    render json: { result_id: next_result&.id, submission_id: next_result&.submission_id,
+                   grouping_id: next_grouping&.id }
+  end
+
   def set_released_to_students
     @result = record
     released_to_students = !@result.released_to_students

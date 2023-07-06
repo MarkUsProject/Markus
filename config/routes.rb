@@ -184,6 +184,7 @@ Rails.application.routes.draw do
         patch 'update_mark'
         get 'view_marks'
         post 'add_tag'
+        get 'random_incomplete_submission'
         post 'remove_tag'
         post 'run_tests'
         get 'stop_test'
