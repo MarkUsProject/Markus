@@ -536,6 +536,7 @@ class Assignment < Assessment
 
     criteria_shown = Set.new
     max_mark = 0
+
     selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
     criteria_columns = selected_criteria.filter_map do |crit|
       unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
