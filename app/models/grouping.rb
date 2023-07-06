@@ -758,6 +758,30 @@ class Grouping < ApplicationRecord
     unless filter_data['tags'].nil? || filter_data['tags'] == []
       groupings = groupings.joins(:tags).where('tags.name': filter_data['tags'])
     end
+    unless filter_data['totalMarkRange'].nil? ||
+      (filter_data['totalMarkRange']['max'] == '' && filter_data['totalMarkRange']['min'] == '')
+      result_ids = groupings.ids
+      total_marks_hash = Result.get_total_marks(result_ids)
+      unless filter_data['totalMarkRange']['max'] == ''
+        total_marks_hash = total_marks_hash.select { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+      end
+      unless filter_data['totalMarkRange']['min'] == ''
+        total_marks_hash = total_marks_hash.select { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
+      end
+      groupings = groupings.joins(:current_result).where('current_result.id': total_marks_hash.keys)
+    end
+    unless filter_data['totalExtraMarkRange'].nil? ||
+      (filter_data['totalExtraMarkRange']['max'] == '' && filter_data['totalExtraMarkRange']['min'] == '')
+      result_ids = groupings.ids
+      total_marks_hash = Result.get_total_extra_marks(result_ids)
+      unless filter_data['totalMarkRange']['max'] == ''
+        total_marks_hash = total_marks_hash.select { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+      end
+      unless filter_data['totalMarkRange']['min'] == ''
+        total_marks_hash = total_marks_hash.select { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
+      end
+      groupings = groupings.joins(:current_result).where('current_result.id': total_marks_hash.keys)
+    end
     groupings
   end
 

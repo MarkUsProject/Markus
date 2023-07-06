@@ -11,17 +11,6 @@
   }
 }
 
-.filter-modal {
-  background: $background-main;
-  border: 1px solid $primary-two;
-  left: 50%;
-  outline: none;
-  padding: 20px;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .order {
   padding-top: 10px;
 }
@@ -29,10 +18,9 @@
 .range {
   align-items: center;
   background: $background-main;
-  display: inline-flex;
   justify-content: left;
+  max-width: $dropdown-horizontal;
   min-height: 30px;
-  min-width: $dropdown-horizontal;
 
   > span {
     margin-left: 10px;
@@ -43,6 +31,17 @@
     border: 1px solid $primary-one;
     border-radius: $radius;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    width: 85px;
+    width: 80px;
+  }
+
+  input:invalid + div::after {
+    color: #900;
+    content: 'Invalid Range';
+  }
+
+  > div {
+    display: inline-flex;
+    padding-top: 5px;
+    width: $dropdown-horizontal;
   }
 }

@@ -29,6 +29,10 @@ const INITIAL_FILTER_MODAL_STATE = {
     min: "",
     max: "",
   },
+  totalExtraMarkRange: {
+    min: "",
+    max: "",
+  },
 };
 
 class Result extends React.Component {
