@@ -115,8 +115,13 @@ module Api
       ApplicationRecord.transaction do
         user = User.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, user: user, course: @current_course)
-        section = @current_course.sections.find_by!(name: params[:section_name]) if params[:section_name]
-        role.section = section if section
+        if params[:section_name]
+          if params[:section_name].empty?
+            role.section = nil
+          else
+            role.section = @current_course.sections.find_by!(name: params[:section_name])
+          end
+        end
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
@@ -132,8 +137,13 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        section = @current_course.sections.find_by!(name: params[:section_name]) if params[:section_name]
-        role.section = section if section
+        if params[:section_name]
+          if params[:section_name].empty?
+            role.section = nil
+          else
+            role.section = @current_course.sections.find_by!(name: params[:section_name])
+          end
+        end
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!

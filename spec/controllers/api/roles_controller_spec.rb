@@ -193,6 +193,16 @@ describe Api::RolesController do
             expect(response).to have_http_status(422)
           end
         end
+        context 'with a nil section name' do
+          let(:created_student) { Student.joins(:user).where('users.user_name': student.user_name).first }
+          let(:other_params) { { section_name: nil } }
+          it 'should be successful' do
+            expect(response).to have_http_status(201)
+          end
+          it 'should not set a section' do
+            expect(created_student.section).to be_nil
+          end
+        end
       end
     end
 
@@ -250,6 +260,21 @@ describe Api::RolesController do
           it 'should raise a 422 error' do
             put :update, params: { id: student.id, course_id: course.id, section_name: 'section.name' }
             expect(response).to have_http_status(422)
+          end
+        end
+        context 'with a nil section name' do
+          let(:section) { create :section }
+          before :each do
+            student.update!(section: section)
+          end
+          it 'should be successful' do
+            put :update, params: { id: student.id, course_id: course.id, section_name: nil }
+            expect(response).to have_http_status(200)
+          end
+          it 'should set the section to nil' do
+            put :update, params: { id: student.id, course_id: course.id, section_name: nil }
+            student.reload
+            expect(student.section).to be_nil
           end
         end
       end
