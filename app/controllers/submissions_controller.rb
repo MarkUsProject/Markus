@@ -903,7 +903,9 @@ class SubmissionsController < ApplicationController
       FileUtils.mkdir_p(cache_file.dirname)
       if type == 'jupyter-notebook'
         args = [
-          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s
+          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s,
+          "--TemplateExporter.extra_template_basedirs=#{Rails.root.join('lib/jupyter-notebook')}",
+          '--template', 'markus-html-template'
         ]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)

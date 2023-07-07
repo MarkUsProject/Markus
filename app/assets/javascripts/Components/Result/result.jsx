@@ -698,6 +698,38 @@ class Result extends React.Component {
     };
   };
 
+  randomIncompleteSubmission = () => {
+    const url = Routes.random_incomplete_submission_course_result_path(
+      this.props.course_id,
+      this.state.result_id
+    );
+
+    this.setState({loading: true}, () => {
+      fetch(url)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+        })
+        .then(result => {
+          if (!result.result_id || !result.submission_id || !result.grouping_id) {
+            alert(I18n.t("results.no_incomplete_submission"));
+            this.setState({loading: false});
+            return;
+          }
+
+          const result_obj = {
+            result_id: result.result_id,
+            submission_id: result.submission_id,
+            grouping_id: result.grouping_id,
+          };
+          this.setState(prevState => ({...prevState, ...result_obj}));
+          let new_url = Routes.edit_course_result_path(this.props.course_id, this.state.result_id);
+          history.pushState({}, document.title, new_url);
+        });
+    });
+  };
+
   updateOverallComment = (value, remark) => {
     return $.post({
       url: Routes.update_overall_comment_course_result_path(
@@ -752,6 +784,7 @@ class Result extends React.Component {
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
           nextSubmission={this.nextSubmission(1)}
+          randomIncompleteSubmission={this.randomIncompleteSubmission}
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
         />

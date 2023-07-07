@@ -95,6 +95,25 @@ export class SubmissionSelector extends React.Component {
     );
   }
 
+  renderRandomIncompleteSubmissionButton() {
+    if (this.props.role !== "Student") {
+      return (
+        <button
+          className="button random-incomplete-submission"
+          onClick={this.props.randomIncompleteSubmission}
+          title={`${I18n.t("results.random_incomplete_submission")} (Ctrl + Shift + ⇨)`}
+          disabled={
+            this.props.num_collected === this.props.num_marked ||
+            (this.props.marking_state === "incomplete" &&
+              this.props.num_marked === this.props.num_collected - 1)
+          }
+        >
+          <FontAwesomeIcon icon="fa-solid fa-dice" className="no-padding" />
+        </button>
+      );
+    }
+  }
+
   render() {
     if (this.props.role === "Student" && !this.props.is_reviewer) {
       return "";
@@ -138,6 +157,7 @@ export class SubmissionSelector extends React.Component {
           >
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
+          {this.renderRandomIncompleteSubmissionButton()}
           <div className="progress">
             <meter
               value={this.props.num_marked}
