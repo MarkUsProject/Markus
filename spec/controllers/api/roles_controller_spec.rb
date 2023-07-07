@@ -187,6 +187,12 @@ describe Api::RolesController do
             expect(response).to have_http_status(422)
           end
         end
+        context 'with an invalid section name' do
+          let(:other_params) { { section_name: 'section.name' } }
+          it 'should raise a 422 error' do
+            expect(response).to have_http_status(422)
+          end
+        end
       end
     end
 
@@ -239,6 +245,12 @@ describe Api::RolesController do
           expect(response).to have_http_status(200)
           student.reload
           expect(student.hidden).to eq(true)
+        end
+        context 'with an invalid section name' do
+          it 'should raise a 422 error' do
+            put :update, params: { id: student.id, course_id: course.id, section_name: 'section.name' }
+            expect(response).to have_http_status(422)
+          end
         end
       end
 

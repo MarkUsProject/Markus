@@ -115,14 +115,15 @@ module Api
       ApplicationRecord.transaction do
         user = User.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, user: user, course: @current_course)
-        role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
+        section = @current_course.sections.find_by!(name: params[:section_name]) if params[:section_name]
+        role.section = section if section
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       end
-    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
@@ -131,14 +132,15 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
+        section = @current_course.sections.find_by!(name: params[:section_name]) if params[:section_name]
+        role.section = section if section
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
       end
       render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
-    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
