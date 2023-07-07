@@ -33,7 +33,11 @@ export class TestRunTable extends React.Component {
   }
 
   fetchData = () => {
-    let fetchDetails = {};
+    let fetchDetails = {
+      headers: {
+        Accept: "application/json",
+      },
+    };
     let url;
     if (this.props.instructor_run) {
       if (this.props.instructor_view) {
@@ -46,22 +50,12 @@ export class TestRunTable extends React.Component {
           this.props.course_id,
           this.props.result_id
         );
-        fetchDetails = {
-          headers: {
-            Accept: "application/json",
-          },
-        };
       }
     } else {
       url = Routes.get_test_runs_students_course_assignment_automated_tests_path(
         this.props.course_id,
         this.props.assignment_id
       );
-      fetchDetails = {
-        headers: {
-          Accept: "application/json",
-        },
-      };
     }
     fetch(url, fetchDetails)
       .then(response => {

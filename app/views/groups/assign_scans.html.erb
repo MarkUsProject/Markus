@@ -36,15 +36,15 @@
       fetch(requestUrl, {
         headers: {
           Accept: "application/json",
-        }
+        },
       })
-      .then((response) =>{
-        if(response.ok) {
-          return response.json();
-        }
-      })
-      .then((data) => parseNextScan(data));
-    });
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+        })
+        .then((data) => parseNextScan(data));
+  });
 
     function parseNextScan(data) {
       $("#group_members").empty();
