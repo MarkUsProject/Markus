@@ -221,7 +221,6 @@ class Result extends React.Component {
         this.setState({
           annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
         });
-        this.refreshAnnotations();
       }); // Resetting back to original
     };
 
@@ -305,10 +304,7 @@ class Result extends React.Component {
 
     data = this.extend_with_selection_data(data);
     if (data) {
-      $.post(
-        Routes.add_existing_annotation_course_annotations_path(this.props.course_id),
-        data
-      ).then(this.refreshAnnotations);
+      $.post(Routes.add_existing_annotation_course_annotations_path(this.props.course_id), data);
     }
   };
 
