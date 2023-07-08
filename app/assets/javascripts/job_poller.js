@@ -8,9 +8,17 @@
 
 export function poll_job(job_id, onSuccess, onFailure, onComplete, interval) {
   interval = interval || 1000;
-  $.ajax({
-    url: Routes.get_job_message_path(job_id),
-    success: function (data) {
+  fetch(Routes.get_job_message_path(job_id), {
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .then(data => {
       if (data.status === "completed") {
         if (onSuccess) {
           onSuccess(data);
@@ -30,6 +38,5 @@ export function poll_job(job_id, onSuccess, onFailure, onComplete, interval) {
           poll_job(job_id, onSuccess, onFailure, onComplete);
         }, interval);
       }
-    },
-  });
+    });
 }

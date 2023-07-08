@@ -19,8 +19,13 @@
 - Modify MarkUs API to allow the CoursesController#index route to accept requests from all types of roles (#6619)
 - Modify MarkUs API to allow the AssignmentsController#index route to accept requests from all types of roles (#6619)
 - A user can't run tests with the same names / Single test error does not spoil the whole test batch (#6620)
+- Refactored GET requests to use fetch API instead of jQuery (#6622)
 - Change icon set to Font Awesome (Free) (#6627)
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
+- Add zoom feature to scanned exam template crop selection (#6640)
+- Ensure Jupyter notebook HTML rendering does not require external CDNs (#6656)
+- Prevent Jupyter notebook from reloading when an annotation is added (#6656)
+- Added a button allowing graders to view a random incomplete submission (#6641)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

@@ -19,16 +19,23 @@ class MarkingSchemeTable extends React.Component {
   }
 
   fetchData() {
-    $.ajax({
-      url: Routes.populate_course_marking_schemes_path(this.props.course_id),
-      dataType: "json",
-    }).then(res => {
-      this.setState({
-        data: res.data,
-        columns: res.columns,
-        loading: false,
+    fetch(Routes.populate_course_marking_schemes_path(this.props.course_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          data: res.data,
+          columns: res.columns,
+          loading: false,
+        });
       });
-    });
   }
 
   nameColumns = [

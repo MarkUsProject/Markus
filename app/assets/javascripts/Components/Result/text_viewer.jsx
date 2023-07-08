@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 
-export class TextViewer extends React.Component {
+export class TextViewer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

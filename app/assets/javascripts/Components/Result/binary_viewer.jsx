@@ -1,6 +1,6 @@
 import React from "react";
 
-export class BinaryViewer extends React.Component {
+export class BinaryViewer extends React.PureComponent {
   render() {
     return (
       <div>

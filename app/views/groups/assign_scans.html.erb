@@ -8,7 +8,7 @@
   pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
   (function(){
     const domContentLoadedCB = function() {
-          $("#names").autocomplete({
+      $("#names").autocomplete({
         source: function (request, response) {
           $.getJSON("get_names",
             {
@@ -30,13 +30,20 @@
       };
       $("#assign_student").submit(function (e) {
         e.preventDefault();
-        $.ajax({
-          method: "GET",
-          url: "assign_student_and_next",
-          dataType: "json",
-          data: $("#assign_student").serialize(),
-          success: parseNextScan
-        });
+        const queryString = $("#assign_student").serialize();
+        const url = "assign_student_and_next";
+        const requestUrl = `${url}?${queryString}`;
+        fetch(requestUrl, {
+          headers: {
+            Accept: "application/json",
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+          })
+          .then((data) => parseNextScan(data));
       });
 
       function parseNextScan(data) {
