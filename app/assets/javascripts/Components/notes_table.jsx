@@ -17,14 +17,20 @@ class NotesTable extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_notes_path(this.props.course_id, {format: "json"}),
-    }).then(res => {
-      this.setState({
-        notes: res,
-        loading: false,
+    fetch(Routes.course_notes_path(this.props.course_id, {format: "json"}), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          notes: res,
+          loading: false,
+        });
       });
-    });
   };
 
   renderButtons(editable, id) {

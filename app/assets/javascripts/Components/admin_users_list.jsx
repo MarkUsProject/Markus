@@ -17,12 +17,19 @@ class AdminUsersList extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.admin_users_path(),
-      dataType: "json",
-    }).then(data => {
-      this.setState({users: data, loading: false});
-    });
+    fetch(Routes.admin_users_path(), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(data => {
+        this.setState({users: data, loading: false});
+      });
   };
 
   columns = [

@@ -59,20 +59,25 @@ class Result extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_result_path(this.props.course_id, this.state.result_id),
-      dataType: "json",
-    }).then(res => {
-      if (res.submission_files) {
-        res.submission_files = this.processSubmissionFiles(res.submission_files);
-      }
-      const markData = this.processMarks(res);
-      this.setState({...res, ...markData, loading: false}, () => {
-        initializePanes();
-        fix_panes();
-        this.updateContextMenu();
+    fetch(Routes.course_result_path(this.props.course_id, this.state.result_id), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        if (res.submission_files) {
+          res.submission_files = this.processSubmissionFiles(res.submission_files);
+        }
+        const markData = this.processMarks(res);
+        this.setState({...res, ...markData, loading: false}, () => {
+          initializePanes();
+          fix_panes();
+          this.updateContextMenu();
+        });
       });
-    });
   };
 
   /* Processing result data */
@@ -329,24 +334,35 @@ class Result extends React.Component {
   };
 
   refreshAnnotationCategories = () => {
-    $.get({
-      url: Routes.course_assignment_annotation_categories_path(
+    fetch(
+      Routes.course_assignment_annotation_categories_path(
         this.props.course_id,
         this.state.parent_assignment_id || this.state.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.setState({annotation_categories: res});
-    });
+      {headers: {Accept: "application/json"}}
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({annotation_categories: res});
+      });
   };
 
   refreshAnnotations = () => {
-    $.ajax({
-      url: Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id),
-      dataType: "json",
-    }).then(res => {
-      this.setState({annotations: res});
-    });
+    fetch(Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({annotations: res});
+      });
   };
 
   editAnnotation = annot_id => {
@@ -645,30 +661,35 @@ class Result extends React.Component {
     return () => {
       const url = Routes.next_grouping_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
+        {direction: direction}
       );
 
       this.setState({loading: true}, () => {
-        $.ajax({
-          url: url,
-          data: {
-            direction: direction,
-          },
-        }).then(result => {
-          if (!result.next_result || !result.next_grouping) {
-            alert(I18n.t("results.no_results_in_direction"));
-            return;
-          }
+        fetch(url)
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+          })
+          .then(result => {
+            if (!result.next_result || !result.next_grouping) {
+              alert(I18n.t("results.no_results_in_direction"));
+              return;
+            }
 
-          const result_obj = {
-            result_id: result.next_result.id,
-            submission_id: result.next_result.submission_id,
-            grouping_id: result.next_grouping.id,
-          };
-          this.setState(prevState => ({...prevState, ...result_obj}));
-          let new_url = Routes.edit_course_result_url(this.props.course_id, this.state.result_id);
-          history.pushState({}, document.title, new_url);
-        });
+            const result_obj = {
+              result_id: result.next_result.id,
+              submission_id: result.next_result.submission_id,
+              grouping_id: result.next_grouping.id,
+            };
+            this.setState(prevState => ({...prevState, ...result_obj}));
+            let new_url = Routes.edit_course_result_path(
+              this.props.course_id,
+              this.state.result_id
+            );
+            history.pushState({}, document.title, new_url);
+          });
       });
     };
   };

@@ -2,6 +2,17 @@ import {mount} from "enzyme";
 
 import {TATable} from "../ta_table";
 
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        data: [],
+        counts: {},
+      }),
+  })
+);
+
 describe("For the TATable's display of TAs", () => {
   let wrapper, tas_sample;
 
@@ -52,13 +63,15 @@ describe("For the TATable's display of TAs", () => {
           hidden: true,
         },
       ];
-      // Mocking the response returned by $.ajax, used in TATable fetchData
-      $.ajax = jest.fn(() =>
-        Promise.resolve({
+      // Mocking the response returned by fetch, used in TATable fetchData
+      fetch.mockReset();
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
           data: tas_sample,
           counts: {all: 4, active: 3, inactive: 1},
-        })
-      );
+        }),
+      });
       wrapper = mount(<TATable course_id={1} />);
     });
 
@@ -70,13 +83,15 @@ describe("For the TATable's display of TAs", () => {
   describe("when no TAs are fetched", () => {
     beforeAll(() => {
       tas_sample = [];
-      // Mocking the response returned by $.ajax, used in TATable fetchData
-      $.ajax = jest.fn(() =>
-        Promise.resolve({
+      // Mocking the response returned by fetch, used in TATable fetchData
+      fetch.mockReset();
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
           data: tas_sample,
           counts: {all: 0, active: 0, inactive: 0},
-        })
-      );
+        }),
+      });
       wrapper = mount(<TATable course_id={1} />);
     });
 

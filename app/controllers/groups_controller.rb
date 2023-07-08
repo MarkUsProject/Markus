@@ -220,6 +220,10 @@ class GroupsController < ApplicationController
       @assignment = Assignment.find(params[:a_id])
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
+    if next_grouping.nil?
+      head :not_found
+      return
+    end
     names = next_grouping.non_rejected_student_memberships.map do |u|
       u.user.display_name
     end

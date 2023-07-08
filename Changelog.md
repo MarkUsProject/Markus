@@ -19,6 +19,7 @@
 - Modify MarkUs API to allow the CoursesController#index route to accept requests from all types of roles (#6619)
 - Modify MarkUs API to allow the AssignmentsController#index route to accept requests from all types of roles (#6619)
 - A user can't run tests with the same names / Single test error does not spoil the whole test batch (#6620)
+- Refactored GET requests to use fetch API instead of jQuery (#6622)
 - Change icon set to Font Awesome (Free) (#6627)
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 - Add zoom feature to scanned exam template crop selection (#6640)

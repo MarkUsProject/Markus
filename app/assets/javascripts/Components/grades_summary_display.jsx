@@ -43,16 +43,23 @@ class GradesSummaryDisplay extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.populate_course_course_summaries_path(this.props.course_id),
-      dataType: "json",
-    }).then(res =>
-      this.setState({
-        ...res,
-        loading: false,
-        datasets: this.compileDatasets(res.graph_data),
+    fetch(Routes.populate_course_course_summaries_path(this.props.course_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
       })
-    );
+      .then(res =>
+        this.setState({
+          ...res,
+          loading: false,
+          datasets: this.compileDatasets(res.graph_data),
+        })
+      );
   };
 
   compileDatasets = data => {
