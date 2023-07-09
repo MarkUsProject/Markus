@@ -1173,19 +1173,39 @@ nav {
   padding: 0.3em 0;
   width: 100%;
 
+  /* Icon-only buttons */
   .button {
+    align-items: center;
+    display: flex;
     height: 3em;
-    line-height: 3em;
+    justify-content: center;
     margin: 0 5px;
-    min-width: 40px;
+    min-width: 3em;
     padding: 0 0.4em;
+
+    > .svg-inline--fa:only-child {
+      height: fit-content;
+      width: 2em;
+    }
   }
 
   button {
+    align-items: center;
+    display: flex;
     height: 3em;
+    justify-content: center;
     margin: 0 5px;
     min-width: 100px;
-    padding: 0.4em;
+    padding: 0 0.4em;
+
+    @include breakpoint(mobile) {
+      min-width: 3em;
+
+      > .svg-inline--fa:only-child {
+        height: fit-content;
+        width: 2em;
+      }
+    }
   }
 }
 

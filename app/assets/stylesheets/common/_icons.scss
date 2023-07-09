@@ -10,9 +10,29 @@ button > .svg-inline--fa,
 .button > .svg-inline--fa,
 a[role='button'] > .svg-inline--fa {
   padding-right: 5px;
+  vertical-align: baseline;
+
+  @include breakpoint(mobile) {
+    padding-right: 0;
+  }
 
   &.no-padding {
     padding-right: 0;
+  }
+}
+
+button > .fa-layers,
+.button > .fa-layers,
+a[role='button'] > .fa-layers {
+  margin-right: 5px;
+  vertical-align: baseline;
+
+  @include breakpoint(mobile) {
+    margin-right: 0;
+  }
+
+  &.no-margin {
+    margin-right: 0;
   }
 }
 
