@@ -18,19 +18,6 @@ class Ta < Role
              .includes(:students, :tas, :group, :assignment)
   end
 
-  # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(result, out_of)
-    total = result.get_total_mark
-
-    percent = BLANK_MARK
-
-    # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
-    end
-    percent
-  end
-
   # An array of all the grades for an assignment for this TA.
   # If TAs are assigned to grade criteria, returns just the subtotal
   # for the criteria the TA was assigned.

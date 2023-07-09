@@ -1030,10 +1030,7 @@ class Assignment < Assessment
       groups[[group_id, group_name, count]]
       groups[[group_id, group_name, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
-    group_sections = {}
-    self.groupings.includes(:section).find_each do |g|
-      group_sections[g.id] = g.section&.id
-    end
+    group_sections = self.groupings.left_outer_joins(:section).pluck('groupings.id', 'sections.id').to_h
     groups = groups.map do |k, v|
       {
         _id: k[0],
