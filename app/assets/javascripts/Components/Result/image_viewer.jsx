@@ -1,9 +1,9 @@
 import React from "react";
 import {render} from "react-dom";
 
-export class ImageViewer extends React.Component {
-  constructor() {
-    super();
+export class ImageViewer extends React.PureComponent {
+  constructor(props) {
+    super(props);
     this.state = {
       rotation: window.start_image_rotation || 0,
       zoom: window.start_image_zoom || 1,

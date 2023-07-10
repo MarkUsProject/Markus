@@ -1,7 +1,7 @@
 import React from "react";
 import {markupTextInRange} from "../Helpers/range_selector";
 
-export class NotebookViewer extends React.Component {
+export class NotebookViewer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.iframe = React.createRef();

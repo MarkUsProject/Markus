@@ -171,6 +171,18 @@ describe("For the StudentTable component's rendering", () => {
   });
 });
 
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        students: [],
+        sections: {},
+        counts: {},
+      }),
+  })
+);
+
 describe("For the StudentTable's display of students", () => {
   let wrapper, students_sample;
 
@@ -222,14 +234,16 @@ describe("For the StudentTable's display of students", () => {
           remaining_grace_credits: 4,
         },
       ];
-      // Mocking the response returned by $.ajax, used in StudentTable fetchData
-      $.ajax = jest.fn(() =>
-        Promise.resolve({
+      // Mocking the response returned by fetch, used in StudentTable fetchData
+      fetch.mockReset();
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
           students: students_sample,
           sections: {1: "LEC0101"},
           counts: {all: 2, active: 2, inactive: 0},
-        })
-      );
+        }),
+      });
       wrapper = mount(<StudentTable selection={[]} course_id={1} />);
     });
 
@@ -242,13 +256,16 @@ describe("For the StudentTable's display of students", () => {
     beforeAll(() => {
       students_sample = [];
       // Mocking the response returned by $.ajax, used in StudentTable fetchData
-      $.ajax = jest.fn(() =>
-        Promise.resolve({
+      fetch.mockReset();
+      fetch.mockResolvedValueOnce({
+        // Use mockResolvedValueOnce to mock a successful response
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
           students: students_sample,
           sections: {},
           counts: {all: 0, active: 0, inactive: 0},
-        })
-      );
+        }),
+      });
       wrapper = mount(<StudentTable selection={[]} course_id={1} />);
     });
 

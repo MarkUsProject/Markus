@@ -34,22 +34,29 @@ class RawSubmissionTable extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_assignment_submissions_path(
-        this.props.course_id,
-        this.props.assignment_id
-      ),
-      dataType: "json",
-    }).then(res => {
-      this.props.resetSelection();
-      const markingStates = getMarkingStates(res.groupings);
-      this.setState({
-        groupings: res.groupings,
-        sections: res.sections,
-        loading: false,
-        marking_states: markingStates,
+    fetch(
+      Routes.course_assignment_submissions_path(this.props.course_id, this.props.assignment_id),
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.props.resetSelection();
+        const markingStates = getMarkingStates(res.groupings);
+        this.setState({
+          groupings: res.groupings,
+          sections: res.sections,
+          loading: false,
+          marking_states: markingStates,
+        });
       });
-    });
   };
 
   onFilteredChange = (filtered, column) => {

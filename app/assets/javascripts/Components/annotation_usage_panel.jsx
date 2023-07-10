@@ -58,18 +58,26 @@ class AnnotationUsagePanel extends React.Component {
   ];
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.annotation_text_uses_course_assignment_annotation_categories_path(
-        this.props.course_id,
-        this.props.assignment_id
-      ),
-      data: {
+    const url = Routes.annotation_text_uses_course_assignment_annotation_categories_path(
+      this.props.course_id,
+      this.props.assignment_id,
+      {
         annotation_text_id: this.props.annotation_id,
+      }
+    );
+    fetch(url, {
+      headers: {
+        Accept: "application/json",
       },
-      dataType: "json",
-    }).then(res => {
-      this.setState({applications: res, details: true});
-    });
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({applications: res, details: true});
+      });
   };
 
   render() {

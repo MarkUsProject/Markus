@@ -18,18 +18,28 @@ class OneTimeAnnotationsTable extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.uncategorized_annotations_course_assignment_annotation_categories_path(
+    fetch(
+      Routes.uncategorized_annotations_course_assignment_annotation_categories_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.setState({
-        data: res,
-        loading: false,
+      {
+        headers: {
+          Accept: "application/json, text/javascript",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          data: res,
+          loading: false,
+        });
       });
-    });
   };
 
   editAnnotation = (annot_id, content) => {

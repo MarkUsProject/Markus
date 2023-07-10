@@ -21,21 +21,31 @@ class RawPeerReviewTable extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.populate_table_course_assignment_peer_reviews_path(
+    fetch(
+      Routes.populate_table_course_assignment_peer_reviews_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.props.resetSelection();
-      const markingStates = getMarkingStates(res);
-      this.setState({
-        peer_reviews: res,
-        loading: false,
-        marking_states: markingStates,
+      {
+        headers: {
+          Acccept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.props.resetSelection();
+        const markingStates = getMarkingStates(res);
+        this.setState({
+          peer_reviews: res,
+          loading: false,
+          marking_states: markingStates,
+        });
       });
-    });
   };
 
   onFilteredChange = (filtered, column) => {
