@@ -4,17 +4,12 @@
                handlers: [:erb] %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-        makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
+      makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
+      $('#add-tag').click(function(e) {
+        modal_create_new.open();
+        e.preventDefault();
+      })
     });
-    (function(){
-      const domContentLoadedCB = function() {
-        $('#add-tag').click(function(e) {
-          modal_create_new.open();
-          e.preventDefault();
-        })
-      }
-      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    })();
   <% end %>
 <% end %>
 

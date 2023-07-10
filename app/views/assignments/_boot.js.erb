@@ -52,7 +52,7 @@
           <label class="required" for="'${input_id}'">${I18n.t('attributes.filename')}</label>
           <input type="text"
                  required="required"
-                 pattern="^[\-\._a-zA-Z0-9][\-\/\._a-zA-Z0-9\\s]*$"
+                 pattern="^[\\-\\._a-zA-Z0-9][\\-\\/\\._a-zA-Z0-9\\\\s]*$"
                  name="assignment[assignment_files_attributes][${new_id}][filename]"
                  id="${input_id}"
                  class="assignment_file" />
@@ -165,5 +165,4 @@
     flatpickr(".assessment_section_properties_input")
     flatpickr("#assignment_assignment_properties_attributes_start_time")
   });
-
 <% end %>

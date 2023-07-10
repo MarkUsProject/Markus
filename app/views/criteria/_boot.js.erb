@@ -1,33 +1,33 @@
 <%= javascript_tag nonce: true do %>
-    document.addEventListener("DOMContentLoaded", function() {
-      bindSortable();
+  document.addEventListener("DOMContentLoaded", function() {
+    bindSortable();
 
-      var ajaxRequest;
-      function bindSortable() {
-        $('.sortable ul').sortable({
-          axis:   'y',
-          cursor: 'move',
-          update: function() {
-            // Cancel any previous requests
-            if (typeof ajaxRequest !== 'undefined') {
-              ajaxRequest.abort();
+    var ajaxRequest;
+    function bindSortable() {
+      $('.sortable ul').sortable({
+        axis:   'y',
+        cursor: 'move',
+        update: function() {
+          // Cancel any previous requests
+          if (typeof ajaxRequest !== 'undefined') {
+            ajaxRequest.abort();
+          }
+
+          ajaxRequest = $.ajax({
+            url:  '<%= update_positions_course_assignment_criteria_path(@current_course, @assignment) %>',
+            type: 'POST',
+            data: $('.sortable ul').sortable('serialize'),
+            dataType: 'script',
+            success: function(response) {
+              ajaxRequest = undefined;
+              bindSortable();
             }
-
-            ajaxRequest = $.ajax({
-              url:  '<%= update_positions_course_assignment_criteria_path(@current_course, @assignment) %>',
-              type: 'POST',
-              data: $('.sortable ul').sortable('serialize'),
-              dataType: 'script',
-              success: function(response) {
-                ajaxRequest = undefined;
-                bindSortable();
-              }
-            });
-          },
-          cancel: '#new_criterion'
-        });
-      }
-    });
+          });
+        },
+        cancel: '#new_criterion'
+      });
+    }
+  });
 
   function add_level(id) {
     let rubric_form = $('#' + id);

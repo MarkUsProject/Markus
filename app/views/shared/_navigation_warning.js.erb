@@ -17,7 +17,7 @@
     onbeforeunload_flag = true
   });
 
-  (function(){
+  (function() {
     const domContentLoadedCB = function() {
       $('input[type="submit"]').click(function () {
         submit_clicked = true;
@@ -26,7 +26,7 @@
 
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    }else{
+    } else {
       domContentLoadedCB()
     }
   })();

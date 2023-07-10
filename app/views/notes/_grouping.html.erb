@@ -9,7 +9,7 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
-  (function(){
+  (function() {
     const domContentLoadedCB = function() {
       $('#assignment_id').on("change", (evt) => {
         document.getElementById('working').style.display = '';
@@ -27,7 +27,7 @@
 
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", domContentLoadedCB);
-    }else{
+    } else {
       domContentLoadedCB()
     }
   })();

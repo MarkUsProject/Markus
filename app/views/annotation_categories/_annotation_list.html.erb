@@ -15,8 +15,8 @@
   </div>
   <%= javascript_tag nonce: true do %>
     $('#add-annotation').click(function(e) {
-    add_annotation_prompt('<%= path %>');
-    e.preventDefault();
+      add_annotation_prompt('<%= path %>');
+      e.preventDefault();
     })
   <% end %>
 

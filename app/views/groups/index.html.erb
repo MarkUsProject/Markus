@@ -21,17 +21,16 @@
           current_duration: '<%= duration_string %>'
         }
       );
-    });
-      document.addEventListener("DOMContentLoaded", function() {
-        $('#assignment-group-use').click(function(e) {
-          modalAssignmentGroupReUse.open();
-          $('#assignment-group-use-close').click(function(e) {
-            modalAssignmentGroupReUse.close();
-            e.preventDefault();
-          })
+
+      $('#assignment-group-use').click(function(e) {
+        modalAssignmentGroupReUse.open();
+        $('#assignment-group-use-close').click(function(e) {
+          modalAssignmentGroupReUse.close();
           e.preventDefault();
         })
-      });
+        e.preventDefault();
+      })
+    });
   <% end %>
 <% end %>
 
