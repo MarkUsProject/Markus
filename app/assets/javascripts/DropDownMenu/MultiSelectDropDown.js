@@ -58,6 +58,7 @@ export class MultiSelectDropdown extends React.Component {
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}
+        data-testid={this.props.id}
       >
         <div className={"tags-box"}>
           {selected.map((tag, index) => (
