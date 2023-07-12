@@ -1,5 +1,5 @@
 <%= javascript_tag nonce: true do %>
-  $(document).ready(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     window.modal_create_new   = new ModalMarkus('#create_new_dialog');
     window.modal_edit         = new ModalMarkus('#edit_tags_dialog');
   });
