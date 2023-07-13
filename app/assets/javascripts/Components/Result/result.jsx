@@ -678,15 +678,15 @@ class Result extends React.Component {
 
   nextSubmission = direction => {
     return () => {
-      const url = Routes.next_grouping_course_result_path(
-        this.props.course_id,
-        this.state.result_id,
-        {direction: direction}
-      );
       let data = {direction: direction};
       if (this.props.role !== "Student") {
         data["filterData"] = this.state.filterData;
       }
+      const url = Routes.next_grouping_course_result_path(
+        this.props.course_id,
+        this.state.result_id,
+        data
+      );
 
       this.setState({loading: true}, () => {
         fetch(url)
