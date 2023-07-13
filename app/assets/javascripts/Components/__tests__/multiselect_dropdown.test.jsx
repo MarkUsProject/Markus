@@ -66,5 +66,9 @@ describe("MultiSelectDropdown", () => {
     expect(props.toggleOption).toHaveBeenCalledWith("def");
   });
 
-  it("should clear all selections when clicked on reset xmark icon", () => {});
+  it("should clear all selections when clicked on reset xmark icon", () => {
+    const icon = screen.getByTestId("reset");
+    fireEvent.click(icon);
+    expect(props.clearSelection).toHaveBeenCalled();
+  });
 });

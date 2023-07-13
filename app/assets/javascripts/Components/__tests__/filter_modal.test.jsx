@@ -79,6 +79,14 @@ describe("FilterModal", () => {
       expect(tags).toHaveLength(0);
     });
 
+    it("should reset tags selection when clicked on xmark icon", () => {
+      const dropdown = screen.getByTestId("Tags");
+      const icon = within(dropdown).getByTestId("reset");
+      fireEvent.click(icon);
+      const tags = dropdown.getElementsByClassName("tag");
+      expect(tags).toHaveLength(0);
+    });
+
     it("should render all selected tags", () => {
       const dropdown = screen.getByTestId("Tags");
       const tags = dropdown.getElementsByClassName("tag");
@@ -117,6 +125,14 @@ describe("FilterModal", () => {
     it("should reset tas selection on Clear all", () => {
       const dropdown = screen.getByTestId("Tas");
       fireEvent.click(screen.getByText(/Clear All/i));
+      const tags = dropdown.getElementsByClassName("tag");
+      expect(tags).toHaveLength(0);
+    });
+
+    it("should reset tas selection when clicked on xmark icon", () => {
+      const dropdown = screen.getByTestId("Tas");
+      const icon = within(dropdown).getByTestId("reset");
+      fireEvent.click(icon);
       const tags = dropdown.getElementsByClassName("tag");
       expect(tags).toHaveLength(0);
     });
