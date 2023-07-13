@@ -40,7 +40,7 @@
     width: 80px;
   }
 
-  input:invalid + div::after {
+  input:invalid + p::after {
     color: #900;
     content: 'Invalid Range';
   }

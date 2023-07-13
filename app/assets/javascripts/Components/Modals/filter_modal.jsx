@@ -48,11 +48,11 @@ export class FilterModal extends React.Component {
     }
   };
 
-  clearSelectionTAs = filter => {
+  clearSelectionTAs = () => {
     this.setState({currentTas: []});
   };
 
-  clearSelectionTags = filter => {
+  clearSelectionTags = () => {
     this.setState({currentTags: []});
   };
 
@@ -120,7 +120,7 @@ export class FilterModal extends React.Component {
           min={this.state.currentTotalMarkRange.min}
           onChange={() => {}}
         />
-        <div className={"validity"}></div>
+        <p className={"validity"}></p>
       </div>
     );
   };
@@ -131,7 +131,7 @@ export class FilterModal extends React.Component {
         <input
           className={"input-min"}
           type="number"
-          step="0.5"
+          step="0.01"
           placeholder={"Min"}
           value={this.state.currentTotalExtraMarkRange.min}
           max={this.state.currentTotalExtraMarkRange.max}
@@ -141,7 +141,7 @@ export class FilterModal extends React.Component {
         <input
           className={"input-max"}
           type="number"
-          step="0.5"
+          step="0.01"
           placeholder={"Max"}
           value={this.state.currentTotalExtraMarkRange.max}
           min={this.state.currentTotalExtraMarkRange.min}

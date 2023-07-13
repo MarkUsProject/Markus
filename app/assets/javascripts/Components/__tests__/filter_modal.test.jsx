@@ -1,5 +1,5 @@
 import * as React from "react";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, within, waitFor} from "@testing-library/react";
 import {FilterModal} from "../Modals/filter_modal";
 
 describe("FilterModal", () => {
@@ -96,6 +96,100 @@ describe("FilterModal", () => {
       const dropdown = screen.getByTestId(/Tas/i);
       const tags = dropdown.getElementsByClassName("tag");
       expect(tags).toHaveLength(2);
+    });
+  });
+
+  describe("Total Mark Range", () => {
+    it("should render 2 input fields of type number", () => {
+      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
+      expect(within(totalMarkFilter).getByPlaceholderText(/Min/i)).toHaveAttribute(
+        "type",
+        "number"
+      );
+      expect(within(totalMarkFilter).getByPlaceholderText(/Max/i)).toHaveAttribute(
+        "type",
+        "number"
+      );
+    });
+
+    it("should not show error message when passed valid range", () => {
+      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
+      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
+      fireEvent.change(minInput, {
+        target: {value: 0},
+      });
+      fireEvent.change(maxInput, {
+        target: {value: 10},
+      });
+      expect(minInput).toHaveValue(0);
+      expect(maxInput).toHaveValue(10);
+      waitFor(
+        () => expect(within(totalMarkFilter).getByText(/Invalid Range/i)).not.toBeInTheDocument
+      );
+    });
+
+    it("should show error message when passed invalid range", async () => {
+      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
+      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
+      fireEvent.change(minInput, {
+        target: {value: 0},
+      });
+      fireEvent.change(maxInput, {
+        target: {value: -1},
+      });
+      expect(minInput).toHaveValue(0);
+      expect(maxInput).toHaveValue(-1);
+      waitFor(() => expect(within(totalMarkFilter).getByText(/Invalid Range/i)).toBeInTheDocument);
+    });
+  });
+
+  describe("Total Extra Mark Range", () => {
+    it("should render 2 input fields of type number", () => {
+      const totalExtraMarkFilter = screen.getByText(/Total Extra Mark/i).closest("div");
+      expect(within(totalExtraMarkFilter).getByPlaceholderText(/Min/i)).toHaveAttribute(
+        "type",
+        "number"
+      );
+      expect(within(totalExtraMarkFilter).getByPlaceholderText(/Max/i)).toHaveAttribute(
+        "type",
+        "number"
+      );
+    });
+
+    it("should not show error message when passed valid range", () => {
+      const totalExtraMarkFilter = screen.getByText(/Total Extra Mark/i).closest("div");
+      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
+      fireEvent.change(minInput, {
+        target: {value: 0},
+      });
+      fireEvent.change(maxInput, {
+        target: {value: 10},
+      });
+      expect(minInput).toHaveValue(0);
+      expect(maxInput).toHaveValue(10);
+      waitFor(
+        () => expect(within(totalExtraMarkFilter).getByText(/Invalid Range/i)).not.toBeInTheDocument
+      );
+    });
+
+    it("should show error message when passed invalid range", async () => {
+      const totalExtraMarkFilter = screen.getByText(/Total Mark/i).closest("div");
+      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
+      fireEvent.change(minInput, {
+        target: {value: 0},
+      });
+      fireEvent.change(maxInput, {
+        target: {value: -1},
+      });
+      expect(minInput).toHaveValue(0);
+      expect(maxInput).toHaveValue(-1);
+      waitFor(
+        () => expect(within(totalExtraMarkFilter).getByText(/Invalid Range/i)).toBeInTheDocument
+      );
     });
   });
 });
