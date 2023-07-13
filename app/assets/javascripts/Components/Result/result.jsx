@@ -688,6 +688,12 @@ class Result extends React.Component {
         data
       );
 
+      const url = Routes.next_grouping_course_result_path(
+        this.props.course_id,
+        this.state.result_id,
+        data
+      );
+
       this.setState({loading: true}, () => {
         fetch(url)
           .then(response => {
