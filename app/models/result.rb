@@ -89,12 +89,12 @@ class Result < ApplicationRecord
     Result.get_subtotals([self.id], user_visibility: user_visibility)[self.id]
   end
 
-  def self.get_subtotals(result_ids, user_visibility: :ta_visible)
-    marks = Mark.joins(:criterion)
-                .where(result_id: result_ids)
-                .where("criteria.#{user_visibility}": true)
-                .group(:result_id)
-                .sum(:mark)
+  def self.get_subtotals(result_ids, user_visibility: :ta_visible, criterion_ids: nil)
+    all_marks = Mark.joins(:criterion)
+                    .where(result_id: result_ids, "criteria.#{user_visibility}": true)
+    all_marks = all_marks.where('criteria.id': criterion_ids) if criterion_ids.present?
+
+    marks = all_marks.group(:result_id).sum(:mark)
     result_ids.index_with { |r_id| marks[r_id] || 0 }
   end
 
