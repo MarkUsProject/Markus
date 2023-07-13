@@ -102,14 +102,27 @@ describe("FilterModal", () => {
   describe("Total Mark Range", () => {
     it("should render 2 input fields of type number", () => {
       const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-      expect(within(totalMarkFilter).getByPlaceholderText(/Min/i)).toHaveAttribute(
-        "type",
-        "number"
-      );
-      expect(within(totalMarkFilter).getByPlaceholderText(/Max/i)).toHaveAttribute(
-        "type",
-        "number"
-      );
+
+      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
+      expect(minInput).toHaveAttribute("type", "number");
+      expect(maxInput).toHaveAttribute("type", "number");
+    });
+
+    it("should reset range inputs on Clear all", () => {
+      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
+      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
+      fireEvent.change(minInput, {
+        target: {value: 0},
+      });
+      fireEvent.change(maxInput, {
+        target: {value: 10},
+      });
+
+      fireEvent.click(screen.getByText(/Clear All/i));
+      expect(minInput).toHaveValue(null);
+      expect(maxInput).toHaveValue(null);
     });
 
     it("should not show error message when passed valid range", () => {
@@ -148,14 +161,26 @@ describe("FilterModal", () => {
   describe("Total Extra Mark Range", () => {
     it("should render 2 input fields of type number", () => {
       const totalExtraMarkFilter = screen.getByText(/Total Extra Mark/i).closest("div");
-      expect(within(totalExtraMarkFilter).getByPlaceholderText(/Min/i)).toHaveAttribute(
-        "type",
-        "number"
-      );
-      expect(within(totalExtraMarkFilter).getByPlaceholderText(/Max/i)).toHaveAttribute(
-        "type",
-        "number"
-      );
+      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
+      expect(minInput).toHaveAttribute("type", "number");
+      expect(maxInput).toHaveAttribute("type", "number");
+    });
+
+    it("should reset range inputs on Clear all", () => {
+      const totalExtraMarkFilter = screen.getByText(/Total Mark/i).closest("div");
+      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
+      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
+      fireEvent.change(minInput, {
+        target: {value: 0},
+      });
+      fireEvent.change(maxInput, {
+        target: {value: 10},
+      });
+
+      fireEvent.click(screen.getByText(/Clear All/i));
+      expect(minInput).toHaveValue(null);
+      expect(maxInput).toHaveValue(null);
     });
 
     it("should not show error message when passed valid range", () => {
