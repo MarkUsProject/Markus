@@ -1,7 +1,7 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-export class Dropdown extends React.Component {
+export class SingleSelectDropDown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {expanded: false};
@@ -25,7 +25,7 @@ export class Dropdown extends React.Component {
         );
       } else {
         return (
-          <ul>
+          <ul data-testid={"options"}>
             {options.map(option => {
               return (
                 <li
@@ -45,9 +45,9 @@ export class Dropdown extends React.Component {
 
   renderArrow = () => {
     if (this.state.expanded !== false) {
-      return <span className="arrow-up" />;
+      return <span className="arrow-up" data-testid={"arrow-up"} />;
     } else {
-      return <span className="arrow-down" />;
+      return <span className="arrow-down" data-testid={"arrow-down"} />;
     }
   };
 
@@ -62,8 +62,9 @@ export class Dropdown extends React.Component {
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}
+        data-testid={"dropdown"}
       >
-        <a>{this.props.selected}</a>
+        <a data-testid={"selection"}>{this.props.selected}</a>
         <div className="options">
           <div
             className="reset"
@@ -71,6 +72,7 @@ export class Dropdown extends React.Component {
               e.preventDefault();
               this.select(e, this.props.defaultValue);
             }}
+            data-testid={"reset-dropdown-selection"}
           >
             <FontAwesomeIcon icon="fa-solid fa-xmark" style={{color: "#255185"}} />
           </div>
