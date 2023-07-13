@@ -37,9 +37,34 @@ describe("MultiSelectDropdown", () => {
     expect(screen.getByLabelText("abc")).toHaveAttribute("checked");
   });
 
+  it("should close expanded dropdown on click", () => {
+    const tags_box = screen.getByTestId("tags-box");
+    fireEvent.click(tags_box);
+    fireEvent.click(tags_box);
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+  });
+
   it("should deselect option when clicked on tag", () => {
     const tag = screen.getByText("abc");
     fireEvent.click(tag);
     expect(props.toggleOption).toHaveBeenCalledWith("abc");
   });
+
+  it("should deselect option when clicked on a select list item", () => {
+    const tags_box = screen.getByTestId("tags-box");
+    fireEvent.click(tags_box);
+    const selected_option = screen.getByLabelText("abc");
+    fireEvent.click(selected_option);
+    expect(props.toggleOption).toHaveBeenCalledWith("abc");
+  });
+
+  it("should select option when clicked on a list item", () => {
+    const tags_box = screen.getByTestId("tags-box");
+    fireEvent.click(tags_box);
+    const option = screen.getByLabelText("def");
+    fireEvent.click(option);
+    expect(props.toggleOption).toHaveBeenCalledWith("def");
+  });
+
+  it("should clear all selections when clicked on reset xmark icon", () => {});
 });

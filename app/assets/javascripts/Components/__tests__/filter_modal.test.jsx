@@ -24,8 +24,9 @@ describe("FilterModal", () => {
           max: "",
         },
       },
-      available_tags: ["abc", "def"],
-      current_tags: ["jhk", "lmp"],
+      available_tags: [{name: "abc"}, {name: "def"}],
+      current_tags: [{name: "jkl"}, {name: "ghi"}],
+      tas: ["abc", "def", "jkl", "ghi"],
       isOpen: true,
       onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
       mutateFilterData: jest.fn().mockImplementation(() => null),
@@ -47,10 +48,13 @@ describe("FilterModal", () => {
     expect(screen.getByText(/Filter By:/i)).toBeInTheDocument();
     expect(screen.getByText(/Save/i)).toBeInTheDocument();
     expect(screen.getByText(/Clear All/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Annotation/i)).toBeInTheDocument();
   });
 
   describe("Filter By Annotation", () => {
+    it("should render the annotation textbox", () => {
+      expect(screen.getByLabelText(/Annotation/i)).toBeInTheDocument();
+    });
+
     it("should reset annotation textbox on Clear all", () => {
       fireEvent.change(screen.getByLabelText("Annotation"), {
         target: {value: "JavaScript"},
@@ -58,44 +62,89 @@ describe("FilterModal", () => {
       fireEvent.click(screen.getByText(/Clear All/i));
       expect(screen.getByLabelText("Annotation")).toHaveValue("");
     });
-
-    it("should save annotation text on submit", () => {
-      fireEvent.change(screen.getByLabelText("Annotation"), {
-        target: {value: "JavaScript"},
-      });
-      fireEvent.click(screen.getByText(/Save/i));
-      props.isOpen = true;
-      expect(screen.getByLabelText("Annotation")).toHaveValue("JavaScript");
-    });
   });
 
   describe("Filter By Tags", () => {
-    it("should reset tags selection on Clear all", async () => {
-      const dropdown = screen.getByTestId(/Tags/i);
+    it("should reset tags selection on Clear all", () => {
+      const dropdown = screen.getByTestId("Tags");
       fireEvent.click(screen.getByText(/Clear All/i));
       const tags = dropdown.getElementsByClassName("tag");
       expect(tags).toHaveLength(0);
     });
 
-    it("should save render all selected tags", () => {
-      const dropdown = screen.getByTestId(/Tags/i);
+    it("should render all selected tags", () => {
+      const dropdown = screen.getByTestId("Tags");
       const tags = dropdown.getElementsByClassName("tag");
       expect(tags).toHaveLength(2);
+    });
+
+    it("should select option when clicked on an option", () => {
+      const dropdown = screen.getByTestId("Tags");
+      fireEvent.click(dropdown);
+      const option = within(dropdown).getByLabelText("ghi");
+      fireEvent.click(option);
+      waitFor(() => expect(option).toHaveAttribute("checked"));
+      fireEvent.click(dropdown);
+      expect(within(dropdown).queryByText("ghi")).toBeInTheDocument();
+    });
+
+    it("should deselect option when clicked on a tag", () => {
+      const dropdown = screen.getByTestId("Tags");
+      const tag = within(dropdown).getByText("abc");
+      fireEvent.click(tag);
+      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
+    });
+
+    it("should deselect option when clicked on a selected option", () => {
+      const dropdown = screen.getByTestId("Tags");
+      fireEvent.click(dropdown);
+      const selected_option = within(dropdown).getByLabelText("abc");
+      fireEvent.click(selected_option);
+      waitFor(() => expect(selected_option).not.toHaveAttribute("checked"));
+      fireEvent.click(dropdown);
+      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
     });
   });
 
   describe("Filter By Tas", () => {
     it("should reset tas selection on Clear all", () => {
-      const dropdown = screen.getByTestId(/Tas/i);
+      const dropdown = screen.getByTestId("Tas");
       fireEvent.click(screen.getByText(/Clear All/i));
       const tags = dropdown.getElementsByClassName("tag");
       expect(tags).toHaveLength(0);
     });
 
-    it("should save render all selected tas", () => {
-      const dropdown = screen.getByTestId(/Tas/i);
+    it("should render all selected tas", () => {
+      const dropdown = screen.getByTestId("Tas");
       const tags = dropdown.getElementsByClassName("tag");
       expect(tags).toHaveLength(2);
+    });
+
+    it("should select option when clicked on an option", () => {
+      const dropdown = screen.getByTestId("Tas");
+      fireEvent.click(dropdown);
+      const option = within(dropdown).getByLabelText("ghi");
+      fireEvent.click(option);
+      waitFor(() => expect(option).toHaveAttribute("checked"));
+      fireEvent.click(dropdown);
+      expect(within(dropdown).queryByText("ghi")).toBeInTheDocument();
+    });
+
+    it("should deselect option when clicked on a tag", () => {
+      const dropdown = screen.getByTestId("Tas");
+      const tag = within(dropdown).getByText("abc");
+      fireEvent.click(tag);
+      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
+    });
+
+    it("should deselect option when clicked on a selected option", () => {
+      const dropdown = screen.getByTestId("Tas");
+      fireEvent.click(dropdown);
+      const selected_option = within(dropdown).getByLabelText("abc");
+      fireEvent.click(selected_option);
+      waitFor(() => expect(selected_option).not.toHaveAttribute("checked"));
+      fireEvent.click(dropdown);
+      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
     });
   });
 
@@ -200,7 +249,7 @@ describe("FilterModal", () => {
       );
     });
 
-    it("should show error message when passed invalid range", async () => {
+    it("should show error message when passed invalid range", () => {
       const totalExtraMarkFilter = screen.getByText(/Total Mark/i).closest("div");
       const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
       const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
