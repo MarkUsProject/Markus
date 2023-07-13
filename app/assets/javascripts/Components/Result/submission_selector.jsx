@@ -23,9 +23,10 @@ export class SubmissionSelector extends React.Component {
         className={className}
         disabled={disabled}
         style={{alignSelf: "flex-end", width: "140px"}}
+        title={buttonText}
       >
         {icon}
-        {buttonText}
+        <span className="button-text">{buttonText}</span>
       </button>
     );
   };
@@ -33,13 +34,23 @@ export class SubmissionSelector extends React.Component {
   renderReleaseMarksButton() {
     if (!this.props.can_release) return "";
 
-    let buttonText, disabled;
+    let buttonText, disabled, icon;
     if (this.props.released_to_students) {
       buttonText = I18n.t("submissions.unrelease_marks");
       disabled = false;
+      icon = (
+        <span className="fa-layers fa-fw">
+          <FontAwesomeIcon
+            icon="fa-solid fa-envelope-circle-check"
+            color={document.documentElement.style.getPropertyValue("--disabled_text")}
+          />
+          <FontAwesomeIcon icon="fa-solid fa-slash" />
+        </span>
+      );
     } else {
       buttonText = I18n.t("submissions.release_marks");
       disabled = this.props.marking_state !== "complete";
+      icon = <FontAwesomeIcon icon="fa-solid fa-envelope-circle-check" />;
     }
     return (
       <button
@@ -47,9 +58,10 @@ export class SubmissionSelector extends React.Component {
         onClick={this.props.setReleasedToStudents}
         disabled={disabled}
         style={{alignSelf: "flex-end"}}
+        title={buttonText}
       >
-        <FontAwesomeIcon icon="fa-solid fa-envelope-circle-check" />
-        {buttonText}
+        {icon}
+        <span className="button-text">{buttonText}</span>
       </button>
     );
   }
@@ -61,10 +73,10 @@ export class SubmissionSelector extends React.Component {
           className="fullscreen-exit"
           onClick={this.props.toggleFullscreen}
           style={{alignSelf: "flex-end"}}
-          title="Alt + Enter"
+          title={`${I18n.t("results.fullscreen_exit")} (Alt + Enter)`}
         >
           <FontAwesomeIcon icon="fa-solid fa-compress" />
-          {I18n.t("results.fullscreen_exit")}
+          <span className="button-text">{I18n.t("results.fullscreen_exit")}</span>
         </button>
       );
     } else {
@@ -73,10 +85,10 @@ export class SubmissionSelector extends React.Component {
           className="fullscreen-enter"
           onClick={this.props.toggleFullscreen}
           style={{alignSelf: "flex-end"}}
-          title="Alt + Enter"
+          title={`${I18n.t("results.fullscreen_enter")} (Alt + Enter)`}
         >
           <FontAwesomeIcon icon="fa-solid fa-expand" />
-          {I18n.t("results.fullscreen_enter")}
+          <span className="button-text">{I18n.t("results.fullscreen_enter")}</span>
         </button>
       );
     }
@@ -88,9 +100,10 @@ export class SubmissionSelector extends React.Component {
         className={"button"}
         href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
         style={{alignSelf: "flex-end"}}
+        title={I18n.t("results.print")}
       >
         <FontAwesomeIcon icon={"fa-solid fa-print"} />
-        {I18n.t("results.print")}
+        <span className="button-text">{I18n.t("results.print")}</span>
       </a>
     );
   }
