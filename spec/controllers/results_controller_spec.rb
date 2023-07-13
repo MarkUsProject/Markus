@@ -167,7 +167,47 @@ describe ResultsController do
     #     end
     #   end
     # end
+
+    context 'filter by tags' do
+      let!(:tag1) { create :tag, groupings: [grouping1, grouping3] }
+      let!(:tag2) { create :tag, groupings: [grouping2, grouping3] }
+
+      context 'when a tag has been picked' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [tag1.name] } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [tag1.name] } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when multiple tags have been picked' do
+        it 'should return the next group with a larger group name that has atleast one of the tags' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [tag1, tag2] } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+
+      context 'when no tag has been picked' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [] } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
   end
+
   shared_examples 'shared ta and instructor tests' do
     context 'accessing next_grouping' do
       it 'should receive 200 when current grouping has a submission' do

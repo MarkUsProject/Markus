@@ -68,15 +68,20 @@ export class FilterModal extends React.Component {
   };
 
   renderTasDropdown = () => {
-    return (
-      <MultiSelectDropdown
-        id={"Tas"}
-        options={this.props.tas}
-        selected={this.state.currentTas}
-        toggleOption={this.toggleOptionTas}
-        clearSelection={this.clearSelectionTAs}
-      />
-    );
+    if (this.props.role !== "Ta") {
+      return (
+        <div className={"filter"}>
+          <p>{I18n.t("results.filters.tas")}</p>
+          <MultiSelectDropdown
+            id={"Tas"}
+            options={this.props.tas}
+            selected={this.state.currentTas}
+            toggleOption={this.toggleOptionTas}
+            clearSelection={this.clearSelectionTAs}
+          />
+        </div>
+      );
+    }
   };
 
   renderTagsDropdown = () => {
@@ -299,10 +304,7 @@ export class FilterModal extends React.Component {
                   </div>
                 </div>
                 <div className={"modal-container"}>
-                  <div className={"filter"}>
-                    <p>{I18n.t("results.filters.tas")}</p>
-                    {this.renderTasDropdown()}
-                  </div>
+                  {this.renderTasDropdown()}
                   <label className={"annotation-input"}>
                     <p>{I18n.t("results.filters.annotation")}</p>
                     <input
