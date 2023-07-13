@@ -720,7 +720,7 @@ class Grouping < ApplicationRecord
     end
     results = results.joins(grouping: :group)
     if !filter_data.nil?
-      results = filter_groupings(results, filter_data)
+      results = filter_groupings(current_role, results, filter_data)
       order_and_get_next_grouping(results, filter_data, reversed)
     else
       results = results.order('groups.group_name')
@@ -747,7 +747,7 @@ class Grouping < ApplicationRecord
 
   private
 
-  def filter_groupings(results, filter_data)
+  def filter_groupings(current_role, results, filter_data)
     unless filter_data['annotationValue'].nil? || filter_data['annotationValue'] == ''
       results = results.joins(annotations: :annotation_text)
                        .where('annotation_texts.content LIKE ?',
@@ -773,7 +773,7 @@ class Grouping < ApplicationRecord
                          .where('results.marking_state' => Result::MARKING_STATES[:incomplete])
       end
     end
-    unless filter_data['tas'].nil? || filter_data['tas'] == []
+    unless current_role.ta? || filter_data['tas'].nil? || filter_data['tas'] == []
       results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
     end
     unless filter_data['tags'].nil? || filter_data['tags'] == []
