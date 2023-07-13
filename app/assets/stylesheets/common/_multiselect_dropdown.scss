@@ -11,7 +11,7 @@
     flex-wrap: nowrap;
     height: 30px;
     margin-left: 1.5%;
-    max-width: $dropdown-horizontal - 30px;
+    max-width: $dropdown-horizontal - 50px;
     overflow: scroll;
     padding: 0 1.5%;
 
@@ -55,6 +55,11 @@
 
     li {
       align-self: stretch;
+      padding-left: 5px;
+
+      label {
+        margin-left: 0.25em;
+      }
     }
   }
 
