@@ -192,7 +192,7 @@ describe ResultsController do
         it 'should return the next group with a larger group name that has atleast one of the tags' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { tags: [tag1, tag2] } }
+                                        direction: 1, filterData: { tags: [tag1.name, tag2.name] } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
         end
       end
@@ -1100,6 +1100,49 @@ describe ResultsController do
 
     context 'accessing next_grouping' do
       include_examples 'ta and instructor #next_grouping with filters'
+
+      context 'filter by tas' do
+        let(:ta1) { create :ta }
+        let(:ta2) { create :ta }
+        let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
+        let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
+        let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
+        let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+
+        context 'when a ta has been picked' do
+          it 'should return the next group with a larger group name that satisfies the constraints' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+
+          it 'should not return the next group that doesn\'t satisfy the constraint' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+        end
+
+        context 'when multiple tas have been picked' do
+          it 'should return the next group with a larger group name that has atleast one of the tas' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name, ta2.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
+
+        context 'when no Ta is picked' do
+          it 'should return the next grouping without constraints' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
+      end
     end
 
     describe '#random_incomplete_submission' do
@@ -1399,6 +1442,23 @@ describe ResultsController do
       end
       context 'accessing next_grouping with valid permissions' do
         include_examples 'ta and instructor #next_grouping with filters'
+        context 'filter by tas' do
+          let(:ta1) { create :ta }
+          let(:ta2) { create :ta }
+          let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
+          let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
+          let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
+          let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+
+          context 'when a ta has been picked' do
+            it 'should return the next group with a larger group name and not filter by selected ta' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                            id: grouping1.current_result.id,
+                                            direction: 1, filterData: { tas: [ta1.user.user_name] } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+            end
+          end
+        end
       end
     end
   end
