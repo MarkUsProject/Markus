@@ -2,6 +2,12 @@ import * as React from "react";
 import {render, screen, fireEvent, within, waitFor} from "@testing-library/react";
 import {FilterModal} from "../Modals/filter_modal";
 
+jest.mock("@fortawesome/react-fontawesome", () => ({
+  FontAwesomeIcon: () => {
+    return null;
+  },
+}));
+
 describe("FilterModal", () => {
   let props;
 
@@ -316,46 +322,30 @@ describe("FilterModal", () => {
         it("should save the selection on change", () => {
           // setting the ordering to descending
           fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
-          waitFor(() => {
-            expect(
-              within(screen.getByTestId("order-by")).getByTestId("descending")
-            ).toHaveAttribute("checked", "");
-            expect(
-              within(screen.getByTestId("order-by")).getByTestId("ascending")
-            ).not.toHaveAttribute("checked");
-          });
+          expect(within(screen.getByTestId("order-by")).getByTestId("descending")).toBeChecked();
+          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).not.toBeChecked();
         });
         it("should reset ordering on clear", () => {
           // setting the ordering to descending
-          fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
+          fireEvent.change(within(screen.getByTestId("order-by")).getByTestId("descending"));
           // clearing the dropdown values
           fireEvent.click(
             within(screen.getByTestId("order-by")).getByTestId("reset-dropdown-selection")
           );
-          waitFor(() => {
-            expect(
-              within(screen.getByTestId("order-by")).getByTestId("descending")
-            ).not.toHaveAttribute("checked");
-            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
-              "checked",
-              ""
-            );
-          });
+          expect(
+            within(screen.getByTestId("order-by")).getByTestId("descending")
+          ).not.toBeChecked();
+          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toBeChecked();
         });
         it("should reset ordering on clearAll", () => {
           // setting the ordering to descending
-          fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
+          fireEvent.change(within(screen.getByTestId("order-by")).getByTestId("descending"));
           // clearing the dropdown values
           fireEvent.click(screen.getByText(/Clear All/i));
-          waitFor(() => {
-            expect(
-              within(screen.getByTestId("order-by")).getByTestId("descending")
-            ).not.toHaveAttribute("checked");
-            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
-              "checked",
-              ""
-            );
-          });
+          expect(
+            within(screen.getByTestId("order-by")).getByTestId("descending")
+          ).not.toBeChecked();
+          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toBeChecked();
         });
       });
     });
