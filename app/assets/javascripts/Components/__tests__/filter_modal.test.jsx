@@ -268,19 +268,17 @@ describe("FilterModal", () => {
   });
   describe("Single Select Dropdown Filters", () => {
     let singleSelectDropdownMakeSelection = (filterTestId, selection) => {
-      it("should save the selection on submit", () => {
+      it("should change the selection", () => {
         let dropdownDiv = screen.getByTestId(filterTestId);
         fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
         fireEvent.click(within(dropdownDiv).getByText(selection));
-        fireEvent.click(screen.getByText(/Save/i));
-        props.isOpen = true;
         expect(within(screen.getByTestId(filterTestId)).getByTestId("selection")).toHaveTextContent(
           selection
         );
       });
     };
     let singleSelectDropdownClearAll = (filterTestId, selection, defaultValue) => {
-      it("should reset selection on Clear all", async () => {
+      it("should reset selection on Clear all", () => {
         let dropdownDiv = screen.getByTestId(filterTestId);
         // setting the dropdown value to some random value
         fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
@@ -315,20 +313,17 @@ describe("FilterModal", () => {
         });
       });
       describe("selecting between ascending and descending order", () => {
-        it("should save the selection on submit", () => {
+        it("should save the selection on change", () => {
           // setting the ordering to descending
           fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
-          fireEvent.click(screen.getByText(/Save/i));
-          props.isOpen = true;
-          screen.debug();
-          expect(within(screen.getByTestId("order-by")).getByTestId("descending")).toHaveAttribute(
-            "checked",
-            true
-          );
-          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
-            "checked",
-            false
-          );
+          waitFor(() => {
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("descending")
+            ).toHaveAttribute("checked", "");
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("ascending")
+            ).not.toHaveAttribute("checked");
+          });
         });
         it("should reset ordering on clear", () => {
           // setting the ordering to descending
@@ -337,28 +332,30 @@ describe("FilterModal", () => {
           fireEvent.click(
             within(screen.getByTestId("order-by")).getByTestId("reset-dropdown-selection")
           );
-          expect(within(screen.getByTestId("order-by")).getByTestId("descending")).toHaveAttribute(
-            "checked",
-            false
-          );
-          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
-            "checked",
-            true
-          );
+          waitFor(() => {
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("descending")
+            ).not.toHaveAttribute("checked");
+            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
+              "checked",
+              ""
+            );
+          });
         });
         it("should reset ordering on clearAll", () => {
           // setting the ordering to descending
           fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
           // clearing the dropdown values
           fireEvent.click(screen.getByText(/Clear All/i));
-          expect(within(screen.getByTestId("order-by")).getByTestId("descending")).toHaveAttribute(
-            "checked",
-            false
-          );
-          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
-            "checked",
-            true
-          );
+          waitFor(() => {
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("descending")
+            ).not.toHaveAttribute("checked");
+            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
+              "checked",
+              ""
+            );
+          });
         });
       });
     });

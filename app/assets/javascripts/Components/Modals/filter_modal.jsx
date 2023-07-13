@@ -246,6 +246,7 @@ export class FilterModal extends React.Component {
                       onChange={e => {
                         this.setState({currentAscBool: !this.state.currentAscBool});
                       }}
+                      data-testid={"radio-group"}
                     >
                       <input
                         type="radio"
