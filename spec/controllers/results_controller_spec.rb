@@ -45,24 +45,26 @@ describe ResultsController do
   end
 
   shared_examples 'ta and instructor #next_grouping with filters' do
-    let!(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
-    let!(:grouping2) do
+    let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+    let(:grouping2) do
       create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
     end
-    let!(:grouping3) do
+    let(:grouping3) do
       create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
     end
-    let!(:grouping4) { create :grouping, assignment: grouping1.assignment }
+    let(:grouping4) { create :grouping, assignment: grouping1.assignment }
     let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
     let(:annotation_text) { create :annotation_text, content: 'aa_' }
     before(:each) do
-      create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
-      create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
       4.times do |i|
         create :ta_membership, role: ta, grouping: groupings[i]
       end
     end
     context 'when annotation text filter is applied' do
+      before(:each) do
+        create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
+        create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
+      end
       context 'when there are no more filtered submissions in the specified direction' do
         it 'should return a response with next_grouping and next_result set to nil' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
@@ -116,6 +118,55 @@ describe ResultsController do
         end
       end
     end
+    context 'section filter' do
+      let(:section) { create :section }
+      before(:each) do
+        groupings[0].inviter.update(section: section)
+        groupings[1].inviter.update(section: nil)
+        groupings[2].inviter.update(section: section)
+      end
+      context 'when a section has been picked' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { sectionValue: 'Section 1' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { sectionValue: 'Section 1' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+      context 'when section is left blank' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { sectionValue: '' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
+    # context 'marking state filter' do
+    #   context 'when remark request is selected' do
+    #     it 'should respond with the next grouping with a remark requested' do
+    #     end
+    #   end
+    #   context 'when released is selected' do
+    #     it 'should respond with the next grouping whose submission has been released' do
+    #     end
+    #   end
+    #
+    #   context 'when complete is selected' do
+    #     it 'should respond with the next grouping whose result is complete' do
+    #     end
+    #   end
+    #   context 'when in progress is selected' do
+    #     it 'should respond with the next grouping whose result is incomplete' do
+    #     end
+    #   end
+    # end
   end
   shared_examples 'shared ta and instructor tests' do
     context 'accessing next_grouping' do
