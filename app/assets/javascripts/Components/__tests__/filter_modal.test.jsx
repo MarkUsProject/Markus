@@ -26,6 +26,7 @@ describe("FilterModal", () => {
       },
       available_tags: [{name: "abc"}, {name: "def"}],
       current_tags: [{name: "jkl"}, {name: "ghi"}],
+      sections: ["LEC0101", "LEC0202"],
       tas: ["abc", "def", "jkl", "ghi"],
       isOpen: true,
       onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
@@ -222,7 +223,6 @@ describe("FilterModal", () => {
       waitFor(() => expect(within(totalMarkFilter).getByText(/Invalid Range/i)).toBeInTheDocument);
     });
   });
-
   describe("Total Extra Mark Range", () => {
     it("should render 2 input fields of type number", () => {
       const totalExtraMarkFilter = screen.getByText(/Total Extra Mark/i).closest("div");
@@ -280,6 +280,119 @@ describe("FilterModal", () => {
       waitFor(
         () => expect(within(totalExtraMarkFilter).getByText(/Invalid Range/i)).toBeInTheDocument
       );
+    });
+  });
+  describe("Single Select Dropdown Filters", () => {
+    let singleSelectDropdownMakeSelection = (filterTestId, selection) => {
+      it("should change the selection", () => {
+        let dropdownDiv = screen.getByTestId(filterTestId);
+        fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
+        fireEvent.click(within(dropdownDiv).getByText(selection));
+        expect(within(screen.getByTestId(filterTestId)).getByTestId("selection")).toHaveTextContent(
+          selection
+        );
+      });
+    };
+    let singleSelectDropdownClearAll = (filterTestId, selection, defaultValue) => {
+      it("should reset selection on Clear all", () => {
+        let dropdownDiv = screen.getByTestId(filterTestId);
+        // setting the dropdown value to some random value
+        fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
+        fireEvent.click(within(dropdownDiv).getByText(selection));
+        //resetting the dropdown value
+        fireEvent.click(screen.getByText(/Clear All/i));
+        expect(within(dropdownDiv).getByTestId("selection")).toHaveTextContent(defaultValue);
+      });
+    };
+    let singleSelectDropdownClear = (filterTestId, selection, defaultValue) => {
+      it("should reset the selection and close the dropdown when the x button is clicked", () => {
+        let dropdownDiv = screen.getByTestId(filterTestId);
+        // setting the dropdown value to some random value
+        fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
+        fireEvent.click(within(dropdownDiv).getByText(selection));
+        // resetting the dropdown value
+        fireEvent.click(within(dropdownDiv).getByTestId("reset-dropdown-selection"));
+        expect(within(dropdownDiv).getByTestId("selection")).toHaveTextContent(defaultValue);
+      });
+    };
+    describe("Order By", () => {
+      describe("selecting order subject", () => {
+        singleSelectDropdownMakeSelection("order-by", "Submission Date");
+        singleSelectDropdownClearAll("order-by", "Submission Date", "Group Name");
+        singleSelectDropdownClear("order-by", "Submission Date", "Group Name");
+        it("should show the user specific options", () => {
+          let dropdownDiv = screen.getByTestId("order-by");
+          fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
+          const options = within(dropdownDiv).getByTestId("options");
+          expect(within(options).getByText("Group Name")).toBeInTheDocument();
+          expect(within(options).getByText("Submission Date")).toBeInTheDocument();
+        });
+      });
+      describe("selecting between ascending and descending order", () => {
+        it("should save the selection on change", () => {
+          // setting the ordering to descending
+          fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
+          waitFor(() => {
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("descending")
+            ).toHaveAttribute("checked", "");
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("ascending")
+            ).not.toHaveAttribute("checked");
+          });
+        });
+        it("should reset ordering on clear", () => {
+          // setting the ordering to descending
+          fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
+          // clearing the dropdown values
+          fireEvent.click(
+            within(screen.getByTestId("order-by")).getByTestId("reset-dropdown-selection")
+          );
+          waitFor(() => {
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("descending")
+            ).not.toHaveAttribute("checked");
+            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
+              "checked",
+              ""
+            );
+          });
+        });
+        it("should reset ordering on clearAll", () => {
+          // setting the ordering to descending
+          fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
+          // clearing the dropdown values
+          fireEvent.click(screen.getByText(/Clear All/i));
+          waitFor(() => {
+            expect(
+              within(screen.getByTestId("order-by")).getByTestId("descending")
+            ).not.toHaveAttribute("checked");
+            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toHaveAttribute(
+              "checked",
+              ""
+            );
+          });
+        });
+      });
+    });
+    describe("Filter By Section", () => {
+      singleSelectDropdownMakeSelection("section", "LEC0101");
+      singleSelectDropdownClearAll("section", "LEC0101", "");
+      singleSelectDropdownClear("section", "LEC0101", "");
+    });
+    describe("Filter By Marking State", () => {
+      singleSelectDropdownMakeSelection("marking-state", "Complete");
+      singleSelectDropdownClearAll("marking-state", "Complete", "");
+      singleSelectDropdownClear("marking-state", "Complete", "");
+      it("should show the user specific options", () => {
+        let dropdownDiv = screen.getByTestId("marking-state");
+        fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
+        dropdownDiv = screen.getByTestId("marking-state");
+        expect(within(dropdownDiv).getByText("In Progress")).toBeInTheDocument();
+        expect(within(dropdownDiv).getByText("Complete")).toBeInTheDocument();
+        expect(within(dropdownDiv).getByText("Released")).toBeInTheDocument();
+        expect(within(dropdownDiv).getByText("Remark Requested")).toBeInTheDocument();
+      });
     });
   });
 });

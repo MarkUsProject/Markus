@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
-import {Dropdown} from "../../DropDownMenu/DropDown";
+import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 
 const INITIAL_MODAL_STATE = {
   currentOrderBy: "Group Name",
@@ -236,9 +236,9 @@ export class FilterModal extends React.Component {
             <div className={"modal-container-scrollable"}>
               <div className={"modal-container-vertical"}>
                 <div className={"modal-container"}>
-                  <div className={"filter"}>
+                  <div className={"filter"} data-testid={"order-by"}>
                     <p>{I18n.t("results.filters.order_by")} </p>
-                    <Dropdown
+                    <SingleSelectDropDown
                       options={["Group Name", "Submission Date"]}
                       selected={this.state.currentOrderBy}
                       select={selection => {
@@ -251,6 +251,7 @@ export class FilterModal extends React.Component {
                       onChange={e => {
                         this.setState({currentAscBool: !this.state.currentAscBool});
                       }}
+                      data-testid={"radio-group"}
                     >
                       <input
                         type="radio"
@@ -258,6 +259,7 @@ export class FilterModal extends React.Component {
                         name="order"
                         value="Asc"
                         onChange={() => {}}
+                        data-testid={"ascending"}
                       />
                       <label htmlFor="Asc">Ascending</label>
                       <input
@@ -266,13 +268,14 @@ export class FilterModal extends React.Component {
                         name="order"
                         value="Desc"
                         onChange={() => {}}
+                        data-testid={"descending"}
                       />
                       <label htmlFor="Desc">Descending</label>
                     </div>
                   </div>
-                  <div className={"filter"}>
+                  <div className={"filter"} data-testid={"marking-state"}>
                     <p>Marking State</p>
-                    <Dropdown
+                    <SingleSelectDropDown
                       options={[
                         I18n.t("submissions.state.in_progress"),
                         I18n.t("submissions.state.complete"),
@@ -291,9 +294,9 @@ export class FilterModal extends React.Component {
                     <p>{I18n.t("results.filters.tags")}</p>
                     {this.renderTagsDropdown()}
                   </div>
-                  <div className={"filter"}>
+                  <div className={"filter"} data-testid={"section"}>
                     <p>Section</p>
-                    <Dropdown
+                    <SingleSelectDropDown
                       options={this.props.sections}
                       selected={this.state.currentSectionValue}
                       select={selection => {
