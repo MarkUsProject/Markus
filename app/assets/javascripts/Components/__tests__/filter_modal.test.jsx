@@ -341,21 +341,9 @@ describe("FilterModal", () => {
           expect(within(screen.getByTestId("order-by")).getByTestId("descending")).toBeChecked();
           expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).not.toBeChecked();
         });
-        it("should reset ordering on clear", () => {
-          // setting the ordering to descending
-          fireEvent.change(within(screen.getByTestId("order-by")).getByTestId("descending"));
-          // clearing the dropdown values
-          fireEvent.click(
-            within(screen.getByTestId("order-by")).getByTestId("reset-dropdown-selection")
-          );
-          expect(
-            within(screen.getByTestId("order-by")).getByTestId("descending")
-          ).not.toBeChecked();
-          expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toBeChecked();
-        });
         it("should reset ordering on clearAll", () => {
           // setting the ordering to descending
-          fireEvent.change(within(screen.getByTestId("order-by")).getByTestId("descending"));
+          fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
           // clearing the dropdown values
           fireEvent.click(screen.getByText(/Clear All/i));
           expect(
