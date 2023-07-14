@@ -29,4 +29,10 @@ FactoryBot.define do
       g.reload
     end
   end
+  factory :grouping_with_inviter_and_accurate_submission, parent: :grouping_with_inviter do
+    after(:create) do |g|
+      create(:version_used_submission_accurate_revision, grouping: g)
+      g.reload
+    end
+  end
 end

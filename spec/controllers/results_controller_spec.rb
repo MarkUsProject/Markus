@@ -54,13 +54,13 @@ describe ResultsController do
     end
     let(:grouping4) { create :grouping, assignment: grouping1.assignment }
     let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
-    let(:annotation_text) { create :annotation_text, content: 'aa_' }
     before(:each) do
       4.times do |i|
         create :ta_membership, role: ta, grouping: groupings[i]
       end
     end
     context 'when annotation text filter is applied' do
+      let(:annotation_text) { create :annotation_text, content: 'aa_' }
       before(:each) do
         create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
         create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
@@ -338,6 +338,151 @@ describe ResultsController do
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { tags: [] } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
+  end
+
+  shared_examples 'instructor and ta #next_grouping with different orderings' do
+    let(:grouping1) { create :grouping_with_inviter_and_accurate_submission, is_collected: true }
+    let(:grouping2) do
+      create :grouping_with_inviter_and_accurate_submission, assignment: grouping1.assignment, is_collected: true
+    end
+    let(:grouping3) do
+      create :grouping_with_inviter_and_accurate_submission, assignment: grouping1.assignment, is_collected: true
+    end
+    before(:each) do
+      3.times do |i|
+        create :ta_membership, role: ta, grouping: groupings[i]
+      end
+    end
+    context 'order by group name' do
+      context 'Descending Order' do
+        context 'direction = 1' do
+          it 'should return the next grouping in descending order of group name' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                          id: grouping2.current_result.id,
+                                          direction: 1, filterData: { ascBool: 'false', orderBy: 'Group Name' } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+          end
+        end
+        context 'direction = -1' do
+          it 'should return the previous grouping in descending order of group name' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                          id: grouping2.current_result.id,
+                                          direction: -1, filterData: { ascBool: 'false', orderBy: 'Group Name' } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+      end
+    end
+    context 'order by submission date' do
+      context 'Ascending Order' do
+        context 'when direction = 1' do
+          context 'when the ordered submission has a different submission date from the current one' do
+            it 'should return the grouping with the next latest submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: 1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+            end
+          end
+          context 'when the next ordered submission shares has the same submission date as the current one' do
+            let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+            let(:grouping2) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            let(:grouping3) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            it 'should return the grouping with the next largest group name with the same submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: 1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+            end
+          end
+        end
+        context 'direction = -1' do
+          context 'when the previous ordered submission has a different submission date from the current one' do
+            it 'should return the grouping with the next earliest submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: -1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+            end
+          end
+          context 'when the previous ordered submission shares has the same submission date as the current one' do
+            let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+            let(:grouping2) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            let(:grouping3) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            it 'should return the grouping with the next smallest group name with the same submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: -1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+            end
+          end
+        end
+      end
+      context 'Descending Order' do
+        context 'direction = 1' do
+          context 'when the next ordered submission has a different submission date from the current one' do
+            it 'should return the grouping with the next earliest submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: 1, filterData: { ascBool: 'false', orderBy: 'Submission Date' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+            end
+          end
+          context 'when the next ordered submission shares has the same submission date as the current one' do
+            let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+            let(:grouping2) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            let(:grouping3) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            it 'should return the grouping with the next smallest group name with the same submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: 1, filterData: { ascBool: 'false', orderBy: 'Submission Date' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+            end
+          end
+        end
+        context 'direction = -1' do
+          context 'when the previous ordered submission has a different submission date from the current one' do
+            it 'should return the grouping with the next latest submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: -1, filterData: {
+                                              ascBool: 'false', orderBy: 'Submission Date'
+                                            } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+            end
+          end
+          context 'when the previous ordered submission shares has the same submission date as the current one' do
+            let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+            let(:grouping2) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            let(:grouping3) do
+              create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+            end
+            it 'should return the grouping with the next largest group name with the same submission date' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: -1, filterData: {
+                                              ascBool: 'false', orderBy: 'Submission Date'
+                                            } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+            end
+          end
         end
       end
     end
@@ -1235,6 +1380,7 @@ describe ResultsController do
 
     context 'accessing next_grouping' do
       include_examples 'ta and instructor #next_grouping with filters'
+      include_examples 'instructor and ta #next_grouping with different orderings'
 
       context 'filter by tas' do
         let(:ta1) { create :ta }
@@ -1577,6 +1723,7 @@ describe ResultsController do
       end
       context 'accessing next_grouping with valid permissions' do
         include_examples 'ta and instructor #next_grouping with filters'
+        include_examples 'instructor and ta #next_grouping with different orderings'
         context 'filter by tas' do
           let(:ta1) { create :ta }
           let(:ta2) { create :ta }
