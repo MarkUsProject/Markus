@@ -275,6 +275,32 @@ describe ResultsController do
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
       end
+      context 'when markingStateValue is left blank' do
+        let(:grouping2) do
+          result = create :incomplete_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        it 'should return the next group regardless of marking state' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: '' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
     end
 
     context 'filter by tags' do
