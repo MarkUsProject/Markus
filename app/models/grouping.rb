@@ -766,7 +766,7 @@ class Grouping < ApplicationRecord
       when 'Released'
         results = released_results
       when 'Complete'
-        results = results.where.not('results.id' => remark_results).where.not('results.id' => released_results)
+        results = results.where.not('results.id' => released_results)
                          .where('results.marking_state' => Result::MARKING_STATES[:complete])
       when 'In Progress'
         results = results.where.not('results.id' => remark_results).where.not('results.id' => released_results)

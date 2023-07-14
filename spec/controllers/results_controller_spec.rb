@@ -148,25 +148,134 @@ describe ResultsController do
         end
       end
     end
-    # context 'marking state filter' do
-    #   context 'when remark request is selected' do
-    #     it 'should respond with the next grouping with a remark requested' do
-    #     end
-    #   end
-    #   context 'when released is selected' do
-    #     it 'should respond with the next grouping whose submission has been released' do
-    #     end
-    #   end
-    #
-    #   context 'when complete is selected' do
-    #     it 'should respond with the next grouping whose result is complete' do
-    #     end
-    #   end
-    #   context 'when in progress is selected' do
-    #     it 'should respond with the next grouping whose result is incomplete' do
-    #     end
-    #   end
-    # end
+    context 'marking state filter' do
+      context 'when remark request is selected' do
+        let(:grouping2) do
+          result = create :incomplete_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        before(:each) do
+          grouping3.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+        end
+        it 'should respond with the next grouping with a remark requested and who has a marking state of incomplete' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+        it 'should not respond with a grouping whose current result is a remark result but is complete' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
+        end
+        it 'should not respond with a grouping that whose current result is not a remark result' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+      context 'when released is selected' do
+        let(:grouping2) do
+          result = create :incomplete_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :complete_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :released_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        it 'should respond with the next grouping whose submission has been released' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'Released' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+      end
+      context 'when complete is selected' do
+        let(:grouping2) do
+          result = create :released_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :remark_result, marking_state: Result::MARKING_STATES[:complete]
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        it 'should respond with the next grouping whose result is complete regardless of remark request status' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'Complete' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+        it 'should not respond with a released result regardless of the result\'s marking status' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'Complete' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+      end
+      context 'when in progress is selected' do
+        let(:grouping2) do
+          result = create :remark_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :released_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :incomplete_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        it 'should respond with the next grouping whose result is incomplete' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'In Progress' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+        it 'should not respond with a released or remark result' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingStateValue: 'In Progress' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
+        end
+      end
+    end
 
     context 'filter by tags' do
       let!(:tag1) { create :tag, groupings: [grouping1, grouping3] }
