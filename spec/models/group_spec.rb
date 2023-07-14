@@ -6,7 +6,6 @@ describe Group do
 
     it { is_expected.to validate_presence_of(:group_name) }
     it { is_expected.to validate_uniqueness_of(:group_name).scoped_to(:course_id) }
-    it { is_expected.to validate_length_of(:group_name).is_at_most(100) }
 
     it { is_expected.not_to allow_value('Mike !Ooh').for(:group_name) }
     it { is_expected.not_to allow_value('A!a.sa').for(:group_name) }

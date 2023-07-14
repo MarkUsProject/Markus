@@ -1025,7 +1025,7 @@ CREATE TABLE public.groupings_tags (
 
 CREATE TABLE public.groups (
     id integer NOT NULL,
-    group_name character varying(100),
+    group_name character varying,
     repo_name character varying,
     course_id bigint NOT NULL
 );

@@ -14,7 +14,6 @@ class Group < ApplicationRecord
 
   validates :group_name, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
   validates :group_name, uniqueness: { scope: :course_id }
-  validates :group_name, length: { maximum: 100 }
   validates :group_name, format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
                                    message: 'must only contain alphanumeric, hyphen, a blank space, or ' \
                                             'underscore' }
