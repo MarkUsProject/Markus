@@ -37,7 +37,7 @@ describe("SingleSelectDropdown", () => {
     expect(screen.getByText("c")).toBeInTheDocument();
     expect(screen.getAllByRole("listitem").length).toBe(3);
   });
-  it("should render an down arrow within the dropdown when it is closed", () => {
+  it("should render a down arrow within the dropdown when it is closed", () => {
     expect(screen.getByTestId("arrow-down")).toBeInTheDocument();
   });
   it("should render a upward arrow within the dropdown when it is open", () => {
