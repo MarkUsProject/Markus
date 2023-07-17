@@ -19,7 +19,7 @@ export class MultiSelectDropdown extends React.Component {
         return (
           <ul>
             <li>
-              <span>I18n.t("results.filters.no_options")</span>
+              <span>{I18n.t("results.filters.no_options")}</span>
             </li>
           </ul>
         );
