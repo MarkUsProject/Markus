@@ -803,7 +803,7 @@ class Grouping < ApplicationRecord
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
-    results
+    results.joins(grouping: :group)
   end
 
   def order_and_get_next_grouping(results, filter_data, reversed)
