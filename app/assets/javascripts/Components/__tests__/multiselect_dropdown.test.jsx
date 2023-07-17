@@ -3,7 +3,7 @@
  */
 
 import * as React from "react";
-import {render, screen, fireEvent, within, waitFor} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 
 describe("MultiSelectDropdown", () => {

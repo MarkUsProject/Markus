@@ -105,7 +105,7 @@ export class FilterModal extends React.Component {
 
   renderTotalMarkRange = () => {
     return (
-      <div className={"range"} onChange={e => this.handleTotalMark(e)}>
+      <div className={"range"} onChange={e => this.handleTotalMark(e)} data-testid={"Total Mark"}>
         <input
           className={"input-min"}
           type="number"
@@ -132,7 +132,11 @@ export class FilterModal extends React.Component {
 
   renderTotalExtraMarkRange = () => {
     return (
-      <div className={"range"} onChange={e => this.handleTotalExtraMark(e)}>
+      <div
+        className={"range"}
+        onChange={e => this.handleTotalExtraMark(e)}
+        data-testid={"Total Extra Mark"}
+      >
         <input
           className={"input-min"}
           type="number"
@@ -152,7 +156,7 @@ export class FilterModal extends React.Component {
           min={this.state.currentTotalExtraMarkRange.min}
           onChange={() => {}}
         />
-        <div className={"validity"}></div>
+        <p className={"validity"}></p>
       </div>
     );
   };

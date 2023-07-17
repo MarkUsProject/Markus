@@ -71,223 +71,180 @@ describe("FilterModal", () => {
     });
   });
 
-  describe("Filter By Tags", () => {
-    it("should reset tags selection on Clear all", () => {
-      const dropdown = screen.getByTestId("Tags");
-      fireEvent.click(screen.getByText(/Clear All/i));
-      const tags = dropdown.getElementsByClassName("tag");
-      expect(tags).toHaveLength(0);
+  describe("MultiSelectDropdown filters", () => {
+    let multiSelectDropdownClearAll = test_id => {
+      it("should reset selection on Clear all button", () => {
+        const dropdown = screen.getByTestId(test_id);
+        fireEvent.click(screen.getByText(/Clear All/i));
+        const tags = dropdown.getElementsByClassName("tag");
+        expect(tags).toHaveLength(0);
+      });
+    };
+
+    let multiSelectDropdownClear = test_id => {
+      it("should reset tags selection when clicked on xmark icon", () => {
+        const dropdown = screen.getByTestId(test_id);
+        const icon = within(dropdown).getByTestId("reset");
+        fireEvent.click(icon);
+        const tags = dropdown.getElementsByClassName("tag");
+        expect(tags).toHaveLength(0);
+      });
+    };
+
+    let multiSelectDropdownRender = test_id => {
+      it("should render all selected tags", () => {
+        const dropdown = screen.getByTestId(test_id);
+        const tags = dropdown.getElementsByClassName("tag");
+        expect(tags).toHaveLength(2);
+      });
+    };
+
+    let multiSelectDropdownMakeSelection = (test_id, selection) => {
+      it("should select option when clicked on an option", () => {
+        const dropdown = screen.getByTestId(test_id);
+        fireEvent.click(dropdown);
+        const option = within(dropdown).getByLabelText(selection);
+        fireEvent.click(option);
+        //check if option checked in dropdown
+        waitFor(() => expect(option).toHaveAttribute("checked"));
+        fireEvent.click(dropdown);
+        //check if tag added to list of selected options
+        expect(within(dropdown).queryByText(selection)).toBeInTheDocument();
+      });
+    };
+
+    let multiSelectDropdownDeselect = (test_id, option) => {
+      it("should deselect option when clicked on a tag", () => {
+        const dropdown = screen.getByTestId(test_id);
+        const tag = within(dropdown).getByText(option);
+        fireEvent.click(tag);
+        //check if tag removed from list of selected options
+        expect(within(dropdown).queryByText(option)).not.toBeInTheDocument();
+
+        //check if option unchecked from dropdown
+        fireEvent.click(dropdown);
+        const selected_option = within(dropdown).getByLabelText(option);
+        expect(selected_option).not.toBeChecked();
+      });
+
+      it("should deselect option when clicked on a selected option", () => {
+        const dropdown = screen.getByTestId(test_id);
+        fireEvent.click(dropdown);
+        const selected_option = within(dropdown).getByLabelText(option);
+        fireEvent.click(selected_option);
+        //check if option unchecked from dropdown
+        expect(selected_option).not.toBeChecked();
+        //check if tag removed from list of selected options
+        fireEvent.click(dropdown);
+        expect(within(dropdown).queryByText(option)).not.toBeInTheDocument();
+      });
+    };
+
+    describe("Filter By Tags", () => {
+      const test_id = "Tags";
+      multiSelectDropdownRender(test_id);
+      multiSelectDropdownClearAll(test_id);
+      multiSelectDropdownClear(test_id);
+      multiSelectDropdownMakeSelection(test_id, "ghi");
+      multiSelectDropdownDeselect(test_id, "abc");
     });
 
-    it("should reset tags selection when clicked on xmark icon", () => {
-      const dropdown = screen.getByTestId("Tags");
-      const icon = within(dropdown).getByTestId("reset");
-      fireEvent.click(icon);
-      const tags = dropdown.getElementsByClassName("tag");
-      expect(tags).toHaveLength(0);
-    });
-
-    it("should render all selected tags", () => {
-      const dropdown = screen.getByTestId("Tags");
-      const tags = dropdown.getElementsByClassName("tag");
-      expect(tags).toHaveLength(2);
-    });
-
-    it("should select option when clicked on an option", () => {
-      const dropdown = screen.getByTestId("Tags");
-      fireEvent.click(dropdown);
-      const option = within(dropdown).getByLabelText("ghi");
-      fireEvent.click(option);
-      waitFor(() => expect(option).toHaveAttribute("checked"));
-      fireEvent.click(dropdown);
-      expect(within(dropdown).queryByText("ghi")).toBeInTheDocument();
-    });
-
-    it("should deselect option when clicked on a tag", () => {
-      const dropdown = screen.getByTestId("Tags");
-      const tag = within(dropdown).getByText("abc");
-      fireEvent.click(tag);
-      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
-    });
-
-    it("should deselect option when clicked on a selected option", () => {
-      const dropdown = screen.getByTestId("Tags");
-      fireEvent.click(dropdown);
-      const selected_option = within(dropdown).getByLabelText("abc");
-      fireEvent.click(selected_option);
-      waitFor(() => expect(selected_option).not.toHaveAttribute("checked"));
-      fireEvent.click(dropdown);
-      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
+    describe("Filter By Tas", () => {
+      const test_id = "Tas";
+      multiSelectDropdownRender(test_id);
+      multiSelectDropdownClearAll(test_id);
+      multiSelectDropdownClear(test_id);
+      multiSelectDropdownMakeSelection(test_id, "ghi");
+      multiSelectDropdownDeselect(test_id, "abc");
     });
   });
 
-  describe("Filter By Tas", () => {
-    it("should reset tas selection on Clear all", () => {
-      const dropdown = screen.getByTestId("Tas");
-      fireEvent.click(screen.getByText(/Clear All/i));
-      const tags = dropdown.getElementsByClassName("tag");
-      expect(tags).toHaveLength(0);
+  describe("Range filters", () => {
+    let rangeRender = test_id => {
+      it("should render 2 input fields of type number", () => {
+        const filter = screen.getByTestId(test_id);
+        const minInput = within(filter).getByPlaceholderText(/Min/i);
+        const maxInput = within(filter).getByPlaceholderText(/Max/i);
+        expect(minInput).toHaveAttribute("type", "number");
+        expect(maxInput).toHaveAttribute("type", "number");
+      });
+    };
+
+    let rangeClearAll = test_id => {
+      it("should reset range inputs on Clear all", () => {
+        const filter = screen.getByTestId(test_id);
+        const minInput = within(filter).getByPlaceholderText(/Min/i);
+        const maxInput = within(filter).getByPlaceholderText(/Max/i);
+        fireEvent.change(minInput, {
+          target: {value: 0},
+        });
+        fireEvent.change(maxInput, {
+          target: {value: 10},
+        });
+
+        fireEvent.click(screen.getByText(/Clear All/i));
+        expect(minInput).toHaveValue(null);
+        expect(maxInput).toHaveValue(null);
+      });
+    };
+
+    let rangeValidInput = test_id => {
+      it("inputs should be valid when passed valid range", () => {
+        const filter = screen.getByTestId(test_id);
+        const minInput = within(filter).getByPlaceholderText(/Min/i);
+        const maxInput = within(filter).getByPlaceholderText(/Max/i);
+        fireEvent.change(minInput, {
+          target: {value: 0},
+        });
+        fireEvent.change(maxInput, {
+          target: {value: 10},
+        });
+        expect(minInput).toHaveValue(0);
+        expect(maxInput).toHaveValue(10);
+
+        // Check the validity of the inputs
+        expect(minInput.checkValidity()).toBe(true);
+        expect(maxInput.checkValidity()).toBe(true);
+      });
+    };
+
+    let rangeInvalidInput = test_id => {
+      it("inputs should be invalid when passed invalid range", async () => {
+        const filter = screen.getByTestId(test_id);
+        const minInput = within(filter).getByPlaceholderText(/Min/i);
+        const maxInput = within(filter).getByPlaceholderText(/Max/i);
+        fireEvent.change(minInput, {
+          target: {value: 0},
+        });
+        fireEvent.change(maxInput, {
+          target: {value: -1},
+        });
+        expect(minInput).toHaveValue(0);
+        expect(maxInput).toHaveValue(-1);
+
+        // Check the validity of the inputs
+        expect(minInput.checkValidity()).toBe(false);
+        expect(maxInput.checkValidity()).toBe(false);
+      });
+    };
+
+    describe("Total Mark Range", () => {
+      const test_id = "Total Mark";
+      rangeRender(test_id);
+      rangeClearAll(test_id);
+      rangeValidInput(test_id);
+      rangeInvalidInput(test_id);
     });
 
-    it("should reset tas selection when clicked on xmark icon", () => {
-      const dropdown = screen.getByTestId("Tas");
-      const icon = within(dropdown).getByTestId("reset");
-      fireEvent.click(icon);
-      const tags = dropdown.getElementsByClassName("tag");
-      expect(tags).toHaveLength(0);
-    });
-
-    it("should render all selected tas", () => {
-      const dropdown = screen.getByTestId("Tas");
-      const tags = dropdown.getElementsByClassName("tag");
-      expect(tags).toHaveLength(2);
-    });
-
-    it("should select option when clicked on an option", () => {
-      const dropdown = screen.getByTestId("Tas");
-      fireEvent.click(dropdown);
-      const option = within(dropdown).getByLabelText("ghi");
-      fireEvent.click(option);
-      waitFor(() => expect(option).toHaveAttribute("checked"));
-      fireEvent.click(dropdown);
-      expect(within(dropdown).queryByText("ghi")).toBeInTheDocument();
-    });
-
-    it("should deselect option when clicked on a tag", () => {
-      const dropdown = screen.getByTestId("Tas");
-      const tag = within(dropdown).getByText("abc");
-      fireEvent.click(tag);
-      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
-    });
-
-    it("should deselect option when clicked on a selected option", () => {
-      const dropdown = screen.getByTestId("Tas");
-      fireEvent.click(dropdown);
-      const selected_option = within(dropdown).getByLabelText("abc");
-      fireEvent.click(selected_option);
-      waitFor(() => expect(selected_option).not.toHaveAttribute("checked"));
-      fireEvent.click(dropdown);
-      expect(within(dropdown).queryByText("abc")).not.toBeInTheDocument();
+    describe("Total Extra Mark Range", () => {
+      const test_id = "Total Extra Mark";
+      rangeRender(test_id);
+      rangeClearAll(test_id);
+      rangeValidInput(test_id);
+      rangeInvalidInput(test_id);
     });
   });
 
-  describe("Total Mark Range", () => {
-    it("should render 2 input fields of type number", () => {
-      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-
-      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
-      expect(minInput).toHaveAttribute("type", "number");
-      expect(maxInput).toHaveAttribute("type", "number");
-    });
-
-    it("should reset range inputs on Clear all", () => {
-      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
-      fireEvent.change(minInput, {
-        target: {value: 0},
-      });
-      fireEvent.change(maxInput, {
-        target: {value: 10},
-      });
-
-      fireEvent.click(screen.getByText(/Clear All/i));
-      expect(minInput).toHaveValue(null);
-      expect(maxInput).toHaveValue(null);
-    });
-
-    it("should not show error message when passed valid range", () => {
-      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
-      fireEvent.change(minInput, {
-        target: {value: 0},
-      });
-      fireEvent.change(maxInput, {
-        target: {value: 10},
-      });
-      expect(minInput).toHaveValue(0);
-      expect(maxInput).toHaveValue(10);
-      waitFor(
-        () => expect(within(totalMarkFilter).getByText(/Invalid Range/i)).not.toBeInTheDocument
-      );
-    });
-
-    it("should show error message when passed invalid range", async () => {
-      const totalMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-      const minInput = within(totalMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalMarkFilter).getByPlaceholderText(/Max/i);
-      fireEvent.change(minInput, {
-        target: {value: 0},
-      });
-      fireEvent.change(maxInput, {
-        target: {value: -1},
-      });
-      expect(minInput).toHaveValue(0);
-      expect(maxInput).toHaveValue(-1);
-      waitFor(() => expect(within(totalMarkFilter).getByText(/Invalid Range/i)).toBeInTheDocument);
-    });
-  });
-  describe("Total Extra Mark Range", () => {
-    it("should render 2 input fields of type number", () => {
-      const totalExtraMarkFilter = screen.getByText(/Total Extra Mark/i).closest("div");
-      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
-      expect(minInput).toHaveAttribute("type", "number");
-      expect(maxInput).toHaveAttribute("type", "number");
-    });
-
-    it("should reset range inputs on Clear all", () => {
-      const totalExtraMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
-      fireEvent.change(minInput, {
-        target: {value: 0},
-      });
-      fireEvent.change(maxInput, {
-        target: {value: 10},
-      });
-
-      fireEvent.click(screen.getByText(/Clear All/i));
-      expect(minInput).toHaveValue(null);
-      expect(maxInput).toHaveValue(null);
-    });
-
-    it("should not show error message when passed valid range", () => {
-      const totalExtraMarkFilter = screen.getByText(/Total Extra Mark/i).closest("div");
-      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
-      fireEvent.change(minInput, {
-        target: {value: 0},
-      });
-      fireEvent.change(maxInput, {
-        target: {value: 10},
-      });
-      expect(minInput).toHaveValue(0);
-      expect(maxInput).toHaveValue(10);
-      waitFor(
-        () => expect(within(totalExtraMarkFilter).getByText(/Invalid Range/i)).not.toBeInTheDocument
-      );
-    });
-
-    it("should show error message when passed invalid range", () => {
-      const totalExtraMarkFilter = screen.getByText(/Total Mark/i).closest("div");
-      const minInput = within(totalExtraMarkFilter).getByPlaceholderText(/Min/i);
-      const maxInput = within(totalExtraMarkFilter).getByPlaceholderText(/Max/i);
-      fireEvent.change(minInput, {
-        target: {value: 0},
-      });
-      fireEvent.change(maxInput, {
-        target: {value: -1},
-      });
-      expect(minInput).toHaveValue(0);
-      expect(maxInput).toHaveValue(-1);
-      waitFor(
-        () => expect(within(totalExtraMarkFilter).getByText(/Invalid Range/i)).toBeInTheDocument
-      );
-    });
-  });
   describe("Single Select Dropdown Filters", () => {
     let singleSelectDropdownMakeSelection = (filterTestId, selection) => {
       it("should change the selection", () => {
