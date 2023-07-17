@@ -720,7 +720,7 @@ class Grouping < ApplicationRecord
     end
     results = results.joins(grouping: :group)
     if !filter_data.nil?
-      results = filter_groupings(current_role, results, filter_data)
+      results = filter_results(current_role, results, filter_data)
       order_and_get_next_grouping(results, filter_data, reversed)
     else
       results = results.order('groups.group_name')
@@ -747,7 +747,7 @@ class Grouping < ApplicationRecord
 
   private
 
-  def filter_groupings(current_role, results, filter_data)
+  def filter_results(current_role, results, filter_data)
     unless filter_data['annotationValue'].nil? || filter_data['annotationValue'] == ''
       results = results.joins(annotations: :annotation_text)
                        .where('annotation_texts.content LIKE ?',
