@@ -1,5 +1,5 @@
 import * as React from "react";
-import {render, screen, fireEvent, within, waitFor} from "@testing-library/react";
+import {render, screen, fireEvent, within} from "@testing-library/react";
 import {FilterModal} from "../Modals/filter_modal";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
@@ -106,7 +106,7 @@ describe("FilterModal", () => {
         const option = within(dropdown).getByLabelText(selection);
         fireEvent.click(option);
         //check if option checked in dropdown
-        waitFor(() => expect(option).toHaveAttribute("checked"));
+        expect(option).toBeChecked();
         fireEvent.click(dropdown);
         //check if tag added to list of selected options
         expect(within(dropdown).queryByText(selection)).toBeInTheDocument();
