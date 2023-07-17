@@ -371,7 +371,7 @@ describe ResultsController do
         it 'should return the next group with a larger group name that satisfies the constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { totalMarkRange: { min: 6.00 } } }
+                                        direction: 1, filterData: { totalMarkRange: { min: 7.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
       end
@@ -400,10 +400,9 @@ describe ResultsController do
         create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
       end
       let(:assignment) { grouping1.assignment }
-      let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
-      let!(:mark2) { create :extra_mark, result: grouping2.current_result, extra_mark: 6 }
-      let!(:mark3) { create :extra_mark, result: grouping3.current_result, extra_mark: 10 }
-      let!(:mark4) { create :extra_mark, result: grouping4.current_result, extra_mark: 5 }
+      let!(:mark2) { create :extra_mark_points, result: grouping2.current_result, extra_mark: 6 }
+      let!(:mark3) { create :extra_mark_points, result: grouping3.current_result, extra_mark: 10 }
+      let!(:mark4) { create :extra_mark_points, result: grouping4.current_result, extra_mark: 5 }
 
       context 'when no range is provided' do
         it 'should return the next grouping without constraints' do
@@ -418,7 +417,7 @@ describe ResultsController do
         it 'should return the next group with a larger group name that satisfies the constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { totalExtraMarkRange: { min: 6 } } }
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 7.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
       end
@@ -427,7 +426,7 @@ describe ResultsController do
         it 'should return the next group with a larger group name that satisfies the constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { totalMarkRange: { max: 5 } } }
+                                        direction: 1, filterData: { totalExtraMarkRange: { max: 5.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
       end
@@ -436,7 +435,7 @@ describe ResultsController do
         it 'should return the next group with a larger group name that satisfies the constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { totalMarkRange: { min: 4, max: 5 } } }
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 4.00, max: 5.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
       end
