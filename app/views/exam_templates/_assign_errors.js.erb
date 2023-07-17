@@ -48,7 +48,7 @@ function getErrorPages(value) {
   }
 }
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function() {
   var container = document.getElementById('pdfContainer');
   let eventBus = new pdfjsViewer.EventBus();
   var pdfViewer = new pdfjsViewer.PDFViewer({
@@ -78,8 +78,8 @@ $(document).ready(function () {
   });
 
   <% if @next_error.nil? %>
-    getFile('', pdfViewer);
+  getFile('', pdfViewer);
   <% else %>
-    getFile('<%= "#{@next_error.id}.pdf" -%>', pdfViewer);
+  getFile('<%= "#{@next_error.id}.pdf" -%>', pdfViewer);
   <% end %>
 });

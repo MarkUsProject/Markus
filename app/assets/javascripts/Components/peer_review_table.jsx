@@ -186,23 +186,27 @@ class PeerReviewsActionBox extends React.Component {
 
     completeButton = (
       <button onClick={this.props.completeResults} disabled={this.props.disabled}>
+        <FontAwesomeIcon icon="fa-solid fa-circle-check" />
         {I18n.t("results.set_to_complete")}
       </button>
     );
 
     incompleteButton = (
       <button onClick={this.props.incompleteResults} disabled={this.props.disabled}>
+        <FontAwesomeIcon icon="fa-solid fa-pen" />
         {I18n.t("results.set_to_incomplete")}
       </button>
     );
     if (this.props.can_manage) {
       releaseMarksButton = (
         <button disabled={this.props.disabled} onClick={this.props.releaseMarks}>
+          <FontAwesomeIcon icon="fa-solid fa-envelope-circle-check" />
           {I18n.t("submissions.release_marks")}
         </button>
       );
       unreleaseMarksButton = (
         <button disabled={this.props.disabled} onClick={this.props.unreleaseMarks}>
+          <FontAwesomeIcon icon="fa-solid fa-envelope-circle-check" />
           {I18n.t("submissions.unrelease_marks")}
         </button>
       );

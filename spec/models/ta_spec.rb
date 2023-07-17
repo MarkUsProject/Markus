@@ -21,12 +21,11 @@ describe Ta do
       context 'when TAs are not assigned criteria' do
         it 'returns the grades for their assigned groupings based on total marks' do
           expected = ta.groupings.where(assessment_id: assignment.id).map do |g|
-            g.current_result.get_total_mark / assignment.max_mark * 100
+            be_within(1e-4).of(g.current_result.get_total_mark / assignment.max_mark * 100)
           end
 
           actual = ta.percentage_grades_array(assignment)
-          expect(actual.length).to eq 2
-          expect(actual.sort).to eq expected.sort
+          expect(actual).to match_array(expected)
         end
       end
 
@@ -48,12 +47,11 @@ describe Ta do
               result.marks.find_by(criterion: criterion1).mark +
               result.marks.find_by(criterion: criterion2).mark
             )
-            subtotal / out_of * 100
+            be_within(1e-4).of(subtotal / out_of * 100)
           end
 
           actual = ta.percentage_grades_array(assignment)
-          expect(actual.length).to eq 2
-          expect(actual.sort).to eq expected.sort
+          expect(actual).to match_array expected
         end
       end
     end

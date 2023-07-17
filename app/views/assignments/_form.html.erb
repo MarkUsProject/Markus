@@ -8,25 +8,25 @@
              handlers: [:erb] %>
 
   <%= javascript_tag nonce: true do %>
-    $(function() {
-      $('#grace-period-add').click(function(e) {
-        add_period("grace_periods", grace_periods);
-        e.preventDefault();
-      })
-      $('#penalty-decay-period-add').click(function(e) {
-        add_period("penalty_decay_periods", penalty_decay_periods);
-        e.preventDefault();
-      })
-      $('#penalty-period-add').click(function(e) {
-        add_period("penalty_periods", penalty_periods);
-        e.preventDefault();
-      })
-      $('#required-file-add').click(function(e) {
-        add_assignment_file();
-        e.preventDefault();
-      })
-      refresh_event_listeners();
-    })
+      document.addEventListener("DOMContentLoaded", function() {
+        $('#grace-period-add').click(function(e) {
+          add_period("grace_periods", grace_periods);
+          e.preventDefault();
+        })
+        $('#penalty-decay-period-add').click(function(e) {
+          add_period("penalty_decay_periods", penalty_decay_periods);
+          e.preventDefault();
+        })
+        $('#penalty-period-add').click(function(e) {
+          add_period("penalty_periods", penalty_periods);
+          e.preventDefault();
+        })
+        $('#required-file-add').click(function(e) {
+          add_assignment_file();
+          e.preventDefault();
+        })
+        refresh_event_listeners();
+      });
   <% end %>
 <% end %>
 

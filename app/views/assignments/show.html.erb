@@ -14,7 +14,7 @@
         document.getElementById('working').style.display = '';
       })
     }
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       invite_modal = new ModalMarkus('#invite_dialog');
       $('#invite-student').click(function(e) {
         invite();

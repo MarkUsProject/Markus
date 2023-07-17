@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {
@@ -462,54 +463,100 @@ class SubmissionsActionBox extends React.Component {
       showReleaseUrlsButton;
 
     completeButton = (
-      <button onClick={this.props.completeResults} disabled={this.props.disabled}>
-        {I18n.t("results.set_to_complete")}
+      <button
+        onClick={this.props.completeResults}
+        disabled={this.props.disabled}
+        title={I18n.t("results.set_to_complete")}
+      >
+        <FontAwesomeIcon icon="fa-solid fa-circle-check" />
+        <span className="button-text">{I18n.t("results.set_to_complete")}</span>
       </button>
     );
 
     incompleteButton = (
-      <button onClick={this.props.incompleteResults} disabled={this.props.disabled}>
-        {I18n.t("results.set_to_incomplete")}
+      <button
+        onClick={this.props.incompleteResults}
+        disabled={this.props.disabled}
+        title={I18n.t("results.set_to_incomplete")}
+      >
+        <FontAwesomeIcon icon="fa-solid fa-pen" />
+        <span className="button-text">{I18n.t("results.set_to_incomplete")}</span>
       </button>
     );
     if (this.props.can_collect) {
       collectButton = (
-        <button onClick={this.props.collectSubmissions} disabled={this.props.disabled}>
-          {I18n.t("submissions.collect.submit")}
+        <button
+          onClick={this.props.collectSubmissions}
+          disabled={this.props.disabled}
+          title={I18n.t("submissions.collect.submit")}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-file-import" />
+          <span className="button-text">{I18n.t("submissions.collect.submit")}</span>
         </button>
       );
 
       releaseMarksButton = (
-        <button disabled={this.props.disabled} onClick={this.props.releaseMarks}>
-          {I18n.t("submissions.release_marks")}
+        <button
+          disabled={this.props.disabled}
+          onClick={this.props.releaseMarks}
+          title={I18n.t("submissions.release_marks")}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-envelope-circle-check" />
+          <span className="button-text">{I18n.t("submissions.release_marks")}</span>
         </button>
       );
       unreleaseMarksButton = (
-        <button disabled={this.props.disabled} onClick={this.props.unreleaseMarks}>
-          {I18n.t("submissions.unrelease_marks")}
+        <button
+          disabled={this.props.disabled}
+          onClick={this.props.unreleaseMarks}
+          title={I18n.t("submissions.unrelease_marks")}
+        >
+          <span className="fa-layers fa-fw">
+            <FontAwesomeIcon
+              icon="fa-solid fa-envelope-circle-check"
+              color={document.documentElement.style.getPropertyValue("--disabled_text")}
+            />
+            <FontAwesomeIcon icon="fa-solid fa-slash" />
+          </span>
+          <span className="button-text">{I18n.t("submissions.unrelease_marks")}</span>
         </button>
       );
       if (this.props.release_with_urls) {
         showReleaseUrlsButton = (
-          <button onClick={this.props.showReleaseUrls} disabled={this.props.disabled}>
-            {I18n.t("submissions.show_release_tokens")}
+          <button
+            onClick={this.props.showReleaseUrls}
+            disabled={this.props.disabled}
+            title={I18n.t("submissions.show_release_tokens")}
+          >
+            <FontAwesomeIcon icon="fa-solid fa-link" />
+            <span className="button-text">{I18n.t("submissions.show_release_tokens")}</span>
           </button>
         );
       }
     }
     if (this.props.can_run_tests) {
       runTestsButton = (
-        <button onClick={this.props.runTests} disabled={this.props.disabled}>
-          {I18n.t("submissions.run_tests")}
+        <button
+          onClick={this.props.runTests}
+          disabled={this.props.disabled}
+          title={I18n.t("submissions.run_tests")}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-rocket" />
+          <span className="button-text">{I18n.t("submissions.run_tests")}</span>
         </button>
       );
     }
 
     let downloadGroupingFilesButton = (
-      <button onClick={this.props.downloadGroupingFiles} disabled={this.props.disabled}>
-        {I18n.t("download_the", {
-          item: I18n.t("activerecord.models.submission.other"),
-        })}
+      <button
+        onClick={this.props.downloadGroupingFiles}
+        disabled={this.props.disabled}
+        title={I18n.t("download_the", {item: I18n.t("activerecord.models.submission.other")})}
+      >
+        <FontAwesomeIcon icon="fa-solid fa-download" />
+        <span className="button-text">
+          {I18n.t("download_the", {item: I18n.t("activerecord.models.submission.other")})}
+        </span>
       </button>
     );
 

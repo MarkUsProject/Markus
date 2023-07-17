@@ -26,6 +26,7 @@
 - Ensure Jupyter notebook HTML rendering does not require external CDNs (#6656)
 - Prevent Jupyter notebook from reloading when an annotation is added (#6656)
 - Added a button allowing graders to view a random incomplete submission (#6641)
+- Add icons to submission and result grading action buttons (#6666)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

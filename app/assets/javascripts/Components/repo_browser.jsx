@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SubmissionFileManager} from "./submission_file_manager";
 
 class RepoBrowser extends React.Component {
@@ -167,16 +168,18 @@ class ManualCollectionForm extends React.Component {
               {I18n.t("submissions.collect.apply_late_penalty")}
             </label>
           </p>
-          <input
+          <button
             type="submit"
             name="commit"
-            value={I18n.t("submissions.collect.this_revision")}
             onClick={event => {
               if (!confirm(I18n.t("submissions.collect.overwrite_warning"))) {
                 event.preventDefault();
               }
             }}
-          />
+          >
+            <FontAwesomeIcon icon="fa-solid fa-file-import" />
+            {I18n.t("submissions.collect.this_revision")}
+          </button>
         </form>
       </fieldset>
     );
