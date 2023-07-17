@@ -19,7 +19,7 @@ export class SingleSelectDropDown extends React.Component {
         return (
           <ul>
             <li>
-              <span>No available options</span>
+              <span>{I18n.t("results.filters.no_options")}</span>
             </li>
           </ul>
         );

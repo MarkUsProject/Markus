@@ -710,7 +710,7 @@ class Grouping < ApplicationRecord
   def get_next_grouping(current_role, reversed, filter_data = nil)
     if current_role.ta?
       # Get relevant groupings for a TA
-      results = self.assignment.current_results.joins(grouping: :tas).joins(:submission).where(
+      results = self.assignment.current_results.joins(grouping: :tas).where(
         'roles.id': current_role.id
       )
 
@@ -720,7 +720,7 @@ class Grouping < ApplicationRecord
     end
     results = results.joins(grouping: :group)
     if !filter_data.nil?
-      results = filter_groupings(current_role, results, filter_data)
+      results = filter_results(current_role, results, filter_data)
       order_and_get_next_grouping(results, filter_data, reversed)
     else
       results = results.order('groups.group_name')
@@ -747,7 +747,7 @@ class Grouping < ApplicationRecord
 
   private
 
-  def filter_groupings(current_role, results, filter_data)
+  def filter_results(current_role, results, filter_data)
     unless filter_data['annotationValue'].nil? || filter_data['annotationValue'] == ''
       results = results.joins(annotations: :annotation_text)
                        .where('annotation_texts.content LIKE ?',
@@ -807,7 +807,7 @@ class Grouping < ApplicationRecord
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
-    results
+    results.joins(grouping: :group)
   end
 
   def order_and_get_next_grouping(results, filter_data, reversed)
@@ -834,17 +834,13 @@ class Grouping < ApplicationRecord
   def next_grouping_ordered_group_name(results, order, reversed)
     if order == 'ASC'
       if !reversed
-        # get next grouping with a result
         next_result = results.where('groups.group_name > ?', self.group.group_name).first
       else
-        # get previous grouping with a result
         next_result = results.where('groups.group_name < ?', self.group.group_name).last
       end
     elsif !reversed
       next_result = results.where('groups.group_name < ?', self.group.group_name).first
-    # get next grouping with a result
     else
-      # get previous grouping with a result
       next_result = results.where('groups.group_name > ?', self.group.group_name).last
     end
     next_result&.grouping
