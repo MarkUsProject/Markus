@@ -710,7 +710,7 @@ class Grouping < ApplicationRecord
   def get_next_grouping(current_role, reversed, filter_data = nil)
     if current_role.ta?
       # Get relevant groupings for a TA
-      results = self.assignment.current_results.joins(grouping: :tas).joins(:submission).where(
+      results = self.assignment.current_results.joins(grouping: :tas).where(
         'roles.id': current_role.id
       )
 
@@ -830,17 +830,13 @@ class Grouping < ApplicationRecord
   def next_grouping_ordered_group_name(results, order, reversed)
     if order == 'ASC'
       if !reversed
-        # get next grouping with a result
         next_result = results.where('groups.group_name > ?', self.group.group_name).first
       else
-        # get previous grouping with a result
         next_result = results.where('groups.group_name < ?', self.group.group_name).last
       end
     elsif !reversed
       next_result = results.where('groups.group_name < ?', self.group.group_name).first
-    # get next grouping with a result
     else
-      # get previous grouping with a result
       next_result = results.where('groups.group_name > ?', self.group.group_name).last
     end
     next_result&.grouping
