@@ -783,10 +783,10 @@ class Grouping < ApplicationRecord
       (filter_data['totalMarkRange']['max'] == '' && filter_data['totalMarkRange']['min'] == '')
       result_ids = results.ids
       total_marks_hash = Result.get_total_marks(result_ids)
-      unless filter_data['totalMarkRange']['max'] == ''
+      unless filter_data['totalMarkRange']['max'] == '' || filter_data['totalMarkRange']['max'].nil?
         total_marks_hash = total_marks_hash.select { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
       end
-      unless filter_data['totalMarkRange']['min'] == ''
+      unless filter_data['totalMarkRange']['min'] == '' || filter_data['totalMarkRange']['min'].nil?
         total_marks_hash = total_marks_hash.select { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
       end
       results = Result.where('results.id': total_marks_hash.keys)
@@ -795,11 +795,15 @@ class Grouping < ApplicationRecord
       (filter_data['totalExtraMarkRange']['max'] == '' && filter_data['totalExtraMarkRange']['min'] == '')
       result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
-      unless filter_data['totalMarkRange']['max'] == ''
-        total_marks_hash = total_marks_hash.select { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+      unless filter_data['totalExtraMarkRange']['max'] == '' || filter_data['totalExtraMarkRange']['max'].nil?
+        total_marks_hash = total_marks_hash.select do |_, value|
+          value <= filter_data['totalExtraMarkRange']['max'].to_f
+        end
       end
-      unless filter_data['totalMarkRange']['min'] == ''
-        total_marks_hash = total_marks_hash.select { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
+      unless filter_data['totalExtraMarkRange']['min'] == '' || filter_data['totalExtraMarkRange']['min'].nil?
+        total_marks_hash = total_marks_hash.select do |_, value|
+          value >= filter_data['totalExtraMarkRange']['min'].to_f
+        end
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end

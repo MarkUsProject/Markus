@@ -303,7 +303,7 @@ describe ResultsController do
       end
     end
 
-    context 'filter by tags' do
+    context 'when filtering by tags' do
       let!(:tag1) { create :tag, groupings: [grouping1, grouping3] }
       let!(:tag2) { create :tag, groupings: [grouping2, grouping3] }
 
@@ -338,6 +338,106 @@ describe ResultsController do
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { tags: [] } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
+
+    context 'when filtering by total mark' do
+      let(:grouping4) do
+        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      end
+      let(:assignment) { grouping1.assignment }
+      let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let!(:mark2) do
+        create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 6
+      end
+      let!(:mark3) do
+        create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 10
+      end
+      let!(:mark4) do
+        create :flexible_mark, criterion: criterion, result: grouping4.current_result, assignment: assignment, mark: 5
+      end
+
+      context 'when no range is provided' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: {} } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+
+      context 'when minimum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 6.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+      end
+
+      context 'when maximum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+      end
+
+      context 'when minimum and maximum values are provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+      end
+    end
+
+    context 'when filter by total extra mark' do
+      let(:grouping4) do
+        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      end
+      let(:assignment) { grouping1.assignment }
+      let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let!(:mark2) { create :extra_mark, result: grouping2.current_result, extra_mark: 6 }
+      let!(:mark3) { create :extra_mark, result: grouping3.current_result, extra_mark: 10 }
+      let!(:mark4) { create :extra_mark, result: grouping4.current_result, extra_mark: 5 }
+
+      context 'when no range is provided' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: {} } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+
+      context 'when minimum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 6 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+      end
+
+      context 'when maximum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { max: 5 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+      end
+
+      context 'when minimum and maximum values are provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 4, max: 5 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
       end
     end
@@ -1733,7 +1833,7 @@ describe ResultsController do
           let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
 
           context 'when a ta has been picked' do
-            it 'should return the next group with a larger group name and not filter by selected ta' do
+            it 'should return the next group with a larger group name and NOT filter by selected ta' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                             id: grouping1.current_result.id,
                                             direction: 1, filterData: { tas: [ta1.user.user_name] } }
