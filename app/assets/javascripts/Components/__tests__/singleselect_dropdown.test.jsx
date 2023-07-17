@@ -18,7 +18,7 @@ describe("SingleSelectDropdown", () => {
 
   describe("when the dropdown is closed", () => {
     describe("when the dropdown is first rendered", () => {
-      it("should load the default value as the currently selected option", () => {
+      it("should load the selected value as the currently selected option", () => {
         expect(screen.getByTestId("selection")).toHaveTextContent("");
       });
     });
