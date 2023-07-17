@@ -46,7 +46,7 @@
 
   function add_assignment_file() {
     var new_id = new Date().getTime();
-    var input_id = `assignment_assignment_files_attributes_${new_id}_filename'`;
+    var input_id = `assignment_assignment_files_attributes_${new_id}_filename`;
     var assignment_file = `
       <p id="${input_id}_holder">
           <label class="required" for="'${input_id}'">${I18n.t('attributes.filename')}</label>
@@ -139,7 +139,7 @@
     }
   }
 
-  $(document).ready(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
       create_grace_periods();
@@ -156,8 +156,8 @@
     // Handle required fields
     check_required_fields();
     $(document).on("change", $('input[required]'), check_required_fields)
-                    .on("keyup", $('input[required]'), check_required_fields)
-                    .on("click", $('#assignment_file_add_link'), check_required_fields);
+      .on("keyup", $('input[required]'), check_required_fields)
+      .on("click", $('#assignment_file_add_link'), check_required_fields);
 
     // Initialize flatpickr calendar for different elements in the DOM
     flatpickr("#assignment_due_date")

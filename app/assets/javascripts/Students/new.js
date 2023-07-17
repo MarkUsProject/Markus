@@ -1,3 +1,3 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   window.modal_add_section = new ModalMarkus("#add_new_section_dialog");
 });

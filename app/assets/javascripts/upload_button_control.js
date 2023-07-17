@@ -7,7 +7,7 @@ var upload_id = _get("upload_id");
 var button_id = _get("button_id");
 
 var Function_List = {
-  onReady: function (u_id, b_id) {
+  onDOMContentLoaded: function (u_id, b_id) {
     // Ensures only one upload field was entered.
     if ($(u_id).length != 1) return;
 
@@ -31,8 +31,14 @@ var Function_List = {
   },
 };
 
-// Finally, executes the jQuery ready command.
-$(document).ready(Function_List.onReady(upload_id, button_id));
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    Function_List.onDOMContentLoaded(upload_id, button_id)
+  );
+} else {
+  Function_List.onDOMContentLoaded(upload_id, button_id)();
+}
 
 function _get(param_name) {
   // Gets the correct attribute from the script.
