@@ -1,9 +1,27 @@
 import React from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class RangeFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {showErrorMessage: false};
+  }
+
+  renderErrorMessage = () => {
+    return (
+      <div className={"range"}>
+        <FontAwesomeIcon icon={"fa-solid fa-circle-exclamation"} />
+        <span className={"validity"}>{I18n.t("results.filters.invalid_range")}</span>
+      </div>
+    );
+  };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      if (this.props.min === "" && this.props.max === "") {
+        this.setState({showErrorMessage: false});
+      }
+    }
   }
 
   render() {
@@ -34,9 +52,7 @@ export class RangeFilter extends React.Component {
             min={min}
             onChange={() => {}}
           />
-          {this.state.showErrorMessage && (
-            <p className={"validity"}>{I18n.t("results.filters.invalid_range")}</p>
-          )}
+          {this.state.showErrorMessage && this.renderErrorMessage()}
         </div>
       </div>
     );
