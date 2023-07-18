@@ -14,6 +14,7 @@ en:
       sections: Sections
       order_by: Order By
       no_options: No options available
+      invalid_range: Invalid Range
     annotation:
       across_all_submission_files: Click on the filename to jump to the annotation.
       common: Common Annotations

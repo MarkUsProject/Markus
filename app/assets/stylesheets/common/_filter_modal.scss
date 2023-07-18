@@ -40,9 +40,8 @@
     width: 80px;
   }
 
-  input:invalid + p::after {
+  .validity {
     color: #900;
-    content: 'Invalid Range';
   }
 
   > div {

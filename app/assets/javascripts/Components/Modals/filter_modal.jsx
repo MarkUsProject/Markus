@@ -19,6 +19,8 @@ const INITIAL_MODAL_STATE = {
     min: "",
     max: "",
   },
+  showErrorTotalMark: false,
+  showErrorExtraTotalMark: false,
 };
 
 export class FilterModal extends React.Component {
@@ -125,7 +127,9 @@ export class FilterModal extends React.Component {
           min={this.state.currentTotalMarkRange.min}
           onChange={() => {}}
         />
-        <p className={"validity"}></p>
+        {this.state.showErrorTotalMark && (
+          <p className={"validity"}>{I18n.t("results.filters.invalid_range")}</p>
+        )}
       </div>
     );
   };
@@ -156,7 +160,9 @@ export class FilterModal extends React.Component {
           min={this.state.currentTotalExtraMarkRange.min}
           onChange={() => {}}
         />
-        <p className={"validity"}></p>
+        {this.state.showErrorExtraTotalMark && (
+          <p className={"validity"}>{I18n.t("results.filters.invalid_range")}</p>
+        )}
       </div>
     );
   };
@@ -165,10 +171,12 @@ export class FilterModal extends React.Component {
     if (e.target.className === "input-min") {
       this.setState({
         currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
+        showErrorTotalMark: !e.target.validity.valid,
       });
     } else {
       this.setState({
         currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
+        showErrorTotalMark: !e.target.validity.valid,
       });
     }
   }
@@ -177,10 +185,12 @@ export class FilterModal extends React.Component {
     if (e.target.className === "input-min") {
       this.setState({
         currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, min: e.target.value},
+        showErrorExtraTotalMark: !e.target.validity.valid,
       });
     } else {
       this.setState({
         currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, max: e.target.value},
+        showErrorExtraTotalMark: !e.target.validity.valid,
       });
     }
   }
