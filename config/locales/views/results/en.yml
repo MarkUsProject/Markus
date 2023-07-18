@@ -1,22 +1,6 @@
 ---
 en:
   results:
-    filter_modal: Filter Submissions
-    filters:
-      clear_all: Clear All
-      save: Save
-      filter_by: 'Filter By:'
-      text_box_placeholder: Type here
-      annotation: Annotation
-      tas: TAs
-      tags: Tags
-      marking_state: Marking State
-      sections: Sections
-      order_by: Order By
-      total_mark: Total Mark
-      total_extra_mark: Total Extra Mark
-      no_options: No options available
-      invalid_range: Invalid Range
     annotation:
       across_all_submission_files: Click on the filename to jump to the annotation.
       common: Common Annotations
@@ -45,6 +29,27 @@ en:
     delete_extra_mark_confirm: Are you sure you want to remove this extra mark?
     expand_all: Expand All
     expand_unmarked: Expand Unmarked
+    filter_modal: Filter Submissions
+    filters:
+      annotation: Annotation
+      clear_all: Clear All
+      filter_by: 'Filter By:'
+      invalid_range: Invalid Range
+      marking_state: Marking State
+      no_options: No options available
+      order_by: Order By
+      ordering:
+        ascending: Ascending
+        descending: Descending
+        group_name: Group Name
+      range_value_separator: to
+      save: Save
+      section: Section
+      tags: Tags
+      tas: TAs
+      text_box_placeholder: Type here
+      total_extra_mark: Total Extra Mark
+      total_mark: Total Mark
     fullscreen_enter: Fullscreen
     fullscreen_exit: Leave fullscreen
     keybinding:
