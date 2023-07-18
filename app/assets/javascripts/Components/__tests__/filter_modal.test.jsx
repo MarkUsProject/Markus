@@ -41,6 +41,7 @@ describe("FilterModal", () => {
         mutateFilterData: jest.fn().mockImplementation(() => null),
         role: role,
       };
+
       // Set the app element for React Modal
       Modal.setAppElement("body");
       render(<FilterModal {...props} />);
@@ -108,11 +109,15 @@ describe("FilterModal", () => {
         it("should select option when clicked on an option", () => {
           const dropdown = screen.getByTestId(test_id);
           fireEvent.click(dropdown);
+
+          //select
           const option = within(dropdown).getByLabelText(selection);
           fireEvent.click(option);
+
           //check if option checked in dropdown
           expect(option).toBeChecked();
           fireEvent.click(dropdown);
+
           //check if tag added to list of selected options
           expect(within(dropdown).queryByText(selection)).toBeInTheDocument();
         });
@@ -123,6 +128,7 @@ describe("FilterModal", () => {
           const dropdown = screen.getByTestId(test_id);
           const tag = within(dropdown).getByText(option);
           fireEvent.click(tag);
+
           //check if tag removed from list of selected options
           expect(within(dropdown).queryByText(option)).not.toBeInTheDocument();
 
@@ -135,10 +141,14 @@ describe("FilterModal", () => {
         it("should deselect option when clicked on a selected option", () => {
           const dropdown = screen.getByTestId(test_id);
           fireEvent.click(dropdown);
+
+          //select
           const selected_option = within(dropdown).getByLabelText(option);
           fireEvent.click(selected_option);
+
           //check if option unchecked from dropdown
           expect(selected_option).not.toBeChecked();
+
           //check if tag removed from list of selected options
           fireEvent.click(dropdown);
           expect(within(dropdown).queryByText(option)).not.toBeInTheDocument();
@@ -256,33 +266,41 @@ describe("FilterModal", () => {
           ).toHaveTextContent(selection);
         });
       };
+
       let singleSelectDropdownClearAll = (filterTestId, selection, defaultValue) => {
         it("should reset selection on Clear all", () => {
           let dropdownDiv = screen.getByTestId(filterTestId);
+
           // setting the dropdown value to some random value
           fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
           fireEvent.click(within(dropdownDiv).getByText(selection));
+
           //resetting the dropdown value
           fireEvent.click(screen.getByText(/Clear All/i));
           expect(within(dropdownDiv).getByTestId("selection")).toHaveTextContent(defaultValue);
         });
       };
+
       let singleSelectDropdownClear = (filterTestId, selection, defaultValue) => {
         it("should reset the selection and close the dropdown when the x button is clicked", () => {
           let dropdownDiv = screen.getByTestId(filterTestId);
+
           // setting the dropdown value to some random value
           fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
           fireEvent.click(within(dropdownDiv).getByText(selection));
+
           // resetting the dropdown value
           fireEvent.click(within(dropdownDiv).getByTestId("reset-dropdown-selection"));
           expect(within(dropdownDiv).getByTestId("selection")).toHaveTextContent(defaultValue);
         });
       };
+
       describe("Order By", () => {
         describe("selecting order subject", () => {
           singleSelectDropdownMakeSelection("order-by", "Submission Date");
           singleSelectDropdownClearAll("order-by", "Submission Date", "Group Name");
           singleSelectDropdownClear("order-by", "Submission Date", "Group Name");
+
           it("should show the user specific options", () => {
             let dropdownDiv = screen.getByTestId("order-by");
             fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
@@ -291,6 +309,7 @@ describe("FilterModal", () => {
             expect(within(options).getByText("Submission Date")).toBeInTheDocument();
           });
         });
+
         describe("selecting between ascending and descending order", () => {
           it("should save the selection on change", () => {
             // setting the ordering to descending
@@ -300,9 +319,11 @@ describe("FilterModal", () => {
               within(screen.getByTestId("order-by")).getByTestId("ascending")
             ).not.toBeChecked();
           });
+
           it("should reset ordering on clearAll", () => {
             // setting the ordering to descending
             fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
+
             // clearing the dropdown values
             fireEvent.click(screen.getByText(/Clear All/i));
             expect(
@@ -312,15 +333,18 @@ describe("FilterModal", () => {
           });
         });
       });
+
       describe("Filter By Section", () => {
         singleSelectDropdownMakeSelection("section", "LEC0101");
         singleSelectDropdownClearAll("section", "LEC0101", "");
         singleSelectDropdownClear("section", "LEC0101", "");
       });
+
       describe("Filter By Marking State", () => {
         singleSelectDropdownMakeSelection("marking-state", "Complete");
         singleSelectDropdownClearAll("marking-state", "Complete", "");
         singleSelectDropdownClear("marking-state", "Complete", "");
+
         it("should show the user specific options", () => {
           let dropdownDiv = screen.getByTestId("marking-state");
           fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
@@ -366,9 +390,11 @@ describe("FilterModal", () => {
         fireEvent.click(dropdown);
         const option = within(dropdown).getByLabelText("d");
         fireEvent.click(option);
+
         //check if option checked in dropdown
         expect(option).toBeChecked();
         fireEvent.click(dropdown);
+
         //check if tag added to list of selected options
         expect(within(dropdown).queryByText("d")).toBeInTheDocument();
       });
@@ -377,6 +403,7 @@ describe("FilterModal", () => {
         const dropdown = screen.getByTestId(test_id);
         const tag = within(dropdown).getByText("a");
         fireEvent.click(tag);
+
         //check if tag removed from list of selected options
         expect(within(dropdown).queryByText("a")).not.toBeInTheDocument();
 
@@ -391,8 +418,10 @@ describe("FilterModal", () => {
         fireEvent.click(dropdown);
         const selected_option = within(dropdown).getByLabelText("a");
         fireEvent.click(selected_option);
+
         //check if option unchecked from dropdown
         expect(selected_option).not.toBeChecked();
+
         //check if tag removed from list of selected options
         fireEvent.click(dropdown);
         expect(within(dropdown).queryByText("a")).not.toBeInTheDocument();
