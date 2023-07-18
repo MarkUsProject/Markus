@@ -36,7 +36,7 @@ export class RangeFilter extends React.Component {
           <input
             className={"input-min"}
             type="number"
-            step="0.01"
+            step="any"
             placeholder={"Min"}
             value={min}
             max={max}
@@ -46,7 +46,7 @@ export class RangeFilter extends React.Component {
           <input
             className={"input-max"}
             type="number"
-            step="0.01"
+            step="any"
             placeholder={"Max"}
             value={max}
             min={min}

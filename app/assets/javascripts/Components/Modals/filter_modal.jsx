@@ -302,7 +302,7 @@ export class FilterModal extends React.Component {
               <section className={"modal-container dialog-actions"}>
                 <input
                   id={"clear_all"}
-                  type="button"
+                  type="reset"
                   value={I18n.t("results.filters.clear_all")}
                   onClick={this.clearFilters}
                 />
