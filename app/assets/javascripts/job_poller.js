@@ -11,6 +11,7 @@ export function poll_job(job_id, onSuccess, onFailure, onComplete, interval) {
   fetch(Routes.get_job_message_path(job_id), {
     headers: {
       Accept: "application/json",
+      "X-requested-with": "XMLHttpRequest",
     },
   })
     .then(response => {
