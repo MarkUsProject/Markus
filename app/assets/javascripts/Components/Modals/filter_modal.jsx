@@ -5,7 +5,7 @@ import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 import {RangeFilter} from "../Helpers/range_filter";
 
 const INITIAL_MODAL_STATE = {
-  currentOrderBy: "Group Name",
+  currentOrderBy: I18n.t("results.filters.ordering.group_name"),
   currentAscBool: true,
   currentAnnotationValue: "",
   currentSectionValue: "",
@@ -208,12 +208,15 @@ export class FilterModal extends React.Component {
                   <div className={"filter"} data-testid={"order-by"}>
                     <p>{I18n.t("results.filters.order_by")} </p>
                     <SingleSelectDropDown
-                      options={["Group Name", "Submission Date"]}
+                      options={[
+                        I18n.t("results.filters.ordering.group_name"),
+                        I18n.t("submissions.commit_date"),
+                      ]}
                       selected={this.state.currentOrderBy}
                       select={selection => {
                         this.setState({currentOrderBy: selection});
                       }}
-                      defaultValue={"Group Name"}
+                      defaultValue={I18n.t("results.filters.ordering.group_name")}
                     />
                     <div
                       className={"order"}
@@ -230,7 +233,7 @@ export class FilterModal extends React.Component {
                         onChange={() => {}}
                         data-testid={"ascending"}
                       />
-                      <label htmlFor="Asc">Ascending</label>
+                      <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
                       <input
                         type="radio"
                         checked={!this.state.currentAscBool}
@@ -239,11 +242,11 @@ export class FilterModal extends React.Component {
                         onChange={() => {}}
                         data-testid={"descending"}
                       />
-                      <label htmlFor="Desc">Descending</label>
+                      <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
                     </div>
                   </div>
                   <div className={"filter"} data-testid={"marking-state"}>
-                    <p>Marking State</p>
+                    <p>{I18n.t("results.filters.marking_state")}</p>
                     <SingleSelectDropDown
                       options={[
                         I18n.t("submissions.state.in_progress"),
@@ -264,7 +267,7 @@ export class FilterModal extends React.Component {
                     {this.renderTagsDropdown()}
                   </div>
                   <div className={"filter"} data-testid={"section"}>
-                    <p>Section</p>
+                    <p>{I18n.t("results.filters.section")}</p>
                     <SingleSelectDropDown
                       options={this.props.sections}
                       selected={this.state.currentSectionValue}
