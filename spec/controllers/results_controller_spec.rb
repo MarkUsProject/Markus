@@ -374,6 +374,13 @@ describe ResultsController do
                                         direction: 1, filterData: { totalMarkRange: { min: 7.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 7.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
       end
 
       context 'when maximum value is provided' do
@@ -383,6 +390,13 @@ describe ResultsController do
                                         direction: 1, filterData: { totalMarkRange: { max: 5.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
       end
 
       context 'when minimum and maximum values are provided' do
@@ -391,6 +405,13 @@ describe ResultsController do
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { totalMarkRange: { min: 4.00, max: 5.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
     end
@@ -420,6 +441,13 @@ describe ResultsController do
                                         direction: 1, filterData: { totalExtraMarkRange: { min: 7.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 7.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
       end
 
       context 'when maximum value is provided' do
@@ -429,6 +457,13 @@ describe ResultsController do
                                         direction: 1, filterData: { totalExtraMarkRange: { max: 5.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
       end
 
       context 'when minimum and maximum values are provided' do
@@ -437,6 +472,13 @@ describe ResultsController do
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { totalExtraMarkRange: { min: 4.00, max: 5.00 } } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
     end
