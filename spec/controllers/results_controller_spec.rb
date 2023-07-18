@@ -59,12 +59,14 @@ describe ResultsController do
         create :ta_membership, role: ta, grouping: groupings[i]
       end
     end
+
     context 'when annotation text filter is applied' do
       let(:annotation_text) { create :annotation_text, content: 'aa_' }
       before(:each) do
         create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
         create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
       end
+
       context 'when there are no more filtered submissions in the specified direction' do
         it 'should return a response with next_grouping and next_result set to nil' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
@@ -74,6 +76,7 @@ describe ResultsController do
           expect(response.parsed_body['next_result']).to be_nil
         end
       end
+
       context 'when there is another filtered result after the current one' do
         it 'should return a response with the next filtered group' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
@@ -82,6 +85,7 @@ describe ResultsController do
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
         end
+
         it 'shouldn\'t return the next non-filtered group' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -90,6 +94,7 @@ describe ResultsController do
           expect(response.parsed_body['next_result']['id']).not_to eq(grouping2.current_result.id)
         end
       end
+
       context 'when annotationValue contains special characters (in the context of a like clause)' do
         it 'should sanitize the string and return the next relevant result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
@@ -99,6 +104,7 @@ describe ResultsController do
           expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
         end
       end
+
       context 'when we filter by a substring of the desired annotation text' do
         it 'should return the next result containing the substring in one of its annotations' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
@@ -109,6 +115,7 @@ describe ResultsController do
         end
       end
     end
+
     context 'section filter' do
       let(:section) { create :section }
       before(:each) do
@@ -116,6 +123,7 @@ describe ResultsController do
         groupings[1].inviter.update(section: nil)
         groupings[2].inviter.update(section: section)
       end
+
       context 'when a section has been picked' do
         it 'should return the next group with a larger group name that satisfies the constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
@@ -123,6 +131,7 @@ describe ResultsController do
                                         direction: 1, filterData: { sectionValue: 'Section 1' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
+
         it 'should not return the next group that doesn\'t satisfy the constraint' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -130,6 +139,7 @@ describe ResultsController do
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
+
       context 'when section is left blank' do
         it 'should return the next grouping without constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
@@ -139,6 +149,7 @@ describe ResultsController do
         end
       end
     end
+
     context 'marking state filter' do
       context 'when remark request is selected' do
         let(:grouping2) do
@@ -162,18 +173,21 @@ describe ResultsController do
         before(:each) do
           grouping3.current_result.update(marking_state: Result::MARKING_STATES[:complete])
         end
+
         it 'should respond with the next grouping with a remark requested and who has a marking state of incomplete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
+
         it 'should not respond with a grouping whose current result is a remark result but is complete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
+
         it 'should not respond with a grouping whose current result is not a remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -181,6 +195,7 @@ describe ResultsController do
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
+
       context 'when released is selected' do
         let(:grouping2) do
           result = create :incomplete_result
@@ -200,6 +215,7 @@ describe ResultsController do
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
+
         it 'should respond with the next grouping whose submission has been released' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -207,6 +223,7 @@ describe ResultsController do
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
       end
+
       context 'when complete is selected' do
         let(:grouping2) do
           result = create :released_result
@@ -220,12 +237,14 @@ describe ResultsController do
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
+
         it 'should respond with the next grouping whose result is complete regardless of remark request status' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { markingStateValue: 'Complete' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
+
         it 'should not respond with a released result regardless of the result\'s marking status' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -252,12 +271,14 @@ describe ResultsController do
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
+
         it 'should respond with the next grouping whose result is incomplete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { markingStateValue: 'In Progress' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
+
         it 'should not respond with a released or remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -266,6 +287,7 @@ describe ResultsController do
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
       end
+
       context 'when markingStateValue is left blank' do
         let(:grouping2) do
           result = create :incomplete_result
@@ -285,6 +307,7 @@ describe ResultsController do
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
+
         it 'should return the next group regardless of marking state' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
@@ -488,6 +511,7 @@ describe ResultsController do
         create :ta_membership, role: ta, grouping: groupings[i]
       end
     end
+
     context 'order by group name' do
       context 'Descending Order' do
         context 'direction = 1' do
@@ -498,6 +522,7 @@ describe ResultsController do
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
           end
         end
+
         context 'direction = -1' do
           it 'should return the previous grouping in descending order of group name' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
@@ -508,6 +533,7 @@ describe ResultsController do
         end
       end
     end
+
     context 'order by submission date' do
       context 'Ascending Order' do
         context 'when direction = 1' do
@@ -519,6 +545,7 @@ describe ResultsController do
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end
           end
+
           context 'when the next ordered submission shares has the same submission date as the current one' do
             let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
             let(:grouping2) do
@@ -527,6 +554,7 @@ describe ResultsController do
             let(:grouping3) do
               create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
             end
+
             it 'should return the grouping with the next largest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
@@ -535,6 +563,7 @@ describe ResultsController do
             end
           end
         end
+
         context 'direction = -1' do
           context 'when the previous ordered submission has a different submission date from the current one' do
             it 'should return the grouping with the next earliest submission date' do
@@ -544,6 +573,7 @@ describe ResultsController do
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
+
           context 'when the previous ordered submission shares has the same submission date as the current one' do
             let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
             let(:grouping2) do
@@ -552,6 +582,7 @@ describe ResultsController do
             let(:grouping3) do
               create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
             end
+
             it 'should return the grouping with the next smallest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
@@ -561,6 +592,7 @@ describe ResultsController do
           end
         end
       end
+
       context 'Descending Order' do
         context 'direction = 1' do
           context 'when the next ordered submission has a different submission date from the current one' do
@@ -571,6 +603,7 @@ describe ResultsController do
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
+
           context 'when the next ordered submission shares has the same submission date as the current one' do
             let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
             let(:grouping2) do
@@ -579,6 +612,7 @@ describe ResultsController do
             let(:grouping3) do
               create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
             end
+
             it 'should return the grouping with the next smallest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
@@ -587,6 +621,7 @@ describe ResultsController do
             end
           end
         end
+
         context 'direction = -1' do
           context 'when the previous ordered submission has a different submission date from the current one' do
             it 'should return the grouping with the next latest submission date' do
@@ -598,6 +633,7 @@ describe ResultsController do
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end
           end
+
           context 'when the previous ordered submission shares has the same submission date as the current one' do
             let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
             let(:grouping2) do
@@ -606,6 +642,7 @@ describe ResultsController do
             let(:grouping3) do
               create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
             end
+
             it 'should return the grouping with the next largest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
