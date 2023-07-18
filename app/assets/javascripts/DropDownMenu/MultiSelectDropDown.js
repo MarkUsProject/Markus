@@ -5,7 +5,23 @@ export class MultiSelectDropdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {expanded: false, tags: []};
+    this.dropdownRef = React.createRef();
   }
+
+  componentDidMount() {
+    document.addEventListener("mousedown", this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
+
+  handleClickOutside = event => {
+    // Check if the click is outside the dropdown container
+    if (this.dropdownRef.current && !this.dropdownRef.current.contains(event.target)) {
+      this.setState({expanded: false});
+    }
+  };
 
   select = (e, option) => {
     e.stopPropagation();
@@ -36,7 +52,9 @@ export class MultiSelectDropdown extends React.Component {
                     checked={isSelected}
                     onChange={() => null}
                   ></input>
-                  <label htmlFor={option}>{option}</label>
+                  <label htmlFor={option} onClick={event => event.preventDefault()}>
+                    {option}
+                  </label>
                 </li>
               );
             })}
@@ -61,9 +79,9 @@ export class MultiSelectDropdown extends React.Component {
       <div
         className="multiselect-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
-        onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}
         data-testid={this.props.id}
+        ref={this.dropdownRef}
       >
         <div className={"tags-box"} data-testid={"tags-box"}>
           {selected.map((tag, index) => (
@@ -71,7 +89,6 @@ export class MultiSelectDropdown extends React.Component {
               className="tag"
               key={index}
               onClick={e => {
-                e.preventDefault();
                 this.select(e, tag);
               }}
             >

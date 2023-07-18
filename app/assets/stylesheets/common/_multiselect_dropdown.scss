@@ -11,9 +11,9 @@
     flex-wrap: nowrap;
     height: 30px;
     margin-left: 1.5%;
-    max-width: $dropdown-horizontal - 50px;
     overflow: scroll;
     padding: 0 1.5%;
+    width: $dropdown-horizontal - 50px;
 
     .tag {
       background: $background-main;
