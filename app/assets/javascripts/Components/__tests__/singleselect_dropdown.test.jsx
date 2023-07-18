@@ -6,6 +6,7 @@ describe("SingleSelectDropdown", () => {
   let props;
   let onChange = jest.fn();
   let options = ["a", "b", "c"];
+
   beforeEach(() => {
     props = {
       options: options,
@@ -13,6 +14,7 @@ describe("SingleSelectDropdown", () => {
       select: onChange,
       defaultValue: "",
     };
+
     render(<SingleSelectDropDown {...props} />);
   });
 
@@ -22,11 +24,13 @@ describe("SingleSelectDropdown", () => {
         expect(screen.getByTestId("selection")).toHaveTextContent("");
       });
     });
+
     it("should not load the dropdown options", () => {
       expect(screen.queryByText("a")).toBeNull();
       expect(screen.queryByText("b")).toBeNull();
       expect(screen.queryByText("c")).toBeNull();
     });
+
     it("should render a down arrow within the dropdown", () => {
       expect(screen.getByTestId("arrow-down")).toBeInTheDocument();
     });
@@ -42,10 +46,12 @@ describe("SingleSelectDropdown", () => {
         expect(screen.getAllByRole("listitem").length).toBe(3);
       });
     });
+
     describe("No options available", () => {
       beforeAll(() => {
         options = [];
       });
+
       it("should show no options available when there aren't any options to choose from", () => {
         fireEvent.click(screen.getByTestId("dropdown"));
         expect(screen.getByText("No options available")).toBeInTheDocument();
@@ -54,10 +60,12 @@ describe("SingleSelectDropdown", () => {
         expect(screen.queryByText("c")).toBeNull();
       });
     });
+
     it("should render a upward arrow within the dropdown", () => {
       fireEvent.click(screen.getByTestId("dropdown"));
       expect(screen.getByTestId("arrow-up")).toBeInTheDocument();
     });
+
     it("should close the dropdown when clicked again", () => {
       fireEvent.click(screen.getByTestId("dropdown"));
       fireEvent.click(screen.getByTestId("dropdown"));
