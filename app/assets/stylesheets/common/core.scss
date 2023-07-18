@@ -417,11 +417,27 @@ th.required::after {
   button,
   .button,
   .form-control {
+    align-items: center;
+    display: flex;
     height: 3em;
-    line-height: 2.75em;
+    justify-content: center;
     margin-left: 1em;
     min-width: 100px;
-    padding: 0 0.7em;
+    padding: 0 0.4em;
+
+    @include breakpoint(mobile) {
+      min-width: 3em;
+    }
+  }
+}
+
+@include breakpoint(mobile) {
+  button,
+  .button,
+  .form-control {
+    .button-text {
+      display: none;
+    }
   }
 }
 

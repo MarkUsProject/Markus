@@ -1,62 +1,70 @@
-$(document).ready(function () {
-  // Change repo folder to be same as short identifier
+(function () {
+  const domContentLoadedCB = function () {
+    // Change repo folder to be same as short identifier
 
-  $("#assignment_due_date").change(function () {
-    update_due_date($("#assignment_due_date").val());
-  });
+    $("#assignment_due_date").change(function () {
+      update_due_date($("#assignment_due_date").val());
+    });
 
-  $("#assignment_assignment_properties_attributes_section_due_dates_type").change(function () {
-    toggle_assessment_section_properties(this.checked);
-  });
-  toggle_assessment_section_properties(
-    $("#assignment_assignment_properties_attributes_section_due_dates_type").is(":checked")
-  );
+    $("#assignment_assignment_properties_attributes_section_due_dates_type").change(function () {
+      toggle_assessment_section_properties(this.checked);
+    });
+    toggle_assessment_section_properties(
+      $("#assignment_assignment_properties_attributes_section_due_dates_type").is(":checked")
+    );
 
-  $(".assessment_section_properties_input").change(function () {
-    if ($("#assignment_due_date").val() === "") {
-      $("#assignment_due_date").val($(this).val());
-    }
-  });
+    $(".assessment_section_properties_input").change(function () {
+      if ($("#assignment_due_date").val() === "") {
+        $("#assignment_due_date").val($(this).val());
+      }
+    });
 
-  $("#persist_groups").change(function () {
-    toggle_persist_groups(this.checked);
-  });
+    $("#persist_groups").change(function () {
+      toggle_persist_groups(this.checked);
+    });
 
-  $("#is_group_assignment").change(function () {
-    toggle_group_assignment(this.checked);
-  });
+    $("#is_group_assignment").change(function () {
+      toggle_group_assignment(this.checked);
+    });
 
-  toggle_group_assignment($("#is_group_assignment").is(":checked"));
+    toggle_group_assignment($("#is_group_assignment").is(":checked"));
 
-  $("#assignment_assignment_properties_attributes_student_form_groups").change(function () {
-    toggle_student_form_groups(this.checked);
-  });
+    $("#assignment_assignment_properties_attributes_student_form_groups").change(function () {
+      toggle_student_form_groups(this.checked);
+    });
 
-  $("#assignment_assignment_properties_attributes_allow_remarks").change(function () {
-    toggle_remark_requests(this.checked);
-  });
+    $("#assignment_assignment_properties_attributes_allow_remarks").change(function () {
+      toggle_remark_requests(this.checked);
+    });
 
-  toggle_remark_requests(false);
+    toggle_remark_requests(false);
 
-  $("#submission_rule_fields input[type=radio]").change(change_submission_rule);
+    $("#submission_rule_fields input[type=radio]").change(change_submission_rule);
 
-  change_submission_rule(); // Opens the correct rule
+    change_submission_rule(); // Opens the correct rule
 
-  // Min group size must be <= max group size
-  // If the min value is larger than the max, make the max this new value
-  $("#assignment_assignment_properties_attributes_group_min").change(function () {
-    if (!check_group_size()) {
-      document.getElementById("assignment_group_max").value = this.value;
-    }
-  });
+    // Min group size must be <= max group size
+    // If the min value is larger than the max, make the max this new value
+    $("#assignment_assignment_properties_attributes_group_min").change(function () {
+      if (!check_group_size()) {
+        document.getElementById("assignment_group_max").value = this.value;
+      }
+    });
 
-  // If the max value is smaller than the min, make the min this new value
-  $("#assignment_assignment_properties_attributes_group_max").change(function () {
-    if (!check_group_size()) {
-      document.getElementById("assignment_group_min").value = this.value;
-    }
-  });
-});
+    // If the max value is smaller than the min, make the min this new value
+    $("#assignment_assignment_properties_attributes_group_max").change(function () {
+      if (!check_group_size()) {
+        document.getElementById("assignment_group_min").value = this.value;
+      }
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+  } else {
+    domContentLoadedCB();
+  }
+})();
 
 function check_group_size() {
   var min = document.getElementById("assignment_group_min").value;

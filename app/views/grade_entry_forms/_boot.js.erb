@@ -43,7 +43,7 @@
     })
   }
 
-  $(document).ready(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     flatpickr(".datepicker", {enableTime: false, dateFormat: I18n.t('date.format_string.flatpickr')})
   });
 <% end %>

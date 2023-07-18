@@ -25,18 +25,24 @@ class GroupsManager extends React.Component {
   componentDidMount() {
     this.fetchData();
     // TODO: Remove reliance on global modal
-    $(document).ready(() => {
-      $("#create_group_dialog form").on("ajax:success", () => {
-        modalCreate.close();
-        this.fetchData();
-      });
-
-      $("#rename_group_dialog form").on("ajax:success", () => {
-        modal_rename.close();
-        this.fetchData();
-      });
-    });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", this.componentDidMountCB);
+    } else {
+      this.componentDidMountCB();
+    }
   }
+
+  componentDidMountCB = () => {
+    $("#create_group_dialog form").on("ajax:success", () => {
+      modalCreate.close();
+      this.fetchData();
+    });
+
+    $("#rename_group_dialog form").on("ajax:success", () => {
+      modal_rename.close();
+      this.fetchData();
+    });
+  };
 
   fetchData = () => {
     fetch(Routes.course_assignment_groups_path(this.props.course_id, this.props.assignment_id), {
@@ -89,12 +95,19 @@ class GroupsManager extends React.Component {
     } else {
       modalCreate.open();
       $("#new_group_name").val("");
-      $(function () {
-        $("#modal-create-close").click(function () {
-          modalCreate.close();
-        });
-      });
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", this.createGroupCB);
+      } else {
+        this.createGroupCB();
+      }
     }
+  };
+
+  createGroupCB = () => {
+    $("#modal-create-close").click(function () {
+      modalCreate.close();
+    });
   };
 
   createAllGroups = () => {
