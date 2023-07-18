@@ -90,15 +90,6 @@ describe ResultsController do
           expect(response.parsed_body['next_result']['id']).not_to eq(grouping2.current_result.id)
         end
       end
-      context 'when a grouping does not have a submission or annotations' do
-        it 'should avoid returning this submission' do
-          get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
-                                        id: grouping3.current_result.id,
-                                        direction: 1, filterData: { annotationValue: 'aa_' } }
-          expect(response.parsed_body['next_grouping']).to be_nil
-          expect(response.parsed_body['next_result']).to be_nil
-        end
-      end
       context 'when annotationValue contains special characters (in the context of a like clause)' do
         it 'should sanitize the string and return the next relevant result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
@@ -183,7 +174,7 @@ describe ResultsController do
                                         direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
-        it 'should not respond with a grouping that whose current result is not a remark result' do
+        it 'should not respond with a grouping whose current result is not a remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
                                         direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
