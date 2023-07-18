@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
+import {RangeFilter} from "../Helpers/range_filter";
 
 const INITIAL_MODAL_STATE = {
   currentOrderBy: "Group Name",
@@ -19,8 +20,6 @@ const INITIAL_MODAL_STATE = {
     min: "",
     max: "",
   },
-  showErrorTotalMark: false,
-  showErrorExtraTotalMark: false,
 };
 
 export class FilterModal extends React.Component {
@@ -107,93 +106,49 @@ export class FilterModal extends React.Component {
 
   renderTotalMarkRange = () => {
     return (
-      <div className={"range"} onChange={e => this.handleTotalMark(e)} data-testid={"Total Mark"}>
-        <input
-          className={"input-min"}
-          type="number"
-          step="0.01"
-          placeholder={"Min"}
-          value={this.state.currentTotalMarkRange.min}
-          max={this.state.currentTotalMarkRange.max}
-          onChange={() => {}}
-        />
-        <span>to</span>
-        <input
-          className={"input-max"}
-          type="number"
-          step="0.01"
-          placeholder={"Max"}
-          value={this.state.currentTotalMarkRange.max}
-          min={this.state.currentTotalMarkRange.min}
-          onChange={() => {}}
-        />
-        {this.state.showErrorTotalMark && (
-          <p className={"validity"}>{I18n.t("results.filters.invalid_range")}</p>
-        )}
-      </div>
+      <RangeFilter
+        title={I18n.t("results.filters.total_mark")}
+        handleInputs={this.handleTotalMark}
+        min={this.state.currentTotalMarkRange.min}
+        max={this.state.currentTotalMarkRange.max}
+      ></RangeFilter>
     );
   };
 
   renderTotalExtraMarkRange = () => {
     return (
-      <div
-        className={"range"}
-        onChange={e => this.handleTotalExtraMark(e)}
-        data-testid={"Total Extra Mark"}
-      >
-        <input
-          className={"input-min"}
-          type="number"
-          step="0.01"
-          placeholder={"Min"}
-          value={this.state.currentTotalExtraMarkRange.min}
-          max={this.state.currentTotalExtraMarkRange.max}
-          onChange={() => {}}
-        />
-        <span>to</span>
-        <input
-          className={"input-max"}
-          type="number"
-          step="0.01"
-          placeholder={"Max"}
-          value={this.state.currentTotalExtraMarkRange.max}
-          min={this.state.currentTotalExtraMarkRange.min}
-          onChange={() => {}}
-        />
-        {this.state.showErrorExtraTotalMark && (
-          <p className={"validity"}>{I18n.t("results.filters.invalid_range")}</p>
-        )}
-      </div>
+      <RangeFilter
+        title={I18n.t("results.filters.total_extra_mark")}
+        handleInputs={this.handleTotalExtraMark}
+        min={this.state.currentTotalExtraMarkRange.min}
+        max={this.state.currentTotalExtraMarkRange.max}
+      ></RangeFilter>
     );
   };
 
-  handleTotalMark(e) {
+  handleTotalMark = e => {
     if (e.target.className === "input-min") {
       this.setState({
         currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
-        showErrorTotalMark: !e.target.validity.valid,
       });
     } else {
       this.setState({
         currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
-        showErrorTotalMark: !e.target.validity.valid,
       });
     }
-  }
+  };
 
-  handleTotalExtraMark(e) {
+  handleTotalExtraMark = e => {
     if (e.target.className === "input-min") {
       this.setState({
         currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, min: e.target.value},
-        showErrorExtraTotalMark: !e.target.validity.valid,
       });
     } else {
       this.setState({
         currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, max: e.target.value},
-        showErrorExtraTotalMark: !e.target.validity.valid,
       });
     }
-  }
+  };
 
   componentDidMount() {
     Modal.setAppElement("body");
@@ -335,14 +290,8 @@ export class FilterModal extends React.Component {
                 </div>
 
                 <div className={"modal-container"}>
-                  <div className={"filter"}>
-                    <p>Total Mark</p>
-                    {this.renderTotalMarkRange()}
-                  </div>
-                  <div className={"filter"}>
-                    <p>Total Extra Mark</p>
-                    {this.renderTotalExtraMarkRange()}
-                  </div>
+                  {this.renderTotalMarkRange()}
+                  {this.renderTotalExtraMarkRange()}
                 </div>
               </div>
             </div>

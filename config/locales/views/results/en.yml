@@ -13,6 +13,8 @@ en:
       marking_state: Marking State
       sections: Sections
       order_by: Order By
+      total_mark: Total Mark
+      total_extra_mark: Total Extra Mark
       no_options: No options available
       invalid_range: Invalid Range
     annotation:
