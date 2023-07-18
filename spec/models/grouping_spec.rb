@@ -1534,8 +1534,8 @@ describe Grouping do
   describe '#get_next_group as instructor' do
     let(:role) { create :instructor }
     let(:assignment) { create :assignment }
-    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
-    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    let!(:grouping1) { create :grouping_with_inviter_and_submission, assignment: assignment }
+    let!(:grouping2) { create :grouping_with_inviter_and_submission, assignment: assignment }
     it 'should let one navigate right if there is a result directly to the right' do
       groupings = assignment.groupings.joins(:group).order('group_name')
       new_grouping = groupings.first.get_next_grouping(role, false)
@@ -1558,7 +1558,7 @@ describe Grouping do
     end
     describe 'with collected results separated by an uncollected results' do
       let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
-      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      let!(:grouping3) { create :grouping_with_inviter_and_submission, assignment: assignment, is_collected: true }
       it 'should let me navigate to the right if any result exists towards the right' do
         groupings = assignment.groupings.joins(:group).order('group_name')
         new_grouping = groupings.first.get_next_grouping(role, false)
@@ -1573,9 +1573,15 @@ describe Grouping do
   end
   describe '#get_next_group as ta' do
     let(:assignment) { create :assignment }
-    let(:role) { create :ta, groupings: assignment.groupings }
-    let!(:grouping1) { create :grouping, assignment: assignment, is_collected: true }
-    let!(:grouping2) { create :grouping, assignment: assignment, is_collected: true }
+    let(:role) { create :ta }
+    let!(:grouping1) { create :grouping_with_inviter_and_submission, assignment: assignment }
+    let!(:grouping2) { create :grouping_with_inviter_and_submission, assignment: assignment }
+    let(:groupings) { [grouping1, grouping2] }
+    before(:each) do
+      2.times do |i|
+        create :ta_membership, role: role, grouping: groupings[i]
+      end
+    end
     it 'should let one navigate right if there is a result directly to the right' do
       groupings = assignment.groupings.joins(:group).order('group_name')
       new_grouping = groupings.first.get_next_grouping(role, false)
@@ -1598,7 +1604,10 @@ describe Grouping do
     end
     describe 'with collected results separated by an uncollected results' do
       let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
-      let!(:grouping3) { create :grouping, assignment: assignment, is_collected: true }
+      let!(:grouping3) { create :grouping_with_inviter_and_submission, assignment: assignment }
+      before(:each) do
+        create :ta_membership, role: role, grouping: grouping3
+      end
       it 'should let me navigate to the right if any result exists towards the right' do
         groupings = assignment.groupings.joins(:group).order('group_name')
         new_grouping = groupings.first.get_next_grouping(role, false)
