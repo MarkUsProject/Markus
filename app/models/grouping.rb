@@ -739,15 +739,15 @@ class Grouping < ApplicationRecord
   private
 
   def filter_results(current_role, results, filter_data)
-    unless filter_data['annotationValue'].nil? || filter_data['annotationValue'] == ''
+    if filter_data['annotationValue'].present?
       results = results.joins(annotations: :annotation_text)
                        .where('annotation_texts.content LIKE ?',
                               "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
     end
-    unless filter_data['sectionValue'].nil? || filter_data['sectionValue'] == ''
+    if filter_data['sectionValue'].present?
       results = results.joins(grouping: :section).where('section.name' => filter_data['sectionValue'])
     end
-    unless filter_data['markingStateValue'].nil? || filter_data['markingStateValue'] == ''
+    if filter_data['markingStateValue'].present?
       remark_results = results.where.not('results.remark_request_submitted_at' => nil)
                               .where('results.marking_state' => Result::MARKING_STATES[:incomplete])
       released_results = results.where.not('results.id' => remark_results).where('results.released_to_students' => true)
@@ -764,20 +764,20 @@ class Grouping < ApplicationRecord
                          .where('results.marking_state' => Result::MARKING_STATES[:incomplete])
       end
     end
-    unless current_role.ta? || filter_data['tas'].nil? || filter_data['tas'] == []
+    unless current_role.ta? || filter_data['tas'].blank?
       results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
     end
-    unless filter_data['tags'].nil? || filter_data['tags'] == []
+    if filter_data['tags'].present?
       results = results.joins(grouping: :tags).where('tags.name': filter_data['tags'])
     end
     unless filter_data['totalMarkRange'].nil? ||
       (filter_data['totalMarkRange']['max'] == '' && filter_data['totalMarkRange']['min'] == '')
       result_ids = results.ids
       total_marks_hash = Result.get_total_marks(result_ids)
-      unless filter_data['totalMarkRange']['max'] == '' || filter_data['totalMarkRange']['max'].nil?
+      if filter_data['totalMarkRange']['max'].present?
         total_marks_hash = total_marks_hash.select { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
       end
-      unless filter_data['totalMarkRange']['min'] == '' || filter_data['totalMarkRange']['min'].nil?
+      if filter_data['totalMarkRange']['min'].present?
         total_marks_hash = total_marks_hash.select { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
       end
       results = Result.where('results.id': total_marks_hash.keys)
@@ -786,12 +786,12 @@ class Grouping < ApplicationRecord
       (filter_data['totalExtraMarkRange']['max'] == '' && filter_data['totalExtraMarkRange']['min'] == '')
       result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
-      unless filter_data['totalExtraMarkRange']['max'] == '' || filter_data['totalExtraMarkRange']['max'].nil?
+      if filter_data['totalExtraMarkRange']['max'].present?
         total_marks_hash = total_marks_hash.select do |_, value|
           value <= filter_data['totalExtraMarkRange']['max'].to_f
         end
       end
-      unless filter_data['totalExtraMarkRange']['min'] == '' || filter_data['totalExtraMarkRange']['min'].nil?
+      if filter_data['totalExtraMarkRange']['min'].present?
         total_marks_hash = total_marks_hash.select do |_, value|
           value >= filter_data['totalExtraMarkRange']['min'].to_f
         end
