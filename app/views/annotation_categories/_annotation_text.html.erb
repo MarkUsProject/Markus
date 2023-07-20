@@ -1,16 +1,23 @@
 <%= javascript_tag nonce: true do %>
-  $(function() {
-    $('#annotation-text-details-edit-<%= annotation_text[:id] %>').click(function(e) {
-      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').hide();
-      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').show();
-      e.preventDefault();
-    });
-    $('#annotation-text-edit-<%= annotation_text[:id] %>').on("reset", function(e) {
-      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').hide();
-      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').show();
-      e.preventDefault();
-    });
-  })
+  (function(){
+    const domContentLoadedCB = function() {
+      $('#annotation-text-details-edit-<%= annotation_text[:id] %>').click(function(e) {
+        $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').hide();
+        $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').show();
+        e.preventDefault();
+      });
+      $('#annotation-text-edit-<%= annotation_text[:id] %>').on("reset", function(e) {
+        $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').hide();
+        $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').show();
+        e.preventDefault();
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", domContentLoadedCB);
+    }else{
+      domContentLoadedCB();
+    }
+  })();
 <% end %>
 
 <li id='annotation_text_<%= annotation_text[:id] %>'>

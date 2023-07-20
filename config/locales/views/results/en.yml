@@ -47,10 +47,13 @@ en:
     marks_released: The marks have been released. You cannot change the grades.
     next_submission: Next Submission
     no_feedback_files: "[No feedback files available]"
+    no_incomplete_submission: There are no more incomplete submissions!
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
     overridden_deductions: Overridden
     previous_submission: Previous Submission
+    print: Print
+    random_incomplete_submission: Random Incomplete Submission
     remark:
       about_remark_save: Please note that the instructor will be unaware of your saved request unless it has been submitted.
       about_remark_submission: Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request.

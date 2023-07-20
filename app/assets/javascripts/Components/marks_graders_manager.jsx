@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 
@@ -18,21 +19,31 @@ class MarksGradersManager extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_grade_entry_form_marks_graders_path(
+    fetch(
+      Routes.course_grade_entry_form_marks_graders_path(
         this.props.course_id,
         this.props.grade_entry_form_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.studentsTable.resetSelection();
-      this.gradersTable.resetSelection();
-      this.setState({
-        graders: res.graders,
-        students: res.students || [],
-        loading: false,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.studentsTable.resetSelection();
+        this.gradersTable.resetSelection();
+        this.setState({
+          graders: res.graders,
+          students: res.students || [],
+          loading: false,
+        });
       });
-    });
   };
 
   assignAll = () => {
@@ -258,10 +269,11 @@ class RawMarksStudentsTable extends React.Component {
               {ta}
               <a
                 href="#"
-                className="remove-icon"
                 onClick={() => this.props.unassignSingle(row.original._id, ta)}
                 title={I18n.t("graders.actions.unassign_grader")}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+              </a>
             </div>
           ));
         },
@@ -296,13 +308,16 @@ class GradersActionBox extends React.Component {
   render = () => {
     return (
       <div className="rt-action-box">
-        <button className="assign-all-button" onClick={this.props.assignAll}>
+        <button onClick={this.props.assignAll}>
+          <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("graders.actions.assign_grader")}
         </button>
-        <button className="assign-randomly-button" onClick={this.props.assignRandomly}>
+        <button onClick={this.props.assignRandomly}>
+          <FontAwesomeIcon icon="fa-solid fa-dice" />
           {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
-        <button className="unassign-all-button" onClick={this.props.unassignAll}>
+        <button onClick={this.props.unassignAll}>
+          <FontAwesomeIcon icon="fa-solid fa-user-minus" />
           {I18n.t("graders.actions.unassign_grader")}
         </button>
       </div>

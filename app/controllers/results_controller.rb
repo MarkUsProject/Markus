@@ -320,6 +320,17 @@ class ResultsController < ApplicationController
     render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
+  def random_incomplete_submission
+    result = record
+    grouping = result.submission.grouping
+
+    next_grouping = grouping.get_random_incomplete(current_role)
+    next_result = next_grouping&.current_result
+
+    render json: { result_id: next_result&.id, submission_id: next_result&.submission_id,
+                   grouping_id: next_grouping&.id }
+  end
+
   def set_released_to_students
     @result = record
     released_to_students = !@result.released_to_students
@@ -627,6 +638,13 @@ class ResultsController < ApplicationController
     send_data csv_string,
               disposition: 'attachment',
               filename: "#{assignment.short_identifier}_release_view_tokens.csv"
+  end
+
+  def print
+    pdf_report = record.generate_print_pdf
+    send_data pdf_report.to_pdf,
+              filename: "#{record.submission.assignment.short_identifier}_#{record.grouping.group.group_name}.pdf",
+              type: 'application/pdf'
   end
 
   private

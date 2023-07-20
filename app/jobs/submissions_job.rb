@@ -1,8 +1,4 @@
 class SubmissionsJob < ApplicationJob
-  def self.show_status(status)
-    I18n.t('poll_job.submissions_job', progress: status[:progress], total: status[:total])
-  end
-
   def add_warning_messages(messages)
     msg = [status[:warning_message], *messages].compact.join("\n")
     status.update(warning_message: msg)
@@ -43,10 +39,26 @@ class SubmissionsJob < ApplicationJob
       grouping.save
       add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
       progress.increment
+      unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
+        CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], status.to_h)
+      end
     end
+  rescue StandardError => e
+    status.catch_exception(e)
+    raise e
   ensure
     unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
-      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], body: 'sent')
+      if status&.progress == 1
+        if status[:warning_message].nil?
+          message = { status: :completed }
+        else
+          message = { status: :completed, warning_message:
+            status[:warning_message] }
+        end
+      else
+        message = status.to_h
+      end
+      CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message.merge({ update_table: true }))
     end
     m_logger.log('Submission collection process done')
   end

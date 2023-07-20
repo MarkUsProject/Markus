@@ -41,16 +41,6 @@ module SubmissionsHelper
       path: path,
       grouping_id: grouping_id
     )
-    f[:filename] =
-      helpers.image_tag('icons/page_white_text.png') +
-      helpers.link_to(" #{file_name}",
-                      download_course_assignment_submissions_path(
-                        course_id,
-                        assignment_id: assignment_id,
-                        revision_identifier: revision_identifier,
-                        file_name: file_name,
-                        path: path, grouping_id: grouping_id
-                      ))
     f[:raw_name] = file_name
     f[:last_revised_date] = I18n.l(file.last_modified_date)
     f[:last_modified_revision] = revision_identifier

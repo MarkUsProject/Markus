@@ -14,6 +14,7 @@ export class SubmissionFilePanel extends React.Component {
       focusLine: null,
       annotationFocus: undefined,
       selectedFileType: null,
+      visibleAnnotations: [],
     };
     this.submissionFileViewer = React.createRef();
   }
@@ -32,6 +33,15 @@ export class SubmissionFilePanel extends React.Component {
       (prevProps.loading && !this.props.loading)
     ) {
       this.refreshSelectedFile();
+    } else if (
+      prevProps.annotations !== this.props.annotations &&
+      this.state.selectedFile !== null
+    ) {
+      const submission_file_id = this.state.selectedFile[1];
+      const visibleAnnotations = this.props.annotations.filter(
+        a => a.submission_file_id === submission_file_id
+      );
+      this.setState({visibleAnnotations});
     }
   }
 
@@ -64,7 +74,17 @@ export class SubmissionFilePanel extends React.Component {
       }
       selectedFile = this.getFirstFile(this.props.fileData);
     }
-    this.setState({selectedFile});
+
+    let visibleAnnotations;
+    if (selectedFile === null) {
+      visibleAnnotations = [];
+    } else {
+      const submission_file_id = selectedFile[1];
+      visibleAnnotations = this.props.annotations.filter(
+        a => a.submission_file_id === submission_file_id
+      );
+    }
+    this.setState({selectedFile, visibleAnnotations});
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
@@ -120,6 +140,7 @@ export class SubmissionFilePanel extends React.Component {
       selectedFile: [file, id],
       focusLine: focusLine,
       annotationFocus: annotationFocus,
+      visibleAnnotations: this.props.annotations.filter(a => a.submission_file_id === id),
     });
     localStorage.setItem("file", file);
   };
@@ -130,17 +151,13 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   render() {
-    let submission_file_id, visibleAnnotations, submission_file_mime_type;
+    let submission_file_id, submission_file_mime_type;
     if (this.state.selectedFile === null) {
       submission_file_id = null;
       submission_file_mime_type = null;
-      visibleAnnotations = [];
     } else {
       submission_file_id = this.state.selectedFile[1];
       submission_file_mime_type = getType(this.state.selectedFile[0]);
-      visibleAnnotations = this.props.annotations.filter(
-        a => a.submission_file_id === submission_file_id
-      );
     }
     return (
       <React.Fragment>
@@ -172,7 +189,7 @@ export class SubmissionFilePanel extends React.Component {
             mime_type={submission_file_mime_type}
             result_id={this.props.result_id}
             selectedFile={submission_file_id}
-            annotations={visibleAnnotations}
+            annotations={this.state.visibleAnnotations}
             focusLine={this.state.focusLine}
             annotationFocus={this.state.annotationFocus}
             released_to_students={this.props.released_to_students}

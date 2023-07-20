@@ -89,12 +89,12 @@ class Result < ApplicationRecord
     Result.get_subtotals([self.id], user_visibility: user_visibility)[self.id]
   end
 
-  def self.get_subtotals(result_ids, user_visibility: :ta_visible)
-    marks = Mark.joins(:criterion)
-                .where(result_id: result_ids)
-                .where("criteria.#{user_visibility}": true)
-                .group(:result_id)
-                .sum(:mark)
+  def self.get_subtotals(result_ids, user_visibility: :ta_visible, criterion_ids: nil)
+    all_marks = Mark.joins(:criterion)
+                    .where(result_id: result_ids, "criteria.#{user_visibility}": true)
+    all_marks = all_marks.where('criteria.id': criterion_ids) if criterion_ids.present?
+
+    marks = all_marks.group(:result_id).sum(:mark)
     result_ids.index_with { |r_id| marks[r_id] || 0 }
   end
 
@@ -173,6 +173,168 @@ class Result < ApplicationRecord
 
   def view_token_expired?
     !self.view_token_expiry.nil? && Time.current >= self.view_token_expiry
+  end
+
+  # Generate a PDF report for this result.
+  # Currently only supports PDF submission file (all other submission files are skipped).
+  def generate_print_pdf
+    marks = self.mark_hash
+    extra_marks = self.extra_marks
+    total_mark = self.get_total_mark
+    overall_comment = self.overall_comment
+    submission = self.submission
+    grouping = submission.grouping
+    assignment = grouping.assignment
+
+    # Make folder for temporary files
+    workdir = "tmp/print/#{self.id}"
+    FileUtils.mkdir_p(workdir)
+
+    # Constants used for PDF generation
+    logo_width = 80
+    line_space = 12
+    annotation_size = 20
+
+    # Generate front page
+    Prawn::Document.generate("#{workdir}/front.pdf") do
+      # Add MarkUs logo
+      image Rails.root.join('app/assets/images/markus_logo_big.png'),
+            at: [bounds.width - logo_width, bounds.height],
+            width: logo_width
+
+      font_families.update(
+        'Open Sans' => {
+          normal: Rails.root.join('vendor/assets/stylesheets/fonts/OpenSansEmoji.ttf'),
+          bold: Rails.root.join('vendor/assets/stylesheets/fonts/OpenSans-Bold.ttf')
+        }
+      )
+      font 'Open Sans'
+
+      # Title
+      formatted_text [{
+        text: "#{assignment.short_identifier}: #{assignment.description}", size: 20, styles: [:bold]
+      }]
+      move_down line_space
+
+      # Group members
+      grouping.accepted_students.includes(:user).find_each do |student|
+        text "#{student.user_name} - #{student.first_name} #{student.last_name}"
+      end
+      move_down line_space
+
+      # Marks
+      assignment.ta_criteria.order(:position).find_each do |criterion|
+        mark = marks.dig(criterion.id, :mark)
+        if criterion.is_a? RubricCriterion
+          formatted_text [{ text: "#{criterion.name}:", styles: [:bold] }]
+          indent(10) do
+            criterion.levels.order(:mark).find_each do |level|
+              styles = level.mark == mark ? [:bold] : [:normal]
+              formatted_text [{
+                text: "• #{level.mark} / #{criterion.max_mark} #{level.name}: #{level.description}",
+                styles: styles
+              }]
+            end
+          end
+        else
+          formatted_text [{
+            text: "#{criterion.name}: #{mark || '-'} / #{criterion.max_mark}",
+            styles: [:bold]
+          }]
+          text criterion.description if criterion.description.present?
+        end
+      end
+
+      extra_marks.each do |extra_mark|
+        text "#{extra_mark.description}: #{extra_mark.extra_mark}#{extra_mark.unit == 'percentage' ? '%' : ''}"
+      end
+      move_down line_space
+
+      formatted_text [{ text: "#{I18n.t('results.total_mark')}: #{total_mark} / #{assignment.max_mark}",
+                        styles: [:bold] }]
+      move_down line_space
+
+      # Annotations and overall comments
+      formatted_text [{ text: Annotation.model_name.human.pluralize, styles: [:bold] }]
+      submission.annotations.order(:annotation_number).includes(:annotation_text).each do |annotation|
+        text "#{annotation.annotation_number}. #{annotation.annotation_text.content}"
+      end
+      move_down line_space
+
+      formatted_text [{ text: Result.human_attribute_name(:overall_comment), styles: [:bold] }]
+      if overall_comment.present?
+        text overall_comment
+      else
+        text I18n.t(:not_applicable)
+      end
+    end
+
+    # Copy all PDF submission files to workspace
+    input_files = submission.submission_files.where("filename LIKE '%.pdf'").order(:path, :filename)
+    grouping.access_repo do |repo|
+      input_files.each do |sf|
+        contents = sf.retrieve_file(repo: repo)
+        FileUtils.mkdir_p(File.join(workdir, sf.path))
+        f = File.open(File.join(workdir, sf.path, sf.filename), 'wb')
+        f.write(contents)
+        f.close
+      end
+    end
+
+    combined_pdf = CombinePDF.new
+    # Simultaneouly do two things:
+    # 1. Generate combined_pdf, a concatenation of all PDF submission files
+    # 2. Generate annotations.pdf, a PDF containing only markers for annotations.
+    #    These will be overlaid onto combined_pdf.
+    Prawn::Document.generate("#{workdir}/annotations.pdf", skip_page_creation: true) do
+      total_num_pages = 0
+      input_files.each do |input_file|
+        # Process the submission file
+        input_pdf = CombinePDF.load(File.join(workdir, input_file.path, input_file.filename))
+        combined_pdf << input_pdf
+
+        num_pages = input_pdf.pages.size
+        num_pages.times do
+          start_new_page
+        end
+
+        # Create markers for the annotations.
+        # TODO: remove where clause after investigating how PDF annotations might have a nil page attribute
+        input_file.annotations.where.not(page: nil).order(:annotation_number).each do |annotation|
+          go_to_page(total_num_pages + annotation.page)
+          width, height = bounds.width, bounds.height
+          x1, y1 = annotation.x1 / 1.0e5 * width, annotation.y1 / 1.0e5 * height
+
+          float do
+            transparent(0.5) do
+              fill_color 'AAAAAA'
+              fill_rectangle([x1, height - y1], annotation_size, annotation_size)
+            end
+
+            bounding_box([x1, height - y1], width: annotation_size, height: annotation_size) do
+              move_down 5
+              text annotation.annotation_number.to_s, color: '000000', align: :center
+            end
+          end
+        end
+
+        total_num_pages += num_pages
+      end
+    end
+
+    # Combine annotations and submission files
+    annotations_pdf = CombinePDF.load("#{workdir}/annotations.pdf")
+    combined_pdf.pages.zip(annotations_pdf.pages) do |combined_page, annotation_page|
+      combined_page.fix_rotation  # Fix rotation metadata, useful for scanned pages
+      combined_page << annotation_page
+    end
+
+    # Finally, insert cover page at the front
+    combined_pdf >> CombinePDF.load("#{workdir}/front.pdf")
+
+    # Delete old files
+    FileUtils.rm_rf(workdir)
+    combined_pdf
   end
 
   private

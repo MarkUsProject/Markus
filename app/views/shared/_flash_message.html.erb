@@ -1,14 +1,28 @@
 <% flash.discard.inspect %> <!-- keep this line until issue #3342 has been resolved (somehow it fixes it) -->
+<%
+  flash_type_to_icon = {
+    notice: 'fa-circle-info',
+    error: 'fa-circle-exclamation',
+    success: 'fa-circle-check',
+    warning: 'fa-warning'
+  }
+%>
 <% [:notice, :error, :success, :warning].each do |key| %>
   <% if flash[key].nil? %>
     <div class="<%= key.to_s %> no-display">
-      <a class="hide-flash">&nbsp;</a>
+      <a class="hide-flash" href="#">
+        <i class="fa-solid fa-close"></i>
+      </a>
+      <i class="fa-solid <%= flash_type_to_icon[key] %>"></i>
       <div class="flash-content"></div>
     </div>
   <% else %>
     <% flash[key] = [flash[key]] unless flash[key].respond_to?(:each) %>
     <div class="<%= key.to_s %>">
-      <a class="hide-flash">&nbsp;</a>
+      <a class="hide-flash" href="#">
+        <i class="fa-solid fa-close"></i>
+      </a>
+      <i class="fa-solid <%= flash_type_to_icon[key] %>"></i>
       <div class="flash-content">
         <% flash[key].each do |content| %>
           <p><%= content.html_safe %></p>
@@ -23,7 +37,7 @@
   window.addEventListener("DOMContentLoaded", function () {
     Array.from(document.getElementsByClassName('hide-flash')).forEach(function (elem) {
       elem.addEventListener("click", function(e) {
-        e.target.parentElement.style.display = 'none';
+        e.target.closest('div').style.display = 'none';
       })
     })
   })

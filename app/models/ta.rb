@@ -18,62 +18,29 @@ class Ta < Role
              .includes(:students, :tas, :group, :assignment)
   end
 
-  # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(result, out_of)
-    total = result.get_total_mark
-
-    percent = BLANK_MARK
-
-    # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
-    end
-    percent
-  end
-
-  # An array of all the grades for an assignment
+  # An array of all the grades for an assignment for this TA.
+  # If TAs are assigned to grade criteria, returns just the subtotal
+  # for the criteria the TA was assigned.
   def percentage_grades_array(assignment)
-    groupings = assignment.groupings
-                          .joins(:tas)
-                          .where(memberships: { role_id: id })
-    grades = []
+    result_ids = assignment.current_results
+                           .joins(grouping: :tas)
+                           .where(marking_state: Result::MARKING_STATES[:complete], 'roles.id': self.id)
+                           .ids
 
     if assignment.assign_graders_to_criteria
-      criteria_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
-      out_of = criteria_ids.sum do |criterion_id|
-        Criterion.find(criterion_id).max_mark
-      end
+      criterion_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
+      out_of = assignment.ta_criteria.where(id: criterion_ids).sum(:max_mark)
       return [] if out_of.zero?
 
-      mark_data = groupings.joins(current_result: :marks)
-                           .where('marks.criterion_id': criteria_ids)
-                           .where.not('marks.mark': nil)
-                           .pluck('results.id', 'marks.mark')
-                           .group_by { |x| x[0] }
-      mark_data.each_value do |marks|
-        next if marks.empty?
-
-        subtotal = 0
-        has_mark = false
-        marks.each do |_, mark|
-          subtotal += mark
-          has_mark = true
-        end
-        grades << subtotal / out_of * 100 if has_mark
-      end
+      raw_marks = Result.get_subtotals(result_ids, criterion_ids: criterion_ids).values
     else
       out_of = assignment.max_mark
-      groupings.includes(:current_result).find_each do |grouping|
-        result = grouping.current_result
-        unless result.nil? || result.get_total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
-          percent = calculate_total_percent(result, out_of)
-          unless percent == BLANK_MARK
-            grades << percent
-          end
-        end
-      end
+      return [] if out_of.zero?
+
+      raw_marks = Result.get_total_marks(result_ids).values
     end
-    grades
+
+    raw_marks.map { |mark| mark * 100 / out_of }
   end
 
   # Returns grade distribution for a grade entry item for each student

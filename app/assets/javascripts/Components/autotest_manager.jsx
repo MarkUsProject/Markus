@@ -2,9 +2,11 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import Form from "@rjsf/core";
+import {TranslatableString} from "@rjsf/utils";
 import {customizeValidator} from "@rjsf/validator-ajv8";
 import Flatpickr from "react-flatpickr";
 import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
 
@@ -430,10 +432,11 @@ class AutotestManager extends React.Component {
           </legend>
           <div className={"rt-action-box upload-download"}>
             <a href={this.specsDownloadURL()} className={"button"}>
-              <i className="fa fa-download-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("download")}
+              <FontAwesomeIcon icon="fa-solid fa-download" />
+              {I18n.t("download")}
             </a>
-            <a onClick={this.onSpecUploadModal} className={"button upload-button"}>
+            <a onClick={this.onSpecUploadModal} className={"button"}>
+              <FontAwesomeIcon icon="fa-solid fa-upload" />
               {I18n.t("upload")}
             </a>
           </div>
@@ -444,7 +447,15 @@ class AutotestManager extends React.Component {
             formData={this.state.formData}
             onChange={this.handleFormChange}
             validator={validator}
-            templates={{ErrorListTemplate: AutotestErrorList}}
+            templates={{
+              ErrorListTemplate: AutotestErrorList,
+              ButtonTemplates: {
+                AddButton,
+                MoveDownButton,
+                MoveUpButton,
+                RemoveButton,
+              },
+            }}
             ref={this.formRef}
           >
             <p /> {/*need something here so that the form doesn't render its own submit button*/}
@@ -481,8 +492,90 @@ class AutotestManager extends React.Component {
 
 class AutotestErrorList extends React.Component {
   render() {
-    return <p className={"error"}>{I18n.t("automated_tests.errors.settings_invalid")}</p>;
+    return (
+      <p className={"error"}>
+        <FontAwesomeIcon icon="fa-solid fa-circle-exclamation" className="icon-left" />
+        {I18n.t("automated_tests.errors.settings_invalid")}
+      </p>
+    );
   }
+}
+
+// Custom button templates to use Font Awesome
+function AddButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <div className="row">
+      <p className={`col-xs-3 col-xs-offset-9 text-right`}>
+        <button
+          type="button"
+          className={`btn btn-info btn-add col-xs-12`}
+          title={translateString(TranslatableString.AddButton)}
+          {...btnProps}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-add" />
+        </button>
+      </p>
+    </div>
+  );
+}
+
+function RemoveButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <button
+      type="button"
+      className={`btn btn-danger array-item-remove`}
+      title={translateString(TranslatableString.RemoveButton)}
+      {...btnProps}
+    >
+      <FontAwesomeIcon icon="fa-solid fa-close" />
+    </button>
+  );
+}
+
+function MoveDownButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <button
+      type="button"
+      className={`btn btn-default array-item-move-down`}
+      title={translateString(TranslatableString.MoveDownButton)}
+      {...btnProps}
+    >
+      <FontAwesomeIcon icon="fa-solid fa-arrow-down" />
+    </button>
+  );
+}
+
+function MoveUpButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <button
+      type="button"
+      className={`btn btn-default array-item-move-up`}
+      title={translateString(TranslatableString.MoveUpButton)}
+      {...btnProps}
+    >
+      <FontAwesomeIcon icon="fa-solid fa-arrow-up" />
+    </button>
+  );
 }
 
 export function makeAutotestManager(elem, props) {

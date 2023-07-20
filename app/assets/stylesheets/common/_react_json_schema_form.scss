@@ -33,6 +33,14 @@
     i {
       display: none;
     }
+
+    > .svg-inline--fa {
+      padding-right: 0;
+    }
+  }
+
+  .array-item-add > .svg-inline--fa {
+    padding-right: 0;
   }
 
   .btn-add {
@@ -160,12 +168,12 @@
 
   // Error messages
   .error-detail {
-    background: $light-error asset-url('icons/exclamation.png') no-repeat 5px center;
+    background-color: $light-error;
     border: 1px solid $severe-error;
     border-radius: $radius;
     list-style: none;
     margin-bottom: 1em;
     margin-left: 170px;
-    padding: 0.25em 0.5em 0.25em 2em;
+    padding: 0.25em 0.5em;
   }
 }

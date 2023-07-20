@@ -24,6 +24,7 @@
           <ul>
             <% unless allowed_to?(:role_is_switched?) %>
               <li>
+                <i class="fa-solid fa-gear"></i>
                 <%= link_to t('menu.settings'),
                             settings_users_path,
                             class: 'settings' %>
@@ -31,6 +32,7 @@
             <% end %>
             <% if is_not_admin_route && @current_course && allowed_to?(:role_switch?, @current_course) %>
               <li>
+                <i class="fa-solid fa-user-group"></i>
                 <%= link_to t('main.role_switch.switch_role'),
                             role_switch_course_path(@current_course.id),
                             remote: true,
@@ -39,21 +41,27 @@
             <% end %>
             <% if is_not_admin_route && @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
               <li>
+                <i class="fa-solid fa-user-group"></i>
                 <%= link_to t('main.role_switch.clear_role_switch_session'),
                             clear_role_switch_session_course_path(@current_course),
                             class: 'switch-role' %>
               </li>
             <% end %>
             <li>
+              <i class="fa-solid fa-question"></i>
               <%= link_to t(:about_markus),
                           about_main_index_path,
                           remote: true,
                           class: 'about-markus' %>
             </li>
             <li>
-              <a class='github' href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
+              <i class="fa-brands fa-github"></i>
+              <a class='github' href="https://github.com/MarkUsProject/Markus/issues/">
+                <%= t(:issues) %>
+              </a>
             </li>
             <li>
+              <i class="fa-solid fa-sign-out"></i>
               <%= link_to(t('main.log_out'),
                           logout_main_index_path,
                           id: 'logout_link',

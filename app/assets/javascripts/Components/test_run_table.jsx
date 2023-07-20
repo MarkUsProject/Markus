@@ -33,41 +33,43 @@ export class TestRunTable extends React.Component {
   }
 
   fetchData = () => {
-    let ajaxDetails = {};
+    let fetchDetails = {
+      headers: {
+        Accept: "application/json",
+      },
+    };
+    let url;
     if (this.props.instructor_run) {
       if (this.props.instructor_view) {
-        ajaxDetails = {
-          url: Routes.get_test_runs_instructors_course_result_path(
-            this.props.course_id,
-            this.props.result_id
-          ),
-          dataType: "json",
-        };
+        url = Routes.get_test_runs_instructors_course_result_path(
+          this.props.course_id,
+          this.props.result_id
+        );
       } else {
-        ajaxDetails = {
-          url: Routes.get_test_runs_instructors_released_course_result_path(
-            this.props.course_id,
-            this.props.result_id
-          ),
-          dataType: "json",
-        };
+        url = Routes.get_test_runs_instructors_released_course_result_path(
+          this.props.course_id,
+          this.props.result_id
+        );
       }
     } else {
-      ajaxDetails = {
-        url: Routes.get_test_runs_students_course_assignment_automated_tests_path(
-          this.props.course_id,
-          this.props.assignment_id
-        ),
-        dataType: "json",
-      };
+      url = Routes.get_test_runs_students_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      );
     }
-    $.ajax(ajaxDetails).then(res => {
-      this.setState({
-        data: res,
-        loading: false,
-        expanded: res.length > 0 ? {0: true} : {},
+    fetch(url, fetchDetails)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(data => {
+        this.setState({
+          data: data,
+          loading: false,
+          expanded: data.length > 0 ? {0: true} : {},
+        });
       });
-    });
   };
 
   onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
@@ -166,6 +168,12 @@ class TestGroupResultTable extends React.Component {
       filtered: [],
       filteredData: props.data,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({filteredData: this.props.data, filtered: []});
+    }
   }
 
   computeExpanded = data => {

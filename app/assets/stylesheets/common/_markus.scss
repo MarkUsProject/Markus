@@ -114,13 +114,13 @@ strong a {
   border-radius: $radius;
   display: block;
   margin-bottom: 1em;
-  padding: 0.25em 0.5em 0.25em 2em;
+  padding: 0.25em 0.5em;
   width: 100%;
 }
 
 .error {
   @extend .alert;
-  background: $light-error asset-url('icons/exclamation.png') no-repeat 5px center;
+  background-color: $light-error;
   border: 1px solid $severe-error;
 }
 
@@ -130,32 +130,24 @@ strong a {
 
 .warning {
   @extend .alert;
-  background: $light-alert asset-url('icons/error.png') no-repeat 5px center;
+  background-color: $light-alert;
   border: 1px solid $alert;
 }
 
 .success {
   @extend .alert;
-  background: $light-success asset-url('icons/accept.png') no-repeat 5px center;
+  background-color: $light-success;
   border: 1px solid $severe-success;
-}
-
-.information {
-  @extend .alert;
-  background: $background-main asset-url('icons/information.png') no-repeat 5px center;
-  border: 1px solid $primary-two;
 }
 
 .notice {
   @extend .alert;
-  background: $background-main asset-url('icons/information.png') no-repeat 5px center;
+  background-color: $background-main;
   border: 1px solid $line;
 }
 
 .hide-flash {
-  background: transparent asset-url('icons/cross.png') no-repeat 5px center;
   float: right;
-  width: 2em;
 }
 
 .no-display {
@@ -164,6 +156,10 @@ strong a {
 
 .flex-display {
   display: flex;
+}
+
+.no-padding {
+  padding: 0;
 }
 
 /** Text and number field inputs */
@@ -690,12 +686,10 @@ kbd {
     padding: 0;
 
     li {
-      background: url('handle@2x.png') 0.5em center no-repeat;
-      background-size: 12px 20px;
       border-top: 1px solid $line;
       list-style: none;
       min-height: 2.5em;
-      padding: 0.5em 0.5em 0.5em 2em;
+      padding: 0.5em;
       transition: background-color $time-quick;
 
       &:hover {
@@ -849,14 +843,7 @@ ul.tags {
 }
 
 .error-with-icon {
-  color: $severe-error;
   font-weight: bold;
-
-  &::before {
-    content: asset-url('icons/error.png');
-    padding-right: 10px;
-    vertical-align: top;
-  }
 }
 
 /** Dialog modal windows */
@@ -978,6 +965,17 @@ nav {
 
   ul.sub_sub {
     background-color: $background-main;
+  }
+
+  #user-info-dropdown {
+    a {
+      display: inline;
+      padding: 0 1em;
+    }
+
+    svg {
+      width: 1em;
+    }
   }
 }
 
@@ -1140,7 +1138,6 @@ nav {
 
 .crop-target {
   border: 1px solid $gridline;
-  max-width: 400px;
 }
 
 // Text editing and previews
@@ -1176,18 +1173,39 @@ nav {
   padding: 0.3em 0;
   width: 100%;
 
+  /* Icon-only buttons */
   .button {
+    align-items: center;
+    display: flex;
     height: 3em;
+    justify-content: center;
     margin: 0 5px;
-    min-width: 40px;
-    padding: 0;
+    min-width: 3em;
+    padding: 0 0.4em;
+
+    > .svg-inline--fa:only-child {
+      height: fit-content;
+      width: 2em;
+    }
   }
 
   button {
+    align-items: center;
+    display: flex;
     height: 3em;
+    justify-content: center;
     margin: 0 5px;
     min-width: 100px;
-    padding: 0.4em;
+    padding: 0 0.4em;
+
+    @include breakpoint(mobile) {
+      min-width: 3em;
+
+      > .svg-inline--fa:only-child {
+        height: fit-content;
+        width: 2em;
+      }
+    }
   }
 }
 
@@ -1319,10 +1337,6 @@ nav {
   margin-top: 1em;
 }
 
-.add-new-button-wrapper {
-  float: right;
-}
-
 // Styling for graphs
 .data-chart-container {
   display: flex;
@@ -1370,4 +1384,49 @@ canvas {
 .lti-table {
   min-width: 250px;
   width: 50%;
+}
+
+.exam-crop-container {
+  display: flex;
+  height: 600px;
+  width: 1000px;
+}
+
+#exam-crop-img-container {
+  background-color: $disabled-area;
+  flex: 1;
+  margin-right: 5px;
+  overflow-x: auto;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.exam-crop-button-container {
+  display: flex;
+  flex-direction: column;
+  padding-left: 5px;
+  padding-top: 5px;
+  width: 40px;
+}
+
+#increase-crop-scale {
+  margin-bottom: 2px;
+}
+
+.crop-scale-button {
+  height: 40px;
+  margin-top: 2px;
+  min-width: 40px;
+  padding: 0;
+  transform: translate(-70px, 0);
+  width: 40px;
+  z-index: 800; // jcrop uses z-index of 690
+}
+
+.crop-scale-button > svg {
+  padding-right: 0;
+}
+
+.jcrop-centered {
+  display: inline-block;
 }

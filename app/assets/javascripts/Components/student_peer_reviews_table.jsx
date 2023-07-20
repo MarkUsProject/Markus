@@ -17,18 +17,24 @@ class StudentPeerReviewsTable extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.list_reviews_course_assignment_peer_reviews_path(
+    fetch(
+      Routes.list_reviews_course_assignment_peer_reviews_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.setState({
-        peer_reviews: res,
-        loading: false,
+      {headers: {Accept: "application/json"}}
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          peer_reviews: res,
+          loading: false,
+        });
       });
-    });
   };
 
   columns = () => [

@@ -17,12 +17,19 @@ class AdminCourseList extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.admin_courses_path(),
-      dataType: "json",
-    }).then(data => {
-      this.setState({courses: data, loading: false});
-    });
+    fetch(Routes.admin_courses_path(), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(data => {
+        this.setState({courses: data, loading: false});
+      });
   };
 
   columns = [

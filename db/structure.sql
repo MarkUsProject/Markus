@@ -1025,7 +1025,7 @@ CREATE TABLE public.groupings_tags (
 
 CREATE TABLE public.groups (
     id integer NOT NULL,
-    group_name character varying(30),
+    group_name character varying,
     repo_name character varying,
     course_id bigint NOT NULL
 );
@@ -4690,4 +4690,5 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20221111182002'),
 ('20221219204837'),
 ('20230109190029'),
-('20230303030615');
+('20230303030615'),
+('20230713153536');

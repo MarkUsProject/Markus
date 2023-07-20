@@ -14,7 +14,7 @@
         document.getElementById('working').style.display = '';
       })
     }
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       invite_modal = new ModalMarkus('#invite_dialog');
       $('#invite-student').click(function(e) {
         invite();
@@ -41,6 +41,7 @@
         <% # If student has no group, inform them
            if @grouping.nil? %>
           <p class='notice'>
+            <i class="fa-solid fa-circle-info left-icon"></i>
             <%= t('groups.student_interface.no_group_yet') %>
             <% if !@assignment.scanned_exam && @assignment.past_collection_date?(@current_role.section) %>
               <%= t('assignments.due_date.final_due_date_passed') %>
@@ -140,6 +141,7 @@
              # 'group is not valid' warning.
              unless @grouping.is_valid? %>
             <p class='warning'>
+              <i class="fa-solid fa-warning icon-left"></i>
               <%= t('groups.student_interface.invite_more_students') %>
             </p>
           <% end %>

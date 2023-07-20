@@ -16,15 +16,22 @@ class CourseList extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.courses_path(),
-      dataType: "json",
-    }).then(res =>
-      this.setState({
-        courses: res.data,
-        loading: false,
+    fetch(Routes.courses_path(), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
       })
-    );
+      .then(response => {
+        this.setState({
+          courses: response.data,
+          loading: false,
+        });
+      });
   };
 
   render() {

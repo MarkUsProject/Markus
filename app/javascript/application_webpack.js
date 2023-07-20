@@ -55,13 +55,20 @@ window.flatpickr = flatpickr;
 
 window.Routes = require("./routes");
 
+// create a global icon for the help system
+import {icon} from "@fortawesome/fontawesome-svg-core";
+import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons";
+window.HELP_ICON_HTML = icon(faCircleQuestion).node[0];
+
 // assets with side-effects only
 import "javascripts/flatpickr_config";
+import "javascripts/fontawesome_config";
 import "javascripts/help-system";
 import "javascripts/layouts";
 import "javascripts/menu";
 import "javascripts/react_config";
 import "javascripts/redirect";
+import "javascripts/fetch_proxy";
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.

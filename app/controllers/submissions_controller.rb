@@ -207,13 +207,13 @@ class SubmissionsController < ApplicationController
       collectable << grouping
     end
     if collectable.count > 0
-      @current_job = SubmissionsJob.perform_later(collectable,
-                                                  enqueuing_user: @current_user,
-                                                  collection_dates: collection_dates.transform_keys(&:to_s),
-                                                  collect_current: collect_current,
-                                                  apply_late_penalty: apply_late_penalty,
-                                                  notify_socket: true)
-      session[:job_id] = @current_job.job_id
+      current_job = SubmissionsJob.perform_later(collectable,
+                                                 enqueuing_user: @current_user,
+                                                 collection_dates: collection_dates.transform_keys(&:to_s),
+                                                 collect_current: collect_current,
+                                                 apply_late_penalty: apply_late_penalty,
+                                                 notify_socket: true)
+      CollectSubmissionsChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
     end
     if some_before_due
       error = I18n.t('submissions.collect.could_not_collect_some_due',
@@ -225,7 +225,7 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    render 'shared/_poll_job'
+    head :ok
   end
 
   def run_tests
@@ -903,7 +903,9 @@ class SubmissionsController < ApplicationController
       FileUtils.mkdir_p(cache_file.dirname)
       if type == 'jupyter-notebook'
         args = [
-          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s
+          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s,
+          "--TemplateExporter.extra_template_basedirs=#{Rails.root.join('lib/jupyter-notebook')}",
+          '--template', 'markus-html-template'
         ]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
