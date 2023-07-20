@@ -709,13 +709,11 @@ class Grouping < ApplicationRecord
 
   def get_next_grouping(current_role, reversed, filter_data = nil)
     if current_role.ta?
-      # Get relevant groupings for a TA
       results = self.assignment.current_results.joins(grouping: :tas).where(
         'roles.id': current_role.id
       )
 
     else
-      # Get all groupings in an assignment -- typically for an instructor
       results = self.assignment.current_results
     end
     results = results.joins(grouping: :group)
@@ -730,14 +728,12 @@ class Grouping < ApplicationRecord
 
   def get_random_incomplete(current_role)
     if current_role.ta?
-      # Get relevant groupings for a TA
       results = self.assignment.current_results.joins(grouping: :tas).where(
         marking_state: Result::MARKING_STATES[:incomplete],
         'roles.id': current_role.id
       )
 
     else
-      # Get all groupings in an assignment -- typically for an instructor
       results = self.assignment.current_results.where(
         marking_state: Result::MARKING_STATES[:incomplete]
       )
