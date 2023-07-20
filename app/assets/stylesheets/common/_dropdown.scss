@@ -66,6 +66,12 @@
           color: $background-main;
         }
       }
+
+      &.disabled {
+        background: $disabled-area;
+        border-color: $disabled-area;
+        pointer-events: none;
+      }
     }
 
     .section {

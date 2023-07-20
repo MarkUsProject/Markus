@@ -31,7 +31,7 @@ export class RangeFilter extends React.Component {
 
     return (
       <div className={"filter"}>
-        <p>{title}</p>
+        {title && <p>{title}</p>}
         <div className={"range"} onChange={e => this.handleInputs(e)} data-testid={title}>
           <input
             className={"input-min"}

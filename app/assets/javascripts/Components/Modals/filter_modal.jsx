@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 import {RangeFilter} from "../Helpers/range_filter";
+import {CriteriaFilter} from "../criteria_filter";
 
 const INITIAL_MODAL_STATE = {
   currentOrderBy: I18n.t("results.filters.ordering.group_name"),
@@ -20,6 +21,7 @@ const INITIAL_MODAL_STATE = {
     min: "",
     max: "",
   },
+  currentCriteria: [],
 };
 
 export class FilterModal extends React.Component {
@@ -35,6 +37,7 @@ export class FilterModal extends React.Component {
       currentTags: this.props.filterData.tags,
       currentTotalMarkRange: this.props.filterData.totalMarkRange,
       currentTotalExtraMarkRange: this.props.filterData.totalExtraMarkRange,
+      currentCriteria: this.props.filterData.criteria,
     };
   }
 
@@ -167,8 +170,21 @@ export class FilterModal extends React.Component {
       tags: this.state.currentTags,
       totalMarkRange: this.state.currentTotalMarkRange,
       totalExtraMarkRange: this.state.currentTotalExtraMarkRange,
+      criteria: this.state.currentCriteria,
     });
     this.props.onRequestClose();
+  };
+
+  addCriteria = criteria => {
+    const newArray = [...this.state.currentCriteria];
+    newArray.push(criteria);
+    this.setState({currentCriteria: newArray});
+  };
+
+  deleteCriteria = criteria => {
+    let newArray = [...this.state.currentCriteria];
+    newArray = newArray.filter(item => item.name !== criteria.name);
+    this.setState({currentCriteria: newArray});
   };
 
   clearFilters = event => {
@@ -196,6 +212,7 @@ export class FilterModal extends React.Component {
               currentTags: this.props.filterData.tags,
               currentTotalMarkRange: this.props.filterData.totalMarkRange,
               currentTotalExtraMarkRange: this.props.filterData.totalExtraMarkRange,
+              currentCriteria: this.props.filterData.criteria,
             });
             this.props.onRequestClose();
           }}
@@ -296,6 +313,14 @@ export class FilterModal extends React.Component {
                   {this.renderTotalMarkRange()}
                   {this.renderTotalExtraMarkRange()}
                 </div>
+              </div>
+              <div className={"modal-container-vertical"}>
+                <CriteriaFilter
+                  options={["a", "b", "c", "d", "e"]}
+                  criteria={this.state.currentCriteria}
+                  addCriteria={this.addCriteria}
+                  removeCriteria={this.deleteCriteria}
+                />
               </div>
             </div>
             <div className={"modal-footer"}>
