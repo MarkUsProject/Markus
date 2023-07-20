@@ -26,7 +26,7 @@
 - Ensure Jupyter notebook HTML rendering does not require external CDNs (#6656)
 - Prevent Jupyter notebook from reloading when an annotation is added (#6656)
 - Added a button allowing graders to view a random incomplete submission (#6641)
-- Added a filter modal allowing graders to specify filters on and re-order results (#6642)
+- Added a filter modal allowing graders to specify filters and order when navigating submissions (#6642)
 - Add icons to submission and result grading action buttons (#6666)
 
 ## [v2.2.3]
