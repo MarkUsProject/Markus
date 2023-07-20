@@ -44,9 +44,8 @@ gem 'rails-i18n', '~> 7.0.0'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick'
+gem 'rmagick', '~> 5.2.0'
 gem 'rtesseract'
-gem 'zxing_cpp', require: 'zxing'
 
 # Ruby miscellany
 gem 'json'

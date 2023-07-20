@@ -634,7 +634,7 @@ class Assignment < Assessment
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
     results = {}
-    headers = SortedSet.new
+    headers = Set.new
     summary_test_results = self.summary_test_results.as_json
 
     summary_test_results.each do |test_result|
@@ -648,6 +648,7 @@ class Assignment < Assessment
 
       headers << header
     end
+    headers = headers.sort
 
     CSV.generate do |csv|
       csv << [nil, *headers]

@@ -76,45 +76,42 @@ describe User do
       end
     end
     context 'without a custom exit status messages' do
+      before do
+        allow(Settings).to receive(:validate_file).and_return(Rails.root.join('config/dummy_invalidate.sh'))
+      end
       context 'a successful login' do
         it 'should return a success message' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(0)
           expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_SUCCESS
         end
       end
       context 'an unsuccessful login' do
         it 'should return a failure message' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(1)
-          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_ERROR
+          expect(User.authenticate('exit3', '123')).to eq User::AUTHENTICATE_ERROR
         end
       end
     end
     context 'with a custom exit status message' do
       before do
         allow(Settings).to receive(:validate_custom_status_message).and_return('2' => 'a two!', '3' => 'a three!')
+        allow(Settings).to receive(:validate_file).and_return(Rails.root.join('config/dummy_invalidate.sh'))
       end
       context 'a successful login' do
         it 'should return a success message' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(0)
           expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_SUCCESS
         end
       end
       context 'an unsuccessful login' do
         it 'should return a failure message with a 1' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(1)
-          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_ERROR
+          expect(User.authenticate('exit1', '123')).to eq User::AUTHENTICATE_ERROR
         end
         it 'should return a failure message with a 4' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(4)
-          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_ERROR
+          expect(User.authenticate('exit4', '123')).to eq User::AUTHENTICATE_ERROR
         end
         it 'should return a custom message with a 2' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(2)
-          expect(User.authenticate('ab', '123')).to eq '2'
+          expect(User.authenticate('exit2', '123')).to eq '2'
         end
         it 'should return a custom message with a 3' do
-          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(3)
-          expect(User.authenticate('ab', '123')).to eq '3'
+          expect(User.authenticate('exit3nomsg', '123')).to eq '3'
         end
       end
     end
