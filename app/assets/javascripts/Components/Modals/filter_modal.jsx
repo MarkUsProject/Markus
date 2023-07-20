@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
-import {RangeFilter} from "../Helpers/range_filter";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const INITIAL_MODAL_STATE = {
   currentOrderBy: I18n.t("results.filters.ordering.group_name"),
@@ -104,50 +104,61 @@ export class FilterModal extends React.Component {
     );
   };
 
-  renderTotalMarkRange = () => {
+  rangeFilter = (min, max, title, onMinChange, onMaxChange) => {
     return (
-      <RangeFilter
-        title={I18n.t("results.filters.total_mark")}
-        handleInputs={this.handleTotalMark}
-        min={this.state.currentTotalMarkRange.min}
-        max={this.state.currentTotalMarkRange.max}
-      ></RangeFilter>
+      <div className={"filter"}>
+        <p>{title}</p>
+        <div className={"range"} data-testid={title}>
+          <input
+            className={"input-min"}
+            type="number"
+            step="any"
+            placeholder={"Min"}
+            value={min}
+            max={max}
+            onChange={e => onMinChange(e)}
+          />
+          <span>{I18n.t("results.filters.range_value_separator")}</span>
+          <input
+            className={"input-max"}
+            type="number"
+            step="any"
+            placeholder={"Max"}
+            value={max}
+            min={min}
+            onChange={e => onMaxChange(e)}
+          />
+          <div className={"hidden"}>
+            <FontAwesomeIcon icon={"fa-solid fa-circle-exclamation"} />
+            <span className={"validity"}>{I18n.t("results.filters.invalid_range")}</span>
+          </div>
+        </div>
+      </div>
     );
   };
 
-  renderTotalExtraMarkRange = () => {
-    return (
-      <RangeFilter
-        title={I18n.t("results.filters.total_extra_mark")}
-        handleInputs={this.handleTotalExtraMark}
-        min={this.state.currentTotalExtraMarkRange.min}
-        max={this.state.currentTotalExtraMarkRange.max}
-      ></RangeFilter>
-    );
+  onTotalMarkMinChange = e => {
+    this.setState({
+      currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
+    });
   };
 
-  handleTotalMark = e => {
-    if (e.target.className === "input-min") {
-      this.setState({
-        currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
-      });
-    } else {
-      this.setState({
-        currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
-      });
-    }
+  onTotalMarkMaxChange = e => {
+    this.setState({
+      currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
+    });
   };
 
-  handleTotalExtraMark = e => {
-    if (e.target.className === "input-min") {
-      this.setState({
-        currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, min: e.target.value},
-      });
-    } else {
-      this.setState({
-        currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, max: e.target.value},
-      });
-    }
+  onTotalExtraMarkMinChange = e => {
+    this.setState({
+      currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, min: e.target.value},
+    });
+  };
+
+  onTotalExtraMarkMaxChange = e => {
+    this.setState({
+      currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, max: e.target.value},
+    });
   };
 
   componentDidMount() {
@@ -293,8 +304,20 @@ export class FilterModal extends React.Component {
                 </div>
 
                 <div className={"modal-container"}>
-                  {this.renderTotalMarkRange()}
-                  {this.renderTotalExtraMarkRange()}
+                  {this.rangeFilter(
+                    this.state.currentTotalMarkRange.min,
+                    this.state.currentTotalMarkRange.max,
+                    I18n.t("results.filters.total_mark"),
+                    this.onTotalMarkMinChange,
+                    this.onTotalMarkMaxChange
+                  )}
+                  {this.rangeFilter(
+                    this.state.currentTotalExtraMarkRange.min,
+                    this.state.currentTotalExtraMarkRange.max,
+                    I18n.t("results.filters.total_extra_mark"),
+                    this.onTotalExtraMarkMinChange,
+                    this.onTotalExtraMarkMaxChange
+                  )}
                 </div>
               </div>
             </div>
