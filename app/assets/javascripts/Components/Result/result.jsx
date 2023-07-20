@@ -19,7 +19,7 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 
 const INITIAL_FILTER_MODAL_STATE = {
   ascBool: true,
-  orderBy: I18n.t("results.filters.ordering.group_name"),
+  orderBy: I18n.t("activerecord.attributes.group.group_name"),
   annotationValue: "",
   tas: [],
   tags: [],

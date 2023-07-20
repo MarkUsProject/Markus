@@ -5,7 +5,7 @@ import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 import {RangeFilter} from "../Helpers/range_filter";
 
 const INITIAL_MODAL_STATE = {
-  currentOrderBy: I18n.t("results.filters.ordering.group_name"),
+  currentOrderBy: I18n.t("activerecord.attributes.group.group_name"),
   currentAscBool: true,
   currentAnnotationValue: "",
   currentSectionValue: "",
@@ -72,7 +72,7 @@ export class FilterModal extends React.Component {
     if (this.props.role !== "Ta") {
       return (
         <div className={"filter"}>
-          <p>{I18n.t("results.filters.tas")}</p>
+          <p>{I18n.t("activerecord.models.ta.other")}</p>
           <MultiSelectDropdown
             id={"Tas"}
             options={this.props.tas}
@@ -209,14 +209,14 @@ export class FilterModal extends React.Component {
                     <p>{I18n.t("results.filters.order_by")} </p>
                     <SingleSelectDropDown
                       options={[
-                        I18n.t("results.filters.ordering.group_name"),
+                        I18n.t("activerecord.attributes.group.group_name"),
                         I18n.t("submissions.commit_date"),
                       ]}
                       selected={this.state.currentOrderBy}
                       select={selection => {
                         this.setState({currentOrderBy: selection});
                       }}
-                      defaultValue={I18n.t("results.filters.ordering.group_name")}
+                      defaultValue={I18n.t("activerecord.attributes.group.group_name")}
                     />
                     <div
                       className={"order"}
@@ -246,7 +246,7 @@ export class FilterModal extends React.Component {
                     </div>
                   </div>
                   <div className={"filter"} data-testid={"marking-state"}>
-                    <p>{I18n.t("results.filters.marking_state")}</p>
+                    <p>{I18n.t("activerecord.attributes.result.marking_state")}</p>
                     <SingleSelectDropDown
                       options={[
                         I18n.t("submissions.state.in_progress"),
@@ -263,11 +263,11 @@ export class FilterModal extends React.Component {
                 </div>
                 <div className={"modal-container"}>
                   <div className={"filter"}>
-                    <p>{I18n.t("results.filters.tags")}</p>
+                    <p>{I18n.t("activerecord.models.tag.other")}</p>
                     {this.renderTagsDropdown()}
                   </div>
                   <div className={"filter"} data-testid={"section"}>
-                    <p>{I18n.t("results.filters.section")}</p>
+                    <p>{I18n.t("activerecord.models.section.one")}</p>
                     <SingleSelectDropDown
                       options={this.props.sections}
                       selected={this.state.currentSectionValue}
@@ -281,7 +281,7 @@ export class FilterModal extends React.Component {
                 <div className={"modal-container"}>
                   {this.renderTasDropdown()}
                   <label className={"annotation-input"}>
-                    <p>{I18n.t("results.filters.annotation")}</p>
+                    <p>{I18n.t("activerecord.models.annotation.one")}</p>
                     <input
                       id="annotation"
                       type={"text"}
@@ -303,10 +303,10 @@ export class FilterModal extends React.Component {
                 <input
                   id={"clear_all"}
                   type="reset"
-                  value={I18n.t("results.filters.clear_all")}
+                  value={I18n.t("clear_all")}
                   onClick={this.clearFilters}
                 />
-                <input id={"Save"} type="submit" value={I18n.t("results.filters.save")} />
+                <input id={"Save"} type="submit" value={I18n.t("save")} />
               </section>
             </div>
           </form>

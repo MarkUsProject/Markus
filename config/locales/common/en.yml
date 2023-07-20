@@ -6,6 +6,7 @@ en:
   apply: Apply
   cancel: Cancel
   close: Close
+  clear_all: Clear All
   continue: Continue
   copy: Copy
   delete: Delete
@@ -52,6 +53,7 @@ en:
     unlink_courses: Unlink this course
   markus: MarkUs
   not_applicable: N/A
+  to: to
   or: Or
   other_info: Other Info
   oversize_feedback_file: 'Error: feedback file was %{file_size} larger than the maximum file size of %{max_file_size} MB'

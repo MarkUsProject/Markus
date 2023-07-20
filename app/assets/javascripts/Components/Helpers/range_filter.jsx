@@ -42,7 +42,7 @@ export class RangeFilter extends React.Component {
             max={max}
             onChange={() => {}}
           />
-          <span>{I18n.t("results.filters.range_value_separator")}</span>
+          <span>{I18n.t("to")}</span>
           <input
             className={"input-max"}
             type="number"
