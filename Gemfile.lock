@@ -254,6 +254,8 @@ GEM
     nio4r (2.5.9)
     nokogiri (1.15.2-aarch64-linux)
       racc (~> 1.4)
+    nokogiri (1.15.2-x86_64-linux)
+      racc (~> 1.4)
     parser (3.2.2.1)
       ast (~> 2.4.1)
     pdf-core (0.9.0)
@@ -454,6 +456,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  x86_64-linux
 
 DEPENDENCIES
   action_policy
