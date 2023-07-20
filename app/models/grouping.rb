@@ -717,13 +717,8 @@ class Grouping < ApplicationRecord
       results = self.assignment.current_results
     end
     results = results.joins(grouping: :group)
-    if !filter_data.nil?
-      results = filter_results(current_role, results, filter_data)
-      order_and_get_next_grouping(results, filter_data, reversed)
-    else
-      results = results.order('groups.group_name')
-      next_grouping_ordered_group_name(results, 'ASC', reversed)
-    end
+    results = filter_results(current_role, results, filter_data)
+    order_and_get_next_grouping(results, filter_data, reversed)
   end
 
   def get_random_incomplete(current_role)
@@ -807,7 +802,7 @@ class Grouping < ApplicationRecord
   end
 
   def order_and_get_next_grouping(results, filter_data, reversed)
-    if filter_data['ascBool'].nil? || filter_data['orderBy'].nil?
+    if filter_data.nil? || filter_data['ascBool'].nil? || filter_data['orderBy'].nil?
       results = results.order('groups.group_name')
       next_grouping_ordered_group_name(results, 'ASC', reversed)
     else
