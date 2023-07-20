@@ -25,46 +25,51 @@ const INITIAL_MODAL_STATE = {
 export class FilterModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      currentOrderBy: this.props.filterData.orderBy,
-      currentAscBool: this.props.filterData.ascBool,
-      currentAnnotationValue: this.props.filterData.annotationValue,
-      currentSectionValue: this.props.filterData.sectionValue,
-      currentMarkingStateValue: this.props.filterData.markingStateValue,
-      currentTas: this.props.filterData.tas,
-      currentTags: this.props.filterData.tags,
-      currentTotalMarkRange: this.props.filterData.totalMarkRange,
-      currentTotalExtraMarkRange: this.props.filterData.totalExtraMarkRange,
-    };
   }
 
   toggleOptionTas = user_name => {
-    const newArray = [...this.state.currentTas];
+    const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
-      this.setState({currentTas: newArray.filter(item => item !== user_name)});
-      // else, add
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tas: newArray.filter(item => item !== user_name),
+      });
     } else {
       newArray.push(user_name);
-      this.setState({currentTas: newArray});
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tas: newArray,
+      });
     }
   };
 
   clearSelectionTAs = () => {
-    this.setState({currentTas: []});
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      tas: [],
+    });
   };
 
   clearSelectionTags = () => {
-    this.setState({currentTags: []});
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      tags: [],
+    });
   };
 
   toggleOptionTags = tag => {
-    const newArray = [...this.state.currentTags];
+    const newArray = [...this.props.filterData.tags];
     if (newArray.includes(tag)) {
-      this.setState({currentTags: newArray.filter(item => item !== tag)});
-      // else, add
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tags: newArray.filter(item => item !== tag),
+      });
     } else {
       newArray.push(tag);
-      this.setState({currentTags: newArray});
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tags: newArray,
+      });
     }
   };
 
@@ -76,7 +81,7 @@ export class FilterModal extends React.Component {
           <MultiSelectDropdown
             id={"Tas"}
             options={this.props.tas}
-            selected={this.state.currentTas}
+            selected={this.props.filterData.tas}
             toggleOption={this.toggleOptionTas}
             clearSelection={this.clearSelectionTAs}
           />
@@ -97,7 +102,7 @@ export class FilterModal extends React.Component {
       <MultiSelectDropdown
         id={"Tags"}
         options={options}
-        selected={this.state.currentTags}
+        selected={this.props.filterData.tags}
         toggleOption={this.toggleOptionTags}
         clearSelection={this.clearSelectionTags}
       />
@@ -138,26 +143,30 @@ export class FilterModal extends React.Component {
   };
 
   onTotalMarkMinChange = e => {
-    this.setState({
-      currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalMarkRange: {...this.props.filterData.totalMarkRange, min: e.target.value},
     });
   };
 
   onTotalMarkMaxChange = e => {
-    this.setState({
-      currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalMarkRange: {...this.props.filterData.totalMarkRange, max: e.target.value},
     });
   };
 
   onTotalExtraMarkMinChange = e => {
-    this.setState({
-      currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, min: e.target.value},
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, min: e.target.value},
     });
   };
 
   onTotalExtraMarkMaxChange = e => {
-    this.setState({
-      currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, max: e.target.value},
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, max: e.target.value},
     });
   };
 
@@ -167,24 +176,12 @@ export class FilterModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.mutateFilterData({
-      ...this.props.filterData,
-      orderBy: this.state.currentOrderBy,
-      ascBool: this.state.currentAscBool,
-      annotationValue: this.state.currentAnnotationValue,
-      sectionValue: this.state.currentSectionValue,
-      markingStateValue: this.state.currentMarkingStateValue,
-      tas: this.state.currentTas,
-      tags: this.state.currentTags,
-      totalMarkRange: this.state.currentTotalMarkRange,
-      totalExtraMarkRange: this.state.currentTotalExtraMarkRange,
-    });
     this.props.onRequestClose();
   };
 
   clearFilters = event => {
     event.preventDefault();
-    this.setState(INITIAL_MODAL_STATE);
+    this.props.clearAllFilters();
   };
 
   render() {
@@ -197,17 +194,6 @@ export class FilterModal extends React.Component {
           className="react-modal dialog"
           isOpen={this.props.isOpen}
           onRequestClose={() => {
-            this.setState({
-              currentOrderBy: this.props.filterData.orderBy,
-              currentAscBool: this.props.filterData.ascBool,
-              currentAnnotationValue: this.props.filterData.annotationValue,
-              currentSectionValue: this.props.filterData.sectionValue,
-              currentMarkingStateValue: this.props.filterData.markingStateValue,
-              currentTas: this.props.filterData.tas,
-              currentTags: this.props.filterData.tags,
-              currentTotalMarkRange: this.props.filterData.totalMarkRange,
-              currentTotalExtraMarkRange: this.props.filterData.totalExtraMarkRange,
-            });
             this.props.onRequestClose();
           }}
         >
@@ -223,22 +209,28 @@ export class FilterModal extends React.Component {
                         I18n.t("results.filters.ordering.group_name"),
                         I18n.t("submissions.commit_date"),
                       ]}
-                      selected={this.state.currentOrderBy}
+                      selected={this.props.filterData.orderBy}
                       select={selection => {
-                        this.setState({currentOrderBy: selection});
+                        this.props.mutateFilterData({
+                          ...this.props.filterData,
+                          orderBy: selection,
+                        });
                       }}
                       defaultValue={I18n.t("results.filters.ordering.group_name")}
                     />
                     <div
                       className={"order"}
                       onChange={e => {
-                        this.setState({currentAscBool: !this.state.currentAscBool});
+                        this.props.mutateFilterData({
+                          ...this.props.filterData,
+                          ascBool: !this.props.filterData.ascBool,
+                        });
                       }}
                       data-testid={"radio-group"}
                     >
                       <input
                         type="radio"
-                        checked={this.state.currentAscBool}
+                        checked={this.props.filterData.ascBool}
                         name="order"
                         value="Asc"
                         onChange={() => {}}
@@ -247,7 +239,7 @@ export class FilterModal extends React.Component {
                       <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
                       <input
                         type="radio"
-                        checked={!this.state.currentAscBool}
+                        checked={!this.props.filterData.ascBool}
                         name="order"
                         value="Desc"
                         onChange={() => {}}
@@ -265,9 +257,12 @@ export class FilterModal extends React.Component {
                         I18n.t("submissions.state.released"),
                         I18n.t("submissions.state.remark_requested"),
                       ]}
-                      selected={this.state.currentMarkingStateValue}
+                      selected={this.props.filterData.markingStateValue}
                       select={selection => {
-                        this.setState({currentMarkingStateValue: selection});
+                        this.props.mutateFilterData({
+                          ...this.props.filterData,
+                          markingStateValue: selection,
+                        });
                       }}
                     />
                   </div>
@@ -281,9 +276,12 @@ export class FilterModal extends React.Component {
                     <p>{I18n.t("results.filters.section")}</p>
                     <SingleSelectDropDown
                       options={this.props.sections}
-                      selected={this.state.currentSectionValue}
+                      selected={this.props.filterData.sectionValue}
                       select={selection => {
-                        this.setState({currentSectionValue: selection});
+                        this.props.mutateFilterData({
+                          ...this.props.filterData,
+                          sectionValue: selection,
+                        });
                       }}
                       defaultValue={""}
                     />
@@ -296,8 +294,13 @@ export class FilterModal extends React.Component {
                     <input
                       id="annotation"
                       type={"text"}
-                      value={this.state.currentAnnotationValue}
-                      onChange={e => this.setState({currentAnnotationValue: e.target.value})}
+                      value={this.props.filterData.annotationValue}
+                      onChange={e =>
+                        this.props.mutateFilterData({
+                          ...this.props.filterData,
+                          annotationValue: e.target.value,
+                        })
+                      }
                       placeholder={I18n.t("results.filters.text_box_placeholder")}
                     />
                   </label>
@@ -305,15 +308,15 @@ export class FilterModal extends React.Component {
 
                 <div className={"modal-container"}>
                   {this.rangeFilter(
-                    this.state.currentTotalMarkRange.min,
-                    this.state.currentTotalMarkRange.max,
+                    this.props.filterData.totalMarkRange.min,
+                    this.props.filterData.totalMarkRange.max,
                     I18n.t("results.filters.total_mark"),
                     this.onTotalMarkMinChange,
                     this.onTotalMarkMaxChange
                   )}
                   {this.rangeFilter(
-                    this.state.currentTotalExtraMarkRange.min,
-                    this.state.currentTotalExtraMarkRange.max,
+                    this.props.filterData.totalExtraMarkRange.min,
+                    this.props.filterData.totalExtraMarkRange.max,
                     I18n.t("results.filters.total_extra_mark"),
                     this.onTotalExtraMarkMinChange,
                     this.onTotalExtraMarkMaxChange
@@ -329,7 +332,7 @@ export class FilterModal extends React.Component {
                   value={I18n.t("results.filters.clear_all")}
                   onClick={this.clearFilters}
                 />
-                <input id={"Save"} type="submit" value={I18n.t("results.filters.save")} />
+                <input type="submit" value={I18n.t("results.filters.close")} />
               </section>
             </div>
           </form>
