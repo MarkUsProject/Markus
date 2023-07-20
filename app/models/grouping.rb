@@ -745,23 +745,23 @@ class Grouping < ApplicationRecord
                               "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
     end
     if filter_data['sectionValue'].present?
-      results = results.joins(grouping: :section).where('section.name' => filter_data['sectionValue'])
+      results = results.joins(grouping: :section).where('section.name': filter_data['sectionValue'])
     end
     if filter_data['markingStateValue'].present?
-      remark_results = results.where.not('results.remark_request_submitted_at' => nil)
-                              .where('results.marking_state' => Result::MARKING_STATES[:incomplete])
-      released_results = results.where.not('results.id' => remark_results).where('results.released_to_students' => true)
+      remark_results = results.where.not('results.remark_request_submitted_at': nil)
+                              .where('results.marking_state': Result::MARKING_STATES[:incomplete])
+      released_results = results.where.not('results.id': remark_results).where('results.released_to_students': true)
       case filter_data['markingStateValue']
       when 'Remark Requested'
         results = remark_results
       when 'Released'
         results = released_results
       when 'Complete'
-        results = results.where.not('results.id' => released_results)
-                         .where('results.marking_state' => Result::MARKING_STATES[:complete])
+        results = results.where.not('results.id': released_results)
+                         .where('results.marking_state': Result::MARKING_STATES[:complete])
       when 'In Progress'
-        results = results.where.not('results.id' => remark_results).where.not('results.id' => released_results)
-                         .where('results.marking_state' => Result::MARKING_STATES[:incomplete])
+        results = results.where.not('results.id': remark_results).where.not('results.id': released_results)
+                         .where('results.marking_state': Result::MARKING_STATES[:incomplete])
       end
     end
     unless current_role.ta? || filter_data['tas'].blank?
