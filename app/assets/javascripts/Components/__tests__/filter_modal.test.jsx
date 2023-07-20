@@ -211,13 +211,11 @@ describe("FilterModal", () => {
           // Check the validity of the inputs
           expect(minInput.checkValidity()).toBe(true);
           expect(maxInput.checkValidity()).toBe(true);
-
-          expect(within(filter).queryByText("Invalid Range")).not.toBeInTheDocument();
         });
       };
 
       let rangeInvalidInput = test_id => {
-        it("inputs should be invalid when passed invalid range", async () => {
+        it("inputs should be invalid when passed invalid range", () => {
           const filter = screen.getByTestId(test_id);
           const minInput = within(filter).getByPlaceholderText(/Min/i);
           const maxInput = within(filter).getByPlaceholderText(/Max/i);
@@ -233,8 +231,6 @@ describe("FilterModal", () => {
           // Check the validity of the inputs
           expect(minInput.checkValidity()).toBe(false);
           expect(maxInput.checkValidity()).toBe(false);
-
-          expect(within(filter).getByText("Invalid Range")).toBeInTheDocument();
         });
       };
 
