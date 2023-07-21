@@ -717,7 +717,9 @@ class Grouping < ApplicationRecord
       results = self.assignment.current_results
     end
     results = results.joins(grouping: :group)
-    results = filter_results(current_role, results, filter_data)
+    unless filter_data.nil?
+      results = filter_results(current_role, results, filter_data)
+    end
     order_and_get_next_grouping(results, filter_data, reversed)
   end
 
@@ -831,26 +833,22 @@ class Grouping < ApplicationRecord
   # this value is not specified (or nil), default ordering is applied.
   def order_and_get_next_grouping(results, filter_data, reversed)
     if filter_data.nil? || filter_data['ascBool'].nil? || filter_data['orderBy'].nil?
-      results = results.order('groups.group_name')
       next_grouping_ordered_group_name(results, 'ASC', reversed)
     else
       order = filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
       case filter_data['orderBy']
       when 'Group Name'
-        results = results.order("groups.group_name #{order}")
         next_grouping_ordered_group_name(results, order, reversed)
       when 'Submission Date'
-        results = results.joins(:submission).order("submissions.revision_timestamp #{order}",
-                                                   "groups.group_name #{order}")
         next_grouping_ordered_submission_date(results, order, reversed)
       else
-        results = results.order('groups.group_name')
         next_grouping_ordered_group_name(results, 'ASC', reversed)
       end
     end
   end
 
   def next_grouping_ordered_group_name(results, order, reversed)
+    results = results.order("groups.group_name #{order}")
     if order == 'ASC'
       if !reversed
         next_result = results.where('groups.group_name > ?', self.group.group_name).first
@@ -866,6 +864,8 @@ class Grouping < ApplicationRecord
   end
 
   def next_grouping_ordered_submission_date(results, order, reversed)
+    results = results.joins(:submission).order("submissions.revision_timestamp #{order}",
+                                               "groups.group_name #{order}")
     if order == 'ASC'
       if !reversed
         # get next grouping with a result
