@@ -13,9 +13,9 @@ class Testing < ActiveRecord::Migration[4.2]
     end
 
     create_table :test_support_files do |t|
-      t.string :file_name, { :null => false }
-      t.references :assignment, { :null => false }
-      t.text :description, { :null => false }
+      t.string :file_name, **{ :null => false }
+      t.references :assignment, **{ :null => false }
+      t.text :description, **{ :null => false }
     end
 
     add_index :test_support_files,
@@ -23,20 +23,20 @@ class Testing < ActiveRecord::Migration[4.2]
               :name => "index_test_files_on_assignment_id"
 
     create_table :test_scripts do |t|
-      t.integer "assignment_id", { :null => false }
-      t.float   "seq_num", { :null => false }
-      t.string  "script_name", { :null => false }
-      t.text    "description", { :null => false }
-      t.integer "max_marks", { :null => false }
+      t.integer "assignment_id", **{ :null => false }
+      t.float   "seq_num", **{ :null => false }
+      t.string  "script_name", **{ :null => false }
+      t.text    "description", **{ :null => false }
+      t.integer "max_marks", **{ :null => false }
       t.boolean "run_on_submission"
       t.boolean "run_on_request"
       t.boolean "halts_testing"
-      t.string "display_description", { :null => false }
-      t.string "display_run_status", { :null => false }
-      t.string "display_marks_earned", { :null => false }
-      t.string "display_input", { :null => false }
-      t.string "display_expected_output", { :null => false }
-      t.string "display_actual_output", { :null => false }
+      t.string "display_description", **{ :null => false }
+      t.string "display_run_status", **{ :null => false }
+      t.string "display_marks_earned", **{ :null => false }
+      t.string "display_input", **{ :null => false }
+      t.string "display_expected_output", **{ :null => false }
+      t.string "display_actual_output", **{ :null => false }
     end
 
     add_index :test_scripts,
@@ -49,12 +49,12 @@ class Testing < ActiveRecord::Migration[4.2]
       t.references :test_script
       t.references :test_script_result
       t.string "name"
-      t.string "completion_status", { :null => false }
-      t.integer "marks_earned", { :null => false }
+      t.string "completion_status", **{ :null => false }
+      t.integer "marks_earned", **{ :null => false }
       t.integer "repo_revision"
-      t.text    "input_description", { :null => false }
-      t.text    "actual_output", { :null => false }
-      t.text    "expected_output", { :null => false }
+      t.text    "input_description", **{ :null => false }
+      t.text    "actual_output", **{ :null => false }
+      t.text    "expected_output", **{ :null => false }
     end
 
     add_index :test_results,
