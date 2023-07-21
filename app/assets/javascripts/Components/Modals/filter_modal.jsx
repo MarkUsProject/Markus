@@ -234,11 +234,11 @@ export class FilterModal extends React.Component {
                         I18n.t("submissions.state.released"),
                         I18n.t("submissions.state.remark_requested"),
                       ]}
-                      selected={this.props.filterData.markingStateValue}
+                      selected={this.props.filterData.markingState}
                       select={selection => {
                         this.props.mutateFilterData({
                           ...this.props.filterData,
-                          markingStateValue: selection,
+                          markingState: selection,
                         });
                       }}
                     />

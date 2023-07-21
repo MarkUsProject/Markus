@@ -177,21 +177,21 @@ describe ResultsController do
         it 'should respond with the next grouping with a remark requested and who has a marking state of incomplete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
+                                        direction: 1, filterData: { markingState: 'Remark Requested' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
 
         it 'should not respond with a grouping whose current result is a remark result but is complete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
+                                        direction: 1, filterData: { markingState: 'Remark Requested' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
 
         it 'should not respond with a grouping whose current result is not a remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'Remark Requested' } }
+                                        direction: 1, filterData: { markingState: 'Remark Requested' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
@@ -219,7 +219,7 @@ describe ResultsController do
         it 'should respond with the next grouping whose submission has been released' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'Released' } }
+                                        direction: 1, filterData: { markingState: 'Released' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
       end
@@ -241,14 +241,14 @@ describe ResultsController do
         it 'should respond with the next grouping whose result is complete regardless of remark request status' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'Complete' } }
+                                        direction: 1, filterData: { markingState: 'Complete' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
 
         it 'should not respond with a released result regardless of the result\'s marking status' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'Complete' } }
+                                        direction: 1, filterData: { markingState: 'Complete' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
       end
@@ -275,20 +275,20 @@ describe ResultsController do
         it 'should respond with the next grouping whose result is incomplete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'In Progress' } }
+                                        direction: 1, filterData: { markingState: 'In Progress' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
 
         it 'should not respond with a released or remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: 'In Progress' } }
+                                        direction: 1, filterData: { markingState: 'In Progress' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
       end
 
-      context 'when markingStateValue is left blank' do
+      context 'when markingState is left blank' do
         let(:grouping2) do
           result = create :incomplete_result
           result.submission.update(submission_version_used: true)
@@ -311,7 +311,7 @@ describe ResultsController do
         it 'should return the next group regardless of marking state' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingStateValue: '' } }
+                                        direction: 1, filterData: { markingState: '' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
         end
       end

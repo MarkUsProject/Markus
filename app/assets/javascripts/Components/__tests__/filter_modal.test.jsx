@@ -23,7 +23,7 @@ describe("FilterModal", () => {
           tas: ["a", "b"],
           tags: ["a", "b"],
           section: "",
-          markingStateValue: "",
+          markingState: "",
           totalMarkRange: {
             min: "",
             max: "",

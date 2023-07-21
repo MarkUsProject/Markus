@@ -747,9 +747,9 @@ class Grouping < ApplicationRecord
   # option don't set +filter_data['annotationText']+ (or set it to nil/'').
   # +filter_data['section']+ is a string specifying the name of the section to filter by. To avoid this filtering
   # option don't set +filter_data['section']+ (or set it to nil/'').
-  # +filter_data['markingStateValue']+ is a string specifying the marking state to filter by; valid strings
+  # +filter_data['markingState']+ is a string specifying the marking state to filter by; valid strings
   # include "Remark Requested", "Released", "Complete" and "In Progress". To avoid this filtering
-  # option don't set +filter_data['markingStateValue']+ (or set it to nil/'').
+  # option don't set +filter_data['markingState']+ (or set it to nil/'').
   # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by. To avoid
   # this filtering option don't set +filter_data['tas']+ (or set it to nil/[]).
   # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by. To avoid
@@ -770,11 +770,11 @@ class Grouping < ApplicationRecord
     if filter_data['section'].present?
       results = results.joins(grouping: :section).where('section.name': filter_data['section'])
     end
-    if filter_data['markingStateValue'].present?
+    if filter_data['markingState'].present?
       remark_results = results.where.not('results.remark_request_submitted_at': nil)
                               .where('results.marking_state': Result::MARKING_STATES[:incomplete])
       released_results = results.where.not('results.id': remark_results).where('results.released_to_students': true)
-      case filter_data['markingStateValue']
+      case filter_data['markingState']
       when 'Remark Requested'
         results = remark_results
       when 'Released'

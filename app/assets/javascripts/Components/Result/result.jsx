@@ -24,7 +24,7 @@ const INITIAL_FILTER_MODAL_STATE = {
   tas: [],
   tags: [],
   section: "",
-  markingStateValue: "",
+  markingState: "",
   totalMarkRange: {
     min: "",
     max: "",
