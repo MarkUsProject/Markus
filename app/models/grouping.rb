@@ -832,62 +832,44 @@ class Grouping < ApplicationRecord
   # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order); when
   # this value is not specified (or nil), the results are ordered in ascending order.
   def order_and_get_next_grouping(results, filter_data, reversed)
-    order = filter_data['ascBool'].nil? || filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
+    asc_temp = filter_data['ascBool'].nil? || filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
+    ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
     case filter_data['orderBy']
     when 'Group Name'
-      next_grouping_ordered_group_name(results, order, reversed)
+      next_grouping_ordered_group_name(results, ascending)
     when 'Submission Date'
-      next_grouping_ordered_submission_date(results, order, reversed)
+      next_grouping_ordered_submission_date(results, ascending)
     else
-      next_grouping_ordered_group_name(results, 'ASC', reversed)
+      next_grouping_ordered_group_name(results, true)
     end
   end
 
-  def next_grouping_ordered_group_name(results, order, reversed)
-    results = results.order("groups.group_name #{order}")
-    if order == 'ASC'
-      if !reversed
-        next_result = results.where('groups.group_name > ?', self.group.group_name).first
-      else
-        next_result = results.where('groups.group_name < ?', self.group.group_name).last
-      end
-    elsif !reversed
-      next_result = results.where('groups.group_name < ?', self.group.group_name).first
+  def next_grouping_ordered_group_name(results, ascending)
+    results = results.order('groups.group_name ASC')
+    if ascending
+      next_result = results.where('groups.group_name > ?', self.group.group_name).first
     else
-      next_result = results.where('groups.group_name > ?', self.group.group_name).last
+      next_result = results.where('groups.group_name < ?', self.group.group_name).last
     end
     next_result&.grouping
   end
 
-  def next_grouping_ordered_submission_date(results, order, reversed)
-    results = results.joins(:submission).order("submissions.revision_timestamp #{order}",
-                                               "groups.group_name #{order}")
-    if order == 'ASC'
-      if !reversed
-        next_result = results
-                      .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
-                      .or(results.where('groups.group_name > ? AND submissions.revision_timestamp = ?',
-                                        self.group.group_name,
-                                        self.current_submission_used.revision_timestamp)).first
-      else
-        next_result = results
-                      .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
-                      .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
-                                        self.group.group_name,
-                                        self.current_submission_used.revision_timestamp)).last
-      end
-    elsif !reversed
+  def next_grouping_ordered_submission_date(results, ascending)
+    results = results.joins(:submission).order('submissions.revision_timestamp ASC',
+                                               'groups.group_name ASC')
+    if ascending
+      next_result = results
+                    .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
+                    .or(results.where('groups.group_name > ? AND submissions.revision_timestamp = ?',
+                                      self.group.group_name,
+                                      self.current_submission_used.revision_timestamp)).first
+
+    else
       next_result = results
                     .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
                     .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
                                       self.group.group_name,
                                       self.current_submission_used.revision_timestamp)).first
-    else
-      next_result = results
-                    .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
-                    .or(results.where('groups.group_name > ? AND submissions.revision_timestamp = ?',
-                                      self.group.group_name,
-                                      self.current_submission_used.revision_timestamp)).last
     end
     next_result&.grouping
   end
