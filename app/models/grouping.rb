@@ -717,9 +717,10 @@ class Grouping < ApplicationRecord
       results = self.assignment.current_results
     end
     results = results.joins(grouping: :group)
-    unless filter_data.nil?
-      results = filter_results(current_role, results, filter_data)
+    if filter_data.nil?
+      filter_data = {}
     end
+    results = filter_results(current_role, results, filter_data)
     order_and_get_next_grouping(results, filter_data, reversed)
   end
 
@@ -825,25 +826,20 @@ class Grouping < ApplicationRecord
 
   # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
   # +reversed+ is a boolean value, true if we want to return the next grouping and false if we want the previous one.
-  # If +filter_data+ is nil default ordering will occur (ordering by group name in ascending order).
   # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "Group Name" and
   # "Submission Date"; when this value is not specified (or nil), default ordering is applied.
   # +filter_data['ascBool']+ specifies whether results should be ordered in ascending or descending order. Valid
   # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order); when
-  # this value is not specified (or nil), default ordering is applied.
+  # this value is not specified (or nil), the results are ordered in ascending order.
   def order_and_get_next_grouping(results, filter_data, reversed)
-    if filter_data.nil? || filter_data['ascBool'].nil? || filter_data['orderBy'].nil?
-      next_grouping_ordered_group_name(results, 'ASC', reversed)
+    order = filter_data['ascBool'].nil? || filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
+    case filter_data['orderBy']
+    when 'Group Name'
+      next_grouping_ordered_group_name(results, order, reversed)
+    when 'Submission Date'
+      next_grouping_ordered_submission_date(results, order, reversed)
     else
-      order = filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
-      case filter_data['orderBy']
-      when 'Group Name'
-        next_grouping_ordered_group_name(results, order, reversed)
-      when 'Submission Date'
-        next_grouping_ordered_submission_date(results, order, reversed)
-      else
-        next_grouping_ordered_group_name(results, 'ASC', reversed)
-      end
+      next_grouping_ordered_group_name(results, 'ASC', reversed)
     end
   end
 
