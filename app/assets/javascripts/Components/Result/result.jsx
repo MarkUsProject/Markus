@@ -18,7 +18,7 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 };
 
 const INITIAL_FILTER_MODAL_STATE = {
-  ascBool: true,
+  ascending: true,
   orderBy: "Group Name",
   annotationText: "",
   tas: [],

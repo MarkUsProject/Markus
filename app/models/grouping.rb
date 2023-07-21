@@ -828,11 +828,11 @@ class Grouping < ApplicationRecord
   # +reversed+ is a boolean value, true if we want to return the next grouping and false if we want the previous one.
   # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "Group Name" and
   # "Submission Date"; when this value is not specified (or nil), default ordering is applied.
-  # +filter_data['ascBool']+ specifies whether results should be ordered in ascending or descending order. Valid
+  # +filter_data['ascending']+ specifies whether results should be ordered in ascending or descending order. Valid
   # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order); when
   # this value is not specified (or nil), the results are ordered in ascending order.
   def order_and_get_next_grouping(results, filter_data, reversed)
-    asc_temp = filter_data['ascBool'].nil? || filter_data['ascBool'] == 'true' ? 'ASC' : 'DESC'
+    asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
     ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
     case filter_data['orderBy']
     when 'Group Name'

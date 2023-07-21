@@ -518,7 +518,7 @@ describe ResultsController do
           it 'should return the next grouping in descending order of group name' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                           id: grouping2.current_result.id,
-                                          direction: 1, filterData: { ascBool: 'false', orderBy: 'Group Name' } }
+                                          direction: 1, filterData: { ascending: 'false', orderBy: 'Group Name' } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
           end
         end
@@ -527,7 +527,7 @@ describe ResultsController do
           it 'should return the previous grouping in descending order of group name' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                           id: grouping2.current_result.id,
-                                          direction: -1, filterData: { ascBool: 'false', orderBy: 'Group Name' } }
+                                          direction: -1, filterData: { ascending: 'false', orderBy: 'Group Name' } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
@@ -541,7 +541,8 @@ describe ResultsController do
             it 'should return the grouping with the next latest submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: 1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+                                            direction: 1, filterData:
+                                              { ascending: 'true', orderBy: 'Submission Date' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end
           end
@@ -558,7 +559,8 @@ describe ResultsController do
             it 'should return the grouping with the next largest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: 1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+                                            direction: 1, filterData:
+                                              { ascending: 'true', orderBy: 'Submission Date' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end
           end
@@ -569,7 +571,8 @@ describe ResultsController do
             it 'should return the grouping with the next earliest submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: -1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+                                            direction: -1, filterData:
+                                              { ascending: 'true', orderBy: 'Submission Date' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
@@ -586,7 +589,8 @@ describe ResultsController do
             it 'should return the grouping with the next smallest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: -1, filterData: { ascBool: 'true', orderBy: 'Submission Date' } }
+                                            direction: -1, filterData:
+                                              { ascending: 'true', orderBy: 'Submission Date' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
@@ -599,7 +603,8 @@ describe ResultsController do
             it 'should return the grouping with the next earliest submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: 1, filterData: { ascBool: 'false', orderBy: 'Submission Date' } }
+                                            direction: 1, filterData:
+                                              { ascending: 'false', orderBy: 'Submission Date' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
@@ -616,7 +621,8 @@ describe ResultsController do
             it 'should return the grouping with the next smallest group name with the same submission date' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: 1, filterData: { ascBool: 'false', orderBy: 'Submission Date' } }
+                                            direction: 1, filterData:
+                                            { ascending: 'false', orderBy: 'Submission Date' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
@@ -628,7 +634,7 @@ describe ResultsController do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
                                             direction: -1, filterData: {
-                                              ascBool: 'false', orderBy: 'Submission Date'
+                                              ascending: 'false', orderBy: 'Submission Date'
                                             } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end
@@ -647,7 +653,7 @@ describe ResultsController do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
                                             direction: -1, filterData: {
-                                              ascBool: 'false', orderBy: 'Submission Date'
+                                              ascending: 'false', orderBy: 'Submission Date'
                                             } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end

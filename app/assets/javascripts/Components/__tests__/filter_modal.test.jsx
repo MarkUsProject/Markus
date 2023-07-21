@@ -17,7 +17,7 @@ describe("FilterModal", () => {
     beforeEach(() => {
       props = {
         filterData: {
-          ascBool: true,
+          ascending: true,
           orderBy: "Group Name",
           annotationText: "",
           tas: ["a", "b"],

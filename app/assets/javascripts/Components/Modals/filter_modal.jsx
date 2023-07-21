@@ -203,22 +203,22 @@ export class FilterModal extends React.Component {
                     <div className={"order"} data-testid={"radio-group"}>
                       <input
                         type="radio"
-                        checked={this.props.filterData.ascBool}
+                        checked={this.props.filterData.ascending}
                         name="order"
                         id="Asc"
                         onChange={() => {
-                          this.props.mutateFilterData({...this.props.filterData, ascBool: true});
+                          this.props.mutateFilterData({...this.props.filterData, ascending: true});
                         }}
                         data-testid={"ascending"}
                       />
                       <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
                       <input
                         type="radio"
-                        checked={!this.props.filterData.ascBool}
+                        checked={!this.props.filterData.ascending}
                         name="order"
                         id="Desc"
                         onChange={() => {
-                          this.props.mutateFilterData({...this.props.filterData, ascBool: false});
+                          this.props.mutateFilterData({...this.props.filterData, ascending: false});
                         }}
                         data-testid={"descending"}
                       />
