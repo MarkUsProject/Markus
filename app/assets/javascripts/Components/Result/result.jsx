@@ -772,6 +772,10 @@ class Result extends React.Component {
     this.setState({filterData: new_filters});
   };
 
+  resetStateFilterData = () => {
+    this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -814,6 +818,7 @@ class Result extends React.Component {
           course_id={this.props.course_id}
           filterData={this.state.filterData}
           mutateFilterData={this.updateStateFilterData}
+          clearAllFilters={this.resetStateFilterData}
           sections={this.state.sections}
           tas={this.state.tas}
           available_tags={this.state.available_tags}

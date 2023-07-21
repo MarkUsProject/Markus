@@ -11,6 +11,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
 describe("FilterModal", () => {
   let props;
+  let component;
 
   let sharedExamplesTaAndInstructor = role => {
     beforeEach(() => {
@@ -39,27 +40,28 @@ describe("FilterModal", () => {
         isOpen: true,
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
         mutateFilterData: jest.fn().mockImplementation(() => null),
+        clearAllFilters: jest.fn().mockImplementation(() => null),
         role: role,
       };
 
       // Set the app element for React Modal
       Modal.setAppElement("body");
-      render(<FilterModal {...props} />);
+      component = render(<FilterModal {...props} />);
     });
 
     it("should close on submit", () => {
-      fireEvent.click(screen.getByText(/Save/i));
+      fireEvent.click(screen.getByText(/Close/i));
       expect(props.onRequestClose).toHaveBeenCalled();
     });
 
-    it("should save filters on submit", () => {
-      fireEvent.click(screen.getByText(/Save/i));
-      expect(props.mutateFilterData).toHaveBeenCalled();
+    it("should clear all filters when clicked on Clear All button", () => {
+      fireEvent.click(screen.getByText(/Clear All/i));
+      expect(props.clearAllFilters).toHaveBeenCalled();
     });
 
     it("should render the modal", () => {
       expect(screen.getByText(/Filter By:/i)).toBeInTheDocument();
-      expect(screen.getByText(/Save/i)).toBeInTheDocument();
+      expect(screen.getByText(/Close/i)).toBeInTheDocument();
       expect(screen.getByText(/Clear All/i)).toBeInTheDocument();
     });
 
@@ -68,32 +70,21 @@ describe("FilterModal", () => {
         expect(screen.getByLabelText(/Annotation/i)).toBeInTheDocument();
       });
 
-      it("should reset annotation textbox on Clear all", () => {
+      it("should save annotation text on input", () => {
         fireEvent.change(screen.getByLabelText("Annotation"), {
           target: {value: "JavaScript"},
         });
-        fireEvent.click(screen.getByText(/Clear All/i));
-        expect(screen.getByLabelText("Annotation")).toHaveValue("");
+        expect(props.mutateFilterData).toHaveBeenCalled();
       });
     });
 
     describe("MultiSelectDropdown filters", () => {
-      let multiSelectDropdownClearAll = test_id => {
-        it("should reset selection on Clear all button", () => {
-          const dropdown = screen.getByTestId(test_id);
-          fireEvent.click(screen.getByText(/Clear All/i));
-          const tags = dropdown.getElementsByClassName("tag");
-          expect(tags).toHaveLength(0);
-        });
-      };
-
       let multiSelectDropdownClear = test_id => {
         it("should reset tags selection when clicked on xmark icon", () => {
           const dropdown = screen.getByTestId(test_id);
           const icon = within(dropdown).getByTestId("reset");
           fireEvent.click(icon);
-          const tags = dropdown.getElementsByClassName("tag");
-          expect(tags).toHaveLength(0);
+          expect(props.mutateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -114,12 +105,7 @@ describe("FilterModal", () => {
           const option = within(dropdown).getByLabelText(selection);
           fireEvent.click(option);
 
-          //check if option checked in dropdown
-          expect(option).toBeChecked();
-          fireEvent.click(dropdown);
-
-          //check if tag added to list of selected options
-          expect(within(dropdown).queryByText(selection)).toBeInTheDocument();
+          expect(props.mutateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -129,13 +115,7 @@ describe("FilterModal", () => {
           const tag = within(dropdown).getByText(option);
           fireEvent.click(tag);
 
-          //check if tag removed from list of selected options
-          expect(within(dropdown).queryByText(option)).not.toBeInTheDocument();
-
-          //check if option unchecked from dropdown
-          fireEvent.click(dropdown);
-          const selected_option = within(dropdown).getByLabelText(option);
-          expect(selected_option).not.toBeChecked();
+          expect(props.mutateFilterData).toHaveBeenCalled();
         });
 
         it("should deselect option when clicked on a selected option", () => {
@@ -146,19 +126,13 @@ describe("FilterModal", () => {
           const selected_option = within(dropdown).getByLabelText(option);
           fireEvent.click(selected_option);
 
-          //check if option unchecked from dropdown
-          expect(selected_option).not.toBeChecked();
-
-          //check if tag removed from list of selected options
-          fireEvent.click(dropdown);
-          expect(within(dropdown).queryByText(option)).not.toBeInTheDocument();
+          expect(props.mutateFilterData).toHaveBeenCalled();
         });
       };
 
       describe("Filter By Tags", () => {
         const test_id = "Tags";
         multiSelectDropdownRender(test_id);
-        multiSelectDropdownClearAll(test_id);
         multiSelectDropdownClear(test_id);
         multiSelectDropdownMakeSelection(test_id, "d");
         multiSelectDropdownDeselect(test_id, "a");
@@ -176,25 +150,7 @@ describe("FilterModal", () => {
         });
       };
 
-      let rangeClearAll = test_id => {
-        it("should reset range inputs on Clear all", () => {
-          const filter = screen.getByTestId(test_id);
-          const minInput = within(filter).getByPlaceholderText(/Min/i);
-          const maxInput = within(filter).getByPlaceholderText(/Max/i);
-          fireEvent.change(minInput, {
-            target: {value: 0},
-          });
-          fireEvent.change(maxInput, {
-            target: {value: 10},
-          });
-
-          fireEvent.click(screen.getByText(/Clear All/i));
-          expect(minInput).toHaveValue(null);
-          expect(maxInput).toHaveValue(null);
-        });
-      };
-
-      let rangeValidInput = test_id => {
+      let rangeOnInput = test_id => {
         it("inputs should be valid when passed valid range", () => {
           const filter = screen.getByTestId(test_id);
           const minInput = within(filter).getByPlaceholderText(/Min/i);
@@ -205,43 +161,51 @@ describe("FilterModal", () => {
           fireEvent.change(maxInput, {
             target: {value: 10},
           });
+
+          expect(props.mutateFilterData).toHaveBeenCalled();
+        });
+      };
+
+      let rangeValidInput = test_id => {
+        it("inputs should be valid when passed valid range", () => {
+          props.filterData.totalMarkRange = {min: 0, max: 10};
+          props.filterData.totalExtraMarkRange = {min: 0, max: 10};
+          component.rerender(<FilterModal {...props} />);
+
+          const filter = screen.getByTestId(test_id);
+          const minInput = within(filter).getByPlaceholderText(/Min/i);
+          const maxInput = within(filter).getByPlaceholderText(/Max/i);
+
           expect(minInput).toHaveValue(0);
           expect(maxInput).toHaveValue(10);
 
-          // Check the validity of the inputs
           expect(minInput.checkValidity()).toBe(true);
           expect(maxInput.checkValidity()).toBe(true);
-
-          expect(within(filter).queryByText("Invalid Range")).not.toBeInTheDocument();
         });
       };
 
       let rangeInvalidInput = test_id => {
-        it("inputs should be invalid when passed invalid range", async () => {
+        it("inputs should be invalid when passed invalid range", () => {
+          props.filterData.totalMarkRange = {min: 0, max: -1};
+          props.filterData.totalExtraMarkRange = {min: 0, max: -1};
+          component.rerender(<FilterModal {...props} />);
+
           const filter = screen.getByTestId(test_id);
           const minInput = within(filter).getByPlaceholderText(/Min/i);
           const maxInput = within(filter).getByPlaceholderText(/Max/i);
-          fireEvent.change(minInput, {
-            target: {value: 0},
-          });
-          fireEvent.change(maxInput, {
-            target: {value: -1},
-          });
+
           expect(minInput).toHaveValue(0);
           expect(maxInput).toHaveValue(-1);
 
-          // Check the validity of the inputs
           expect(minInput.checkValidity()).toBe(false);
           expect(maxInput.checkValidity()).toBe(false);
-
-          expect(within(filter).getByText("Invalid Range")).toBeInTheDocument();
         });
       };
 
       describe("Total Mark Range", () => {
         const test_id = "Total Mark";
         rangeRender(test_id);
-        rangeClearAll(test_id);
+        rangeOnInput(test_id);
         rangeValidInput(test_id);
         rangeInvalidInput(test_id);
       });
@@ -249,7 +213,7 @@ describe("FilterModal", () => {
       describe("Total Extra Mark Range", () => {
         const test_id = "Total Extra Mark";
         rangeRender(test_id);
-        rangeClearAll(test_id);
+        rangeOnInput(test_id);
         rangeValidInput(test_id);
         rangeInvalidInput(test_id);
       });
@@ -261,23 +225,7 @@ describe("FilterModal", () => {
           let dropdownDiv = screen.getByTestId(filterTestId);
           fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
           fireEvent.click(within(dropdownDiv).getByText(selection));
-          expect(
-            within(screen.getByTestId(filterTestId)).getByTestId("selection")
-          ).toHaveTextContent(selection);
-        });
-      };
-
-      let singleSelectDropdownClearAll = (filterTestId, selection, defaultValue) => {
-        it("should reset selection on Clear all", () => {
-          let dropdownDiv = screen.getByTestId(filterTestId);
-
-          // setting the dropdown value to some random value
-          fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
-          fireEvent.click(within(dropdownDiv).getByText(selection));
-
-          //resetting the dropdown value
-          fireEvent.click(screen.getByText(/Clear All/i));
-          expect(within(dropdownDiv).getByTestId("selection")).toHaveTextContent(defaultValue);
+          expect(props.mutateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -291,14 +239,13 @@ describe("FilterModal", () => {
 
           // resetting the dropdown value
           fireEvent.click(within(dropdownDiv).getByTestId("reset-dropdown-selection"));
-          expect(within(dropdownDiv).getByTestId("selection")).toHaveTextContent(defaultValue);
+          expect(props.mutateFilterData).toHaveBeenCalled();
         });
       };
 
       describe("Order By", () => {
         describe("selecting order subject", () => {
           singleSelectDropdownMakeSelection("order-by", "Submission Date");
-          singleSelectDropdownClearAll("order-by", "Submission Date", "Group Name");
           singleSelectDropdownClear("order-by", "Submission Date", "Group Name");
 
           it("should show the user specific options", () => {
@@ -314,35 +261,18 @@ describe("FilterModal", () => {
           it("should save the selection on change", () => {
             // setting the ordering to descending
             fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
-            expect(within(screen.getByTestId("order-by")).getByTestId("descending")).toBeChecked();
-            expect(
-              within(screen.getByTestId("order-by")).getByTestId("ascending")
-            ).not.toBeChecked();
-          });
-
-          it("should reset ordering on clearAll", () => {
-            // setting the ordering to descending
-            fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
-
-            // clearing the dropdown values
-            fireEvent.click(screen.getByText(/Clear All/i));
-            expect(
-              within(screen.getByTestId("order-by")).getByTestId("descending")
-            ).not.toBeChecked();
-            expect(within(screen.getByTestId("order-by")).getByTestId("ascending")).toBeChecked();
+            expect(props.mutateFilterData).toHaveBeenCalled();
           });
         });
       });
 
       describe("Filter By Section", () => {
         singleSelectDropdownMakeSelection("section", "LEC0101");
-        singleSelectDropdownClearAll("section", "LEC0101", "");
         singleSelectDropdownClear("section", "LEC0101", "");
       });
 
       describe("Filter By Marking State", () => {
         singleSelectDropdownMakeSelection("marking-state", "Complete");
-        singleSelectDropdownClearAll("marking-state", "Complete", "");
         singleSelectDropdownClear("marking-state", "Complete", "");
 
         it("should show the user specific options", () => {
@@ -364,19 +294,11 @@ describe("FilterModal", () => {
     describe("Filter by Tas", () => {
       const test_id = "Tas";
 
-      it("should reset selection on Clear all button", () => {
-        const dropdown = screen.getByTestId(test_id);
-        fireEvent.click(screen.getByText(/Clear All/i));
-        const tags = dropdown.getElementsByClassName("tag");
-        expect(tags).toHaveLength(0);
-      });
-
       it("should reset tags selection when clicked on xmark icon", () => {
         const dropdown = screen.getByTestId(test_id);
         const icon = within(dropdown).getByTestId("reset");
         fireEvent.click(icon);
-        const tags = dropdown.getElementsByClassName("tag");
-        expect(tags).toHaveLength(0);
+        expect(props.mutateFilterData).toHaveBeenCalled();
       });
 
       it("should render all selected tags", () => {
@@ -391,12 +313,7 @@ describe("FilterModal", () => {
         const option = within(dropdown).getByLabelText("d");
         fireEvent.click(option);
 
-        //check if option checked in dropdown
-        expect(option).toBeChecked();
-        fireEvent.click(dropdown);
-
-        //check if tag added to list of selected options
-        expect(within(dropdown).queryByText("d")).toBeInTheDocument();
+        expect(props.mutateFilterData).toHaveBeenCalled();
       });
 
       it("should deselect option when clicked on a tag", () => {
@@ -404,13 +321,7 @@ describe("FilterModal", () => {
         const tag = within(dropdown).getByText("a");
         fireEvent.click(tag);
 
-        //check if tag removed from list of selected options
-        expect(within(dropdown).queryByText("a")).not.toBeInTheDocument();
-
-        //check if option unchecked from dropdown
-        fireEvent.click(dropdown);
-        const selected_option = within(dropdown).getByLabelText("a");
-        expect(selected_option).not.toBeChecked();
+        expect(props.mutateFilterData).toHaveBeenCalled();
       });
 
       it("should deselect option when clicked on a selected option", () => {
@@ -419,12 +330,7 @@ describe("FilterModal", () => {
         const selected_option = within(dropdown).getByLabelText("a");
         fireEvent.click(selected_option);
 
-        //check if option unchecked from dropdown
-        expect(selected_option).not.toBeChecked();
-
-        //check if tag removed from list of selected options
-        fireEvent.click(dropdown);
-        expect(within(dropdown).queryByText("a")).not.toBeInTheDocument();
+        expect(props.mutateFilterData).toHaveBeenCalled();
       });
     });
   });

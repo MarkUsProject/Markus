@@ -40,14 +40,18 @@
     width: 80px;
   }
 
-  .validity {
-    color: #900;
-    margin-left: 5px;
+  > input:valid ~ .hidden {
+    display: none;
   }
 
-  > div {
+  .hidden {
     display: inline-flex;
     padding-top: 5px;
     width: $dropdown-horizontal;
+
+    .validity {
+      color: $severe-error;
+      margin-left: 2px;
+    }
   }
 }
