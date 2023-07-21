@@ -22,7 +22,7 @@ describe("FilterModal", () => {
           annotationValue: "",
           tas: ["a", "b"],
           tags: ["a", "b"],
-          sectionValue: "",
+          section: "",
           markingStateValue: "",
           totalMarkRange: {
             min: "",

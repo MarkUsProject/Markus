@@ -4,24 +4,6 @@ import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const INITIAL_MODAL_STATE = {
-  currentOrderBy: I18n.t("activerecord.attributes.group.group_name"),
-  currentAscBool: true,
-  currentAnnotationValue: "",
-  currentSectionValue: "",
-  currentMarkingStateValue: "",
-  currentTas: [],
-  currentTags: [],
-  currentTotalMarkRange: {
-    min: "",
-    max: "",
-  },
-  currentTotalExtraMarkRange: {
-    min: "",
-    max: "",
-  },
-};
-
 export class FilterModal extends React.Component {
   constructor(props) {
     super(props);
@@ -271,11 +253,11 @@ export class FilterModal extends React.Component {
                     <p>{I18n.t("activerecord.models.section.one")}</p>
                     <SingleSelectDropDown
                       options={this.props.sections}
-                      selected={this.props.filterData.sectionValue}
+                      selected={this.props.filterData.section}
                       select={selection => {
                         this.props.mutateFilterData({
                           ...this.props.filterData,
-                          sectionValue: selection,
+                          section: selection,
                         });
                       }}
                       defaultValue={""}

@@ -745,8 +745,8 @@ class Grouping < ApplicationRecord
   # +filter_data+ is not nil.
   # +filter_data['annotationValue']+ is a string specifying some annotation text to filter by. To avoid this filtering
   # option don't set +filter_data['annotationValue']+ (or set it to nil/'').
-  # +filter_data['sectionValue']+ is a string specifying the name of the section to filter by. To avoid this filtering
-  # option don't set +filter_data['sectionValue']+ (or set it to nil/'').
+  # +filter_data['section']+ is a string specifying the name of the section to filter by. To avoid this filtering
+  # option don't set +filter_data['section']+ (or set it to nil/'').
   # +filter_data['markingStateValue']+ is a string specifying the marking state to filter by; valid strings
   # include "Remark Requested", "Released", "Complete" and "In Progress". To avoid this filtering
   # option don't set +filter_data['markingStateValue']+ (or set it to nil/'').
@@ -767,8 +767,8 @@ class Grouping < ApplicationRecord
                        .where('annotation_texts.content LIKE ?',
                               "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
     end
-    if filter_data['sectionValue'].present?
-      results = results.joins(grouping: :section).where('section.name': filter_data['sectionValue'])
+    if filter_data['section'].present?
+      results = results.joins(grouping: :section).where('section.name': filter_data['section'])
     end
     if filter_data['markingStateValue'].present?
       remark_results = results.where.not('results.remark_request_submitted_at': nil)

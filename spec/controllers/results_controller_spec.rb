@@ -128,14 +128,14 @@ describe ResultsController do
         it 'should return the next group with a larger group name that satisfies the constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { sectionValue: 'Section 1' } }
+                                        direction: 1, filterData: { section: 'Section 1' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
 
         it 'should not return the next group that doesn\'t satisfy the constraint' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { sectionValue: 'Section 1' } }
+                                        direction: 1, filterData: { section: 'Section 1' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
@@ -144,7 +144,7 @@ describe ResultsController do
         it 'should return the next grouping without constraints' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { sectionValue: '' } }
+                                        direction: 1, filterData: { section: '' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
         end
       end

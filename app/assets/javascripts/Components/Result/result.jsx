@@ -23,7 +23,7 @@ const INITIAL_FILTER_MODAL_STATE = {
   annotationValue: "",
   tas: [],
   tags: [],
-  sectionValue: "",
+  section: "",
   markingStateValue: "",
   totalMarkRange: {
     min: "",
