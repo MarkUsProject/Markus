@@ -738,6 +738,26 @@ class Grouping < ApplicationRecord
 
   private
 
+  # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
+  # +filter_data+ is not nil.
+  # +filter_data['annotationValue']+ is a string specifying some annotation text to filter by. To avoid this filtering
+  # option don't set +filter_data['annotationValue']+ (or set it to nil/'').
+  # +filter_data['sectionValue']+ is a string specifying the name of the section to filter by. To avoid this filtering
+  # option don't set +filter_data['sectionValue']+ (or set it to nil/'').
+  # +filter_data['markingStateValue']+ is a string specifying the marking state to filter by; valid strings
+  # include "Remark Requested", "Released", "Complete" and "In Progress". To avoid this filtering
+  # option don't set +filter_data['markingStateValue']+ (or set it to nil/'').
+  # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by. To avoid
+  # this filtering option don't set +filter_data['tas']+ (or set it to nil/[]).
+  # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by. To avoid
+  # this filtering option don't set +filter_data['tags']+ (or set it to nil/[]).
+  # +filter_data['TotalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
+  # float. 'max' is the maximum and 'min' is the minimum total mark a result should have. Note: min.to_f <= max.to_f.
+  # To not filter by total mark, pass in an empty hash or dont specify +filter_data['TotalMarkRange']+.
+  # +filter_data['TotalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
+  # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
+  # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or dont specify
+  # +filter_data['TotalExtraMarkRange']+.
   def filter_results(current_role, results, filter_data)
     if filter_data['annotationValue'].present?
       results = results.joins(annotations: :annotation_text)
@@ -801,6 +821,14 @@ class Grouping < ApplicationRecord
     results.joins(grouping: :group)
   end
 
+  # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
+  # +reversed+ is a boolean value, true if we want to return the next grouping and false if we want the previous one.
+  # If +filter_data+ is nil default ordering will occur (ordering by group name in ascending order).
+  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "Group Name" and
+  # "Submission Date"; when this value is not specified (or nil), default ordering is applied.
+  # +filter_data['ascBool']+ specifies whether results should be ordered in ascending or descending order. Valid
+  # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order); when
+  # this value is not specified (or nil), default ordering is applied.
   def order_and_get_next_grouping(results, filter_data, reversed)
     if filter_data.nil? || filter_data['ascBool'].nil? || filter_data['orderBy'].nil?
       results = results.order('groups.group_name')
