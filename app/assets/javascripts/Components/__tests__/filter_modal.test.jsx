@@ -19,7 +19,7 @@ describe("FilterModal", () => {
         filterData: {
           ascBool: true,
           orderBy: "Group Name",
-          annotationValue: "",
+          annotationText: "",
           tas: ["a", "b"],
           tags: ["a", "b"],
           section: "",

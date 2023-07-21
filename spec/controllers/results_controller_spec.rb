@@ -71,7 +71,7 @@ describe ResultsController do
         it 'should return a response with next_grouping and next_result set to nil' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
                                         id: grouping3.current_result.id,
-                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
           expect(response.parsed_body['next_grouping']).to be_nil
           expect(response.parsed_body['next_result']).to be_nil
         end
@@ -81,7 +81,7 @@ describe ResultsController do
         it 'should return a response with the next filtered group' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
         end
@@ -89,17 +89,17 @@ describe ResultsController do
         it 'shouldn\'t return the next non-filtered group' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
           expect(response.parsed_body['next_result']['id']).not_to eq(grouping2.current_result.id)
         end
       end
 
-      context 'when annotationValue contains special characters (in the context of a like clause)' do
+      context 'when annotationText contains special characters (in the context of a like clause)' do
         it 'should sanitize the string and return the next relevant result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { annotationValue: 'aa_' } }
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
         end
@@ -109,7 +109,7 @@ describe ResultsController do
         it 'should return the next result containing the substring in one of its annotations' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { annotationValue: 'a' } }
+                                        direction: 1, filterData: { annotationText: 'a' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
         end

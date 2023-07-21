@@ -271,14 +271,14 @@ export class FilterModal extends React.Component {
                     <input
                       id="annotation"
                       type={"text"}
-                      value={this.props.filterData.annotationValue}
+                      value={this.props.filterData.annotationText}
                       onChange={e =>
                         this.props.mutateFilterData({
                           ...this.props.filterData,
-                          annotationValue: e.target.value,
+                          annotationText: e.target.value,
                         })
                       }
-                      placeholder={I18n.t("to")}
+                      placeholder={I18n.t("results.filters.text_box_placeholder")}
                     />
                   </label>
                 </div>

@@ -743,8 +743,8 @@ class Grouping < ApplicationRecord
 
   # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
   # +filter_data+ is not nil.
-  # +filter_data['annotationValue']+ is a string specifying some annotation text to filter by. To avoid this filtering
-  # option don't set +filter_data['annotationValue']+ (or set it to nil/'').
+  # +filter_data['annotationText']+ is a string specifying some annotation text to filter by. To avoid this filtering
+  # option don't set +filter_data['annotationText']+ (or set it to nil/'').
   # +filter_data['section']+ is a string specifying the name of the section to filter by. To avoid this filtering
   # option don't set +filter_data['section']+ (or set it to nil/'').
   # +filter_data['markingStateValue']+ is a string specifying the marking state to filter by; valid strings
@@ -762,10 +762,10 @@ class Grouping < ApplicationRecord
   # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or dont specify
   # +filter_data['TotalExtraMarkRange']+.
   def filter_results(current_role, results, filter_data)
-    if filter_data['annotationValue'].present?
+    if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
-                       .where('annotation_texts.content LIKE ?',
-                              "%#{AnnotationText.sanitize_sql_like(filter_data['annotationValue'])}%")
+                       .where('lower(annotation_texts.content) LIKE ?',
+                              "%#{AnnotationText.sanitize_sql_like(filter_data['annotationText'].downcase)}%")
     end
     if filter_data['section'].present?
       results = results.joins(grouping: :section).where('section.name': filter_data['section'])
