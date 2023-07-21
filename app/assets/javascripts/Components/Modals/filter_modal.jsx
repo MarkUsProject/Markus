@@ -232,7 +232,7 @@ export class FilterModal extends React.Component {
                         type="radio"
                         checked={this.props.filterData.ascBool}
                         name="order"
-                        value="Asc"
+                        id="Asc"
                         onChange={() => {}}
                         data-testid={"ascending"}
                       />
@@ -241,7 +241,7 @@ export class FilterModal extends React.Component {
                         type="radio"
                         checked={!this.props.filterData.ascBool}
                         name="order"
-                        value="Desc"
+                        id="Desc"
                         onChange={() => {}}
                         data-testid={"descending"}
                       />
