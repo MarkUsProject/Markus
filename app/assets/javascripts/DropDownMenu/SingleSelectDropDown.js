@@ -66,7 +66,7 @@ export class SingleSelectDropDown extends React.Component {
         <a data-testid={"selection"}>{this.props.selected}</a>
         <div className="options">
           <div
-            className="reset"
+            className="float-right"
             onClick={e => {
               e.preventDefault();
               this.select(e, this.props.defaultValue);

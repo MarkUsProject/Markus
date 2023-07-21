@@ -98,7 +98,7 @@ export class MultiSelectDropdown extends React.Component {
         </div>
         {arrow}
         <div
-          className="reset"
+          className="reset float-right"
           data-testid={"reset"}
           onClick={e => {
             e.preventDefault();
