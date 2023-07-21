@@ -864,14 +864,12 @@ class Grouping < ApplicationRecord
                                                "groups.group_name #{order}")
     if order == 'ASC'
       if !reversed
-        # get next grouping with a result
         next_result = results
                       .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
                       .or(results.where('groups.group_name > ? AND submissions.revision_timestamp = ?',
                                         self.group.group_name,
                                         self.current_submission_used.revision_timestamp)).first
       else
-        # get previous grouping with a result
         next_result = results
                       .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
                       .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
@@ -884,9 +882,7 @@ class Grouping < ApplicationRecord
                     .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
                                       self.group.group_name,
                                       self.current_submission_used.revision_timestamp)).first
-      # get next grouping with a result
     else
-      # get previous grouping with a result
       next_result = results
                     .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
                     .or(results.where('groups.group_name > ? AND submissions.revision_timestamp = ?',
