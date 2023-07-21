@@ -61,7 +61,6 @@ export class SingleSelectDropDown extends React.Component {
         className="singleselect-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
-        tabIndex={-1}
         data-testid={"dropdown"}
       >
         <a data-testid={"selection"}>{this.props.selected}</a>
@@ -74,7 +73,7 @@ export class SingleSelectDropDown extends React.Component {
             }}
             data-testid={"reset-dropdown-selection"}
           >
-            <FontAwesomeIcon icon="fa-solid fa-xmark" style={{color: "#255185"}} />
+            <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
           </div>
           {this.renderArrow()}
         </div>
