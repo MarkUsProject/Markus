@@ -218,22 +218,15 @@ export class FilterModal extends React.Component {
                       }}
                       defaultValue={I18n.t("activerecord.attributes.group.group_name")}
                     />
-                    <div
-                      className={"order"}
-                      onChange={e => {
-                        this.props.mutateFilterData({
-                          ...this.props.filterData,
-                          ascBool: !this.props.filterData.ascBool,
-                        });
-                      }}
-                      data-testid={"radio-group"}
-                    >
+                    <div className={"order"} data-testid={"radio-group"}>
                       <input
                         type="radio"
                         checked={this.props.filterData.ascBool}
                         name="order"
                         id="Asc"
-                        onChange={() => {}}
+                        onChange={() => {
+                          this.props.mutateFilterData({...this.props.filterData, ascBool: true});
+                        }}
                         data-testid={"ascending"}
                       />
                       <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
@@ -242,7 +235,9 @@ export class FilterModal extends React.Component {
                         checked={!this.props.filterData.ascBool}
                         name="order"
                         id="Desc"
-                        onChange={() => {}}
+                        onChange={() => {
+                          this.props.mutateFilterData({...this.props.filterData, ascBool: false});
+                        }}
                         data-testid={"descending"}
                       />
                       <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
