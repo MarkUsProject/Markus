@@ -27,6 +27,7 @@
 - Prevent Jupyter notebook from reloading when an annotation is added (#6656)
 - Added a button allowing graders to view a random incomplete submission (#6641)
 - Add icons to submission and result grading action buttons (#6666)
+- Remove group name maximum length constraint (#6668)
 - Fix bug where in some cases flash messages were not being rendered correctly (#6670)
 
 ## [v2.2.3]
