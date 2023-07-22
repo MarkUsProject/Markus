@@ -12,7 +12,7 @@ export function renderFlash(event, request, headers) {
   }
   let discard = [];
   let discardMessage;
-  if (headers.xhr) {
+  if (request) {
     discardMessage = request.getResponseHeader("X-Message-Discard");
   } else {
     discardMessage = headers.get("X-Message-Discard");
@@ -29,7 +29,7 @@ export function renderFlash(event, request, headers) {
       flashDiv.style.display = "none";
     } else {
       let flashMessage;
-      if (headers.xhr) {
+      if (request) {
         flashMessage = request.getResponseHeader(`X-Message-${key}`);
       } else {
         flashMessage = headers.get(`X-Message-${key}`);

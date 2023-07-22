@@ -92,7 +92,9 @@ class ApplicationController < ActionController::Base
         response.headers["X-Message-#{key}"] = str
       end
     end
-    flash.discard
+    if request.xhr?
+      flash.discard
+    end
   end
 
   # dynamically hide a flash message (for HTTP requests)
