@@ -43,17 +43,17 @@ export class MultiSelectDropdown extends React.Component {
         return (
           <ul>
             {options.map(option => {
-              isSelected = selected.includes(option);
+              isSelected = selected.includes(option.key);
               return (
-                <li key={option} onClick={e => this.onSelect(e, option)}>
+                <li key={option.key} onClick={e => this.onSelect(e, option.key)}>
                   <input
                     type="checkbox"
-                    id={option}
+                    id={option.key}
                     checked={isSelected}
                     onChange={() => null}
                   ></input>
-                  <label htmlFor={option} onClick={event => event.preventDefault()}>
-                    {option}
+                  <label htmlFor={option.display} onClick={event => event.preventDefault()}>
+                    {option.display}
                   </label>
                 </li>
               );

@@ -57,12 +57,15 @@ export class FilterModal extends React.Component {
 
   renderTasDropdown = () => {
     if (this.props.role !== "Ta") {
+      let tas = this.props.tas.map(option => {
+        return {key: option[0], display: option[0] + " - " + option[1]};
+      });
       return (
         <div className={"filter"}>
           <p>{I18n.t("activerecord.models.ta.other")}</p>
           <MultiSelectDropdown
             id={"Tas"}
-            options={this.props.tas}
+            options={tas}
             selected={this.props.filterData.tas}
             onToggleOption={this.onToggleOptionTas}
             onClearSelection={this.onClearSelectionTAs}
@@ -75,10 +78,18 @@ export class FilterModal extends React.Component {
   renderTagsDropdown = () => {
     let options = [];
     if (this.props.available_tags.length !== 0) {
-      options = options.concat(this.props.available_tags.map(item => item.name));
+      options = options.concat(
+        this.props.available_tags.map(item => {
+          return {key: item.name, display: item.name};
+        })
+      );
     }
     if (this.props.current_tags.length !== 0) {
-      options = options.concat(this.props.current_tags.map(item => item.name));
+      options = options.concat(
+        this.props.current_tags.map(item => {
+          return {key: item.name, display: item.name};
+        })
+      );
     }
     return (
       <MultiSelectDropdown
