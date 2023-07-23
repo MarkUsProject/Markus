@@ -11,7 +11,7 @@ describe("SingleSelectDropdown", () => {
     props = {
       options: options,
       selected: "",
-      select: onChange,
+      onSelect: onChange,
       defaultValue: "",
     };
 

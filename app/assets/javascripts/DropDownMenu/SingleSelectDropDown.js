@@ -7,9 +7,9 @@ export class SingleSelectDropDown extends React.Component {
     this.state = {expanded: false};
   }
 
-  select = (e, selection) => {
+  onSelect = (e, selection) => {
     e.stopPropagation();
-    this.props.select(selection);
+    this.props.onSelect(selection);
     this.setState({expanded: false});
   };
 
@@ -31,7 +31,7 @@ export class SingleSelectDropDown extends React.Component {
                 <li
                   key={option}
                   style={{alignSelf: "stretch"}}
-                  onClick={e => this.select(e, option)}
+                  onClick={e => this.onSelect(e, option)}
                 >
                   <span>{option}</span>
                 </li>
@@ -69,7 +69,7 @@ export class SingleSelectDropDown extends React.Component {
             className="float-right"
             onClick={e => {
               e.preventDefault();
-              this.select(e, this.props.defaultValue);
+              this.onSelect(e, this.props.defaultValue);
             }}
             data-testid={"reset-dropdown-selection"}
           >

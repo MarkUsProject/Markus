@@ -9,7 +9,7 @@ export class FilterModal extends React.Component {
     super(props);
   }
 
-  toggleOptionTas = user_name => {
+  onToggleOptionTas = user_name => {
     const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
       this.props.mutateFilterData({
@@ -25,21 +25,21 @@ export class FilterModal extends React.Component {
     }
   };
 
-  clearSelectionTAs = () => {
+  onClearSelectionTAs = () => {
     this.props.mutateFilterData({
       ...this.props.filterData,
       tas: [],
     });
   };
 
-  clearSelectionTags = () => {
+  onClearSelectionTags = () => {
     this.props.mutateFilterData({
       ...this.props.filterData,
       tags: [],
     });
   };
 
-  toggleOptionTags = tag => {
+  onToggleOptionTags = tag => {
     const newArray = [...this.props.filterData.tags];
     if (newArray.includes(tag)) {
       this.props.mutateFilterData({
@@ -64,8 +64,8 @@ export class FilterModal extends React.Component {
             id={"Tas"}
             options={this.props.tas}
             selected={this.props.filterData.tas}
-            toggleOption={this.toggleOptionTas}
-            clearSelection={this.clearSelectionTAs}
+            onToggleOption={this.onToggleOptionTas}
+            onClearSelection={this.onClearSelectionTAs}
           />
         </div>
       );
@@ -85,8 +85,8 @@ export class FilterModal extends React.Component {
         id={"Tags"}
         options={options}
         selected={this.props.filterData.tags}
-        toggleOption={this.toggleOptionTags}
-        clearSelection={this.clearSelectionTags}
+        onToggleOption={this.onToggleOptionTags}
+        onClearSelection={this.onClearSelectionTags}
       />
     );
   };
@@ -161,7 +161,7 @@ export class FilterModal extends React.Component {
     this.props.onRequestClose();
   };
 
-  clearFilters = event => {
+  onClearFilters = event => {
     event.preventDefault();
     this.props.clearAllFilters();
   };
@@ -191,7 +191,7 @@ export class FilterModal extends React.Component {
                       I18n.t("submissions.commit_date"),
                     ]}
                     selected={this.props.filterData.orderBy}
-                    select={selection => {
+                    onSelect={selection => {
                       this.props.mutateFilterData({
                         ...this.props.filterData,
                         orderBy: selection,
@@ -234,7 +234,7 @@ export class FilterModal extends React.Component {
                       I18n.t("submissions.state.remark_requested"),
                     ]}
                     selected={this.props.filterData.markingState}
-                    select={selection => {
+                    onSelect={selection => {
                       this.props.mutateFilterData({
                         ...this.props.filterData,
                         markingState: selection,
@@ -253,7 +253,7 @@ export class FilterModal extends React.Component {
                   <SingleSelectDropDown
                     options={this.props.sections}
                     selected={this.props.filterData.section}
-                    select={selection => {
+                    onSelect={selection => {
                       this.props.mutateFilterData({
                         ...this.props.filterData,
                         section: selection,
@@ -306,7 +306,7 @@ export class FilterModal extends React.Component {
                 id={"clear_all"}
                 type="reset"
                 value={I18n.t("clear_all")}
-                onClick={this.clearFilters}
+                onClick={this.onClearFilters}
               />
               <input type="submit" value={I18n.t("close")} />
             </section>
