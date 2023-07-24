@@ -13,7 +13,7 @@ describe("FilterModal", () => {
   let props;
   let component;
 
-  let sharedExamplesTaAndInstructor = role => {
+  let sharedExamplesTaAndInstructor = can_manage => {
     beforeEach(() => {
       props = {
         filterData: {
@@ -41,7 +41,7 @@ describe("FilterModal", () => {
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
         mutateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
-        role: role,
+        can_manage_assessments: can_manage,
       };
 
       // Set the app element for React Modal
@@ -288,8 +288,8 @@ describe("FilterModal", () => {
     });
   };
 
-  describe("An Instructor", () => {
-    sharedExamplesTaAndInstructor("Instructor");
+  describe("An Instructor or Grader with permissions to manage assessments", () => {
+    sharedExamplesTaAndInstructor(true);
 
     describe("Filter by Tas", () => {
       const test_id = "Tas";
@@ -335,8 +335,8 @@ describe("FilterModal", () => {
     });
   });
 
-  describe("A Ta", () => {
-    sharedExamplesTaAndInstructor("Ta");
+  describe("A Ta without permission to manage assessments", () => {
+    sharedExamplesTaAndInstructor(false);
 
     describe("Filter by Tas", () => {
       it("should not render filter by tas", () => {

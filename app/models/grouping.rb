@@ -707,7 +707,7 @@ class Grouping < ApplicationRecord
     end
   end
 
-  def get_next_grouping(current_role, reversed, filter_data = nil)
+  def get_next_grouping(current_role, reversed, can_manage_assessments, filter_data = nil)
     if current_role.ta?
       results = self.assignment.current_results.joins(grouping: :tas).where(
         'roles.id': current_role.id
@@ -720,7 +720,7 @@ class Grouping < ApplicationRecord
     if filter_data.nil?
       filter_data = {}
     end
-    results = filter_results(current_role, results, filter_data)
+    results = filter_results(results, filter_data, can_manage_assessments)
     order_and_get_next_grouping(results, filter_data, reversed)
   end
 
@@ -761,7 +761,7 @@ class Grouping < ApplicationRecord
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
   # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or dont specify
   # +filter_data['TotalExtraMarkRange']+.
-  def filter_results(current_role, results, filter_data)
+  def filter_results(results, filter_data, can_manage_assessments)
     if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
                        .where('lower(annotation_texts.content) LIKE ?',
@@ -787,7 +787,8 @@ class Grouping < ApplicationRecord
                          .where('results.marking_state': Result::MARKING_STATES[:incomplete])
       end
     end
-    unless current_role.ta? || filter_data['tas'].blank?
+
+    unless !can_manage_assessments || filter_data['tas'].nil? || filter_data['tas'] == []
       results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
     end
     if filter_data['tags'].present?

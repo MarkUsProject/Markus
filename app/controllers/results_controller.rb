@@ -138,8 +138,9 @@ class ResultsController < ApplicationController
           data[:members] = []
         end
 
-        if current_role.instructor?
+        if allowed_to?(:manage_assessments?, current_role)
           data[:tas] = assignment.ta_memberships.joins(:user).distinct.pluck('users.user_name', 'users.display_name')
+          data[:can_manage_assessments] = true
         end
 
         # Marks
@@ -321,7 +322,8 @@ class ResultsController < ApplicationController
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
       reversed = params[:direction] != '1'
-      next_grouping = grouping.get_next_grouping(current_role, reversed, filter_data)
+      can_manage_assessments = allowed_to?(:manage_assessments?, current_role)
+      next_grouping = grouping.get_next_grouping(current_role, reversed, can_manage_assessments, filter_data)
       next_result = next_grouping&.current_result
     end
 

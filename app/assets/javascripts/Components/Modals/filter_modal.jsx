@@ -56,7 +56,7 @@ export class FilterModal extends React.Component {
   };
 
   renderTasDropdown = () => {
-    if (this.props.role !== "Ta") {
+    if (this.props.can_manage_assessments) {
       let tas = this.props.tas.map(option => {
         return {key: option[0], display: option[0] + " - " + option[1]};
       });
