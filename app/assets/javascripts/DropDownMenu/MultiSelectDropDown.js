@@ -96,17 +96,19 @@ export class MultiSelectDropdown extends React.Component {
             </div>
           ))}
         </div>
-        {arrow}
-        <div
-          className="reset float-right"
-          data-testid={"reset"}
-          onClick={e => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.props.onClearSelection();
-          }}
-        >
-          <FontAwesomeIcon icon="fa-solid fa-xmark" />
+        <div className={"options"}>
+          <div
+            className="float-right"
+            data-testid={"reset"}
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              this.props.onClearSelection();
+            }}
+          >
+            <FontAwesomeIcon icon="fa-solid fa-xmark" />
+          </div>
+          {arrow}
         </div>
         {expanded && this.renderDropdown(options, selected, expanded)}
       </div>
