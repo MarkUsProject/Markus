@@ -823,7 +823,7 @@ class Result extends React.Component {
           tas={this.state.tas}
           available_tags={this.state.available_tags}
           current_tags={this.state.current_tags}
-          can_manage_assessments={this.state.can_manage_assessments}
+          role={this.props.role}
           loading={this.state.loading}
         />
         <div key="panes-content" id="panes-content">
