@@ -64,7 +64,7 @@ export class FilterModal extends React.Component {
         <div className={"filter"}>
           <p>{I18n.t("activerecord.models.ta.other")}</p>
           <MultiSelectDropdown
-            id={"Tas"}
+            title={"Tas"}
             options={tas}
             selected={this.props.filterData.tas}
             onToggleOption={this.onToggleOptionTas}
@@ -93,7 +93,7 @@ export class FilterModal extends React.Component {
     }
     return (
       <MultiSelectDropdown
-        id={"Tags"}
+        title={"Tags"}
         options={options}
         selected={this.props.filterData.tags}
         onToggleOption={this.onToggleOptionTags}
@@ -215,7 +215,6 @@ export class FilterModal extends React.Component {
                       type="radio"
                       checked={this.props.filterData.ascending}
                       name="order"
-                      id="Asc"
                       onChange={() => {
                         this.props.mutateFilterData({...this.props.filterData, ascending: true});
                       }}
@@ -226,7 +225,6 @@ export class FilterModal extends React.Component {
                       type="radio"
                       checked={!this.props.filterData.ascending}
                       name="order"
-                      id="Desc"
                       onChange={() => {
                         this.props.mutateFilterData({...this.props.filterData, ascending: false});
                       }}
@@ -279,7 +277,6 @@ export class FilterModal extends React.Component {
                 <label className={"annotation-input"}>
                   <p>{I18n.t("activerecord.models.annotation.one")}</p>
                   <input
-                    id="annotation"
                     type={"text"}
                     value={this.props.filterData.annotationText}
                     onChange={e =>
@@ -313,12 +310,7 @@ export class FilterModal extends React.Component {
           </div>
           <div className={"modal-footer"}>
             <section className={"modal-container dialog-actions"}>
-              <input
-                id={"clear_all"}
-                type="reset"
-                value={I18n.t("clear_all")}
-                onClick={this.onClearFilters}
-              />
+              <input type="reset" value={I18n.t("clear_all")} onClick={this.onClearFilters} />
               <input type="submit" value={I18n.t("close")} />
             </section>
           </div>

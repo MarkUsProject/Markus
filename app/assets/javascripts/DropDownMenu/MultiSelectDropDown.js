@@ -46,12 +46,7 @@ export class MultiSelectDropdown extends React.Component {
               isSelected = selected.includes(option.key);
               return (
                 <li key={option.key} onClick={e => this.onSelect(e, option.key)}>
-                  <input
-                    type="checkbox"
-                    id={option.key}
-                    checked={isSelected}
-                    onChange={() => null}
-                  ></input>
+                  <input type="checkbox" checked={isSelected} onChange={() => null}></input>
                   <label htmlFor={option.display} onClick={event => event.preventDefault()}>
                     {option.display}
                   </label>
@@ -79,14 +74,13 @@ export class MultiSelectDropdown extends React.Component {
       <div
         className="multiselect-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
-        data-testid={this.props.id}
+        data-testid={this.props.title}
         ref={this.dropdownRef}
       >
         <div className={"tags-box"} data-testid={"tags-box"}>
-          {selected.map((tag, index) => (
+          {selected.map(tag => (
             <div
               className="tag"
-              key={index}
               onClick={e => {
                 this.onSelect(e, tag);
               }}
