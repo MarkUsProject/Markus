@@ -13,7 +13,7 @@ describe("FilterModal", () => {
   let props;
   let component;
 
-  let sharedExamplesTaAndInstructor = can_manage => {
+  let sharedExamplesTaAndInstructor = role => {
     beforeEach(() => {
       props = {
         filterData: {
@@ -36,12 +36,17 @@ describe("FilterModal", () => {
         available_tags: [{name: "a"}, {name: "b"}],
         current_tags: [{name: "c"}, {name: "d"}],
         sections: ["LEC0101", "LEC0202"],
-        tas: ["a", "b", "c", "d"],
+        tas: [
+          ["a", "A"],
+          ["b", "B"],
+          ["c", "C"],
+          ["d", "D"],
+        ],
         isOpen: true,
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
         mutateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
-        can_manage_assessments: can_manage,
+        role: role,
       };
 
       // Set the app element for React Modal
@@ -252,7 +257,7 @@ describe("FilterModal", () => {
             let dropdownDiv = screen.getByTestId("order-by");
             fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
             const options = within(dropdownDiv).getByTestId("options");
-            expect(within(options).getByText("Group Name")).toBeInTheDocument();
+            expect(within(options).getByText("Group name")).toBeInTheDocument();
             expect(within(options).getByText("Submission Date")).toBeInTheDocument();
           });
         });
@@ -288,8 +293,8 @@ describe("FilterModal", () => {
     });
   };
 
-  describe("An Instructor or Grader with permissions to manage assessments", () => {
-    sharedExamplesTaAndInstructor(true);
+  describe("An Instructor", () => {
+    sharedExamplesTaAndInstructor("Instructor");
 
     describe("Filter by Tas", () => {
       const test_id = "Tas";
@@ -310,7 +315,7 @@ describe("FilterModal", () => {
       it("should select option when clicked on an option", () => {
         const dropdown = screen.getByTestId(test_id);
         fireEvent.click(dropdown);
-        const option = within(dropdown).getByLabelText("d");
+        const option = within(dropdown).getByLabelText("d - D");
         fireEvent.click(option);
 
         expect(props.mutateFilterData).toHaveBeenCalled();
@@ -327,7 +332,7 @@ describe("FilterModal", () => {
       it("should deselect option when clicked on a selected option", () => {
         const dropdown = screen.getByTestId(test_id);
         fireEvent.click(dropdown);
-        const selected_option = within(dropdown).getByLabelText("a");
+        const selected_option = within(dropdown).getByLabelText("a - A");
         fireEvent.click(selected_option);
 
         expect(props.mutateFilterData).toHaveBeenCalled();
@@ -335,8 +340,8 @@ describe("FilterModal", () => {
     });
   });
 
-  describe("A Ta without permission to manage assessments", () => {
-    sharedExamplesTaAndInstructor(false);
+  describe("A Ta", () => {
+    sharedExamplesTaAndInstructor("Ta");
 
     describe("Filter by Tas", () => {
       it("should not render filter by tas", () => {
