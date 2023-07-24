@@ -5,8 +5,8 @@ en:
   all: All
   apply: Apply
   cancel: Cancel
-  close: Close
   clear_all: Clear All
+  close: Close
   continue: Continue
   copy: Copy
   delete: Delete
@@ -53,7 +53,6 @@ en:
     unlink_courses: Unlink this course
   markus: MarkUs
   not_applicable: N/A
-  to: to
   or: Or
   other_info: Other Info
   oversize_feedback_file: 'Error: feedback file was %{file_size} larger than the maximum file size of %{max_file_size} MB'
@@ -65,5 +64,6 @@ en:
   select_filename: Select Filename
   skip: Skip
   this: This
+  to: to
   working: Loading
   write: Write
