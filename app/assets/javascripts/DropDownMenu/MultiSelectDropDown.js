@@ -75,6 +75,7 @@ export class MultiSelectDropdown extends React.Component {
         className="multiselect-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         data-testid={this.props.title}
+        tabIndex={-1}
         ref={this.dropdownRef}
       >
         <div className={"tags-box"} data-testid={"tags-box"}>
