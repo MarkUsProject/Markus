@@ -33,7 +33,11 @@ export class SingleSelectDropDown extends React.Component {
                   style={{alignSelf: "stretch"}}
                   onClick={e => this.onSelect(e, option)}
                 >
-                  <span>{option}</span>
+                  <span>
+                    {this.props.valueToDisplayName != null
+                      ? this.props.valueToDisplayName[option]
+                      : option}
+                  </span>
                 </li>
               );
             })}
@@ -64,7 +68,11 @@ export class SingleSelectDropDown extends React.Component {
         tabIndex={-1}
         data-testid={"dropdown"}
       >
-        <a data-testid={"selection"}>{this.props.selected}</a>
+        <a data-testid={"selection"}>
+          {this.props.valueToDisplayName != null
+            ? this.props.valueToDisplayName[this.props.selected]
+            : this.props.selected}
+        </a>
         <div className="options">
           <div
             className="float-right"

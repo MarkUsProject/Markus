@@ -748,7 +748,7 @@ class Grouping < ApplicationRecord
   # +filter_data['section']+ is a string specifying the name of the section to filter by. To avoid this filtering
   # option don't set +filter_data['section']+ (or set it to nil/'').
   # +filter_data['markingState']+ is a string specifying the marking state to filter by; valid strings
-  # include "Remark Requested", "Released", "Complete" and "In Progress". To avoid this filtering
+  # include "remark_requested", "released", "complete" and "in_progress". To avoid this filtering
   # option don't set +filter_data['markingState']+ (or set it to nil/'').
   # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by. To avoid
   # this filtering option don't set +filter_data['tas']+ (or set it to nil/[]).
@@ -775,14 +775,14 @@ class Grouping < ApplicationRecord
                               .where('results.marking_state': Result::MARKING_STATES[:incomplete])
       released_results = results.where.not('results.id': remark_results).where('results.released_to_students': true)
       case filter_data['markingState']
-      when 'Remark Requested'
+      when 'remark_requested'
         results = remark_results
-      when 'Released'
+      when 'released'
         results = released_results
-      when 'Complete'
+      when 'complete'
         results = results.where.not('results.id': released_results)
                          .where('results.marking_state': Result::MARKING_STATES[:complete])
-      when 'In Progress'
+      when 'in_progress'
         results = results.where.not('results.id': remark_results).where.not('results.id': released_results)
                          .where('results.marking_state': Result::MARKING_STATES[:incomplete])
       end
@@ -827,8 +827,8 @@ class Grouping < ApplicationRecord
 
   # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
   # +reversed+ is a boolean value, true if we want to return the next grouping and false if we want the previous one.
-  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "Group Name" and
-  # "Submission Date"; when this value is not specified (or nil), default ordering is applied.
+  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name" and
+  # "submission_date"; when this value is not specified (or nil), default ordering is applied.
   # +filter_data['ascending']+ specifies whether results should be ordered in ascending or descending order. Valid
   # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order); when
   # this value is not specified (or nil), the results are ordered in ascending order.
@@ -836,7 +836,7 @@ class Grouping < ApplicationRecord
     asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
     ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
     case filter_data['orderBy']
-    when 'Submission Date'
+    when 'submission_date'
       next_grouping_ordered_submission_date(results, ascending)
     else # group name/otherwise
       next_grouping_ordered_group_name(results, ascending)

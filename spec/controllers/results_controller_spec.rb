@@ -172,21 +172,21 @@ describe ResultsController do
         it 'should respond with the next grouping with a remark requested and who has a marking state of incomplete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'Remark Requested' } }
+                                        direction: 1, filterData: { markingState: 'remark_requested' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
 
         it 'should not respond with a grouping whose current result is a remark result but is complete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'Remark Requested' } }
+                                        direction: 1, filterData: { markingState: 'remark_requested' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
 
         it 'should not respond with a grouping whose current result is not a remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'Remark Requested' } }
+                                        direction: 1, filterData: { markingState: 'remark_requested' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
         end
       end
@@ -214,7 +214,7 @@ describe ResultsController do
         it 'should respond with the next grouping whose submission has been released' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'Released' } }
+                                        direction: 1, filterData: { markingState: 'released' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
       end
@@ -236,14 +236,14 @@ describe ResultsController do
         it 'should respond with the next grouping whose result is complete regardless of remark request status' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'Complete' } }
+                                        direction: 1, filterData: { markingState: 'complete' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
 
         it 'should not respond with a released result regardless of the result\'s marking status' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'Complete' } }
+                                        direction: 1, filterData: { markingState: 'complete' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
         end
       end
@@ -270,14 +270,14 @@ describe ResultsController do
         it 'should respond with the next grouping whose result is incomplete' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'In Progress' } }
+                                        direction: 1, filterData: { markingState: 'in_progress' } }
           expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
         end
 
         it 'should not respond with a released or remark result' do
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                         id: grouping1.current_result.id,
-                                        direction: 1, filterData: { markingState: 'In Progress' } }
+                                        direction: 1, filterData: { markingState: 'in_progress' } }
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
           expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
         end
@@ -510,7 +510,7 @@ describe ResultsController do
             it 'should return the next grouping in descending order of group name' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: 1, filterData: { ascending: 'false', orderBy: 'Group Name' } }
+                                            direction: 1, filterData: { ascending: 'false', orderBy: 'group_name' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
             end
           end
@@ -519,7 +519,7 @@ describe ResultsController do
             it 'should return the previous grouping in descending order of group name' do
               get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                             id: grouping2.current_result.id,
-                                            direction: -1, filterData: { ascending: 'false', orderBy: 'Group Name' } }
+                                            direction: -1, filterData: { ascending: 'false', orderBy: 'group_name' } }
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
             end
           end
@@ -534,7 +534,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: 1, filterData:
-                                                { ascending: 'true', orderBy: 'Submission Date' } }
+                                                { ascending: 'true', orderBy: 'submission_date' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
             end
@@ -558,7 +558,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: 1, filterData:
-                                                { ascending: 'true', orderBy: 'Submission Date' } }
+                                                { ascending: 'true', orderBy: 'submission_date' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
             end
@@ -570,7 +570,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: -1, filterData:
-                                                { ascending: 'true', orderBy: 'Submission Date' } }
+                                                { ascending: 'true', orderBy: 'submission_date' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -593,7 +593,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: -1, filterData:
-                                                { ascending: 'true', orderBy: 'Submission Date' } }
+                                                { ascending: 'true', orderBy: 'submission_date' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -607,7 +607,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: 1, filterData:
-                                                { ascending: 'false', orderBy: 'Submission Date' } }
+                                                { ascending: 'false', orderBy: 'submission_date' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -630,7 +630,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: 1, filterData:
-                                              { ascending: 'false', orderBy: 'Submission Date' } }
+                                              { ascending: 'false', orderBy: 'submission_date' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -642,7 +642,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: -1, filterData: {
-                                                ascending: 'false', orderBy: 'Submission Date'
+                                                ascending: 'false', orderBy: 'submission_date'
                                               } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
@@ -666,7 +666,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: -1, filterData: {
-                                                ascending: 'false', orderBy: 'Submission Date'
+                                                ascending: 'false', orderBy: 'submission_date'
                                               } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
