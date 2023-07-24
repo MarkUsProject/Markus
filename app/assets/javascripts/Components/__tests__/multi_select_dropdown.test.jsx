@@ -15,7 +15,12 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 describe("MultiSelectDropdown", () => {
   let props = {
     id: "Test",
-    options: ["a", "b", "c", "d"],
+    options: [
+      {key: "a", display: "a"},
+      {key: "b", display: "b"},
+      {key: "c", display: "c"},
+      {key: "d", display: "d"},
+    ],
     selected: ["a"],
     onToggleOption: jest.fn().mockImplementation(() => null),
     onClearSelection: jest.fn().mockImplementation(() => null),

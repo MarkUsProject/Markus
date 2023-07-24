@@ -219,6 +219,7 @@ export class FilterModal extends React.Component {
                       onChange={() => {
                         this.props.mutateFilterData({...this.props.filterData, ascending: true});
                       }}
+                      id={"Asc"}
                       data-testid={"ascending"}
                     />
                     <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
@@ -229,6 +230,7 @@ export class FilterModal extends React.Component {
                       onChange={() => {
                         this.props.mutateFilterData({...this.props.filterData, ascending: false});
                       }}
+                      id={"Desc"}
                       data-testid={"descending"}
                     />
                     <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
@@ -276,7 +278,7 @@ export class FilterModal extends React.Component {
               </div>
               <div className={"modal-container"}>
                 {this.renderTasDropdown()}
-                <label className={"annotation-input"}>
+                <div className={"annotation-input"}>
                   <p>{I18n.t("activerecord.models.annotation.one")}</p>
                   <input
                     type={"text"}
@@ -289,7 +291,7 @@ export class FilterModal extends React.Component {
                     }
                     placeholder={I18n.t("results.filters.text_box_placeholder")}
                   />
-                </label>
+                </div>
               </div>
 
               <div className={"modal-container"}>
