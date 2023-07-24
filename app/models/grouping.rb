@@ -835,17 +835,15 @@ class Grouping < ApplicationRecord
     asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
     ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
     case filter_data['orderBy']
-    when 'Group Name'
-      next_grouping_ordered_group_name(results, ascending)
     when 'Submission Date'
       next_grouping_ordered_submission_date(results, ascending)
-    else
-      next_grouping_ordered_group_name(results, true)
+    else # group name/otherwise
+      next_grouping_ordered_group_name(results, ascending)
     end
   end
 
   def next_grouping_ordered_group_name(results, ascending)
-    results = results.order('groups.group_name ASC')
+    results = results.group([:id, 'groups.group_name']).order('groups.group_name ASC')
     if ascending
       next_result = results.where('groups.group_name > ?', self.group.group_name).first
     else
@@ -855,8 +853,9 @@ class Grouping < ApplicationRecord
   end
 
   def next_grouping_ordered_submission_date(results, ascending)
-    results = results.joins(:submission).order('submissions.revision_timestamp ASC',
-                                               'groups.group_name ASC')
+    results = results.joins(:submission).group([:id, 'groups.group_name', 'submissions.revision_timestamp'])
+                     .order('submissions.revision_timestamp ASC',
+                            'groups.group_name ASC')
     if ascending
       next_result = results
                     .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
