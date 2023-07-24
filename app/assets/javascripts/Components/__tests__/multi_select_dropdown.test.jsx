@@ -17,8 +17,8 @@ describe("MultiSelectDropdown", () => {
     id: "Test",
     options: ["a", "b", "c", "d"],
     selected: ["a"],
-    toggleOption: jest.fn().mockImplementation(() => null),
-    clearSelection: jest.fn().mockImplementation(() => null),
+    onToggleOption: jest.fn().mockImplementation(() => null),
+    onClearSelection: jest.fn().mockImplementation(() => null),
   };
 
   it("should render the closed dropdown by default", () => {
@@ -68,7 +68,7 @@ describe("MultiSelectDropdown", () => {
 
     const tag = screen.getByText("a");
     fireEvent.click(tag);
-    expect(props.toggleOption).toHaveBeenCalledWith("a");
+    expect(props.onToggleOption).toHaveBeenCalledWith("a");
   });
 
   it("should deselect option when clicked on a select list item", () => {
@@ -78,7 +78,7 @@ describe("MultiSelectDropdown", () => {
     fireEvent.click(tags_box);
     const selected_option = screen.getByLabelText("a");
     fireEvent.click(selected_option);
-    expect(props.toggleOption).toHaveBeenCalledWith("a");
+    expect(props.onToggleOption).toHaveBeenCalledWith("a");
     expect(screen.queryByRole("list")).toBeInTheDocument();
   });
 
@@ -89,7 +89,7 @@ describe("MultiSelectDropdown", () => {
     fireEvent.click(tags_box);
     const option = screen.getByLabelText("b");
     fireEvent.click(option);
-    expect(props.toggleOption).toHaveBeenCalledWith("b");
+    expect(props.onToggleOption).toHaveBeenCalledWith("b");
   });
 
   it("should clear all selections when clicked on reset xmark icon", () => {
@@ -97,7 +97,7 @@ describe("MultiSelectDropdown", () => {
 
     const icon = screen.getByTestId("reset");
     fireEvent.click(icon);
-    expect(props.clearSelection).toHaveBeenCalled();
+    expect(props.onClearSelection).toHaveBeenCalled();
   });
 
   it("should show no options available when options passed down from props is empty", () => {

@@ -9,7 +9,7 @@ export class FilterModal extends React.Component {
     super(props);
   }
 
-  toggleOptionTas = user_name => {
+  onToggleOptionTas = user_name => {
     const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
       this.props.mutateFilterData({
@@ -25,21 +25,21 @@ export class FilterModal extends React.Component {
     }
   };
 
-  clearSelectionTAs = () => {
+  onClearSelectionTAs = () => {
     this.props.mutateFilterData({
       ...this.props.filterData,
       tas: [],
     });
   };
 
-  clearSelectionTags = () => {
+  onClearSelectionTags = () => {
     this.props.mutateFilterData({
       ...this.props.filterData,
       tags: [],
     });
   };
 
-  toggleOptionTags = tag => {
+  onToggleOptionTags = tag => {
     const newArray = [...this.props.filterData.tags];
     if (newArray.includes(tag)) {
       this.props.mutateFilterData({
@@ -57,15 +57,18 @@ export class FilterModal extends React.Component {
 
   renderTasDropdown = () => {
     if (this.props.role !== "Ta") {
+      let tas = this.props.tas.map(option => {
+        return {key: option[0], display: option[0] + " - " + option[1]};
+      });
       return (
         <div className={"filter"}>
           <p>{I18n.t("activerecord.models.ta.other")}</p>
           <MultiSelectDropdown
             id={"Tas"}
-            options={this.props.tas}
+            options={tas}
             selected={this.props.filterData.tas}
-            toggleOption={this.toggleOptionTas}
-            clearSelection={this.clearSelectionTAs}
+            onToggleOption={this.onToggleOptionTas}
+            onClearSelection={this.onClearSelectionTAs}
           />
         </div>
       );
@@ -75,18 +78,26 @@ export class FilterModal extends React.Component {
   renderTagsDropdown = () => {
     let options = [];
     if (this.props.available_tags.length !== 0) {
-      options = options.concat(this.props.available_tags.map(item => item.name));
+      options = options.concat(
+        this.props.available_tags.map(item => {
+          return {key: item.name, display: item.name};
+        })
+      );
     }
     if (this.props.current_tags.length !== 0) {
-      options = options.concat(this.props.current_tags.map(item => item.name));
+      options = options.concat(
+        this.props.current_tags.map(item => {
+          return {key: item.name, display: item.name};
+        })
+      );
     }
     return (
       <MultiSelectDropdown
         id={"Tags"}
         options={options}
         selected={this.props.filterData.tags}
-        toggleOption={this.toggleOptionTags}
-        clearSelection={this.clearSelectionTags}
+        onToggleOption={this.onToggleOptionTags}
+        onClearSelection={this.onClearSelectionTags}
       />
     );
   };
@@ -161,7 +172,7 @@ export class FilterModal extends React.Component {
     this.props.onRequestClose();
   };
 
-  clearFilters = event => {
+  onClearFilters = event => {
     event.preventDefault();
     this.props.clearAllFilters();
   };
@@ -171,150 +182,148 @@ export class FilterModal extends React.Component {
       return "";
     }
     return (
-      <div>
-        <Modal
-          className="react-modal dialog"
-          isOpen={this.props.isOpen}
-          onRequestClose={() => {
-            this.props.onRequestClose();
-          }}
-        >
-          <h3>{I18n.t("results.filters.filter_by")}</h3>
-          <form onSubmit={this.onSubmit}>
-            <div className={"modal-container-scrollable"}>
-              <div className={"modal-container-vertical"}>
-                <div className={"modal-container"}>
-                  <div className={"filter"} data-testid={"order-by"}>
-                    <p>{I18n.t("results.filters.order_by")} </p>
-                    <SingleSelectDropDown
-                      options={[
-                        I18n.t("activerecord.attributes.group.group_name"),
-                        I18n.t("submissions.commit_date"),
-                      ]}
-                      selected={this.props.filterData.orderBy}
-                      select={selection => {
-                        this.props.mutateFilterData({
-                          ...this.props.filterData,
-                          orderBy: selection,
-                        });
-                      }}
-                      defaultValue={I18n.t("activerecord.attributes.group.group_name")}
-                    />
-                    <div className={"order"} data-testid={"radio-group"}>
-                      <input
-                        type="radio"
-                        checked={this.props.filterData.ascending}
-                        name="order"
-                        id="Asc"
-                        onChange={() => {
-                          this.props.mutateFilterData({...this.props.filterData, ascending: true});
-                        }}
-                        data-testid={"ascending"}
-                      />
-                      <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
-                      <input
-                        type="radio"
-                        checked={!this.props.filterData.ascending}
-                        name="order"
-                        id="Desc"
-                        onChange={() => {
-                          this.props.mutateFilterData({...this.props.filterData, ascending: false});
-                        }}
-                        data-testid={"descending"}
-                      />
-                      <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
-                    </div>
-                  </div>
-                  <div className={"filter"} data-testid={"marking-state"}>
-                    <p>{I18n.t("activerecord.attributes.result.marking_state")}</p>
-                    <SingleSelectDropDown
-                      options={[
-                        I18n.t("submissions.state.in_progress"),
-                        I18n.t("submissions.state.complete"),
-                        I18n.t("submissions.state.released"),
-                        I18n.t("submissions.state.remark_requested"),
-                      ]}
-                      selected={this.props.filterData.markingState}
-                      select={selection => {
-                        this.props.mutateFilterData({
-                          ...this.props.filterData,
-                          markingState: selection,
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className={"modal-container"}>
-                  <div className={"filter"}>
-                    <p>{I18n.t("activerecord.models.tag.other")}</p>
-                    {this.renderTagsDropdown()}
-                  </div>
-                  <div className={"filter"} data-testid={"section"}>
-                    <p>{I18n.t("activerecord.models.section.one")}</p>
-                    <SingleSelectDropDown
-                      options={this.props.sections}
-                      selected={this.props.filterData.section}
-                      select={selection => {
-                        this.props.mutateFilterData({
-                          ...this.props.filterData,
-                          section: selection,
-                        });
-                      }}
-                      defaultValue={""}
-                    />
-                  </div>
-                </div>
-                <div className={"modal-container"}>
-                  {this.renderTasDropdown()}
-                  <label className={"annotation-input"}>
-                    <p>{I18n.t("activerecord.models.annotation.one")}</p>
+      <Modal
+        className="react-modal dialog"
+        isOpen={this.props.isOpen}
+        onRequestClose={() => {
+          this.props.onRequestClose();
+        }}
+      >
+        <h3>{I18n.t("results.filters.filter_by")}</h3>
+        <form onSubmit={this.onSubmit}>
+          <div className={"modal-container-scrollable"}>
+            <div className={"modal-container-vertical"}>
+              <div className={"modal-container"}>
+                <div className={"filter"} data-testid={"order-by"}>
+                  <p>{I18n.t("results.filters.order_by")} </p>
+                  <SingleSelectDropDown
+                    options={[
+                      I18n.t("activerecord.attributes.group.group_name"),
+                      I18n.t("submissions.commit_date"),
+                    ]}
+                    selected={this.props.filterData.orderBy}
+                    onSelect={selection => {
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        orderBy: selection,
+                      });
+                    }}
+                    defaultValue={I18n.t("activerecord.attributes.group.group_name")}
+                  />
+                  <div className={"order"} data-testid={"radio-group"}>
                     <input
-                      id="annotation"
-                      type={"text"}
-                      value={this.props.filterData.annotationText}
-                      onChange={e =>
-                        this.props.mutateFilterData({
-                          ...this.props.filterData,
-                          annotationText: e.target.value,
-                        })
-                      }
-                      placeholder={I18n.t("results.filters.text_box_placeholder")}
+                      type="radio"
+                      checked={this.props.filterData.ascending}
+                      name="order"
+                      id="Asc"
+                      onChange={() => {
+                        this.props.mutateFilterData({...this.props.filterData, ascending: true});
+                      }}
+                      data-testid={"ascending"}
                     />
-                  </label>
+                    <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
+                    <input
+                      type="radio"
+                      checked={!this.props.filterData.ascending}
+                      name="order"
+                      id="Desc"
+                      onChange={() => {
+                        this.props.mutateFilterData({...this.props.filterData, ascending: false});
+                      }}
+                      data-testid={"descending"}
+                    />
+                    <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
+                  </div>
                 </div>
-
-                <div className={"modal-container"}>
-                  {this.rangeFilter(
-                    this.props.filterData.totalMarkRange.min,
-                    this.props.filterData.totalMarkRange.max,
-                    I18n.t("results.filters.total_mark"),
-                    this.onTotalMarkMinChange,
-                    this.onTotalMarkMaxChange
-                  )}
-                  {this.rangeFilter(
-                    this.props.filterData.totalExtraMarkRange.min,
-                    this.props.filterData.totalExtraMarkRange.max,
-                    I18n.t("results.filters.total_extra_mark"),
-                    this.onTotalExtraMarkMinChange,
-                    this.onTotalExtraMarkMaxChange
-                  )}
+                <div className={"filter"} data-testid={"marking-state"}>
+                  <p>{I18n.t("activerecord.attributes.result.marking_state")}</p>
+                  <SingleSelectDropDown
+                    options={[
+                      I18n.t("submissions.state.in_progress"),
+                      I18n.t("submissions.state.complete"),
+                      I18n.t("submissions.state.released"),
+                      I18n.t("submissions.state.remark_requested"),
+                    ]}
+                    selected={this.props.filterData.markingState}
+                    onSelect={selection => {
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        markingState: selection,
+                      });
+                    }}
+                  />
                 </div>
               </div>
+              <div className={"modal-container"}>
+                <div className={"filter"}>
+                  <p>{I18n.t("activerecord.models.tag.other")}</p>
+                  {this.renderTagsDropdown()}
+                </div>
+                <div className={"filter"} data-testid={"section"}>
+                  <p>{I18n.t("activerecord.models.section.one")}</p>
+                  <SingleSelectDropDown
+                    options={this.props.sections}
+                    selected={this.props.filterData.section}
+                    onSelect={selection => {
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        section: selection,
+                      });
+                    }}
+                    defaultValue={""}
+                  />
+                </div>
+              </div>
+              <div className={"modal-container"}>
+                {this.renderTasDropdown()}
+                <label className={"annotation-input"}>
+                  <p>{I18n.t("activerecord.models.annotation.one")}</p>
+                  <input
+                    id="annotation"
+                    type={"text"}
+                    value={this.props.filterData.annotationText}
+                    onChange={e =>
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        annotationText: e.target.value,
+                      })
+                    }
+                    placeholder={I18n.t("results.filters.text_box_placeholder")}
+                  />
+                </label>
+              </div>
+
+              <div className={"modal-container"}>
+                {this.rangeFilter(
+                  this.props.filterData.totalMarkRange.min,
+                  this.props.filterData.totalMarkRange.max,
+                  I18n.t("results.filters.total_mark"),
+                  this.onTotalMarkMinChange,
+                  this.onTotalMarkMaxChange
+                )}
+                {this.rangeFilter(
+                  this.props.filterData.totalExtraMarkRange.min,
+                  this.props.filterData.totalExtraMarkRange.max,
+                  I18n.t("results.filters.total_extra_mark"),
+                  this.onTotalExtraMarkMinChange,
+                  this.onTotalExtraMarkMaxChange
+                )}
+              </div>
             </div>
-            <div className={"modal-footer"}>
-              <section className={"modal-container dialog-actions"}>
-                <input
-                  id={"clear_all"}
-                  type="reset"
-                  value={I18n.t("clear_all")}
-                  onClick={this.clearFilters}
-                />
-                <input type="submit" value={I18n.t("close")} />
-              </section>
-            </div>
-          </form>
-        </Modal>
-      </div>
+          </div>
+          <div className={"modal-footer"}>
+            <section className={"modal-container dialog-actions"}>
+              <input
+                id={"clear_all"}
+                type="reset"
+                value={I18n.t("clear_all")}
+                onClick={this.onClearFilters}
+              />
+              <input type="submit" value={I18n.t("close")} />
+            </section>
+          </div>
+        </form>
+      </Modal>
     );
   }
 }

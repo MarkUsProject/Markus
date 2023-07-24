@@ -23,9 +23,9 @@ export class MultiSelectDropdown extends React.Component {
     }
   };
 
-  select = (e, option) => {
+  onSelect = (e, option) => {
     e.stopPropagation();
-    this.props.toggleOption(option);
+    this.props.onToggleOption(option);
   };
 
   renderDropdown = (options, selected, expanded) => {
@@ -43,17 +43,17 @@ export class MultiSelectDropdown extends React.Component {
         return (
           <ul>
             {options.map(option => {
-              isSelected = selected.includes(option);
+              isSelected = selected.includes(option.key);
               return (
-                <li key={option} onClick={e => this.select(e, option)}>
+                <li key={option.key} onClick={e => this.onSelect(e, option.key)}>
                   <input
                     type="checkbox"
-                    id={option}
+                    id={option.key}
                     checked={isSelected}
                     onChange={() => null}
                   ></input>
-                  <label htmlFor={option} onClick={event => event.preventDefault()}>
-                    {option}
+                  <label htmlFor={option.display} onClick={event => event.preventDefault()}>
+                    {option.display}
                   </label>
                 </li>
               );
@@ -88,7 +88,7 @@ export class MultiSelectDropdown extends React.Component {
               className="tag"
               key={index}
               onClick={e => {
-                this.select(e, tag);
+                this.onSelect(e, tag);
               }}
             >
               <span>{tag}</span>
@@ -103,7 +103,7 @@ export class MultiSelectDropdown extends React.Component {
           onClick={e => {
             e.preventDefault();
             e.stopPropagation();
-            this.props.clearSelection();
+            this.props.onClearSelection();
           }}
         >
           <FontAwesomeIcon icon="fa-solid fa-xmark" />
