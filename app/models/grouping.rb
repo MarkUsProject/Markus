@@ -798,10 +798,10 @@ class Grouping < ApplicationRecord
       result_ids = results.ids
       total_marks_hash = Result.get_total_marks(result_ids)
       if filter_data['totalMarkRange']['max'].present?
-        total_marks_hash = total_marks_hash.select { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+        total_marks_hash.select! { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
       end
       if filter_data['totalMarkRange']['min'].present?
-        total_marks_hash = total_marks_hash.select { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
+        total_marks_hash.select! { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
@@ -810,12 +810,12 @@ class Grouping < ApplicationRecord
       result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
       if filter_data['totalExtraMarkRange']['max'].present?
-        total_marks_hash = total_marks_hash.select do |_, value|
+        total_marks_hash.select! do |_, value|
           value <= filter_data['totalExtraMarkRange']['max'].to_f
         end
       end
       if filter_data['totalExtraMarkRange']['min'].present?
-        total_marks_hash = total_marks_hash.select do |_, value|
+        total_marks_hash.select! do |_, value|
           value >= filter_data['totalExtraMarkRange']['min'].to_f
         end
       end
