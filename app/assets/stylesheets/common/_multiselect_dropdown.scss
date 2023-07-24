@@ -3,51 +3,27 @@
 
 .multiselect-dropdown {
   @include dropdown-default;
+  padding: 0.25em;
 
   .tags-box {
-    align-items: center;
-    display: inline-flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    height: 30px;
-    margin-left: 1.5%;
-    overflow: scroll;
-    padding: 0 1.5%;
+    display: inline-block;
+    height: 22px;
+    overflow-y: auto;
     width: $dropdown-horizontal - 50px;
 
     .tag {
       background: $background-main;
       border: 1px solid $primary-three;
       border-radius: $radius;
-      flex-direction: row;
+      display: inline-block;
       font-size: x-small;
-      margin: 1.25pt 1pt;
-      min-height: fit-content;
-      min-width: fit-content;
+      margin: 1pt;
       padding: 0.1em 0.2em;
 
       span {
-        margin: 0.25em;
+        margin-right: 0.25em;
       }
     }
-  }
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .tags-box::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .tags-box {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .reset {
-    margin-right: 5px;
-    position: relative;
-    top: 50%;
-    transform: translate(0, -50%);
   }
 
   ul {
@@ -63,11 +39,15 @@
     }
   }
 
+  .options {
+    align-items: center;
+    display: inline-flex;
+    float: right;
+    padding: 0.25em;
+  }
+
   .arrow-down,
   .arrow-up {
-    margin-right: 5px;
-    position: relative;
-    top: 50%;
-    transform: translate(0, -50%);
+    margin-left: 5px;
   }
 }

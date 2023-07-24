@@ -787,7 +787,8 @@ class Grouping < ApplicationRecord
                          .where('results.marking_state': Result::MARKING_STATES[:incomplete])
       end
     end
-    unless current_role.ta? || filter_data['tas'].blank?
+
+    unless current_role.ta? || filter_data['tas'].nil? || filter_data['tas'] == []
       results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
     end
     if filter_data['tags'].present?
