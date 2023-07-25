@@ -843,6 +843,9 @@ class Grouping < ApplicationRecord
     end
   end
 
+  # Gets the next grouping by first ordering +results+ by group name in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
   def next_grouping_ordered_group_name(results, ascending)
     results = results.group([:id, 'groups.group_name']).order('groups.group_name ASC')
     if ascending
@@ -853,6 +856,9 @@ class Grouping < ApplicationRecord
     next_result&.grouping
   end
 
+  # Gets the next grouping by first ordering +results+ by submission date and then by group name in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
   def next_grouping_ordered_submission_date(results, ascending)
     results = results.joins(:submission).group([:id, 'groups.group_name', 'submissions.revision_timestamp'])
                      .order('submissions.revision_timestamp ASC',
