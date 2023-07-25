@@ -1,10 +1,11 @@
 @import 'constants';
-@import 'dropdown';
 
-.singleselect-dropdown {
-  @include dropdown-default;
-
+.dropdown.singleselect-dropdown {
   > a {
     max-width: $dropdown-horizontal - 50px;
+  }
+
+  ul {
+    display: block;
   }
 }

@@ -1,8 +1,6 @@
 @import 'constants';
-@import 'dropdown';
 
 .multiselect-dropdown {
-  @include dropdown-default;
   padding: 0.25em;
 
   .tags-box {
