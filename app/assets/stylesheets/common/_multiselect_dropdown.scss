@@ -1,6 +1,7 @@
 @import 'constants';
 
-.multiselect-dropdown {
+.dropdown.multi-select-dropdown {
+  height: 30px;
   padding: 0.25em;
 
   .tags-box {
@@ -10,7 +11,6 @@
     width: $dropdown-horizontal - 50px;
 
     .tag {
-      background: $background-main;
       border: 1px solid $primary-three;
       border-radius: $radius;
       display: inline-block;
@@ -25,27 +25,36 @@
   }
 
   ul {
-    top: 2em;
+    display: block;
+    max-height: 120px;
+    overflow-y: auto;
 
     li {
-      align-self: stretch;
-      padding-left: 5px;
+      > span {
+        margin-left: 2pt;
+      }
 
-      label {
-        margin-left: 0.25em;
+      .fa-square,
+      .fa-square-check {
+        color: $primary-one;
+      }
+
+      &:hover,
+      &.active {
+        > .fa-square-check,
+        .fa-square {
+          color: $background-main;
+        }
       }
     }
   }
 
   .options {
-    align-items: center;
     display: inline-flex;
-    float: right;
     padding: 0.25em;
   }
 
-  .arrow-down,
-  .arrow-up {
-    margin-left: 5px;
+  .fa-xmark {
+    color: $primary-one;
   }
 }

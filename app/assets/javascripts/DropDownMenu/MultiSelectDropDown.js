@@ -7,12 +7,6 @@ export class MultiSelectDropdown extends React.Component {
     this.state = {expanded: false, tags: []};
   }
 
-  onClickOutside = e => {
-    if (!e.target.contains(e.relatedTarget)) {
-      this.setState({expanded: false});
-    }
-  };
-
   onSelect = (e, option) => {
     e.stopPropagation();
     this.props.onToggleOption(option);
@@ -36,24 +30,22 @@ export class MultiSelectDropdown extends React.Component {
               isSelected = selected.includes(option.key);
               return (
                 <li key={option.key} onClick={e => this.onSelect(e, option.key)}>
-                  <input
-                    id={option.key}
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => null}
-                    onBlur={e => {
-                      e.stopPropagation();
-                    }}
-                  ></input>
-                  <label htmlFor={option.key} onClick={event => event.preventDefault()}>
-                    {option.display}
-                  </label>
+                  {this.renderCheckBox(isSelected)}
+                  <span>{option.display}</span>
                 </li>
               );
             })}
           </ul>
         );
       }
+    }
+  };
+
+  renderCheckBox = checked => {
+    if (checked) {
+      return <FontAwesomeIcon icon="fa-solid fa-square-check" />;
+    } else {
+      return <FontAwesomeIcon icon="fa-regular fa-square" />;
     }
   };
 
@@ -70,11 +62,11 @@ export class MultiSelectDropdown extends React.Component {
 
     return (
       <div
-        className="multiselect-dropdown"
+        className="dropdown multi-select-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         data-testid={this.props.title}
         tabIndex={-1}
-        onBlur={this.onClickOutside}
+        onBlur={() => this.setState({expanded: false})}
       >
         <div className={"tags-box"} data-testid={"tags-box"}>
           {selected.map(tag => (
@@ -89,9 +81,8 @@ export class MultiSelectDropdown extends React.Component {
             </div>
           ))}
         </div>
-        <div className={"options"}>
+        <div className={"options float-right"}>
           <div
-            className="float-right"
             data-testid={"reset"}
             onClick={e => {
               e.preventDefault();
