@@ -197,10 +197,11 @@ export class FilterModal extends React.Component {
                 <div className={"filter"} data-testid={"order-by"}>
                   <p>{I18n.t("results.filters.order_by")} </p>
                   <SingleSelectDropDown
-                    options={[
-                      I18n.t("activerecord.attributes.group.group_name"),
-                      I18n.t("submissions.commit_date"),
-                    ]}
+                    valueToDisplayName={{
+                      group_name: I18n.t("activerecord.attributes.group.group_name"),
+                      submission_date: I18n.t("submissions.commit_date"),
+                    }}
+                    options={["group_name", "submission_date"]}
                     selected={this.props.filterData.orderBy}
                     onSelect={selection => {
                       this.props.mutateFilterData({
@@ -238,12 +239,13 @@ export class FilterModal extends React.Component {
                 <div className={"filter"} data-testid={"marking-state"}>
                   <p>{I18n.t("activerecord.attributes.result.marking_state")}</p>
                   <SingleSelectDropDown
-                    options={[
-                      I18n.t("submissions.state.in_progress"),
-                      I18n.t("submissions.state.complete"),
-                      I18n.t("submissions.state.released"),
-                      I18n.t("submissions.state.remark_requested"),
-                    ]}
+                    valueToDisplayName={{
+                      in_progress: I18n.t("submissions.state.in_progress"),
+                      complete: I18n.t("submissions.state.complete"),
+                      released: I18n.t("submissions.state.released"),
+                      remark_requested: I18n.t("submissions.state.remark_requested"),
+                    }}
+                    options={["in_progress", "complete", "released", "remark_requested"]}
                     selected={this.props.filterData.markingState}
                     onSelect={selection => {
                       this.props.mutateFilterData({

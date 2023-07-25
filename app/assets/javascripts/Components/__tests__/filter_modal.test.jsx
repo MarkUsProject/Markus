@@ -18,7 +18,7 @@ describe("FilterModal", () => {
       props = {
         filterData: {
           ascending: true,
-          orderBy: "Group Name",
+          orderBy: "group_name",
           annotationText: "",
           tas: ["a", "b"],
           tags: ["a", "b"],
