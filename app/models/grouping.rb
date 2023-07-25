@@ -822,6 +822,17 @@ class Grouping < ApplicationRecord
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
+    if filter_data['criteria'].present?
+      results = results.joins(marks: :criterion)
+      filter_data['criteria'].each do |criteria|
+        unless criteria['min'].nil?
+          results = results.where('criteria.name = ? AND marks.mark >= ?', criteria['name'], criteria['min'])
+        end
+        unless criteria['max'].nil?
+          results = results.where('criteria.name = ? AND marks.mark <= ?', criteria['name'], criteria['max'])
+        end
+      end
+    end
     results.joins(grouping: :group)
   end
 
