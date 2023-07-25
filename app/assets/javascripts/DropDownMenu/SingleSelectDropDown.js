@@ -28,11 +28,7 @@ export class SingleSelectDropDown extends React.Component {
           <ul data-testid={"options"}>
             {options.map(option => {
               return (
-                <li
-                  key={option}
-                  style={{alignSelf: "stretch"}}
-                  onClick={e => this.onSelect(e, option)}
-                >
+                <li key={option} onClick={e => this.onSelect(e, option)}>
                   <span>
                     {this.props.valueToDisplayName != null
                       ? this.props.valueToDisplayName[option]
