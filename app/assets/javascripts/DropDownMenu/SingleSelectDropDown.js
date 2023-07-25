@@ -69,19 +69,18 @@ export class SingleSelectDropDown extends React.Component {
             ? this.props.valueToDisplayName[this.props.selected]
             : this.props.selected}
         </a>
-        <div className="options">
-          <div
-            className="float-right"
-            onClick={e => {
-              e.preventDefault();
-              this.onSelect(e, this.props.defaultValue);
-            }}
-            data-testid={"reset-dropdown-selection"}
-          >
-            <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
-          </div>
-          {this.renderArrow()}
+        {this.renderArrow()}
+        <div
+          className="float-right"
+          onClick={e => {
+            e.preventDefault();
+            this.onSelect(e, this.props.defaultValue);
+          }}
+          data-testid={"reset-dropdown-selection"}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
         </div>
+
         {expanded && this.renderDropdown(options, selected, expanded)}
       </div>
     );
