@@ -8,7 +8,9 @@ export class MultiSelectDropdown extends React.Component {
   }
 
   onClickOutside = e => {
-    this.setState({expanded: false});
+    if (!e.target.contains(e.relatedTarget)) {
+      this.setState({expanded: false});
+    }
   };
 
   onSelect = (e, option) => {
@@ -39,6 +41,9 @@ export class MultiSelectDropdown extends React.Component {
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => null}
+                    onBlur={e => {
+                      e.stopPropagation();
+                    }}
                   ></input>
                   <label htmlFor={option.key} onClick={event => event.preventDefault()}>
                     {option.display}
