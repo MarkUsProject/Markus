@@ -5,22 +5,10 @@ export class MultiSelectDropdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {expanded: false, tags: []};
-    this.dropdownRef = React.createRef();
   }
 
-  componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside);
-  }
-
-  handleClickOutside = event => {
-    // Check if the click is outside the dropdown container
-    if (this.dropdownRef.current && !this.dropdownRef.current.contains(event.target)) {
-      this.setState({expanded: false});
-    }
+  onClickOutside = e => {
+    this.setState({expanded: false});
   };
 
   onSelect = (e, option) => {
@@ -81,7 +69,7 @@ export class MultiSelectDropdown extends React.Component {
         onClick={() => this.setState({expanded: !this.state.expanded})}
         data-testid={this.props.title}
         tabIndex={-1}
-        ref={this.dropdownRef}
+        onBlur={this.onClickOutside}
       >
         <div className={"tags-box"} data-testid={"tags-box"}>
           {selected.map(tag => (
