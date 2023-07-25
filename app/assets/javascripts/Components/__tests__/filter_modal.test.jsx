@@ -72,11 +72,12 @@ describe("FilterModal", () => {
 
     describe("Filter By Annotation", () => {
       it("should render the annotation textbox", () => {
-        expect(screen.getByLabelText(/Annotation/i)).toBeInTheDocument();
+        expect(screen.getByText(/Annotation/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Type here/i)).toBeInTheDocument();
       });
 
       it("should save annotation text on input", () => {
-        fireEvent.change(screen.getByLabelText("Annotation"), {
+        fireEvent.change(screen.getByPlaceholderText(/Type here/i), {
           target: {value: "JavaScript"},
         });
         expect(props.mutateFilterData).toHaveBeenCalled();
