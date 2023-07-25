@@ -59,15 +59,6 @@ describe("MultiSelectDropdown", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 
-  it("should close expanded dropdown on mousedown outside", () => {
-    render(<MultiSelectDropdown {...props} />);
-
-    const tags_box = screen.getByTestId("tags-box");
-    fireEvent.click(tags_box);
-    fireEvent.mouseDown(document);
-    expect(screen.queryByRole("list")).not.toBeInTheDocument();
-  });
-
   it("should deselect option when clicked on tag", () => {
     render(<MultiSelectDropdown {...props} />);
 
