@@ -18,11 +18,10 @@
 }
 
 .range {
-  align-items: center;
   background: $background-main;
-  justify-content: left;
   max-width: $dropdown-horizontal;
   min-height: 30px;
+  width: $dropdown-horizontal;
 
   > span {
     margin-left: 10px;

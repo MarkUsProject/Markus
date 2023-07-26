@@ -80,7 +80,6 @@ export class SingleSelectDropDown extends React.Component {
         >
           <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
         </div>
-
         {expanded && this.renderDropdown(options, selected, expanded)}
       </div>
     );

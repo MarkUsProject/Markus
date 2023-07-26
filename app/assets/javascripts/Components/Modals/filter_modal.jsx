@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
+import {CriteriaFilter} from "../criteria_filter";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class FilterModal extends React.Component {
@@ -172,6 +173,18 @@ export class FilterModal extends React.Component {
     this.props.onRequestClose();
   };
 
+  addCriteria = criteria => {
+    // const newArray = [...this.state.currentCriteria];
+    // newArray.push(criteria);
+    // this.setState({currentCriteria: newArray});
+  };
+
+  deleteCriteria = criteria => {
+    // let newArray = [...this.state.currentCriteria];
+    // newArray = newArray.filter(item => item.name !== criteria.name);
+    // this.setState({currentCriteria: newArray});
+  };
+
   onClearFilters = event => {
     event.preventDefault();
     this.props.clearAllFilters();
@@ -311,6 +324,14 @@ export class FilterModal extends React.Component {
                   this.onTotalExtraMarkMaxChange
                 )}
               </div>
+            </div>
+            <div className={"modal-container-vertical"}>
+              <CriteriaFilter
+                options={["a", "b", "c", "d", "e"]}
+                criteria={[]}
+                addCriteria={this.addCriteria}
+                removeCriteria={this.deleteCriteria}
+              />
             </div>
           </div>
           <div className={"modal-footer"}>
