@@ -1,4 +1,5 @@
 import React from "react";
+import ReactTable from "react-table";
 import {SingleSelectDropDown} from "../DropDownMenu/SingleSelectDropDown";
 import {RangeFilter} from "./Helpers/range_filter";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -47,31 +48,45 @@ export class CriteriaFilter extends React.Component {
     }
   }
 
+  criterionColumns = () => [
+    {
+      Header: I18n.t("activerecord.models.criterion.one"),
+      accessor: "name",
+      maxWidth: 85,
+    },
+    {
+      Header: "Min",
+      accessor: "min",
+      maxWidth: 40,
+      className: "number",
+    },
+    {
+      Header: "Max",
+      accessor: "max",
+      maxWidth: 40,
+      className: "number",
+    },
+    {
+      Header: "",
+      id: "action",
+      minWidth: 18,
+      Cell: row => {
+        return (
+          <div onClick={() => this.props.removeCriteria(row.original)}>
+            <FontAwesomeIcon icon="fa-solid fa-xmark" className={"no-padding"} />
+          </div>
+        );
+      },
+    },
+  ];
+
   renderSelectedCriteria = () => {
-    let rows = this.props.criteria.map(criteria => {
-      return [
-        <tr key={criteria.name}>
-          <th style={{minWidth: "80%"}}>{criteria.name}</th>
-
-          <td>{criteria.min}</td>
-          <td>{criteria.max}</td>
-          <td>
-            {
-              <div onClick={e => this.removeCriteria(e, criteria)}>
-                <FontAwesomeIcon icon="fa-solid fa-xmark" />
-              </div>
-            }
-          </td>
-        </tr>,
-      ];
-    });
-
     return (
-      <div style={{alignSelf: "stretch"}}>
-        <table style={{minWidth: "100%"}}>
-          <tbody>{rows}</tbody>
-        </table>
-      </div>
+      <ReactTable
+        columns={this.criterionColumns()}
+        data={this.props.criteria}
+        className="auto-overflow criterion"
+      />
     );
   };
 
@@ -95,13 +110,13 @@ export class CriteriaFilter extends React.Component {
 
   render() {
     return (
-      <div className={"filter"}>
+      <div className={"criterion-filter"}>
         <div>
           <p>Criteria</p>
           <SingleSelectDropDown
             options={this.props.options}
             selected={this.state.name}
-            select={selection => {
+            onSelect={selection => {
               this.setState({name: selection});
             }}
             disabled={this.state.disabled}
@@ -117,17 +132,6 @@ export class CriteriaFilter extends React.Component {
           </button>
         </div>
         {this.renderSelectedCriteria()}
-        {/*<ul>*/}
-        {/*  {this.props.criteria.map(selected => {*/}
-        {/*    return (*/}
-        {/*      <li key={selected.name}>*/}
-        {/*        <span>*/}
-        {/*          {selected.name}*/}
-        {/*        </span>*/}
-        {/*      </li>*/}
-        {/*    );*/}
-        {/*  })}*/}
-        {/*</ul>*/}
       </div>
     );
   }

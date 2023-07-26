@@ -174,15 +174,21 @@ export class FilterModal extends React.Component {
   };
 
   addCriteria = criteria => {
-    // const newArray = [...this.state.currentCriteria];
-    // newArray.push(criteria);
-    // this.setState({currentCriteria: newArray});
+    let newArray = [...this.props.filterData.criteria];
+    newArray.push(criteria);
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      criteria: newArray,
+    });
   };
 
   deleteCriteria = criteria => {
-    // let newArray = [...this.state.currentCriteria];
-    // newArray = newArray.filter(item => item.name !== criteria.name);
-    // this.setState({currentCriteria: newArray});
+    console.log(criteria);
+    let newArray = [...this.props.filterData.criteria];
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      criteria: newArray.filter(item => item.name !== criteria.name),
+    });
   };
 
   onClearFilters = event => {
@@ -327,7 +333,7 @@ export class FilterModal extends React.Component {
             <div className={"modal-container-vertical"}>
               <CriteriaFilter
                 options={["a", "b", "c", "d", "e"]}
-                criteria={[]}
+                criteria={[...this.props.filterData.criteria]}
                 addCriteria={this.addCriteria}
                 removeCriteria={this.deleteCriteria}
               />

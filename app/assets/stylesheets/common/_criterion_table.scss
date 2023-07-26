@@ -1,0 +1,34 @@
+@import 'constants';
+
+.criterion-filter {
+  box-shadow: 0 4px 4px 0 $line;
+  height: 450px;
+  justify-content: center;
+  padding: 10px;
+  width: $dropdown-horizontal + 20px;
+}
+
+.ReactTable.auto-overflow.criterion {
+  margin-top: 10px;
+  max-width: $dropdown-horizontal;
+
+  .rt-thead,
+  .rt-tbody {
+    overflow-y: auto;
+  }
+
+  .rt-td:last-child {
+    padding-right: 5px;
+  }
+
+  .rt-tbody {
+    max-height: 240px;
+  }
+
+  .rt-noData {
+    background: $background-support;
+    color: $sharp-line;
+    padding: 0.25em;
+    top: 3.2em;
+  }
+}
