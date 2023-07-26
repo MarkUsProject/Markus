@@ -1,9 +1,11 @@
 @import 'constants';
 
 @mixin filter-modal-dropdown {
+  height: 30px;
   width: $dropdown-horizontal;
 
   ul {
+    display: block;
     max-height: 120px;
     overflow-y: auto;
   }
