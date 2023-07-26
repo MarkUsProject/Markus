@@ -50,6 +50,8 @@ import {
 
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
 
+import {faSquare} from "@fortawesome/free-regular-svg-icons";
+
 config.autoAddCss = false;
 
 library.add(
@@ -102,5 +104,7 @@ library.add(
 );
 
 library.add(faGithub);
+
+library.add(faSquare);
 
 dom.watch();
