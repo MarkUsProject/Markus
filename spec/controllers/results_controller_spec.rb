@@ -491,6 +491,123 @@ describe ResultsController do
         end
       end
     end
+    context 'when filtering by criteria' do
+      let(:assignment) { grouping1.assignment }
+      let!(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let!(:mark1a) do
+        create :flexible_mark, criterion: criterion, result: grouping1.current_result, assignment: assignment, mark: 1
+      end
+      let!(:mark2a) do
+        create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 2
+      end
+      let!(:mark3a) do
+        create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 3
+      end
+
+      context 'when a single criteria specified' do
+        context 'when only min is specified' do
+          before(:each) { mark2a.update(mark: 0) }
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   min: 1 }] } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+
+          it 'should select the next grouping whose result satisfies the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   min: 1 }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+
+        context 'when only max is specified' do
+          before(:each) { mark2a.update(mark: 8) }
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+
+          it 'should select the next grouping whose result satisfies the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+
+        context 'when both max and min are specified' do
+          before(:each) { mark2a.update(mark: 8) }
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   min: 1, max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+
+          it 'should select the next grouping whose result satisfies the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   min: 1, max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+      end
+
+      context 'when multiple criteria are specified' do
+        let!(:criterion2) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+        let!(:mark1b) do
+          create :flexible_mark, criterion: criterion2, result: grouping1.current_result, assignment: assignment,
+                                 mark: 1
+        end
+        let!(:mark3b) do
+          create :flexible_mark, criterion: criterion2, result: grouping3.current_result, assignment: assignment,
+                                 mark: 3
+        end
+        context 'when both max and min are specified' do
+          it 'should not select the next grouping whose result does not have a mark for the second criterion' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1,
+                                          filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                     min: 1, max: 3 }, { name: 'Flexible criterion 2',
+                                                                                         min: 1, max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            create :flexible_mark, criterion: criterion2, result: grouping2.current_result,
+                                   assignment: assignment, mark: 5
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1,
+                                          filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                     min: 1, max: 3 }, { name: 'Flexible criterion 2',
+                                                                                         min: 1, max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+          it 'should select the next grouping whose result satisfies the conditions' do
+            create :flexible_mark, criterion: criterion2, result: grouping2.current_result,
+                                   assignment: assignment, mark: 5
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1,
+                                          filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                     min: 1, max: 3 }, { name: 'Flexible criterion 2',
+                                                                                         min: 1, max: 3 }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+      end
+    end
   end
 
   shared_examples 'instructor and ta #next_grouping with different orderings' do

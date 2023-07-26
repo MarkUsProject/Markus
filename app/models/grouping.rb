@@ -822,14 +822,20 @@ class Grouping < ApplicationRecord
     end
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)
+      filtered_results = results.ids
       filter_data['criteria'].each do |criteria|
         unless criteria['min'].nil?
-          results = results.where('criteria.name = ? AND marks.mark >= ?', criteria['name'], criteria['min'])
+          filtered_results = results.where('results.id': filtered_results)
+                                    .where('criteria.name = ? AND marks.mark >= ?',
+                                           criteria['name'], criteria['min'].to_f).ids
         end
         unless criteria['max'].nil?
-          results = results.where('criteria.name = ? AND marks.mark <= ?', criteria['name'], criteria['max'])
+          filtered_results = results.where('results.id': filtered_results)
+                                    .where('criteria.name = ? AND marks.mark <= ?',
+                                           criteria['name'], criteria['max'].to_f).ids
         end
       end
+      results = results.where('results.id': filtered_results)
     end
     results.joins(grouping: :group)
   end
