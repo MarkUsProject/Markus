@@ -43,9 +43,17 @@ export class MultiSelectDropdown extends React.Component {
 
   renderCheckBox = checked => {
     if (checked) {
-      return <FontAwesomeIcon icon="fa-solid fa-square-check" />;
+      return (
+        <div data-testid={"checked"}>
+          <FontAwesomeIcon icon="fa-solid fa-square-check" />
+        </div>
+      );
     } else {
-      return <FontAwesomeIcon icon="fa-regular fa-square" />;
+      return (
+        <div data-testid={"unchecked"}>
+          <FontAwesomeIcon icon="fa-regular fa-square" />
+        </div>
+      );
     }
   };
 

@@ -28,6 +28,10 @@
 
   ul {
     li {
+      > div {
+        display: inline-block;
+      }
+
       > span {
         margin-left: 2pt;
       }
@@ -39,7 +43,7 @@
 
       &:hover,
       &.active {
-        > .fa-square-check,
+        .fa-square-check,
         .fa-square {
           color: $background-main;
         }
