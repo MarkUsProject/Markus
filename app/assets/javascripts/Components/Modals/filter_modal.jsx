@@ -219,8 +219,9 @@ export class FilterModal extends React.Component {
                     valueToDisplayName={{
                       group_name: I18n.t("activerecord.attributes.group.group_name"),
                       submission_date: I18n.t("submissions.commit_date"),
+                      total_mark: I18n.t("results.total_mark"),
                     }}
-                    options={["group_name", "submission_date"]}
+                    options={["group_name", "submission_date", "total_mark"]}
                     selected={this.props.filterData.orderBy}
                     onSelect={selection => {
                       this.props.mutateFilterData({
@@ -317,7 +318,7 @@ export class FilterModal extends React.Component {
                 {this.rangeFilter(
                   this.props.filterData.totalMarkRange.min,
                   this.props.filterData.totalMarkRange.max,
-                  I18n.t("results.filters.total_mark"),
+                  I18n.t("results.total_mark"),
                   this.onTotalMarkMinChange,
                   this.onTotalMarkMaxChange
                 )}

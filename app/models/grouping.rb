@@ -820,6 +820,23 @@ class Grouping < ApplicationRecord
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
+    if filter_data['criteria'].present?
+      results = results.joins(marks: :criterion)
+      filtered_results = results.ids
+      filter_data['criteria'].each do |criteria|
+        unless criteria['min'].nil?
+          filtered_results = results.where('results.id': filtered_results)
+                                    .where('criteria.name = ? AND marks.mark >= ?',
+                                           criteria['name'], criteria['min'].to_f).ids
+        end
+        unless criteria['max'].nil?
+          filtered_results = results.where('results.id': filtered_results)
+                                    .where('criteria.name = ? AND marks.mark <= ?',
+                                           criteria['name'], criteria['max'].to_f).ids
+        end
+      end
+      results = results.where('results.id': filtered_results)
+    end
     results.joins(grouping: :group)
   end
 
@@ -836,6 +853,8 @@ class Grouping < ApplicationRecord
     case filter_data['orderBy']
     when 'submission_date'
       next_grouping_ordered_submission_date(results, ascending)
+    when 'total_mark'
+      next_grouping_ordered_total_mark(results, ascending)
     else # group name/otherwise
       next_grouping_ordered_group_name(results, ascending)
     end
@@ -876,6 +895,39 @@ class Grouping < ApplicationRecord
                                       self.current_submission_used.revision_timestamp)).first
     end
     next_result&.grouping
+  end
+
+  # Gets the next grouping by first ordering +results+ by total mark in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
+  def next_grouping_ordered_total_mark(results, ascending)
+    results = results.group([:id, 'groups.group_name'])
+    total_marks = Result.get_total_marks(results.ids)
+    result_data = results.pluck('results.id', 'groups.group_name')
+    result_data.each do |el|
+      el.append(total_marks[el[0]])
+    end
+    # index 0 = id, index 1 = group name, index 2 = total mark
+    result_data = result_data.sort_by { |result| [result[2], result[1]] }
+    if ascending
+      sat_indicies = result_data.each_index.select do |i|
+        result_data[i][2] > self.current_result.get_total_mark || (
+              result_data[i][2] == self.current_result.get_total_mark && result_data[i][1] > self.group.group_name
+            )
+      end
+      next_res_index = sat_indicies[0]
+    else
+      sat_indicies = result_data.each_index.select do |i|
+        result_data[i][2] < self.current_result.get_total_mark || (
+              result_data[i][2] == self.current_result.get_total_mark && result_data[i][1] < self.group.group_name
+            )
+      end
+      next_res_index = sat_indicies[-1]
+    end
+    if !next_res_index.nil? && next_res_index >= 0 && next_res_index < result_data.length
+      return results.find(result_data[next_res_index][0]).grouping
+    end
+    nil
   end
 
   def add_assignment_folder(group_repo)
