@@ -18,13 +18,13 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 };
 
 const INITIAL_FILTER_MODAL_STATE = {
-  ascBool: true,
-  orderBy: I18n.t("results.filters.ordering.group_name"),
-  annotationValue: "",
+  ascending: true,
+  orderBy: "group_name",
+  annotationText: "",
   tas: [],
   tags: [],
-  sectionValue: "",
-  markingStateValue: "",
+  section: "",
+  markingState: "",
   totalMarkRange: {
     min: "",
     max: "",
@@ -773,6 +773,10 @@ class Result extends React.Component {
     this.setState({filterData: new_filters});
   };
 
+  resetStateFilterData = () => {
+    this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -815,10 +819,12 @@ class Result extends React.Component {
           course_id={this.props.course_id}
           filterData={this.state.filterData}
           mutateFilterData={this.updateStateFilterData}
+          clearAllFilters={this.resetStateFilterData}
           sections={this.state.sections}
           tas={this.state.tas}
           available_tags={this.state.available_tags}
           current_tags={this.state.current_tags}
+          role={this.props.role}
           loading={this.state.loading}
         />
         <div key="panes-content" id="panes-content">

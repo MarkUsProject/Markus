@@ -3,7 +3,7 @@
  */
 
 import * as React from "react";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, within} from "@testing-library/react";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
@@ -15,10 +15,15 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 describe("MultiSelectDropdown", () => {
   let props = {
     id: "Test",
-    options: ["a", "b", "c", "d"],
+    options: [
+      {key: "a", display: "a"},
+      {key: "b", display: "b"},
+      {key: "c", display: "c"},
+      {key: "d", display: "d"},
+    ],
     selected: ["a"],
-    toggleOption: jest.fn().mockImplementation(() => null),
-    clearSelection: jest.fn().mockImplementation(() => null),
+    onToggleOption: jest.fn().mockImplementation(() => null),
+    onClearSelection: jest.fn().mockImplementation(() => null),
   };
 
   it("should render the closed dropdown by default", () => {
@@ -37,12 +42,11 @@ describe("MultiSelectDropdown", () => {
 
     const tags_box = screen.getByTestId("tags-box");
     fireEvent.click(tags_box);
-    expect(screen.queryByRole("list")).toBeInTheDocument();
+    const list = screen.queryByRole("list");
+    expect(list).toBeInTheDocument();
     expect(screen.queryAllByRole("listitem")).toHaveLength(4);
-    expect(screen.getByLabelText("a")).toHaveAttribute("checked");
-    expect(screen.getByLabelText("b")).not.toHaveAttribute("checked");
-    expect(screen.getByLabelText("c")).not.toHaveAttribute("checked");
-    expect(screen.getByLabelText("d")).not.toHaveAttribute("checked");
+    expect(within(list).getAllByTestId("checked")).toHaveLength(1);
+    expect(within(list).getAllByTestId("unchecked")).toHaveLength(3);
   });
 
   it("should close expanded dropdown on click", () => {
@@ -54,21 +58,12 @@ describe("MultiSelectDropdown", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 
-  it("should close expanded dropdown on mousedown outside", () => {
-    render(<MultiSelectDropdown {...props} />);
-
-    const tags_box = screen.getByTestId("tags-box");
-    fireEvent.click(tags_box);
-    fireEvent.mouseDown(document);
-    expect(screen.queryByRole("list")).not.toBeInTheDocument();
-  });
-
   it("should deselect option when clicked on tag", () => {
     render(<MultiSelectDropdown {...props} />);
 
     const tag = screen.getByText("a");
     fireEvent.click(tag);
-    expect(props.toggleOption).toHaveBeenCalledWith("a");
+    expect(props.onToggleOption).toHaveBeenCalledWith("a");
   });
 
   it("should deselect option when clicked on a select list item", () => {
@@ -76,9 +71,9 @@ describe("MultiSelectDropdown", () => {
 
     const tags_box = screen.getByTestId("tags-box");
     fireEvent.click(tags_box);
-    const selected_option = screen.getByLabelText("a");
+    const selected_option = within(screen.queryByRole("list")).getByText("a");
     fireEvent.click(selected_option);
-    expect(props.toggleOption).toHaveBeenCalledWith("a");
+    expect(props.onToggleOption).toHaveBeenCalledWith("a");
     expect(screen.queryByRole("list")).toBeInTheDocument();
   });
 
@@ -87,9 +82,9 @@ describe("MultiSelectDropdown", () => {
 
     const tags_box = screen.getByTestId("tags-box");
     fireEvent.click(tags_box);
-    const option = screen.getByLabelText("b");
+    const option = within(screen.queryByRole("list")).getByText("b");
     fireEvent.click(option);
-    expect(props.toggleOption).toHaveBeenCalledWith("b");
+    expect(props.onToggleOption).toHaveBeenCalledWith("b");
   });
 
   it("should clear all selections when clicked on reset xmark icon", () => {
@@ -97,7 +92,7 @@ describe("MultiSelectDropdown", () => {
 
     const icon = screen.getByTestId("reset");
     fireEvent.click(icon);
-    expect(props.clearSelection).toHaveBeenCalled();
+    expect(props.onClearSelection).toHaveBeenCalled();
   });
 
   it("should show no options available when options passed down from props is empty", () => {

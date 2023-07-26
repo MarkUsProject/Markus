@@ -7,13 +7,13 @@ export class SingleSelectDropDown extends React.Component {
     this.state = {expanded: false};
   }
 
-  select = (e, selection) => {
+  onSelect = (e, selection) => {
     e.stopPropagation();
-    this.props.select(selection);
+    this.props.onSelect(selection);
     this.setState({expanded: false});
   };
 
-  renderDropdown = (options, selected, expanded, disabled) => {
+  renderDropdown = (options, selected, expanded) => {
     if (expanded) {
       if (options.length === 0) {
         return (
@@ -27,23 +27,15 @@ export class SingleSelectDropDown extends React.Component {
         return (
           <ul data-testid={"options"}>
             {options.map(option => {
-              if (disabled && disabled.includes(option)) {
-                return (
-                  <li key={option} className={"disabled"}>
-                    <span>{option}</span>
-                  </li>
-                );
-              } else {
-                return (
-                  <li
-                    key={option}
-                    style={{alignSelf: "stretch"}}
-                    onClick={e => this.select(e, option)}
-                  >
-                    <span>{option}</span>
-                  </li>
-                );
-              }
+              return (
+                <li key={option} onClick={e => this.onSelect(e, option)}>
+                  <span>
+                    {this.props.valueToDisplayName != null
+                      ? this.props.valueToDisplayName[option]
+                      : option}
+                  </span>
+                </li>
+              );
             })}
           </ul>
         );
@@ -63,31 +55,32 @@ export class SingleSelectDropDown extends React.Component {
     let selected = this.props.selected;
     let options = this.props.options;
     let expanded = this.state.expanded;
-    let disabled = this.props.disabled;
 
     return (
       <div
-        className="singleselect-dropdown"
+        className="dropdown singleselect-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}
         data-testid={"dropdown"}
       >
-        <a data-testid={"selection"}>{this.props.selected}</a>
-        <div className="options">
-          <div
-            className="reset"
-            onClick={e => {
-              e.preventDefault();
-              this.select(e, this.props.defaultValue);
-            }}
-            data-testid={"reset-dropdown-selection"}
-          >
-            <FontAwesomeIcon icon="fa-solid fa-xmark" style={{color: "#255185"}} />
-          </div>
-          {this.renderArrow()}
+        <a data-testid={"selection"}>
+          {this.props.valueToDisplayName != null
+            ? this.props.valueToDisplayName[this.props.selected]
+            : this.props.selected}
+        </a>
+        {this.renderArrow()}
+        <div
+          className="float-right"
+          onClick={e => {
+            e.preventDefault();
+            this.onSelect(e, this.props.defaultValue);
+          }}
+          data-testid={"reset-dropdown-selection"}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
         </div>
-        {expanded && this.renderDropdown(options, selected, expanded, disabled)}
+        {expanded && this.renderDropdown(options, selected, expanded)}
       </div>
     );
   }

@@ -5,6 +5,7 @@ en:
   all: All
   apply: Apply
   cancel: Cancel
+  clear_all: Clear All
   close: Close
   continue: Continue
   copy: Copy
@@ -63,5 +64,6 @@ en:
   select_filename: Select Filename
   skip: Skip
   this: This
+  to: to
   working: Loading
   write: Write

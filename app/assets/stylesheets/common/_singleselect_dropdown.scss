@@ -1,42 +1,15 @@
 @import 'constants';
-@import 'dropdown';
+@import 'filter_modal_dropdown';
 
-.singleselect-dropdown {
-  @include dropdown-default;
-  padding: 0.5em;
+.dropdown.singleselect-dropdown {
+  @include filter-modal-dropdown;
 
-  > a {
-    display: inline-flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    max-width: $dropdown-horizontal - 60px;
-    overflow: scroll;
-  }
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  > a::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Hide scrollbar for IE, Edge and Firefox */
-  > a {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .options {
-    align-items: center;
-    display: inline-flex;
-    float: right;
-  }
-
-  ul {
-    gap: 1px;
-    margin: 0;
-    top: 3em;
-  }
-
-  .arrow-down,
-  .arrow-up {
-    margin-left: 5px;
+  a {
+    display: inline-block;
+    height: 17px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 140px;
+    word-wrap: break-word;
   }
 }

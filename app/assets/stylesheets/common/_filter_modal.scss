@@ -4,10 +4,6 @@
   margin: 5px;
 
   input[type='text'] {
-    background: $background-main;
-    border: 1px solid $primary-one;
-    border-radius: $radius;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
     height: 30px;
     width: $dropdown-horizontal;
   }
@@ -22,9 +18,8 @@
 }
 
 .range {
-  align-items: center;
   background: $background-main;
-  justify-content: left;
+  max-width: $dropdown-horizontal;
   min-height: 30px;
   width: $dropdown-horizontal;
 
@@ -34,20 +29,21 @@
   }
 
   input[type='number'] {
-    border: 1px solid $primary-one;
-    border-radius: $radius;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
     width: 80px;
   }
 
-  .validity {
-    color: #900;
-    margin-left: 5px;
+  > input:valid ~ .hidden {
+    display: none;
   }
 
-  > div {
+  .hidden {
     display: inline-flex;
     padding-top: 5px;
     width: $dropdown-horizontal;
+
+    .validity {
+      color: $severe-error;
+      margin-left: 2px;
+    }
   }
 }

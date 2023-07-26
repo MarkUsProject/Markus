@@ -2,86 +2,74 @@ import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
-import {RangeFilter} from "../Helpers/range_filter";
 import {CriteriaFilter} from "../criteria_filter";
-
-const INITIAL_MODAL_STATE = {
-  currentOrderBy: I18n.t("results.filters.ordering.group_name"),
-  currentAscBool: true,
-  currentAnnotationValue: "",
-  currentSectionValue: "",
-  currentMarkingStateValue: "",
-  currentTas: [],
-  currentTags: [],
-  currentTotalMarkRange: {
-    min: "",
-    max: "",
-  },
-  currentTotalExtraMarkRange: {
-    min: "",
-    max: "",
-  },
-  currentCriteria: [],
-};
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class FilterModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      currentOrderBy: this.props.filterData.orderBy,
-      currentAscBool: this.props.filterData.ascBool,
-      currentAnnotationValue: this.props.filterData.annotationValue,
-      currentSectionValue: this.props.filterData.sectionValue,
-      currentMarkingStateValue: this.props.filterData.markingStateValue,
-      currentTas: this.props.filterData.tas,
-      currentTags: this.props.filterData.tags,
-      currentTotalMarkRange: this.props.filterData.totalMarkRange,
-      currentTotalExtraMarkRange: this.props.filterData.totalExtraMarkRange,
-      currentCriteria: this.props.filterData.criteria,
-    };
   }
 
-  toggleOptionTas = user_name => {
-    const newArray = [...this.state.currentTas];
+  onToggleOptionTas = user_name => {
+    const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
-      this.setState({currentTas: newArray.filter(item => item !== user_name)});
-      // else, add
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tas: newArray.filter(item => item !== user_name),
+      });
     } else {
       newArray.push(user_name);
-      this.setState({currentTas: newArray});
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tas: newArray,
+      });
     }
   };
 
-  clearSelectionTAs = () => {
-    this.setState({currentTas: []});
+  onClearSelectionTAs = () => {
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      tas: [],
+    });
   };
 
-  clearSelectionTags = () => {
-    this.setState({currentTags: []});
+  onClearSelectionTags = () => {
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      tags: [],
+    });
   };
 
-  toggleOptionTags = tag => {
-    const newArray = [...this.state.currentTags];
+  onToggleOptionTags = tag => {
+    const newArray = [...this.props.filterData.tags];
     if (newArray.includes(tag)) {
-      this.setState({currentTags: newArray.filter(item => item !== tag)});
-      // else, add
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tags: newArray.filter(item => item !== tag),
+      });
     } else {
       newArray.push(tag);
-      this.setState({currentTags: newArray});
+      this.props.mutateFilterData({
+        ...this.props.filterData,
+        tags: newArray,
+      });
     }
   };
 
   renderTasDropdown = () => {
-    if (this.props.role !== "Ta") {
+    if (this.props.role === "Instructor") {
+      let tas = this.props.tas.map(option => {
+        return {key: option[0], display: option[0] + " - " + option[1]};
+      });
       return (
         <div className={"filter"}>
-          <p>{I18n.t("results.filters.tas")}</p>
+          <p>{I18n.t("activerecord.models.ta.other")}</p>
           <MultiSelectDropdown
-            id={"Tas"}
-            options={this.props.tas}
-            selected={this.state.currentTas}
-            toggleOption={this.toggleOptionTas}
-            clearSelection={this.clearSelectionTAs}
+            title={"Tas"}
+            options={tas}
+            selected={this.props.filterData.tas}
+            onToggleOption={this.onToggleOptionTas}
+            onClearSelection={this.onClearSelectionTAs}
           />
         </div>
       );
@@ -91,66 +79,89 @@ export class FilterModal extends React.Component {
   renderTagsDropdown = () => {
     let options = [];
     if (this.props.available_tags.length !== 0) {
-      options = options.concat(this.props.available_tags.map(item => item.name));
+      options = options.concat(
+        this.props.available_tags.map(item => {
+          return {key: item.name, display: item.name};
+        })
+      );
     }
     if (this.props.current_tags.length !== 0) {
-      options = options.concat(this.props.current_tags.map(item => item.name));
+      options = options.concat(
+        this.props.current_tags.map(item => {
+          return {key: item.name, display: item.name};
+        })
+      );
     }
     return (
       <MultiSelectDropdown
-        id={"Tags"}
+        title={"Tags"}
         options={options}
-        selected={this.state.currentTags}
-        toggleOption={this.toggleOptionTags}
-        clearSelection={this.clearSelectionTags}
+        selected={this.props.filterData.tags}
+        onToggleOption={this.onToggleOptionTags}
+        onClearSelection={this.onClearSelectionTags}
       />
     );
   };
 
-  renderTotalMarkRange = () => {
+  rangeFilter = (min, max, title, onMinChange, onMaxChange) => {
     return (
-      <RangeFilter
-        title={I18n.t("results.filters.total_mark")}
-        handleInputs={this.handleTotalMark}
-        min={this.state.currentTotalMarkRange.min}
-        max={this.state.currentTotalMarkRange.max}
-      ></RangeFilter>
+      <div className={"filter"}>
+        <p>{title}</p>
+        <div className={"range"} data-testid={title}>
+          <input
+            className={"input-min"}
+            type="number"
+            step="any"
+            placeholder={"Min"}
+            value={min}
+            max={max}
+            onChange={e => onMinChange(e)}
+          />
+          <span>{I18n.t("to")}</span>
+          <input
+            className={"input-max"}
+            type="number"
+            step="any"
+            placeholder={"Max"}
+            value={max}
+            min={min}
+            onChange={e => onMaxChange(e)}
+          />
+          <div className={"hidden"}>
+            <FontAwesomeIcon icon={"fa-solid fa-circle-exclamation"} />
+            <span className={"validity"}>{I18n.t("results.filters.invalid_range")}</span>
+          </div>
+        </div>
+      </div>
     );
   };
 
-  renderTotalExtraMarkRange = () => {
-    return (
-      <RangeFilter
-        title={I18n.t("results.filters.total_extra_mark")}
-        handleInputs={this.handleTotalExtraMark}
-        min={this.state.currentTotalExtraMarkRange.min}
-        max={this.state.currentTotalExtraMarkRange.max}
-      ></RangeFilter>
-    );
+  onTotalMarkMinChange = e => {
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalMarkRange: {...this.props.filterData.totalMarkRange, min: e.target.value},
+    });
   };
 
-  handleTotalMark = e => {
-    if (e.target.className === "input-min") {
-      this.setState({
-        currentTotalMarkRange: {...this.state.currentTotalMarkRange, min: e.target.value},
-      });
-    } else {
-      this.setState({
-        currentTotalMarkRange: {...this.state.currentTotalMarkRange, max: e.target.value},
-      });
-    }
+  onTotalMarkMaxChange = e => {
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalMarkRange: {...this.props.filterData.totalMarkRange, max: e.target.value},
+    });
   };
 
-  handleTotalExtraMark = e => {
-    if (e.target.className === "input-min") {
-      this.setState({
-        currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, min: e.target.value},
-      });
-    } else {
-      this.setState({
-        currentTotalExtraMarkRange: {...this.state.currentTotalExtraMarkRange, max: e.target.value},
-      });
-    }
+  onTotalExtraMarkMinChange = e => {
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, min: e.target.value},
+    });
+  };
+
+  onTotalExtraMarkMaxChange = e => {
+    this.props.mutateFilterData({
+      ...this.props.filterData,
+      totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, max: e.target.value},
+    });
   };
 
   componentDidMount() {
@@ -159,37 +170,24 @@ export class FilterModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.mutateFilterData({
-      ...this.props.filterData,
-      orderBy: this.state.currentOrderBy,
-      ascBool: this.state.currentAscBool,
-      annotationValue: this.state.currentAnnotationValue,
-      sectionValue: this.state.currentSectionValue,
-      markingStateValue: this.state.currentMarkingStateValue,
-      tas: this.state.currentTas,
-      tags: this.state.currentTags,
-      totalMarkRange: this.state.currentTotalMarkRange,
-      totalExtraMarkRange: this.state.currentTotalExtraMarkRange,
-      criteria: this.state.currentCriteria,
-    });
     this.props.onRequestClose();
   };
 
   addCriteria = criteria => {
-    const newArray = [...this.state.currentCriteria];
-    newArray.push(criteria);
-    this.setState({currentCriteria: newArray});
+    // const newArray = [...this.state.currentCriteria];
+    // newArray.push(criteria);
+    // this.setState({currentCriteria: newArray});
   };
 
   deleteCriteria = criteria => {
-    let newArray = [...this.state.currentCriteria];
-    newArray = newArray.filter(item => item.name !== criteria.name);
-    this.setState({currentCriteria: newArray});
+    // let newArray = [...this.state.currentCriteria];
+    // newArray = newArray.filter(item => item.name !== criteria.name);
+    // this.setState({currentCriteria: newArray});
   };
 
-  clearFilters = event => {
+  onClearFilters = event => {
     event.preventDefault();
-    this.setState(INITIAL_MODAL_STATE);
+    this.props.clearAllFilters();
   };
 
   render() {
@@ -197,146 +195,152 @@ export class FilterModal extends React.Component {
       return "";
     }
     return (
-      <div>
-        <Modal
-          className="react-modal dialog"
-          isOpen={this.props.isOpen}
-          onRequestClose={() => {
-            this.setState({
-              currentOrderBy: this.props.filterData.orderBy,
-              currentAscBool: this.props.filterData.ascBool,
-              currentAnnotationValue: this.props.filterData.annotationValue,
-              currentSectionValue: this.props.filterData.sectionValue,
-              currentMarkingStateValue: this.props.filterData.markingStateValue,
-              currentTas: this.props.filterData.tas,
-              currentTags: this.props.filterData.tags,
-              currentTotalMarkRange: this.props.filterData.totalMarkRange,
-              currentTotalExtraMarkRange: this.props.filterData.totalExtraMarkRange,
-              currentCriteria: this.props.filterData.criteria,
-            });
-            this.props.onRequestClose();
-          }}
-        >
-          <h3>{I18n.t("results.filters.filter_by")}</h3>
-          <form onSubmit={this.onSubmit}>
-            <div className={"modal-container-scrollable"}>
-              <div className={"modal-container-vertical"}>
-                <div className={"modal-container"}>
-                  <div className={"filter"} data-testid={"order-by"}>
-                    <p>{I18n.t("results.filters.order_by")} </p>
-                    <SingleSelectDropDown
-                      options={[
-                        I18n.t("results.filters.ordering.group_name"),
-                        I18n.t("submissions.commit_date"),
-                      ]}
-                      selected={this.state.currentOrderBy}
-                      select={selection => {
-                        this.setState({currentOrderBy: selection});
-                      }}
-                      defaultValue={I18n.t("results.filters.ordering.group_name")}
-                    />
-                    <div
-                      className={"order"}
-                      onChange={e => {
-                        this.setState({currentAscBool: !this.state.currentAscBool});
-                      }}
-                      data-testid={"radio-group"}
-                    >
-                      <input
-                        type="radio"
-                        checked={this.state.currentAscBool}
-                        name="order"
-                        value="Asc"
-                        onChange={() => {}}
-                        data-testid={"ascending"}
-                      />
-                      <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
-                      <input
-                        type="radio"
-                        checked={!this.state.currentAscBool}
-                        name="order"
-                        value="Desc"
-                        onChange={() => {}}
-                        data-testid={"descending"}
-                      />
-                      <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
-                    </div>
-                  </div>
-                  <div className={"filter"} data-testid={"marking-state"}>
-                    <p>{I18n.t("results.filters.marking_state")}</p>
-                    <SingleSelectDropDown
-                      options={[
-                        I18n.t("submissions.state.in_progress"),
-                        I18n.t("submissions.state.complete"),
-                        I18n.t("submissions.state.released"),
-                        I18n.t("submissions.state.remark_requested"),
-                      ]}
-                      selected={this.state.currentMarkingStateValue}
-                      select={selection => {
-                        this.setState({currentMarkingStateValue: selection});
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className={"modal-container"}>
-                  <div className={"filter"}>
-                    <p>{I18n.t("results.filters.tags")}</p>
-                    {this.renderTagsDropdown()}
-                  </div>
-                  <div className={"filter"} data-testid={"section"}>
-                    <p>{I18n.t("results.filters.section")}</p>
-                    <SingleSelectDropDown
-                      options={this.props.sections}
-                      selected={this.state.currentSectionValue}
-                      select={selection => {
-                        this.setState({currentSectionValue: selection});
-                      }}
-                      defaultValue={""}
-                    />
-                  </div>
-                </div>
-                <div className={"modal-container"}>
-                  {this.renderTasDropdown()}
-                  <label className={"annotation-input"}>
-                    <p>{I18n.t("results.filters.annotation")}</p>
+      <Modal
+        className="react-modal dialog"
+        isOpen={this.props.isOpen}
+        onRequestClose={() => {
+          this.props.onRequestClose();
+        }}
+      >
+        <h3>{I18n.t("results.filters.filter_by")}</h3>
+        <form onSubmit={this.onSubmit}>
+          <div className={"modal-container-scrollable"}>
+            <div className={"modal-container-vertical"}>
+              <div className={"modal-container"}>
+                <div className={"filter"} data-testid={"order-by"}>
+                  <p>{I18n.t("results.filters.order_by")} </p>
+                  <SingleSelectDropDown
+                    valueToDisplayName={{
+                      group_name: I18n.t("activerecord.attributes.group.group_name"),
+                      submission_date: I18n.t("submissions.commit_date"),
+                    }}
+                    options={["group_name", "submission_date"]}
+                    selected={this.props.filterData.orderBy}
+                    onSelect={selection => {
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        orderBy: selection,
+                      });
+                    }}
+                    defaultValue={I18n.t("activerecord.attributes.group.group_name")}
+                  />
+                  <div className={"order"} data-testid={"radio-group"}>
                     <input
-                      id="annotation"
-                      type={"text"}
-                      value={this.state.currentAnnotationValue}
-                      onChange={e => this.setState({currentAnnotationValue: e.target.value})}
-                      placeholder={I18n.t("results.filters.text_box_placeholder")}
+                      type="radio"
+                      checked={this.props.filterData.ascending}
+                      name="order"
+                      onChange={() => {
+                        this.props.mutateFilterData({...this.props.filterData, ascending: true});
+                      }}
+                      id={"Asc"}
+                      data-testid={"ascending"}
                     />
-                  </label>
+                    <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
+                    <input
+                      type="radio"
+                      checked={!this.props.filterData.ascending}
+                      name="order"
+                      onChange={() => {
+                        this.props.mutateFilterData({...this.props.filterData, ascending: false});
+                      }}
+                      id={"Desc"}
+                      data-testid={"descending"}
+                    />
+                    <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
+                  </div>
                 </div>
+                <div className={"filter"} data-testid={"marking-state"}>
+                  <p>{I18n.t("activerecord.attributes.result.marking_state")}</p>
+                  <SingleSelectDropDown
+                    valueToDisplayName={{
+                      in_progress: I18n.t("submissions.state.in_progress"),
+                      complete: I18n.t("submissions.state.complete"),
+                      released: I18n.t("submissions.state.released"),
+                      remark_requested: I18n.t("submissions.state.remark_requested"),
+                    }}
+                    options={["in_progress", "complete", "released", "remark_requested"]}
+                    selected={this.props.filterData.markingState}
+                    onSelect={selection => {
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        markingState: selection,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+              <div className={"modal-container"}>
+                <div className={"filter"}>
+                  <p>{I18n.t("activerecord.models.tag.other")}</p>
+                  {this.renderTagsDropdown()}
+                </div>
+                <div className={"filter"} data-testid={"section"}>
+                  <p>{I18n.t("activerecord.models.section.one")}</p>
+                  <SingleSelectDropDown
+                    options={this.props.sections}
+                    selected={this.props.filterData.section}
+                    onSelect={selection => {
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        section: selection,
+                      });
+                    }}
+                    defaultValue={""}
+                  />
+                </div>
+              </div>
+              <div className={"modal-container"}>
+                {this.renderTasDropdown()}
+                <div className={"annotation-input"}>
+                  <p>{I18n.t("activerecord.models.annotation.one")}</p>
+                  <input
+                    type={"text"}
+                    value={this.props.filterData.annotationText}
+                    onChange={e =>
+                      this.props.mutateFilterData({
+                        ...this.props.filterData,
+                        annotationText: e.target.value,
+                      })
+                    }
+                    placeholder={I18n.t("results.filters.text_box_placeholder")}
+                  />
+                </div>
+              </div>
 
-                <div className={"modal-container"}>
-                  {this.renderTotalMarkRange()}
-                  {this.renderTotalExtraMarkRange()}
-                </div>
-              </div>
-              <div className={"modal-container-vertical"}>
-                <CriteriaFilter
-                  options={["a", "b", "c", "d", "e"]}
-                  criteria={this.state.currentCriteria}
-                  addCriteria={this.addCriteria}
-                  removeCriteria={this.deleteCriteria}
-                />
+              <div className={"modal-container"}>
+                {this.rangeFilter(
+                  this.props.filterData.totalMarkRange.min,
+                  this.props.filterData.totalMarkRange.max,
+                  I18n.t("results.filters.total_mark"),
+                  this.onTotalMarkMinChange,
+                  this.onTotalMarkMaxChange
+                )}
+                {this.rangeFilter(
+                  this.props.filterData.totalExtraMarkRange.min,
+                  this.props.filterData.totalExtraMarkRange.max,
+                  I18n.t("results.filters.total_extra_mark"),
+                  this.onTotalExtraMarkMinChange,
+                  this.onTotalExtraMarkMaxChange
+                )}
               </div>
             </div>
-            <div className={"modal-footer"}>
-              <section className={"modal-container dialog-actions"}>
-                <input
-                  id={"clear_all"}
-                  type="reset"
-                  value={I18n.t("results.filters.clear_all")}
-                  onClick={this.clearFilters}
-                />
-                <input id={"Save"} type="submit" value={I18n.t("results.filters.save")} />
-              </section>
+            <div className={"modal-container-vertical"}>
+              <CriteriaFilter
+                options={["a", "b", "c", "d", "e"]}
+                criteria={[]}
+                addCriteria={this.addCriteria}
+                removeCriteria={this.deleteCriteria}
+              />
             </div>
-          </form>
-        </Modal>
-      </div>
+          </div>
+          <div className={"modal-footer"}>
+            <section className={"modal-container dialog-actions"}>
+              <input type="reset" value={I18n.t("clear_all")} onClick={this.onClearFilters} />
+              <input type="submit" value={I18n.t("close")} />
+            </section>
+          </div>
+        </form>
+      </Modal>
     );
   }
 }

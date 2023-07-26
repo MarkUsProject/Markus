@@ -139,7 +139,7 @@ class ResultsController < ApplicationController
         end
 
         if current_role.instructor?
-          data[:tas] = course.tas.joins(:user).pluck('users.user_name')
+          data[:tas] = assignment.ta_memberships.joins(:user).distinct.pluck('users.user_name', 'users.display_name')
         end
 
         # Marks

@@ -45,7 +45,7 @@ class ResultPolicy < ApplicationPolicy
 
   def review?
     check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) || (
-      filter_data.nil? && record&.submission&.assignment&.has_peer_review &&
+      record&.submission&.assignment&.has_peer_review &&
           role.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
     )
   end
