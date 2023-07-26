@@ -3,7 +3,7 @@
  */
 
 import * as React from "react";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, within} from "@testing-library/react";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
@@ -42,12 +42,11 @@ describe("MultiSelectDropdown", () => {
 
     const tags_box = screen.getByTestId("tags-box");
     fireEvent.click(tags_box);
-    expect(screen.queryByRole("list")).toBeInTheDocument();
+    const list = screen.queryByRole("list");
+    expect(list).toBeInTheDocument();
     expect(screen.queryAllByRole("listitem")).toHaveLength(4);
-    expect(screen.getByLabelText("a")).toHaveAttribute("checked");
-    expect(screen.getByLabelText("b")).not.toHaveAttribute("checked");
-    expect(screen.getByLabelText("c")).not.toHaveAttribute("checked");
-    expect(screen.getByLabelText("d")).not.toHaveAttribute("checked");
+    expect(within(list).getAllByTestId("checked")).toHaveLength(1);
+    expect(within(list).getAllByTestId("unchecked")).toHaveLength(3);
   });
 
   it("should close expanded dropdown on click", () => {
@@ -72,7 +71,7 @@ describe("MultiSelectDropdown", () => {
 
     const tags_box = screen.getByTestId("tags-box");
     fireEvent.click(tags_box);
-    const selected_option = screen.getByLabelText("a");
+    const selected_option = within(screen.queryByRole("list")).getByText("a");
     fireEvent.click(selected_option);
     expect(props.onToggleOption).toHaveBeenCalledWith("a");
     expect(screen.queryByRole("list")).toBeInTheDocument();
@@ -83,7 +82,7 @@ describe("MultiSelectDropdown", () => {
 
     const tags_box = screen.getByTestId("tags-box");
     fireEvent.click(tags_box);
-    const option = screen.getByLabelText("b");
+    const option = within(screen.queryByRole("list")).getByText("b");
     fireEvent.click(option);
     expect(props.onToggleOption).toHaveBeenCalledWith("b");
   });
