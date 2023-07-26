@@ -1,0 +1,16 @@
+@import 'constants';
+
+@mixin filter-modal-dropdown {
+  width: $dropdown-horizontal;
+  z-index: 100000;
+
+  ul {
+    display: block;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+
+  .fa-xmark {
+    color: $primary-one;
+  }
+}

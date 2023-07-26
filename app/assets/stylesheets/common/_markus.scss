@@ -1070,6 +1070,13 @@ nav {
     }
   }
 
+  .selection {
+    max-width: 140px;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
   .arrow-down,
   .arrow-up {
     margin-left: 5px;

@@ -1,6 +1,8 @@
 @import 'constants';
+@import 'filter_modal_dropdown';
 
 .multiselect-dropdown {
+  @include filter-modal-dropdown;
   padding: 0.25em;
 
   .tags-box {
