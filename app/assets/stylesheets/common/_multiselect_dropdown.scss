@@ -1,8 +1,8 @@
 @import 'constants';
-@import 'dropdown';
+@import 'filter_modal_dropdown';
 
-.multiselect-dropdown {
-  @include dropdown-default;
+.dropdown.multi-select-dropdown {
+  @include filter-modal-dropdown;
   padding: 0.25em;
 
   .tags-box {
@@ -12,7 +12,6 @@
     width: $dropdown-horizontal - 50px;
 
     .tag {
-      background: $background-main;
       border: 1px solid $primary-three;
       border-radius: $radius;
       display: inline-block;
@@ -27,27 +26,32 @@
   }
 
   ul {
-    top: 2em;
-
     li {
-      align-self: stretch;
-      padding-left: 5px;
+      > div {
+        display: inline-block;
+      }
 
-      label {
-        margin-left: 0.25em;
+      > span {
+        margin-left: 2pt;
+      }
+
+      .fa-square,
+      .fa-square-check {
+        color: $primary-one;
+      }
+
+      &:hover,
+      &.active {
+        .fa-square-check,
+        .fa-square {
+          color: $background-main;
+        }
       }
     }
   }
 
   .options {
-    align-items: center;
     display: inline-flex;
-    float: right;
     padding: 0.25em;
-  }
-
-  .arrow-down,
-  .arrow-up {
-    margin-left: 5px;
   }
 }

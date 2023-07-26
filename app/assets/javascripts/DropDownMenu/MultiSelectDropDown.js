@@ -5,23 +5,7 @@ export class MultiSelectDropdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {expanded: false, tags: []};
-    this.dropdownRef = React.createRef();
   }
-
-  componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside);
-  }
-
-  handleClickOutside = event => {
-    // Check if the click is outside the dropdown container
-    if (this.dropdownRef.current && !this.dropdownRef.current.contains(event.target)) {
-      this.setState({expanded: false});
-    }
-  };
 
   onSelect = (e, option) => {
     e.stopPropagation();
@@ -46,21 +30,30 @@ export class MultiSelectDropdown extends React.Component {
               isSelected = selected.includes(option.key);
               return (
                 <li key={option.key} onClick={e => this.onSelect(e, option.key)}>
-                  <input
-                    id={option.key}
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => null}
-                  ></input>
-                  <label htmlFor={option.key} onClick={event => event.preventDefault()}>
-                    {option.display}
-                  </label>
+                  {this.renderCheckBox(isSelected)}
+                  <span>{option.display}</span>
                 </li>
               );
             })}
           </ul>
         );
       }
+    }
+  };
+
+  renderCheckBox = checked => {
+    if (checked) {
+      return (
+        <div data-testid={"checked"}>
+          <FontAwesomeIcon icon="fa-solid fa-square-check" />
+        </div>
+      );
+    } else {
+      return (
+        <div data-testid={"unchecked"}>
+          <FontAwesomeIcon icon="fa-regular fa-square" />
+        </div>
+      );
     }
   };
 
@@ -77,11 +70,11 @@ export class MultiSelectDropdown extends React.Component {
 
     return (
       <div
-        className="multiselect-dropdown"
+        className="dropdown multi-select-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         data-testid={this.props.title}
         tabIndex={-1}
-        ref={this.dropdownRef}
+        onBlur={() => this.setState({expanded: false})}
       >
         <div className={"tags-box"} data-testid={"tags-box"}>
           {selected.map(tag => (
@@ -96,9 +89,8 @@ export class MultiSelectDropdown extends React.Component {
             </div>
           ))}
         </div>
-        <div className={"options"}>
+        <div className={"options float-right"}>
           <div
-            className="float-right"
             data-testid={"reset"}
             onClick={e => {
               e.preventDefault();

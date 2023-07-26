@@ -794,28 +794,26 @@ class Grouping < ApplicationRecord
     if filter_data['tags'].present?
       results = results.joins(grouping: :tags).where('tags.name': filter_data['tags'])
     end
-    unless filter_data['totalMarkRange'].nil? ||
-      (filter_data['totalMarkRange']['max'] == '' && filter_data['totalMarkRange']['min'] == '')
+    unless filter_data.dig('totalMarkRange', 'max').blank? && filter_data.dig('totalMarkRange', 'min').blank?
       result_ids = results.ids
       total_marks_hash = Result.get_total_marks(result_ids)
-      if filter_data['totalMarkRange']['max'].present?
+      if filter_data.dig('totalMarkRange', 'max').present?
         total_marks_hash.select! { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
       end
-      if filter_data['totalMarkRange']['min'].present?
+      if filter_data.dig('totalMarkRange', 'min').present?
         total_marks_hash.select! { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
-    unless filter_data['totalExtraMarkRange'].nil? ||
-      (filter_data['totalExtraMarkRange']['max'] == '' && filter_data['totalExtraMarkRange']['min'] == '')
+    unless filter_data.dig('totalExtraMarkRange', 'max').blank? && filter_data.dig('totalExtraMarkRange', 'min').blank?
       result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
-      if filter_data['totalExtraMarkRange']['max'].present?
+      if filter_data.dig('totalExtraMarkRange', 'max').present?
         total_marks_hash.select! do |_, value|
           value <= filter_data['totalExtraMarkRange']['max'].to_f
         end
       end
-      if filter_data['totalExtraMarkRange']['min'].present?
+      if filter_data.dig('totalExtraMarkRange', 'min').present?
         total_marks_hash.select! do |_, value|
           value >= filter_data['totalExtraMarkRange']['min'].to_f
         end
@@ -856,6 +854,9 @@ class Grouping < ApplicationRecord
     end
   end
 
+  # Gets the next grouping by first ordering +results+ by group name in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
   def next_grouping_ordered_group_name(results, ascending)
     results = results.group([:id, 'groups.group_name']).order('groups.group_name ASC')
     if ascending
@@ -866,6 +867,9 @@ class Grouping < ApplicationRecord
     next_result&.grouping
   end
 
+  # Gets the next grouping by first ordering +results+ by submission date and then by group name in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
   def next_grouping_ordered_submission_date(results, ascending)
     results = results.joins(:submission).group([:id, 'groups.group_name', 'submissions.revision_timestamp'])
                      .order('submissions.revision_timestamp ASC',

@@ -1,28 +1,15 @@
 @import 'constants';
-@import 'dropdown';
+@import 'filter_modal_dropdown';
 
-.singleselect-dropdown {
-  @include dropdown-default;
-  padding: 0.5em;
+.dropdown.singleselect-dropdown {
+  @include filter-modal-dropdown;
 
-  > a {
-    max-width: $dropdown-horizontal - 50px;
-  }
-
-  .options {
-    align-items: center;
-    display: inline-flex;
-    float: right;
-  }
-
-  ul {
-    gap: 1px;
-    margin: 0;
-    top: 3em;
-  }
-
-  .arrow-down,
-  .arrow-up {
-    margin-left: 5px;
+  a {
+    display: inline-block;
+    height: 17px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 140px;
+    word-wrap: break-word;
   }
 }

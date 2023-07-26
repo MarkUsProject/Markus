@@ -72,11 +72,12 @@ describe("FilterModal", () => {
 
     describe("Filter By Annotation", () => {
       it("should render the annotation textbox", () => {
-        expect(screen.getByLabelText(/Annotation/i)).toBeInTheDocument();
+        expect(screen.getByText(/Annotation/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Type here/i)).toBeInTheDocument();
       });
 
       it("should save annotation text on input", () => {
-        fireEvent.change(screen.getByLabelText("Annotation"), {
+        fireEvent.change(screen.getByPlaceholderText(/Type here/i), {
           target: {value: "JavaScript"},
         });
         expect(props.mutateFilterData).toHaveBeenCalled();
@@ -107,7 +108,7 @@ describe("FilterModal", () => {
           fireEvent.click(dropdown);
 
           //select
-          const option = within(dropdown).getByLabelText(selection);
+          const option = within(dropdown).getByText(selection);
           fireEvent.click(option);
 
           expect(props.mutateFilterData).toHaveBeenCalled();
@@ -117,8 +118,7 @@ describe("FilterModal", () => {
       let multiSelectDropdownDeselect = (test_id, option) => {
         it("should deselect option when clicked on a tag", () => {
           const dropdown = screen.getByTestId(test_id);
-          const tag = within(dropdown).getByText(option);
-          fireEvent.click(tag);
+          fireEvent.click(within(dropdown).getByText(option));
 
           expect(props.mutateFilterData).toHaveBeenCalled();
         });
@@ -126,9 +126,10 @@ describe("FilterModal", () => {
         it("should deselect option when clicked on a selected option", () => {
           const dropdown = screen.getByTestId(test_id);
           fireEvent.click(dropdown);
+          const list = within(dropdown).getByRole("list", {hidden: true});
 
           //select
-          const selected_option = within(dropdown).getByLabelText(option);
+          const selected_option = within(list).getByText(option);
           fireEvent.click(selected_option);
 
           expect(props.mutateFilterData).toHaveBeenCalled();
@@ -315,7 +316,7 @@ describe("FilterModal", () => {
       it("should select option when clicked on an option", () => {
         const dropdown = screen.getByTestId(test_id);
         fireEvent.click(dropdown);
-        const option = within(dropdown).getByLabelText("d - D");
+        const option = within(dropdown).getByText("d - D");
         fireEvent.click(option);
 
         expect(props.mutateFilterData).toHaveBeenCalled();
@@ -332,7 +333,7 @@ describe("FilterModal", () => {
       it("should deselect option when clicked on a selected option", () => {
         const dropdown = screen.getByTestId(test_id);
         fireEvent.click(dropdown);
-        const selected_option = within(dropdown).getByLabelText("a - A");
+        const selected_option = within(dropdown).getByText("a - A");
         fireEvent.click(selected_option);
 
         expect(props.mutateFilterData).toHaveBeenCalled();
