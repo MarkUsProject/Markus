@@ -3,7 +3,6 @@
 
 .dropdown.multi-select-dropdown {
   @include filter-modal-dropdown;
-  height: 30px;
   padding: 0.25em;
 
   .tags-box {
