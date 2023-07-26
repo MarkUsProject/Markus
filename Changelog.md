@@ -28,6 +28,8 @@
 - Added a button allowing graders to view a random incomplete submission (#6641)
 - Added a filter modal allowing graders to specify filters and order when navigating submissions (#6642)
 - Add icons to submission and result grading action buttons (#6666)
+- Remove group name maximum length constraint (#6668)
+- Fix bug where in some cases flash messages were not being rendered correctly (#6670)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
