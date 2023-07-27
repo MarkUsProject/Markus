@@ -260,7 +260,7 @@ export class FilterModal extends React.Component {
                 <div className={"filter"} data-testid={"section"}>
                   <p>{I18n.t("activerecord.models.section.one")}</p>
                   <SingleSelectDropDown
-                    options={this.props.sections}
+                    options={this.props.sections.sort()}
                     selected={this.props.filterData.section}
                     onSelect={selection => {
                       this.props.mutateFilterData({
