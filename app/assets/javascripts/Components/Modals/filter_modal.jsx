@@ -165,11 +165,6 @@ export class FilterModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  onSubmit = event => {
-    event.preventDefault();
-    this.props.onRequestClose();
-  };
-
   onClearFilters = event => {
     event.preventDefault();
     this.props.clearAllFilters();
@@ -191,7 +186,7 @@ export class FilterModal extends React.Component {
           <FontAwesomeIcon icon="fa-solid fa-filter" className={"filter-icon-title"} />
           {I18n.t("results.filter_submissions")}
         </h3>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.props.onRequestClose}>
           <div className={"modal-container-scrollable"}>
             <div className={"modal-container-vertical"}>
               <div className={"modal-container"}>
