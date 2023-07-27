@@ -65,7 +65,7 @@ describe("FilterModal", () => {
     });
 
     it("should render the modal", () => {
-      expect(screen.getByText(/Filter By:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Filter Submissions/i)).toBeInTheDocument();
       expect(screen.getByText(/Close/i)).toBeInTheDocument();
       expect(screen.getByText(/Clear All/i)).toBeInTheDocument();
     });
@@ -73,11 +73,11 @@ describe("FilterModal", () => {
     describe("Filter By Annotation", () => {
       it("should render the annotation textbox", () => {
         expect(screen.getByText(/Annotation/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/Type here/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Search Text/i)).toBeInTheDocument();
       });
 
       it("should save annotation text on input", () => {
-        fireEvent.change(screen.getByPlaceholderText(/Type here/i), {
+        fireEvent.change(screen.getByPlaceholderText(/Search Text/i), {
           target: {value: "JavaScript"},
         });
         expect(props.mutateFilterData).toHaveBeenCalled();
@@ -217,7 +217,7 @@ describe("FilterModal", () => {
       });
 
       describe("Total Extra Mark Range", () => {
-        const test_id = "Total Extra Mark";
+        const test_id = "Total Extra Marks";
         rangeRender(test_id);
         rangeOnInput(test_id);
         rangeValidInput(test_id);
