@@ -154,7 +154,8 @@ class ExamTemplatesController < ApplicationController
       head :bad_request
       return
     else
-      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
+      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
+                                            params[:on_duplicate])
       session[:job_id] = current_job.job_id
     end
     respond_to do |format|
