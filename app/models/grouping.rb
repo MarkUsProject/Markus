@@ -754,10 +754,8 @@ class Grouping < ApplicationRecord
   # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
   # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
-  # or set it to nil. If +filter_data['annotationText']+, +filter_data['section']+ or +filter_data['markingState']+
-  # are set to '', no filtering for the corresponding option will occur. The same behaviour occurs when
-  # +filter_data['tas']+ or +filter_data['tags']+ is set to [] and when +filter_data['totalMarkRange']+ or
-  # +filter_data['totalExtraMarkRange']+ is set to an empty hash.
+  # or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as determined by
+  # `.blank?`), no filtering will occur for the corresponding option.
   def filter_results(current_role, results, filter_data)
     if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
