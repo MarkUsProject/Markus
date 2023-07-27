@@ -77,6 +77,7 @@ library.add(
   faFileImage,
   faFileImport,
   faFilePdf,
+  faFilter,
   faFolder,
   faFolderOpen,
   faFolderPlus,
@@ -101,8 +102,7 @@ library.add(
   faUserGroup,
   faUserMinus,
   faUserPlus,
-  faWarning,
-  faFilter
+  faWarning
 );
 
 dom.watch();
