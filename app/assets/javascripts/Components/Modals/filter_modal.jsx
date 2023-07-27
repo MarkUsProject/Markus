@@ -9,13 +9,11 @@ export class FilterModal extends React.Component {
     const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
       this.props.mutateFilterData({
-        ...this.props.filterData,
         tas: newArray.filter(item => item !== user_name),
       });
     } else {
       newArray.push(user_name);
       this.props.mutateFilterData({
-        ...this.props.filterData,
         tas: newArray,
       });
     }
@@ -23,14 +21,12 @@ export class FilterModal extends React.Component {
 
   onClearSelectionTAs = () => {
     this.props.mutateFilterData({
-      ...this.props.filterData,
       tas: [],
     });
   };
 
   onClearSelectionTags = () => {
     this.props.mutateFilterData({
-      ...this.props.filterData,
       tags: [],
     });
   };
@@ -39,13 +35,11 @@ export class FilterModal extends React.Component {
     const newArray = [...this.props.filterData.tags];
     if (newArray.includes(tag)) {
       this.props.mutateFilterData({
-        ...this.props.filterData,
         tags: newArray.filter(item => item !== tag),
       });
     } else {
       newArray.push(tag);
       this.props.mutateFilterData({
-        ...this.props.filterData,
         tags: newArray,
       });
     }
@@ -135,28 +129,24 @@ export class FilterModal extends React.Component {
 
   onTotalMarkMinChange = e => {
     this.props.mutateFilterData({
-      ...this.props.filterData,
       totalMarkRange: {...this.props.filterData.totalMarkRange, min: e.target.value},
     });
   };
 
   onTotalMarkMaxChange = e => {
     this.props.mutateFilterData({
-      ...this.props.filterData,
       totalMarkRange: {...this.props.filterData.totalMarkRange, max: e.target.value},
     });
   };
 
   onTotalExtraMarkMinChange = e => {
     this.props.mutateFilterData({
-      ...this.props.filterData,
       totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, min: e.target.value},
     });
   };
 
   onTotalExtraMarkMaxChange = e => {
     this.props.mutateFilterData({
-      ...this.props.filterData,
       totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, max: e.target.value},
     });
   };
@@ -200,7 +190,6 @@ export class FilterModal extends React.Component {
                   selected={this.props.filterData.orderBy}
                   onSelect={selection => {
                     this.props.mutateFilterData({
-                      ...this.props.filterData,
                       orderBy: selection,
                     });
                   }}
@@ -212,7 +201,7 @@ export class FilterModal extends React.Component {
                     checked={this.props.filterData.ascending}
                     name="order"
                     onChange={() => {
-                      this.props.mutateFilterData({...this.props.filterData, ascending: true});
+                      this.props.mutateFilterData({ascending: true});
                     }}
                     id={"Asc"}
                     data-testid={"ascending"}
@@ -223,7 +212,7 @@ export class FilterModal extends React.Component {
                     checked={!this.props.filterData.ascending}
                     name="order"
                     onChange={() => {
-                      this.props.mutateFilterData({...this.props.filterData, ascending: false});
+                      this.props.mutateFilterData({ascending: false});
                     }}
                     id={"Desc"}
                     data-testid={"descending"}
@@ -244,7 +233,6 @@ export class FilterModal extends React.Component {
                   selected={this.props.filterData.markingState}
                   onSelect={selection => {
                     this.props.mutateFilterData({
-                      ...this.props.filterData,
                       markingState: selection,
                     });
                   }}
@@ -263,7 +251,6 @@ export class FilterModal extends React.Component {
                   selected={this.props.filterData.section}
                   onSelect={selection => {
                     this.props.mutateFilterData({
-                      ...this.props.filterData,
                       section: selection,
                     });
                   }}
@@ -280,7 +267,6 @@ export class FilterModal extends React.Component {
                   value={this.props.filterData.annotationText}
                   onChange={e =>
                     this.props.mutateFilterData({
-                      ...this.props.filterData,
                       annotationText: e.target.value,
                     })
                   }

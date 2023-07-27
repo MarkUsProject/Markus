@@ -769,7 +769,8 @@ class Result extends React.Component {
   };
 
   updateFilterData = new_filters => {
-    this.setState({filterData: new_filters});
+    const filters = {...this.state.filterData, ...new_filters};
+    this.setState({filterData: filters});
   };
 
   resetFilterData = () => {
