@@ -105,9 +105,10 @@ export class FilterModal extends React.Component {
         <div className={"range"} data-testid={title}>
           <input
             className={"input-min"}
+            aria-label={title + " - Min"}
             type="number"
             step="any"
-            placeholder={"Min"}
+            placeholder={I18n.t("min")}
             value={min}
             max={max}
             onChange={e => onMinChange(e)}
@@ -115,9 +116,10 @@ export class FilterModal extends React.Component {
           <span>{I18n.t("to")}</span>
           <input
             className={"input-max"}
+            aria-label={title + " - Max"}
             type="number"
             step="any"
-            placeholder={"Max"}
+            placeholder={I18n.t("max")}
             value={max}
             min={min}
             onChange={e => onMaxChange(e)}
