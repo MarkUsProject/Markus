@@ -8,25 +8,25 @@ export class FilterModal extends React.Component {
   onToggleOptionTas = user_name => {
     const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
-      this.props.mutateFilterData({
+      this.props.updateFilterData({
         tas: newArray.filter(item => item !== user_name),
       });
     } else {
       newArray.push(user_name);
-      this.props.mutateFilterData({
+      this.props.updateFilterData({
         tas: newArray,
       });
     }
   };
 
   onClearSelectionTAs = () => {
-    this.props.mutateFilterData({
+    this.props.updateFilterData({
       tas: [],
     });
   };
 
   onClearSelectionTags = () => {
-    this.props.mutateFilterData({
+    this.props.updateFilterData({
       tags: [],
     });
   };
@@ -34,12 +34,12 @@ export class FilterModal extends React.Component {
   onToggleOptionTags = tag => {
     const newArray = [...this.props.filterData.tags];
     if (newArray.includes(tag)) {
-      this.props.mutateFilterData({
+      this.props.updateFilterData({
         tags: newArray.filter(item => item !== tag),
       });
     } else {
       newArray.push(tag);
-      this.props.mutateFilterData({
+      this.props.updateFilterData({
         tags: newArray,
       });
     }
@@ -128,25 +128,25 @@ export class FilterModal extends React.Component {
   };
 
   onTotalMarkMinChange = e => {
-    this.props.mutateFilterData({
+    this.props.updateFilterData({
       totalMarkRange: {...this.props.filterData.totalMarkRange, min: e.target.value},
     });
   };
 
   onTotalMarkMaxChange = e => {
-    this.props.mutateFilterData({
+    this.props.updateFilterData({
       totalMarkRange: {...this.props.filterData.totalMarkRange, max: e.target.value},
     });
   };
 
   onTotalExtraMarkMinChange = e => {
-    this.props.mutateFilterData({
+    this.props.updateFilterData({
       totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, min: e.target.value},
     });
   };
 
   onTotalExtraMarkMaxChange = e => {
-    this.props.mutateFilterData({
+    this.props.updateFilterData({
       totalExtraMarkRange: {...this.props.filterData.totalExtraMarkRange, max: e.target.value},
     });
   };
@@ -190,7 +190,7 @@ export class FilterModal extends React.Component {
                     options={["group_name", "submission_date"]}
                     selected={this.props.filterData.orderBy}
                     onSelect={selection => {
-                      this.props.mutateFilterData({
+                      this.props.updateFilterData({
                         orderBy: selection,
                       });
                     }}
@@ -202,7 +202,7 @@ export class FilterModal extends React.Component {
                       checked={this.props.filterData.ascending}
                       name="order"
                       onChange={() => {
-                        this.props.mutateFilterData({ascending: true});
+                        this.props.updateFilterData({ascending: true});
                       }}
                       id={"Asc"}
                       data-testid={"ascending"}
@@ -213,7 +213,7 @@ export class FilterModal extends React.Component {
                       checked={!this.props.filterData.ascending}
                       name="order"
                       onChange={() => {
-                        this.props.mutateFilterData({ascending: false});
+                        this.props.updateFilterData({ascending: false});
                       }}
                       id={"Desc"}
                       data-testid={"descending"}
@@ -233,7 +233,7 @@ export class FilterModal extends React.Component {
                     options={["in_progress", "complete", "released", "remark_requested"]}
                     selected={this.props.filterData.markingState}
                     onSelect={selection => {
-                      this.props.mutateFilterData({
+                      this.props.updateFilterData({
                         markingState: selection,
                       });
                     }}
@@ -251,7 +251,7 @@ export class FilterModal extends React.Component {
                     options={this.props.sections.sort()}
                     selected={this.props.filterData.section}
                     onSelect={selection => {
-                      this.props.mutateFilterData({
+                      this.props.updateFilterData({
                         section: selection,
                       });
                     }}
@@ -267,7 +267,7 @@ export class FilterModal extends React.Component {
                     type={"text"}
                     value={this.props.filterData.annotationText}
                     onChange={e =>
-                      this.props.mutateFilterData({
+                      this.props.updateFilterData({
                         annotationText: e.target.value,
                       })
                     }

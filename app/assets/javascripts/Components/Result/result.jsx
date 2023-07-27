@@ -818,7 +818,7 @@ class Result extends React.Component {
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
           filterData={this.state.filterData}
-          mutateFilterData={this.updateFilterData}
+          updateFilterData={this.updateFilterData}
           clearAllFilters={this.resetFilterData}
           sections={this.state.sections}
           tas={this.state.tas}
