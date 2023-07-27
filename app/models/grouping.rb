@@ -743,24 +743,22 @@ class Grouping < ApplicationRecord
 
   # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
   # +filter_data+ is not nil.
-  # +filter_data['annotationText']+ is a string specifying some annotation text to filter by. To avoid this filtering
-  # option don't set +filter_data['annotationText']+ (or set it to nil/'').
-  # +filter_data['section']+ is a string specifying the name of the section to filter by. To avoid this filtering
-  # option don't set +filter_data['section']+ (or set it to nil/'').
+  # +filter_data['annotationText']+ is a string specifying some annotation text to filter by.
+  # +filter_data['section']+ is a string specifying the name of the section to filter by.
   # +filter_data['markingState']+ is a string specifying the marking state to filter by; valid strings
-  # include "remark_requested", "released", "complete" and "in_progress". To avoid this filtering
-  # option don't set +filter_data['markingState']+ (or set it to nil/'').
-  # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by. To avoid
-  # this filtering option don't set +filter_data['tas']+ (or set it to nil/[]).
-  # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by. To avoid
-  # this filtering option don't set +filter_data['tags']+ (or set it to nil/[]).
+  # include "remark_requested", "released", "complete", "in_progress" and "".
+  # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by.
+  # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by.
   # +filter_data['totalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
   # float. 'max' is the maximum and 'min' is the minimum total mark a result should have. Note: min.to_f <= max.to_f.
-  # To not filter by total mark, pass in an empty hash or don't specify +filter_data['totalMarkRange']+.
   # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
-  # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or don't specify
-  # +filter_data['totalExtraMarkRange']+.
+  # Note: min.to_f <= max.to_f.
+  # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
+  # or set it to nil. If +filter_data['annotationText']+, +filter_data['section']+ or +filter_data['markingState']+
+  # are set to '', no filtering for the corresponding option will occur. The same behaviour occurs when
+  # +filter_data['tas']+ or +filter_data['tags']+ is set to [] and when +filter_data['totalMarkRange']+ or
+  # +filter_data['totalExtraMarkRange']+ is set to an empty hash.
   def filter_results(current_role, results, filter_data)
     if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
