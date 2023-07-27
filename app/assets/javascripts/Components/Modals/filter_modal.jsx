@@ -5,10 +5,6 @@ import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class FilterModal extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   onToggleOptionTas = user_name => {
     const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
