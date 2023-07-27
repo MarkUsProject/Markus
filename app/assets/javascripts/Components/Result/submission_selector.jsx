@@ -160,7 +160,7 @@ export class SubmissionSelector extends React.Component {
             isOpen={this.state.showFilterModal}
             onRequestClose={() => this.setState({showFilterModal: false})}
             filterData={this.props.filterData}
-            mutateFilterData={this.props.mutateFilterData}
+            updateFilterData={this.props.updateFilterData}
             clearAllFilters={this.props.clearAllFilters}
             sections={this.props.sections}
             tas={this.props.tas}
