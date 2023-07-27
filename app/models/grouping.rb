@@ -870,7 +870,7 @@ class Grouping < ApplicationRecord
                     .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
                     .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
                                       self.group.group_name,
-                                      self.current_submission_used.revision_timestamp)).first
+                                      self.current_submission_used.revision_timestamp)).last
     end
     next_result&.grouping
   end
