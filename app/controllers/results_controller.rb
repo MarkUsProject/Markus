@@ -118,7 +118,7 @@ class ResultsController < ApplicationController
         end
 
         if current_role.instructor? || current_role.ta?
-          data[:sections] = course.sections.order(:name).pluck(:name)
+          data[:sections] = course.sections.pluck(:name)
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
