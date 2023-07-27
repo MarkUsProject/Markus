@@ -58,7 +58,7 @@ export class SingleSelectDropDown extends React.Component {
 
     return (
       <div
-        className="dropdown singleselect-dropdown"
+        className="dropdown single-select-dropdown"
         onClick={() => this.setState({expanded: !this.state.expanded})}
         onBlur={() => this.setState({expanded: false})}
         tabIndex={-1}

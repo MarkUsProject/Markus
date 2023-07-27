@@ -189,7 +189,10 @@ export class FilterModal extends React.Component {
           this.props.onRequestClose();
         }}
       >
-        <h3>{I18n.t("results.filters.filter_by")}</h3>
+        <h3>
+          <FontAwesomeIcon icon="fa-solid fa-filter" className={"filter-icon-title"} />
+          {I18n.t("results.filter_submissions")}
+        </h3>
         <form onSubmit={this.onSubmit}>
           <div className={"modal-container-scrollable"}>
             <div className={"modal-container-vertical"}>
@@ -298,14 +301,14 @@ export class FilterModal extends React.Component {
                 {this.rangeFilter(
                   this.props.filterData.totalMarkRange.min,
                   this.props.filterData.totalMarkRange.max,
-                  I18n.t("results.filters.total_mark"),
+                  I18n.t("results.total_mark"),
                   this.onTotalMarkMinChange,
                   this.onTotalMarkMaxChange
                 )}
                 {this.rangeFilter(
                   this.props.filterData.totalExtraMarkRange.min,
                   this.props.filterData.totalExtraMarkRange.max,
-                  I18n.t("results.filters.total_extra_mark"),
+                  I18n.t("results.total_extra_marks"),
                   this.onTotalExtraMarkMinChange,
                   this.onTotalExtraMarkMaxChange
                 )}

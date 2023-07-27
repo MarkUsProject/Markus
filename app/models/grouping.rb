@@ -754,13 +754,13 @@ class Grouping < ApplicationRecord
   # this filtering option don't set +filter_data['tas']+ (or set it to nil/[]).
   # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by. To avoid
   # this filtering option don't set +filter_data['tags']+ (or set it to nil/[]).
-  # +filter_data['TotalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
+  # +filter_data['totalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
   # float. 'max' is the maximum and 'min' is the minimum total mark a result should have. Note: min.to_f <= max.to_f.
-  # To not filter by total mark, pass in an empty hash or dont specify +filter_data['TotalMarkRange']+.
-  # +filter_data['TotalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
+  # To not filter by total mark, pass in an empty hash or don't specify +filter_data['totalMarkRange']+.
+  # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
-  # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or dont specify
-  # +filter_data['TotalExtraMarkRange']+.
+  # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or don't specify
+  # +filter_data['totalExtraMarkRange']+.
   def filter_results(current_role, results, filter_data)
     if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
@@ -788,7 +788,7 @@ class Grouping < ApplicationRecord
       end
     end
 
-    unless current_role.ta? || filter_data['tas'].nil? || filter_data['tas'] == []
+    unless current_role.ta? || filter_data['tas'].blank?
       results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
     end
     if filter_data['tags'].present?
