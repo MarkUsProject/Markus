@@ -182,7 +182,7 @@ export class FilterModal extends React.Component {
           this.props.onRequestClose();
         }}
       >
-        <h3>
+        <h3 className={"filter-modal-title"}>
           <FontAwesomeIcon icon="fa-solid fa-filter" className={"filter-icon-title"} />
           {I18n.t("results.filter_submissions")}
         </h3>
