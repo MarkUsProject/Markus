@@ -17,6 +17,24 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
+const INITIAL_FILTER_MODAL_STATE = {
+  ascending: true,
+  orderBy: "group_name",
+  annotationText: "",
+  tas: [],
+  tags: [],
+  section: "",
+  markingState: "",
+  totalMarkRange: {
+    min: "",
+    max: "",
+  },
+  totalExtraMarkRange: {
+    min: "",
+    max: "",
+  },
+};
+
 class Result extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +51,7 @@ class Result extends React.Component {
       result_id: props.result_id,
       grouping_id: props.grouping_id,
       can_release: false,
+      filterData: INITIAL_FILTER_MODAL_STATE,
     };
 
     this.leftPane = React.createRef();
@@ -659,10 +678,15 @@ class Result extends React.Component {
 
   nextSubmission = direction => {
     return () => {
+      let data = {direction: direction};
+      if (this.props.role !== "Student") {
+        data["filterData"] = this.state.filterData;
+      }
+
       const url = Routes.next_grouping_course_result_path(
         this.props.course_id,
         this.state.result_id,
-        {direction: direction}
+        data
       );
 
       this.setState({loading: true}, () => {
@@ -675,6 +699,7 @@ class Result extends React.Component {
           .then(result => {
             if (!result.next_result || !result.next_grouping) {
               alert(I18n.t("results.no_results_in_direction"));
+              this.setState({loading: false});
               return;
             }
 
@@ -743,6 +768,15 @@ class Result extends React.Component {
     });
   };
 
+  updateFilterData = new_filters => {
+    const filters = {...this.state.filterData, ...new_filters};
+    this.setState({filterData: filters});
+  };
+
+  resetFilterData = () => {
+    this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -783,6 +817,14 @@ class Result extends React.Component {
           randomIncompleteSubmission={this.randomIncompleteSubmission}
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
+          filterData={this.state.filterData}
+          updateFilterData={this.updateFilterData}
+          clearAllFilters={this.resetFilterData}
+          sections={this.state.sections}
+          tas={this.state.tas}
+          available_tags={this.state.available_tags}
+          current_tags={this.state.current_tags}
+          loading={this.state.loading}
         />
         <div key="panes-content" id="panes-content">
           <div id="panes">

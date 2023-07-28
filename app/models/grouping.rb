@@ -707,37 +707,31 @@ class Grouping < ApplicationRecord
     end
   end
 
-  def get_next_grouping(current_role, reversed)
+  def get_next_grouping(current_role, reversed, filter_data = nil)
     if current_role.ta?
-      # Get relevant groupings for a TA
-      groupings = current_role.groupings
-                              .where(assignment: assignment)
-                              .joins(:group)
-                              .order('group_name')
+      results = self.assignment.current_results.joins(grouping: :tas).where(
+        'roles.id': current_role.id
+      )
+
     else
-      # Get all groupings in an assignment -- typically for an instructor
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      results = self.assignment.current_results
     end
-    if !reversed
-      # get next grouping with a result
-      next_grouping = groupings.where('group_name > ?', self.group.group_name).where(is_collected: true).first
-    else
-      # get previous grouping with a result
-      next_grouping = groupings.where('group_name < ?', self.group.group_name).where(is_collected: true).last
+    results = results.joins(grouping: :group)
+    if filter_data.nil?
+      filter_data = {}
     end
-    next_grouping
+    results = filter_results(current_role, results, filter_data)
+    order_and_get_next_grouping(results, filter_data, reversed)
   end
 
   def get_random_incomplete(current_role)
     if current_role.ta?
-      # Get relevant groupings for a TA
       results = self.assignment.current_results.joins(grouping: :tas).where(
         marking_state: Result::MARKING_STATES[:incomplete],
         'roles.id': current_role.id
       )
 
     else
-      # Get all groupings in an assignment -- typically for an instructor
       results = self.assignment.current_results.where(
         marking_state: Result::MARKING_STATES[:incomplete]
       )
@@ -746,6 +740,138 @@ class Grouping < ApplicationRecord
   end
 
   private
+
+  # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
+  # +filter_data+ is not nil.
+  # +filter_data['annotationText']+ is a string specifying some annotation text to filter by.
+  # +filter_data['section']+ is a string specifying the name of the section to filter by.
+  # +filter_data['markingState']+ is a string specifying the marking state to filter by; valid strings
+  # include "remark_requested", "released", "complete", "in_progress" and "".
+  # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by.
+  # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by.
+  # +filter_data['totalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
+  # float. 'max' is the maximum and 'min' is the minimum total mark a result should have.
+  # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
+  # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
+  # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
+  # or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as determined by
+  # `.blank?`), no filtering will occur for the corresponding option.
+  def filter_results(current_role, results, filter_data)
+    if filter_data['annotationText'].present?
+      results = results.joins(annotations: :annotation_text)
+                       .where('lower(annotation_texts.content) LIKE ?',
+                              "%#{AnnotationText.sanitize_sql_like(filter_data['annotationText'].downcase)}%")
+    end
+    if filter_data['section'].present?
+      results = results.joins(grouping: :section).where('section.name': filter_data['section'])
+    end
+    if filter_data['markingState'].present?
+      remark_results = results.where.not('results.remark_request_submitted_at': nil)
+                              .where('results.marking_state': Result::MARKING_STATES[:incomplete])
+      released_results = results.where.not('results.id': remark_results).where('results.released_to_students': true)
+      case filter_data['markingState']
+      when 'remark_requested'
+        results = remark_results
+      when 'released'
+        results = released_results
+      when 'complete'
+        results = results.where.not('results.id': released_results)
+                         .where('results.marking_state': Result::MARKING_STATES[:complete])
+      when 'in_progress'
+        results = results.where.not('results.id': remark_results).where.not('results.id': released_results)
+                         .where('results.marking_state': Result::MARKING_STATES[:incomplete])
+      end
+    end
+
+    unless current_role.ta? || filter_data['tas'].blank?
+      results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
+    end
+    if filter_data['tags'].present?
+      results = results.joins(grouping: :tags).where('tags.name': filter_data['tags'])
+    end
+    unless filter_data.dig('totalMarkRange', 'max').blank? && filter_data.dig('totalMarkRange', 'min').blank?
+      result_ids = results.ids
+      total_marks_hash = Result.get_total_marks(result_ids)
+      if filter_data.dig('totalMarkRange', 'max').present?
+        total_marks_hash.select! { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+      end
+      if filter_data.dig('totalMarkRange', 'min').present?
+        total_marks_hash.select! { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
+      end
+      results = Result.where('results.id': total_marks_hash.keys)
+    end
+    unless filter_data.dig('totalExtraMarkRange', 'max').blank? && filter_data.dig('totalExtraMarkRange', 'min').blank?
+      result_ids = results.ids
+      total_marks_hash = Result.get_total_extra_marks(result_ids)
+      if filter_data.dig('totalExtraMarkRange', 'max').present?
+        total_marks_hash.select! do |_, value|
+          value <= filter_data['totalExtraMarkRange']['max'].to_f
+        end
+      end
+      if filter_data.dig('totalExtraMarkRange', 'min').present?
+        total_marks_hash.select! do |_, value|
+          value >= filter_data['totalExtraMarkRange']['min'].to_f
+        end
+      end
+      results = Result.where('results.id': total_marks_hash.keys)
+    end
+    results.joins(grouping: :group)
+  end
+
+  # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
+  # +reversed+ is a boolean value, true to return the next grouping and false to return the previous one.
+  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name" and
+  # "submission_date". When this value is not specified (or nil), default ordering is applied.
+  # +filter_data['ascending']+ specifies whether results should be ordered in ascending or descending order. Valid
+  # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order). When
+  # this value is not specified (or nil), the results are ordered in ascending order.
+  def order_and_get_next_grouping(results, filter_data, reversed)
+    asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
+    ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
+    case filter_data['orderBy']
+    when 'submission_date'
+      next_grouping_ordered_submission_date(results, ascending)
+    else # group name/otherwise
+      next_grouping_ordered_group_name(results, ascending)
+    end
+  end
+
+  # Gets the next grouping by first ordering +results+ by group name in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
+  def next_grouping_ordered_group_name(results, ascending)
+    results = results.group([:id, 'groups.group_name']).order('groups.group_name ASC')
+    if ascending
+      next_result = results.where('groups.group_name > ?', self.group.group_name).first
+    else
+      next_result = results.where('groups.group_name < ?', self.group.group_name).last
+    end
+    next_result&.grouping
+  end
+
+  # Gets the next grouping by first ordering +results+ by submission date and then by group name in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
+  def next_grouping_ordered_submission_date(results, ascending)
+    results = results.joins(:submission).group([:id, 'groups.group_name', 'submissions.revision_timestamp'])
+                     .order('submissions.revision_timestamp ASC',
+                            'groups.group_name ASC')
+    if ascending
+      next_result = results
+                    .where('submissions.revision_timestamp > ?', self.current_submission_used.revision_timestamp)
+                    .or(results.where('groups.group_name > ? AND submissions.revision_timestamp = ?',
+                                      self.group.group_name,
+                                      self.current_submission_used.revision_timestamp)).first
+
+    else
+      next_result = results
+                    .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
+                    .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
+                                      self.group.group_name,
+                                      self.current_submission_used.revision_timestamp)).last
+    end
+    next_result&.grouping
+  end
 
   def add_assignment_folder(group_repo)
     assignment_folder = self.assignment.repository_folder

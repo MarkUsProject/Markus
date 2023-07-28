@@ -21,6 +21,18 @@
   }
 }
 
+.modal-container-scrollable {
+  align-items: flex-start;
+  display: flex;
+  max-height: 300px;
+  overflow-y: auto;
+
+  > * {
+    margin: 5px;
+    padding: 5px;
+  }
+}
+
 .modal-container-vertical {
   display: flex;
   flex-direction: column;

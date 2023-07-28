@@ -5,6 +5,7 @@ en:
   all: All
   apply: Apply
   cancel: Cancel
+  clear_all: Clear All
   close: Close
   continue: Continue
   copy: Copy
@@ -51,6 +52,8 @@ en:
     unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
     unlink_courses: Unlink this course
   markus: MarkUs
+  max: Max
+  min: Min
   not_applicable: N/A
   or: Or
   other_info: Other Info
@@ -63,5 +66,6 @@ en:
   select_filename: Select Filename
   skip: Skip
   this: This
+  to: to
   working: Loading
   write: Write
