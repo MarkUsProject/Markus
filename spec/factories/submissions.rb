@@ -3,7 +3,7 @@ FactoryBot.define do
     association :grouping
     submission_version { 1 }
     revision_identifier { 1 }
-    revision_timestamp { Date.current }
+    revision_timestamp { Time.current }
     is_empty { false }
 
     factory :version_used_submission do

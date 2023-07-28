@@ -880,6 +880,10 @@ class Assignment < Assessment
                  'results.created_at = sub.results_created_at')
   end
 
+  def current_remark_results
+    self.current_results.where.not('results.remark_request_submitted_at' => nil)
+  end
+
   # Query for all non-peer review results for this assignment (for the current submissions)
   def non_pr_results
     Result.joins(:grouping)

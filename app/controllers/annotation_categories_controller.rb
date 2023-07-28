@@ -151,8 +151,11 @@ class AnnotationCategoriesController < ApplicationController
                                      annotation_category_id: nil
                                    )
 
-    annotation_texts = texts_for_current_assignment.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10) |
-                       one_time_texts.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10)
+    annotation_texts = texts_for_current_assignment
+                       .where('lower(content) LIKE ?', "#{ApplicationRecord.sanitize_sql_like(string.downcase)}%")
+                       .limit(10) |
+                       one_time_texts.where('lower(content) LIKE ?',
+                                            "#{ApplicationRecord.sanitize_sql_like(string.downcase)}%").limit(10)
     render json: annotation_texts
   end
 

@@ -84,7 +84,7 @@ jobs:
       - name: Set up database
         run: bundle exec rails db:migrate
       - name: Install chrome and chromedriver
-        uses: nanasess/setup-chromedriver@v1
+        uses: nanasess/setup-chromedriver@v2
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
       - name: Run rspec tests

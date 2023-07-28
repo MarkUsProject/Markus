@@ -1,0 +1,58 @@
+@import 'constants';
+
+.filter-modal {
+  .filter-modal-title {
+    padding-left: 30px;
+  }
+
+  .filter-icon-title {
+    padding-right: 10px;
+  }
+
+  .annotation-input {
+    margin: 5px;
+
+    input[type='text'] {
+      height: 30px;
+      width: $dropdown-horizontal;
+    }
+  }
+
+  .filter {
+    margin: 5px;
+  }
+
+  .order {
+    padding-top: 10px;
+  }
+
+  .range {
+    background: $background-main;
+    max-width: $dropdown-horizontal;
+    min-height: 30px;
+
+    > span {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    input[type='number'] {
+      width: 80px;
+    }
+
+    > input:valid ~ .hidden {
+      display: none;
+    }
+
+    .hidden {
+      display: inline-flex;
+      padding-top: 5px;
+      width: $dropdown-horizontal;
+
+      .validity {
+        color: $severe-error;
+        margin-left: 2px;
+      }
+    }
+  }
+}

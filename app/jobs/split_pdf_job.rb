@@ -13,7 +13,7 @@ class SplitPdfJob < ApplicationJob
     status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil)
+  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil, on_duplicate = nil)
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed
@@ -85,7 +85,7 @@ class SplitPdfJob < ApplicationJob
         end
         progress.increment
       end
-      num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log)
+      num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log, on_duplicate)
       num_incomplete = partial_exams.length - num_complete
 
       split_pdf_log.update(
@@ -104,7 +104,7 @@ class SplitPdfJob < ApplicationJob
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, filename = nil, split_pdf_log = nil)
+  def save_pages(exam_template, partial_exams, filename = nil, split_pdf_log = nil, on_duplicate = nil)
     return unless exam_template.course.instructors.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -147,18 +147,25 @@ class SplitPdfJob < ApplicationJob
           group: group,
           split_pdf_log: split_pdf_log
         )
-        # if a page already exists, move the page to error directory instead of overwriting it
-        if File.exist?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
-          status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
-        else
+        if !File.exist?(File.join(destination, "#{page_num}.pdf")) || on_duplicate == 'overwrite'
+          # if the page already exists and on_duplicate == 'overwrite', overwrite the page,
+          # and indicate in page status
+          status = File.exist?(File.join(destination, "#{page_num}.pdf")) ? '(Overwritten) ' : ''
           new_pdf.save File.join(destination, "#{page_num}.pdf")
+
           # set status depending on whether parent directory of destination is complete or incomplete
           if File.dirname(destination) == complete_dir
-            status = 'Saved to complete directory'
+            status += 'Saved to complete directory'
           else
-            status = 'Saved to incomplete directory'
+            status += 'Saved to incomplete directory'
           end
+        elsif File.exist?(File.join(destination, "#{page_num}.pdf")) && on_duplicate == 'ignore'
+          # if the page already exists and on_duplicate == 'ignore', ignore the page
+          status = 'Duplicate page ignored'
+        else
+          # if the page already exists and on_duplicate is anything else, move the page to error directory
+          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
+          status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         end
         # update status of page
         split_page.update(status: status)
