@@ -77,7 +77,7 @@ describe User do
     end
     context 'without a custom exit status messages' do
       before do
-        allow(Settings).to receive(:validate_file).and_return(Rails.root.join('config/dummy_invalidate.sh'))
+        allow(Settings).to receive(:validate_file).and_return(Rails.root.join('spec/fixtures/files/dummy_invalidate.sh'))
       end
       context 'a successful login' do
         it 'should return a success message' do
@@ -93,7 +93,7 @@ describe User do
     context 'with a custom exit status message' do
       before do
         allow(Settings).to receive(:validate_custom_status_message).and_return('2' => 'a two!', '3' => 'a three!')
-        allow(Settings).to receive(:validate_file).and_return(Rails.root.join('config/dummy_invalidate.sh'))
+        allow(Settings).to receive(:validate_file).and_return(Rails.root.join('spec/fixtures/files/dummy_invalidate.sh'))
       end
       context 'a successful login' do
         it 'should return a success message' do

@@ -236,7 +236,6 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.4)
     minitest (5.18.1)
     mono_logger (1.1.1)
     msgpack (1.6.0)
@@ -253,8 +252,7 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
-    nokogiri (1.15.3)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.15.2-aarch64-linux)
       racc (~> 1.4)
     nokogiri (1.15.2-x86_64-linux)
       racc (~> 1.4)
@@ -359,7 +357,7 @@ GEM
     rqrcode (2.2.0)
       chunky_png (~> 1.0)
       rqrcode_core (~> 0.1)
-    rqrcode_core (0.1.2)
+    rqrcode_core (0.2.0)
     rspec-core (3.12.2)
       rspec-support (~> 3.12.0)
     rspec-expectations (3.12.3)
@@ -512,7 +510,7 @@ DEPENDENCIES
   responders
   resque
   resque-scheduler
-  rmagick
+  rmagick (~> 5.2.0)
   rspec-rails (~> 6.0.3)
   rtesseract
   rubyzip

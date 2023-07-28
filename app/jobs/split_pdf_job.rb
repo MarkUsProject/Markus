@@ -60,6 +60,7 @@ class SplitPdfJob < ApplicationJob
           m = code_regex.match(RTesseract.new(qr_file_location).to_s)
         end
         status = ''
+
         if m.nil?
           new_page.save File.join(error_dir, "#{split_page.id}.pdf")
           num_pages_qr_scan_error += 1
@@ -236,6 +237,7 @@ class SplitPdfJob < ApplicationJob
                   'application/pdf')
         end
         repo.commit(txn)
+
         next unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
         begin
           # convert PDF to an image
