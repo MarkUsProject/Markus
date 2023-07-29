@@ -743,24 +743,19 @@ class Grouping < ApplicationRecord
 
   # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
   # +filter_data+ is not nil.
-  # +filter_data['annotationText']+ is a string specifying some annotation text to filter by. To avoid this filtering
-  # option don't set +filter_data['annotationText']+ (or set it to nil/'').
-  # +filter_data['section']+ is a string specifying the name of the section to filter by. To avoid this filtering
-  # option don't set +filter_data['section']+ (or set it to nil/'').
+  # +filter_data['annotationText']+ is a string specifying some annotation text to filter by.
+  # +filter_data['section']+ is a string specifying the name of the section to filter by.
   # +filter_data['markingState']+ is a string specifying the marking state to filter by; valid strings
-  # include "remark_requested", "released", "complete" and "in_progress". To avoid this filtering
-  # option don't set +filter_data['markingState']+ (or set it to nil/'').
-  # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by. To avoid
-  # this filtering option don't set +filter_data['tas']+ (or set it to nil/[]).
-  # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by. To avoid
-  # this filtering option don't set +filter_data['tags']+ (or set it to nil/[]).
-  # +filter_data['TotalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
-  # float. 'max' is the maximum and 'min' is the minimum total mark a result should have. Note: min.to_f <= max.to_f.
-  # To not filter by total mark, pass in an empty hash or dont specify +filter_data['TotalMarkRange']+.
-  # +filter_data['TotalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
+  # include "remark_requested", "released", "complete", "in_progress" and "".
+  # +filter_data['tas']+ is a list of strings corresponding to ta user names specifying the tas to filter by.
+  # +filter_data['tags']+ is a list of strings corresponding to tag names specifying the tags to filter by.
+  # +filter_data['totalMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing a
+  # float. 'max' is the maximum and 'min' is the minimum total mark a result should have.
+  # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
-  # Note: min.to_f <= max.to_f. To not filter by total extra mark, pass in an empty hash or dont specify
-  # +filter_data['TotalExtraMarkRange']+.
+  # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
+  # or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as determined by
+  # `.blank?`), no filtering will occur for the corresponding option.
   def filter_results(current_role, results, filter_data)
     if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
@@ -788,7 +783,7 @@ class Grouping < ApplicationRecord
       end
     end
 
-    unless current_role.ta? || filter_data['tas'].nil? || filter_data['tas'] == []
+    unless current_role.ta? || filter_data['tas'].blank?
       results = results.joins(grouping: { tas: :user }).where('user.user_name': filter_data['tas'])
     end
     if filter_data['tags'].present?
@@ -841,11 +836,11 @@ class Grouping < ApplicationRecord
   end
 
   # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
-  # +reversed+ is a boolean value, true if we want to return the next grouping and false if we want the previous one.
+  # +reversed+ is a boolean value, true to return the next grouping and false to return the previous one.
   # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name" and
-  # "submission_date"; when this value is not specified (or nil), default ordering is applied.
+  # "submission_date". When this value is not specified (or nil), default ordering is applied.
   # +filter_data['ascending']+ specifies whether results should be ordered in ascending or descending order. Valid
-  # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order); when
+  # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order). When
   # this value is not specified (or nil), the results are ordered in ascending order.
   def order_and_get_next_grouping(results, filter_data, reversed)
     asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
@@ -855,6 +850,7 @@ class Grouping < ApplicationRecord
       next_grouping_ordered_submission_date(results, ascending)
     when 'total_mark'
       next_grouping_ordered_total_mark(results, ascending)
+
     else # group name/otherwise
       next_grouping_ordered_group_name(results, ascending)
     end
@@ -892,7 +888,7 @@ class Grouping < ApplicationRecord
                     .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
                     .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
                                       self.group.group_name,
-                                      self.current_submission_used.revision_timestamp)).first
+                                      self.current_submission_used.revision_timestamp)).last
     end
     next_result&.grouping
   end

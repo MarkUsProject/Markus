@@ -14,6 +14,7 @@ export class MultiSelectDropdown extends React.Component {
 
   renderDropdown = (options, selected, expanded) => {
     let isSelected;
+    options.sort((a, b) => a.key.localeCompare(b.key));
     if (expanded) {
       if (options.length === 0) {
         return (

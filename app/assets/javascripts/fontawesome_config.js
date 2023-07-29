@@ -22,6 +22,7 @@ import {
   faFileImage,
   faFileImport,
   faFilePdf,
+  faFilter,
   faFolder,
   faFolderOpen,
   faFolderPlus,
@@ -45,7 +46,6 @@ import {
   faUserMinus,
   faUserPlus,
   faWarning,
-  faFilter,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
@@ -77,10 +77,12 @@ library.add(
   faFileImage,
   faFileImport,
   faFilePdf,
+  faFilter,
   faFolder,
   faFolderOpen,
   faFolderPlus,
   faGear,
+  faGithub,
   faGripVertical,
   faLink,
   faMinus,
@@ -92,6 +94,7 @@ library.add(
   faRocket,
   faSignOut,
   faSlash,
+  faSquare,
   faSquareCheck,
   faTable,
   faTrash,
@@ -99,12 +102,7 @@ library.add(
   faUserGroup,
   faUserMinus,
   faUserPlus,
-  faWarning,
-  faFilter
+  faWarning
 );
-
-library.add(faGithub);
-
-library.add(faSquare);
 
 dom.watch();

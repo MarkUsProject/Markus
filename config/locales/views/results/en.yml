@@ -29,17 +29,15 @@ en:
     delete_extra_mark_confirm: Are you sure you want to remove this extra mark?
     expand_all: Expand All
     expand_unmarked: Expand Unmarked
-    filter_modal: Filter Submissions
+    filter_submissions: Filter Submissions
     filters:
-      filter_by: 'Filter By:'
       invalid_range: Invalid Range
       no_options: No options available
       order_by: Order By
       ordering:
         ascending: Ascending
         descending: Descending
-      text_box_placeholder: Type here
-      total_extra_mark: Total Extra Mark
+      text_box_placeholder: Search text
     fullscreen_enter: Fullscreen
     fullscreen_exit: Leave fullscreen
     keybinding:

@@ -30,6 +30,7 @@
 - Add icons to submission and result grading action buttons (#6666)
 - Remove group name maximum length constraint (#6668)
 - Fix bug where in some cases flash messages were not being rendered correctly (#6670)
+- Enable duplicate pages when uploading scanned exams to overwrite existing pages or be ignored (#6674)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

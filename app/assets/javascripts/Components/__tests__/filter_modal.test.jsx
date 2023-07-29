@@ -44,7 +44,7 @@ describe("FilterModal", () => {
         ],
         isOpen: true,
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
-        mutateFilterData: jest.fn().mockImplementation(() => null),
+        updateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
         role: role,
       };
@@ -65,7 +65,7 @@ describe("FilterModal", () => {
     });
 
     it("should render the modal", () => {
-      expect(screen.getByText(/Filter By:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Filter Submissions/i)).toBeInTheDocument();
       expect(screen.getByText(/Close/i)).toBeInTheDocument();
       expect(screen.getByText(/Clear All/i)).toBeInTheDocument();
     });
@@ -73,14 +73,14 @@ describe("FilterModal", () => {
     describe("Filter By Annotation", () => {
       it("should render the annotation textbox", () => {
         expect(screen.getByText(/Annotation/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/Type here/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Search Text/i)).toBeInTheDocument();
       });
 
       it("should save annotation text on input", () => {
-        fireEvent.change(screen.getByPlaceholderText(/Type here/i), {
+        fireEvent.change(screen.getByPlaceholderText(/Search Text/i), {
           target: {value: "JavaScript"},
         });
-        expect(props.mutateFilterData).toHaveBeenCalled();
+        expect(props.updateFilterData).toHaveBeenCalled();
       });
     });
 
@@ -90,7 +90,7 @@ describe("FilterModal", () => {
           const dropdown = screen.getByTestId(test_id);
           const icon = within(dropdown).getByTestId("reset");
           fireEvent.click(icon);
-          expect(props.mutateFilterData).toHaveBeenCalled();
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -111,7 +111,7 @@ describe("FilterModal", () => {
           const option = within(dropdown).getByText(selection);
           fireEvent.click(option);
 
-          expect(props.mutateFilterData).toHaveBeenCalled();
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -120,7 +120,7 @@ describe("FilterModal", () => {
           const dropdown = screen.getByTestId(test_id);
           fireEvent.click(within(dropdown).getByText(option));
 
-          expect(props.mutateFilterData).toHaveBeenCalled();
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
 
         it("should deselect option when clicked on a selected option", () => {
@@ -132,7 +132,7 @@ describe("FilterModal", () => {
           const selected_option = within(list).getByText(option);
           fireEvent.click(selected_option);
 
-          expect(props.mutateFilterData).toHaveBeenCalled();
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -168,7 +168,7 @@ describe("FilterModal", () => {
             target: {value: 10},
           });
 
-          expect(props.mutateFilterData).toHaveBeenCalled();
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -217,7 +217,7 @@ describe("FilterModal", () => {
       });
 
       describe("Total Extra Mark Range", () => {
-        const test_id = "Total Extra Mark";
+        const test_id = "Total Extra Marks";
         rangeRender(test_id);
         rangeOnInput(test_id);
         rangeValidInput(test_id);
@@ -231,7 +231,7 @@ describe("FilterModal", () => {
           let dropdownDiv = screen.getByTestId(filterTestId);
           fireEvent.click(within(dropdownDiv).getByTestId("dropdown"));
           fireEvent.click(within(dropdownDiv).getByText(selection));
-          expect(props.mutateFilterData).toHaveBeenCalled();
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -245,7 +245,8 @@ describe("FilterModal", () => {
 
           // resetting the dropdown value
           fireEvent.click(within(dropdownDiv).getByTestId("reset-dropdown-selection"));
-          expect(props.mutateFilterData).toHaveBeenCalled();
+
+          expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
 
@@ -267,7 +268,7 @@ describe("FilterModal", () => {
           it("should save the selection on change", () => {
             // setting the ordering to descending
             fireEvent.click(within(screen.getByTestId("order-by")).getByTestId("descending"));
-            expect(props.mutateFilterData).toHaveBeenCalled();
+            expect(props.updateFilterData).toHaveBeenCalled();
           });
         });
       });
@@ -304,7 +305,7 @@ describe("FilterModal", () => {
         const dropdown = screen.getByTestId(test_id);
         const icon = within(dropdown).getByTestId("reset");
         fireEvent.click(icon);
-        expect(props.mutateFilterData).toHaveBeenCalled();
+        expect(props.updateFilterData).toHaveBeenCalled();
       });
 
       it("should render all selected tags", () => {
@@ -319,7 +320,7 @@ describe("FilterModal", () => {
         const option = within(dropdown).getByText("d - D");
         fireEvent.click(option);
 
-        expect(props.mutateFilterData).toHaveBeenCalled();
+        expect(props.updateFilterData).toHaveBeenCalled();
       });
 
       it("should deselect option when clicked on a tag", () => {
@@ -327,7 +328,7 @@ describe("FilterModal", () => {
         const tag = within(dropdown).getByText("a");
         fireEvent.click(tag);
 
-        expect(props.mutateFilterData).toHaveBeenCalled();
+        expect(props.updateFilterData).toHaveBeenCalled();
       });
 
       it("should deselect option when clicked on a selected option", () => {
@@ -336,7 +337,7 @@ describe("FilterModal", () => {
         const selected_option = within(dropdown).getByText("a - A");
         fireEvent.click(selected_option);
 
-        expect(props.mutateFilterData).toHaveBeenCalled();
+        expect(props.updateFilterData).toHaveBeenCalled();
       });
     });
   });
