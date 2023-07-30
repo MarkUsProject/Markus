@@ -1,9 +1,8 @@
 @import 'constants';
 
 .criterion-filter {
-  box-shadow: 0 0 4px 0.5px $line;
+  box-shadow: 0 0 2px 0.5px $line;
   height: 410px;
-  justify-content: center;
   padding: 10px;
 
   .add-criteria {
