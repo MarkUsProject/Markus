@@ -157,36 +157,36 @@ export class FilterModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  addCriteria = criteria => {
-    let newArray = [...this.props.filterData.criteria];
-    newArray.push(criteria);
+  addCriterion = criterion => {
+    let criteria = [...this.props.filterData.criteria];
+    criteria.push(criterion);
     this.props.updateFilterData({
-      criteria: newArray,
+      criteria: criteria,
     });
   };
 
-  onCriteriaMinChange = (e, criteria) => {
-    let criterion = [...this.props.filterData.criteria];
-    let i = criterion.findIndex(obj => obj.name === criteria);
-    criterion[i].min = e.target.value;
+  onCriterionMinChange = (e, criterion) => {
+    let criteria = [...this.props.filterData.criteria];
+    let i = criteria.findIndex(obj => obj.name === criterion);
+    criteria[i].min = e.target.value;
     this.props.updateFilterData({
-      criteria: criterion,
+      criteria: criteria,
     });
   };
 
-  onCriteriaMaxChange = (e, criteria) => {
-    let criterion = [...this.props.filterData.criteria];
-    let i = criterion.findIndex(obj => obj.name === criteria);
-    criterion[i].max = e.target.value;
+  onCriterionMaxChange = (e, criterion) => {
+    let criteria = [...this.props.filterData.criteria];
+    let i = criteria.findIndex(obj => obj.name === criterion);
+    criteria[i].max = e.target.value;
     this.props.updateFilterData({
-      criteria: criterion,
+      criteria: criteria,
     });
   };
 
-  deleteCriteria = criteria => {
-    let newArray = [...this.props.filterData.criteria];
+  deleteCriterion = criterion => {
+    let criteria = [...this.props.filterData.criteria];
     this.props.updateFilterData({
-      criteria: newArray.filter(item => item.name !== criteria),
+      criteria: criteria.filter(item => item.name !== criterion),
     });
   };
 
@@ -333,10 +333,10 @@ export class FilterModal extends React.Component {
               <CriteriaFilter
                 options={this.props.criterionSummaryData}
                 criteria={[...this.props.filterData.criteria]}
-                addCriteria={this.addCriteria}
-                removeCriteria={this.deleteCriteria}
-                onMinChange={this.onCriteriaMinChange}
-                onMaxChange={this.onCriteriaMaxChange}
+                addCriterion={this.addCriterion}
+                removeCriterion={this.deleteCriterion}
+                onMinChange={this.onCriterionMinChange}
+                onMaxChange={this.onCriterionMaxChange}
               />
             </div>
           </div>

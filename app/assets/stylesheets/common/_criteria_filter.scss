@@ -1,15 +1,15 @@
 @import 'constants';
 
-.criterion-filter {
+.criteria-filter {
   box-shadow: 0 0 2px 0.5px $line;
   height: 410px;
   padding: 10px;
 
-  .add-criteria {
+  .add-criterion {
     margin-top: 10px;
   }
 
-  .criterion-list {
+  .criteria-list {
     margin-top: 20px;
     max-height: 250px;
     overflow-y: auto;
@@ -21,7 +21,7 @@
       margin-bottom: 10px;
     }
 
-    .criteria-title {
+    .criterion-title {
       display: inline-block;
       margin-bottom: 10px;
       width: $dropdown-horizontal - 10px;

@@ -10,36 +10,36 @@ export class CriteriaFilter extends React.Component {
     };
   }
 
-  criteriaFilter = (min, max, criteria) => {
+  criterionRange = (min, max, criterion) => {
     return (
-      <li>
-        <div className={"criteria-title"}>
-          <span>{criteria}</span>
-          <div className={"float-right"} onClick={() => this.removeCriteria(criteria)}>
+      <li key={criterion}>
+        <div className={"criterion-title"}>
+          <span>{criterion}</span>
+          <div className={"float-right"} onClick={() => this.removeCriterion(criterion)}>
             <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
           </div>
         </div>
-        <div className={"range"} data-testid={criteria}>
+        <div className={"range"} data-testid={criterion}>
           <input
             className={"input-min"}
-            aria-label={criteria + " - " + I18n.t("min")}
+            aria-label={criterion + " - " + I18n.t("min")}
             type="number"
             step="any"
             placeholder={I18n.t("min")}
             value={min}
             max={max}
-            onChange={e => this.props.onMinChange(e, criteria)}
+            onChange={e => this.props.onMinChange(e, criterion)}
           />
           <span>{I18n.t("to")}</span>
           <input
             className={"input-max"}
-            aria-label={criteria + " - " + I18n.t("max")}
+            aria-label={criterion + " - " + I18n.t("max")}
             type="number"
             step="any"
             placeholder={I18n.t("max")}
             value={max}
             min={min}
-            onChange={e => this.props.onMaxChange(e, criteria)}
+            onChange={e => this.props.onMaxChange(e, criterion)}
           />
           <div className={"hidden"}>
             <FontAwesomeIcon icon={"fa-solid fa-circle-exclamation"} />
@@ -53,31 +53,31 @@ export class CriteriaFilter extends React.Component {
   renderSelectedCriteria = () => {
     const criteria = this.props.criteria;
     return (
-      <ul className={"criterion-list"}>
-        {criteria.map(criteria => {
-          return this.criteriaFilter(criteria.min, criteria.max, criteria.name);
+      <ul className={"criteria-list"}>
+        {criteria.map(criterion => {
+          return this.criterionRange(criterion.min, criterion.max, criterion.name);
         })}
       </ul>
     );
   };
 
-  addCriteria = e => {
+  addCriterion = e => {
     e.preventDefault();
-    this.props.addCriteria({name: this.state.name});
+    this.props.addCriterion({name: this.state.name});
     this.setState({
       name: "",
     });
   };
 
-  removeCriteria = criteria => {
-    this.props.removeCriteria(criteria);
+  removeCriterion = criterion => {
+    this.props.removeCriterion(criterion);
   };
 
   render() {
     return (
-      <div className={"criterion-filter"}>
+      <div className={"criteria-filter"}>
         <div>
-          <p>Criteria</p>
+          <p>{I18n.t("activerecord.models.criterion.other")}</p>
           <SingleSelectDropDown
             options={this.props.options
               .map(option => {
@@ -88,17 +88,16 @@ export class CriteriaFilter extends React.Component {
             onSelect={selection => {
               this.setState({name: selection});
             }}
-            disabled={this.props.criteria.map(criteria => {
-              return criteria.name;
+            disabled={this.props.criteria.map(criterion => {
+              return criterion.name;
             })}
           />
           <button
-            className={"add-criteria"}
-            value={"Add Criteria"}
-            onClick={e => this.addCriteria(e)}
+            className={"add-criterion"}
+            onClick={e => this.addCriterion(e)}
             disabled={this.state.name === ""}
           >
-            Add Criteria
+            {I18n.t("results.filters.add_criterion")}
           </button>
         </div>
         {this.renderSelectedCriteria()}

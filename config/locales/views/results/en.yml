@@ -31,6 +31,7 @@ en:
     expand_unmarked: Expand Unmarked
     filter_submissions: Filter Submissions
     filters:
+      add_criterion: Add Criterion
       invalid_range: Invalid Range
       no_options: No options available
       order_by: Order By
