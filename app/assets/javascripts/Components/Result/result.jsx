@@ -769,11 +769,12 @@ class Result extends React.Component {
     });
   };
 
-  updateStateFilterData = new_filters => {
-    this.setState({filterData: new_filters});
+  updateFilterData = new_filters => {
+    const filters = {...this.state.filterData, ...new_filters};
+    this.setState({filterData: filters});
   };
 
-  resetStateFilterData = () => {
+  resetFilterData = () => {
     this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
   };
 
@@ -818,14 +819,14 @@ class Result extends React.Component {
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
           filterData={this.state.filterData}
-          mutateFilterData={this.updateStateFilterData}
-          clearAllFilters={this.resetStateFilterData}
+          updateFilterData={this.updateFilterData}
+          clearAllFilters={this.resetFilterData}
           sections={this.state.sections}
           tas={this.state.tas}
           available_tags={this.state.available_tags}
           current_tags={this.state.current_tags}
-          role={this.props.role}
           loading={this.state.loading}
+          criterionSummaryData={this.state.criterionSummaryData}
         />
         <div key="panes-content" id="panes-content">
           <div id="panes">

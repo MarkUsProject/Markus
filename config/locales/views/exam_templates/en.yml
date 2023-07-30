@@ -90,6 +90,11 @@ en:
       instruction: Papers to upload (.pdf)
       invalid: Invalid file type
       missing: Missing File
+      on_duplicate:
+        error: Duplicated pages are marked as errors
+        ignore: Duplicated pages are ignored
+        instruction: 'When an uploaded page is a duplicate of an existing page:'
+        overwrite: Duplicated pages overwrite existing pages
       search_failure: Exam Template to format upload not found
       success: Scans successfully uploaded
       title: Upload Scans

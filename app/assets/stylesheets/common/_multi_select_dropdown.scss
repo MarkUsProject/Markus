@@ -1,0 +1,57 @@
+@import 'constants';
+@import 'filter_modal_dropdown';
+
+.dropdown.multi-select-dropdown {
+  @include filter-modal-dropdown;
+  padding: 0.25em;
+
+  .tags-box {
+    display: inline-block;
+    height: 22px;
+    overflow-y: auto;
+    width: $dropdown-horizontal - 50px;
+
+    .tag {
+      border: 1px solid $primary-three;
+      border-radius: $radius;
+      display: inline-block;
+      font-size: x-small;
+      margin: 1pt;
+      padding: 0.1em 0.2em;
+
+      span {
+        margin-right: 0.25em;
+      }
+    }
+  }
+
+  ul {
+    li {
+      > div {
+        display: inline-block;
+      }
+
+      > span {
+        margin-left: 2pt;
+      }
+
+      .fa-square,
+      .fa-square-check {
+        color: $primary-one;
+      }
+
+      &:hover,
+      &.active {
+        .fa-square-check,
+        .fa-square {
+          color: $background-main;
+        }
+      }
+    }
+  }
+
+  .options {
+    display: inline-flex;
+    padding: 0.25em;
+  }
+}

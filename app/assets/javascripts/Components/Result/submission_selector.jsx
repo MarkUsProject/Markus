@@ -125,7 +125,7 @@ export class SubmissionSelector extends React.Component {
         <button
           className="button filter"
           onClick={this.onOpenFilterModal}
-          title={I18n.t("results.filter_modal")}
+          title={I18n.t("results.filter_submissions")}
         >
           <FontAwesomeIcon icon="fa-solid fa-filter" className="no-padding" />
         </button>
@@ -160,7 +160,7 @@ export class SubmissionSelector extends React.Component {
             isOpen={this.state.showFilterModal}
             onRequestClose={() => this.setState({showFilterModal: false})}
             filterData={this.props.filterData}
-            mutateFilterData={this.props.mutateFilterData}
+            updateFilterData={this.props.updateFilterData}
             clearAllFilters={this.props.clearAllFilters}
             sections={this.props.sections}
             tas={this.props.tas}
@@ -168,6 +168,7 @@ export class SubmissionSelector extends React.Component {
             current_tags={this.props.current_tags}
             loading={this.props.loading}
             role={this.props.role}
+            criterionSummaryData={this.props.criterionSummaryData}
           />
         </div>
       );

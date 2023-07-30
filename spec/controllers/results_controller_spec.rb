@@ -491,6 +491,7 @@ describe ResultsController do
         end
       end
     end
+
     context 'when filtering by criteria' do
       let(:assignment) { grouping1.assignment }
       let!(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
@@ -791,6 +792,7 @@ describe ResultsController do
           end
         end
       end
+
       context 'order by total mark' do
         let(:assignment) { grouping1.assignment }
         let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
