@@ -160,17 +160,33 @@ export class FilterModal extends React.Component {
   addCriteria = criteria => {
     let newArray = [...this.props.filterData.criteria];
     newArray.push(criteria);
-    this.props.mutateFilterData({
-      ...this.props.filterData,
+    this.props.updateFilterData({
       criteria: newArray,
+    });
+  };
+
+  onCriteriaMinChange = (e, criteria) => {
+    let criterion = [...this.props.filterData.criteria];
+    let i = criterion.findIndex(obj => obj.name === criteria);
+    criterion[i].min = e.target.value;
+    this.props.updateFilterData({
+      criteria: criterion,
+    });
+  };
+
+  onCriteriaMaxChange = (e, criteria) => {
+    let criterion = [...this.props.filterData.criteria];
+    let i = criterion.findIndex(obj => obj.name === criteria);
+    criterion[i].max = e.target.value;
+    this.props.updateFilterData({
+      criteria: criterion,
     });
   };
 
   deleteCriteria = criteria => {
     let newArray = [...this.props.filterData.criteria];
-    this.props.mutateFilterData({
-      ...this.props.filterData,
-      criteria: newArray.filter(item => item.name !== criteria.name),
+    this.props.updateFilterData({
+      criteria: newArray.filter(item => item.name !== criteria),
     });
   };
 
@@ -315,10 +331,12 @@ export class FilterModal extends React.Component {
             </div>
             <div className={"modal-container-vertical"}>
               <CriteriaFilter
-                options={["a", "b", "c", "d", "e"]}
+                options={this.props.criterionSummaryData}
                 criteria={[...this.props.filterData.criteria]}
                 addCriteria={this.addCriteria}
                 removeCriteria={this.deleteCriteria}
+                onMinChange={this.onCriteriaMinChange}
+                onMaxChange={this.onCriteriaMaxChange}
               />
             </div>
           </div>

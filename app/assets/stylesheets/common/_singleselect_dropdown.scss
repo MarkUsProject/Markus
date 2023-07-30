@@ -1,7 +1,7 @@
 @import 'constants';
 @import 'filter_modal_dropdown';
 
-.dropdown.singleselect-dropdown {
+.dropdown.single-select-dropdown {
   @include filter-modal-dropdown;
 
   a {

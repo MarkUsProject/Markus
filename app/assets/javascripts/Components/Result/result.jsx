@@ -826,6 +826,7 @@ class Result extends React.Component {
           available_tags={this.state.available_tags}
           current_tags={this.state.current_tags}
           loading={this.state.loading}
+          criterionSummaryData={this.state.criterionSummaryData}
         />
         <div key="panes-content" id="panes-content">
           <div id="panes">

@@ -13,7 +13,7 @@ export class SingleSelectDropDown extends React.Component {
     this.setState({expanded: false});
   };
 
-  renderDropdown = (options, selected, expanded) => {
+  renderDropdown = (options, selected, expanded, disabled) => {
     if (expanded) {
       if (options.length === 0) {
         return (
@@ -27,15 +27,23 @@ export class SingleSelectDropDown extends React.Component {
         return (
           <ul data-testid={"options"}>
             {options.map(option => {
-              return (
-                <li key={option} onClick={e => this.onSelect(e, option)}>
-                  <span>
-                    {this.props.valueToDisplayName != null
-                      ? this.props.valueToDisplayName[option]
-                      : option}
-                  </span>
-                </li>
-              );
+              if (disabled && disabled.includes(option)) {
+                return (
+                  <li key={option} className={"disabled"}>
+                    <span>{option}</span>
+                  </li>
+                );
+              } else {
+                return (
+                  <li key={option} onClick={e => this.onSelect(e, option)}>
+                    <span>
+                      {this.props.valueToDisplayName != null
+                        ? this.props.valueToDisplayName[option]
+                        : option}
+                    </span>
+                  </li>
+                );
+              }
             })}
           </ul>
         );
@@ -55,6 +63,7 @@ export class SingleSelectDropDown extends React.Component {
     let selected = this.props.selected;
     let options = this.props.options;
     let expanded = this.state.expanded;
+    let disabled = this.props.disabled;
 
     return (
       <div
@@ -81,7 +90,7 @@ export class SingleSelectDropDown extends React.Component {
           <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
         </div>
 
-        {expanded && this.renderDropdown(options, selected, expanded)}
+        {expanded && this.renderDropdown(options, selected, expanded, disabled)}
       </div>
     );
   }

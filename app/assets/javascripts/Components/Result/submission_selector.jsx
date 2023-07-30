@@ -168,6 +168,7 @@ export class SubmissionSelector extends React.Component {
             current_tags={this.props.current_tags}
             loading={this.props.loading}
             role={this.props.role}
+            criterionSummaryData={this.props.criterionSummaryData}
           />
         </div>
       );

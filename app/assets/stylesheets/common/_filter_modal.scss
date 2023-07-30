@@ -28,8 +28,8 @@
 
   .range {
     background: $background-main;
-    max-width: $dropdown-horizontal;
     min-height: 30px;
+    width: $dropdown-horizontal;
 
     > span {
       margin-left: 10px;
