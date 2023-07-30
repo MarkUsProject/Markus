@@ -63,7 +63,7 @@ export class CriteriaFilter extends React.Component {
 
   addCriterion = e => {
     e.preventDefault();
-    this.props.addCriterion({name: this.state.name});
+    this.props.addCriterion({name: this.state.criterion});
     this.setState({
       criterion: "",
     });
@@ -84,9 +84,9 @@ export class CriteriaFilter extends React.Component {
                 return option.criterion;
               })
               .sort()}
-            selected={this.state.name}
+            selected={this.state.criterion}
             onSelect={selection => {
-              this.setState({name: selection});
+              this.setState({criterion: selection});
             }}
             disabled={this.props.criteria.map(criterion => {
               return criterion.name;
