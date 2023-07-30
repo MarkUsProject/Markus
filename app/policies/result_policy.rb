@@ -9,7 +9,6 @@ class ResultPolicy < ApplicationPolicy
   alias_rule :refresh_view_tokens?, :update_view_token_expiry?, to: :set_released_to_students?
 
   authorize :view_token, optional: true
-  authorize :filter_data, optional: true, allow_nil: true
 
   def view?
     check?(:manage_submissions?, role) || check?(:assigned_grader?, record.grouping) ||
