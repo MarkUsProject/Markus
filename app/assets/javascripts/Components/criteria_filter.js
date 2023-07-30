@@ -6,7 +6,7 @@ export class CriteriaFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      criterion: "",
     };
   }
 
@@ -65,7 +65,7 @@ export class CriteriaFilter extends React.Component {
     e.preventDefault();
     this.props.addCriterion({name: this.state.name});
     this.setState({
-      name: "",
+      criterion: "",
     });
   };
 
@@ -95,7 +95,7 @@ export class CriteriaFilter extends React.Component {
           <button
             className={"add-criterion"}
             onClick={e => this.addCriterion(e)}
-            disabled={this.state.name === ""}
+            disabled={this.state.criterion === ""}
           >
             {I18n.t("results.filters.add_criterion")}
           </button>
