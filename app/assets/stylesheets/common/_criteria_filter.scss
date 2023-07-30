@@ -3,7 +3,7 @@
 .criteria-filter {
   box-shadow: 0 0 2px 0.5px $line;
   height: 410px;
-  min-width: 220px;
+  max-width: fit-content;
   padding: 10px;
 
   .add-criterion {
