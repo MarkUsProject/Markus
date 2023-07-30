@@ -824,12 +824,12 @@ class Grouping < ApplicationRecord
       results = results.joins(marks: :criterion)
       filtered_results = results.ids
       filter_data['criteria'].each do |criteria|
-        unless criteria['min'].nil?
+        if criteria['min'].present?
           filtered_results = results.where('results.id': filtered_results)
                                     .where('criteria.name = ? AND marks.mark >= ?',
                                            criteria['name'], criteria['min'].to_f).ids
         end
-        unless criteria['max'].nil?
+        if criteria['max'].present?
           filtered_results = results.where('results.id': filtered_results)
                                     .where('criteria.name = ? AND marks.mark <= ?',
                                            criteria['name'], criteria['max'].to_f).ids
