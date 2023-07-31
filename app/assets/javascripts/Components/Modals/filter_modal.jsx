@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 import {CriteriaFilter} from "../criteria_filter";
-
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class FilterModal extends React.Component {
@@ -157,7 +156,7 @@ export class FilterModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  addCriterion = criterion => {
+  onAddCriterion = criterion => {
     let criteria = [...this.props.filterData.criteria];
     criteria.push(criterion);
     this.props.updateFilterData({
@@ -183,7 +182,7 @@ export class FilterModal extends React.Component {
     });
   };
 
-  deleteCriterion = criterion => {
+  onDeleteCriterion = criterion => {
     let criteria = [...this.props.filterData.criteria];
     this.props.updateFilterData({
       criteria: criteria.filter(item => item.name !== criterion),
@@ -333,8 +332,8 @@ export class FilterModal extends React.Component {
               <CriteriaFilter
                 options={this.props.criterionSummaryData}
                 criteria={[...this.props.filterData.criteria]}
-                addCriterion={this.addCriterion}
-                removeCriterion={this.deleteCriterion}
+                onAddCriterion={this.onAddCriterion}
+                onDeleteCriterion={this.onDeleteCriterion}
                 onMinChange={this.onCriterionMinChange}
                 onMaxChange={this.onCriterionMaxChange}
               />
