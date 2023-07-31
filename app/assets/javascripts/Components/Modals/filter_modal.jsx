@@ -329,7 +329,7 @@ export class FilterModal extends React.Component {
                 )}
               </div>
             </div>
-            <div className={"modal-container-vertical"}>
+            <div className={"modal-container-vertical"} data-testid={"criteria"}>
               <CriteriaFilter
                 options={this.props.criterionSummaryData}
                 criteria={[...this.props.filterData.criteria]}
