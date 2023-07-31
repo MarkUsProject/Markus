@@ -910,6 +910,7 @@ class Grouping < ApplicationRecord
     results = results.group([:id, 'groups.group_name'])
     total_marks = Result.get_total_marks(results.ids)
     result_data = results.pluck('results.id', 'groups.group_name')
+    curr_result_total = self.current_result.get_total_mark
     result_data.each do |el|
       el.append(total_marks[el[0]])
     end
@@ -917,15 +918,15 @@ class Grouping < ApplicationRecord
     result_data = result_data.sort_by { |result| [result[2], result[1]] }
     if ascending
       sat_indices = result_data.each_index.select do |i|
-        result_data[i][2] > self.current_result.get_total_mark || (
-              result_data[i][2] == self.current_result.get_total_mark && result_data[i][1] > self.group.group_name
+        result_data[i][2] > curr_result_total || (
+              result_data[i][2] == curr_result_total && result_data[i][1] > self.group.group_name
             )
       end
       next_res_index = sat_indices[0]
     else
       sat_indices = result_data.each_index.select do |i|
-        result_data[i][2] < self.current_result.get_total_mark || (
-              result_data[i][2] == self.current_result.get_total_mark && result_data[i][1] < self.group.group_name
+        result_data[i][2] < curr_result_total || (
+              result_data[i][2] == curr_result_total && result_data[i][1] < self.group.group_name
             )
       end
       next_res_index = sat_indices[-1]
