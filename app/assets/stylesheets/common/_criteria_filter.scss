@@ -29,6 +29,10 @@
         margin-bottom: 10px;
         width: $dropdown-horizontal - 10px;
 
+        .clickable {
+          cursor: pointer;
+        }
+
         span {
           display: inline-block;
           max-width: 150px;

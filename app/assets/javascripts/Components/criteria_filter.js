@@ -16,7 +16,7 @@ export class CriteriaFilter extends React.Component {
         <div className={"criterion-title"}>
           <span>{criterion}</span>
           <div
-            className={"float-right"}
+            className={"float-right clickable"}
             onClick={() => this.props.onDeleteCriterion(criterion)}
             data-testid={"remove-criterion"}
           >
