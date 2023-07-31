@@ -16,8 +16,8 @@ export class CriteriaFilter extends React.Component {
         <div className={"criterion-title"}>
           <span>{criterion}</span>
           <div
-            className={"float-right"}
-            onClick={() => this.removeCriterion(criterion)}
+            className={"float-right clickable"}
+            onClick={() => this.props.onDeleteCriterion(criterion)}
             data-testid={"remove-criterion"}
           >
             <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
@@ -65,16 +65,12 @@ export class CriteriaFilter extends React.Component {
     );
   };
 
-  addCriterion = e => {
+  onAddCriterion = e => {
     e.preventDefault();
-    this.props.addCriterion({name: this.state.criterion});
+    this.props.onAddCriterion({name: this.state.criterion});
     this.setState({
       criterion: "",
     });
-  };
-
-  removeCriterion = criterion => {
-    this.props.removeCriterion(criterion);
   };
 
   render() {
@@ -99,7 +95,7 @@ export class CriteriaFilter extends React.Component {
           />
           <button
             className={"add-criterion"}
-            onClick={e => this.addCriterion(e)}
+            onClick={e => this.onAddCriterion(e)}
             disabled={this.state.criterion === ""}
           >
             {I18n.t("results.filters.add_criterion")}
