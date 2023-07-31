@@ -15,7 +15,11 @@ export class CriteriaFilter extends React.Component {
       <li key={criterion}>
         <div className={"criterion-title"}>
           <span>{criterion}</span>
-          <div className={"float-right"} onClick={() => this.removeCriterion(criterion)}>
+          <div
+            className={"float-right"}
+            onClick={() => this.removeCriterion(criterion)}
+            data-testid={"remove-criterion"}
+          >
             <FontAwesomeIcon icon="fa-solid fa-xmark" className={"x-mark"} />
           </div>
         </div>
