@@ -26,12 +26,18 @@
       display: block;
       list-style: none;
       margin-bottom: 10px;
-    }
 
-    .criterion-title {
-      display: inline-block;
-      margin-bottom: 10px;
-      width: $dropdown-horizontal - 10px;
+      .criterion-title {
+        display: inline-block;
+        margin-bottom: 10px;
+        width: $dropdown-horizontal - 10px;
+
+        span {
+          display: inline-block;
+          max-width: 150px;
+          word-wrap: break-word;
+        }
+      }
     }
   }
 }
