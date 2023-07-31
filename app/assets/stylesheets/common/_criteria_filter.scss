@@ -7,13 +7,18 @@
   height: 410px;
   padding: 10px;
 
-  .add-criterion {
-    margin-top: 10px;
+  .title {
+    max-width: fit-content;
+
+    .add-criterion {
+      margin-top: 10px;
+    }
   }
 
   .criteria-list {
     margin-top: 20px;
     max-height: 250px;
+    max-width: fit-content;
     overflow-y: auto;
     padding: 0;
 

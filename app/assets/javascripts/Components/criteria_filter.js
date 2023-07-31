@@ -76,7 +76,7 @@ export class CriteriaFilter extends React.Component {
   render() {
     return (
       <div className={"criteria-filter"}>
-        <div>
+        <div className={"title"}>
           <p>{I18n.t("activerecord.models.criterion.other")}</p>
           <SingleSelectDropDown
             options={this.props.options
@@ -91,6 +91,7 @@ export class CriteriaFilter extends React.Component {
             disabled={this.props.criteria.map(criterion => {
               return criterion.name;
             })}
+            defaultValue={""}
           />
           <button
             className={"add-criterion"}
