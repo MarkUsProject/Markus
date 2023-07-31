@@ -753,6 +753,11 @@ class Grouping < ApplicationRecord
   # float. 'max' is the maximum and 'min' is the minimum total mark a result should have.
   # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
+  # +filter_data['criteria']+ is a list of hashes containing information about criteria to filter by. Each hash
+  # should contain a unique criterion name and can contain the keys 'min' and/or 'max' each mapping to a string
+  # representing a float. 'max' is the maximum and 'min' is the minimum grade for a given criterion a result should
+  # have. If both 'max' and 'min' are blank (a whitespace string/nil), filtering for the corresponding criterion will
+  # not occur.
   # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
   # or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as determined by
   # `.blank?`), no filtering will occur for the corresponding option.
@@ -843,8 +848,8 @@ class Grouping < ApplicationRecord
 
   # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
   # +reversed+ is a boolean value, true to return the next grouping and false to return the previous one.
-  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name" and
-  # "submission_date". When this value is not specified (or nil), default ordering is applied.
+  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name",
+  # "submission_date" and "total_mark". When this value is not specified (or nil), default ordering is applied.
   # +filter_data['ascending']+ specifies whether results should be ordered in ascending or descending order. Valid
   # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order). When
   # this value is not specified (or nil), the results are ordered in ascending order.
