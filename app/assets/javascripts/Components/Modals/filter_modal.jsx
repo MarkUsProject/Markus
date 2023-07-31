@@ -234,6 +234,7 @@ export class FilterModal extends React.Component {
                   />
                   <div className={"order"} data-testid={"radio-group"}>
                     <input
+                      className={"filter-order"}
                       type="radio"
                       checked={this.props.filterData.ascending}
                       name="order"
@@ -243,8 +244,11 @@ export class FilterModal extends React.Component {
                       id={"Asc"}
                       data-testid={"ascending"}
                     />
-                    <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
+                    <label className={"filter-order"} htmlFor="Asc">
+                      {I18n.t("results.filters.ordering.ascending")}
+                    </label>
                     <input
+                      className={"filter-order"}
                       type="radio"
                       checked={!this.props.filterData.ascending}
                       name="order"
@@ -254,7 +258,9 @@ export class FilterModal extends React.Component {
                       id={"Desc"}
                       data-testid={"descending"}
                     />
-                    <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
+                    <label className={"filter-order"} htmlFor="Desc">
+                      {I18n.t("results.filters.ordering.descending")}
+                    </label>
                   </div>
                 </div>
                 <div className={"filter"} data-testid={"marking-state"}>

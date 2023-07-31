@@ -916,19 +916,19 @@ class Grouping < ApplicationRecord
     # index 0 = id, index 1 = group name, index 2 = total mark
     result_data = result_data.sort_by { |result| [result[2], result[1]] }
     if ascending
-      sat_indicies = result_data.each_index.select do |i|
+      sat_indices = result_data.each_index.select do |i|
         result_data[i][2] > self.current_result.get_total_mark || (
               result_data[i][2] == self.current_result.get_total_mark && result_data[i][1] > self.group.group_name
             )
       end
-      next_res_index = sat_indicies[0]
+      next_res_index = sat_indices[0]
     else
-      sat_indicies = result_data.each_index.select do |i|
+      sat_indices = result_data.each_index.select do |i|
         result_data[i][2] < self.current_result.get_total_mark || (
               result_data[i][2] == self.current_result.get_total_mark && result_data[i][1] < self.group.group_name
             )
       end
-      next_res_index = sat_indicies[-1]
+      next_res_index = sat_indices[-1]
     end
     if !next_res_index.nil? && next_res_index >= 0 && next_res_index < result_data.length
       return results.find(result_data[next_res_index][0]).grouping
