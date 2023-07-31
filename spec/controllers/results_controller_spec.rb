@@ -505,7 +505,7 @@ describe ResultsController do
         create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 3
       end
 
-      context 'when a single criteria specified' do
+      context 'when a single criteria is specified' do
         context 'when only min is specified' do
           before(:each) { mark2a.update(mark: 0) }
           it 'should not select the next grouping whose result does not satisfy the conditions' do
