@@ -754,10 +754,10 @@ class Grouping < ApplicationRecord
   # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
   # +filter_data['criteria']+ is a list of hashes containing information about criteria to filter by. Each hash
-  # should contain a unique criterion name and can contain the keys 'min' and/or 'max' each mapping to a string
-  # representing a float. 'max' is the maximum and 'min' is the minimum grade for a given criterion a result should
-  # have. If both 'max' and 'min' are blank (a whitespace string/nil), filtering for the corresponding criterion will
-  # not occur.
+  # should contain the key 'name' mapping to a string corresponding to the criterion name and can contain the keys
+  # 'min' and/or 'max' each mapping to a string representing a float. 'max' is the maximum and 'min' is the minimum
+  # grade for the given criterion a result should have. If both 'max' and 'min' are blank (a whitespace string/nil),
+  # filtering for the corresponding criterion will not occur.
   # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
   # or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as determined by
   # `.blank?`), no filtering will occur for the corresponding option.
