@@ -821,10 +821,8 @@ class Grouping < ApplicationRecord
       filter_data['criteria'].each do |criteria|
         if criteria['min'].present? && criteria['max'].present?
           temp_results = temp_results.or(results
-                                           .where('criteria.name = ? AND marks.mark >= ? AND criteria.name = ? ' \
-                                                  'AND marks.mark <= ?',
-                                                  criteria['name'], criteria['min'].to_f, criteria['name'],
-                                                  criteria['max'].to_f))
+                                           .where('criteria.name = ? AND marks.mark >= ? AND marks.mark <= ?',
+                                                  criteria['name'], criteria['min'].to_f, criteria['max'].to_f))
         elsif criteria['min'].present?
           temp_results = temp_results.or(results
                                     .where('criteria.name = ? AND marks.mark >= ?',
