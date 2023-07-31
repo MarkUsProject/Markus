@@ -2,8 +2,9 @@
 
 .criteria-filter {
   box-shadow: 0 0 2px 0.5px $line;
+  display: flex;
+  flex-direction: column;
   height: 410px;
-  max-width: fit-content;
   padding: 10px;
 
   .add-criterion {
