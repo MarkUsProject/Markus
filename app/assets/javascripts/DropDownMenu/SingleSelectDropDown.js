@@ -30,7 +30,11 @@ export class SingleSelectDropDown extends React.Component {
               if (disabled && disabled.includes(option)) {
                 return (
                   <li key={option} className={"disabled"}>
-                    <span>{option}</span>
+                    <span>
+                      {this.props.valueToDisplayName != null
+                        ? this.props.valueToDisplayName[option]
+                        : option}
+                    </span>
                   </li>
                 );
               } else {
