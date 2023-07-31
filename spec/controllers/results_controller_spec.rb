@@ -562,6 +562,23 @@ describe ResultsController do
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
+        context 'when min and max are not specified' do
+          it 'should get the next grouping without any constraints applied' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1' }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
+        context 'when min and max are empty strings' do
+          it 'should get the next grouping without any constraints applied' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
+                                                                                   min: '', max: '' }] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
       end
 
       context 'when multiple criteria are specified' do
