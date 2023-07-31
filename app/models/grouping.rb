@@ -931,7 +931,7 @@ class Grouping < ApplicationRecord
       end
       next_res_index = sat_indices[-1]
     end
-    if !next_res_index.nil? && next_res_index >= 0 && next_res_index < result_data.length
+    unless next_res_index.nil?
       return results.find(result_data[next_res_index][0]).grouping
     end
     nil
