@@ -29,8 +29,8 @@ describe("Criteria Filter", () => {
     ],
     onMinChange: jest.fn().mockImplementation(() => null),
     onMaxChange: jest.fn().mockImplementation(() => null),
-    addCriterion: jest.fn().mockImplementation(() => null),
-    removeCriterion: jest.fn().mockImplementation(() => null),
+    onAddCriterion: jest.fn().mockImplementation(() => null),
+    onDeleteCriterion: jest.fn().mockImplementation(() => null),
   };
 
   beforeEach(() => {
@@ -85,7 +85,7 @@ describe("Criteria Filter", () => {
 
       //add criterion
       fireEvent.click(button);
-      expect(props.addCriterion).toHaveBeenCalledWith({name: "e"});
+      expect(props.onAddCriterion).toHaveBeenCalledWith({name: "e"});
     });
   });
 
@@ -114,14 +114,14 @@ describe("Criteria Filter", () => {
   });
 
   describe("when deleting a criterion", () => {
-    it("should remove the criterion", () => {
+    it("should delete the criterion", () => {
       const listItems = screen.getAllByRole("listitem");
       const listItem = listItems[0];
       const xmark = within(listItem).getByTestId("remove-criterion");
 
       fireEvent.click(xmark);
 
-      expect(props.removeCriterion).toHaveBeenCalledWith("a");
+      expect(props.onDeleteCriterion).toHaveBeenCalledWith("a");
     });
   });
 });
