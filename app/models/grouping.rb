@@ -817,20 +817,26 @@ class Grouping < ApplicationRecord
     end
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)
-      filtered_results = results.ids
+      temp_results = results.where('results.id': -1) # nothing should satisfy this
       filter_data['criteria'].each do |criteria|
-        if criteria['min'].present?
-          filtered_results = results.where('results.id': filtered_results)
+        if criteria['min'].present? && criteria['max'].present?
+          temp_results = temp_results.or(results
+                                           .where('criteria.name = ? AND marks.mark >= ? AND marks.mark <= ?',
+                                                  criteria['name'], criteria['min'].to_f, criteria['max'].to_f))
+        elsif criteria['min'].present?
+          temp_results = temp_results.or(results
                                     .where('criteria.name = ? AND marks.mark >= ?',
-                                           criteria['name'], criteria['min'].to_f).ids
-        end
-        if criteria['max'].present?
-          filtered_results = results.where('results.id': filtered_results)
+                                           criteria['name'], criteria['min'].to_f))
+        elsif criteria['max'].present?
+          temp_results = temp_results.or(results
                                     .where('criteria.name = ? AND marks.mark <= ?',
-                                           criteria['name'], criteria['max'].to_f).ids
+                                           criteria['name'], criteria['max'].to_f))
+        else
+          temp_results = temp_results.or(results
+                                           .where(criteria: { name: criteria['name'] }))
         end
       end
-      results = results.where('results.id': filtered_results)
+      results = temp_results.group(:id).having("count(results.id) >= #{filter_data['criteria'].length}")
     end
     results.joins(grouping: :group)
   end

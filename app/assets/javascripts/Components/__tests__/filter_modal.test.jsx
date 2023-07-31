@@ -258,7 +258,6 @@ describe("FilterModal", () => {
 
           // resetting the dropdown value
           fireEvent.click(within(dropdownDiv).getByTestId("reset-dropdown-selection"));
-
           expect(props.updateFilterData).toHaveBeenCalled();
         });
       };
