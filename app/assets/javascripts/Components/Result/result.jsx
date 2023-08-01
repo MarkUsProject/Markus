@@ -69,11 +69,29 @@ class Result extends React.Component {
 
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
+
+    if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
+      localStorage.removeItem("file");
+      localStorage.removeItem("filterData");
+    }
+    localStorage.setItem("assignment_id", this.state.assignment_id);
+
+    this.refreshFilterData();
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.result_id !== prevState.result_id) {
       this.componentDidMount();
+    }
+    if (
+      prevState.assignment_id !== this.state.assignment_id ||
+      (prevState.loading && !this.state.loading)
+    ) {
+      if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
+        localStorage.removeItem("file");
+        localStorage.removeItem("filterData");
+      }
+      localStorage.setItem("assignment_id", this.state.assignment_id);
     }
   }
 
@@ -768,13 +786,25 @@ class Result extends React.Component {
     });
   };
 
+  refreshFilterData = () => {
+    const storedFilter = localStorage.getItem("filterData");
+    if (storedFilter) {
+      this.setState({filterData: JSON.parse(storedFilter)});
+    } else {
+      this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+      localStorage.removeItem("filterData");
+    }
+  };
+
   updateFilterData = new_filters => {
     const filters = {...this.state.filterData, ...new_filters};
     this.setState({filterData: filters});
+    localStorage.setItem("filterData", JSON.stringify(filters));
   };
 
   resetFilterData = () => {
     this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+    localStorage.setItem("filterData", JSON.stringify(INITIAL_FILTER_MODAL_STATE));
   };
 
   render() {
