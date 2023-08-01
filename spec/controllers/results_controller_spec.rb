@@ -829,7 +829,7 @@ describe ResultsController do
               it 'should return the next grouping with a larger total mark' do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
-                                              direction: 1, filterData: { ascending: 'true', orderBy: 'Total Mark' } }
+                                              direction: 1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
             end
@@ -841,7 +841,7 @@ describe ResultsController do
                 mark3.update(mark: 1)
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
-                                              direction: 1, filterData: { ascending: 'true', orderBy: 'Total Mark' } }
+                                              direction: 1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
             end
@@ -852,7 +852,7 @@ describe ResultsController do
               it 'should return the grouping with the next smallest group name with the same total mark' do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
-                                              direction: -1, filterData: { ascending: 'true', orderBy: 'Total Mark' } }
+                                              direction: -1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -864,7 +864,7 @@ describe ResultsController do
                 mark3.update(mark: 1)
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
-                                              direction: -1, filterData: { ascending: 'true', orderBy: 'Total Mark' } }
+                                              direction: -1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -877,7 +877,7 @@ describe ResultsController do
               it 'should return the grouping with the next smallest total mark' do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
-                                              direction: 1, filterData: { ascending: 'false', orderBy: 'Total Mark' } }
+                                              direction: 1, filterData: { ascending: 'false', orderBy: 'total_mark' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -886,7 +886,7 @@ describe ResultsController do
               it 'should return the grouping with the next smallest group name with the same total mark' do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
-                                              direction: 1, filterData: { ascending: 'false', orderBy: 'Total Mark' } }
+                                              direction: 1, filterData: { ascending: 'false', orderBy: 'total_mark' } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
               end
             end
@@ -898,7 +898,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: -1, filterData: {
-                                                ascending: 'false', orderBy: 'Total Mark'
+                                                ascending: 'false', orderBy: 'total_mark'
                                               } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
@@ -912,7 +912,7 @@ describe ResultsController do
                 get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
                                               id: grouping2.current_result.id,
                                               direction: -1, filterData: {
-                                                ascending: 'false', orderBy: 'Total Mark'
+                                                ascending: 'false', orderBy: 'total_mark'
                                               } }
                 expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
               end
