@@ -242,9 +242,9 @@ class ExamTemplate < ApplicationRecord
     cover = pdf.pages[0]
     cover_page = CombinePDF.new
     cover_page << cover
-    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
-      self.quality = 100
-      self.density = '300'
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do |options|
+      options.quality = 100
+      options.density = '300'
     end
     imglist.first.write(File.join(self.base_path, 'cover.jpg'))
   end
