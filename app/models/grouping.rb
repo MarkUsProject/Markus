@@ -841,7 +841,7 @@ class Grouping < ApplicationRecord
                                            .where(criteria: { name: criteria['name'] }))
         end
       end
-      results = temp_results.group(:id).having("count(results.id) >= #{filter_data['criteria'].length}")
+      results = temp_results.group(:id).having('count(results.id) >= ?', filter_data['criteria'].length)
     end
     results.joins(grouping: :group)
   end
