@@ -907,29 +907,23 @@ class Grouping < ApplicationRecord
   # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
   # If there is no next grouping, nil is returned.
   def next_grouping_ordered_total_mark(results, ascending)
+    # if the current result isn't present in results, add it for future processing
+    results = results.or(Result.where('results.id': self.current_result.id))
     result_data = results.pluck('results.id', 'groups.group_name').uniq { |id, _| id }
     total_marks = Result.get_total_marks(result_data.map { |id, _| id })
-    curr_result_total = self.current_result.get_total_mark
     result_data.each do |el|
       el.append(total_marks[el[0]])
     end
     result_data = result_data.sort_by { |_, group_name, total_mark| [total_mark, group_name] }
-    if ascending
-      sat_indices = result_data.each_index.select do |i|
-        result_data[i][2] > curr_result_total || (
-              result_data[i][2] == curr_result_total && result_data[i][1] > self.group.group_name
-            )
-      end
-      next_res_index = sat_indices[0]
-    else
-      sat_indices = result_data.each_index.select do |i|
-        result_data[i][2] < curr_result_total || (
-              result_data[i][2] == curr_result_total && result_data[i][1] < self.group.group_name
-            )
-      end
-      next_res_index = sat_indices[-1]
+    curr_res_index = result_data.bsearch_index do |_, group_name, total_mark|
+      [total_marks[self.current_result.id], self.group.group_name] <=> [total_mark, group_name]
     end
-    unless next_res_index.nil?
+    if ascending
+      next_res_index = curr_res_index + 1
+    else
+      next_res_index = curr_res_index - 1
+    end
+    if next_res_index >= 0 && next_res_index < result_data.length
       return Result.find(result_data[next_res_index][0]).grouping
     end
     nil
