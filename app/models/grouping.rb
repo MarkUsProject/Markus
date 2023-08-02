@@ -830,12 +830,12 @@ class Grouping < ApplicationRecord
                                                   criteria['name'], criteria['min'].to_f, criteria['max'].to_f))
         elsif criteria['min'].present?
           temp_results = temp_results.or(results
-                                    .where('criteria.name = ? AND marks.mark >= ?',
-                                           criteria['name'], criteria['min'].to_f))
+                                           .where('criteria.name = ? AND marks.mark >= ?',
+                                                  criteria['name'], criteria['min'].to_f))
         elsif criteria['max'].present?
           temp_results = temp_results.or(results
-                                    .where('criteria.name = ? AND marks.mark <= ?',
-                                           criteria['name'], criteria['max'].to_f))
+                                           .where('criteria.name = ? AND marks.mark <= ?',
+                                                  criteria['name'], criteria['max'].to_f))
         else
           temp_results = temp_results.or(results
                                            .where(criteria: { name: criteria['name'] }))
