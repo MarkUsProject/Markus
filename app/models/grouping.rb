@@ -913,8 +913,7 @@ class Grouping < ApplicationRecord
     result_data.each do |el|
       el.append(total_marks[el[0]])
     end
-    # index 0 = id, index 1 = group name, index 2 = total mark
-    result_data = result_data.sort_by { |result| [result[2], result[1]] }
+    result_data = result_data.sort_by { |_, group_name, total_mark| [total_mark, group_name] }
     if ascending
       sat_indices = result_data.each_index.select do |i|
         result_data[i][2] > curr_result_total || (
