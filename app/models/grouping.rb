@@ -907,9 +907,8 @@ class Grouping < ApplicationRecord
   # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
   # If there is no next grouping, nil is returned.
   def next_grouping_ordered_total_mark(results, ascending)
-    results = results.group([:id, 'groups.group_name'])
-    total_marks = Result.get_total_marks(results.ids)
-    result_data = results.pluck('results.id', 'groups.group_name')
+    result_data = results.pluck('results.id', 'groups.group_name').uniq { |id, _| id }
+    total_marks = Result.get_total_marks(result_data.map { |id, _| id })
     curr_result_total = self.current_result.get_total_mark
     result_data.each do |el|
       el.append(total_marks[el[0]])
@@ -932,7 +931,7 @@ class Grouping < ApplicationRecord
       next_res_index = sat_indices[-1]
     end
     unless next_res_index.nil?
-      return results.find(result_data[next_res_index][0]).grouping
+      return Result.find(result_data[next_res_index][0]).grouping
     end
     nil
   end
