@@ -822,7 +822,7 @@ class Grouping < ApplicationRecord
     end
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)
-      temp_results = results.where('results.id': -1) # nothing should satisfy this
+      temp_results = Result.none
       filter_data['criteria'].each do |criteria|
         if criteria['min'].present? && criteria['max'].present?
           temp_results = temp_results.or(results
