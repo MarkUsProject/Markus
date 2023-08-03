@@ -32,12 +32,12 @@ describe("FilterModal", () => {
             min: "",
             max: "",
           },
-          criteria: [
-            {name: "a", min: 0, max: 10},
-            {name: "b", min: 0},
-            {name: "c", max: 10},
-            {name: "d", min: 10, max: 0},
-          ],
+          criteria: {
+            a: {min: 0, max: 10},
+            b: {min: 0},
+            c: {max: 10},
+            d: {min: 10, max: 0},
+          },
         },
         available_tags: [{name: "a"}, {name: "b"}],
         current_tags: [{name: "c"}, {name: "d"}],
