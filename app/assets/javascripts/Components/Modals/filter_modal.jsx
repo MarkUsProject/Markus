@@ -157,35 +157,34 @@ export class FilterModal extends React.Component {
   }
 
   onAddCriterion = criterion => {
-    let criteria = [...this.props.filterData.criteria];
-    criteria.push(criterion);
+    let criteria = {...this.props.filterData.criteria};
+    criteria[criterion] = {};
     this.props.updateFilterData({
       criteria: criteria,
     });
   };
 
   onCriterionMinChange = (e, criterion) => {
-    let criteria = [...this.props.filterData.criteria];
-    let i = criteria.findIndex(obj => obj.name === criterion);
-    criteria[i].min = e.target.value;
+    let criteria = {...this.props.filterData.criteria};
+    criteria[criterion].min = e.target.value;
     this.props.updateFilterData({
       criteria: criteria,
     });
   };
 
   onCriterionMaxChange = (e, criterion) => {
-    let criteria = [...this.props.filterData.criteria];
-    let i = criteria.findIndex(obj => obj.name === criterion);
-    criteria[i].max = e.target.value;
+    let criteria = {...this.props.filterData.criteria};
+    criteria[criterion].max = e.target.value;
     this.props.updateFilterData({
       criteria: criteria,
     });
   };
 
   onDeleteCriterion = criterion => {
-    let criteria = [...this.props.filterData.criteria];
+    let criteria = {...this.props.filterData.criteria};
+    delete criteria[criterion];
     this.props.updateFilterData({
-      criteria: criteria.filter(item => item.name !== criterion),
+      criteria: criteria,
     });
   };
 
@@ -337,7 +336,7 @@ export class FilterModal extends React.Component {
             <div className={"modal-container-vertical"} data-testid={"criteria"}>
               <CriteriaFilter
                 options={this.props.criterionSummaryData}
-                criteria={[...this.props.filterData.criteria]}
+                criteria={this.props.filterData.criteria}
                 onAddCriterion={this.onAddCriterion}
                 onDeleteCriterion={this.onDeleteCriterion}
                 onMinChange={this.onCriterionMinChange}
