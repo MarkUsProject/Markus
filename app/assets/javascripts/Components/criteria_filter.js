@@ -6,7 +6,7 @@ export class CriteriaFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      criterion: "",
+      selectedCriterion: "",
     };
   }
 
@@ -55,11 +55,11 @@ export class CriteriaFilter extends React.Component {
   };
 
   renderSelectedCriteria = () => {
-    const criteria = this.props.criteria;
+    const criteria = Object.entries(this.props.criteria);
     return (
       <ul className={"criteria-list"}>
         {criteria.map(criterion => {
-          return this.criterionRange(criterion.min, criterion.max, criterion.name);
+          return this.criterionRange(criterion[1].min, criterion[1].max, criterion[0]);
         })}
       </ul>
     );
@@ -67,9 +67,9 @@ export class CriteriaFilter extends React.Component {
 
   onAddCriterion = e => {
     e.preventDefault();
-    this.props.onAddCriterion({name: this.state.criterion});
+    this.props.onAddCriterion(this.state.selectedCriterion);
     this.setState({
-      criterion: "",
+      selectedCriterion: "",
     });
   };
 
@@ -79,24 +79,18 @@ export class CriteriaFilter extends React.Component {
         <div className={"title"}>
           <p>{I18n.t("activerecord.models.criterion.other")}</p>
           <SingleSelectDropDown
-            options={this.props.options
-              .map(option => {
-                return option.criterion;
-              })
-              .sort()}
-            selected={this.state.criterion}
+            options={this.props.options.map(option => option.criterion).sort()}
+            selected={this.state.selectedCriterion}
             onSelect={selection => {
-              this.setState({criterion: selection});
+              this.setState({selectedCriterion: selection});
             }}
-            disabled={this.props.criteria.map(criterion => {
-              return criterion.name;
-            })}
+            disabled={Object.keys(this.props.criteria)}
             defaultValue={""}
           />
           <button
             className={"add-criterion"}
             onClick={e => this.onAddCriterion(e)}
-            disabled={this.state.criterion === ""}
+            disabled={this.state.selectedCriterion === ""}
           >
             {I18n.t("results.filters.add_criterion")}
           </button>

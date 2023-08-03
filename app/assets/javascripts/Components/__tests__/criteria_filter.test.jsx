@@ -14,12 +14,12 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
 describe("Criteria Filter", () => {
   let props = {
-    criteria: [
-      {name: "a", min: 0, max: 10},
-      {name: "b", min: 0},
-      {name: "c", max: 10},
-      {name: "d", min: 10, max: 0},
-    ],
+    criteria: {
+      a: {min: 0, max: 10},
+      b: {min: 0},
+      c: {max: 10},
+      d: {min: 10, max: 0},
+    },
     options: [
       {criterion: "a"},
       {criterion: "b"},
@@ -85,7 +85,7 @@ describe("Criteria Filter", () => {
 
       //add criterion
       fireEvent.click(button);
-      expect(props.onAddCriterion).toHaveBeenCalledWith({name: "e"});
+      expect(props.onAddCriterion).toHaveBeenCalledWith("e");
     });
   });
 

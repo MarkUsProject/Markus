@@ -33,7 +33,7 @@ const INITIAL_FILTER_MODAL_STATE = {
     min: "",
     max: "",
   },
-  criteria: [],
+  criteria: {},
 };
 
 class Result extends React.Component {
