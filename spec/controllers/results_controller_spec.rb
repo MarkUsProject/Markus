@@ -511,16 +511,18 @@ describe ResultsController do
           it 'should not select the next grouping whose result does not satisfy the conditions' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   min: 1 }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
           end
 
           it 'should select the next grouping whose result satisfies the conditions' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   min: 1 }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
@@ -530,16 +532,18 @@ describe ResultsController do
           it 'should not select the next grouping whose result does not satisfy the conditions' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   max: 3 }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            max: 3
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
           end
 
           it 'should select the next grouping whose result satisfies the conditions' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   max: 3 }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            max: 3
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
@@ -549,16 +553,18 @@ describe ResultsController do
           it 'should not select the next grouping whose result does not satisfy the conditions' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   min: 1, max: 3 }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1, max: 3
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
           end
 
           it 'should select the next grouping whose result satisfies the conditions' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   min: 1, max: 3 }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1, max: 3
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
@@ -566,7 +572,7 @@ describe ResultsController do
           it 'should get the next grouping without any constraints applied' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1' }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {} } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
           end
         end
@@ -574,8 +580,9 @@ describe ResultsController do
           it 'should get the next grouping without any constraints applied' do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
-                                          direction: 1, filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                                   min: '', max: '' }] } }
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: '', max: ''
+                                          } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
           end
         end
@@ -596,9 +603,8 @@ describe ResultsController do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
                                           direction: 1,
-                                          filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                     min: 1, max: 3 }, { name: 'Flexible criterion 2',
-                                                                                         min: 1, max: 3 }] } }
+                                          filterData: { criteria: { 'Flexible criterion 1': { min: 1, max: 3 },
+                                                                    'Flexible criterion 2': { min: 1, max: 3 } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
           it 'should not select the next grouping whose result does not satisfy the conditions' do
@@ -607,9 +613,8 @@ describe ResultsController do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
                                           direction: 1,
-                                          filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                     min: 1, max: 3 }, { name: 'Flexible criterion 2',
-                                                                                         min: 1, max: 3 }] } }
+                                          filterData: { criteria: { 'Flexible criterion 1': { min: 1, max: 3 },
+                                                                    'Flexible criterion 2': { min: 1, max: 3 } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
           it 'should select the next grouping whose result satisfies the conditions' do
@@ -618,9 +623,8 @@ describe ResultsController do
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
                                           direction: 1,
-                                          filterData: { criteria: [{ name: 'Flexible criterion 1',
-                                                                     min: 1, max: 3 }, { name: 'Flexible criterion 2',
-                                                                                         min: 1, max: 3 }] } }
+                                          filterData: { criteria: { 'Flexible criterion 1': { min: 1, max: 3 },
+                                                                    'Flexible criterion 2': { min: 1, max: 3 } } } }
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
