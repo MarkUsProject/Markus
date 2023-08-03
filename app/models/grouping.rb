@@ -823,7 +823,9 @@ class Grouping < ApplicationRecord
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)
       temp_results = Result.none
+      num_criteria = 0
       filter_data['criteria'].each do |name, range|
+        num_criteria += 1
         if range.present? && range['min'].present? && range['max'].present?
           temp_results = temp_results.or(results
                                            .where('criteria.name = ? AND marks.mark >= ? AND marks.mark <= ?',
@@ -841,7 +843,7 @@ class Grouping < ApplicationRecord
                                            .where(criteria: { name: name }))
         end
       end
-      results = temp_results.group(:id).having('count(results.id) >= ?', filter_data['criteria'].count)
+      results = temp_results.group(:id).having('count(results.id) >= ?', num_criteria)
     end
     results.joins(grouping: :group)
   end
