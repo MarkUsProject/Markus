@@ -753,8 +753,8 @@ class Grouping < ApplicationRecord
   # float. 'max' is the maximum and 'min' is the minimum total mark a result should have.
   # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
-  # +filter_data['criteria']+ is a list of hashes containing information about criteria to filter by. Each hash
-  # should contain the key 'name' mapping to a string corresponding to the criterion name and can contain the keys
+  # +filter_data['criteria']+ is hash containing information about criteria to filter by. Each key
+  # should be a string corresponding to the criterion name and can contain a hash with keys
   # 'min' and/or 'max' each mapping to a string representing a float. 'max' is the maximum and 'min' is the minimum
   # grade for the given criterion a result should have. If both 'max' and 'min' are blank (a whitespace string/nil),
   # filtering for the corresponding criterion will not occur.
@@ -823,25 +823,25 @@ class Grouping < ApplicationRecord
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)
       temp_results = Result.none
-      filter_data['criteria'].each do |criteria|
-        if criteria['min'].present? && criteria['max'].present?
+      filter_data['criteria'].each do |name, range|
+        if range.present? && range['min'].present? && range['max'].present?
           temp_results = temp_results.or(results
                                            .where('criteria.name = ? AND marks.mark >= ? AND marks.mark <= ?',
-                                                  criteria['name'], criteria['min'].to_f, criteria['max'].to_f))
-        elsif criteria['min'].present?
+                                                  name, range['min'].to_f, range['max'].to_f))
+        elsif range.present? && range['min'].present?
           temp_results = temp_results.or(results
                                            .where('criteria.name = ? AND marks.mark >= ?',
-                                                  criteria['name'], criteria['min'].to_f))
-        elsif criteria['max'].present?
+                                                  name, range['min'].to_f))
+        elsif range.present? && range['max'].present?
           temp_results = temp_results.or(results
                                            .where('criteria.name = ? AND marks.mark <= ?',
-                                                  criteria['name'], criteria['max'].to_f))
+                                                  name, range['max'].to_f))
         else
           temp_results = temp_results.or(results
-                                           .where(criteria: { name: criteria['name'] }))
+                                           .where(criteria: { name: name }))
         end
       end
-      results = temp_results.group(:id).having('count(results.id) >= ?', filter_data['criteria'].length)
+      results = temp_results.group(:id).having('count(results.id) >= ?', filter_data['criteria'].count)
     end
     results.joins(grouping: :group)
   end
