@@ -42,16 +42,23 @@ class SplitPdfJob < ApplicationJob
         original_pdf = File.binread(File.join(raw_dir, "#{split_page.id}.pdf"))
 
         # convert PDF to an image
-        img = Magick::Image.from_blob(original_pdf) do
-          self.quality = 100
-          self.density = '200'
+        img = Magick::Image.from_blob(original_pdf) do |options|
+          options.quality = 100
+          options.density = '200'
         end.first
 
         qr_file_location = File.join(raw_dir, "#{split_page.id}.jpg")
         img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
         img.destroy!
         code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
-        m = code_regex.match(ZXing.decode(qr_file_location)) || code_regex.match(RTesseract.new(qr_file_location).to_s)
+        python_exe = Rails.application.config.python
+        read_qr_py_file = Rails.root.join('lib/scanner/read_qr_code.py').to_s
+        stdout, status = Open3.capture2(python_exe, read_qr_py_file, qr_file_location)
+        if status.success?
+          m = code_regex.match(stdout)
+        else
+          m = code_regex.match(RTesseract.new(qr_file_location).to_s)
+        end
         status = ''
 
         if m.nil?
@@ -234,9 +241,9 @@ class SplitPdfJob < ApplicationJob
         next unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
         begin
           # convert PDF to an image
-          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
-            self.quality = 100
-            self.density = '300'
+          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do |options|
+            options.quality = 100
+            options.density = '300'
           end
         rescue StandardError
           next
