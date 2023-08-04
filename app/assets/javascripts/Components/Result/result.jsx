@@ -73,7 +73,6 @@ class Result extends React.Component {
 
     if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
       localStorage.removeItem("file");
-      localStorage.removeItem("filterData");
     }
     localStorage.setItem("assignment_id", this.state.assignment_id);
 
@@ -90,7 +89,6 @@ class Result extends React.Component {
     ) {
       if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
         localStorage.removeItem("file");
-        localStorage.removeItem("filterData");
       }
       localStorage.setItem("assignment_id", this.state.assignment_id);
     }
@@ -114,8 +112,62 @@ class Result extends React.Component {
           initializePanes();
           fix_panes();
           this.updateContextMenu();
+          if (this.state.role !== "Student") {
+            this.syncFilterData();
+          }
         });
       });
+  };
+
+  syncFilterData = () => {
+    this.syncSection(this.state.filterData["section"], this.state.sections);
+    this.syncTags(
+      this.state.filterData["tags"],
+      this.state.available_tags.concat(...this.state.current_tags)
+    );
+    this.syncCriteria(
+      this.state.filterData["criteria"],
+      this.state.criterionSummaryData.map(criterion_info => criterion_info.criterion)
+    );
+    if (this.state.role === "Instructor") {
+      this.syncGraders(
+        this.state.filterData["tas"],
+        this.state.tas.map(ta_info => ta_info[0])
+      );
+    }
+  };
+
+  syncSection = (sectionSelection, sectionData) => {
+    if (!sectionData.includes(sectionSelection) && sectionSelection !== "") {
+      this.updateFilterData({section: INITIAL_FILTER_MODAL_STATE["section"]});
+    }
+  };
+
+  syncTags = (tagSelections, tagData) => {
+    let existsInTagData = potentialTag => tagData.some(tag => tag.name === potentialTag);
+    let syncedTags = tagSelections.filter(tag => existsInTagData(tag));
+    if (syncedTags.length !== tagSelections.length) {
+      this.updateFilterData({tags: syncedTags});
+    }
+  };
+
+  syncGraders = (graderSelections, graderData) => {
+    let syncedGraders = graderSelections.filter(grader => graderData.includes(grader));
+    if (syncedGraders.length !== graderSelections.length) {
+      this.updateFilterData({tas: syncedGraders});
+    }
+  };
+
+  syncCriteria = (criteriaSelections, criteriaData) => {
+    let criteriaSelectionNames = Object.keys(criteriaSelections);
+    let unSyncedCriteria = criteriaSelectionNames.filter(
+      criterion => !criteriaData.includes(criterion)
+    );
+    if (unSyncedCriteria.length !== 0) {
+      let newCriteria = {...criteriaSelections};
+      unSyncedCriteria.forEach(criterion => delete newCriteria[criterion]);
+      this.updateFilterData({criteria: newCriteria});
+    }
   };
 
   /* Processing result data */
@@ -788,24 +840,31 @@ class Result extends React.Component {
   };
 
   refreshFilterData = () => {
-    const storedFilter = localStorage.getItem("filterData");
+    const storedFilter = localStorage.getItem(
+      `${this.props.user_id}_${this.state.assignment_id}_filterData`
+    );
     if (storedFilter) {
       this.setState({filterData: JSON.parse(storedFilter)});
     } else {
       this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
-      localStorage.removeItem("filterData");
     }
   };
 
   updateFilterData = new_filters => {
     const filters = {...this.state.filterData, ...new_filters};
     this.setState({filterData: filters});
-    localStorage.setItem("filterData", JSON.stringify(filters));
+    localStorage.setItem(
+      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
+      JSON.stringify(filters)
+    );
   };
 
   resetFilterData = () => {
     this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
-    localStorage.setItem("filterData", JSON.stringify(INITIAL_FILTER_MODAL_STATE));
+    localStorage.setItem(
+      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
+      JSON.stringify(INITIAL_FILTER_MODAL_STATE)
+    );
   };
 
   render() {
