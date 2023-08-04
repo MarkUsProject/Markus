@@ -112,7 +112,7 @@ class Result extends React.Component {
           initializePanes();
           fix_panes();
           this.updateContextMenu();
-          if (this.state.role !== "Student") {
+          if (this.props.role !== "Student") {
             this.syncFilterData();
           }
         });
