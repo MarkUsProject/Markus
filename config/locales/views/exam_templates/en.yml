@@ -3,8 +3,12 @@ en:
   exam_templates:
     assign_errors:
       copy_number: Copy Number
-      document_info: Document Info
+      document_info: Page Information
+      errors:
+        file_not_found: File "%{filename}" not found
+        invalid_page_number: Invalid page number %{page_num}
       fix_errors: Fix
+      help: Manually enter paper copy number and page number for pages where QR code scanning failed.
       page_number: Page Number
       upside_down: Page Upside Down?
     assign_scans:
