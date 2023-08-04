@@ -52,6 +52,10 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   refreshSelectedFile = () => {
+    if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
+      localStorage.removeItem("file");
+    }
+    localStorage.setItem("assignment_id", this.state.assignment_id);
     let selectedFile = [];
     const stored_file = localStorage.getItem("file");
     if (!this.state.student_view && stored_file) {

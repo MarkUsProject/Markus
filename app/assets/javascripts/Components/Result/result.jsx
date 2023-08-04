@@ -71,26 +71,12 @@ class Result extends React.Component {
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
 
-    if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
-      localStorage.removeItem("file");
-    }
-    localStorage.setItem("assignment_id", this.state.assignment_id);
-
     this.refreshFilterData();
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.result_id !== prevState.result_id) {
       this.componentDidMount();
-    }
-    if (
-      prevState.assignment_id !== this.state.assignment_id ||
-      (prevState.loading && !this.state.loading)
-    ) {
-      if (localStorage.getItem("assignment_id") !== String(this.state.assignment_id)) {
-        localStorage.removeItem("file");
-      }
-      localStorage.setItem("assignment_id", this.state.assignment_id);
     }
   }
 
