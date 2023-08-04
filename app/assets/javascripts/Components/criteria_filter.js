@@ -79,7 +79,7 @@ export class CriteriaFilter extends React.Component {
         <div className={"title"}>
           <p>{I18n.t("activerecord.models.criterion.other")}</p>
           <SingleSelectDropDown
-            options={this.props.options.map(option => option.criterion).sort()}
+            options={this.props.options.map(option => option.criterion)}
             selected={this.state.selectedCriterion}
             onSelect={selection => {
               this.setState({selectedCriterion: selection});

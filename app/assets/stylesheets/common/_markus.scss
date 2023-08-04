@@ -1053,8 +1053,8 @@ nav {
     }
 
     li:not(.section) {
-      &:hover,
-      &.active {
+      &:not(.disabled):hover,
+      &:not(.disabled).active {
         background: $sub-menu;
         color: $background-main;
 
@@ -1066,7 +1066,7 @@ nav {
       &.disabled {
         background: $disabled-area;
         border-color: $disabled-area;
-        pointer-events: none;
+        cursor: default;
       }
     }
 
