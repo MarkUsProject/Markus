@@ -129,7 +129,7 @@ class Result extends React.Component {
       this.state.filterData["criteria"],
       this.state.criterionSummaryData.map(criterion_info => criterion_info.criterion)
     );
-    if (this.state.role === "Instructor") {
+    if (this.props.role === "Instructor") {
       this.syncGraders(
         this.state.filterData["tas"],
         this.state.tas.map(ta_info => ta_info[0])
