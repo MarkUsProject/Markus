@@ -1,7 +1,7 @@
 @import 'constants';
 
 .criteria-filter {
-  box-shadow: 0 0 2px 0.5px $line;
+  border-left: $disabled-area solid 1.5px;
   height: 410px;
   padding: 10px;
 
