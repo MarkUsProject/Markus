@@ -20,7 +20,10 @@
       padding: 0.1em 0.2em;
 
       span {
+        display: inline-block;
         margin-right: 0.25em;
+        max-width: 100px;
+        word-wrap: break-word;
       }
     }
   }

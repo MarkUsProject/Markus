@@ -32,6 +32,12 @@ describe("FilterModal", () => {
             min: "",
             max: "",
           },
+          criteria: {
+            a: {min: 0, max: 10},
+            b: {min: 0},
+            c: {max: 10},
+            d: {min: 10, max: 0},
+          },
         },
         available_tags: [{name: "a"}, {name: "b"}],
         current_tags: [{name: "c"}, {name: "d"}],
@@ -47,6 +53,13 @@ describe("FilterModal", () => {
         updateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
         role: role,
+        criterionSummaryData: [
+          {criterion: "a"},
+          {criterion: "b"},
+          {criterion: "c"},
+          {criterion: "d"},
+          {criterion: "e"},
+        ],
       };
 
       // Set the app element for React Modal
@@ -157,7 +170,7 @@ describe("FilterModal", () => {
       };
 
       let rangeOnInput = test_id => {
-        it("inputs should be valid when passed valid range", () => {
+        it("should update props on input", () => {
           const filter = screen.getByTestId(test_id);
           const minInput = within(filter).getByPlaceholderText(/Min/i);
           const maxInput = within(filter).getByPlaceholderText(/Max/i);
@@ -290,6 +303,63 @@ describe("FilterModal", () => {
           expect(within(dropdownDiv).getByText("Released")).toBeInTheDocument();
           expect(within(dropdownDiv).getByText("Remark Requested")).toBeInTheDocument();
         });
+      });
+    });
+
+    describe("Criteria Filter", () => {
+      it("should render the criteria filter component", () => {
+        expect(screen.getByText("Criteria")).toBeInTheDocument();
+      });
+
+      it("should add the selected criterion", () => {
+        const criteria = screen.getByTestId("criteria");
+        const dropdown = within(criteria).getByTestId("dropdown");
+        const button = within(criteria).getByRole("button", {hidden: true});
+
+        //select option
+        fireEvent.click(dropdown);
+        fireEvent.click(within(dropdown).getByText("e"));
+
+        //add criterion
+        fireEvent.click(button);
+        expect(props.updateFilterData).toHaveBeenCalled();
+      });
+
+      it("should delete a criterion", () => {
+        const criteria = screen.getByTestId("criteria");
+        const listItems = within(criteria).getAllByRole("listitem", {hidden: true});
+        const listItem = listItems[0];
+        const xmark = within(listItem).getByTestId("remove-criterion");
+
+        fireEvent.click(xmark);
+
+        expect(props.updateFilterData).toHaveBeenCalled();
+      });
+
+      it("should update minimum value on input", () => {
+        const criteria = screen.getByTestId("criteria");
+        const listItems = within(criteria).getAllByRole("listitem", {hidden: true});
+        const listItem = listItems[0];
+        const minInput = within(listItem).getByPlaceholderText("Min");
+
+        fireEvent.change(minInput, {
+          target: {value: 1},
+        });
+
+        expect(props.updateFilterData).toHaveBeenCalled();
+      });
+
+      it("should update maximum value on input", () => {
+        const criteria = screen.getByTestId("criteria");
+        const listItems = within(criteria).getAllByRole("listitem", {hidden: true});
+        const listItem = listItems[0];
+        const maxInput = within(listItem).getByPlaceholderText("Max");
+
+        fireEvent.change(maxInput, {
+          target: {value: 1},
+        });
+
+        expect(props.updateFilterData).toHaveBeenCalled();
       });
     });
   };

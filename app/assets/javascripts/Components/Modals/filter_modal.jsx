@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
+import {CriteriaFilter} from "../criteria_filter";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class FilterModal extends React.Component {
@@ -155,6 +156,38 @@ export class FilterModal extends React.Component {
     Modal.setAppElement("body");
   }
 
+  onAddCriterion = criterion => {
+    let criteria = {...this.props.filterData.criteria};
+    criteria[criterion] = {};
+    this.props.updateFilterData({
+      criteria: criteria,
+    });
+  };
+
+  onCriterionMinChange = (e, criterion) => {
+    let criteria = {...this.props.filterData.criteria};
+    criteria[criterion].min = e.target.value;
+    this.props.updateFilterData({
+      criteria: criteria,
+    });
+  };
+
+  onCriterionMaxChange = (e, criterion) => {
+    let criteria = {...this.props.filterData.criteria};
+    criteria[criterion].max = e.target.value;
+    this.props.updateFilterData({
+      criteria: criteria,
+    });
+  };
+
+  onDeleteCriterion = criterion => {
+    let criteria = {...this.props.filterData.criteria};
+    delete criteria[criterion];
+    this.props.updateFilterData({
+      criteria: criteria,
+    });
+  };
+
   onClearFilters = event => {
     event.preventDefault();
     this.props.clearAllFilters();
@@ -186,8 +219,9 @@ export class FilterModal extends React.Component {
                     valueToDisplayName={{
                       group_name: I18n.t("activerecord.attributes.group.group_name"),
                       submission_date: I18n.t("submissions.commit_date"),
+                      total_mark: I18n.t("results.total_mark"),
                     }}
-                    options={["group_name", "submission_date"]}
+                    options={["group_name", "submission_date", "total_mark"]}
                     selected={this.props.filterData.orderBy}
                     onSelect={selection => {
                       this.props.updateFilterData({
@@ -198,6 +232,7 @@ export class FilterModal extends React.Component {
                   />
                   <div className={"order"} data-testid={"radio-group"}>
                     <input
+                      className={"filter-order"}
                       type="radio"
                       checked={this.props.filterData.ascending}
                       name="order"
@@ -207,8 +242,11 @@ export class FilterModal extends React.Component {
                       id={"Asc"}
                       data-testid={"ascending"}
                     />
-                    <label htmlFor="Asc">{I18n.t("results.filters.ordering.ascending")}</label>
+                    <label className={"filter-order"} htmlFor="Asc">
+                      {I18n.t("results.filters.ordering.ascending")}
+                    </label>
                     <input
+                      className={"filter-order"}
                       type="radio"
                       checked={!this.props.filterData.ascending}
                       name="order"
@@ -218,7 +256,9 @@ export class FilterModal extends React.Component {
                       id={"Desc"}
                       data-testid={"descending"}
                     />
-                    <label htmlFor="Desc">{I18n.t("results.filters.ordering.descending")}</label>
+                    <label className={"filter-order"} htmlFor="Desc">
+                      {I18n.t("results.filters.ordering.descending")}
+                    </label>
                   </div>
                 </div>
                 <div className={"filter"} data-testid={"marking-state"}>
@@ -292,6 +332,16 @@ export class FilterModal extends React.Component {
                   this.onTotalExtraMarkMaxChange
                 )}
               </div>
+            </div>
+            <div className={"modal-container-vertical"} data-testid={"criteria"}>
+              <CriteriaFilter
+                options={this.props.criterionSummaryData}
+                criteria={this.props.filterData.criteria}
+                onAddCriterion={this.onAddCriterion}
+                onDeleteCriterion={this.onDeleteCriterion}
+                onMinChange={this.onCriterionMinChange}
+                onMaxChange={this.onCriterionMaxChange}
+              />
             </div>
           </div>
           <div className={"modal-footer"}>

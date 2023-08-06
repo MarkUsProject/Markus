@@ -753,9 +753,13 @@ class Grouping < ApplicationRecord
   # float. 'max' is the maximum and 'min' is the minimum total mark a result should have.
   # +filter_data['totalExtraMarkRange']+ is a hash with the keys 'min' and 'max' each mapping to a string representing
   # a float. 'max' is the maximum and 'min' is the minimum total extra mark a result should have.
-  # To avoid filtering by any of the specified filters, don't set values for the corresponding key in +filter_data+
-  # or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as determined by
-  # `.blank?`), no filtering will occur for the corresponding option.
+  # +filter_data['criteria']+ is hash containing information about criteria to filter by. Each key should be a string
+  # corresponding to the criterion name and should map to a hash with keys 'min' and/or 'max' each mapping to a string
+  # representing a float. 'max' is the maximum and 'min' is the minimum grade for the given criterion a result should
+  # have. If both 'max' and 'min' are blank (a whitespace string/nil), filtering for the corresponding criterion will
+  # not occur. To avoid filtering by any of the specified filters, don't set values for the corresponding key in
+  # +filter_data+ or set it to nil. If the value for a key is blank (false, empty, or a whitespace string, as
+  # determined by `.blank?`), no filtering will occur for the corresponding option.
   def filter_results(current_role, results, filter_data)
     if filter_data['annotationText'].present?
       results = results.joins(annotations: :annotation_text)
@@ -815,13 +819,38 @@ class Grouping < ApplicationRecord
       end
       results = Result.where('results.id': total_marks_hash.keys)
     end
+    if filter_data['criteria'].present?
+      results = results.joins(marks: :criterion)
+      temp_results = Result.none
+      num_criteria = 0
+      filter_data['criteria'].each do |name, range|
+        num_criteria += 1
+        if range.present? && range['min'].present? && range['max'].present?
+          temp_results = temp_results.or(results
+                                           .where('criteria.name = ? AND marks.mark >= ? AND marks.mark <= ?',
+                                                  name, range['min'].to_f, range['max'].to_f))
+        elsif range.present? && range['min'].present?
+          temp_results = temp_results.or(results
+                                           .where('criteria.name = ? AND marks.mark >= ?',
+                                                  name, range['min'].to_f))
+        elsif range.present? && range['max'].present?
+          temp_results = temp_results.or(results
+                                           .where('criteria.name = ? AND marks.mark <= ?',
+                                                  name, range['max'].to_f))
+        else
+          temp_results = temp_results.or(results
+                                           .where(criteria: { name: name }))
+        end
+      end
+      results = temp_results.group(:id).having('count(results.id) >= ?', num_criteria)
+    end
     results.joins(grouping: :group)
   end
 
   # Orders the results, specified as +results+ by using +filter_data+ and returns the next grouping using +reversed+.
   # +reversed+ is a boolean value, true to return the next grouping and false to return the previous one.
-  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name" and
-  # "submission_date". When this value is not specified (or nil), default ordering is applied.
+  # +filter_data['orderBy']+ specifies how the results should be ordered, with valid values being "group_name",
+  # "submission_date" and "total_mark". When this value is not specified (or nil), default ordering is applied.
   # +filter_data['ascending']+ specifies whether results should be ordered in ascending or descending order. Valid
   # options include "true" (corresponding to ascending order) or "false" (corresponding to descending order). When
   # this value is not specified (or nil), the results are ordered in ascending order.
@@ -831,6 +860,8 @@ class Grouping < ApplicationRecord
     case filter_data['orderBy']
     when 'submission_date'
       next_grouping_ordered_submission_date(results, ascending)
+    when 'total_mark'
+      next_grouping_ordered_total_mark(results, ascending)
     else # group name/otherwise
       next_grouping_ordered_group_name(results, ascending)
     end
@@ -871,6 +902,32 @@ class Grouping < ApplicationRecord
                                       self.current_submission_used.revision_timestamp)).last
     end
     next_result&.grouping
+  end
+
+  # Gets the next grouping by first ordering +results+ by total mark in either ascending
+  # (+ascending+ = true) or descending (+ascending+ = false) order and then extracting the next grouping.
+  # If there is no next grouping, nil is returned.
+  def next_grouping_ordered_total_mark(results, ascending)
+    # if the current result isn't present in results, add it for future processing
+    results = results.or(Result.where('results.id': self.current_result.id))
+    result_data = results.pluck('results.id', 'groups.group_name').uniq { |id, _| id }
+    total_marks = Result.get_total_marks(result_data.map { |id, _| id })
+    result_data.each do |el|
+      el.append(total_marks[el[0]])
+    end
+    result_data = result_data.sort_by { |_, group_name, total_mark| [total_mark, group_name] }
+    curr_res_index = result_data.bsearch_index do |_, group_name, total_mark|
+      [total_marks[self.current_result.id], self.group.group_name] <=> [total_mark, group_name]
+    end
+    if ascending
+      next_res_index = curr_res_index + 1
+    else
+      next_res_index = curr_res_index - 1
+    end
+    if next_res_index >= 0 && next_res_index < result_data.length
+      return Result.find(result_data[next_res_index][0]).grouping
+    end
+    nil
   end
 
   def add_assignment_folder(group_repo)
