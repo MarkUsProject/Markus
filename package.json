@@ -52,7 +52,7 @@
     "jsdom-worker": "^0.3.0",
     "mini-css-extract-plugin": "^2.7.6",
     "sass": "^1.64.2",
-    "sass-loader": "^13.2.2",
+    "sass-loader": "^13.3.2",
     "webpack": "^5.85.0",
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.9.0"
