@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@babel/runtime": "^7.21.0",
+    "@babel/runtime": "^7.22.6",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",
-    "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "^7.21.5",
-    "@babel/preset-react": "^7.22.3",
+    "@babel/plugin-transform-runtime": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.5",
     "babel-jest": "^29.4.3",
