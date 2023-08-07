@@ -1,3 +1,2 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
-# TODO: Replace commit hash after @ with better solution or fix the requirements checker in python.rb
-markus_exam_matcher @ git+https://github.com/MarkUsProject/markus-exam-matcher.git@90845c3a1f8cc1dead7f09dd045a41518d447aba
+markus-exam-matcher~=0.1.0
