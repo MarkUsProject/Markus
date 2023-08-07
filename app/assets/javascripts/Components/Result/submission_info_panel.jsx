@@ -43,6 +43,10 @@ export class SubmissionInfoPanel extends React.Component {
             <p>{this.props.members.join(", ")}</p>
           </React.Fragment>
         )}
+        <h3>{I18n.t("activerecord.attributes.assignment.due_date")}</h3>
+        <p>{this.props.due_date}</p>
+        <h3>{I18n.t("submissions.repo_browser.submitted_at")}</h3>
+        <p>{this.props.submission_time}</p>
         <h3>{I18n.t("tags.results.current_tags")}</h3>
         <ul className="tag-list">{this.renderTagList()}</ul>
         <h3>{I18n.t("tags.results.available_tags")}</h3>
