@@ -32,6 +32,8 @@
 - Fix bug where in some cases flash messages were not being rendered correctly (#6670)
 - Enable duplicate pages when uploading scanned exams to overwrite existing pages or be ignored (#6674)
 - Extended the filter modal to allow graders to order results by total mark and filter them by criteria (#6669)
+- Validate copy and page number when fixing errors with scanned exams (#6695)
+- Display due date and submission time in result "Submission Info" tab (#6698)
 - Added "Help" link to the MarkUs page header dropdown (#6702)
 
 ## [v2.2.3]

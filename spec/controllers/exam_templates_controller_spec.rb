@@ -155,6 +155,111 @@ describe ExamTemplatesController do
       end
     end
 
+    describe '#fix_error' do
+      let(:split_pdf_log) { create :split_pdf_log, exam_template: exam_template }
+      let(:split_page) { create :split_page, split_pdf_log: split_pdf_log }
+      let(:split_page_id) { split_page.id }
+      let(:copy_number) { 1 }
+      let(:page_number) { 1 }
+
+      before do
+        filename = "#{split_page_id}.pdf"
+        error_file = File.join(exam_template.base_path, 'error', filename)
+        complete_page = File.join(exam_template.base_path, 'complete', copy_number.to_s, page_number.to_s)
+        incomplete_page = File.join(exam_template.base_path, 'incomplete', copy_number.to_s, page_number.to_s)
+
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with(error_file).and_return(true)
+        allow(File).to receive(:exist?).with(complete_page).and_return(false)
+        allow(File).to receive(:exist?).with(incomplete_page).and_return(false)
+        post_as user, :fix_error,
+                params: { course_id: course.id,
+                          id: exam_template.id,
+                          commit: 'Save',
+                          split_page_id: split_page_id,
+                          copy_number: copy_number,
+                          page_number: page_number }
+      end
+
+      context 'when the split page id does not exist' do
+        let(:split_page_id) { -1 }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the error page does not exist' do
+        it 'reports an error', skip_before: true do
+          post_as user, :fix_error,
+                  params: { course_id: course.id,
+                            id: exam_template.id,
+                            commit: 'Save',
+                            split_page_id: split_page_id,
+                            copy_number: copy_number,
+                            page_number: page_number }
+
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the copy number is blank' do
+        let(:copy_number) { nil }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the copy number is not an int' do
+        let(:copy_number) { 'not an int' }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the copy number is invalid' do
+        let(:copy_number) { -1 }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the page number is blank' do
+        let(:page_number) { nil }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the page number is invalid' do
+        let(:page_number) { 'not an int' }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the page number exceeds the exam template page count' do
+        let(:page_number) { exam_template.num_pages + 1 }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+    end
+
     describe '#view_logs' do
       before { get_as user, :view_logs, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
