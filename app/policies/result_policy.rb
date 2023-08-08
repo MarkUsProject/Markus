@@ -51,8 +51,8 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def update_mark?
-    assignment = record.grouping.assignment
     assigned_to_criterion = true
+    assignment = record.grouping.assignment
     if assignment.assign_graders_to_criteria && role.ta?
       assigned_to_criterion = role.criterion_ta_associations.where(criterion_id: criterion_id).present?
     end
