@@ -40,6 +40,7 @@ export class ImageViewer extends React.PureComponent {
     window.annotation_type = ANNOTATION_TYPES.IMAGE;
 
     $(".annotation_holder").remove();
+    $(".annotation_holder_remark").remove();
     window.annotation_manager = new ImageAnnotationManager(!this.props.released_to_students);
     this.annotation_manager = window.annotation_manager;
   };
@@ -51,6 +52,10 @@ export class ImageViewer extends React.PureComponent {
     } else {
       content +=
         annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
+    }
+
+    if (annotation.is_remark) {
+      content += ` (${I18n.t("results.annotation.remark_flag")})`;
     }
 
     let originalImgH = document.getElementById("image_preview").height;
@@ -123,7 +128,8 @@ export class ImageViewer extends React.PureComponent {
           end: Math.floor(midHeightRotated + corners[0][1]),
         },
       },
-      annotation.id
+      annotation.id,
+      annotation.is_remark
     );
   };
 

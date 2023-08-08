@@ -1119,6 +1119,10 @@ nav {
   z-index: 1;
 }
 
+.remark {
+  background: $darker-orange;
+}
+
 .annotation-holder-active {
   background: $annotation-holder;
   border: 3px solid $severe-error;
