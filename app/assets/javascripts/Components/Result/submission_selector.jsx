@@ -1,9 +1,16 @@
 import React from "react";
-import {render} from "react-dom";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {FilterModal} from "../Modals/filter_modal";
 
 export class SubmissionSelector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showFilterModal: false,
+    };
+  }
+
   renderToggleMarkingStateButton = () => {
     let buttonText, className, disabled, icon;
     if (this.props.marking_state === "complete") {
@@ -108,6 +115,24 @@ export class SubmissionSelector extends React.Component {
     );
   }
 
+  onOpenFilterModal = () => {
+    this.setState({showFilterModal: true});
+  };
+
+  renderFilterButton() {
+    if (this.props.role !== "Student") {
+      return (
+        <button
+          className="button filter"
+          onClick={this.onOpenFilterModal}
+          title={I18n.t("results.filter_submissions")}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-filter" className="no-padding" />
+        </button>
+      );
+    }
+  }
+
   renderRandomIncompleteSubmissionButton() {
     if (this.props.role !== "Student") {
       return (
@@ -123,6 +148,29 @@ export class SubmissionSelector extends React.Component {
         >
           <FontAwesomeIcon icon="fa-solid fa-dice" className="no-padding" />
         </button>
+      );
+    }
+  }
+
+  renderFilterModal() {
+    if (this.props.role !== "Student") {
+      return (
+        <div>
+          <FilterModal
+            isOpen={this.state.showFilterModal}
+            onRequestClose={() => this.setState({showFilterModal: false})}
+            filterData={this.props.filterData}
+            updateFilterData={this.props.updateFilterData}
+            clearAllFilters={this.props.clearAllFilters}
+            sections={this.props.sections}
+            tas={this.props.tas}
+            available_tags={this.props.available_tags}
+            current_tags={this.props.current_tags}
+            loading={this.props.loading}
+            role={this.props.role}
+            criterionSummaryData={this.props.criterionSummaryData}
+          />
+        </div>
       );
     }
   }
@@ -171,6 +219,7 @@ export class SubmissionSelector extends React.Component {
             <FontAwesomeIcon icon="fa-solid fa-arrow-right" className="no-padding" />
           </button>
           {this.renderRandomIncompleteSubmissionButton()}
+          {this.renderFilterButton()}
           <div className="progress">
             <meter
               value={this.props.num_marked}
@@ -195,6 +244,7 @@ export class SubmissionSelector extends React.Component {
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}
         </div>
+        {this.renderFilterModal()}
       </div>
     );
   }

@@ -66,7 +66,7 @@
     <% end %>
     <% if annotation_text[:annotation_category].nil? %>
       <div class='annotation-text-details'>
-        <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
+        <%= t('activerecord.models.submission', count: 1) + ': ' %>
         <%= link_to annotation_text[:group_name],
                     edit_course_result_url(@current_course, annotation_text[:result_id]) %>
       </div>

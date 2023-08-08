@@ -10,7 +10,7 @@ class ImproveDbIndexes < ActiveRecord::Migration[4.2]
 
     add_index :results, :submission_id, :unique => true, :name => "results_u1"
 
-    change_column :groups, :group_name, :string, {:limit => 30}
+    change_column :groups, :group_name, :string, limit: 30
     add_index :groups, :group_name, :name => "groups_n1"
   end
 

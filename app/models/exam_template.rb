@@ -65,7 +65,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   # Split up PDF file based on this exam template.
-  def split_pdf(path, original_filename = nil, current_role = nil)
+  def split_pdf(path, original_filename = nil, current_role = nil, on_duplicate = nil)
     basename = File.basename path, '.pdf'
     filename = original_filename.nil? ? basename : File.basename(original_filename)
     pdf = CombinePDF.load path
@@ -86,7 +86,7 @@ class ExamTemplate < ApplicationRecord
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role)
+    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role, on_duplicate)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)
@@ -242,9 +242,9 @@ class ExamTemplate < ApplicationRecord
     cover = pdf.pages[0]
     cover_page = CombinePDF.new
     cover_page << cover
-    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
-      self.quality = 100
-      self.density = '300'
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do |options|
+      options.quality = 100
+      options.density = '300'
     end
     imglist.first.write(File.join(self.base_path, 'cover.jpg'))
   end

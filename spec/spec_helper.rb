@@ -153,4 +153,8 @@ RSpec.configure do |config|
   #   end
   # end
   config.include ActionCable::TestHelper
+
+  config.expect_with :rspec do |c|
+    c.max_formatted_output_length = nil
+  end
 end

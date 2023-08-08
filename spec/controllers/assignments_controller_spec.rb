@@ -177,7 +177,7 @@ describe AssignmentsController do
 
       assignment_results = assignment.summary_test_results
 
-      headers = SortedSet.new(test_results.headers)
+      headers = Set.new(test_results.headers.drop(1)).sort
       assignment_results.each do |result|
         expect(headers.include?("#{result['name']}:#{result['test_result_name']}")).to eq true
       end
@@ -188,7 +188,7 @@ describe AssignmentsController do
       test_results = CSV.parse(response.body, headers: true)
 
       headers = test_results.headers.drop(1)
-      sorted_headers = SortedSet.new(headers)
+      sorted_headers = Set.new(headers).sort
       sorted_headers.each_with_index do |header, i|
         expect(header).to eq headers[i]
       end
