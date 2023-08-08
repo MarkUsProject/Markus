@@ -5,6 +5,7 @@ import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
 import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
 import {getType} from "mime/lite";
+import {renderFlashMessages} from "../flash";
 
 class SubmissionFileManager extends React.Component {
   constructor(props) {
@@ -122,8 +123,12 @@ class SubmissionFileManager extends React.Component {
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
       })
+        .fail(() => {
+          let flash_messages = {error: "Your changes could not be made. Please try again."};
+          renderFlashMessages(flash_messages);
+        })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
-        .then(this.endAction);
+        .always(() => this.endAction);
     }
   };
 
