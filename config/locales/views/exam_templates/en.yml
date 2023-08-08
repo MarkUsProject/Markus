@@ -6,6 +6,7 @@ en:
       document_info: Page Information
       errors:
         file_not_found: File "%{filename}" not found
+        invalid_exam_number: Invalid exam copy number %{exam_num}
         invalid_page_number: Invalid page number %{page_num}
       fix_errors: Fix
       help: Manually enter paper copy number and page number for pages where QR code scanning failed.

@@ -214,8 +214,17 @@ describe ExamTemplatesController do
         end
       end
 
-      context 'when the copy number is invalid' do
+      context 'when the copy number is not an int' do
         let(:copy_number) { 'not an int' }
+
+        it 'reports an error' do
+          expect(flash[:error]).to_not be_empty
+          expect(response.body).to eq("#{split_page_id}.pdf")
+        end
+      end
+
+      context 'when the copy number is invalid' do
+        let(:copy_number) { -1 }
 
         it 'reports an error' do
           expect(flash[:error]).to_not be_empty

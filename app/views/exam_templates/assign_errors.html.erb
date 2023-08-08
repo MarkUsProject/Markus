@@ -47,6 +47,7 @@
                       t('exam_templates.assign_errors.copy_number') %>
         <%= number_field_tag :copy_number, nil,
                              autofocus: true,
+                             min: 1,
                              required: true %>
         <%= label_tag :page_number,
                       t('exam_templates.assign_errors.page_number') %>

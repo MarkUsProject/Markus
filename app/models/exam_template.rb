@@ -108,6 +108,9 @@ class ExamTemplate < ApplicationRecord
     if page_num < 1 || page_num > self.num_pages
       raise I18n.t('exam_templates.assign_errors.errors.invalid_page_number', page_num: page_num)
     end
+    if exam_num < 1
+      raise I18n.t('exam_templates.assign_errors.errors.invalid_exam_number', exam_num: exam_num)
+    end
 
     # if file is missing from complete group
     # if there isn't corresponding file in incomplete group
