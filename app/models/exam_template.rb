@@ -93,16 +93,44 @@ class ExamTemplate < ApplicationRecord
     error_file = File.join(
       base_path, 'error', filename
     )
-    return unless File.exist? error_file
     complete_dir = File.join(
       base_path, 'complete', exam_num
     )
     incomplete_dir = File.join(
       base_path, 'incomplete', exam_num
     )
+
+    unless File.exist? error_file
+      raise I18n.t('exam_templates.assign_errors.errors.file_not_found', filename: error_file)
+    end
+    exam_num = Integer(exam_num)
+    page_num = Integer(page_num)
+    if page_num < 1 || page_num > self.num_pages
+      raise I18n.t('exam_templates.assign_errors.errors.invalid_page_number', page_num: page_num)
+    end
+    if exam_num < 1
+      raise I18n.t('exam_templates.assign_errors.errors.invalid_exam_number', exam_num: exam_num)
+    end
+
     # if file is missing from complete group
     # if there isn't corresponding file in incomplete group
-    unless File.exist?(File.join(complete_dir, page_num)) && !File.exist?(File.join(incomplete_dir, page_num))
+    unless File.exist?(File.join(complete_dir, page_num.to_s)) && !File.exist?(File.join(incomplete_dir, page_num.to_s))
+      # Update status of split_page to be FIXED
+      split_page_id = File.basename(filename, '.pdf') # since filename is "#{split_page.id}.pdf"
+      split_page = SplitPage.find(split_page_id)
+      group = Group.find_or_create_by!(
+        group_name: "#{self.name}_paper_#{exam_num}",
+        repo_name: "#{self.name}_paper_#{exam_num}",
+        course: self.course
+      )
+      split_page.update!(status: 'FIXED', exam_page_number: page_num, group: group)
+      # This creates both a new grouping and a new folder in the group repository
+      # when a new group is entered.
+      grouping = Grouping.find_or_create_by!(
+        group_id: group.id,
+        assessment_id: self.assessment_id
+      )
+
       # if incomplete directory doesn't exist yet
       FileUtils.mkdir_p incomplete_dir
       # move the file into incomplete group
@@ -119,22 +147,6 @@ class ExamTemplate < ApplicationRecord
         end
         File.binwrite(error_file_new_name, new_pdf.to_pdf)
       end
-
-      # Update status of split_page to be FIXED
-      split_page_id = File.basename(filename, '.pdf') # since filename is "#{split_page.id}.pdf"
-      split_page = SplitPage.find(split_page_id)
-      group = Group.find_or_create_by(
-        group_name: "#{self.name}_paper_#{exam_num}",
-        repo_name: "#{self.name}_paper_#{exam_num}",
-        course: self.course
-      )
-      split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
-      # This creates both a new grouping and a new folder in the group repository
-      # when a new group is entered.
-      grouping = Grouping.find_or_create_by(
-        group_id: group.id,
-        assessment_id: self.assessment_id
-      )
 
       # add assignment files based on template divisions
       grouping.access_repo do |repo|
