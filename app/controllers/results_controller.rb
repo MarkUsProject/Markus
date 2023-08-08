@@ -46,7 +46,9 @@ class ResultsController < ApplicationController
           past_remark_due_date: is_review ? pr_assignment.past_remark_due_date? : assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
           parent_assignment_id: pr_assignment&.id,
-          student_view: current_role.student? && !is_reviewer
+          student_view: current_role.student? && !is_reviewer,
+          due_date: I18n.l(grouping.due_date.in_time_zone),
+          submission_time: I18n.l(submission.revision_timestamp.in_time_zone)
         }
         if original_result.nil?
           data[:overall_comment] = result.overall_comment
