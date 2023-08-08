@@ -15,6 +15,7 @@
 @import 'courses';
 @import 'url_viewer';
 @import 'statistics';
+@import 'criteria_filter';
 @import 'multi_select_dropdown';
 @import 'single_select_dropdown';
 @import 'filter_modal';
@@ -1052,14 +1053,20 @@ nav {
     }
 
     li:not(.section) {
-      &:hover,
-      &.active {
+      &:not(.disabled):hover,
+      &:not(.disabled).active {
         background: $sub-menu;
         color: $background-main;
 
         > a {
           color: $background-main;
         }
+      }
+
+      &.disabled {
+        background: $disabled-area;
+        border-color: $disabled-area;
+        cursor: default;
       }
     }
 

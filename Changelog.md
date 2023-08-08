@@ -31,7 +31,8 @@
 - Remove group name maximum length constraint (#6668)
 - Fix bug where in some cases flash messages were not being rendered correctly (#6670)
 - Enable duplicate pages when uploading scanned exams to overwrite existing pages or be ignored (#6674)
-- Prevent TAs that aren't assigned to grade a given criterion from grading that criterion (#6699)
+- Extended the filter modal to allow graders to order results by total mark and filter them by criteria (#6669)
+- Prevent TAs that aren't assigned to grade a given criterion from assigning a grade to that criterion (#6699)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
