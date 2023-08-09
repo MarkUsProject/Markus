@@ -128,7 +128,7 @@ class SubmissionFileManager extends React.Component {
           renderFlashMessages(flash_messages);
         })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
-        .always(() => this.endAction);
+        .then(() => this.endAction);
     }
   };
 
