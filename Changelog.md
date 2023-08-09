@@ -34,6 +34,7 @@
 - Extended the filter modal to allow graders to order results by total mark and filter them by criteria (#6669)
 - Validate copy and page number when fixing errors with scanned exams (#6695)
 - Display due date and submission time in result "Submission Info" tab (#6698)
+- Added "Help" link to the MarkUs page header dropdown (#6702)
 - Prevent TAs that aren't assigned to grade a given criterion from assigning a grade to that criterion (#6699)
 
 ## [v2.2.3]
