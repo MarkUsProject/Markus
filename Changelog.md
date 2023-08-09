@@ -32,6 +32,7 @@
 - Fix bug where in some cases flash messages were not being rendered correctly (#6670)
 - Enable duplicate pages when uploading scanned exams to overwrite existing pages or be ignored (#6674)
 - Extended the filter modal to allow graders to order results by total mark and filter them by criteria (#6669)
+- Display flash message on file upload failure (#6703)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
