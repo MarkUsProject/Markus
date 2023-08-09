@@ -97,9 +97,7 @@ class StarterFileManager extends React.Component {
       contentType: false, // tell jQuery not to set contentType
     })
       .then(this.fetchData)
-      .fail(() => {
-        renderFlashMessages({error: I18n.t("upload_errors.generic")});
-      })
+      .fail(() => renderFlashMessages({error: I18n.t("upload_errors.generic")}))
       .always(() =>
         this.setState({
           showFileUploadModal: false,

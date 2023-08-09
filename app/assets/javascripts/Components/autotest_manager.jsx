@@ -137,9 +137,7 @@ class AutotestManager extends React.Component {
       .then(this.fetchFileDataOnly)
       .then(() => this.toggleFormChanged(true))
       .then(this.endAction)
-      .fail(() => {
-        renderFlashMessages({error: I18n.t("upload_errors.generic")});
-      });
+      .fail(() => renderFlashMessages({error: I18n.t("upload_errors.generic")}));
   };
 
   handleDeleteFile = fileKeys => {

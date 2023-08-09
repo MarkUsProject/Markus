@@ -125,9 +125,7 @@ class SubmissionFileManager extends React.Component {
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
         .then(() => this.endAction)
-        .fail(() => {
-          renderFlashMessages({error: I18n.t("upload_errors.generic")});
-        });
+        .fail(() => renderFlashMessages({error: I18n.t("upload_errors.generic")}));
     }
   };
 
