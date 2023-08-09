@@ -258,9 +258,9 @@ class SplitPdfJob < ApplicationJob
         img.destroy!
         student_info.destroy!
 
-        exam_matcher_exe = "#{Rails.application.config.python} -m markus_exam_matcher"
+        python_exe = Rails.application.config.python
         char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
-        stdout, status = Open3.capture2("#{exam_matcher_exe} #{student_info_file} #{char_type}")
+        stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', student_info_file, char_type)
         parsed = stdout.strip.split("\n")
 
         next unless status.success? && parsed.length == 1
