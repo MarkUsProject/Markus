@@ -123,11 +123,11 @@ class SubmissionFileManager extends React.Component {
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
       })
+        .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
+        .then(() => this.endAction)
         .fail(() => {
           renderFlashMessages({error: I18n.t("upload_errors.generic")});
-        })
-        .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
-        .then(() => this.endAction);
+        });
     }
   };
 
