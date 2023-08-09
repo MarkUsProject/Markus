@@ -51,16 +51,12 @@ class ResultPolicy < ApplicationPolicy
   end
 
   def update_mark?
-    assigned_to_criterion = true
     assignment = record.grouping.assignment
     if assignment.assign_graders_to_criteria && role.ta?
-      assigned_to_criterion = role.criterion_ta_associations.where(criterion_id: criterion_id).present?
+      check?(:review?) && check?(:assigned_to_criterion?, with: TaPolicy)
+    else
+      check?(:review?)
     end
-
-    check?(:manage_submissions?, role) || (check?(:assigned_grader?, record.grouping) &&
-      assigned_to_criterion) || (record&.submission&.assignment&.has_peer_review &&
-        role.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
-                                )
   end
 
   def set_released_to_students?
