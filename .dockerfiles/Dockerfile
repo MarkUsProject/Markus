@@ -1,7 +1,7 @@
-FROM ubuntu:focal AS base
+FROM ubuntu:jammy AS base
 
 ARG NODE_MAJOR=18
-ARG BUNDLER_VERSION='2.3.17'
+ARG BUNDLER_VERSION='2.4.13'
 ARG USER=markus
 
 # Required in order to ensure bind-mounts are owned by the correct user inside the container
@@ -69,6 +69,7 @@ ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 RUN apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends openssh-server \
                                                                                python3 \
+                                                                               python3-dev \
                                                                                python3-venv \
                                                                                equivs
 

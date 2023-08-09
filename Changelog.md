@@ -26,9 +26,14 @@
 - Ensure Jupyter notebook HTML rendering does not require external CDNs (#6656)
 - Prevent Jupyter notebook from reloading when an annotation is added (#6656)
 - Added a button allowing graders to view a random incomplete submission (#6641)
+- Added a filter modal allowing graders to specify filters and order when navigating submissions (#6642)
 - Add icons to submission and result grading action buttons (#6666)
 - Remove group name maximum length constraint (#6668)
 - Fix bug where in some cases flash messages were not being rendered correctly (#6670)
+- Enable duplicate pages when uploading scanned exams to overwrite existing pages or be ignored (#6674)
+- Extended the filter modal to allow graders to order results by total mark and filter them by criteria (#6669)
+- Validate copy and page number when fixing errors with scanned exams (#6695)
+- Display due date and submission time in result "Submission Info" tab (#6698)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.4'
+gem 'rails', '~> 7.0.6'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -47,9 +47,8 @@ gem 'redis', '~> 4.8.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick'
+gem 'rmagick', '~> 5.2.0'
 gem 'rtesseract'
-gem 'zxing_cpp', require: 'zxing'
 
 # Ruby miscellany
 gem 'json'

@@ -31,7 +31,7 @@ class MarkusCsv
       if options[:encoding]
         input = input.encode(Encoding::UTF_8, options[:encoding])
       end
-      CSV.parse(input, options) do |row|
+      CSV.parse(input, **options) do |row|
         yield row
         valid_line_count += 1
       rescue CsvInvalidLineError => e

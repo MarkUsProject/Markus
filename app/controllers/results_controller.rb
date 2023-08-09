@@ -21,6 +21,7 @@ class ResultsController < ApplicationController
         result = record
         submission = result.submission
         assignment = submission.assignment
+        course = assignment.course
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
         is_review = result.is_a_review?
@@ -45,7 +46,9 @@ class ResultsController < ApplicationController
           past_remark_due_date: is_review ? pr_assignment.past_remark_due_date? : assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
           parent_assignment_id: pr_assignment&.id,
-          student_view: current_role.student? && !is_reviewer
+          student_view: current_role.student? && !is_reviewer,
+          due_date: I18n.l(grouping.due_date.in_time_zone),
+          submission_time: I18n.l(submission.revision_timestamp.in_time_zone)
         }
         if original_result.nil?
           data[:overall_comment] = result.overall_comment
@@ -117,6 +120,7 @@ class ResultsController < ApplicationController
         end
 
         if current_role.instructor? || current_role.ta?
+          data[:sections] = course.sections.pluck(:name)
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
@@ -133,6 +137,10 @@ class ResultsController < ApplicationController
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
           data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_reviews.ids.first}"
           data[:members] = []
+        end
+
+        if current_role.instructor?
+          data[:tas] = assignment.ta_memberships.joins(:user).distinct.pluck('users.user_name', 'users.display_name')
         end
 
         # Marks
@@ -298,6 +306,7 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
+    filter_data = params[:filterData]
     result = record
     grouping = result.submission.grouping
     assignment = grouping.assignment
@@ -313,7 +322,7 @@ class ResultsController < ApplicationController
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
       reversed = params[:direction] != '1'
-      next_grouping = grouping.get_next_grouping(current_role, reversed)
+      next_grouping = grouping.get_next_grouping(current_role, reversed, filter_data)
       next_result = next_grouping&.current_result
     end
 
