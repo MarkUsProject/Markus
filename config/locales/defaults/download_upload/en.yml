@@ -19,6 +19,7 @@ en:
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
     syntax_error: 'There is an error in the file you uploaded: %{error}'
     unparseable_csv: The selected file is not a CSV file (even though it may have a .csv extension).
+    upload_generic: The selected file could not be uploaded.
   upload_help_html: ' For information about the file format(s) supported, please visit <a href="https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Importing-and-Exporting-Data.md#%{section_id}">this page</a>.'
   upload_success:
     one: "%{count} object successfully uploaded."
