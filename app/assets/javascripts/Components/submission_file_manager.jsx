@@ -124,8 +124,7 @@ class SubmissionFileManager extends React.Component {
         contentType: false, // tell jQuery not to set contentType
       })
         .fail(() => {
-          let flash_messages = {error: "Your changes could not be made. Please try again."};
-          renderFlashMessages(flash_messages);
+          renderFlashMessages({error: I18n.t("upload_errors.generic")});
         })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
         .then(() => this.endAction);

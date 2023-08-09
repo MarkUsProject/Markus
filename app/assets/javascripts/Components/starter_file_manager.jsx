@@ -98,8 +98,7 @@ class StarterFileManager extends React.Component {
     })
       .then(this.fetchData)
       .fail(() => {
-        let flash_messages = {error: "Your changes could not be made. Please try again."};
-        renderFlashMessages(flash_messages);
+        renderFlashMessages({error: I18n.t("upload_errors.generic")});
       })
       .always(() =>
         this.setState({
