@@ -52,7 +52,7 @@ class ResultPolicy < ApplicationPolicy
 
   def update_mark?
     assignment = record.grouping.assignment
-    if assignment.assign_graders_to_criteria && role.ta?
+    if !check?(:manage_submissions?, role) && assignment.assign_graders_to_criteria && role.ta?
       check?(:review?) && check?(:assigned_to_criterion?, with: TaPolicy)
     else
       check?(:review?)
