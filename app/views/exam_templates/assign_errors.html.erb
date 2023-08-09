@@ -18,7 +18,7 @@
   <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>
   <div class='title-help'>
     <p>
-      <%= t('exam_templates.assign_scans.help') %>
+      <%= t('exam_templates.assign_errors.help') %>
     </p>
   </div>
 <% end %>
@@ -46,19 +46,22 @@
         <%= label_tag :copy_number,
                       t('exam_templates.assign_errors.copy_number') %>
         <%= number_field_tag :copy_number, nil,
-                             autofocus: true %>
+                             autofocus: true,
+                             min: 1,
+                             required: true %>
         <%= label_tag :page_number,
                       t('exam_templates.assign_errors.page_number') %>
         <%= number_field_tag :page_number, nil,
                              min: 1,
-                             max: @split_pdf_log.exam_template.num_pages %>
+                             max: @split_pdf_log.exam_template.num_pages,
+                             required: true %>
         <%= label_tag :upside_down,
                       t('exam_templates.assign_errors.upside_down') %>
         <%= check_box_tag :upside_down, 'upside_down', false %>
       </div>
       <p>
         <%= submit_tag t('save'), data: { disable_with: t('save') } %>
-        <%= submit_tag t('skip'), data: { disable_with: t('skip') }%>
+        <%= submit_tag t('skip'), data: { disable_with: t('skip') }, formnovalidate: true %>
       </p>
     <% end %>
   </div>

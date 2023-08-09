@@ -21,14 +21,14 @@ Rails.application.config.after_initialize do
     end
   end
 
-  pip = "#{Rails.application.config.python} -m pip"
-
   begin
-    installed, status = Open3.capture2("#{pip} freeze")
+    installed, status = Open3.capture2(Rails.application.config.python, '-m', 'pip', 'freeze')
   rescue Errno::ENOENT
     warn 'MARKUS WARNING: No python3 executable can be found. Jupyter notebook rendering ' \
          'and Automatic student matching will be disabled. Install python3 to enable these features.'
   else
+    pip = "#{Rails.application.config.python} -m pip"
+
     if status.success?
       installed = installed.lines.map(&:chomp)
 
