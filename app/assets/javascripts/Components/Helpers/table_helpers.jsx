@@ -183,7 +183,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "incomplete",
         text:
           I18n.t("submissions.state.in_progress") +
-          (["in_progress", "all"].includes(markingStateFilter)
+          (["incomplete", "all"].includes(markingStateFilter)
             ? ` (${marking_states["incomplete"]})`
             : ""),
       },
