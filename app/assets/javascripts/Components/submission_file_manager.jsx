@@ -123,7 +123,7 @@ class SubmissionFileManager extends React.Component {
         contentType: false, // tell jQuery not to set contentType
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
-        .then(() => this.endAction);
+        .then(this.endAction);
     }
   };
 
