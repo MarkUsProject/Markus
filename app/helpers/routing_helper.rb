@@ -6,7 +6,7 @@ module RoutingHelper
   def referer_options
     referer_url = request.referer || ''
     referer = URI(referer_url)
-    relative_url = Rails.application.config.action_controller.relative_url_root
+    relative_url = Rails.application.config.relative_url_root
     referer.path = referer.path.gsub(%r{^#{relative_url}/?}, '/')
     begin
       options = Rails.application.routes.recognize_path(referer.to_s)

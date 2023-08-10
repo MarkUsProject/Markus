@@ -12,11 +12,11 @@ class StarterFileEntry < ApplicationRecord
   end
 
   def files_and_dirs
-    Dir.glob("#{full_path}/**/*", File::FNM_DOTMATCH).map do |f|
+    Dir.glob("#{full_path}/**/*", File::FNM_DOTMATCH).filter_map do |f|
       unless %w[.. .].include?(File.basename(f))
         Pathname.new(f)
       end
-    end.compact + [full_path]
+    end + [full_path]
   end
 
   def add_files_to_zip_file(zip_file)

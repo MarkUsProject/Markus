@@ -1,8 +1,9 @@
 # read MarkUs version from app/MARKUS_VERSION and set it as a configuration variable
 
 class VersionReader
+  VERSION_REGEX = /master|v\d+\.\d+\.\d+/.freeze
   def self.read_version
-    version_file = File.expand_path(File.join(::Rails.root.to_s, 'app', 'MARKUS_VERSION'))
+    version_file = Rails.root.join('app/MARKUS_VERSION').expand_path
     unless File.exist?(version_file)
       return 'unknown'
     end
@@ -13,7 +14,7 @@ class VersionReader
       version_info[k.downcase] = v
     end
     markus_version = version_info['version']
-    raise "Invalid Version: #{markus_version}" unless markus_version.match(/master|v\d+\.\d+\.\d+/)
+    raise "Invalid Version: #{markus_version}" unless VERSION_REGEX.match?(markus_version)
     Rails.configuration.markus_version = markus_version
   end
 end

@@ -47,11 +47,11 @@ describe Api::UsersController do
           end
           it 'should be successful' do
             get :index
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return info about all the users' do
             get :index
-            user_names = Hash.from_xml(response.body).dig('users', 'user').map { |h| h['user_name'] }
+            user_names = Hash.from_xml(response.body).dig('users', 'user').pluck('user_name')
             expect(user_names).to contain_exactly(*User.all.pluck(:user_name))
           end
           it 'should return info about a single user if a filter is used' do
@@ -72,19 +72,19 @@ describe Api::UsersController do
           end
           it 'should be successful' do
             get :index
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return info about all the users' do
             get :index
-            expect(JSON.parse(response.body).map { |h| h['user_name'] }).to contain_exactly(*User.all.pluck(:user_name))
+            expect(response.parsed_body.pluck('user_name')).to contain_exactly(*User.all.pluck(:user_name))
           end
           it 'should return info about a single user if a filter is used' do
             get :index, params: { filter: { user_name: end_users[0].user_name } }
-            expect(JSON.parse(response.body).map { |h| h['user_name'] }).to eq([end_users[0].user_name])
+            expect(response.parsed_body.pluck('user_name')).to eq([end_users[0].user_name])
           end
           it 'should return all information in the default fields' do
             get :index
-            info = JSON.parse(response.body)[0]
+            info = response.parsed_body[0]
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
           end
         end
@@ -106,7 +106,7 @@ describe Api::UsersController do
           end
           it 'should be successful' do
             get :show, params: { id: end_users[0].id }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return info about the user' do
             get :show, params: { id: end_users[0].id }
@@ -124,15 +124,15 @@ describe Api::UsersController do
           end
           it 'should be successful' do
             get :show, params: { id: end_users[0].id }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return info about the user' do
             get :show, params: { id: end_users[0].id }
-            expect(JSON.parse(response.body)['user_name']).to eq(end_users[0].user_name)
+            expect(response.parsed_body['user_name']).to eq(end_users[0].user_name)
           end
           it 'should return all information in the default fields' do
             get :show, params: { id: end_users[0].id }
-            info = JSON.parse(response.body)
+            info = response.parsed_body
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
           end
         end
@@ -154,7 +154,7 @@ describe Api::UsersController do
         context 'when creating a new end user' do
           let(:new_user) { build :end_user }
           it 'should be successful' do
-            expect(response.status).to eq(201)
+            expect(response).to have_http_status(201)
           end
           it 'should create a new user' do
             expect(User.find_by(user_name: new_user.user_name)).not_to be_nil
@@ -163,7 +163,7 @@ describe Api::UsersController do
         context 'when creating a new admin user' do
           let(:new_user) { build :admin_user }
           it 'should be successful' do
-            expect(response.status).to eq(201)
+            expect(response).to have_http_status(201)
           end
           it 'should create a new user' do
             expect(User.find_by(user_name: new_user.user_name)).not_to be_nil
@@ -172,19 +172,19 @@ describe Api::UsersController do
         context 'when trying to create a user who already exists' do
           let(:new_user) { create :end_user }
           it 'should raise a 422 error' do
-            expect(response.status).to eq(409)
+            expect(response).to have_http_status(409)
           end
         end
         context 'when creating a user with an invalid user_name' do
           let(:new_user) { build :end_user, user_name: '   dragon ..' }
           it 'should raise a 422 error' do
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
         context 'when creating a user with an invalid type' do
           let(:new_user) { build :end_user, type: 'Dragon' }
           it 'should raise a 422 error' do
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
         end
       end
@@ -203,19 +203,19 @@ describe Api::UsersController do
         context 'when updating an existing user' do
           it 'should update a user name' do
             put :update, params: { id: end_user.id, user_name: tmp_user.user_name }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             end_user.reload
             expect(end_user.user_name).to eq(tmp_user.user_name)
           end
           it 'should update a first name' do
             put :update, params: { id: end_user.id, first_name: tmp_user.first_name }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             end_user.reload
             expect(end_user.first_name).to eq(tmp_user.first_name)
           end
           it 'should update a last name' do
             put :update, params: { id: end_user.id, last_name: tmp_user.last_name }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             end_user.reload
             expect(end_user.last_name).to eq(tmp_user.last_name)
           end
@@ -236,13 +236,13 @@ describe Api::UsersController do
         context 'when updating an existing user' do
           it 'should update a first name' do
             put :update_by_username, params: { user_name: end_user.user_name, first_name: tmp_user.first_name }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             end_user.reload
             expect(end_user.first_name).to eq(tmp_user.first_name)
           end
           it 'should update a last name' do
             put :update_by_username, params: { user_name: end_user.user_name, last_name: tmp_user.last_name }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             end_user.reload
             expect(end_user.last_name).to eq(tmp_user.last_name)
           end

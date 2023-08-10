@@ -103,6 +103,8 @@ RSpec.configure do |config|
   config.before type: :system do
     # Override the default driver used by rspec system tests
     driven_by :selenium_remote_chrome
+
+    SimpleCov.command_name 'system'
   end
 
   config.after :each do |test|
@@ -138,4 +140,21 @@ RSpec.configure do |config|
   ActionDispatch::IntegrationTest.register_encoder :csv,
                                                    param_encoder: ->(params) { params },
                                                    response_parser: ->(body) { CSV.parse(body) }
+
+  # Uncomment to enable Bullet logging
+  # if Bullet.enable?
+  #   config.before(:each) do
+  #     Bullet.start_request
+  #   end
+  #
+  #   config.after(:each) do
+  #     Bullet.perform_out_of_channel_notifications if Bullet.notification?
+  #     Bullet.end_request
+  #   end
+  # end
+  config.include ActionCable::TestHelper
+
+  config.expect_with :rspec do |c|
+    c.max_formatted_output_length = nil
+  end
 end

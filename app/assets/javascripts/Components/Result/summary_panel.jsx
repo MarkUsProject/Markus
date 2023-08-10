@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {DataChart} from "../Helpers/data_chart";
 
 export class SummaryPanel extends React.Component {
@@ -14,8 +15,7 @@ export class SummaryPanel extends React.Component {
   markDataSet = {
     label: I18n.t("activerecord.models.mark.one"),
     backgroundColor: "rgba(58,106,179,0.35)",
-    borderColor: "#3a6ab3",
-    borderWidth: 1,
+    border: {color: "#3a6ab3", width: 1},
     hoverBackgroundColor: "rgba(58,106,179,0.75)",
   };
 
@@ -23,8 +23,7 @@ export class SummaryPanel extends React.Component {
   oldMarkDataSet = {
     label: I18n.t("results.remark.old_mark"),
     backgroundColor: "rgba(250,253,170,0.65)",
-    borderColor: "#dde426",
-    borderWidth: 1,
+    border: {color: "#dde426", width: 1},
     hoverBackgroundColor: "#dde426",
   };
 
@@ -295,11 +294,8 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <p style={{textAlign: "center"}}>
-          <button
-            onClick={() => this.toggleMarksChart()}
-            className={"mark-chart"}
-            style={{width: "85%"}}
-          >
+          <button onClick={() => this.toggleMarksChart()} style={{width: "85%"}}>
+            <FontAwesomeIcon icon="fa-solid fa-chart-column" />
             {I18n.t("results.marks_chart")}
           </button>
         </p>

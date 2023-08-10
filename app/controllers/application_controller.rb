@@ -80,9 +80,8 @@ class ApplicationController < ActionController::Base
     @encodings = [%w[Unicode UTF-8], %w[ISO-8859-1 ISO-8859-1]]
   end
 
-  # add flash message to AJAX response headers
+  # add flash message to HTTP response headers
   def flash_to_headers
-    return unless request.xhr?
     [:error, :success, :warning, :notice].each do |key|
       unless flash[key].nil?
         if flash[key].is_a?(Array)
@@ -93,13 +92,13 @@ class ApplicationController < ActionController::Base
         response.headers["X-Message-#{key}"] = str
       end
     end
-    flash.discard
+    if request.xhr?
+      flash.discard
+    end
   end
 
-  # dynamically hide a flash message (for AJAX requests only)
+  # dynamically hide a flash message (for HTTP requests)
   def hide_flash(key)
-    return unless request.xhr?
-
     discard_header = response.headers['X-Message-Discard']
     if discard_header.nil?
       response.headers['X-Message-Discard'] = key.to_s

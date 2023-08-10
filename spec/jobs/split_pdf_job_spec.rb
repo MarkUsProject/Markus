@@ -87,7 +87,7 @@ describe SplitPdfJob do
     expect(error_dir_entries.length).to eq 2
   end
 
-  it 'correctly splits a PDF with one test paper with three pages having an unparseable QR code' do
+  it 'correctly splits a PDF with one test paper with three pages having an unparseable QR code but parseable text' do
     filename = 'midterm_scan_102.pdf'
     split_pdf_log = exam_template.split_pdf_logs.create(
       filename: filename,
@@ -102,14 +102,9 @@ describe SplitPdfJob do
     SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
 
     expect(Group.count).to eq 1
-    expect(split_pdf_log.num_groups_in_incomplete).to eq 1
-    expect(split_pdf_log.num_pages_qr_scan_error).to eq 3
-    expect(split_pdf_log.split_pages.where(status: 'ERROR: QR code not found').count).to eq 3
-    expect(split_pdf_log.split_pages.where(status: 'Saved to incomplete directory').count).to eq 3
-
-    # Check that error pages were saved correctly.
-    error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
-    expect(error_dir_entries.length).to eq 3
+    expect(split_pdf_log.num_groups_in_complete).to eq 1
+    expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
+    expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
   end
 
   it 'correctly splits a PDF with one test paper with cover page having an unparseable QR code' do
@@ -135,6 +130,71 @@ describe SplitPdfJob do
     # Check that error pages were saved correctly.
     error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
     expect(error_dir_entries.length).to eq 1
+  end
+
+  context 'when there are duplicated pages' do
+    let(:filename) { 'midterm_scan_102.pdf' }
+    let(:split_pdf_log) do
+      exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 6,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        role: instructor
+      )
+    end
+    let(:split_pdf_log2) do
+      exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 6,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        role: instructor
+      )
+    end
+    before do
+      FileUtils.cp "db/data/scanned_exams/#{filename}",
+                   File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
+    end
+
+    context 'and on_duplicate = "error"' do
+      it 'marks duplicated pages as errors' do
+        FileUtils.cp "db/data/scanned_exams/#{filename}",
+                     File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
+        SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'error')
+
+        expect(split_pdf_log2.split_pages.where('status LIKE ?', '%already exists').size).to eq 6
+        error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
+        expect(error_dir_entries.length).to eq 6
+      end
+    end
+
+    context 'and on_duplicate = "overwrite"' do
+      it 'overwrites existing pages' do
+        FileUtils.cp "db/data/scanned_exams/#{filename}",
+                     File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
+        SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'overwrite')
+
+        expect(split_pdf_log2.split_pages.where('status LIKE ?', '%Overwritten%').size).to eq 6
+        error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
+        expect(error_dir_entries.length).to eq 0
+      end
+    end
+
+    context 'and on_duplicate = "ignore"' do
+      it 'ignores duplicated pages' do
+        FileUtils.cp "db/data/scanned_exams/#{filename}",
+                     File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
+        SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'ignore')
+
+        expect(split_pdf_log2.split_pages.where(status: 'Duplicate page ignored').size).to eq 6
+        error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
+        expect(error_dir_entries.length).to eq 0
+      end
+    end
   end
 
   context 'when automatic parsing is enabled' do

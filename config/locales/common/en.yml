@@ -5,6 +5,7 @@ en:
   all: All
   apply: Apply
   cancel: Cancel
+  clear_all: Clear All
   close: Close
   continue: Continue
   copy: Copy
@@ -19,17 +20,40 @@ en:
     config_error: Error configuring LTI.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
+    course_not_linked: This course has not been linked with an external course. To link this course with an external course, launch MarkUs from the external LMS.
     course_select_instructions: Match your course with a MarkUs course.
     create_course: Create New Course
+    create_line_item_checkbox: Create gradebook item?
+    create_line_item_in_progress: Creating gradebook item.
+    create_new_line_items: Create new gradebook items
+    grade_sync_complete: Grade Sync Complete
     grade_sync_instructions: This will only synchronize grades that have been released.
     launch: Launch MarkUs
+    line_item_created: Gradebook item created.
+    lti_configuration: LTI configuration
+    lti_course_link_html: Course linked to external course
     lti_deployment: "%{lti_deployment_name} on %{lti_host}"
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
+    no_grades: No grades to sync
+    no_platform: No platforms selected
+    no_users: No user data returned from LMS
+    roster_sync: Sync Roster
+    roster_sync_complete: Roster Sync Complete
+    roster_sync_errors: Some students could not be synced.
+    roster_sync_instructions: This will synchronize the MarkUs course roster with the LMS roster, creating accounts if they do not exist.
     select_course: Select the course that matches %{course_name}
+    start_grade_sync: Syncing Grades
+    start_roster_sync: Syncing Roster
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
+    sync_students: Sync Student roster
+    sync_tas: Sync TA roster
+    unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
+    unlink_courses: Unlink this course
   markus: MarkUs
+  max: Max
+  min: Min
   not_applicable: N/A
   or: Or
   other_info: Other Info
@@ -42,5 +66,6 @@ en:
   select_filename: Select Filename
   skip: Skip
   this: This
+  to: to
   working: Loading
   write: Write

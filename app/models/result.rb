@@ -24,7 +24,7 @@ class Result < ApplicationRecord
 
   before_update :check_for_released
 
-  # Release or unrelease the submissions of a set of groupings.
+  # Release or unrelease the results of a set of groupings.
   def self.set_release_on_results(grouping_ids, release)
     groupings = Grouping.where(id: grouping_ids)
     without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
@@ -34,8 +34,12 @@ class Result < ApplicationRecord
       raise StandardError, I18n.t('submissions.errors.no_submission', group_name: group_names)
     end
 
-    without_complete_result = groupings.joins(:current_result)
-                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
+    assignment = groupings.first.assignment
+    results = assignment.current_results.where('groupings.id': grouping_ids)
+    incomplete_results = results.where('results.marking_state': Result::MARKING_STATES[:incomplete])
+
+    without_complete_result = groupings.joins(:current_submission_used)
+                                       .where('submissions.id': incomplete_results.pluck(:submission_id))
 
     if without_complete_result.present?
       group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
@@ -46,8 +50,7 @@ class Result < ApplicationRecord
       end
     end
 
-    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
-                   .update_all(released_to_students: release)
+    result = results.update_all(released_to_students: release)
 
     if release
       groupings.includes(:accepted_students).find_each do |grouping|
@@ -86,12 +89,12 @@ class Result < ApplicationRecord
     Result.get_subtotals([self.id], user_visibility: user_visibility)[self.id]
   end
 
-  def self.get_subtotals(result_ids, user_visibility: :ta_visible)
-    marks = Mark.joins(:criterion)
-                .where(result_id: result_ids)
-                .where("criteria.#{user_visibility}": true)
-                .group(:result_id)
-                .sum(:mark)
+  def self.get_subtotals(result_ids, user_visibility: :ta_visible, criterion_ids: nil)
+    all_marks = Mark.joins(:criterion)
+                    .where(result_id: result_ids, "criteria.#{user_visibility}": true)
+    all_marks = all_marks.where('criteria.id': criterion_ids) if criterion_ids.present?
+
+    marks = all_marks.group(:result_id).sum(:mark)
     result_ids.index_with { |r_id| marks[r_id] || 0 }
   end
 
@@ -146,7 +149,7 @@ class Result < ApplicationRecord
   end
 
   def is_a_review?
-    !peer_review_id.nil?
+    peer_reviews.exists?
   end
 
   def is_review_for?(user, assignment)

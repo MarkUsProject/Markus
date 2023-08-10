@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import ReactTable from "react-table";
 import Flatpickr from "react-flatpickr";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class ReleaseUrlsModal extends React.Component {
   constructor() {
@@ -121,7 +122,9 @@ class ReleaseUrlsModal extends React.Component {
                       className="refresh"
                       onClick={() => this.refreshViewTokens([row.original.result_id])}
                       title={I18n.t("refresh")}
-                    />
+                    >
+                      <FontAwesomeIcon icon="fa-solid fa-refresh" className="icon-left" />
+                    </a>
                     {row.original.result_view_token}
                   </div>
                 );

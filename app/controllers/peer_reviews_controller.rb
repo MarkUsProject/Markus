@@ -31,7 +31,7 @@ class PeerReviewsController < ApplicationController
     reviewee_to_reviewers_map = peer_reviews.joins(:reviewee)
                                             .pluck('groupings.id', :reviewer_id)
                                             .group_by { |reviewee_id, _| reviewee_id }
-    reviewee_to_reviewers_map.transform_values! { |rows| rows.map { |row| row[1] } }
+    reviewee_to_reviewers_map.transform_values! { |rows| rows.pluck(1) }
 
     # A map of grouping_id => group_name (both assignment and parent assignment groupings).
     id_to_group_names_map = assignment.groupings.or(assignment.parent_assignment.groupings)
@@ -62,7 +62,7 @@ class PeerReviewsController < ApplicationController
                                    'groups_groupings.group_name as reviewee_name'
                                  )
 
-    total_marks = Result.get_total_marks(peer_review_data.map { |data| data['result_id'] })
+    total_marks = Result.get_total_marks(peer_review_data.pluck('result_id'))
     peer_review_data.each do |data|
       data[:final_grade] = total_marks['result_id']
       data[:marking_state] = data['results.released_to_students'] ? 'released' : data['results.marking_state']

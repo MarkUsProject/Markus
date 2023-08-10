@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.4'
+gem 'rails', '~> 7.0.6'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -23,12 +23,13 @@ gem 'sass-rails'
 gem 'terser'
 
 # Background tasks
-gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
+gem 'activejob-status'
 gem 'resque'
 gem 'resque-scheduler'
 
 # Authorization
 gem 'action_policy'
+gem 'rack-cors'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
@@ -39,12 +40,15 @@ gem 'i18n'
 gem 'i18n-js'
 gem 'rails-i18n', '~> 7.0.0'
 
+# Redis
+gem 'redis', '~> 4.8.1'
+
 # Exam template requirements
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick'
-gem 'zxing_cpp', require: 'zxing'
+gem 'rmagick', '~> 5.2.0'
+gem 'rtesseract'
 
 # Ruby miscellany
 gem 'json'
@@ -77,7 +81,6 @@ group :development do
   gem 'binding_of_caller' # supplement for better_errors
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
-  gem 'bullet'
   gem 'listen' # to listen for changes in i18n-js files
 end
 
@@ -97,10 +100,11 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
-  gem 'byebug'
+  gem 'bullet'
   gem 'capybara'
+  gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 6.0.1'
+  gem 'rspec-rails', '~> 6.0.3'
   gem 'selenium-webdriver'
 end
 
@@ -117,9 +121,6 @@ end
 group :offline do
   gem 'railroady'
   gem 'rdoc'
-  gem 'rubocop'
-  gem 'rubocop-git'
-  gem 'rubocop-performance'
 end
 
 # If you  plan to use unicorn servers for production

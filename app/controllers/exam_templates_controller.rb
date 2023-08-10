@@ -154,7 +154,8 @@ class ExamTemplatesController < ApplicationController
       head :bad_request
       return
     else
-      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
+      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
+                                            params[:on_duplicate])
       session[:job_id] = current_job.job_id
     end
     respond_to do |format|
@@ -278,7 +279,14 @@ class ExamTemplatesController < ApplicationController
       page_number = params[:page_number]
       filename = "#{split_page_id}.pdf"
       upside_down = params[:upside_down]
-      exam_template.fix_error(filename, copy_number, page_number, upside_down)
+
+      begin
+        exam_template.fix_error(filename, copy_number, page_number, upside_down)
+      rescue StandardError => e
+        flash_now(:error, e.message)
+        render plain: "#{params[:split_page_id]}.pdf"
+        return
+      end
     end
 
     split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])

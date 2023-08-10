@@ -42,7 +42,7 @@ describe CourseSummariesController do
             end
           end
         end
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       context 'tests the second csv row which contains out of values' do
@@ -76,8 +76,11 @@ describe CourseSummariesController do
           user_name = grouping.students.first.user_name
           csv_rows = get_as(instructor, :download_csv_grades_report,
                             params: { course_id: course.id }, format: :csv).parsed_body
-          csv_rows.select { |r| r.first == user_name }
-                  .map { |r| expect(r.last).to eq(grouping.current_result.get_total_mark.to_s) }
+          csv_rows.each do |r|
+            next if r.first != user_name
+
+            expect(r.last).to eq(grouping.current_result.get_total_mark.to_s)
+          end
         end
       end
     end
@@ -160,7 +163,9 @@ describe CourseSummariesController do
           user_name = grouping.students.first.user_name
           get_as instructor, :populate, params: { course_id: course.id }, format: :json
           data = response.parsed_body.deep_symbolize_keys[:data]
-          data.select { |d| d[:user_name] == user_name }.map do |d|
+          data.each do |d|
+            next if d[:user_name] != user_name
+
             expect(d[:assessment_marks][assignment.id.to_s.to_sym][:mark]).to eq(grouping.current_result.get_total_mark)
           end
         end

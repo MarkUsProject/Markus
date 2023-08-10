@@ -16,10 +16,8 @@ describe ResultsController do
   let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
   let(:from_codeviewer) { nil }
 
-  SAMPLE_FILE_CONTENT = 'sample file content'.freeze
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
   SAMPLE_COMMENT = 'sample comment'.freeze
-  SAMPLE_FILE_NAME = 'file.java'.freeze
 
   after(:each) do
     destroy_repos
@@ -46,98 +44,890 @@ describe ResultsController do
     end
   end
 
-  shared_examples 'download files' do
-    context 'and without any file errors' do
-      before :each do
-        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-        get :download, params: { course_id: course.id,
-                                 select_file_id: submission_file.id,
-                                 from_codeviewer: from_codeviewer,
-                                 id: incomplete_result.id }
-      end
-      it { expect(response).to have_http_status(:success) }
-      test_no_flash
-      it 'should have the correct content type' do
-        expect(response.header['Content-Type']).to eq 'text/plain'
-      end
-      it 'should show the file content in the response body' do
-        expect(response.body).to eq SAMPLE_FILE_CONTENT
-      end
+  shared_examples 'ta and instructor #next_grouping with filters' do
+    let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+    let(:grouping2) do
+      create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
     end
-    context 'and with a file error' do
-      before :each do
-        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_raise SAMPLE_ERROR_MESSAGE
-        get :download, params: { course_id: course.id,
-                                 select_file_id: submission_file.id,
-                                 from_codeviewer: from_codeviewer,
-                                 id: incomplete_result.id }
-      end
-      it { expect(response).to have_http_status(:redirect) }
-      it 'should display a flash error' do
-        expect(extract_text(flash[:error][0])).to eq SAMPLE_ERROR_MESSAGE
-      end
+    let(:grouping3) do
+      create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
     end
-    context 'and with a supported image file shown in browser' do
-      before :each do
-        allow_any_instance_of(SubmissionFile).to receive(:is_supported_image?).and_return true
-        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-        get :download, params: { course_id: course.id,
-                                 select_file_id: submission_file.id,
-                                 id: incomplete_result.id,
-                                 from_codeviewer: from_codeviewer,
-                                 show_in_browser: true }
+    let(:grouping4) { create :grouping, assignment: grouping1.assignment }
+    let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
+
+    context 'when annotation text filter is applied' do
+      let(:annotation_text) { create :annotation_text, content: 'aa_' }
+      before(:each) do
+        create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
+        create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
       end
-      it { expect(response).to have_http_status(:success) }
-      test_no_flash
-      it 'should have the correct content type' do
-        expect(response.header['Content-Type']).to eq 'image'
-      end
-      it 'should show the file content in the response body' do
-        expect(response.body).to eq SAMPLE_FILE_CONTENT
-      end
-    end
-    context 'show in browser is true' do
-      let(:submission_file) { create :submission_file, filename: filename, submission: submission }
-      subject do
-        get :download, params: { course_id: course.id,
-                                 select_file_id: submission_file.id,
-                                 id: incomplete_result.id,
-                                 from_codeviewer: from_codeviewer,
-                                 show_in_browser: true }
-      end
-      context 'file is a jupyter-notebook file' do
-        let(:filename) { 'example.ipynb' }
-        let(:redirect_location) do
-          notebook_content_course_assignment_submissions_path(course,
-                                                              assignment,
-                                                              select_file_id: submission_file.id)
+
+      context 'when there are no more filtered submissions in the specified direction' do
+        it 'should return a response with next_grouping and next_result set to nil' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping3.id,
+                                        id: grouping3.current_result.id,
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
+          expect(response.parsed_body['next_grouping']).to be_nil
+          expect(response.parsed_body['next_result']).to be_nil
         end
-        context 'and the python dependencies are installed' do
-          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
-          it 'should redirect to "notebook_content"' do
-            expect(subject).to(redirect_to(redirect_location))
+      end
+
+      context 'when there is another filtered result after the current one' do
+        it 'should return a response with the next filtered group' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
+        end
+
+        it 'shouldn\'t return the next non-filtered group' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          expect(response.parsed_body['next_result']['id']).not_to eq(grouping2.current_result.id)
+        end
+      end
+
+      context 'when annotationText contains special characters (in the context of a like clause)' do
+        it 'should sanitize the string and return the next relevant result' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationText: 'aa_' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
+        end
+      end
+
+      context 'when we filter by a substring of the desired annotation text' do
+        it 'should return the next result containing the substring in one of its annotations' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { annotationText: 'a' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          expect(response.parsed_body['next_result']['id']).to eq(grouping3.current_result.id)
+        end
+      end
+    end
+
+    context 'section filter' do
+      let(:section) { create :section }
+      before(:each) do
+        groupings[0].inviter.update(section: section)
+        groupings[1].inviter.update(section: nil)
+        groupings[2].inviter.update(section: section)
+      end
+
+      context 'when a section has been picked' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { section: 'Section 1' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { section: 'Section 1' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when section is left blank' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { section: '' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
+
+    context 'marking state filter' do
+      context 'when remark request is selected' do
+        let(:grouping2) do
+          result = create :incomplete_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        before(:each) do
+          grouping3.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'should respond with the next grouping with a remark requested and who has a marking state of incomplete' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'remark_requested' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not respond with a grouping whose current result is a remark result but is complete' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'remark_requested' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
+        end
+
+        it 'should not respond with a grouping whose current result is not a remark result' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'remark_requested' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when released is selected' do
+        let(:grouping2) do
+          result = create :incomplete_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :complete_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :released_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+
+        it 'should respond with the next grouping whose submission has been released' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'released' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+      end
+
+      context 'when complete is selected' do
+        let(:grouping2) do
+          result = create :released_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :remark_result, marking_state: Result::MARKING_STATES[:complete]
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+
+        it 'should respond with the next grouping whose result is complete regardless of remark request status' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'complete' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+
+        it 'should not respond with a released result regardless of the result\'s marking status' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'complete' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+      end
+      context 'when in progress is selected' do
+        let(:grouping2) do
+          result = create :remark_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :released_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :incomplete_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+
+        it 'should respond with the next grouping whose result is incomplete' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'in_progress' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not respond with a released or remark result' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: 'in_progress' } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping3.id)
+        end
+      end
+
+      context 'when markingState is left blank' do
+        let(:grouping2) do
+          result = create :incomplete_result
+          result.submission.update(submission_version_used: true)
+          result.grouping.update(assignment: grouping1.assignment)
+          result.grouping
+        end
+        let(:grouping3) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+        let(:grouping4) do
+          remark_result = create :remark_result
+          remark_result.submission.update(submission_version_used: true)
+          remark_result.grouping.update(assignment: grouping1.assignment)
+          remark_result.grouping
+        end
+
+        it 'should return the next group regardless of marking state' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { markingState: '' } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
+
+    context 'when filtering by tags' do
+      let(:tag1) { create :tag, groupings: [grouping1, grouping3], name: 'tag1' }
+      let(:tag2) { create :tag, groupings: [grouping2, grouping3], name: 'tag2' }
+
+      context 'when a tag has been picked' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [tag1.name] } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [tag1.name] } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when multiple tags have been picked' do
+        it 'should return the next group with a larger group name that has at least one of the tags' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [tag1.name, tag2.name] } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+
+      context 'when no tag has been picked' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { tags: [] } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+    end
+
+    context 'when filtering by total mark' do
+      let(:grouping4) do
+        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      end
+      let(:assignment) { grouping1.assignment }
+      let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let!(:mark2) do
+        create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 6
+      end
+      let!(:mark3) do
+        create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 10
+      end
+      let!(:mark4) do
+        create :flexible_mark, criterion: criterion, result: grouping4.current_result, assignment: assignment, mark: 5
+      end
+
+      context 'when no range is provided' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: {} } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+
+      context 'when minimum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 7.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 7.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when maximum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when minimum and maximum values are provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+    end
+
+    context 'when filtering by total extra mark' do
+      let(:grouping4) do
+        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      end
+      let(:assignment) { grouping1.assignment }
+      let!(:mark2) { create :extra_mark_points, result: grouping2.current_result, extra_mark: 6 }
+      let!(:mark3) { create :extra_mark_points, result: grouping3.current_result, extra_mark: 10 }
+      let!(:mark4) { create :extra_mark_points, result: grouping4.current_result, extra_mark: 5 }
+
+      context 'when no range is provided' do
+        it 'should return the next grouping without constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: {} } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+      end
+
+      context 'when minimum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 7.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 7.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when maximum value is provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+
+      context 'when minimum and maximum values are provided' do
+        it 'should return the next group with a larger group name that satisfies the constraints' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+        end
+
+        it 'should not return the next group that doesn\'t satisfy the constraint' do
+          get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { totalExtraMarkRange: { min: 4.00, max: 5.00 } } }
+          expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+        end
+      end
+    end
+
+    context 'when filtering by criteria' do
+      let(:assignment) { grouping1.assignment }
+      let!(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let!(:mark1a) do
+        create :flexible_mark, criterion: criterion, result: grouping1.current_result, assignment: assignment, mark: 1
+      end
+      let!(:mark2a) do
+        create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 2
+      end
+      let!(:mark3a) do
+        create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 3
+      end
+
+      context 'when a single criteria is specified' do
+        context 'when only min is specified' do
+          before(:each) { mark2a.update(mark: 0) }
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+
+          it 'should select the next grouping whose result satisfies the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
         end
-        context 'and the python dependencies are not installed' do
-          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
-          it 'should not redirect to "notebook_content"' do
-            expect(subject).not_to(redirect_to(redirect_location))
+
+        context 'when only max is specified' do
+          before(:each) { mark2a.update(mark: 8) }
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            max: 3
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+
+          it 'should select the next grouping whose result satisfies the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            max: 3
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+
+        context 'when both max and min are specified' do
+          before(:each) { mark2a.update(mark: 8) }
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1, max: 3
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+
+          it 'should select the next grouping whose result satisfies the conditions' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: 1, max: 3
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+        context 'when min and max are not specified' do
+          it 'should get the next grouping without any constraints applied' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {} } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
+        context 'when min and max are empty strings' do
+          it 'should get the next grouping without any constraints applied' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { criteria: { 'Flexible criterion 1': {
+                                            min: '', max: ''
+                                          } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
           end
         end
       end
-      context 'file is a rmarkdown file' do
-        let(:filename) { 'example.Rmd' }
-        it 'should show the file content in the response body' do
-          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-          subject
-          expect(response.body).to eq SAMPLE_FILE_CONTENT
+
+      context 'when multiple criteria are specified' do
+        let!(:criterion2) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+        let!(:mark1b) do
+          create :flexible_mark, criterion: criterion2, result: grouping1.current_result, assignment: assignment,
+                                 mark: 1
+        end
+        let!(:mark3b) do
+          create :flexible_mark, criterion: criterion2, result: grouping3.current_result, assignment: assignment,
+                                 mark: 3
+        end
+        context 'when both max and min are specified' do
+          it 'should not select the next grouping whose result does not have a mark for the second criterion' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1,
+                                          filterData: { criteria: { 'Flexible criterion 1': { min: 1, max: 3 },
+                                                                    'Flexible criterion 2': { min: 1, max: 3 } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+          it 'should not select the next grouping whose result does not satisfy the conditions' do
+            create :flexible_mark, criterion: criterion2, result: grouping2.current_result,
+                                   assignment: assignment, mark: 5
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1,
+                                          filterData: { criteria: { 'Flexible criterion 1': { min: 1, max: 3 },
+                                                                    'Flexible criterion 2': { min: 1, max: 3 } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+          it 'should select the next grouping whose result satisfies the conditions' do
+            create :flexible_mark, criterion: criterion2, result: grouping2.current_result,
+                                   assignment: assignment, mark: 5
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1,
+                                          filterData: { criteria: { 'Flexible criterion 1': { min: 1, max: 3 },
+                                                                    'Flexible criterion 2': { min: 1, max: 3 } } } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+        end
+      end
+    end
+  end
+
+  shared_examples 'instructor and ta #next_grouping with different orderings' do
+    context 'with 3 groupings' do
+      let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+      let(:grouping2) do
+        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      end
+      let(:grouping3) do
+        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      end
+      let(:groupings) { [grouping1, grouping2, grouping3] }
+
+      context 'order by group name' do
+        context 'Descending Order' do
+          context 'direction = 1' do
+            it 'should return the next grouping in descending order of group name' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: 1, filterData: { ascending: 'false', orderBy: 'group_name' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+            end
+          end
+
+          context 'direction = -1' do
+            it 'should return the previous grouping in descending order of group name' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                            id: grouping2.current_result.id,
+                                            direction: -1, filterData: { ascending: 'false', orderBy: 'group_name' } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+            end
+          end
+        end
+      end
+
+      context 'order by submission date' do
+        context 'Ascending Order' do
+          context 'when direction = 1' do
+            context 'when the ordered submission has a different submission date from the current one' do
+              it 'should return the grouping with the next latest submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData:
+                                                { ascending: 'true', orderBy: 'submission_date' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+
+            context 'when the next ordered submission shares has the same submission date as the current one' do
+              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping2) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              let(:grouping3) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+
+              before(:each) do
+                3.times do |i|
+                  groupings[i].current_submission_used.update(revision_timestamp: Date.current)
+                end
+              end
+
+              it 'should return the grouping with the next largest group name with the same submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData:
+                                                { ascending: 'true', orderBy: 'submission_date' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+          end
+
+          context 'direction = -1' do
+            context 'when the previous ordered submission has a different submission date from the current one' do
+              it 'should return the grouping with the next earliest submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData:
+                                                { ascending: 'true', orderBy: 'submission_date' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+
+            context 'when the previous ordered submission shares has the same submission date as the current one' do
+              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping2) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              let(:grouping3) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              before(:each) do
+                3.times do |i|
+                  groupings[i].current_submission_used.update(revision_timestamp: Date.current)
+                end
+              end
+
+              it 'should return the grouping with the next smallest group name with the same submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData:
+                                                { ascending: 'true', orderBy: 'submission_date' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+          end
+        end
+
+        context 'Descending Order' do
+          context 'direction = 1' do
+            context 'when the next ordered submission has a different submission date from the current one' do
+              it 'should return the grouping with the next earliest submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData:
+                                                { ascending: 'false', orderBy: 'submission_date' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+
+            context 'when the next ordered submission shares has the same submission date as the current one' do
+              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping2) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              let(:grouping3) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              before(:each) do
+                3.times do |i|
+                  groupings[i].current_submission_used.update(revision_timestamp: Date.current)
+                end
+              end
+
+              it 'should return the grouping with the next smallest group name with the same submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData:
+                                              { ascending: 'false', orderBy: 'submission_date' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+          end
+
+          context 'direction = -1' do
+            context 'when the previous ordered submission has a different submission date from the current one' do
+              it 'should return the grouping with the next latest submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData: {
+                                                ascending: 'false', orderBy: 'submission_date'
+                                              } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+
+            context 'when the previous ordered submission shares has the same submission date as the current one' do
+              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping2) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              let(:grouping3) do
+                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+              end
+              before(:each) do
+                3.times do |i|
+                  groupings[i].current_submission_used.update(revision_timestamp: Date.current)
+                end
+              end
+
+              it 'should return the grouping with the next largest group name with the same submission date' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData: {
+                                                ascending: 'false', orderBy: 'submission_date'
+                                              } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+          end
+        end
+      end
+
+      context 'order by total mark' do
+        let(:assignment) { grouping1.assignment }
+        let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+        let!(:mark1) do
+          create :flexible_mark, criterion: criterion, result: grouping1.current_result, assignment: assignment, mark: 1
+        end
+        let!(:mark2) do
+          create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 2
+        end
+        let!(:mark3) do
+          create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 3
+        end
+
+        context 'Ascending Order' do
+          context 'when direction = 1' do
+            context 'when the next ordered submission has a different total mark from the current one' do
+              it 'should return the next grouping with a larger total mark' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+
+            context 'when the next ordered submission shares the same total mark as the current one' do
+              it 'should return the grouping with the next largest group name with the same total mark' do
+                mark1.update(mark: 1)
+                mark2.update(mark: 1)
+                mark3.update(mark: 1)
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+          end
+
+          context 'direction = -1' do
+            context 'when the previous ordered submission has a different total mark from the current one' do
+              it 'should return the grouping with the next smallest group name with the same total mark' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+
+            context 'when the previous ordered submission shares has the same total mark as the current one' do
+              it 'should return the grouping with the next smallest group name with the same total mark' do
+                mark1.update(mark: 1)
+                mark2.update(mark: 1)
+                mark3.update(mark: 1)
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData: { ascending: 'true', orderBy: 'total_mark' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+          end
+        end
+
+        context 'Descending Order' do
+          context 'direction = 1' do
+            context 'when the next ordered submission has a different total mark from the current one' do
+              it 'should return the grouping with the next smallest total mark' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData: { ascending: 'false', orderBy: 'total_mark' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+
+            context 'when the next ordered submission shares has the same total mark as the current one' do
+              it 'should return the grouping with the next smallest group name with the same total mark' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: 1, filterData: { ascending: 'false', orderBy: 'total_mark' } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping1.id)
+              end
+            end
+          end
+
+          context 'direction = -1' do
+            context 'when the previous ordered submission has a different total mark from the current one' do
+              it 'should return the grouping with the next largest total mark' do
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData: {
+                                                ascending: 'false', orderBy: 'total_mark'
+                                              } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+
+            context 'when the previous ordered submission shares has the same total mark as the current one' do
+              it 'should return the grouping with the next largest group name with the same total mark' do
+                mark1.update(mark: 1)
+                mark2.update(mark: 1)
+                mark3.update(mark: 1)
+                get :next_grouping, params: { course_id: course.id, grouping_id: grouping2.id,
+                                              id: grouping2.current_result.id,
+                                              direction: -1, filterData: {
+                                                ascending: 'false', orderBy: 'total_mark'
+                                              } }
+                expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+              end
+            end
+          end
         end
       end
     end
   end
 
   shared_examples 'shared ta and instructor tests' do
-    include_examples 'download files'
     context 'accessing next_grouping' do
       it 'should receive 200 when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
@@ -172,101 +962,13 @@ describe ResultsController do
         # TODO: test that the grade distribution is refreshed
       end
     end
-    context 'accessing download_zip' do
-      before :each do
-        grouping.group.access_repo do |repo|
-          txn = repo.get_transaction('test')
-          path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
-          txn.add(path, SAMPLE_FILE_CONTENT, '')
-          repo.commit(txn)
-          @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
-        end
-        file = SubmissionFile.find_by(submission_id: @submission.id)
-        @annotation = TextAnnotation.create line_start: 1,
-                                            line_end: 2,
-                                            column_start: 1,
-                                            column_end: 2,
-                                            submission_file_id: file.id,
-                                            is_remark: false,
-                                            annotation_number: @submission.annotations.count + 1,
-                                            annotation_text: create(:annotation_text, creator: instructor),
-                                            result: complete_result,
-                                            creator: instructor
-        file_name_snippet = grouping.group.access_repo do |repo|
-          "#{assignment.short_identifier}_#{grouping.group.group_name}_r#{repo.get_latest_revision.revision_identifier}"
-        end
-        @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
-        @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
-        @submission_file_path = SAMPLE_FILE_NAME
-      end
-      after :each do
-        FileUtils.rm_f @file_path_ann
-        FileUtils.rm_f @file_path
-      end
-      context 'and including annotations' do
-        before :each do
-          get :download_zip, params: { course_id: course.id,
-                                       id: @submission.results.first.id,
-                                       grouping_id: grouping.id,
-                                       include_annotations: 'true' }
-        end
-        after :each do
-          FileUtils.rm_f @file_path_ann
-        end
-        it { expect(response).to have_http_status(:success) }
-        it 'should have make the correct content type' do
-          expect(response.header['Content-Type']).to eq 'application/zip'
-        end
-        it 'should create a zip file' do
-          File.exist? @file_path_ann
-        end
-        it 'should create a zip file containing the submission file' do
-          Zip::File.open(@file_path_ann) do |zip_file|
-            expect(zip_file.find_entry(@submission_file_path)).not_to be_nil
-          end
-        end
-        it 'should include the annotations in the file output' do
-          Zip::File.open(@file_path_ann) do |zip_file|
-            expect(zip_file.read(@submission_file_path)).to include(@annotation.annotation_text.content)
-          end
-        end
-      end
-      context 'and not including annotations' do
-        before :each do
-          get :download_zip, params: { course_id: course.id,
-                                       id: @submission.results.first.id,
-                                       grouping_id: grouping.id,
-                                       include_annotations: 'false' }
-        end
-        after :each do
-          FileUtils.rm_f @file_path
-        end
-        it { expect(response).to have_http_status(:success) }
-        it 'should have make the correct content type' do
-          expect(response.header['Content-Type']).to eq 'application/zip'
-        end
-        it 'should create a zip file' do
-          File.exist? @file_path
-        end
-        it 'should create a zip file containing the submission file' do
-          Zip::File.open(@file_path) do |zip_file|
-            expect(zip_file.find_entry(@submission_file_path)).not_to be_nil
-          end
-        end
-        it 'should not include the annotations in the file output' do
-          Zip::File.open(@file_path) do |zip_file|
-            expect(zip_file.read(@submission_file_path)).not_to include(@annotation.annotation_text.content)
-          end
-        end
-      end
-    end
     context 'accessing update_mark' do
       it 'should report an updated mark' do
         patch :update_mark, params: { course_id: course.id,
                                       id: incomplete_result.id,
                                       criterion_id: rubric_mark.criterion_id,
                                       mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)['num_marked']).to eq 0
+        expect(response.parsed_body['num_marked']).to eq 0
         expect(rubric_mark.reload.override).to be true
       end
       context 'setting override when annotations linked to criteria exist' do
@@ -520,8 +1222,8 @@ describe ResultsController do
     context 'user has access to view the result' do
       it 'contains important basic data' do
         subject
-        expect(response.status).to eq(200)
-        data = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        data = response.parsed_body
         received_data = {
           instructor_run: data['instructor_run'],
           is_reviewer: data['is_reviewer'],
@@ -539,7 +1241,7 @@ describe ResultsController do
 
       it 'has submission file data' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
         file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
         expect(data['submission_files']).to eq(file_data)
@@ -547,14 +1249,14 @@ describe ResultsController do
 
       it 'has no annotation categories data' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expected_data = is_student ? be_nil : eq([])
         expect(data['annotation_categories']).to expected_data
       end
 
       it 'has no grace token deduction data' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data['grace_token_deductions']).to eq([])
       end
 
@@ -567,7 +1269,7 @@ describe ResultsController do
         end
         it 'sends grace token deduction data' do
           subject
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expected_deduction_data = [
             {
               id: grace_period_deduction1.id,
@@ -595,16 +1297,14 @@ describe ResultsController do
              download: :post,
              get_annotations: :get,
              add_extra_mark: :post,
-             download_zip: :get,
-             cancel_remark_request: :delete,
              delete_grace_period_deduction: :delete,
              next_grouping: :get,
+             random_incomplete_submission: :get,
              remove_extra_mark: :post,
              revert_to_automatic_deductions: :patch,
              set_released_to_students: :post,
              update_overall_comment: :post,
              toggle_marking_state: :post,
-             update_remark_request: :patch,
              update_positions: :get,
              view_marks: :get,
              add_tag: :post,
@@ -621,6 +1321,7 @@ describe ResultsController do
     before(:each) { sign_in student }
     [:edit,
      :next_grouping,
+     :random_incomplete_submission,
      :set_released_to_students,
      :toggle_marking_state,
      :update_overall_comment,
@@ -630,52 +1331,6 @@ describe ResultsController do
      :refresh_view_tokens,
      :update_view_token_expiry,
      :download_view_tokens].each { |route_name| test_unauthorized(route_name) }
-    context 'downloading files' do
-      shared_examples 'without permission' do
-        before :each do
-          get :download, params: { course_id: course.id,
-                                   id: incomplete_result.id,
-                                   from_codeviewer: from_codeviewer,
-                                   select_file_id: submission_file.id }
-        end
-        it { expect(response).to have_http_status(:forbidden) }
-      end
-
-      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
-      let(:incomplete_result) { assignment.groupings.first.current_result }
-      let(:submission) { incomplete_result.submission }
-      context 'role is a reviewer for the current result' do
-        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
-        let(:student) { reviewer_grouping.accepted_students.first }
-        before { create :peer_review, reviewer: reviewer_grouping, result: incomplete_result }
-        context 'from_codeviewer is true' do
-          let(:from_codeviewer) { true }
-          include_examples 'download files'
-        end
-        context 'from_codeviewer is nil' do
-          include_examples 'without permission'
-        end
-      end
-      context 'role is not a reviewer for the current result' do
-        context 'role is an accepted member of the results grouping' do
-          let(:student) { incomplete_result.grouping.accepted_students.first }
-          context 'and the selected file is associated with the current submission' do
-            let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
-            let(:grouping) { incomplete_result.grouping }
-            include_examples 'download files'
-          end
-          context 'and the selected file is associated with a different submission' do
-            let(:submission_file) { create(:submission_file) }
-            include_examples 'without permission'
-          end
-        end
-        context 'role is not an accepted member of the results grouping' do
-          let(:student) { create(:student) }
-          include_examples 'without permission'
-        end
-      end
-    end
-    include_examples 'download files'
     include_examples 'showing json data', true
     context '#view_token_check' do
       let(:role) { create(:student) }
@@ -844,103 +1499,6 @@ describe ResultsController do
         end
       end
     end
-
-    describe '#update_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-      let(:student) { grouping.inviter }
-      let(:submission) do
-        s = create :submission, grouping: grouping
-        s.get_original_result.update!(released_to_students: true)
-        s
-      end
-      let(:result) { submission.get_original_result }
-
-      context 'when saving a remark request message' do
-        let(:subject) do
-          patch_as student,
-                   :update_remark_request,
-                   params: { course_id: assignment.course_id,
-                             id: result.id,
-                             submission: { remark_request: 'Message' },
-                             save: true }
-        end
-
-        before { subject }
-
-        it 'updates the submission remark request message' do
-          expect(submission.reload.remark_request).to eq 'Message'
-        end
-
-        it 'does not submit the remark request' do
-          expect(submission.reload.remark_result).to be_nil
-        end
-      end
-
-      context 'when submitting a remark request' do
-        let(:subject) do
-          patch_as student,
-                   :update_remark_request,
-                   params: { course_id: assignment.course_id,
-                             id: result.id,
-                             submission: { remark_request: 'Message' },
-                             submit: true }
-        end
-
-        before { subject }
-
-        it 'updates the submission remark request message' do
-          expect(submission.reload.remark_request).to eq 'Message'
-        end
-
-        it 'submits the remark request' do
-          expect(submission.reload.remark_result).to_not be_nil
-        end
-
-        it 'unreleases the original result' do
-          expect(submission.get_original_result.reload.released_to_students).to be false
-        end
-      end
-    end
-
-    describe '#cancel_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-      let(:student) { grouping.inviter }
-      let(:submission) do
-        s = create :submission, grouping: grouping, remark_request: 'original message',
-                                remark_request_timestamp: Time.current
-        s.make_remark_result
-        s.results.reload
-        s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
-        s.get_original_result.update!(released_to_students: false)
-
-        s
-      end
-
-      let(:subject) do
-        delete_as student,
-                  :cancel_remark_request,
-                  params: { course_id: assignment.course_id,
-                            id: submission.remark_result.id }
-      end
-
-      before { subject }
-
-      it 'destroys the remark result' do
-        submission.non_pr_results.reload
-        expect(submission.remark_result).to be_nil
-      end
-
-      it 'releases the original result' do
-        expect(submission.get_original_result.reload.released_to_students).to be true
-      end
-
-      it 'redirects to the original result view' do
-        expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
-                                                                      id: submission.get_original_result.id)
-      end
-    end
   end
   context 'An instructor' do
     before(:each) { sign_in instructor }
@@ -953,7 +1511,6 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
       test_assigns_not_nil :result
     end
-    include_examples 'shared ta and instructor tests'
     include_examples 'showing json data', false
 
     context 'accessing update_overall_comment' do
@@ -986,7 +1543,7 @@ describe ResultsController do
       end
       it 'should return a json containing the new tokens' do
         subject
-        expect(JSON.parse(response.body)).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
+        expect(response.parsed_body).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
       end
       context 'some result ids are not associated with the assignment' do
         let(:extra_result) { create :complete_result }
@@ -1005,7 +1562,7 @@ describe ResultsController do
         end
         it 'should return a json containing the new tokens for the assignment (not the extra one)' do
           subject
-          expect(JSON.parse(response.body)).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
+          expect(response.parsed_body).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
         end
       end
     end
@@ -1027,7 +1584,7 @@ describe ResultsController do
       end
       it 'should return a json containing the new dates' do
         subject
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         results.pluck(:id, :view_token_expiry).each do |id, date|
           expect(Time.zone.parse(data[id.to_s])).to be_within(1.second).of(date)
         end
@@ -1054,7 +1611,7 @@ describe ResultsController do
         end
         it 'should return a json containing the new tokens for the assignment (not the extra one)' do
           subject
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           results.pluck(:id, :view_token_expiry).each do |id, date|
             expect(Time.zone.parse(data[id.to_s])).to be_within(1.second).of(date)
           end
@@ -1161,7 +1718,7 @@ describe ResultsController do
                                 format: :json }, xhr: true
 
           category_names = [first_name, second_name].sort!
-          returned_categories = response.parsed_body['annotation_categories'].map { |c| c['annotation_category_name'] }
+          returned_categories = response.parsed_body['annotation_categories'].pluck('annotation_category_name')
           expect(returned_categories.sort!).to eq category_names
           expect(response.parsed_body['annotation_categories'].size).to eq 2
         end
@@ -1183,9 +1740,9 @@ describe ResultsController do
           end
           expect(returned_categories.sort!).to eq category_names
           expect(response.parsed_body['annotation_categories'].size).to eq 2
-          expect(response.parsed_body['annotation_categories'].select do |cat|
+          expect(response.parsed_body['annotation_categories'].count do |cat|
             cat['id'] == deductive_category.id
-          end.size).to eq 1
+          end).to eq 1
         end
       end
     end
@@ -1259,13 +1816,101 @@ describe ResultsController do
         expect(filename).to eq "#{assignment.short_identifier}_#{complete_result.grouping.group.group_name}.pdf"
       end
     end
+
+    context 'accessing next_grouping' do
+      let(:grouping1) { create :grouping_with_inviter_and_submission }
+      let(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:grouping4) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
+      before(:each) { groupings }
+      include_examples 'ta and instructor #next_grouping with filters'
+      include_examples 'instructor and ta #next_grouping with different orderings'
+
+      context 'filter by tas' do
+        let(:ta1) { create :ta }
+        let(:ta2) { create :ta }
+        let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
+        let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
+        let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
+        let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+
+        context 'when a ta has been picked' do
+          it 'should return the next group with a larger group name that satisfies the constraints' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+          end
+
+          it 'should not return the next group that doesn\'t satisfy the constraint' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).not_to eq(grouping2.id)
+          end
+        end
+
+        context 'when multiple tas have been picked' do
+          it 'should return the next group with a larger group name that has atleast one of the tas' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name, ta2.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
+
+        context 'when no Ta is picked' do
+          it 'should return the next grouping without constraints' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
+      end
+    end
+
+    describe '#random_incomplete_submission' do
+      it 'should receive 200 when current grouping has a submission' do
+        allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+        get :random_incomplete_submission, params: { course_id: course.id, grouping_id: grouping.id,
+                                                     id: incomplete_result.id }
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'should receive 200 when current grouping does not have a submission' do
+        allow_any_instance_of(Grouping).to receive(:has_submission).and_return false
+        get :random_incomplete_submission, params: { course_id: course.id, grouping_id: grouping.id,
+                                                     id: incomplete_result.id }
+        expect(response).to have_http_status(:ok)
+      end
+      context 'when there are no more random incomplete submissions' do
+        it 'should receive a JSON object with result_id, submission_id and grouping_id as nil' do
+          a2 = create(:assignment_with_criteria_and_results)
+          a2.groupings.each do |group|
+            group.tas.push(ta)
+            group.save
+          end
+          a2.save
+          get :random_incomplete_submission, params: { course_id: course.id,
+                                                       grouping_id: a2.groupings.first.id,
+                                                       id: a2.submissions.first.current_result.id }
+          expect(response).to have_http_status(:ok)
+          expect(response.parsed_body['result_id']).to eq(nil)
+          expect(response.parsed_body['submission_id']).to eq(nil)
+          expect(response.parsed_body['grouping_id']).to eq(nil)
+        end
+      end
+    end
   end
+
   context 'A TA' do
     before(:each) { sign_in ta }
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
 
     context 'when groups information is anonymized' do
-      let(:data) { JSON.parse(response.body) }
+      let(:data) { response.parsed_body }
       let!(:grace_period_deduction) do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
@@ -1305,7 +1950,7 @@ describe ResultsController do
     end
 
     context 'when criteria are assigned to this grader' do
-      let(:data) { JSON.parse(response.body) }
+      let(:data) { response.parsed_body }
       let(:params) { { course_id: course.id, id: incomplete_result.id } }
       let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
       before :each do
@@ -1366,16 +2011,6 @@ describe ResultsController do
       end
     end
 
-    context 'that has been assigned to grade the group\'s result' do
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
-      include_examples 'shared ta and instructor tests'
-      include_examples 'showing json data', false
-    end
-    context 'that can manage submissions' do
-      let(:ta) { create :ta, manage_submissions: true }
-      include_examples 'shared ta and instructor tests'
-      include_examples 'showing json data', false
-    end
     context 'accessing update_mark' do
       context 'when is assigned to grade the given group\'s submission' do
         let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
@@ -1387,7 +2022,7 @@ describe ResultsController do
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                         mark: 1 }, xhr: true
-          expect(JSON.parse(response.body)['num_marked']).to eq 0
+          expect(response.parsed_body['num_marked']).to eq 0
         end
       end
     end
@@ -1424,6 +2059,14 @@ describe ResultsController do
         it {
           allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
           get :next_grouping, params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
+          expect(response).to have_http_status(:forbidden)
+        }
+      end
+      context 'accessing random_incomplete_submission' do
+        it {
+          allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
+          get :random_incomplete_submission,
+              params: { course_id: course.id, grouping_id: grouping.id, id: incomplete_result.id }
           expect(response).to have_http_status(:forbidden)
         }
       end
@@ -1502,31 +2145,6 @@ describe ResultsController do
           expect(old_mark).to eq incomplete_result.get_total_mark
         end
       end
-      context 'accessing download' do
-        it {
-          get :download, params: { course_id: course.id,
-                                   select_file_id: submission_file.id,
-                                   from_codeviewer: from_codeviewer,
-                                   id: incomplete_result.id }
-          expect(response).to have_http_status(:forbidden)
-        }
-      end
-      context 'accessing download_zip' do
-        it {
-          grouping.group.access_repo do |repo|
-            txn = repo.get_transaction('test')
-            path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
-            txn.add(path, SAMPLE_FILE_CONTENT, '')
-            repo.commit(txn)
-            @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
-          end
-          get :download_zip, params: { course_id: course.id,
-                                       id: @submission.results.first.id,
-                                       grouping_id: grouping.id,
-                                       include_annotations: 'true' }
-          expect(response).to have_http_status(:forbidden)
-        }
-      end
       context 'accessing show' do
         context 'HTTP POST request' do
           it {
@@ -1547,6 +2165,43 @@ describe ResultsController do
       end
       context 'accessing get_test_runs_instructors' do
         test_unauthorized(:get_test_runs_instructors)
+      end
+    end
+    context 'accessing next_grouping with valid permissions' do
+      let(:grouping1) { create :grouping_with_inviter_and_submission }
+      let(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:grouping4) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
+      before(:each) do
+        3.times do |i|
+          create :ta_membership, role: ta, grouping: groupings[i]
+        end
+      end
+      context 'ta and instructor #next_grouping with filters' do
+        before(:each) do
+          create :ta_membership, role: ta, grouping: groupings[3]
+        end
+        include_examples 'ta and instructor #next_grouping with filters'
+      end
+
+      include_examples 'instructor and ta #next_grouping with different orderings'
+      context 'filter by tas' do
+        let(:ta1) { create :ta }
+        let(:ta2) { create :ta }
+        let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
+        let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
+        let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
+        let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+
+        context 'when a ta has been picked' do
+          it 'should return the next group with a larger group name and NOT filter by selected ta' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { tas: [ta1.user.user_name] } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
       end
     end
   end

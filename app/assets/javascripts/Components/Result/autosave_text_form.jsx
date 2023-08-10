@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import MarkdownEditor from "../markdown_editor";
 
@@ -28,15 +29,25 @@ function debounce(func, wait, immediate) {
   };
 }
 
-const SaveMessage = ({unSaved}) => (
-  <div className="autosave-text">
-    {unSaved ? (
-      <p className="invalid-icon">{I18n.t("results.autosave.unsaved")}</p>
-    ) : (
-      <p className="valid-icon">{I18n.t("results.autosave.saved")}</p>
-    )}
-  </div>
-);
+function SaveMessage({unSaved}) {
+  let contents;
+  if (unSaved) {
+    contents = (
+      <p>
+        <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-left" />
+        {I18n.t("results.autosave.unsaved")}
+      </p>
+    );
+  } else {
+    contents = (
+      <p>
+        <FontAwesomeIcon icon="fa-solid fa-circle-check" className="icon-left" />
+        {I18n.t("results.autosave.saved")}
+      </p>
+    );
+  }
+  return <div className="autosave-text">{contents}</div>;
+}
 
 export class TextForm extends React.Component {
   constructor(props) {

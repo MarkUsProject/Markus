@@ -12,5 +12,9 @@ module Api
     def see_hidden?
       role.instructor? || role.ta? || role.visible_assessments(assessment_id: record.id).exists?
     end
+
+    def index?
+      real_user.is_a?(EndUser) && !role.nil?
+    end
   end
 end

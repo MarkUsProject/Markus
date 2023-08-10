@@ -26,7 +26,7 @@ describe AutotestSpecsJob do
         subject
       end
       it 'should set the body of the request' do
-        rel_url_root = Rails.configuration.action_controller.relative_url_root
+        rel_url_root = Rails.configuration.relative_url_root
         file_url = "http://localhost:3000#{rel_url_root}/api/courses/#{assignment.course.id}/" \
                    "assignments/#{assignment.id}/test_files"
         expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj|

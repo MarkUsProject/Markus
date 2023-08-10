@@ -21,8 +21,7 @@
           current_duration: '<%= duration_string %>'
         }
       );
-    });
-    $(function() {
+
       $('#assignment-group-use').click(function(e) {
         modalAssignmentGroupReUse.open();
         $('#assignment-group-use-close').click(function(e) {
@@ -31,7 +30,7 @@
         })
         e.preventDefault();
       })
-    })
+    });
   <% end %>
 <% end %>
 

@@ -15,7 +15,7 @@ describe AdminUser do
         expect(admin_user.first_name).to eq('admin')
       end
       it 'sets last_name to the default value' do
-        expect(admin_user.last_name).to eq('admin')
+        expect(admin_user.last_name).to eq('user')
       end
     end
     context 'when there is existing AdminUser' do

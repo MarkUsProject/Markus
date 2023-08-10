@@ -1,6 +1,6 @@
 describe 'Check Authorized Keys Function' do
   let(:keys) do
-    ActiveRecord::Base.connection.execute('SELECT get_authorized_keys()').map { |h| h['get_authorized_keys'] }
+    ActiveRecord::Base.connection.execute('SELECT get_authorized_keys()').pluck('get_authorized_keys')
   end
   context 'no keys exist' do
     it 'returns nothing' do

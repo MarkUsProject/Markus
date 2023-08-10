@@ -3,7 +3,7 @@ FactoryBot.define do
     content { Faker::Lorem.sentence }
     created_at { Time.current }
     updated_at { Time.current }
-    creator { FactoryBot.create(:instructor) }
+    creator { create(:instructor) }
     association :annotation_category, factory: :annotation_category
   end
 

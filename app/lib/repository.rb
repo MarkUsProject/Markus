@@ -365,7 +365,7 @@ module Repository
     def send_tree_to_zip(subdirectory_path, zip_file, revision, zip_subdir: nil, &block)
       revision.tree_at_path(subdirectory_path, with_attrs: false).each do |path, obj|
         if obj.is_a? Repository::RevisionFile
-          file_contents = block_given? ? block.call(obj) : download_as_string(obj)
+          file_contents = block ? yield(obj) : download_as_string(obj)
           full_path = zip_subdir ? File.join(zip_subdir, path) : path
           zip_file.get_output_stream(full_path) do |f|
             f.print file_contents

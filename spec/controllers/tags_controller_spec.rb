@@ -93,7 +93,7 @@ describe TagsController do
       post_as instructor, :upload,
               params: { upload_file: @file_good_csv, assignment_id: assignment.id, course_id: course.id }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 2)].map { |f| extract_text f })
@@ -107,7 +107,7 @@ describe TagsController do
       post_as instructor, :upload,
               params: { upload_file: @file_good_yml, assignment_id: assignment.id, course_id: course.id }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
 
@@ -119,7 +119,7 @@ describe TagsController do
       post_as instructor, :upload,
               params: { upload_file: @file_invalid_column, assignment_id: assignment.id, course_id: course.id }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
     end
@@ -153,7 +153,7 @@ describe TagsController do
       shared_examples 'upload csv' do
         it 'responds with appropriate status' do
           get_as instructor, :download, params: params, format: 'csv'
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
 
         # parse header object to check for the right disposition
@@ -220,7 +220,7 @@ describe TagsController do
       shared_examples 'upload yml' do
         it 'responds with appropriate status' do
           get_as instructor, :download, params: params, format: 'yml'
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
 
         # parse header object to check for the right disposition

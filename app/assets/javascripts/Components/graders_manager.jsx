@@ -1,6 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
@@ -50,27 +51,34 @@ class GradersManager extends React.Component {
   };
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_assignment_graders_path(this.props.course_id, this.props.assignment_id),
-      dataType: "json",
-    }).then(res => {
-      if (this.gradersTable) this.gradersTable.resetSelection();
-      if (this.groupsTable) this.groupsTable.resetSelection();
-      if (this.criteriaTable) this.criteriaTable.resetSelection();
+    fetch(Routes.course_assignment_graders_path(this.props.course_id, this.props.assignment_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        if (this.gradersTable) this.gradersTable.resetSelection();
+        if (this.groupsTable) this.groupsTable.resetSelection();
+        if (this.criteriaTable) this.criteriaTable.resetSelection();
 
-      this.setState({
-        graders: res.graders,
-        groups: res.groups,
-        criteria: res.criteria,
-        assign_graders_to_criteria: res.assign_graders_to_criteria,
-        loading: false,
-        sections: res.sections,
-        anonymize_groups: res.anonymize_groups,
-        hide_unassigned_criteria: res.hide_unassigned_criteria,
-        isGraderDistributionModalOpen: false,
-        hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
+        this.setState({
+          graders: res.graders,
+          groups: res.groups,
+          criteria: res.criteria,
+          assign_graders_to_criteria: res.assign_graders_to_criteria,
+          loading: false,
+          sections: res.sections,
+          anonymize_groups: res.anonymize_groups,
+          hide_unassigned_criteria: res.hide_unassigned_criteria,
+          isGraderDistributionModalOpen: false,
+          hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
+        });
       });
-    });
   };
 
   assignAll = () => {
@@ -545,12 +553,13 @@ class RawGroupsTable extends React.Component {
                 : ta_data.grader}
               <a
                 href="#"
-                className="remove-icon"
                 onClick={() =>
                   this.props.unassignSingle(row.original._id, ta_data.grader, "groups_table")
                 }
                 title={I18n.t("graders.actions.unassign_grader")}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+              </a>
             </div>
           ));
         },
@@ -616,12 +625,13 @@ class RawCriteriaTable extends React.Component {
                 : ta_data.grader}
               <a
                 href="#"
-                className="remove-icon"
                 onClick={() =>
                   this.props.unassignSingle(row.original._id, ta_data.grader, "criteria_table")
                 }
                 title={I18n.t("graders.actions.unassign_grader")}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+              </a>
             </div>
           ));
         },
@@ -694,13 +704,16 @@ class GradersActionBox extends React.Component {
             {I18n.t("tas.display_inactive")}
           </label>
         </span>
-        <button className="assign-all-button" onClick={this.props.assignAll}>
+        <button onClick={this.props.assignAll}>
+          <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("graders.actions.assign_grader")}
         </button>
-        <button className="assign-randomly-button" onClick={this.props.openGraderDistributionModal}>
+        <button onClick={this.props.openGraderDistributionModal}>
+          <FontAwesomeIcon icon="fa-solid fa-dice" />
           {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
-        <button className="unassign-all-button" onClick={this.props.unassignAll}>
+        <button onClick={this.props.unassignAll}>
+          <FontAwesomeIcon icon="fa-solid fa-user-minus" />
           {I18n.t("graders.actions.unassign_grader")}
         </button>
       </div>

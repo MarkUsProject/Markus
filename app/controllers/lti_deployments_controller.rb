@@ -14,12 +14,14 @@ class LtiDeploymentsController < ApplicationController
       return
     end
     nonce = rand(10 ** 30).to_s.rjust(30, '0')
+    session_nonce = rand(10 ** 30).to_s.rjust(30, '0')
     lti_launch_data = {}
     lti_launch_data[:client_id] = params[:client_id]
     lti_launch_data[:iss] = params[:iss]
     lti_launch_data[:nonce] = nonce
-    lti_launch_data[:state] = session.id
-    cookies.permanent.encrypted[:lti_launch_data] = { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now }
+    lti_launch_data[:state] = session_nonce
+    cookies.permanent.encrypted[:lti_launch_data] =
+      { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now, same_site: :none, secure: true }
     auth_params = {
       scope: 'openid',
       response_type: 'id_token',
@@ -30,11 +32,12 @@ class LtiDeploymentsController < ApplicationController
       response_mode: 'form_post',
       nonce: nonce,
       prompt: 'none',
-      state: session.id # Binds this request to the LTI response
+      state: session_nonce
     }
     auth_request_uri = construct_redirect_with_port(request.referer, endpoint: self.class::LMS_REDIRECT_ENDPOINT)
 
     http = Net::HTTP.new(auth_request_uri.host, auth_request_uri.port)
+    http.use_ssl = true if auth_request_uri.instance_of? URI::HTTPS
     req = Net::HTTP::Post.new(auth_request_uri)
     req.set_form_data(auth_params)
 
@@ -47,6 +50,7 @@ class LtiDeploymentsController < ApplicationController
   def redirect_login
     if request.post?
       lti_launch_data = JSON.parse(cookies.encrypted[:lti_launch_data]).symbolize_keys
+
       if params[:id_token].blank? || params[:state] != lti_launch_data[:state]
         render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
                                      layout: false
@@ -99,7 +103,8 @@ class LtiDeploymentsController < ApplicationController
       lti_data[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:user_launch_data]]['user_id']
       unless logged_in?
         lti_data[:lti_redirect] = request.url
-        cookies.encrypted.permanent[:lti_data] = { value: JSON.generate(lti_data), expires: 1.hour.from_now }
+        cookies.encrypted.permanent[:lti_data] =
+          { value: JSON.generate(lti_data), expires: 1.hour.from_now, same_site: :none, secure: true }
         redirect_to root_path
         return
       end
@@ -113,9 +118,9 @@ class LtiDeploymentsController < ApplicationController
     end
     lti_client = LtiClient.find_or_create_by(client_id: lti_data[:client_id], host: lti_data[:host])
     lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client,
-                                                         external_deployment_id: lti_data[:deployment_id])
-    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name],
-                           lms_course_id: lti_data[:lms_course_id])
+                                                         external_deployment_id: lti_data[:deployment_id],
+                                                         lms_course_id: lti_data[:lms_course_id])
+    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name])
     session[:lti_course_label] = lti_data[:lms_course_label]
     if lti_data.key?(:names_role_service)
       names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
@@ -148,7 +153,7 @@ class LtiDeploymentsController < ApplicationController
     if request.post?
       begin
         course = Course.find(params[:course])
-        unless Instructor.exists?(user: real_user, course: course)
+        unless allowed_to?(:manage_lti_deployments?, course, with: CoursePolicy)
           flash_message(:error, t('lti.course_link_error'))
           render 'choose_course'
           return
@@ -166,6 +171,7 @@ class LtiDeploymentsController < ApplicationController
 
   def check_host
     known_lti_hosts = Settings.lti.domains
+    known_lti_hosts << URI(root_url).host
     if known_lti_hosts.exclude?(URI(request.referer).host)
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
                                    status: :unprocessable_entity, layout: false
@@ -175,20 +181,14 @@ class LtiDeploymentsController < ApplicationController
 
   def create_course
     new_course = Course.create!(name: params['name'], display_name: params['display_name'], is_hidden: true)
-    Instructor.create!(user: current_user, course: new_course)
+    if current_user.admin_user?
+      AdminRole.create!(user: current_user, course: new_course)
+    else
+      Instructor.create!(user: current_user, course: new_course)
+    end
     lti_deployment = record
     lti_deployment.update!(course: new_course)
     redirect_to edit_course_path(new_course)
-  end
-
-  def create_lti_grades
-    assessment = Assessment.find(params[:assessment_id])
-    lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
-    lti_deployments.each do |lti|
-      lti.get_students
-      lti.create_or_update_lti_assessment(assessment)
-      lti.create_grades(assessment)
-    end
   end
 
   def get_config

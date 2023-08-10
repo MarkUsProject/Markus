@@ -3,7 +3,7 @@ describe AnnotationCategory do
   let(:instructor) { create(:instructor) }
 
   describe 'validations hold' do
-    subject { FactoryBot.create(:annotation_category) }
+    subject { create(:annotation_category) }
 
     it { is_expected.to validate_presence_of(:annotation_category_name) }
     it { is_expected.to have_many(:annotation_texts) }

@@ -7,10 +7,10 @@ class MarkusCsv
   # Returns a CSV string representation of an array of data.
   # 'objects' is an array of data, and gen_csv is a block which
   # takes an object and returns an array of strings.
-  def self.generate(objects, headers = [], &gen_csv)
+  def self.generate(objects, headers = [])
     CSV.generate do |csv|
       headers.each { |obj| csv << obj }
-      objects.each { |obj| csv << gen_csv.call(obj) }
+      objects.each { |obj| csv << yield(obj) }
     end
   end
 
@@ -22,7 +22,7 @@ class MarkusCsv
   # of the following:
   #   1) A string listing all erroneous lines.
   #   2) A more generic error message for invalid files.
-  def self.parse(input, options = {}, &parse_obj)
+  def self.parse(input, **options)
     invalid_lines = []
     valid_line_count = 0
     result = { invalid_lines: '', valid_lines: '' }
@@ -31,8 +31,8 @@ class MarkusCsv
       if options[:encoding]
         input = input.encode(Encoding::UTF_8, options[:encoding])
       end
-      CSV.parse(input, options) do |row|
-        parse_obj.call(row)
+      CSV.parse(input, **options) do |row|
+        yield row
         valid_line_count += 1
       rescue CsvInvalidLineError => e
         # append individual error messages to each entry

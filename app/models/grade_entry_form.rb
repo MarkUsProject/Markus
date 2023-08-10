@@ -45,7 +45,8 @@ class GradeEntryForm < Assessment
                   .where(roles: { hidden: false })
                   .pluck('grade_entry_students.id')
 
-    @completed_result_marks = GradeEntryStudent.get_total_grades(ges_ids).values.compact.sort
+    @completed_result_marks = GradeEntryStudent.get_total_grades(ges_ids).values.compact
+    @completed_result_marks.sort!
   end
 
   def released_marks
@@ -130,7 +131,7 @@ class GradeEntryForm < Assessment
       num_items = self.grade_entry_items.count
     end
 
-    total_grades = GradeEntryStudent.get_total_grades(students.map { |s| s['grade_entry_students.id'] })
+    total_grades = GradeEntryStudent.get_total_grades(students.pluck('grade_entry_students.id'))
 
     MarkusCsv.generate(students, headers) do |student|
       total_grade = total_grades[student['grade_entry_students.id']]

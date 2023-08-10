@@ -32,7 +32,7 @@ describe TasController do
 
       it 'responds with appropriate status' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       # parse header object to check for the right disposition
@@ -71,7 +71,7 @@ describe TasController do
       let(:format_str) { 'yml' }
       it 'responds with appropriate status' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       it 'sets disposition as attachment' do
@@ -180,7 +180,7 @@ describe TasController do
   context '#index' do
     it 'respond with success on index' do
       get_as instructor, :index, params: { course_id: course.id }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
     it 'retrieves correct data' do
       get_as instructor, :index, format: 'json', params: { course_id: course.id }

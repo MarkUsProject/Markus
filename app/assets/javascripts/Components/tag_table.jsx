@@ -17,16 +17,26 @@ class TagTable extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_tags_path(this.props.course_id),
-      data: {assignment_id: this.props.assignment_id},
-      dataType: "json",
-    }).then(res => {
-      this.setState({
-        tags: res,
-        loading: false,
-      });
+    const url = Routes.course_tags_path(this.props.course_id, {
+      assignment_id: this.props.assignment_id,
     });
+
+    fetch(url, {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          tags: res,
+          loading: false,
+        });
+      });
   };
 
   edit = tag_id => {

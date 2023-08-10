@@ -8,24 +8,21 @@ class GradesSummaryDisplay extends React.Component {
   averageDataSet = {
     label: I18n.t("class_average"),
     backgroundColor: "rgba(228,151,44,0.35)",
-    borderColor: "#e4972c",
-    borderWidth: 1,
+    border: {color: "#e4972c", width: 1},
     hoverBackgroundColor: "rgba(228,151,44,0.75)",
   };
 
   medianDataSet = {
     label: I18n.t("class_median"),
     backgroundColor: "rgba(35,192,35,0.35)",
-    borderColor: "#23c023",
-    borderWidth: 1,
+    border: {color: "#23c023", width: 1},
     hoverBackgroundColor: "rgba(35,192,35,0.75)",
   };
 
   individualDataSet = {
     label: I18n.t("results.your_mark"),
     backgroundColor: "rgba(58,106,179,0.35)",
-    borderColor: "#3a6ab3",
-    borderWidth: 1,
+    border: {color: "#3a6ab3", width: 1},
     hoverBackgroundColor: "rgba(58,106,179,0.75)",
   };
 
@@ -46,16 +43,23 @@ class GradesSummaryDisplay extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.populate_course_course_summaries_path(this.props.course_id),
-      dataType: "json",
-    }).then(res =>
-      this.setState({
-        ...res,
-        loading: false,
-        datasets: this.compileDatasets(res.graph_data),
+    fetch(Routes.populate_course_course_summaries_path(this.props.course_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
       })
-    );
+      .then(res =>
+        this.setState({
+          ...res,
+          loading: false,
+          datasets: this.compileDatasets(res.graph_data),
+        })
+      );
   };
 
   compileDatasets = data => {

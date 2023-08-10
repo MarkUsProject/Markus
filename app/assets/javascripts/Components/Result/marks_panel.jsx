@@ -33,7 +33,7 @@ export class MarksPanel extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.marks.length !== this.props.marks.length) {
+    if (prevProps.marks !== this.props.marks) {
       // Expand by default if a mark has not yet been given, and the current user can give the mark.
       let expanded = new Set();
       this.props.marks.forEach(data => {

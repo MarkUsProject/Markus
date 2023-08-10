@@ -10,5 +10,20 @@
     <%= f.label :pdf_to_split, t('exam_templates.upload_scans.instruction') %>
     <%= f.file_field :pdf_to_split, required: true, accept: 'application/pdf' %>
   </div>
+  <p>
+    <%= I18n.t('exam_templates.upload_scans.on_duplicate.instruction') %>
+  </p>
+  <p>
+    <%= f.radio_button :on_duplicate, 'overwrite', checked: true %>
+    <%= f.label :on_duplicate, I18n.t('exam_templates.upload_scans.on_duplicate.overwrite'), value: 'overwrite' %>
+  </p>
+  <p>
+    <%= f.radio_button :on_duplicate, 'ignore' %>
+    <%= f.label :on_duplicate, I18n.t('exam_templates.upload_scans.on_duplicate.ignore'), value: 'ignore' %>
+  </p>
+  <p>
+    <%= f.radio_button :on_duplicate, 'error' %>
+    <%= f.label :on_duplicate, I18n.t('exam_templates.upload_scans.on_duplicate.error'), value: 'error' %>
+  </p>
   <p><%= f.submit t('upload'), id: 'split_exam' %></p>
 <% end %>

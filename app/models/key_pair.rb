@@ -18,7 +18,7 @@ class KeyPair < ApplicationRecord
 
   # Check if +self.public_key+ is formatted correctly
   def public_key_format
-    single_line = self.public_key.lines.map(&:strip).select(&:present?).length == 1
+    single_line = self.public_key.lines.one? { |line| line.strip.present? }
     key_type, key, _comment = self.public_key.split
     valid_key_type = KEY_TYPES.include? key_type
     errors.add(:public_key, I18n.t('key_pairs.create.invalid_key')) unless single_line && valid_key_type && !key.nil?

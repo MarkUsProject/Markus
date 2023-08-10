@@ -240,7 +240,7 @@ class Assignment < Assessment
 
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_max > 1
+    group_max > 1
   end
 
   # Return all released marks for this assignment
@@ -333,7 +333,7 @@ class Assignment < Assessment
       end
     end
     ids = Set.new
-    groupings = grouping_data.map do |data|
+    groupings = grouping_data.filter_map do |data|
       next if ids.include? data['groupings.id'] # distinct on the query doesn't seem to work
 
       ids << data['groupings.id']
@@ -356,7 +356,7 @@ class Assignment < Assessment
         members: members[data['groupings.id']],
         section: data['sections.name'] || ''
       }
-    end.compact
+    end
 
     {
       students: students.values,
@@ -461,14 +461,14 @@ class Assignment < Assessment
 
   # Get a list of repo checkout client commands to be used for scripting
   def get_repo_checkout_commands(ssh_url: false)
-    self.groupings.includes(:group, :current_submission_used).map do |grouping|
+    self.groupings.includes(:group, :current_submission_used).filter_map do |grouping|
       submission = grouping.current_submission_used
       next if submission&.revision_identifier.nil?
       url = ssh_url ? grouping.group.repository_ssh_access_url : grouping.group.repository_external_access_url
       Repository.get_class.get_checkout_command(url,
                                                 submission.revision_identifier,
                                                 grouping.group.group_name, repository_folder)
-    end.compact
+    end
   end
 
   # Get a list of group_name, repo-url pairs
@@ -538,7 +538,7 @@ class Assignment < Assessment
     max_mark = 0
 
     selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
-    criteria_columns = selected_criteria.map do |crit|
+    criteria_columns = selected_criteria.filter_map do |crit|
       unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
       next if hide_unassigned && unassigned
 
@@ -551,7 +551,7 @@ class Assignment < Assessment
         className: unassigned ? 'number unassigned' : 'number',
         headerClassName: unassigned ? 'unassigned' : ''
       }
-    end.compact
+    end
 
     final_data = groupings.map do |g|
       result = results_data[g.id]
@@ -568,7 +568,7 @@ class Assignment < Assessment
       end
 
       tag_info = tag_data.fetch(g.id, [])
-                         .map { |a| a['tags.name'] }
+                         .pluck('tags.name')
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       criteria.transform_values! { |data| data[:mark] }
       extra_mark = extra_marks_hash[result&.id]
@@ -612,7 +612,7 @@ class Assignment < Assessment
     self.test_groups
         .joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
         .joins("INNER JOIN (#{test_groups_query}) sub \
-                ON test_groups.id = sub.test_groups_id \
+                ON test_groups.id = sub.test_groups_id
                 AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
         .select('test_groups.name',
                 'test_groups_id',
@@ -634,7 +634,7 @@ class Assignment < Assessment
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
     results = {}
-    headers = SortedSet.new
+    headers = Set.new
     summary_test_results = self.summary_test_results.as_json
 
     summary_test_results.each do |test_result|
@@ -648,6 +648,7 @@ class Assignment < Assessment
 
       headers << header
     end
+    headers = headers.sort
 
     CSV.generate do |csv|
       csv << [nil, *headers]
@@ -675,16 +676,20 @@ class Assignment < Assessment
     if role.instructor?
       groupings = self.groupings
                       .includes(:group,
-                                :accepted_students,
                                 current_result: :marks)
     else
       groupings = self.groupings
                       .includes(:group,
-                                :accepted_students,
                                 current_result: :marks)
                       .joins(:memberships)
                       .where('memberships.role_id': role.id)
     end
+
+    students = Student.all
+                      .includes(:accepted_groupings, :section)
+                      .where('accepted_groupings.assessment_id': self.id)
+                      .joins(:user)
+                      .order('users.user_name')
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
@@ -708,21 +713,21 @@ class Assignment < Assessment
       csv << headers[0]
       csv << headers[1]
 
-      groupings.each do |g|
-        result = g.current_result
+      students.each do |student|
+        # filtered to keep only the groupings for this assignment when defining students above
+        g = student.accepted_groupings.first
+        result = g&.current_result
         marks = result.nil? ? {} : result.mark_hash
-        g.accepted_students.each do |s|
-          other_info = Student::CSV_ORDER.map { |field| s.public_send(field) }
-          row = [g.group.group_name] + other_info
-          if result.nil?
-            row += Array.new(2 + self.ta_criteria.count, nil)
-          else
-            row << total_marks_hash[result.id]
-            row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
-            row << extra_marks_hash[result.id]
-          end
-          csv << row
+        other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
+        row = [g&.group&.group_name] + other_info
+        if result.nil?
+          row += Array.new(2 + self.ta_criteria.count, nil)
+        else
+          row << total_marks_hash[result.id]
+          row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
+          row << extra_marks_hash[result.id]
         end
+        csv << row
       end
     end
   end
@@ -750,8 +755,7 @@ class Assignment < Assessment
   # Returns all the submissions that have not been graded (completed).
   # Note: This assumes that every submission has at least one result.
   def ungraded_submission_results
-    current_submissions_used.joins(:current_result)
-                            .where('results.marking_state': Result::MARKING_STATES[:incomplete])
+    current_results.where('results.marking_state': Result::MARKING_STATES[:incomplete])
   end
 
   def is_criteria_mark?(ta_id)
@@ -778,8 +782,8 @@ class Assignment < Assessment
 
   def get_num_valid
     groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
-             .select(&:is_valid?)
-             .size
+             .to_a
+             .count(&:is_valid?)
   end
 
   def get_num_marked(ta_id = nil)
@@ -862,13 +866,29 @@ class Assignment < Assessment
 
   # Query for all current results for this assignment
   def current_results
-    # The timestamps of all current results
-    subquery = self.groupings.joins(:current_result).group(:id)
-                   .select('groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
+    # The timestamps of all current results. This duplicates #non_pr_results,
+    # except it renames the groupings table to avoid a name conflict with the second query below.
+    subquery = Result.joins('INNER JOIN submissions AS _submissions ON results.submission_id = _submissions.id ' \
+                            'INNER JOIN groupings AS _groupings ON _submissions.grouping_id = _groupings.id')
+                     .where('_groupings.assessment_id': id, '_submissions.submission_version_used': true)
+                     .where.missing(:peer_reviews)
+                     .group('_groupings.id')
+                     .select('_groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
 
     Result.joins(:grouping)
           .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND " \
                  'results.created_at = sub.results_created_at')
+  end
+
+  def current_remark_results
+    self.current_results.where.not('results.remark_request_submitted_at' => nil)
+  end
+
+  # Query for all non-peer review results for this assignment (for the current submissions)
+  def non_pr_results
+    Result.joins(:grouping)
+          .where('groupings.assessment_id': id, 'submissions.submission_version_used': true)
+          .where.missing(:peer_reviews)
   end
 
   # Returns true if this is a peer review, meaning it has a parent assignment,
@@ -932,9 +952,9 @@ class Assignment < Assessment
       sf_group = section&.starter_file_group_for(self) || default_starter_file_group
       sf_group&.starter_file_entries || []
     when 'shuffle'
-      self.starter_file_groups.includes(:starter_file_entries).map do |g|
+      self.starter_file_groups.includes(:starter_file_entries).filter_map do |g|
         StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
-      end.compact
+      end
     when 'group'
       StarterFileGroup.find_by(id: self.starter_file_groups.ids.sample)&.starter_file_entries || []
     else
@@ -973,11 +993,11 @@ class Assignment < Assessment
     files_dir = Pathname.new autotest_files_dir
     return [] unless Dir.exist? files_dir
 
-    Dir.glob("#{files_dir}/**/*", File::FNM_DOTMATCH).map do |f|
+    Dir.glob("#{files_dir}/**/*", File::FNM_DOTMATCH).filter_map do |f|
       unless %w[.. .].include?(File.basename(f))
         Pathname.new(f).relative_path_from(files_dir).to_s
       end
-    end.compact
+    end
   end
 
   def scanned_exams_path
@@ -1015,10 +1035,7 @@ class Assignment < Assessment
       groups[[group_id, group_name, count]]
       groups[[group_id, group_name, count]] << { grader: ta, hidden: hidden } unless ta.nil?
     end
-    group_sections = {}
-    self.groupings.includes(:section).find_each do |g|
-      group_sections[g.id] = g.section&.id
-    end
+    group_sections = self.groupings.left_outer_joins(:section).pluck('groupings.id', 'sections.id').to_h
     groups = groups.map do |k, v|
       {
         _id: k[0],
@@ -1093,16 +1110,16 @@ class Assignment < Assessment
       deductions = {}
     end
 
-    result_data = groupings
-                  .left_outer_joins(current_submission_used: [:current_result, :submitted_remark])
-                  .order('results.created_at DESC')
-                  .pluck_to_hash('groupings.id',
-                                 'results.id',
-                                 'results.marking_state',
-                                 'results.released_to_students',
-                                 'results.view_token',
-                                 'results.view_token_expiry')
-                  .group_by { |h| h['groupings.id'] }
+    # All results for the currently-used submissions, including both remark and original results
+    result_data = self.non_pr_results.joins(:grouping)
+                      .order('results.created_at DESC')
+                      .pluck_to_hash('groupings.id',
+                                     'results.id',
+                                     'results.marking_state',
+                                     'results.released_to_students',
+                                     'results.view_token',
+                                     'results.view_token_expiry')
+                      .group_by { |h| h['groupings.id'] }
 
     if current_role.ta? && anonymize_groups
       member_data = {}
@@ -1130,14 +1147,14 @@ class Assignment < Assessment
       !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
     end
 
-    result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
+    result_ids = result_data.values.flat_map { |arr| arr.pluck('results.id') }
 
     total_marks = Mark.where(criterion: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
                       .group_by(&:first)
-                      .transform_values { |arr| arr.map(&:second).compact.sum }
+                      .transform_values { |arr| arr.filter_map(&:second).sum }
 
-    max_mark = criteria.map(&:max_mark).compact.sum
+    max_mark = criteria.filter_map(&:max_mark).sum
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     collection_dates = all_grouping_collection_dates
@@ -1146,7 +1163,7 @@ class Assignment < Assessment
 
     # This is the submission data that's actually returned
     data.map do |grouping_id, group_name, revision_timestamp, is_empty, start_time|
-      tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
+      tag_info, result_info, member_info, section_info, collection_date = data_collections.pluck(grouping_id)
       has_remark = result_info&.count&.> 1
       result_info = result_info&.first || {}
 
@@ -1154,7 +1171,7 @@ class Assignment < Assessment
         _id: grouping_id, # Needed for checkbox version of react-table
         max_mark: max_mark,
         group_name: current_role.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
-        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
+        tags: (tag_info.nil? ? [] : tag_info.pluck('tags.name')),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
                                      result_info['results.released_to_students'],
@@ -1179,7 +1196,7 @@ class Assignment < Assessment
         end
       end
 
-      base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
+      base[:members] = member_info.pluck('users.user_name') unless member_info.nil?
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 
@@ -1320,7 +1337,7 @@ class Assignment < Assessment
     unless difference.zero?
       max_tokens = assignment_properties.tokens_per_period
       groupings.each do |g|
-        g.test_tokens = [[g.test_tokens + difference, 0].max, max_tokens].min
+        g.test_tokens = (g.test_tokens + difference).clamp(0, max_tokens)
         g.save
       end
     end

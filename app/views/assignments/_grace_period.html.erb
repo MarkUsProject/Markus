@@ -26,6 +26,7 @@
         <span class='PeriodDeltaChain_ToTime'></span>
       </span>
     </td>
+    <td><%= t('grace_period_submission_rules.credit', count: 1) %></td>
     <td>
       <% if !f.object.nil? && !f.object.new_record? %>
         <%= f.check_box :_destroy %>

@@ -6,12 +6,12 @@
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
   <%= javascript_tag nonce: true do %>
-    $(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       $('#add-annotation-category').click(function(e) {
         add_annotation_category('<%= new_course_assignment_annotation_category_path(@current_course, @assignment) %>');
         e.preventDefault();
       })
-    })
+    });
   <% end %>
 <% end %>
 
@@ -33,7 +33,9 @@
 ] %>
 
 
-<p id='criterion_error' class='warning no-display'></p>
+<p id='criterion_error' class='warning no-display'>
+  <i class="fa-solid fa-warning"></i>
+</p>
 <div class='pane-wrapper'>
   <div class="annotation-pane-wrapper">
     <%= render partial: 'annotation_categories/annotation_category_pane' %>

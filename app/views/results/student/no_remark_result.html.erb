@@ -11,7 +11,10 @@
 <% end %>
 
 <div class="wrapLeft">
-  <p class="notice"><%= t('results.remark.no_remark_result') %></p>
+  <p class="notice">
+    <i class="fa-solid fa-circle-info left-icon"></i>
+    <%= t('results.remark.no_remark_result') %>
+  </p>
   <p>
     <em><%= t('results.remark.submitted_on', time: l(@submission.remark_request_timestamp)) %></em>
   </p>
@@ -31,12 +34,13 @@
     </div>
   </div>
   <div>
-    <p class="notice"><%= t('results.remark.cancel_remark_to_change') %></p>
+    <p class="notice">
+      <i class="fa-solid fa-circle-info left-icon"></i>
+      <%= t('results.remark.cancel_remark_to_change') %>
+    </p>
     <p>
       <%= link_to t('results.remark.cancel'),
-                  { controller: 'results',
-                    action: 'cancel_remark_request',
-                    id: @result.id },
+                  cancel_remark_request_course_assignment_submission_path(course_id:@assignment.course_id, assignment_id:@assignment.id, id:@submission.id),
                   class: 'button',
                   data: { confirm: t('results.remark.cancel_confirm') },
                   method: :delete %>

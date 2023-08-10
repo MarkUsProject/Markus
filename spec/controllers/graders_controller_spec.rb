@@ -42,7 +42,7 @@ describe GradersController do
 
     it 'doing a GET on :index(graders_controller)' do
       get_as @instructor, :index, params: { course_id: course.id, assignment_id: @assignment.id }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
       expect(assigns(:assignment)).not_to be_nil
     end
 
@@ -353,7 +353,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -364,7 +364,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'random_assign', graders: [@ta1], current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -375,7 +375,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'random_assign', groupings: [@grouping1], current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -387,7 +387,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'random_assign', groupings: [@grouping1], weightings: [1],
                             graders: [@ta1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
@@ -399,7 +399,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1],
                             weightings: [1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas[0].id).to eq @ta1.id
           expect(@grouping3.tas).to eq []
@@ -411,7 +411,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1], graders: [@ta1, @ta2],
                             weightings: [1, 1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
@@ -423,7 +423,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
                             weightings: [1, 1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping1.tas[0].id).not_to eq @grouping2.tas[0].id
@@ -436,7 +436,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
                             weightings: [1, 0], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id)
           expect(@grouping3.tas).to eq []
@@ -448,7 +448,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
                             weightings: [2, 1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping2.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
           expect(@grouping3.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
@@ -462,7 +462,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
                             weightings: [1, 1, 1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas.size).to eq 1
           expect(@grouping2.tas.size).to eq 1
           expect(@grouping3.tas.size).to eq 1
@@ -520,7 +520,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'assign', current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -531,7 +531,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             graders: [@ta1], current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -542,7 +542,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1], current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -553,7 +553,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1], graders: [@ta1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
@@ -564,7 +564,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas[0].id).to eq @ta1.id
           expect(@grouping3.tas).to eq []
@@ -575,7 +575,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1], graders: [@ta1, @ta2], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 2
           expect(@grouping1.tas).to include(@ta1)
           expect(@grouping1.tas).to include(@ta2)
@@ -588,7 +588,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2], current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 2
           expect(@grouping1.tas).to include(@ta1)
           expect(@grouping1.tas).to include(@ta2)
@@ -605,7 +605,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 3
           expect(@grouping1.tas).to include(@ta1)
           expect(@grouping1.tas).to include(@ta2)
@@ -624,7 +624,7 @@ describe GradersController do
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                             groupings: [@grouping1, @grouping2], graders: [@ta1.id.to_s, @ta2.id.to_s],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 2
           expect(@grouping1.tas).to include(@ta1)
           expect(@grouping1.tas).to include(@ta2)
@@ -680,7 +680,7 @@ describe GradersController do
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             global_actions: 'unassign', current_table: 'groups_table' }
-          expect(response.status).to eq(400)
+          expect(response).to have_http_status(400)
           expect(@grouping1.tas).to eq [@ta1]
           expect(@grouping2.tas).to eq [@ta2]
           expect(@grouping3.tas).to eq []
@@ -697,7 +697,7 @@ describe GradersController do
                             groupings: [@grouping1.id],
                             graders: [@ta1.id, @ta2.id, @ta3.id],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas).to eq []
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq [@ta3]
@@ -715,7 +715,7 @@ describe GradersController do
                             groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
                             graders: [@ta3.id],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas).not_to include(@ta3)
           expect(@grouping2.tas).not_to include(@ta3)
           expect(@grouping3.tas).not_to include(@ta3)
@@ -739,7 +739,7 @@ describe GradersController do
                             groupings: [@grouping2.id],
                             graders: [@ta1.id],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping2.tas).not_to include(@ta1)
           expect(@grouping1.tas).to include(@ta1)
           expect(@grouping1.tas).to include(@ta2)
@@ -767,7 +767,7 @@ describe GradersController do
                             groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
                             graders: [@ta1.id, @ta2.id, @ta3.id],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
           expect(@grouping1.tas).to eq []
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
@@ -792,7 +792,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -803,7 +803,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -815,7 +815,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -828,7 +828,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -840,7 +840,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id], current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas[0].id).to eq @ta1.id
             expect(@criterion3.tas).to eq []
@@ -852,7 +852,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id], current_table:  'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -864,7 +864,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id], current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
             expect(@criterion2.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
             expect(@criterion1.tas[0].id).not_to eq @criterion2.tas[0].id
@@ -878,7 +878,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas.size).to eq(1)
             expect(@criterion2.tas.size).to eq(1)
             expect(@criterion3.tas.size).to eq(1)
@@ -900,7 +900,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'assign', current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -911,7 +911,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'assign', graders: [@ta1], current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -923,7 +923,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -936,7 +936,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -949,7 +949,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas[0].id).to eq @ta1.id
             expect(@criterion3.tas).to eq []
@@ -962,7 +962,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas.length).to eq 2
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
@@ -977,7 +977,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas.length).to eq 2
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
@@ -994,7 +994,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas.length).to eq 3
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
@@ -1015,7 +1015,7 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
 
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1046,7 +1046,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1066,7 +1066,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             expect(@criterion1.tas).to eq []
             @criterion2.reload
@@ -1087,7 +1087,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1115,7 +1115,7 @@ describe GradersController do
                               graders: [@ta1.id],
                               criteria: [@criterion2.position],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion2.tas).not_to include(@ta1)
             @criterion1.reload
             @criterion2.reload
@@ -1146,7 +1146,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1177,7 +1177,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -1188,7 +1188,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -1200,7 +1200,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -1212,7 +1212,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
                               criteria: [@criterion1.position], graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1228,7 +1228,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1244,7 +1244,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1260,7 +1260,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1278,7 +1278,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1303,7 +1303,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
                               global_actions: 'assign', current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.reload
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
@@ -1315,7 +1315,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               graders: [@ta1], current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.reload
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
@@ -1327,7 +1327,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1], current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -1340,7 +1340,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1356,7 +1356,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1372,7 +1372,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1390,7 +1390,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1410,7 +1410,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1432,7 +1432,7 @@ describe GradersController do
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
                               criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id], current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1463,7 +1463,7 @@ describe GradersController do
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(400)
+            expect(response).to have_http_status(400)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1483,7 +1483,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             expect(@criterion1.tas).to eq []
             @criterion2.reload
@@ -1504,7 +1504,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1532,7 +1532,7 @@ describe GradersController do
                               criteria: [@criterion2.position],
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion2.tas).not_to include(@ta1)
             @criterion1.reload
             @criterion2.reload
@@ -1563,7 +1563,7 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
             expect(@criterion1.tas).to eq []
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []

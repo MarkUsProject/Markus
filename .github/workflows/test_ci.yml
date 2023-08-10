@@ -2,13 +2,17 @@ name: MarkUs Tests
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - master
+
 jobs:
   test:
     if: github.event.pull_request.draft == false
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     services:
       postgres:
-        image: postgres:12
+        image: postgres:14
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -41,11 +45,11 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1
+          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ruby-2.7
+          ruby-version: ruby-3.0
           bundler-cache: true
       - name: Set up node and cache packages
         uses: actions/setup-node@v3
@@ -62,13 +66,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}-${{ hashFiles('requirements-qr.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Install python packages
         run: |
           python3.9 -m venv venv
-          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt
+          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt -r requirements-qr.txt
       - name: Configure server
         run: |
           sudo rm -f /etc/localtime
@@ -80,36 +84,42 @@ jobs:
       - name: Set up database
         run: bundle exec rails db:migrate
       - name: Install chrome and chromedriver
-        uses: nanasess/setup-chromedriver@v1
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: '115.0.5790.102'
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
       - name: Run rspec tests
-        run: bundle exec rspec
+        run: |
+          bundle exec rspec
+          bundle exec rspec spec/system
         env:
           MARKUS__PYTHON: ./venv/bin/python3
-      - name: Run rspec system tests
-        run: bundle exec rspec spec/system
       - name: Coveralls Parallel (rspec)
-        uses: coverallsapp/github-action@1.1.3
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: rspec
           parallel: true
+          file: coverage/lcov.info
       - name: Run jest tests
         run: npm run test-cov
       - name: Coveralls Parallel (jest)
-        uses: coverallsapp/github-action@1.1.3
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: jest
           parallel: true
+          file: coverage/lcov.info
 
   finish:
     needs: test
-    runs-on: ubuntu-20.04
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-22.04
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@1.1.3
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
+          carryforward: "rspec,jest"

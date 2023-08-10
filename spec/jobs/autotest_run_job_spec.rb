@@ -34,6 +34,7 @@ describe AutotestRunJob do
         allow_any_instance_of(AutotestRunJob).to receive(:send_request!).and_return(dummy_return)
       end
       context 'if there is only one group' do
+        let(:user2) { create :instructor }
         let(:n_groups) { 1 }
         it 'should not create a batch' do
           expect { subject }.not_to(change { TestBatch.count })
@@ -41,6 +42,18 @@ describe AutotestRunJob do
         it 'should create a test run without an associated batch' do
           subject
           expect(TestRun.where(batch_id: nil)).not_to be_nil
+        end
+        it 'should broadcast a message to the user' do
+          expect { subject }
+            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).with(body: 'sent')
+        end
+        it 'should broadcast exactly one message' do
+          expect { subject }
+            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).once
+        end
+        it 'should not broadcast a message to other users' do
+          expect { subject }
+            .to have_broadcasted_to(user2.user).from_channel(TestRunsChannel).exactly 0
         end
       end
       context 'there is more than one group' do
@@ -67,11 +80,15 @@ describe AutotestRunJob do
           subject
           expect(TestRun.where(status: :in_progress).count).to eq n_groups
         end
-        it 'should create test runs associated to the correct grouping and with the correct autotest_run_ids' do
+        it 'should create test runs associated to the correct autotest_run_ids' do
           subject
-          test_run_data = TestRun.joins(grouping: :group).pluck('groups.id', 'test_runs.autotest_test_id')
-          expected = groupings.map { |g| g.group.id }.zip(JSON.parse(dummy_return.body)['test_ids'])
-          expect(test_run_data).to contain_exactly(*expected)
+          autotest_test_ids = TestRun.joins(grouping: :group).pluck('test_runs.autotest_test_id')
+          expected = JSON.parse(dummy_return.body)['test_ids']
+          expect(autotest_test_ids).to contain_exactly(*expected)
+        end
+        it 'should not broadcast a message' do
+          expect { subject }
+            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).exactly 0
         end
       end
       it 'should enqueue an AutotestResultsJob job' do
@@ -88,7 +105,7 @@ describe AutotestRunJob do
       end
       include_examples 'autotest jobs'
       let(:test_data) do
-        url_root = Rails.configuration.action_controller.relative_url_root
+        url_root = Rails.configuration.relative_url_root
         groups.map do |group|
           file_url = "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/" \
                      "#{assignment.id}/groups/#{group.id}/submission_files?#{collected ? 'collected=true' : ''}"
@@ -96,8 +113,10 @@ describe AutotestRunJob do
                                     .joins(starter_file_entries: :starter_file_group)
                                     .where(group_id: group.id)
                                     .pluck('starter_file_entries.path', 'starter_file_groups.name')
-                                    .map { |v| { starter_file_group: v.second, starter_file_path: v.first } if v.first }
-                                    .compact
+                                    .filter_map do |v|
+            { starter_file_group: v.second, starter_file_path: v.first } if v.first
+          end
+
           {
             file_url: file_url,
             env_vars: { MARKUS_GROUP: group.group_name, MARKUS_STARTER_FILES: starter_files.to_json }

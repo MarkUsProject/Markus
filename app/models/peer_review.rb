@@ -38,7 +38,6 @@ class PeerReview < ApplicationRecord
       result = Result.create!(submission: reviewee.current_submission_used,
                               marking_state: Result::MARKING_STATES[:incomplete])
       peer_review = PeerReview.create!(reviewer: reviewer, result: result)
-      result.peer_review_id = peer_review.id
       result.save!
       peer_review
     end
@@ -103,7 +102,7 @@ class PeerReview < ApplicationRecord
                          .pluck('groups_groupings.group_name', 'groups.group_name')
 
     # Group by reviewee group name, and map to just the reviewer group names.
-    mappings.group_by { |x| x[0] }.transform_values { |pairs| pairs.map { |p| p[1] } }
+    mappings.group_by { |x| x[0] }.transform_values { |pairs| pairs.pluck(1) }
   end
 
   def self.from_csv(assignment, data)

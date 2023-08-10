@@ -3,6 +3,7 @@ import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function blurOnEnter(event) {
   if (event.key === "Enter") {
@@ -36,13 +37,19 @@ class StarterFileManager extends React.Component {
   };
 
   fetchData = () => {
-    $.get({
-      url: Routes.populate_starter_file_manager_course_assignment_path(
+    fetch(
+      Routes.populate_starter_file_manager_course_assignment_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => this.setState({loading: false, ...res}));
+      {headers: {Accept: "aaplication/json"}}
+    )
+      .then(reponse => {
+        if (reponse.ok) {
+          return reponse.json();
+        }
+      })
+      .then(res => this.setState({loading: false, ...res}));
   };
 
   createStarterFileGroup = () => {
@@ -230,9 +237,11 @@ class StarterFileManager extends React.Component {
               />
               <button
                 key={"delete_starter_file_group_button"}
-                className={"button remove-icon"}
+                className={"button"}
                 onClick={() => this.deleteStarterFileGroup(id)}
-              />
+              >
+                <FontAwesomeIcon icon="fa-solid fa-trash" />
+              </button>
             </fieldset>
           );
         })}
@@ -463,9 +472,11 @@ class StarterFileManager extends React.Component {
           {this.renderFileManagers()}
           <button
             key={"create_starter_file_group_button"}
-            className={"button add-new-button"}
+            className={"button"}
             onClick={this.createStarterFileGroup}
-          />
+          >
+            <FontAwesomeIcon icon="fa-solid fa-add" />
+          </button>
           <StarterFileFileUploadModal
             groupUploadTarget={this.state.groupUploadTarget}
             isOpen={this.state.showFileUploadModal}

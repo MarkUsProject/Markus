@@ -127,6 +127,8 @@ module Markus
       end]
     end
 
+    config.action_cable.url = "#{config.relative_url_root}/cable"
+
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib

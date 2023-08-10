@@ -2,10 +2,16 @@ import React from "react";
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import Form from "@rjsf/core";
+import {TranslatableString} from "@rjsf/utils";
+import {customizeValidator} from "@rjsf/validator-ajv8";
 import Flatpickr from "react-flatpickr";
 import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
+
+const ajvOptionsOverrides = {discriminator: true};
+const validator = customizeValidator({ajvOptionsOverrides});
 
 class AutotestManager extends React.Component {
   constructor(props) {
@@ -16,12 +22,45 @@ class AutotestManager extends React.Component {
       uiSchema: {
         testers: {
           items: {
-            classNames: "tester-item",
+            "ui:classNames": "tester-item",
+            env_data: {
+              pip_requirements: {
+                "ui:widget": "textarea",
+              },
+            },
             test_data: {
               items: {
                 "ui:order": ["extra_info", "*"],
+                "ui:options": {label: false},
+                category: {
+                  "ui:title": I18n.t("automated_tests.category"),
+                },
+                feedback_file_names: {
+                  "ui:classNames": "feedback-file-names",
+                  "ui:options": {orderable: false},
+                  items: {
+                    "ui:placeholder": I18n.t("attributes.filename"),
+                    "ui:options": {label: false},
+                    "ui:title": I18n.t("attributes.filename"),
+                  },
+                },
+                script_files: {
+                  items: {
+                    "ui:options": {label: false},
+                  },
+                },
+                student_files: {
+                  items: {
+                    "ui:options": {label: false},
+                  },
+                },
+                timeout: {
+                  "ui:title": I18n.t("automated_tests.timeout"),
+                  "ui:widget": "updown",
+                },
               },
             },
+            "ui:options": {label: false},
           },
         },
       },
@@ -39,6 +78,7 @@ class AutotestManager extends React.Component {
       uploadTarget: undefined,
       form_changed: false,
     };
+    this.formRef = React.createRef();
   }
 
   componentDidMount() {
@@ -184,6 +224,9 @@ class AutotestManager extends React.Component {
   };
 
   onSubmit = () => {
+    if (!this.formRef.current.validateForm()) {
+      return;
+    }
     let data = {
       assignment: {
         enable_test: this.state.enable_test,
@@ -356,12 +399,14 @@ class AutotestManager extends React.Component {
     return (
       <div>
         <div className="inline-labels">
-          <input
-            type="checkbox"
-            checked={this.state.enable_test}
-            onChange={this.toggleEnableTest}
-          />
-          <label>{I18n.t("activerecord.attributes.assignment.enable_test")}</label>
+          <label>
+            <input
+              type="checkbox"
+              checked={this.state.enable_test}
+              onChange={this.toggleEnableTest}
+            />
+            {I18n.t("activerecord.attributes.assignment.enable_test")}
+          </label>
         </div>
         <fieldset>
           <legend>
@@ -386,10 +431,12 @@ class AutotestManager extends React.Component {
             <span>{"Testers"}</span>
           </legend>
           <div className={"rt-action-box upload-download"}>
-            <a href={this.specsDownloadURL()} className={"button download-button"}>
+            <a href={this.specsDownloadURL()} className={"button"}>
+              <FontAwesomeIcon icon="fa-solid fa-download" />
               {I18n.t("download")}
             </a>
-            <a onClick={this.onSpecUploadModal} className={"button upload-button"}>
+            <a onClick={this.onSpecUploadModal} className={"button"}>
+              <FontAwesomeIcon icon="fa-solid fa-upload" />
               {I18n.t("upload")}
             </a>
           </div>
@@ -399,7 +446,17 @@ class AutotestManager extends React.Component {
             uiSchema={this.state.uiSchema}
             formData={this.state.formData}
             onChange={this.handleFormChange}
-            noValidate={true}
+            validator={validator}
+            templates={{
+              ErrorListTemplate: AutotestErrorList,
+              ButtonTemplates: {
+                AddButton,
+                MoveDownButton,
+                MoveUpButton,
+                RemoveButton,
+              },
+            }}
+            ref={this.formRef}
           >
             <p /> {/*need something here so that the form doesn't render its own submit button*/}
           </Form>
@@ -431,6 +488,94 @@ class AutotestManager extends React.Component {
       </div>
     );
   }
+}
+
+class AutotestErrorList extends React.Component {
+  render() {
+    return (
+      <p className={"error"}>
+        <FontAwesomeIcon icon="fa-solid fa-circle-exclamation" className="icon-left" />
+        {I18n.t("automated_tests.errors.settings_invalid")}
+      </p>
+    );
+  }
+}
+
+// Custom button templates to use Font Awesome
+function AddButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <div className="row">
+      <p className={`col-xs-3 col-xs-offset-9 text-right`}>
+        <button
+          type="button"
+          className={`btn btn-info btn-add col-xs-12`}
+          title={translateString(TranslatableString.AddButton)}
+          {...btnProps}
+        >
+          <FontAwesomeIcon icon="fa-solid fa-add" />
+        </button>
+      </p>
+    </div>
+  );
+}
+
+function RemoveButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <button
+      type="button"
+      className={`btn btn-danger array-item-remove`}
+      title={translateString(TranslatableString.RemoveButton)}
+      {...btnProps}
+    >
+      <FontAwesomeIcon icon="fa-solid fa-close" />
+    </button>
+  );
+}
+
+function MoveDownButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <button
+      type="button"
+      className={`btn btn-default array-item-move-down`}
+      title={translateString(TranslatableString.MoveDownButton)}
+      {...btnProps}
+    >
+      <FontAwesomeIcon icon="fa-solid fa-arrow-down" />
+    </button>
+  );
+}
+
+function MoveUpButton(props) {
+  const {
+    uiSchema,
+    registry: {translateString},
+    ...btnProps
+  } = props;
+  return (
+    <button
+      type="button"
+      className={`btn btn-default array-item-move-up`}
+      title={translateString(TranslatableString.MoveUpButton)}
+      {...btnProps}
+    >
+      <FontAwesomeIcon icon="fa-solid fa-arrow-up" />
+    </button>
+  );
 }
 
 export function makeAutotestManager(elem, props) {

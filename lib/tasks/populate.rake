@@ -103,7 +103,8 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
 Note: You have been assigned to a group by the instructor.",
       repository_folder: 'A3',
       due_date: 3.weeks.from_now,
-      invalid_override: true
+      group_max: 3,
+      student_form_groups: false
     )
     req_file1 = AssignmentFile.new
     req_file1.filename = 'gcd.sh'

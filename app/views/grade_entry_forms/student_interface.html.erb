@@ -40,8 +40,7 @@
             datasets: [{
               data: <%= @item_percentages.to_json.html_safe %>,
               backgroundColor: 'rgba(58,106,179,0.35)',
-              borderColor: '#3a6ab3',
-              borderWidth: 1,
+              border: {color: '#3a6ab3', width: 1},
               hoverBackgroundColor: 'rgba(58,106,179,0.75)'
             }]
           });

@@ -391,7 +391,7 @@ describe Course do
 
   describe '#get_required_files' do
     let(:actual) { assignment.course.get_required_files }
-    let(:matching) { actual.lines.select { |line| line.match(/^#{assignment.repository_folder}/) }.map(&:chomp) }
+    let(:matching) { actual.lines.filter_map { |line| line.chomp if /^#{assignment.repository_folder}/.match?(line) } }
     context 'when a course has no assignments' do
       it 'should return an empty string' do
         expect(course.get_required_files).to eq('')
@@ -567,11 +567,8 @@ describe Course do
 
         student1_data = "#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n"
         student2_data = "#{user2.user_name},#{user2.last_name},#{user2.first_name},,,#{user2.email}\n"
-        if user1.user_name <= user2.user_name
-          expected = student1_data + student2_data
-        else
-          expected = student2_data + student1_data
-        end
+        student_data = [student1_data, student2_data]
+        expected = student_data.sort.join
         expect(result).to eq(expected)
       end
     end
@@ -607,7 +604,6 @@ describe Course do
       let!(:student2) { create :student, user: user2, course: course }
       it 'returns the data of the students' do
         result = course.export_student_data_yml
-        expected = []
 
         student1_data = {
           user_name: user1.user_name,
@@ -626,14 +622,7 @@ describe Course do
           id_number: nil,
           section_name: nil
         }
-
-        if user1.user_name <= user2.user_name
-          expected.push(student1_data)
-          expected.push(student2_data)
-        else
-          expected.push(student2_data)
-          expected.push(student1_data)
-        end
+        expected = [student1_data, student2_data].sort_by { |a| a[:user_name] }
         expect(result).to eq(expected.to_yaml)
       end
     end

@@ -63,7 +63,7 @@ class AutomatedTestsController < ApplicationController
                                                   [grouping.group_id],
                                                   collected: false)
       session[:job_id] = @current_job.job_id
-      flash_message(:success, I18n.t('automated_tests.tests_running'))
+      flash_message(:success, I18n.t('automated_tests.test_run_table.tests_running'))
     end
   rescue StandardError => e
     flash_message(:error, e.message)
@@ -91,6 +91,7 @@ class AutomatedTestsController < ApplicationController
           url: download_file_course_assignment_automated_tests_url(assignment.course, assignment, file_name: file) }
       end
     end
+    file_keys.sort!
 
     schema_data = JSON.parse(assignment.course.autotest_setting.schema)
     fill_in_schema_data!(schema_data, file_keys, assignment)

@@ -23,4 +23,8 @@ class UserPolicy < ApplicationPolicy
   def reset_api_key?
     true
   end
+
+  def lti_manage?
+    role.nil? ? user.admin_user? : role.instructor? || role.admin_role?
+  end
 end

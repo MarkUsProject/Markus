@@ -1,5 +1,6 @@
 class ApplicationJob < ActiveJob::Base
   include ActiveJob::Status
+  include Bullet::ActiveJob if Rails.env.development?
 
   queue_as queue_name
 
@@ -25,12 +26,6 @@ class ApplicationJob < ActiveJob::Base
 
   before_enqueue do |job|
     self.status.update(job_class: job.class)
-  end
-
-  rescue_from(StandardError) do |e|
-    self.status.update(error_message: e.to_s)
-    self.status.update(status: :failed)
-    raise
   end
 
   def self.queue_name

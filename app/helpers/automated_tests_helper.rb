@@ -12,15 +12,15 @@ module AutomatedTestsHelper
         },
         display_output: {
           type: :string,
-          enum: TestGroup.display_outputs.keys,
-          enumNames: TestGroup.display_outputs.keys.map { |k| I18n.t("automated_tests.display_output.#{k}") },
+          oneOf: TestGroup.display_outputs.keys.map do |k|
+            { const: k, title: I18n.t("automated_tests.display_output.#{k}") }
+          end,
           default: TestGroup.display_outputs.keys.first,
           title: I18n.t('automated_tests.display_output_title')
         },
         criterion: {
           type: :string,
           enum: criterion_names,
-          enumNames: criterion_names,
           title: Criterion.model_name.human
         }
       },
@@ -28,9 +28,17 @@ module AutomatedTestsHelper
   end
 
   def fill_in_schema_data!(schema_data, files, assignment)
-    schema_data['definitions']['files_list']['enum'] = files
+    if files.present?
+      schema_data['definitions']['files_list']['enum'] = files
+    else
+      schema_data['definitions']['files_list']['enum'] = ['']
+    end
     schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
     schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
+
+    # TODO: remove these two lines when autotest schema is updated
+    schema_data['definitions']['tester_schemas']['discriminator'] = { propertyName: 'tester_type' }
+    schema_data['definitions']['tester_schemas']['required'] = ['tester_type']
     schema_data
   end
 
@@ -101,17 +109,17 @@ module AutomatedTestsHelper
   end
 
   def get_markus_address(host_with_port)
-    if Rails.application.config.action_controller.relative_url_root.nil?
+    if Rails.application.config.relative_url_root.nil?
       host_with_port
     else
-      host_with_port + Rails.application.config.action_controller.relative_url_root
+      host_with_port + Rails.application.config.relative_url_root
     end
   end
 
   # Sends RESTful api requests to the autotester
   module AutotestApi
     include AutomatedTestsHelper
-    AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
+    AUTOTEST_USERNAME = "markus_#{Rails.application.config.relative_url_root}".freeze
 
     class LimitExceededException < StandardError; end
     class UnauthorizedException < StandardError; end
@@ -214,6 +222,9 @@ module AutomatedTestsHelper
           autotest_test_id: test_id_hash[grouping.group.id],
           status: :in_progress
         )
+        if batch.nil?
+          TestRunsChannel.broadcast_to(role.user, body: 'sent')
+        end
       end
     end
 
@@ -294,10 +305,10 @@ module AutomatedTestsHelper
 
     # Get the current URL for this MarkUs instance (adds the relative url root to +host_with_port+) if it exists.
     def get_markus_address(host_with_port)
-      if Rails.application.config.action_controller.relative_url_root.nil?
+      if Rails.application.config.relative_url_root.nil?
         host_with_port
       else
-        host_with_port + Rails.application.config.action_controller.relative_url_root
+        host_with_port + Rails.application.config.relative_url_root
       end
     end
 
@@ -336,7 +347,7 @@ module AutomatedTestsHelper
               .group_by { |val| val[...2] }
               .map do |key, val|
                 [*key,
-                 val.map { |v| { starter_file_group: v[2], starter_file_path: v[3] } if v[2] }.compact]
+                 val.filter_map { |v| { starter_file_group: v[2], starter_file_path: v[3] } if v[2] }]
               end
   end
 

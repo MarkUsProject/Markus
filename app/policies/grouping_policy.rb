@@ -24,7 +24,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def students_form_groups?
-    !record.assignment.invalid_override
+    record.assignment.student_form_groups
   end
 
   def before_due_date?

@@ -1,11 +1,15 @@
 ---
 en:
   automated_tests:
+    cancel_tests: Cancel tests
+    category: Run by
     display_output:
       instructors: Never display test output to students
       instructors_and_student_tests: Only display test output to students for student-run tests
       instructors_and_students: Always display test output to students
     display_output_title: Display test output to students?
+    errors:
+      settings_invalid: There is an error in your autotest configuration. Please check the settings below carefully.
     files: Test Files
     invalid_specs_file: Settings file is not a valid json file
     job_messages:
@@ -39,6 +43,8 @@ en:
     stop_batch: Stop batch
     stop_test: Stop test
     student_tests: Student-Run Tests
+    test_run_table:
+      tests_running: Running tests.
     test_runs_status: Test Runs Status
     test_runs_statuses:
       cancelled: cancelled
@@ -48,4 +54,5 @@ en:
     testing_disabled: Automated testing is not enabled for this assignment.
     tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     tests_running: Running tests. Please refresh this page in a bit to view the results.
+    timeout: Timeout (s)
     title: Automated Testing

@@ -56,6 +56,12 @@
       <td><kbd>Shift</kbd> + <kbd>⇦</kbd></td>
       <td><%=t('results.previous_submission')%></td>
     </tr>
+    <%if @current_role.class.name != 'Student'%>
+      <tr>
+        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>⇨</kbd></td>
+        <td><%=t('results.random_incomplete_submission')%></td>
+      </tr>
+    <%end%>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇧</kbd></td>
       <td><%=t('results.keybinding.previous_criterion')%></td>
