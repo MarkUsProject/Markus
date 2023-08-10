@@ -58,6 +58,8 @@ export class RightPane extends React.Component {
             <SubmissionInfoPanel
               currentTags={this.props.current_tags}
               availableTags={this.props.available_tags}
+              due_date={this.props.due_date}
+              submission_time={this.props.submission_time}
               notes_count={this.props.notes_count}
               remark_submitted={this.props.remark_submitted}
               addTag={this.props.addTag}

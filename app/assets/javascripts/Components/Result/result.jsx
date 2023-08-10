@@ -885,6 +885,7 @@ class Result extends React.Component {
                 available_tags={this.state.available_tags}
                 criterionSummaryData={this.state.criterionSummaryData}
                 current_tags={this.state.current_tags}
+                due_date={this.state.due_date}
                 extra_marks={this.state.extra_marks}
                 extraMarkSubtotal={this.state.extraMarkSubtotal}
                 grace_token_deductions={this.state.grace_token_deductions}
@@ -896,6 +897,7 @@ class Result extends React.Component {
                 released_to_students={this.state.released_to_students}
                 remark_submitted={this.state.remark_submitted}
                 revertToAutomaticDeductions={this.revertToAutomaticDeductions}
+                submission_time={this.state.submission_time}
                 subtotal={this.state.subtotal}
                 total={this.state.total}
                 updateMark={this.updateMark}
