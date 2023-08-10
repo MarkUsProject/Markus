@@ -49,6 +49,12 @@
             <% end %>
             <li>
               <i class="fa-solid fa-question"></i>
+              <a href="https://github.com/MarkUsProject/Wiki/blob/<%= Rails.configuration.markus_version %>/Home.md">
+                <%= t(:help) %>
+              </a>
+            </li>
+            <li>
+              <i class="fa-solid fa-info"></i>
               <%= link_to t(:about_markus),
                           about_main_index_path,
                           remote: true,
