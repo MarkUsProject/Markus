@@ -37,6 +37,7 @@
 - Added "Help" link to the MarkUs page header dropdown (#6702)
 - Prevent TAs that aren't assigned to grade a given criterion from assigning a grade to that criterion (#6699)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
+- Replace byebug gem with debug gem (#6705)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
