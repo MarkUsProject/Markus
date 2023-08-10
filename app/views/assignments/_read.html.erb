@@ -52,6 +52,10 @@
             <% unless remaining_credits <= 0 %>
               <% acc += p.hours %>
               <% remaining_credits -= 1 %>
+              <li>
+                <%= t('grace_period_submission_rules.detailed_message_html', interval: acc ) %>
+                <%= "(" + I18n.l(@grouping.due_date + acc.hours) + ")" %>
+              </li>
             <% end %>
           <% end %>
           <%# Relative remaining grace credits for the grouping %>

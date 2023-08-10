@@ -6,6 +6,7 @@ en:
       one: "%{count} grace credit"
       other: "%{count} grace credits"
     deadline_html: Due date using <em>all</em> available grace credits
+    detailed_message_html: A grace credit will be deducted <strong>%{interval}</strong> hours after the deadline
     group_credits_html: Your group has <strong>%{available_grace_credits}</strong> available grace credit(s)
     individual_credits_html: You have <strong>%{available_grace_credits}</strong> available grace credit(s)
     no_group_yet: Form a group to determine how many grace credits you have available for this assignment.
