@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)
 - Add OCR for parsing scanned exam uploads (#6433)
 - Move submission-specific results/ routes to be under submissions/ (#6434)
