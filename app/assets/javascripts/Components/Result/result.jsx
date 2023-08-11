@@ -832,7 +832,7 @@ class Result extends React.Component {
     if (storedFilter) {
       this.setState({filterData: JSON.parse(storedFilter)});
     } else {
-      this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+      this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
     }
   };
 
