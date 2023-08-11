@@ -85,6 +85,10 @@ export class TextViewer extends React.PureComponent {
         annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
     }
 
+    if (annotation.is_remark) {
+      content += ` (${I18n.t("results.annotation.remark_flag")})`;
+    }
+
     this.annotation_manager.addAnnotation(
       annotation.annotation_text_id,
       content,
@@ -94,7 +98,8 @@ export class TextViewer extends React.PureComponent {
         column_start: parseInt(annotation.column_start, 10),
         column_end: parseInt(annotation.column_end, 10),
       },
-      annotation.id
+      annotation.id,
+      annotation.is_remark
     );
   };
 

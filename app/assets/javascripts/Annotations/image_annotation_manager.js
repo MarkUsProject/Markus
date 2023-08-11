@@ -18,13 +18,13 @@ class ImageAnnotationManager extends AnnotationManager {
   /**
    * Add the given annotation to the image location specified by <range>.
    */
-  addAnnotation(annotation_text_id, content, range, annotation_id) {
+  addAnnotation(annotation_text_id, content, range, annotation_id, is_remark) {
     // Do nothing if annotation already exists.
     if (document.getElementById("annotation_holder_" + annotation_id) !== null) {
       return;
     }
 
-    super.addAnnotation(annotation_text_id, content, range, annotation_id);
+    super.addAnnotation(annotation_text_id, content, range, annotation_id, is_remark);
     this.render_holders();
   }
 
@@ -68,6 +68,9 @@ class ImageAnnotationManager extends AnnotationManager {
         holder = document.createElement("div");
         holder.id = "annotation_holder_" + annotation_id;
         holder.addClass("annotation_holder");
+        if (this.annotations[annotation_id].is_remark) {
+          holder.addClass("remark");
+        }
         holder.onmousemove = this.check_for_annotations.bind(this);
         if (this.enable_annotations) {
           holder.onmousedown = this.start_select_box.bind(this);

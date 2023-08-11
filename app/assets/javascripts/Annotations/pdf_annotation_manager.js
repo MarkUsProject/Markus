@@ -175,9 +175,16 @@
      * @param {string} content            [description]
      * @param {{x1: int, y1: int, x2: int, y2: int, page: int}} range
      * @param {string} annotation_id the id of the annotation
+     * @param {boolean} is_remark
      */
-    addAnnotation(annotation_text_id, content, range, annotation_id) {
-      let annotation = super.addAnnotation(annotation_text_id, content, range, annotation_id);
+    addAnnotation(annotation_text_id, content, range, annotation_id, is_remark) {
+      let annotation = super.addAnnotation(
+        annotation_text_id,
+        content,
+        range,
+        annotation_id,
+        is_remark
+      );
 
       // Update display
       this.renderAnnotation(annotation);
@@ -213,6 +220,9 @@
       let $control = document.createElement("div");
       $control.id = "annotation_holder_" + annotation_id;
       $control.addClass("annotation_holder");
+      if (this.annotations[annotation_id].is_remark) {
+        $control.addClass("remark");
+      }
       $control.style.top = (newCoords.y1 / COORDINATE_MULTIPLIER) * 100 + "%";
       $control.style.left = (newCoords.x1 / COORDINATE_MULTIPLIER) * 100 + "%";
       $control.style.width = ((newCoords.x2 - newCoords.x1) / COORDINATE_MULTIPLIER) * 100 + "%";
