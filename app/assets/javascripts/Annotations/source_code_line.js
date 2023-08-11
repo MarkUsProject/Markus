@@ -25,7 +25,7 @@ class SourceCodeLine {
   // Increase a Source Code Line's glow depth, add listeners.
   // Adds annotation at text positions start..(end - 1),
   // splitting nodes if needed.
-  glow(annotationId, start, end, hoverOnFunction, hoverOffFunction) {
+  glow(annotationId, start, end, hoverOnFunction, hoverOffFunction, is_remark) {
     if (end === -1) {
       end = this.line_node.textContent.length;
     }
@@ -88,6 +88,9 @@ class SourceCodeLine {
         }
         parent.setAttribute("data-annotationDepth", newGlowDepth);
         parent.addClass("source-code-glowing-" + newGlowDepth);
+        if (is_remark) {
+          parent.addClass("remark");
+        }
         parent.addEventListener("mouseover", hoverOnFunction);
         parent.addEventListener("mouseout", hoverOffFunction);
       }
@@ -143,7 +146,8 @@ class SourceCodeLine {
         false,
         annotationId,
         hoverOnFunction,
-        hoverOffFunction
+        hoverOffFunction,
+        is_remark
       );
     } else {
       // Split the start node and set class/data/events
@@ -153,7 +157,8 @@ class SourceCodeLine {
         true,
         annotationId,
         hoverOnFunction,
-        hoverOffFunction
+        hoverOffFunction,
+        is_remark
       );
 
       // Split the end node and set class/data/events
@@ -163,14 +168,23 @@ class SourceCodeLine {
         false,
         annotationId,
         hoverOnFunction,
-        hoverOffFunction
+        hoverOffFunction,
+        is_remark
       );
     }
   }
 
   // Split span node and apply class/data/events
   // If glow_end is true, the glow will be after the original span
-  splitAndGlowSpan(spanNode, nodeOffset, glowEnd, annotationId, hoverOnFunction, hoverOffFunction) {
+  splitAndGlowSpan(
+    spanNode,
+    nodeOffset,
+    glowEnd,
+    annotationId,
+    hoverOnFunction,
+    hoverOffFunction,
+    is_remark
+  ) {
     let spanGlow = $(spanNode).clone(false)[0];
 
     let glowDepth = spanGlow.getAttribute("data-annotationDepth");
@@ -183,7 +197,9 @@ class SourceCodeLine {
     spanGlow.setAttribute("data-annotationDepth", newGlowDepth);
     spanGlow.setAttribute("data-annotationID" + annotationId, annotationId);
     spanGlow.addClass("source-code-glowing-" + newGlowDepth);
-
+    if (is_remark) {
+      spanGlow.addClass("remark");
+    }
     spanGlow.addEventListener("mouseover", hoverOnFunction);
     spanGlow.addEventListener("mouseout", hoverOffFunction);
 

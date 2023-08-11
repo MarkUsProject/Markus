@@ -1,6 +1,6 @@
 # Ta policy class
 class TaPolicy < RolePolicy
-  authorize :assignment, :submission, optional: true
+  authorize :assignment, :criterion_id, :submission, optional: true
 
   def run_tests?
     allowed = record.grader_permission.run_tests
@@ -29,5 +29,9 @@ class TaPolicy < RolePolicy
 
   def manage_role_status?
     role.instructor?
+  end
+
+  def assigned_to_criterion?
+    role.criterion_ta_associations.where(criterion_id: criterion_id).present?
   end
 end
