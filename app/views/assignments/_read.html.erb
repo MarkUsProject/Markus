@@ -48,12 +48,14 @@
         <% acc = 0 %>
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% remaining_credits = @grouping.available_grace_credits %>
+          <%used_credits = 0 %>
           <% @assignment.submission_rule.periods.each do |p| %>
             <% unless remaining_credits <= 0 %>
               <% acc += p.hours %>
               <% remaining_credits -= 1 %>
+              <% used_credits += 1 %>
               <li>
-                <%= t('grace_period_submission_rules.detailed_message_html', interval: acc ) %>
+                <%= t('grace_period_submission_rules.detailed_message_html', count: used_credits, interval: acc ) %>
                 <%= "(" + I18n.l(@grouping.due_date + acc.hours) + ")" %>
               </li>
             <% end %>
