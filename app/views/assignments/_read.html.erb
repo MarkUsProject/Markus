@@ -48,7 +48,7 @@
         <% acc = 0 %>
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% remaining_credits = @grouping.available_grace_credits %>
-          <%used_credits = 0 %>
+          <% used_credits = 0 %>
           <% @assignment.submission_rule.periods.each do |p| %>
             <% unless remaining_credits <= 0 %>
               <% acc += p.hours %>
