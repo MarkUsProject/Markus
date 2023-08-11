@@ -829,10 +829,15 @@ class Result extends React.Component {
     const storedFilter = localStorage.getItem(
       `${this.props.user_id}_${this.state.assignment_id}_filterData`
     );
-    if (storedFilter) {
-      this.setState({filterData: JSON.parse(storedFilter)});
-    } else {
-      this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
+    let parsed_filter = null;
+    try {
+      parsed_filter = JSON.parse(storedFilter);
+    } finally {
+      if (parsed_filter) {
+        this.setState({filterData: parsed_filter});
+      } else {
+        this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
+      }
     }
   };
 
