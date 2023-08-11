@@ -100,6 +100,85 @@ describe AssignmentPolicy do
     end
   end
 
+  describe_rule :stop_test? do
+    succeed 'when role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+
+    context 'when role is a ta' do
+      succeed 'that can manage assessments' do
+        let(:role) { create :ta, manage_assessments: true }
+      end
+      failed 'that cannot manage assessments' do
+        let(:role) { create :ta, manage_assessments: false }
+      end
+    end
+
+    context 'when role is a student' do
+      let(:context) { { role: role, real_user: role.user, test_run_id: test_run_id } }
+      let(:role) { create :student }
+      succeed 'when student can cancel test' do
+        let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
+        let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+        let(:test_run_id) { test_run.id }
+        let(:assignment) do
+          build :assignment_for_student_tests,
+                assignment_properties_attributes: { enable_student_tests: true,
+                                                    unlimited_tokens: true,
+                                                    tokens_per_period: 0 }
+        end
+      end
+
+      failed 'when student cannot cancel test' do
+        let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
+        let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+        let(:test_run_id) { test_run.id + 1 }
+        let(:assignment) do
+          build :assignment_for_student_tests,
+                assignment_properties_attributes: { enable_student_tests: true,
+                                                    unlimited_tokens: true,
+                                                    tokens_per_period: 0 }
+        end
+      end
+      context 'when authorized with an assignment' do
+        let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
+        let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+        let(:test_run_id) { test_run.id }
+        succeed 'when student tests enabled' do
+          let(:assignment) do
+            build :assignment_for_student_tests, assignment_properties_attributes: { enable_student_tests: true,
+                                                                                     unlimited_tokens: true,
+                                                                                     tokens_per_period: 0 }
+          end
+        end
+        failed 'when student tests disabled' do
+          let(:assignment) { build :assignment_for_student_tests }
+        end
+      end
+      context 'when authorized with a grouping' do
+        let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+        let(:test_run_id) { test_run.id }
+
+        let(:assignment) do
+          create :assignment_for_student_tests, assignment_properties_attributes: { unlimited_tokens: true }
+        end
+        succeed 'when the role is a member' do
+          let!(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment }
+        end
+        failed 'when the role is not a member' do
+          let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+        end
+        failed 'when the due date has passed' do
+          before { assignment.update!(due_date: 1.day.ago) }
+          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
+        end
+        succeed 'when the due date has not passed' do
+          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
+        end
+      end
+    end
+  end
+
   describe_rule :tests_set_up? do
     succeed 'when remote_autotest_settings_id exist' do
       before { assignment.update! remote_autotest_settings_id: 1 }
@@ -120,7 +199,7 @@ describe AssignmentPolicy do
   describe_rule :create_group? do
     let(:role) { create :student }
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
-    let(:properties) { { student_form_groups: true, invalid_override: false } }
+    let(:properties) { { student_form_groups: true } }
     let(:past_collection_date?) { false }
     let(:has_accepted_grouping_for?) { false }
     before do
@@ -132,7 +211,7 @@ describe AssignmentPolicy do
       let(:past_collection_date?) { true }
     end
     failed 'when students cannot form groups' do
-      let(:properties) { { student_form_groups: false, invalid_override: false } }
+      let(:properties) { { student_form_groups: false, group_max: 1 } }
     end
     failed 'when the student is in a group for this assignment' do
       let(:has_accepted_grouping_for?) { true }
@@ -161,10 +240,10 @@ describe AssignmentPolicy do
   describe_rule :students_form_groups? do
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
     failed 'when students cannot form groups' do
-      let(:properties) { { student_form_groups: false, invalid_override: false } }
+      let(:properties) { { student_form_groups: false, group_max: 1 } }
     end
     succeed 'when students can form groups' do
-      let(:properties) { { student_form_groups: true, invalid_override: false } }
+      let(:properties) { { student_form_groups: true } }
     end
   end
 

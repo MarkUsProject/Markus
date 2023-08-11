@@ -263,6 +263,69 @@ describe ResultPolicy do
     end
   end
 
+  describe_rule :update_mark? do
+    let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+    let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+    let(:assignment) { create :assignment_with_peer_review }
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    context 'role is a ta' do
+      let(:grouping) do
+        create :grouping_with_inviter, inviter: create(:student),
+                                       assignment: assignment, tas: [role]
+      end
+      succeed 'when they can manage submissions' do
+        let!(:role) { create(:ta, manage_submissions: true) }
+      end
+      context 'when they are assigned to grade the given group\'s submission' do
+        let!(:role) { create(:ta) }
+        succeed 'when the assign_graders_to_criteria attribute for the associated assignment is false'
+        context 'when the assign_graders_to_criteria attribute for the associated assignment is true' do
+          let(:context) { { role: role, real_user: role.user, criterion_id: criterion_id } }
+          let(:assignment) do
+            assignment = create :assignment_with_peer_review
+            assignment.assignment_properties.update(assign_graders_to_criteria: true)
+            assignment
+          end
+          let(:criterion) { create :rubric_criterion, assignment: assignment }
+          succeed 'when the ta is assigned to grade the given criteria' do
+            let(:criterion_id) { (create :criterion_ta_association, ta: role, criterion: criterion).criterion_id }
+          end
+          failed 'when the ta is not assigned to grade the given criteria' do
+            let(:criterion_id) { criterion.id }
+          end
+        end
+      end
+      failed 'when they have not been assigned to grade the given group\'s submission' do
+        # Assure the grouping used does not have any ta's assigned to grade their submission
+        let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
+        let(:role) { create(:ta) }
+      end
+    end
+
+    context 'role is a student' do
+      let(:role) { create(:student) }
+      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment }
+      context 'when the assignment has a peer review' do
+        let(:assignment) { create :assignment_with_peer_review }
+        succeed 'when the role is a reviewer for the result' do
+          let(:record) { create :complete_result, submission: create(:submission, grouping: review_grouping) }
+          let(:grouping) { create :grouping_with_inviter, inviter: role, assignment: assignment.pr_assignment }
+          let(:review_grouping) { create :grouping_with_inviter, assignment: assignment }
+          before { create :peer_review, reviewer: grouping, result: record }
+        end
+        failed 'when the role is not a reviewer for the result' do
+          before { create :peer_review }
+        end
+      end
+      failed 'when the assignment does not have a peer review' do
+        let(:assignment) { create :assignment }
+      end
+    end
+  end
+
   describe_rule :set_released_to_students? do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
@@ -292,59 +355,6 @@ describe ResultPolicy do
     end
     failed 'role is a student' do
       let(:role) { create(:student) }
-    end
-  end
-
-  describe_rule :download? do
-    succeed 'role is an instructor' do
-      let(:role) { create(:instructor) }
-    end
-    context 'role is a ta' do
-      let(:record) { create :complete_result, submission: create(:submission, grouping: grouping) }
-      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
-      let(:assignment) { create :assignment_with_peer_review }
-      succeed 'when they can manage submissions' do
-        let!(:role) { create(:ta, manage_submissions: true) }
-      end
-      succeed 'when they are assigned to grade the given group\'s submission' do
-        let!(:role) { create(:ta) }
-        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
-      end
-      failed 'when they aren\'t assigned to grade the given group\'s submission' do
-        let(:role) { create(:ta) }
-      end
-    end
-    context 'role is a student' do
-      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
-      let(:record) { assignment.groupings.first.current_result }
-      context 'role is a reviewer for the current result' do
-        let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
-        let(:role) { reviewer_grouping.accepted_students.first }
-        before { create :peer_review, reviewer: reviewer_grouping, result: record }
-        succeed 'from_codeviewer is true' do
-          let(:context) { { role: role, real_user: role.user, from_codeviewer: true } }
-        end
-        failed 'from_codeviewer is false' do
-          let(:context) { { role: role, real_user: role.user, from_codeviewer: false } }
-        end
-      end
-      context 'role is not a reviewer for the current result' do
-        context 'role is an accepted member of the results grouping' do
-          let(:role) { record.grouping.accepted_students.first }
-          succeed 'and there is no file selected'
-          succeed 'and the selected file is associated with the current submission' do
-            let(:select_file) { create(:submission_file, submission: record.submission) }
-            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
-          end
-          failed 'and the selected file is associated with a different submission' do
-            let(:select_file) { create(:submission_file) }
-            let(:context) { { role: role, real_user: role.user, select_file: select_file } }
-          end
-        end
-        failed 'role is not an accepted member of the results grouping' do
-          let(:role) { create(:student) }
-        end
-      end
     end
   end
 

@@ -1,17 +1,22 @@
-const FLASH_KEYS = ["notice", "warning", "success", "error"];
+import {FLASH_KEYS} from "./flash";
 
 /*
  * Display flash messages sent in response to an AJAX request.
  * If a message key is in the X-Message-Discard header, hide
  * it instead.
  */
-export function renderFlash(event, request) {
+export function renderFlash(event, request, headers) {
   // For rails/ujs, request is stored in event.
   if (request === undefined) {
     request = event.detail[0];
   }
   let discard = [];
-  const discardMessage = request.getResponseHeader("X-Message-Discard");
+  let discardMessage;
+  if (request) {
+    discardMessage = request.getResponseHeader("X-Message-Discard");
+  } else {
+    discardMessage = headers.get("X-Message-Discard");
+  }
   if (discardMessage) {
     discard = discardMessage.split(";");
   }
@@ -23,7 +28,12 @@ export function renderFlash(event, request) {
     if (discard.includes(key)) {
       flashDiv.style.display = "none";
     } else {
-      const flashMessage = request.getResponseHeader(`X-Message-${key}`);
+      let flashMessage;
+      if (request) {
+        flashMessage = request.getResponseHeader(`X-Message-${key}`);
+      } else {
+        flashMessage = headers.get(`X-Message-${key}`);
+      }
       if (flashMessage) {
         const messages = flashMessage.split(";");
         const contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;

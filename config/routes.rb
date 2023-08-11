@@ -95,6 +95,7 @@ Rails.application.routes.draw do
       member do
         get 'test_autotest_connection'
         put 'reset_autotest_connection'
+        delete 'destroy_lti_deployment'
       end
     end
     get '/', controller: 'main_admin', action: 'index'
@@ -110,6 +111,9 @@ Rails.application.routes.draw do
       post 'switch_role'
       get 'download_assignments'
       post 'upload_assignments'
+      delete 'destroy_lti_deployment'
+      post 'sync_roster'
+      get 'lti_deployments'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update]
@@ -166,10 +170,7 @@ Rails.application.routes.draw do
       member do
         get 'get_annotations'
         get 'add_extra_marks'
-        get 'download'
         post 'download'
-        get 'download_zip'
-        delete 'cancel_remark_request'
         post 'add_extra_mark'
         delete 'delete_grace_period_deduction'
         get 'next_grouping'
@@ -183,13 +184,13 @@ Rails.application.routes.draw do
         patch 'update_mark'
         get 'view_marks'
         post 'add_tag'
+        get 'random_incomplete_submission'
         post 'remove_tag'
         post 'run_tests'
         get 'stop_test'
         get 'get_test_runs_instructors'
         get 'get_test_runs_instructors_released'
         get 'view_token_check'
-        patch 'update_remark_request'
       end
     end
 
@@ -227,6 +228,8 @@ Rails.application.routes.draw do
         get 'grade_distribution'
         get 'download_config_files'
         get 'download_test_results'
+        post 'create_lti_grades'
+        post 'create_lti_line_items'
       end
 
       resources :starter_file_groups, only: [:create]
@@ -323,6 +326,12 @@ Rails.application.routes.draw do
           post 'repo_browser'
           post 'manually_collect_and_begin_grading'
           get 'downloads'
+        end
+        member do
+          get 'download_file'
+          get 'download_file_zip'
+          delete 'cancel_remark_request'
+          patch 'update_remark_request'
         end
       end
 
@@ -497,7 +506,6 @@ Rails.application.routes.draw do
     resources :lti_deployments, only: [] do
       collection do
         get 'public_jwk'
-        post 'create_lti_grades'
         resources :canvas, only: [] do
           collection do
             get 'get_config'

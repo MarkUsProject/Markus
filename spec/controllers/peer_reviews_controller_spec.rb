@@ -120,7 +120,7 @@ describe PeerReviewsController do
         end
 
         get_as role, :populate, params: { course_id: course.id, assignment_id: @pr_id }
-        @response = JSON.parse(response.body)
+        @response = response.parsed_body
       end
 
       it 'returns the correct reviewee_to_reviewers_map' do

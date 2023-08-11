@@ -4,6 +4,7 @@ import ReactTable from "react-table";
 import {getType} from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
+import consumer from "../../../javascript/channels/consumer";
 
 export class TestRunTable extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ export class TestRunTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    this.create_test_runs_channel_subscription();
   }
 
   componentDidUpdate(prevProps) {
@@ -31,44 +33,67 @@ export class TestRunTable extends React.Component {
   }
 
   fetchData = () => {
-    let ajaxDetails = {};
+    let fetchDetails = {
+      headers: {
+        Accept: "application/json",
+      },
+    };
+    let url;
     if (this.props.instructor_run) {
       if (this.props.instructor_view) {
-        ajaxDetails = {
-          url: Routes.get_test_runs_instructors_course_result_path(
-            this.props.course_id,
-            this.props.result_id
-          ),
-          dataType: "json",
-        };
+        url = Routes.get_test_runs_instructors_course_result_path(
+          this.props.course_id,
+          this.props.result_id
+        );
       } else {
-        ajaxDetails = {
-          url: Routes.get_test_runs_instructors_released_course_result_path(
-            this.props.course_id,
-            this.props.result_id
-          ),
-          dataType: "json",
-        };
+        url = Routes.get_test_runs_instructors_released_course_result_path(
+          this.props.course_id,
+          this.props.result_id
+        );
       }
     } else {
-      ajaxDetails = {
-        url: Routes.get_test_runs_students_course_assignment_automated_tests_path(
-          this.props.course_id,
-          this.props.assignment_id
-        ),
-        dataType: "json",
-      };
+      url = Routes.get_test_runs_students_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      );
     }
-    $.ajax(ajaxDetails).then(res => {
-      this.setState({
-        data: res,
-        loading: false,
-        expanded: res.length > 0 ? {0: true} : {},
+    fetch(url, fetchDetails)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(data => {
+        this.setState({
+          data: data,
+          loading: false,
+          expanded: data.length > 0 ? {0: true} : {},
+        });
       });
-    });
   };
 
   onExpandedChange = newExpanded => this.setState({expanded: newExpanded});
+
+  create_test_runs_channel_subscription = () => {
+    consumer.subscriptions.create(
+      {
+        channel: "TestRunsChannel",
+        course_id: this.props.course_id,
+        assignment_id: this.props.assignment_id,
+        grouping_id: this.props.grouping_id,
+        submission_id: this.props.submission_id,
+      },
+      {
+        connected: () => {},
+
+        disconnected: () => {},
+
+        received: data => {
+          this.fetchData();
+        },
+      }
+    );
+  };
 
   render() {
     let height;
@@ -143,6 +168,12 @@ class TestGroupResultTable extends React.Component {
       filtered: [],
       filteredData: props.data,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({filteredData: this.props.data, filtered: []});
+    }
   }
 
   computeExpanded = data => {
@@ -360,5 +391,5 @@ class TestGroupFeedbackFileTable extends React.Component {
 }
 
 export function makeTestRunTable(elem, props) {
-  render(<TestRunTable {...props} />, elem);
+  return render(<TestRunTable {...props} />, elem);
 }

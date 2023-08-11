@@ -63,6 +63,15 @@ describe("SubmissionSelector", () => {
     expect(wrapper.find(".group-name").text()).toBe(props.group_name);
   });
 
+  it("should show filter modal when filter-button is pressed", () => {
+    wrapper = getWrapper(props);
+    expect(wrapper.find(".filter").exists()).toBeTruthy();
+    wrapper.find(".filter").simulate("click");
+    const modal = wrapper.find("FilterModal");
+
+    expect(modal.exists()).toBeTruthy();
+  });
+
   it("should pass correct values to the progress meter", () => {
     props.num_marked = 50;
     props.num_collected = 100;

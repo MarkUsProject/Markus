@@ -115,14 +115,20 @@ module Api
       ApplicationRecord.transaction do
         user = User.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, user: user, course: @current_course)
-        role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
+        if params[:section_name]
+          if params[:section_name].empty?
+            role.section = nil
+          else
+            role.section = @current_course.sections.find_by!(name: params[:section_name])
+          end
+        end
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
-        role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
+        role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       end
-    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
@@ -131,14 +137,20 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        role.section = @current_course.sections.find_by(name: params[:section_name]) if params[:section_name]
+        if params[:section_name]
+          if params[:section_name].empty?
+            role.section = nil
+          else
+            role.section = @current_course.sections.find_by!(name: params[:section_name])
+          end
+        end
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
-        role.hidden = params[:hidden].to_s.downcase == 'true' if params[:hidden]
+        role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
         role.save!
       end
       render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
-    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
@@ -161,7 +173,7 @@ module Api
     def filtered_roles
       collection = Role.includes(:user).where(params.permit(:course_id)).order(:id)
       collection = collection.where.not(type: AdminRole.name) unless @real_user.admin_user?
-      if params[:filter]&.present?
+      if params[:filter].present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
         user_filter = params[:filter].permit(*USER_FIELDS).to_h.transform_keys { |k| "users.#{k}" }
         filter_params = { **role_filter, **user_filter }

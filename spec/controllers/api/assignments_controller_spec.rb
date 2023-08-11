@@ -3,6 +3,165 @@ describe Api::AssignmentsController do
 
   let(:course) { create :course }
   let(:assignment) { create :assignment, course: course }
+
+  shared_examples 'GET #index' do
+    let(:assignment_different_course) { create :assignment, course: create(:course) }
+    let(:assignments) { create_list :assignment, 5, course: course }
+    let(:assignments_different_course) { create_list :assignment, 5, course: create(:course) }
+
+    context 'when expecting an xml response' do
+      before do
+        request.env['HTTP_ACCEPT'] = 'application/xml'
+      end
+
+      context 'with a single assignment' do
+        it 'should be successful' do
+          assignment
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return xml content' do
+          assignment
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment.id.to_s)
+        end
+
+        it 'should return all default fields' do
+          assignment
+          get :index, params: { course_id: course.id }
+          keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
+        end
+      end
+
+      context 'with a single assignment in a different course' do
+        it 'should be successful' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body)['assignments']).to be_nil
+        end
+      end
+
+      context 'with multiple assignments' do
+        it 'should be successful' do
+          assignments
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return xml content about all assignments' do
+          assignments
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body).dig('assignments', 'assignment').length).to eq(5)
+        end
+
+        it 'should return all default fields for all assignments' do
+          assignments
+          get :index, params: { course_id: course.id }
+          keys = Hash.from_xml(response.body).dig('assignments', 'assignment').map { |h| h.keys.map(&:to_sym) }
+          expect(keys).to all(match_array(Api::AssignmentsController::DEFAULT_FIELDS))
+        end
+      end
+
+      context 'with multiple assignments in a different course' do
+        it 'should be successful' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body)['assignments']).to be_nil
+        end
+      end
+    end
+
+    context 'expecting a json response' do
+      before do
+        request.env['HTTP_ACCEPT'] = 'application/json'
+      end
+
+      context 'with a single assignment' do
+        it 'should be successful' do
+          assignment
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return json content' do
+          assignment
+          get :index, params: { course_id: course.id }
+          expect(response.parsed_body&.first&.dig('id')).to eq(assignment.id)
+        end
+
+        it 'should return all default fields' do
+          assignment
+          get :index, params: { course_id: course.id }
+          keys = response.parsed_body&.first&.keys&.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
+        end
+      end
+
+      context 'with a single assignment in a different course' do
+        it 'should be successful' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(response.parsed_body&.first&.dig('id')).to be_nil
+        end
+      end
+
+      context 'with multiple assignments' do
+        it 'should be successful' do
+          assignments
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return json content about all assignments' do
+          assignments
+          get :index, params: { course_id: course.id }
+          expect(response.parsed_body.length).to eq(5)
+        end
+
+        it 'should return all default fields for all assignments' do
+          assignments
+          get :index, params: { course_id: course.id }
+          keys = response.parsed_body.map { |h| h.keys.map(&:to_sym) }
+          expect(keys).to all(match_array(Api::AssignmentsController::DEFAULT_FIELDS))
+        end
+      end
+
+      context 'with multiple assignments in a different course' do
+        it 'should be successful' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          assignment_different_course
+          get :index, params: { course_id: course.id }
+          expect(response.parsed_body).to be_empty
+        end
+      end
+    end
+  end
+
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -30,131 +189,41 @@ describe Api::AssignmentsController do
       expect(response).to have_http_status(403)
     end
   end
-  context 'An authenticated request requesting' do
-    before :each do
-      instructor = create :instructor, course: course
+
+  context 'An authenticated instructor request requesting' do
+    let!(:instructor) { create :instructor, course: course }
+    before do
       instructor.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
 
-    context 'GET index' do
-      context 'expecting an xml response' do
-        before :each do
-          request.env['HTTP_ACCEPT'] = 'application/xml'
+    context 'GET #index' do
+      include_examples 'GET #index'
+
+      context 'with a single hidden assignment' do
+        let(:assignment_hidden) { create :assignment, course: course, is_hidden: true }
+
+        it 'should be successful' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
         end
-        context 'with a single assignment' do
-          before :each do
-            assignment
-            get :index, params: { course_id: course.id }
-          end
-          it 'should be successful' do
-            expect(response.status).to eq(200)
-          end
-          it 'should return xml content' do
-            expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment.id.to_s)
-          end
-          it 'should return all default fields' do
-            keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym).sort
-            expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
-          end
+
+        it 'should return xml content' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment_hidden.id.to_s)
         end
-        context 'with a single assignment in a different course' do
-          before do
-            create :assignment, course: create(:course)
-            get :index, params: { course_id: course.id }
-          end
-          it 'should be successful' do
-            expect(response.status).to eq(200)
-          end
-          it 'should return empty content' do
-            expect(Hash.from_xml(response.body)['assignments']).to be_nil
-          end
-        end
-        context 'with multiple assignments' do
-          before :each do
-            5.times { create :assignment, course: course }
-            get :index, params: { course_id: course.id }
-          end
-          it 'should return xml content about all assignments' do
-            expect(Hash.from_xml(response.body).dig('assignments', 'assignment').length).to eq(5)
-          end
-          it 'should return all default fields for all assignments' do
-            keys = Hash.from_xml(response.body).dig('assignments', 'assignment').map { |h| h.keys.map(&:to_sym).sort }
-            expect(keys).to all(eq(Api::AssignmentsController::DEFAULT_FIELDS.sort))
-          end
-        end
-        context 'with multiple assignments in a different course' do
-          before :each do
-            create_list :assignment, 5, course: create(:course)
-            get :index, params: { course_id: course.id }
-          end
-          it 'should be successful' do
-            expect(response.status).to eq(200)
-          end
-          it 'should return empty content' do
-            expect(Hash.from_xml(response.body)['assignments']).to be_nil
-          end
-        end
-      end
-      context 'expecting a json response' do
-        before :each do
-          request.env['HTTP_ACCEPT'] = 'application/json'
-        end
-        context 'with a single assignment' do
-          before :each do
-            assignment
-            get :index, params: { course_id: course.id }
-          end
-          it 'should be successful' do
-            expect(response.status).to eq(200)
-          end
-          it 'should return json content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(assignment.id)
-          end
-          it 'should return all default fields' do
-            keys = JSON.parse(response.body)&.first&.keys&.map(&:to_sym)&.sort
-            expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
-          end
-        end
-        context 'with a single assignment in a different course' do
-          before do
-            create :assignment, course: create(:course)
-            get :index, params: { course_id: course.id }
-          end
-          it 'should be successful' do
-            expect(response.status).to eq(200)
-          end
-          it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
-          end
-        end
-        context 'with multiple assignments' do
-          before :each do
-            5.times { create :assignment, course: course }
-            get :index, params: { course_id: course.id }
-          end
-          it 'should return xml content about all assignments' do
-            expect(JSON.parse(response.body).length).to eq(5)
-          end
-          it 'should return all default fields for all assignments' do
-            keys = JSON.parse(response.body).map { |h| h.keys.map(&:to_sym).sort }
-            expect(keys).to all(eq(Api::AssignmentsController::DEFAULT_FIELDS.sort))
-          end
-        end
-        context 'with a multiple assignments in a different course' do
-          before do
-            create_list :assignment, 5, course: create(:course)
-            get :index, params: { course_id: course.id }
-          end
-          it 'should be successful' do
-            expect(response.status).to eq(200)
-          end
-          it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
-          end
+
+        it 'should return all default fields' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end
     end
+
     context 'GET show' do
       context 'expecting an xml response' do
         before :each do
@@ -162,14 +231,14 @@ describe Api::AssignmentsController do
           get :show, params: { id: assignment.id, course_id: course.id }
         end
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return xml content' do
           expect(Hash.from_xml(response.body).dig('assignment', 'id')).to eq(assignment.id.to_s)
         end
         it 'should return all default fields' do
-          keys = Hash.from_xml(response.body)['assignment'].keys.map(&:to_sym).sort
-          expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
+          keys = Hash.from_xml(response.body)['assignment'].keys.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end
       context 'expecting a json response' do
@@ -178,27 +247,27 @@ describe Api::AssignmentsController do
           get :show, params: { id: assignment.id, course_id: course.id }
         end
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return json content' do
-          expect(JSON.parse(response.body)&.dig('id')).to eq(assignment.id)
+          expect(response.parsed_body&.dig('id')).to eq(assignment.id)
         end
         it 'should return all default fields' do
-          keys = JSON.parse(response.body)&.keys&.map(&:to_sym)&.sort
-          expect(keys).to eq(Api::AssignmentsController::DEFAULT_FIELDS.sort)
+          keys = response.parsed_body&.keys&.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end
       context 'requesting a non-existant assignment' do
         it 'should respond with 404' do
           get :show, params: { id: -1, course_id: course.id }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
       context 'requesting an assignment in a different course' do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :show, params: { id: assignment.id, course_id: assignment.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -226,7 +295,7 @@ describe Api::AssignmentsController do
       context 'with minimal required params' do
         it 'should respond with 201' do
           post :create, params: params
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status(201)
         end
         it 'should create an assignment' do
           expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
@@ -236,14 +305,14 @@ describe Api::AssignmentsController do
         context 'for a different course' do
           it 'should response with 403' do
             post :create, params: { **params, course_id: create(:course).id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
       end
       context 'with all params' do
         it 'should respond with 201' do
           post :create, params: params
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status(201)
         end
         it 'should create an assignment' do
           expect(Assignment.find_by(short_identifier: params[:short_identifier])).to be_nil
@@ -255,7 +324,7 @@ describe Api::AssignmentsController do
         context 'missing short_id' do
           it 'should respond with 422' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:description, :due_date, :course_id)
@@ -265,7 +334,7 @@ describe Api::AssignmentsController do
         context 'missing description' do
           it 'should respond with 404' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
@@ -275,7 +344,7 @@ describe Api::AssignmentsController do
         context 'missing due_date' do
           it 'should respond with 404' do
             post :create, params: params.slice(:short_identifier, :description, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :description, :course_id)
@@ -286,19 +355,19 @@ describe Api::AssignmentsController do
       context 'where short_identifier is already taken' do
         it 'should respond with 409' do
           post :create, params: { **params, short_identifier: (create :assignment, course: course).short_identifier }
-          expect(response.status).to eq(409)
+          expect(response).to have_http_status(409)
         end
       end
       context 'where due_date is invalid' do
         it 'should respond with 500' do
           post :create, params: { **params, due_date: 'not a real date' }
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
       context 'where submission rule is invalid' do
         it 'should respond with 500' do
           post :create, params: { **full_params, submission_rule_interval: 'not a real interval' }
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
     end
@@ -306,24 +375,24 @@ describe Api::AssignmentsController do
       it 'should update an existing assignment' do
         new_desc = assignment.description + 'more!'
         put :update, params: { id: assignment.id, course_id: course.id, description: new_desc }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'should not update a short identifier' do
         new_short_id = assignment.short_identifier + 'more!'
         put :update, params: { id: assignment.id, course_id: course.id, short_identifier: new_short_id }
-        expect(response.status).to eq(500)
+        expect(response).to have_http_status(500)
       end
       it 'should not update an assignment that does not exist' do
         new_desc = assignment.description + 'more!'
         put :update, params: { id: -1, course_id: course.id, description: new_desc }
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
       context 'for a different course' do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           new_desc = assignment.description + 'more!'
           put :update, params: { id: assignment.id, course_id: assignment.course.id, description: new_desc }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -333,13 +402,13 @@ describe Api::AssignmentsController do
       it_behaves_like 'zip file download'
       it 'should be successful' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       context 'for a different course' do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :test_files, params: { id: assignment.id, course_id: assignment.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -375,7 +444,7 @@ describe Api::AssignmentsController do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :test_specs, params: { id: assignment.id, course_id: assignment.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -422,7 +491,7 @@ describe Api::AssignmentsController do
         let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           post :update_test_specs, params: { id: assignment.id, course_id: assignment.course.id, specs: '{}' }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -434,15 +503,40 @@ describe Api::AssignmentsController do
       end
     end
   end
+
   context 'An authenticated student request' do
-    let(:student) { create(:grouping_with_inviter, assignment: assignment).inviter }
-    before :each do
+    let(:student) { create :student, course: course }
+    before do
       student.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
-      assignment.update(api_submit: true)
+    end
+
+    context 'GET #index' do
+      include_examples 'GET #index'
+
+      context 'with a single hidden assignment' do
+        let(:assignment_hidden) { create :assignment, course: course, is_hidden: true }
+
+        it 'should be successful' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return empty content' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body)['assignments']).to be_nil
+        end
+      end
     end
 
     context 'POST submit_file' do
+      let(:student) { create(:grouping_with_inviter, assignment: assignment).inviter }
+      before do
+        assignment.update(api_submit: true)
+      end
+
       subject do
         post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
                                      file_content: 'This is a test file', course_id: course.id }
@@ -573,6 +667,40 @@ describe Api::AssignmentsController do
             let!(:test_file) { create :assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id }
             include_examples 'submits successfully'
           end
+        end
+      end
+    end
+  end
+
+  context 'An authenticated ta request' do
+    let!(:ta) { create :ta, course: course }
+    before do
+      ta.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{ta.api_key.strip}"
+    end
+    context 'GET #index' do
+      include_examples 'GET #index'
+
+      context 'with a single hidden assignment' do
+        let(:assignment_hidden) { create :assignment, course: course, is_hidden: true }
+
+        it 'should be successful' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          expect(response).to have_http_status(200)
+        end
+
+        it 'should return xml content' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment_hidden.id.to_s)
+        end
+
+        it 'should return all default fields' do
+          assignment_hidden
+          get :index, params: { course_id: course.id }
+          keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym)
+          expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
       end
     end

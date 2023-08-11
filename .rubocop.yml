@@ -1,5 +1,6 @@
 require:
   - rubocop-rails
+  - rubocop-performance
 
 AllCops:
   Exclude:
@@ -134,6 +135,13 @@ Naming/MethodParameterName:
 Naming/PredicateName:
   Enabled: false
 
+# Performance checks
+Performance/CollectionLiteralInLoop:
+  MinSize: 3
+
+Rails/ActionOrder:
+  Enabled: false
+
 Rails/HasAndBelongsToMany:
   Enabled: false
 
@@ -141,6 +149,12 @@ Rails/HasManyOrHasOneDependent:
   Enabled: false
 
 Rails/HelperInstanceVariable:
+  Enabled: false
+
+Rails/I18nLazyLookup:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
   Enabled: false
 
 Rails/OrderById:

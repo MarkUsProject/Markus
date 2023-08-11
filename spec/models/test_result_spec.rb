@@ -21,6 +21,7 @@ describe TestResult do
       @test_group_result = create(:test_group_result, test_group: @test_group, test_run: @test_run)
       @test_result = create(:test_result, test_group_result: @test_group_result)
     end
+    let(:test_result2) { create(:test_result, test_group_result: @test_group_result) }
 
     context 'A valid test result' do
       it 'can be saved' do
@@ -112,6 +113,11 @@ describe TestResult do
       it 'has negative time' do
         @test_result.time = -1
         expect(@test_result).not_to be_valid
+      end
+
+      it 'has the same name as another test in the associated test_group_result' do
+        test_result2.name = @test_result.name
+        expect(test_result2).not_to be_valid
       end
     end
   end

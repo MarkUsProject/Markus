@@ -1,9 +1,8 @@
 class ResultsController < ApplicationController
   before_action { authorize! }
 
-  authorize :from_codeviewer, through: :from_codeviewer_param
-  authorize :select_file, through: :select_file
   authorize :view_token, through: :view_token_param
+  authorize :criterion_id, through: :criterion_id_param
 
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
@@ -23,6 +22,7 @@ class ResultsController < ApplicationController
         result = record
         submission = result.submission
         assignment = submission.assignment
+        course = assignment.course
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
         is_review = result.is_a_review?
@@ -47,7 +47,9 @@ class ResultsController < ApplicationController
           past_remark_due_date: is_review ? pr_assignment.past_remark_due_date? : assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
           parent_assignment_id: pr_assignment&.id,
-          student_view: current_role.student? && !is_reviewer
+          student_view: current_role.student? && !is_reviewer,
+          due_date: I18n.l(grouping.due_date.in_time_zone),
+          submission_time: I18n.l(submission.revision_timestamp.in_time_zone)
         }
         if original_result.nil?
           data[:overall_comment] = result.overall_comment
@@ -119,6 +121,7 @@ class ResultsController < ApplicationController
         end
 
         if current_role.instructor? || current_role.ta?
+          data[:sections] = course.sections.pluck(:name)
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
@@ -133,8 +136,12 @@ class ResultsController < ApplicationController
           reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
-          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_review_id}"
+          data[:group_name] = "#{PeerReview.model_name.human} #{result.peer_reviews.ids.first}"
           data[:members] = []
+        end
+
+        if current_role.instructor?
+          data[:tas] = assignment.ta_memberships.joins(:user).distinct.pluck('users.user_name', 'users.display_name')
         end
 
         # Marks
@@ -224,7 +231,7 @@ class ResultsController < ApplicationController
         else
           data[:assignment_max_mark] = assignment.max_mark
         end
-        data[:total] = marks_map.map { |h| h['mark'] }
+        data[:total] = marks_map.pluck('mark')
         data[:old_total] = old_marks.values_at(:mark).compact.sum
 
         # Tags
@@ -238,7 +245,7 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    @host = Rails.application.config.action_controller.relative_url_root
+    @host = Rails.application.config.relative_url_root
     @result = record
     @submission = @result.submission
     @grouping = @submission.grouping
@@ -279,7 +286,7 @@ class ResultsController < ApplicationController
                                                 submission.assignment.id,
                                                 [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
-    flash_message(:success, I18n.t('automated_tests.tests_running'))
+    flash_message(:success, I18n.t('automated_tests.test_run_table.tests_running'))
   end
 
   ##  Tag Methods  ##
@@ -300,25 +307,38 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
+    filter_data = params[:filterData]
     result = record
     grouping = result.submission.grouping
     assignment = grouping.assignment
 
     if result.is_a_review? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
       assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
+      peer_review_ids = result.peer_reviews.order(id: :asc).ids
       if params[:direction] == '1'
-        next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+        next_grouping = assigned_prs.where('peer_reviews.id > ?', peer_review_ids.last).first
       else
-        next_grouping = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+        next_grouping = assigned_prs.where('peer_reviews.id < ?', peer_review_ids.first).last
       end
       next_result = Result.find_by(id: next_grouping&.result_id)
     else
       reversed = params[:direction] != '1'
-      next_grouping = grouping.get_next_grouping(current_role, reversed)
+      next_grouping = grouping.get_next_grouping(current_role, reversed, filter_data)
       next_result = next_grouping&.current_result
     end
 
     render json: { next_result: next_result, next_grouping: next_grouping }
+  end
+
+  def random_incomplete_submission
+    result = record
+    grouping = result.submission.grouping
+
+    next_grouping = grouping.get_random_incomplete(current_role)
+    next_result = next_grouping&.current_result
+
+    render json: { result_id: next_result&.id, submission_id: next_result&.submission_id,
+                   grouping_id: next_grouping&.id }
   end
 
   def set_released_to_students
@@ -357,82 +377,6 @@ class ResultsController < ApplicationController
       flash_now(:error, @result.errors.full_messages.join(' ;'))
       head :bad_request
     end
-  end
-
-  def download
-    # TODO: move this to the submissions controller
-    if params[:download_zip_button]
-      download_zip
-      return
-    end
-
-    file = select_file
-    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
-      redirect_to notebook_content_course_assignment_submissions_url(current_course,
-                                                                     record.submission.grouping.assignment,
-                                                                     select_file_id: params[:select_file_id])
-      return
-    end
-
-    begin
-      if params[:include_annotations] == 'true' && !file.is_supported_image?
-        file_contents = file.retrieve_file(include_annotations: true)
-      else
-        file_contents = file.retrieve_file
-      end
-    rescue StandardError => e
-      flash_message(:error, e.message)
-      redirect_to edit_course_result_path(current_course, record)
-      return
-    end
-    filename = file.filename
-    # Display the file in the page if it is an image/pdf, and download button
-    # was not explicitly pressed
-    if file.is_supported_image? && !params[:show_in_browser].nil?
-      send_data file_contents, type: 'image', disposition: 'inline',
-                               filename: filename
-    else
-      send_data_download file_contents, filename: filename
-    end
-  end
-
-  def download_zip
-    # TODO: move this to the submissions controller
-    submission = record.submission
-    if submission.revision_identifier.nil?
-      render plain: t('submissions.no_files_available')
-      return
-    end
-
-    grouping = submission.grouping
-    assignment = grouping.assignment
-    revision_identifier = submission.revision_identifier
-    repo_folder = assignment.repository_folder
-    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
-
-    zip_path = if params[:include_annotations] == 'true'
-                 "tmp/#{assignment.short_identifier}_" \
-                   "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
-               else
-                 "tmp/#{assignment.short_identifier}_" \
-                   "#{grouping.group.group_name}_r#{revision_identifier}.zip"
-               end
-
-    files = submission.submission_files
-    Zip::File.open(zip_path, create: true) do |zip_file|
-      grouping.access_repo do |repo|
-        revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision) do |file|
-          submission_file = files.find_by(filename: file.name, path: file.path)
-          submission_file&.retrieve_file(
-            include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
-          )
-        end
-      end
-    end
-    # Send the Zip file
-    send_file zip_path, disposition: 'inline',
-                        filename: zip_name + '.zip'
   end
 
   def get_annotations
@@ -613,7 +557,7 @@ class ResultsController < ApplicationController
     end
     @feedback_files = @submission.feedback_files
 
-    @host = Rails.application.config.action_controller.relative_url_root
+    @host = Rails.application.config.relative_url_root
 
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_role.user_name}' viewed results for assignment '#{@assignment.short_identifier}'.")
@@ -642,45 +586,6 @@ class ResultsController < ApplicationController
     head :ok
   end
 
-  def update_remark_request
-    @submission = record.submission
-    @assignment = @submission.grouping.assignment
-    if @assignment.past_remark_due_date?
-      head :bad_request
-    else
-      @submission.update(
-        remark_request: params[:submission][:remark_request],
-        remark_request_timestamp: Time.current
-      )
-      if params[:save]
-        head :ok
-      elsif params[:submit]
-        unless @submission.remark_result
-          @submission.make_remark_result
-          @submission.non_pr_results.reload
-        end
-        @submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
-        @submission.get_original_result.update(released_to_students: false)
-        render js: 'location.reload();'
-      else
-        head :bad_request
-      end
-    end
-  end
-
-  # Allows student to cancel a remark request.
-  def cancel_remark_request
-    submission = record.submission
-
-    submission.remark_result.destroy
-    submission.get_original_result.update(released_to_students: true)
-
-    redirect_to controller: 'results',
-                action: 'view_marks',
-                course_id: current_course.id,
-                id: submission.get_original_result.id
-  end
-
   def delete_grace_period_deduction
     result = record
     grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
@@ -700,14 +605,14 @@ class ResultsController < ApplicationController
 
   # Regenerate the view tokens for the results whose ids are given
   def refresh_view_tokens
-    updated = requested_results.map { |r| r.regenerate_view_token ? r.id : nil }.compact
+    updated = requested_results.filter_map { |r| r.regenerate_view_token ? r.id : nil }
     render json: Result.where(id: updated).pluck(:id, :view_token).to_h
   end
 
   # Update the view token expiry date for the results whose ids are given
   def update_view_token_expiry
     expiry = params[:expiry_datetime]
-    updated = requested_results.map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }.compact
+    updated = requested_results.filter_map { |r| r.update(view_token_expiry: expiry) ? r.id : nil }
     render json: Result.where(id: updated).pluck(:id, :view_token_expiry).to_h
   end
 
@@ -754,14 +659,6 @@ class ResultsController < ApplicationController
 
   private
 
-  def from_codeviewer_param
-    params[:from_codeviewer] == 'true'
-  end
-
-  def select_file
-    params[:select_file_id] && SubmissionFile.find_by(id: params[:select_file_id])
-  end
-
   def extra_mark_params
     params.require(:extra_mark).permit(:result,
                                        :description,
@@ -770,6 +667,10 @@ class ResultsController < ApplicationController
 
   def view_token_param
     params[:view_token] || session['view_token']&.[](record&.id&.to_s)
+  end
+
+  def criterion_id_param
+    params[:criterion_id]
   end
 
   def requested_results

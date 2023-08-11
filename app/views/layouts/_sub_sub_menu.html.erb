@@ -66,6 +66,12 @@
               </li>
             <% end %>
           <% end %>
+          <% if LtiDeployment.where(course: @current_course).any? %>
+          <li class='<%= "active" if controller.action_name == 'lti_settings' %>'>
+            <%= link_to I18n.t('lti.lti_settings'),
+                        lti_settings_course_assignment_path(@current_course, @assignment) %>
+          </li>
+          <% end %>
         <% end %>
       <% end %>
     </ul>

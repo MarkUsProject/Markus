@@ -23,50 +23,68 @@ class RawMarksSpreadsheet extends React.Component {
 
   fetchData = () => {
     // Getting additional grade entry item columns
-    $.ajax({
-      url: Routes.get_mark_columns_course_grade_entry_form_path(
+    fetch(
+      Routes.get_mark_columns_course_grade_entry_form_path(
         this.props.course_id,
         this.props.grade_entry_form_id
       ),
-      method: "GET",
-      dataType: "json",
-    }).then(data => {
-      let grade_columns = data.map(c =>
-        Object.assign({}, c, {
-          Cell: this.inputCell,
-          style: {
-            padding: "0",
-            border: "1px solid #8d8d8d",
-            margin: "-1px 0",
-          },
-          className: "grade-input",
-          minWidth: 50,
-          defaultSortDesc: true,
-        })
-      );
-      this.setState({grade_columns});
-    });
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(data => {
+        let grade_columns = data.map(c =>
+          Object.assign({}, c, {
+            Cell: this.inputCell,
+            style: {
+              padding: "0",
+              border: "1px solid #8d8d8d",
+              margin: "-1px 0",
+            },
+            className: "grade-input",
+            minWidth: 50,
+            defaultSortDesc: true,
+          })
+        );
+        this.setState({grade_columns});
+      });
 
     // Getting row data
-    $.ajax({
-      url: Routes.populate_grades_table_course_grade_entry_form_path(
+    fetch(
+      Routes.populate_grades_table_course_grade_entry_form_path(
         this.props.course_id,
         this.props.grade_entry_form_id
       ),
-      method: "GET",
-      dataType: "json",
-    }).then(response => {
-      this.props.resetSelection();
-
-      this.setState(
-        {
-          data: response.data,
-          loading: false,
-          sections: response.sections,
+      {
+        headers: {
+          Accept: "application/json",
         },
-        () => this.forceUpdate()
-      );
-    });
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(response => {
+        this.props.resetSelection();
+
+        this.setState(
+          {
+            data: response.data,
+            loading: false,
+            sections: response.sections,
+          },
+          () => this.forceUpdate()
+        );
+      });
   };
 
   /* Called when an action is run */
@@ -146,6 +164,7 @@ class RawMarksSpreadsheet extends React.Component {
         grade_entry_form_id={this.props.grade_entry_form_id}
         grade_id={"grade_" + row.original._id + "_" + row.column.id}
         grade_entry_column={row.column.id}
+        bonus={row.column.data.bonus}
         student_id={row.original._id}
         default_value={row.value}
         updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
@@ -338,7 +357,10 @@ class GradeEntryCell extends React.Component {
     let updated_grade = event.target.value === "" ? "" : Number(event.target.value);
     this.setState({value: updated_grade});
 
-    if (updated_grade !== "" && (Number.isNaN(updated_grade) || updated_grade < 0)) {
+    if (
+      updated_grade !== "" &&
+      (Number.isNaN(updated_grade) || (!this.props.bonus && updated_grade < 0))
+    ) {
       return;
     }
 
@@ -386,7 +408,7 @@ class GradeEntryCell extends React.Component {
         step="any"
         size={4}
         value={this.state.value}
-        min={0}
+        min={this.props.bonus ? "" : 0}
         onChange={this.handleChange}
       />
     );

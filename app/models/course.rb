@@ -58,7 +58,7 @@ class Course < ApplicationRecord
       MarkusCsv.parse(assignment_data) do |row|
         assignment = self.assignments.find_or_create_by(short_identifier: row[0])
         attrs = Assignment::DEFAULT_FIELDS.zip(row).to_h
-        attrs.delete_if { |_, v| v.nil? }
+        attrs.compact!
         if assignment.new_record?
           assignment.assignment_properties.repository_folder = row[0]
           assignment.assignment_properties.token_period = 1
@@ -104,12 +104,12 @@ class Course < ApplicationRecord
   def get_required_files
     assignments = self.assignments.includes(:assignment_files, :assignment_properties)
                       .where(assignment_properties: { scanned_exam: false }, is_hidden: false)
-    assignments.map do |assignment|
+    assignments.flat_map do |assignment|
       assignment.assignment_files.map do |file|
         filename = File.join(assignment.repository_folder, file.filename)
         "#{filename} #{assignment.only_required_files ? true : false}"
       end
-    end.flatten.join("\n")
+    end.join("\n")
   end
 
   def export_student_data_csv

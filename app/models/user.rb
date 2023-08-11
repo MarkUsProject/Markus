@@ -44,7 +44,7 @@ class User < ApplicationRecord
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
-    not_allowed_regexp = Regexp.new(/[\n\0]+/)
+    not_allowed_regexp = /[\n\0]+/
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
       m_logger = MarkusLogger.instance
       m_logger.log("User '#{login}' failed to log in. Username/password contained " \
@@ -56,7 +56,7 @@ class User < ApplicationRecord
       # for that at the moment (you would do it by e.g. pipe.readlines)
 
       # External validation is supported on *NIX only
-      if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+      if RUBY_PLATFORM.match?(/(:?mswin|mingw)/) # should match for Windows only
         return AUTHENTICATE_BAD_PLATFORM
       end
 

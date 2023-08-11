@@ -41,16 +41,6 @@ module SubmissionsHelper
       path: path,
       grouping_id: grouping_id
     )
-    f[:filename] =
-      helpers.image_tag('icons/page_white_text.png') +
-      helpers.link_to(" #{file_name}",
-                      download_course_assignment_submissions_path(
-                        course_id,
-                        assignment_id: assignment_id,
-                        revision_identifier: revision_identifier,
-                        file_name: file_name,
-                        path: path, grouping_id: grouping_id
-                      ))
     f[:raw_name] = file_name
     f[:last_revised_date] = I18n.l(file.last_modified_date)
     f[:last_modified_revision] = revision_identifier
@@ -74,7 +64,7 @@ module SubmissionsHelper
     # Only allow required files to be uploaded if +only_required_files+ is true
     required_files = grouping.assignment.assignment_files.pluck(:filename)
     if only_required_files && required_files.exclude?(params[:filename])
-      message = t('assignments.upload_file_requirement') +
+      message = t('assignments.upload_file_requirement', file_name: params[:filename]) +
         "\n#{Assignment.human_attribute_name(:assignment_files)}: #{required_files.join(', ')}"
       render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_entity
       return

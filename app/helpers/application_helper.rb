@@ -3,6 +3,8 @@ module ApplicationHelper
   # A more robust flash method. Easier to add multiple messages of each type:
   # :error, :success, :warning and :notice
   def flash_message(type, text = '', flash_type = flash, **kwargs)
+    return if text.nil?
+
     available_types = [:error, :success, :warning, :notice]
     # If type isn't one of the four above, we display it as :notice.
     # We don't want to suppress the message, which is why we pick a
@@ -10,7 +12,7 @@ module ApplicationHelper
     type = :notice unless available_types.include?(type)
     # If a flash with that type doesn't exist, create a new array
     flash_type[type] ||= []
-    content = kwargs.empty? ? "<p>#{text.to_s.gsub(/\n/, '<br/>')}</p>" : render_to_string(**kwargs).split("\n").join
+    content = kwargs.empty? ? "<p>#{text.to_s.gsub("\n", '<br/>')}</p>" : render_to_string(**kwargs).split("\n").join
     # If the message doesn't already exist, add it
     flash_type[type].push(content) unless flash_type[type].include?(content)
   end

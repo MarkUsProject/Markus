@@ -3,6 +3,9 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  authorize :from_codeviewer, through: :from_codeviewer_param
+  authorize :view_token, through: :view_token_param
+
   PERMITTED_IFRAME_SRC = ([:self] + %w[https://www.youtube.com https://drive.google.com https://docs.google.com]).freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
@@ -204,11 +207,13 @@ class SubmissionsController < ApplicationController
       collectable << grouping
     end
     if collectable.count > 0
-      @current_job = SubmissionsJob.perform_later(collectable,
-                                                  collection_dates: collection_dates.transform_keys(&:to_s),
-                                                  collect_current: collect_current,
-                                                  apply_late_penalty: apply_late_penalty)
-      session[:job_id] = @current_job.job_id
+      current_job = SubmissionsJob.perform_later(collectable,
+                                                 enqueuing_user: @current_user,
+                                                 collection_dates: collection_dates.transform_keys(&:to_s),
+                                                 collect_current: collect_current,
+                                                 apply_late_penalty: apply_late_penalty,
+                                                 notify_socket: true)
+      CollectSubmissionsChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
     end
     if some_before_due
       error = I18n.t('submissions.collect.could_not_collect_some_due',
@@ -220,7 +225,7 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    render 'shared/_poll_job'
+    head :ok
   end
 
   def run_tests
@@ -232,7 +237,9 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
+    group_ids = groupings.filter_map do |g|
+      next unless g.has_non_empty_submission?
+
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
         head :bad_request
@@ -467,6 +474,83 @@ class SubmissionsController < ApplicationController
         render json: { content: file_contents.to_json, type: file_type }
       end
     end
+  end
+
+  def download_file
+    if params[:download_zip_button]
+      download_file_zip
+      return
+    end
+    file = select_file
+    if file.nil?
+      return head :not_found
+    end
+
+    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
+      redirect_to notebook_content_course_assignment_submissions_url(current_course,
+                                                                     record.grouping.assignment,
+                                                                     select_file_id: params[:select_file_id])
+      return
+    end
+
+    begin
+      if params[:include_annotations] == 'true' && !file.is_supported_image?
+        file_contents = file.retrieve_file(include_annotations: true)
+      else
+        file_contents = file.retrieve_file
+      end
+    rescue StandardError => e
+      flash_message(:error, e.message)
+      head :internal_server_error
+      return
+    end
+    filename = file.filename
+    # Display the file in the page if it is an image/pdf, and download button
+    # was not explicitly pressed
+    if file.is_supported_image? && !params[:show_in_browser].nil?
+      send_data file_contents, type: 'image', disposition: 'inline',
+                               filename: filename
+    else
+      send_data_download file_contents, filename: filename
+    end
+  end
+
+  def download_file_zip
+    submission = record
+    if submission.revision_identifier.nil?
+      render plain: t('submissions.no_files_available')
+      return
+    end
+
+    grouping = submission.grouping
+    assignment = grouping.assignment
+    revision_identifier = submission.revision_identifier
+    repo_folder = assignment.repository_folder
+    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
+
+    zip_path = if params[:include_annotations] == 'true'
+                 "tmp/#{assignment.short_identifier}_" \
+                   "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
+               else
+                 "tmp/#{assignment.short_identifier}_" \
+                   "#{grouping.group.group_name}_r#{revision_identifier}.zip"
+               end
+
+    files = submission.submission_files
+    Zip::File.open(zip_path, create: true) do |zip_file|
+      grouping.access_repo do |repo|
+        revision = repo.get_revision(revision_identifier)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, revision) do |file|
+          submission_file = files.find_by(filename: file.name, path: file.path)
+          submission_file&.retrieve_file(
+            include_annotations: params[:include_annotations] == 'true' && !submission_file.is_supported_image?
+          )
+        end
+      end
+    end
+    # Send the Zip file
+    send_file zip_path, disposition: 'inline',
+                        filename: zip_name + '.zip'
   end
 
   def download
@@ -745,7 +829,7 @@ class SubmissionsController < ApplicationController
     if is_review
       results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
     else
-      results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+      results = assignment.current_results.where('groupings.id': params[:groupings])
     end
 
     errors = Hash.new { |h, k| h[k] = [] }
@@ -760,7 +844,56 @@ class SubmissionsController < ApplicationController
     head :ok
   end
 
+  # Allows student to cancel a remark request.
+  def cancel_remark_request
+    @submission = record
+    @assignment = record.grouping.assignment
+    @course = record.course
+    record.remark_result.destroy
+    record.get_original_result.update(released_to_students: true)
+
+    redirect_to controller: 'results',
+                action: 'view_marks',
+                course_id: current_course.id,
+                id: record.get_original_result.id
+  end
+
+  def update_remark_request
+    @submission = record
+    @assignment = record.grouping.assignment
+    @course = record.course
+    if @assignment.past_remark_due_date?
+      head :bad_request
+    else
+      record.update(
+        remark_request: params[:submission][:remark_request],
+        remark_request_timestamp: Time.current
+      )
+      if params[:save]
+        head :ok
+      elsif params[:submit]
+        unless record.remark_result
+          record.make_remark_result
+          record.non_pr_results.reload
+        end
+        record.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+        record.get_original_result.update(released_to_students: false)
+        render js: 'location.reload();'
+      else
+        head :bad_request
+      end
+    end
+  end
+
   private
+
+  def view_token_param
+    if !record.nil?
+      params[:view_token] || session['view_token']&.[](record.current_result&.id&.to_s)
+    else
+      false
+    end
+  end
 
   def notebook_to_html(file_contents, unique_path, type)
     return file_contents unless type == 'jupyter-notebook'
@@ -770,7 +903,9 @@ class SubmissionsController < ApplicationController
       FileUtils.mkdir_p(cache_file.dirname)
       if type == 'jupyter-notebook'
         args = [
-          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s
+          Rails.application.config.python, '-m', 'nbconvert', '--to', 'html', '--stdin', '--output', cache_file.to_s,
+          "--TemplateExporter.extra_template_basedirs=#{Rails.root.join('lib/jupyter-notebook')}",
+          '--template', 'markus-html-template'
         ]
       end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
@@ -843,7 +978,7 @@ class SubmissionsController < ApplicationController
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
     end
-    entries.map do |file_name, file_obj|
+    entries.filter_map do |file_name, file_obj|
       if file_obj.is_a? Repository::RevisionFile
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
@@ -857,7 +992,7 @@ class SubmissionsController < ApplicationController
       else
         { key: "#{file_name}/" }
       end
-    end.compact
+    end
   end
 
   # Include grouping_id param in parent_params so that check_record can ensure that
@@ -873,5 +1008,13 @@ class SubmissionsController < ApplicationController
     uri.is_a?(URI::HTTP) && uri.host.present?
   rescue URI::InvalidURIError
     false
+  end
+
+  def select_file
+    params[:select_file_id] && record.submission_files.find_by(id: params[:select_file_id])
+  end
+
+  def from_codeviewer_param
+    params[:from_codeviewer] == 'true'
   end
 end

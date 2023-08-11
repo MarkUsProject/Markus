@@ -8,25 +8,25 @@
              handlers: [:erb] %>
 
   <%= javascript_tag nonce: true do %>
-    $(function() {
-      $('#grace-period-add').click(function(e) {
-        add_period("grace_periods", grace_periods);
-        e.preventDefault();
-      })
-      $('#penalty-decay-period-add').click(function(e) {
-        add_period("penalty_decay_periods", penalty_decay_periods);
-        e.preventDefault();
-      })
-      $('#penalty-period-add').click(function(e) {
-        add_period("penalty_periods", penalty_periods);
-        e.preventDefault();
-      })
-      $('#required-file-add').click(function(e) {
-        add_assignment_file();
-        e.preventDefault();
-      })
-      refresh_event_listeners();
-    })
+      document.addEventListener("DOMContentLoaded", function() {
+        $('#grace-period-add').click(function(e) {
+          add_period("grace_periods", grace_periods);
+          e.preventDefault();
+        })
+        $('#penalty-decay-period-add').click(function(e) {
+          add_period("penalty_decay_periods", penalty_decay_periods);
+          e.preventDefault();
+        })
+        $('#penalty-period-add').click(function(e) {
+          add_period("penalty_periods", penalty_periods);
+          e.preventDefault();
+        })
+        $('#required-file-add').click(function(e) {
+          add_assignment_file();
+          e.preventDefault();
+        })
+        refresh_event_listeners();
+      });
   <% end %>
 <% end %>
 
@@ -215,9 +215,6 @@
                        Assignment.human_attribute_name(:release_with_urls) %>
         <%= ap_f.check_box :release_with_urls %>
 
-        <% if @lti_deployments.present? %>
-          <%= render partial: 'lti_deployments/line_items' %>
-        <% end %>
       </div>
       </fieldset>
     </fieldset>
@@ -282,7 +279,7 @@
                       Assignment.human_attribute_name(:allow_groups) %>
         <%= check_box_tag :is_group_assignment, true,
                           @assignment.student_form_groups ||
-                          @assignment.invalid_override %>
+                          @assignment.group_max > 1 %>
       </p>
       <fieldset class='group_properties nested-fieldset'>
         <div class='inline-labels'>
@@ -341,9 +338,10 @@
           <table id='grace_periods_table'>
             <thead>
             <tr>
-              <th><%= t('submission_rules.after').capitalize %></th>
+              <th><%= t('submission_rules.period').capitalize %></th>
               <th><%= t('submission_rules.from').capitalize %></th>
               <th><%= t('submission_rules.to').capitalize %></th>
+              <th><%= t('submission_rules.deduct').capitalize %></th>
               <th><%= t(:delete) %></th>
             </tr>
             </thead>
@@ -425,10 +423,10 @@
           <table id='penalty_periods_table'>
             <thead>
             <tr>
-              <th><%= t('submission_rules.after').capitalize %></th>
-              <th><%= t('submission_rules.deduct').capitalize %></th>
+              <th><%= t('submission_rules.period').capitalize %></th>
               <th><%= t('submission_rules.from').capitalize %></th>
               <th><%= t('submission_rules.to').capitalize %></th>
+              <th><%= t('submission_rules.deduct').capitalize %></th>
               <th><%= t(:delete) %></th>
             </tr>
             </thead>

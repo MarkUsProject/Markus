@@ -11,13 +11,13 @@
              formats: [:js],
              handlers: [:erb] %>
   <%= javascript_tag nonce: true do %>
-    $(function() {
+    document.addEventListener("DOMContentLoaded", function() {
       $('#add-new-column').click(function(e) {
         add_column();
         e.preventDefault();
       })
       refresh_event_listeners();
-    })
+    });
   <% end %>
 <% end %>
 
@@ -60,11 +60,11 @@
   </fieldset>
 
   <div class="grade-entry-items-wrapper" id='grade_entry_items'>
-    <div class="add-new-button-wrapper">
-      <%= link_to t('grade_entry_forms.add_column'),
-                  '#',
-                  class: 'button add-new-button',
-                  id: 'add-new-column' %>
+    <div class="float-right">
+      <a href="#" class="button" id="add-new-column">
+        <i class="fa-solid fa-circle-plus"></i>
+        <%= t('grade_entry_forms.add_column') %>
+      </a>
     </div>
     <h2><%= GradeEntryItem.model_name.human.pluralize %></h2>
     <%# Ensures there is at least one column whenever the form is loaded. %>

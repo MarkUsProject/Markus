@@ -21,6 +21,13 @@ en:
       progress: "%{count}/%{size} submissions collected"
       results_loss_warning: This action identifies the version of files to grade for each selected group. Instructors and TAs can begin grading after files are collected.
       scanned_exam_latest_warning: For scanned exams, the latest submitted file version for each selected group is used regardless of the due date.
+      status:
+        completed: This job is now complete.
+        failed:
+          message: 'This job failed due to the following error: {{error}}'
+          no_message: This job failed due to an unexpected error.
+        in_progress: "{{progress}}/{{total}} submissions collected."
+        queued: This job is waiting to be run.
       submit: Collect Submissions
       this_revision: Collect and Grade This Revision
       undo_results_loss_warning: 'This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error. WARNING: All grading work done since the previous Collect All Submissions operation will be lost.'
@@ -71,6 +78,7 @@ en:
     repo_browser:
       client_time: 'commit:'
       collected: collected
+      confirm_deletion: Confirm Deletion
       repository: Repository
       repository_name: 'Repository: %{repository}'
       revised_by: Revised By

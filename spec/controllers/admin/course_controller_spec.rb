@@ -93,7 +93,7 @@ describe Admin::CoursesController do
         end
         it 'sends the appropriate data' do
           get_as admin, :index, format: 'json'
-          received_data = JSON.parse(response.body).map(&:symbolize_keys)
+          received_data = response.parsed_body.map(&:symbolize_keys)
           expected_data = [
             {
               id: course1.id,
@@ -268,7 +268,7 @@ describe Admin::CoursesController do
       context 'there is no autotest_setting set' do
         it 'should return unprocessable_entity' do
           subject
-          assert_response :unprocessable_entity
+          expect(response).to have_http_status(:unprocessable_entity)
         end
       end
       context 'there is an autotest_setting' do
@@ -305,7 +305,7 @@ describe Admin::CoursesController do
       context 'there is no autotest_setting set' do
         it 'should return unprocessable_entity' do
           subject
-          assert_response :unprocessable_entity
+          expect(response).to have_http_status(:unprocessable_entity)
         end
       end
       context 'there is an autotest_setting' do

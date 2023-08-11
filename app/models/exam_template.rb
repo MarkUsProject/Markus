@@ -65,7 +65,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   # Split up PDF file based on this exam template.
-  def split_pdf(path, original_filename = nil, current_role = nil)
+  def split_pdf(path, original_filename = nil, current_role = nil, on_duplicate = nil)
     basename = File.basename path, '.pdf'
     filename = original_filename.nil? ? basename : File.basename(original_filename)
     pdf = CombinePDF.load path
@@ -86,23 +86,51 @@ class ExamTemplate < ApplicationRecord
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role)
+    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role, on_duplicate)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)
     error_file = File.join(
       base_path, 'error', filename
     )
-    return unless File.exist? error_file
     complete_dir = File.join(
       base_path, 'complete', exam_num
     )
     incomplete_dir = File.join(
       base_path, 'incomplete', exam_num
     )
+
+    unless File.exist? error_file
+      raise I18n.t('exam_templates.assign_errors.errors.file_not_found', filename: error_file)
+    end
+    exam_num = Integer(exam_num)
+    page_num = Integer(page_num)
+    if page_num < 1 || page_num > self.num_pages
+      raise I18n.t('exam_templates.assign_errors.errors.invalid_page_number', page_num: page_num)
+    end
+    if exam_num < 1
+      raise I18n.t('exam_templates.assign_errors.errors.invalid_exam_number', exam_num: exam_num)
+    end
+
     # if file is missing from complete group
     # if there isn't corresponding file in incomplete group
-    unless File.exist?(File.join(complete_dir, page_num)) && !File.exist?(File.join(incomplete_dir, page_num))
+    unless File.exist?(File.join(complete_dir, page_num.to_s)) && !File.exist?(File.join(incomplete_dir, page_num.to_s))
+      # Update status of split_page to be FIXED
+      split_page_id = File.basename(filename, '.pdf') # since filename is "#{split_page.id}.pdf"
+      split_page = SplitPage.find(split_page_id)
+      group = Group.find_or_create_by!(
+        group_name: "#{self.name}_paper_#{exam_num}",
+        repo_name: "#{self.name}_paper_#{exam_num}",
+        course: self.course
+      )
+      split_page.update!(status: 'FIXED', exam_page_number: page_num, group: group)
+      # This creates both a new grouping and a new folder in the group repository
+      # when a new group is entered.
+      grouping = Grouping.find_or_create_by!(
+        group_id: group.id,
+        assessment_id: self.assessment_id
+      )
+
       # if incomplete directory doesn't exist yet
       FileUtils.mkdir_p incomplete_dir
       # move the file into incomplete group
@@ -119,22 +147,6 @@ class ExamTemplate < ApplicationRecord
         end
         File.binwrite(error_file_new_name, new_pdf.to_pdf)
       end
-
-      # Update status of split_page to be FIXED
-      split_page_id = File.basename(filename, '.pdf') # since filename is "#{split_page.id}.pdf"
-      split_page = SplitPage.find(split_page_id)
-      group = Group.find_or_create_by(
-        group_name: "#{self.name}_paper_#{exam_num}",
-        repo_name: "#{self.name}_paper_#{exam_num}",
-        course: self.course
-      )
-      split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
-      # This creates both a new grouping and a new folder in the group repository
-      # when a new group is entered.
-      grouping = Grouping.find_or_create_by(
-        group_id: group.id,
-        assessment_id: self.assessment_id
-      )
 
       # add assignment files based on template divisions
       grouping.access_repo do |repo|
@@ -242,9 +254,9 @@ class ExamTemplate < ApplicationRecord
     cover = pdf.pages[0]
     cover_page = CombinePDF.new
     cover_page << cover
-    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
-      self.quality = 100
-      self.density = '300'
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do |options|
+      options.quality = 100
+      options.density = '300'
     end
     imglist.first.write(File.join(self.base_path, 'cover.jpg'))
   end

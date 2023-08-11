@@ -46,7 +46,7 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return xml content' do
             expect(Hash.from_xml(response.body)
@@ -63,7 +63,7 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
             expect(Hash.from_xml(response.body)['grade_entry_forms']).to be_nil
@@ -90,7 +90,7 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
             expect(Hash.from_xml(response.body)['grade_entry_forms']).to be_nil
@@ -107,13 +107,13 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return json content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to eq(grade_entry_form.id)
+            expect(response.parsed_body&.first&.dig('id')).to eq(grade_entry_form.id)
           end
           it 'should return all default fields' do
-            keys = JSON.parse(response.body)&.first&.keys&.map(&:to_sym)
+            keys = response.parsed_body&.first&.keys&.map(&:to_sym)
             expect(keys).to contain_exactly(:grade_entry_items, *Api::GradeEntryFormsController::DEFAULT_FIELDS)
           end
         end
@@ -123,10 +123,10 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
+            expect(response.parsed_body&.first&.dig('id')).to be_nil
           end
         end
         context 'with multiple grade entry forms' do
@@ -135,10 +135,10 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should return xml content about all grade entry forms' do
-            expect(JSON.parse(response.body).length).to eq(5)
+            expect(response.parsed_body.length).to eq(5)
           end
           it 'should return all default fields for all grade entry forms' do
-            keys = JSON.parse(response.body).map { |h| h.keys.map(&:to_sym) }
+            keys = response.parsed_body.map { |h| h.keys.map(&:to_sym) }
             expect(keys).to all(contain_exactly(:grade_entry_items, *Api::GradeEntryFormsController::DEFAULT_FIELDS))
           end
         end
@@ -148,10 +148,10 @@ describe Api::GradeEntryFormsController do
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
-            expect(response.status).to eq(200)
+            expect(response).to have_http_status(200)
           end
           it 'should return empty content' do
-            expect(JSON.parse(response.body)&.first&.dig('id')).to be_nil
+            expect(response.parsed_body&.first&.dig('id')).to be_nil
           end
         end
       end
@@ -173,14 +173,14 @@ describe Api::GradeEntryFormsController do
       context 'requesting a non-existant grade entry form' do
         it 'should respond with 404' do
           get :show, params: { id: -1, course_id: course.id }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
       context 'requesting a grade entry form in a different course' do
         it 'should response with 403' do
           grade_entry_form = create :grade_entry_form, course: create(:course)
           get :show, params: { id: grade_entry_form.id, course_id: grade_entry_form.course_id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end
@@ -199,7 +199,7 @@ describe Api::GradeEntryFormsController do
       context 'with minimal required params' do
         it 'should respond with 201' do
           post :create, params: params
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status(201)
         end
         it 'should create an assignment' do
           expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).to be_nil
@@ -209,14 +209,14 @@ describe Api::GradeEntryFormsController do
         context 'for a different course' do
           it 'should response with 403' do
             post :create, params: { **params, course_id: create(:course).id }
-            expect(response.status).to eq(403)
+            expect(response).to have_http_status(403)
           end
         end
       end
       context 'with all params' do
         it 'should respond with 201' do
           post :create, params: params
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status(201)
         end
         it 'should create an assignment' do
           expect(GradeEntryForm.find_by(short_identifier: params[:short_identifier])).to be_nil
@@ -228,7 +228,7 @@ describe Api::GradeEntryFormsController do
         context 'missing short_id' do
           it 'should respond with 422' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:description, :due_date, :course_id)
@@ -238,7 +238,7 @@ describe Api::GradeEntryFormsController do
         context 'missing description' do
           it 'should respond with 422' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(response.status).to eq(422)
+            expect(response).to have_http_status(422)
           end
           it 'should not create an assignment' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
@@ -250,13 +250,13 @@ describe Api::GradeEntryFormsController do
         it 'should respond with 409' do
           grade_entry_form = create :grade_entry_form, course: course
           post :create, params: { **params, short_identifier: grade_entry_form.short_identifier }
-          expect(response.status).to eq(409)
+          expect(response).to have_http_status(409)
         end
       end
       context 'where due_date is invalid' do
         it 'should respond with 422' do
           post :create, params: { **params, due_date: 'not a real date' }
-          expect(response.status).to eq(422)
+          expect(response).to have_http_status(422)
         end
       end
     end
@@ -264,24 +264,24 @@ describe Api::GradeEntryFormsController do
       it 'should update an existing assignment' do
         new_desc = grade_entry_form.description + 'more!'
         put :update, params: { id: grade_entry_form.id, description: new_desc, course_id: course.id }
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'should not update a short identifier' do
         new_short_id = grade_entry_form.short_identifier + 'more!'
         put :update, params: { id: grade_entry_form.id, short_identifier: new_short_id, course_id: course.id }
-        expect(response.status).to eq(500)
+        expect(response).to have_http_status(500)
       end
       it 'should not update an assignment that does not exist' do
         new_desc = grade_entry_form.description + 'more!'
         put :update, params: { id: -1, description: new_desc, course_id: course.id }
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(404)
       end
       context 'for a different course' do
         let(:grade_entry_form) { create :grade_entry_form, course: create(:course) }
         it 'should response with 403' do
           new_desc = grade_entry_form.description + 'more!'
           put :update, params: { id: grade_entry_form.id, description: new_desc, course_id: grade_entry_form.course.id }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end

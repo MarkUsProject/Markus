@@ -82,7 +82,10 @@ describe SubmissionsJob do
     end
     context 'when a revision id does not exist in the repo for the group' do
       it 'should not create a submission' do
-        SubmissionsJob.perform_now(groupings[0...1], revision_identifier: revision_ids[groupings.first.id] + 'aaaaa')
+        revision_id = revision_ids[groupings.first.id] + 'aaaaa'
+        expect { SubmissionsJob.perform_now(groupings[0...1], revision_identifier: revision_id) }
+          .to raise_error(Repository::RevisionDoesNotExist)
+
         g = groupings.first.reload
         expect(g.current_submission_used).to be_nil
       end
@@ -154,6 +157,107 @@ describe SubmissionsJob do
           expect(g.current_submission_used.revision_identifier).to eq latest_revision.to_s
         end
       end
+    end
+  end
+
+  context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
+    let(:instructor) { create :instructor }
+    let(:instructor2) { create :instructor }
+
+    context 'without errors when collecting submissions' do
+      it 'broadcasts status updates for each collected submission, once upon completion, and once to update the ' \
+         'table' do
+        (1..3).each do |i|
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+            expect(options[:status]).to be(:working)
+            expect(options[:progress]).to eq(i)
+            expect(options[:total]).to eq(3)
+            expect(options.count).to eq(3)
+          end
+        end
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+          expect(options[:status]).to be(:completed)
+          expect(options[:update_table]).not_to be_nil
+          expect(options.count).to eq(2)
+        end
+        SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
+      end
+      it 'broadcasts a warning message if it is present' do
+        # making it so that error messages are set
+        2.times do |i|
+          allow(groupings[i]).to receive(:save) do
+            groupings[i].errors.add(:is_collected)
+          end
+        end
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+          expect(options[:warning_message]).to eq('Is collected is invalid')
+        end
+        3.times do |_|
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+            expect(options[:warning_message]).to eq("Is collected is invalid\nIs collected is invalid")
+          end
+        end
+        SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
+      end
+      it 'broadcasts exactly four messages (three status updates and one joint status and table update)' do
+        expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true) }
+          .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 4
+      end
+    end
+    context 'with errors when collecting submissions' do
+      before(:each) do
+        allow(groupings[1]).to receive(:save).and_raise(StandardError)
+      end
+      after(:each) do
+        expect do
+          SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true)
+        end.to raise_error
+      end
+      it 'sends all status updates prior to the error, the error itself, and one to update the submissions table' do
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+          expect(options[:status]).to be(:working)
+          expect(options[:progress]).to eq(1)
+          expect(options[:total]).to eq(3)
+          expect(options.count).to eq(3)
+        end
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+          expect(options[:status]).to be(:failed)
+          expect(options[:update_table]).not_to be_nil
+        end
+      end
+
+      it 'sends exactly two status updates (one when the first submission is collected and a joint one for the error' \
+         'and table update)' do
+        expect(CollectSubmissionsChannel).to receive(:broadcast_to).exactly(2).times
+      end
+      it 'broadcasts a warning message if present' do
+        allow(groupings[0]).to receive(:save) do
+          groupings[0].errors.add(:is_collected)
+        end
+        2.times do |_|
+          expect(CollectSubmissionsChannel).to receive(:broadcast_to) do |_, options|
+            expect(options[:warning_message]).to eq('Is collected is invalid')
+          end
+        end
+      end
+    end
+    it "doesn't broadcast the message to other users" do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user, notify_socket: true) }
+        .to have_broadcasted_to(instructor2.user).from_channel(CollectSubmissionsChannel).exactly 0
+    end
+  end
+  context 'when notify_socket flag is not set' do
+    let(:instructor) { create :instructor }
+    it "doesn't broadcast a message" do
+      expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user) }
+        .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
+    end
+  end
+  context 'when enqueuing user is not set' do
+    let(:instructor) { create :instructor }
+    it "doesn't broadcast a message" do
+      expect { SubmissionsJob.perform_now(groupings, notify_socket: true) }
+        .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
     end
   end
 

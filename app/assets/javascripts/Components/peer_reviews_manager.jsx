@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
@@ -25,25 +26,31 @@ class PeerReviewsManager extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.populate_course_assignment_peer_reviews_path(
+    fetch(
+      Routes.populate_course_assignment_peer_reviews_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.studentsTable.resetSelection();
-      this.reviewersTable.resetSelection();
-      this.setState({
-        reviewerGroups: res.reviewer_groups.groups,
-        revieweeGroups: res.reviewee_groups.groups || [],
-        revieweeToReviewers: res.reviewee_to_reviewers_map,
-        groupIdToName: res.id_to_group_names_map,
-        reviewerToNumReviews: res.num_reviews_map,
-        sections: res.sections,
-        loading: false,
+      {headers: {Accept: "application/json"}}
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.studentsTable.resetSelection();
+        this.reviewersTable.resetSelection();
+        this.setState({
+          reviewerGroups: res.reviewer_groups.groups,
+          revieweeGroups: res.reviewee_groups.groups || [],
+          revieweeToReviewers: res.reviewee_to_reviewers_map,
+          groupIdToName: res.id_to_group_names_map,
+          reviewerToNumReviews: res.num_reviews_map,
+          sections: res.sections,
+          loading: false,
+        });
       });
-    });
   };
 
   updateNumReviewers = num => {
@@ -374,25 +381,19 @@ class GradersActionBox extends React.Component {
           />
           <button
             id="random_assign"
-            className="assign-randomly-button"
             onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
           >
+            <FontAwesomeIcon icon="fa-solid fa-dice" />
             {I18n.t("peer_reviews.action.random_assign")}
           </button>
         </div>
-        <button
-          id="assign"
-          className="assign-all-button"
-          onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
-        >
+        <button id="assign" onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}>
+          <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("peer_reviews.action.assign")}
         </button>
 
-        <button
-          id="unassign"
-          className="unassign-all-button"
-          onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
-        >
+        <button id="unassign" onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}>
+          <FontAwesomeIcon icon="fa-solid fa-user-minus" />
           {I18n.t("peer_reviews.action.unassign")}
         </button>
       </div>

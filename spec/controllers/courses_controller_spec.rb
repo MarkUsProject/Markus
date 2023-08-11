@@ -187,11 +187,11 @@ describe CoursesController do
   context 'accessing course pages' do
     it 'responds with success on index' do
       get_as instructor, :index
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
     it 'responds with success on show as an instructor' do
       get_as instructor, :show, params: { id: course }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
     it 'redirects to assignments on show as a student' do
       get_as student, :show, params: { id: course }
@@ -346,7 +346,7 @@ describe CoursesController do
     it 'accepts a valid file' do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       test1 = Assignment.find_by(short_identifier: @test_asn1)
       expect(test1).to_not be_nil
       test2 = Assignment.find_by(short_identifier: @test_asn2)
@@ -360,7 +360,7 @@ describe CoursesController do
     it 'accepts a valid YAML file' do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_good_yml }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       test1 = Assignment.find_by(short_identifier: @test_asn1)
       expect(test1).to_not be_nil
       test2 = Assignment.find_by(short_identifier: @test_asn2)
@@ -372,7 +372,7 @@ describe CoursesController do
     it 'does not accept files with invalid columns' do
       post_as instructor, :upload_assignments, params: { id: course.id, upload_file: @file_invalid_column }
 
-      expect(response.status).to eq(302)
+      expect(response).to have_http_status(302)
       expect(flash[:error]).to_not be_empty
       test = Assignment.find_by(short_identifier: @test_asn2)
       expect(test).to be_nil
@@ -387,7 +387,7 @@ describe CoursesController do
 
     it 'responds with appropriate status' do
       get_as instructor, :download_assignments, params: { id: course.id, format: 'csv' }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
 
     # parse header object to check for the right disposition
@@ -432,7 +432,7 @@ describe CoursesController do
 
     it 'responds with appropriate status' do
       get_as instructor, :download_assignments, params: { id: course.id, format: 'yml' }
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status(200)
     end
 
     # parse header object to check for the right disposition
@@ -485,7 +485,7 @@ describe CoursesController do
       let!(:student2c2) { create :student, course: course2, user: end_user }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
-        parsed_body = JSON.parse(response.body)['data']
+        parsed_body = response.parsed_body['data']
         sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
         expect(parsed_body == sorted_body)
       end
@@ -496,7 +496,7 @@ describe CoursesController do
       let!(:ta2c2) { create :ta, course: course2, user: end_user }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
-        parsed_body = JSON.parse(response.body)['data']
+        parsed_body = response.parsed_body['data']
         sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
         expect(parsed_body == sorted_body)
       end
@@ -507,10 +507,71 @@ describe CoursesController do
       let!(:instructor2c2) { create :instructor, course: course2, user: end_user }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
-        parsed_body = JSON.parse(response.body)['data']
+        parsed_body = response.parsed_body['data']
         sorted_body = parsed_body.sort_by { |k| k['courses.name'] }
         expect(parsed_body == sorted_body)
       end
+    end
+  end
+  describe 'destroying lti deployments' do
+    let!(:lti_deployment) { create :lti_deployment, course: course }
+    let(:admin_role) { create :admin_role, course: course }
+    it 'redirects if the user is not logged in' do
+      delete :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(302)
+    end
+    it 'returns an error for students' do
+      delete_as student, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(403)
+    end
+    it 'returns an error for TAs' do
+      delete_as ta, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(403)
+    end
+    it 'redirects back as an instructor' do
+      delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(303)
+    end
+    it 'redirects back as an admin' do
+      delete_as admin_role, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(response).to have_http_status(303)
+    end
+    it 'deletes the deployment' do
+      delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+      expect(LtiDeployment.all.count).to eq(0)
+    end
+    context 'with dependent line items' do
+      let!(:lti_line_item) { create :lti_line_item, lti_deployment: lti_deployment }
+      it 'deletes the line item' do
+        delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(LtiLineItem.all.count).to eq(0)
+      end
+    end
+    context 'with dependent services' do
+      let!(:lti_names_roles) { create :lti_service_namesrole, lti_deployment: lti_deployment }
+      let!(:lti_line_item_service) { create :lti_service_lineitem, lti_deployment: lti_deployment }
+      it 'deletes the dependent objects' do
+        delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(LtiService.all.count).to eq(0)
+      end
+    end
+    context 'with lti users' do
+      let!(:lti_user) { create :lti_user, user: student.user }
+      it 'does not delete users' do
+        delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(LtiUser.all.count).to eq(1)
+      end
+    end
+  end
+  describe 'get lti deployments' do
+    let!(:lti_deployment) { create :lti_deployment, course: course }
+    it 'returns the deployment' do
+      get_as instructor, :lti_deployments, params: { id: course.id }
+      expect(response.parsed_body[0]['id']).to eq(lti_deployment.id)
+    end
+    it 'returns the nested lti client' do
+      get_as instructor, :lti_deployments, params: { id: course.id }
+      expect(response.parsed_body[0]).to have_key('lti_client')
     end
   end
 end

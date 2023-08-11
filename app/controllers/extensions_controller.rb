@@ -41,7 +41,7 @@ class ExtensionsController < ApplicationController
 
   def duration_from_params
     params = extension_params
-    Extension::PARTS.map { |part| params[part].to_i.public_send(part) }.sum
+    Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
   end
 
   def extension_params

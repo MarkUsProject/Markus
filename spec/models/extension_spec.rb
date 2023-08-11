@@ -14,16 +14,16 @@ describe Extension do
     end
   end
   describe 'check callbacks' do
-    it 'should remove pending memberships on creation' do
+    it 'should mark the group as instructor approved on creation' do
       create :student_membership, grouping: grouping
-      expect { extension }.to change { Membership.count }.by(-1)
+      expect { extension }.to change { grouping.instructor_approved }.to(true)
     end
   end
   describe '#to_parts' do
     it 'should return the time_delta attribute calculated as PARTS' do
       time_delta = extension.time_delta
       parts = extension.to_parts
-      duration_from_parts = Extension::PARTS.map { |part| parts[part].to_i.public_send(part) }.sum
+      duration_from_parts = Extension::PARTS.sum { |part| parts[part].to_i.public_send(part) }
       expect(time_delta).to eq(duration_from_parts)
     end
     it 'should return only the parts in PARTS' do
@@ -31,10 +31,10 @@ describe Extension do
     end
   end
   describe '.to_parts' do
-    let(:duration) { Extension::PARTS.map { |part| rand(1..10).public_send(part) }.sum }
+    let(:duration) { Extension::PARTS.sum { |part| rand(1..10).public_send(part) } }
     it 'should return the duration calculated as PARTS' do
       parts = Extension.to_parts duration
-      duration_from_parts = Extension::PARTS.map { |part| parts[part].to_i.public_send(part) }.sum
+      duration_from_parts = Extension::PARTS.sum { |part| parts[part].to_i.public_send(part) }
       expect(duration).to eq(duration_from_parts)
     end
     it 'should return only the parts in PARTS' do

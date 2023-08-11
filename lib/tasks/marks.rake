@@ -93,7 +93,7 @@ namespace :db do
         updated_at: now
       }
     end)
-    one_time_ids = one_time_ids.map { |x| x['id'] }
+    one_time_ids = one_time_ids.pluck('id')
 
     annotations = []
     marks = []

@@ -69,10 +69,10 @@ FactoryBot.define do
       3.times { create(:test_group, assignment: a) }
 
       a.groupings.each do |grouping|
-        a.test_groups.each do |test_group|
-          test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
+        test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
+        a.test_groups.order(:id).each_with_index do |test_group, i|
           test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
-          create(:test_result, test_group_result: test_group_result)
+          create(:test_result, test_group_result: test_group_result, name: "Test Case #{i + 1}")
         end
       end
     end
@@ -140,15 +140,15 @@ FactoryBot.define do
   # be created from this using such functions as random assignment.
   factory :assignment_with_peer_review_and_groupings_results, parent: :assignment_with_peer_review do
     after(:create) do |assign|
-      students = 6.times.map { create(:student) }
-      groupings = 3.times.map { create(:grouping, assignment: assign) }
-      pr_groupings = 3.times.map { create(:grouping, assignment: assign.pr_assignment) }
+      students = create_list(:student, 6)
+      groupings = create_list(:grouping, 3, assignment: assign)
+      pr_groupings = create_list(:grouping, 3, assignment: assign.pr_assignment)
       3.times.each do |i|
         create(:accepted_student_membership, role: students[i], grouping: groupings[i])
         create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i])
 
-        submission = create(:version_used_submission, grouping: groupings[i])
-        create(:result, submission: submission, marking_state: Result::MARKING_STATES[:complete])
+        create(:version_used_submission, grouping: groupings[i])
+        groupings[i].reload
       end
     end
   end

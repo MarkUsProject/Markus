@@ -28,25 +28,32 @@ export class AssignmentSummaryTable extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id),
-      dataType: "json",
-    }).then(res => {
-      res.criteriaColumns.forEach(col => {
-        col["filterable"] = false;
-        col["defaultSortDesc"] = true;
+    fetch(Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        res.criteriaColumns.forEach(col => {
+          col["filterable"] = false;
+          col["defaultSortDesc"] = true;
+        });
+        const markingStates = getMarkingStates(res.data);
+        this.setState({
+          data: res.data,
+          criteriaColumns: res.criteriaColumns,
+          num_assigned: res.numAssigned,
+          num_marked: res.numMarked,
+          loading: false,
+          marking_states: markingStates,
+          lti_deployments: res.ltiDeployments,
+        });
       });
-      const markingStates = getMarkingStates(res.data);
-      this.setState({
-        data: res.data,
-        criteriaColumns: res.criteriaColumns,
-        num_assigned: res.numAssigned,
-        num_marked: res.numMarked,
-        loading: false,
-        marking_states: markingStates,
-        lti_deployments: res.ltiDeployments,
-      });
-    });
   };
 
   onFilteredChange = (filtered, column) => {
@@ -257,6 +264,7 @@ export class AssignmentSummaryTable extends React.Component {
           onRequestClose={() => this.setState({showLtiGradeModal: false})}
           lti_deployments={this.state.lti_deployments}
           assignment_id={this.props.assignment_id}
+          course_id={this.props.course_id}
         />
       </div>
     );

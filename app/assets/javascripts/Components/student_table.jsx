@@ -23,18 +23,24 @@ class RawStudentTable extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      method: "get",
-      url: Routes.course_students_path(this.props.course_id),
-      dataType: "json",
-    }).then(res => {
-      this.setState({
-        data: res,
-        loading: false,
-        selection: [],
-        selectAll: false,
+    fetch(Routes.course_students_path(this.props.course_id), {
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          data: res,
+          loading: false,
+          selection: [],
+          selectAll: false,
+        });
       });
-    });
   };
 
   /* Called when an action is run */

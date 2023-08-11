@@ -64,7 +64,7 @@ describe Api::SubmissionFilesController do
           success, _messages = group.access_repo do |repo|
             file_path = Pathname.new(assignment.repository_folder).join path
             files = repo.get_latest_revision.files_at_path(file_path.to_s)
-            files.keys.include? 'test.txt'
+            files.key? 'test.txt'
           end
           expect(success).to be_truthy
         end
@@ -99,7 +99,7 @@ describe Api::SubmissionFilesController do
                                         course_id: course.id }
       end
       it 'should be successful' do
-        expect(response.status).to eq(201)
+        expect(response).to have_http_status(201)
       end
       it 'should create folders in the corresponding directory' do
         path = Pathname.new('a/b/c')
@@ -118,7 +118,7 @@ describe Api::SubmissionFilesController do
                                           course_id: course.id }
         end
         it 'should return 500 error' do
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
     end
@@ -142,7 +142,7 @@ describe Api::SubmissionFilesController do
             repo.get_latest_revision.path_exists?(folder_path.to_s)
           end
           expect(success).to be_falsey
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         include_examples 'for a different course'
       end
@@ -154,7 +154,7 @@ describe Api::SubmissionFilesController do
                                          course_id: course.id }
         end
         it 'should return 500 error' do
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
         include_examples 'for a different course'
       end
@@ -177,7 +177,7 @@ describe Api::SubmissionFilesController do
             repo.get_latest_revision.path_exists?(folder_path.to_s)
           end
           expect(success).to be_falsey
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         include_examples 'for a different course'
       end
@@ -187,7 +187,7 @@ describe Api::SubmissionFilesController do
                                            folder_path: 'a/b/x', course_id: course.id }
         end
         it 'should return 500 error' do
-          expect(response.status).to eq(500)
+          expect(response).to have_http_status(500)
         end
       end
     end
@@ -202,7 +202,7 @@ describe Api::SubmissionFilesController do
       include_examples 'for a different course'
       context 'when no specific file is selected' do
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return a zip containing both files' do
           files = 0
@@ -226,7 +226,7 @@ describe Api::SubmissionFilesController do
       context 'when a specific file is selected' do
         let(:file_name) { File.basename(file_names[0]) }
         it 'should be successful' do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
         it 'should return a non-zipped  containing the content of a single file' do
           expect(response.body).to eq(file_content[0])
@@ -235,19 +235,19 @@ describe Api::SubmissionFilesController do
       context 'when a non-existant file is selected' do
         let(:file_name) { file_names.map { |f| File.basename f }.join }
         it 'should return a 422 error' do
-          expect(response.status).to eq(422)
+          expect(response).to have_http_status(422)
         end
       end
       context 'when an assignment does not exist' do
         let(:aid) { assignment.id + 1 }
         it 'should return a 404 error' do
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
       context 'when a group does not exist' do
         let(:gid) { group.id + 1 }
         it 'should return a 404 error' do
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(404)
         end
       end
     end

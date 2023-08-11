@@ -17,6 +17,25 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
+const INITIAL_FILTER_MODAL_STATE = {
+  ascending: true,
+  orderBy: "group_name",
+  annotationText: "",
+  tas: [],
+  tags: [],
+  section: "",
+  markingState: "",
+  totalMarkRange: {
+    min: "",
+    max: "",
+  },
+  totalExtraMarkRange: {
+    min: "",
+    max: "",
+  },
+  criteria: {},
+};
+
 class Result extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +52,7 @@ class Result extends React.Component {
       result_id: props.result_id,
       grouping_id: props.grouping_id,
       can_release: false,
+      filterData: INITIAL_FILTER_MODAL_STATE,
     };
 
     this.leftPane = React.createRef();
@@ -47,6 +67,9 @@ class Result extends React.Component {
     document.addEventListener("fullscreenchange", () => {
       this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
     });
+
+    // Clear text selection to enable shift + arrow keyboard shortcuts
+    document.getSelection().removeAllRanges();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -56,20 +79,25 @@ class Result extends React.Component {
   }
 
   fetchData = () => {
-    $.get({
-      url: Routes.course_result_path(this.props.course_id, this.state.result_id),
-      dataType: "json",
-    }).then(res => {
-      if (res.submission_files) {
-        res.submission_files = this.processSubmissionFiles(res.submission_files);
-      }
-      const markData = this.processMarks(res);
-      this.setState({...res, ...markData, loading: false}, () => {
-        initializePanes();
-        fix_panes();
-        this.updateContextMenu();
+    fetch(Routes.course_result_path(this.props.course_id, this.state.result_id), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        if (res.submission_files) {
+          res.submission_files = this.processSubmissionFiles(res.submission_files);
+        }
+        const markData = this.processMarks(res);
+        this.setState({...res, ...markData, loading: false}, () => {
+          initializePanes();
+          fix_panes();
+          this.updateContextMenu();
+        });
       });
-    });
   };
 
   /* Processing result data */
@@ -139,10 +167,10 @@ class Result extends React.Component {
       this.props.course_id,
       this.state.result_id,
       this.state.assignment_id,
-      Routes.download_course_result_path(
+      Routes.download_file_course_assignment_submission_path(
         this.props.course_id,
-        this.state.submission_id,
-        this.state.result_id
+        this.state.assignment_id,
+        this.state.submission_id
       )
     );
 
@@ -218,7 +246,6 @@ class Result extends React.Component {
         this.setState({
           annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
         });
-        this.refreshAnnotations();
       }); // Resetting back to original
     };
 
@@ -302,10 +329,7 @@ class Result extends React.Component {
 
     data = this.extend_with_selection_data(data);
     if (data) {
-      $.post(
-        Routes.add_existing_annotation_course_annotations_path(this.props.course_id),
-        data
-      ).then(this.refreshAnnotations);
+      $.post(Routes.add_existing_annotation_course_annotations_path(this.props.course_id), data);
     }
   };
 
@@ -330,24 +354,35 @@ class Result extends React.Component {
   };
 
   refreshAnnotationCategories = () => {
-    $.get({
-      url: Routes.course_assignment_annotation_categories_path(
+    fetch(
+      Routes.course_assignment_annotation_categories_path(
         this.props.course_id,
         this.state.parent_assignment_id || this.state.assignment_id
       ),
-      dataType: "json",
-    }).then(res => {
-      this.setState({annotation_categories: res});
-    });
+      {headers: {Accept: "application/json"}}
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({annotation_categories: res});
+      });
   };
 
   refreshAnnotations = () => {
-    $.ajax({
-      url: Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id),
-      dataType: "json",
-    }).then(res => {
-      this.setState({annotations: res});
-    });
+    fetch(Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id), {
+      headers: {Accept: "application/json"},
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({annotations: res});
+      });
   };
 
   editAnnotation = annot_id => {
@@ -644,34 +679,77 @@ class Result extends React.Component {
 
   nextSubmission = direction => {
     return () => {
+      let data = {direction: direction};
+      if (this.props.role !== "Student") {
+        data["filterData"] = this.state.filterData;
+      }
+
       const url = Routes.next_grouping_course_result_path(
         this.props.course_id,
-        this.state.result_id
+        this.state.result_id,
+        data
       );
 
       this.setState({loading: true}, () => {
-        $.ajax({
-          url: url,
-          data: {
-            direction: direction,
-          },
-        }).then(result => {
-          if (!result.next_result || !result.next_grouping) {
-            alert(I18n.t("results.no_results_in_direction"));
+        fetch(url)
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+          })
+          .then(result => {
+            if (!result.next_result || !result.next_grouping) {
+              alert(I18n.t("results.no_results_in_direction"));
+              this.setState({loading: false});
+              return;
+            }
+
+            const result_obj = {
+              result_id: result.next_result.id,
+              submission_id: result.next_result.submission_id,
+              grouping_id: result.next_grouping.id,
+            };
+            this.setState(prevState => ({...prevState, ...result_obj}));
+            let new_url = Routes.edit_course_result_path(
+              this.props.course_id,
+              this.state.result_id
+            );
+            history.pushState({}, document.title, new_url);
+          });
+      });
+    };
+  };
+
+  randomIncompleteSubmission = () => {
+    const url = Routes.random_incomplete_submission_course_result_path(
+      this.props.course_id,
+      this.state.result_id
+    );
+
+    this.setState({loading: true}, () => {
+      fetch(url)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+        })
+        .then(result => {
+          if (!result.result_id || !result.submission_id || !result.grouping_id) {
+            alert(I18n.t("results.no_incomplete_submission"));
+            this.setState({loading: false});
             return;
           }
 
           const result_obj = {
-            result_id: result.next_result.id,
-            submission_id: result.next_result.submission_id,
-            grouping_id: result.next_grouping.id,
+            result_id: result.result_id,
+            submission_id: result.submission_id,
+            grouping_id: result.grouping_id,
           };
           this.setState(prevState => ({...prevState, ...result_obj}));
-          let new_url = Routes.edit_course_result_url(this.props.course_id, this.state.result_id);
+          let new_url = Routes.edit_course_result_path(this.props.course_id, this.state.result_id);
           history.pushState({}, document.title, new_url);
         });
-      });
-    };
+    });
   };
 
   updateOverallComment = (value, remark) => {
@@ -689,6 +767,15 @@ class Result extends React.Component {
       }
       return result;
     });
+  };
+
+  updateFilterData = new_filters => {
+    const filters = {...this.state.filterData, ...new_filters};
+    this.setState({filterData: filters});
+  };
+
+  resetFilterData = () => {
+    this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
   };
 
   render() {
@@ -728,8 +815,18 @@ class Result extends React.Component {
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
           nextSubmission={this.nextSubmission(1)}
+          randomIncompleteSubmission={this.randomIncompleteSubmission}
           previousSubmission={this.nextSubmission(-1)}
           course_id={this.props.course_id}
+          filterData={this.state.filterData}
+          updateFilterData={this.updateFilterData}
+          clearAllFilters={this.resetFilterData}
+          sections={this.state.sections}
+          tas={this.state.tas}
+          available_tags={this.state.available_tags}
+          current_tags={this.state.current_tags}
+          loading={this.state.loading}
+          criterionSummaryData={this.state.criterionSummaryData}
         />
         <div key="panes-content" id="panes-content">
           <div id="panes">
@@ -788,6 +885,7 @@ class Result extends React.Component {
                 available_tags={this.state.available_tags}
                 criterionSummaryData={this.state.criterionSummaryData}
                 current_tags={this.state.current_tags}
+                due_date={this.state.due_date}
                 extra_marks={this.state.extra_marks}
                 extraMarkSubtotal={this.state.extraMarkSubtotal}
                 grace_token_deductions={this.state.grace_token_deductions}
@@ -799,6 +897,7 @@ class Result extends React.Component {
                 released_to_students={this.state.released_to_students}
                 remark_submitted={this.state.remark_submitted}
                 revertToAutomaticDeductions={this.revertToAutomaticDeductions}
+                submission_time={this.state.submission_time}
                 subtotal={this.state.subtotal}
                 total={this.state.total}
                 updateMark={this.updateMark}

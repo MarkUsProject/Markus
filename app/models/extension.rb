@@ -7,7 +7,7 @@ class Extension < ApplicationRecord
 
   validates :time_delta, numericality: { greater_than: 0 }
 
-  after_create :remove_pending_memberships
+  after_create :validate_grouping
 
   PARTS = [:weeks, :days, :hours, :minutes].freeze
 
@@ -26,8 +26,7 @@ class Extension < ApplicationRecord
 
   private
 
-  def remove_pending_memberships
-    grouping.pending_student_memberships.destroy_all
+  def validate_grouping
     grouping.validate_grouping
   end
 end

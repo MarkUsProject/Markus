@@ -23,7 +23,7 @@ describe AutomatedTestsController do
         get_as role, :manage, params: params
       end
       it 'role should be able to view the Automated Testing manage page' do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       it 'should render the assignment_content layout' do
         expect(response).to render_template('layouts/assignment_content')
@@ -44,13 +44,13 @@ describe AutomatedTestsController do
         it 'should return the schema from the file' do
           file_content = JSON.parse(fixture_file_upload('automated_tests/minimal_testers.json').read)
           subject
-          expect(JSON.parse(response.body)['schema']).to eq(file_content)
+          expect(response.parsed_body['schema']).to eq(file_content)
         end
       end
       context 'the assignment has no test settings' do
         it 'should return empty form data' do
           subject
-          expect(JSON.parse(response.body)['formData']).to eq({})
+          expect(response.parsed_body['formData']).to eq({})
         end
       end
       context 'the assignment has test settings' do
@@ -58,7 +58,7 @@ describe AutomatedTestsController do
         it 'should return the settings content as form data' do
           assignment.update!(autotest_settings: settings_content)
           subject
-          expect(JSON.parse(response.body)['formData']).to eq(settings_content)
+          expect(response.parsed_body['formData']).to eq(settings_content)
         end
       end
       context 'assignment data' do
@@ -74,7 +74,7 @@ describe AutomatedTestsController do
         before { assignment.update!(properties) }
         it 'should include assignment data' do
           subject
-          expect(JSON.parse(response.body).slice(*properties.keys.map(&:to_s))).to eq(properties.transform_keys(&:to_s))
+          expect(response.parsed_body.slice(*properties.keys.map(&:to_s))).to eq(properties.transform_keys(&:to_s))
         end
       end
       context 'files data' do
@@ -90,14 +90,14 @@ describe AutomatedTestsController do
                                                                     file_name: 'file.txt')
           data = [{ key: 'file.txt', submitted_date: I18n.l(current_time),
                     size: 1, url: url }.transform_keys(&:to_s)]
-          expect(JSON.parse(response.body)['files']).to eq(data)
+          expect(response.parsed_body['files']).to eq(data)
         end
         it 'should include directories' do
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['some_dir']
           allow_any_instance_of(Pathname).to receive(:directory?).and_return true
           subject
           data = [{ key: 'some_dir/' }.transform_keys(&:to_s)]
-          expect(JSON.parse(response.body)['files']).to eq(data)
+          expect(response.parsed_body['files']).to eq(data)
         end
         it 'should include nested files' do
           current_time = Time.utc(2021)
@@ -115,7 +115,7 @@ describe AutomatedTestsController do
           data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt',
                                           submitted_date: I18n.l(current_time),
                                           size: 1, url: url }]
-          expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
+          expect(response.parsed_body['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
         end
       end
     end
@@ -129,7 +129,7 @@ describe AutomatedTestsController do
       it_behaves_like 'zip file download'
       it 'should be successful' do
         subject
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
       context 'non empty automated test files' do
         before :each do
@@ -228,7 +228,7 @@ describe AutomatedTestsController do
         end
         it 'should download a file containing the content' do
           get_as role, :download_specs, params: params
-          expect(JSON.parse(response.body)).to eq content
+          expect(response.parsed_body).to eq content
         end
         it 'should respond with a success' do
           get_as role, :download_specs, params: params
@@ -241,7 +241,7 @@ describe AutomatedTestsController do
           end
           it 'should remove the test_group_id' do
             get_as role, :download_specs, params: params
-            test_group_settings = JSON.parse(response.body)['testers'].first['test_data'].first['extra_info']
+            test_group_settings = response.parsed_body['testers'].first['test_data'].first['extra_info']
             expect(test_group_settings).to_not have_key('test_group_id')
           end
         end

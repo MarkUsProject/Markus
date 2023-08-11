@@ -226,7 +226,7 @@ describe SubmissionFile do
         it 'return a corresponding array' do
           @submission_file.annotations.push(@annot1)
           @submission_file.annotations.push(@annot2)
-          expect(@submission_file.get_annotation_grid.sort { |x, y| x[:id] <=> y[:id] })
+          expect(@submission_file.get_annotation_grid.sort_by { |x| x[:id] })
             .to eq([{ id: 1, annot_id: 3, x_range: { start: 0, end: 10 },
                       y_range: { start: 0, end: 10 } },
                     { id: 2, annot_id: 4, x_range: { start: 57, end: 73 },
@@ -263,7 +263,7 @@ describe SubmissionFile do
         it 'return a corresponding array' do
           @submission_file.annotations.push(@annot1)
           @submission_file.annotations.push(@annot2)
-          expect(@submission_file.get_annotation_grid.sort { |x, y| x[:id] <=> y[:id] })
+          expect(@submission_file.get_annotation_grid.sort_by { |x| x[:id] })
             .to eq([{ id: 1, annot_id: 3, x_range: { start: 0, end: 10 },
                       y_range: { start: 0, end: 10 } },
                     { id: 2, annot_id: 4, x_range: { start: 57, end: 73 },

@@ -13,7 +13,7 @@ class SplitPdfJob < ApplicationJob
     status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil)
+  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil, on_duplicate = nil)
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed
@@ -42,29 +42,22 @@ class SplitPdfJob < ApplicationJob
         original_pdf = File.binread(File.join(raw_dir, "#{split_page.id}.pdf"))
 
         # convert PDF to an image
-        imglist = Magick::Image.from_blob(original_pdf) do
-          self.quality = 100
-          self.density = '83'
-        end
-        imglist.each do |img|
-          # Snip out the top left corner of PDF that contains the QR code
-          top_left_qr_img = img.crop 20, 25, img.columns / 3.8, img.rows / 5.0
-          top_left_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
-        end
-        qrcode_regex = /\A(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)\Z/
-        left_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
-        left_m = qrcode_regex.match left_qr_code_string
-        if !left_m.nil?
-          m = left_m
-        else # if parsing fails, try the top right corner of the PDF
-          imglist.each do |img|
-            # Snip out the top right corner of PDF that contains the QR code
-            top_right_qr_img = img.crop 510, 25, img.columns / 3.8, img.rows / 5.0
-            top_right_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
-            right_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
-            right_m = qrcode_regex.match right_qr_code_string
-            m = right_m
-          end
+        img = Magick::Image.from_blob(original_pdf) do |options|
+          options.quality = 100
+          options.density = '200'
+        end.first
+
+        qr_file_location = File.join(raw_dir, "#{split_page.id}.jpg")
+        img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
+        img.destroy!
+        code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
+        python_exe = Rails.application.config.python
+        read_qr_py_file = Rails.root.join('lib/scanner/read_qr_code.py').to_s
+        stdout, status = Open3.capture2(python_exe, read_qr_py_file, qr_file_location)
+        if status.success?
+          m = code_regex.match(stdout)
+        else
+          m = code_regex.match(RTesseract.new(qr_file_location).to_s)
         end
         status = ''
 
@@ -93,7 +86,7 @@ class SplitPdfJob < ApplicationJob
         end
         progress.increment
       end
-      num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log)
+      num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log, on_duplicate)
       num_incomplete = partial_exams.length - num_complete
 
       split_pdf_log.update(
@@ -112,7 +105,7 @@ class SplitPdfJob < ApplicationJob
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, filename = nil, split_pdf_log = nil)
+  def save_pages(exam_template, partial_exams, filename = nil, split_pdf_log = nil, on_duplicate = nil)
     return unless exam_template.course.instructors.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -155,18 +148,25 @@ class SplitPdfJob < ApplicationJob
           group: group,
           split_pdf_log: split_pdf_log
         )
-        # if a page already exists, move the page to error directory instead of overwriting it
-        if File.exist?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
-          status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
-        else
+        if !File.exist?(File.join(destination, "#{page_num}.pdf")) || on_duplicate == 'overwrite'
+          # if the page already exists and on_duplicate == 'overwrite', overwrite the page,
+          # and indicate in page status
+          status = File.exist?(File.join(destination, "#{page_num}.pdf")) ? '(Overwritten) ' : ''
           new_pdf.save File.join(destination, "#{page_num}.pdf")
+
           # set status depending on whether parent directory of destination is complete or incomplete
           if File.dirname(destination) == complete_dir
-            status = 'Saved to complete directory'
+            status += 'Saved to complete directory'
           else
-            status = 'Saved to incomplete directory'
+            status += 'Saved to incomplete directory'
           end
+        elsif File.exist?(File.join(destination, "#{page_num}.pdf")) && on_duplicate == 'ignore'
+          # if the page already exists and on_duplicate == 'ignore', ignore the page
+          status = 'Duplicate page ignored'
+        else
+          # if the page already exists and on_duplicate is anything else, move the page to error directory
+          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
+          status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         end
         # update status of page
         split_page.update(status: status)
@@ -241,9 +241,9 @@ class SplitPdfJob < ApplicationJob
         next unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
         begin
           # convert PDF to an image
-          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
-            self.quality = 100
-            self.density = '300'
+          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do |options|
+            options.quality = 100
+            options.density = '300'
           end
         rescue StandardError
           next
@@ -255,13 +255,17 @@ class SplitPdfJob < ApplicationJob
                                 exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
+        img.destroy!
+        student_info.destroy!
 
         python_exe = Rails.application.config.python
-        read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
-        stdout, status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
-        next unless status.success?
+        char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
+        stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', student_info_file, char_type)
+        parsed = stdout.strip.split("\n")
 
-        student = match_student(stdout.strip.split("\n"), exam_template)
+        next unless status.success? && parsed.length == 1
+
+        student = match_student(parsed[0], exam_template)
 
         unless student.nil?
           StudentMembership.find_or_create_by(role: student,
@@ -274,17 +278,15 @@ class SplitPdfJob < ApplicationJob
   end
 
   # Determine a match using the parsed handwritten text and the user identifying field (+exam_template.cover_fields+).
-  # If the parsing was successful, +parsed+ is a list of two strings parsed from the handwritten text:
-  # the first is the result of attempting to parse alphabetic characters, and the second is the result of
-  # attempting to parse numeric digits.
+  # If the parsing was successful, +parsed+ is a string parsed from the handwritten text: if
+  # +exam_template.cover_fields+ is 'id_number', it is the result of attempting to parse numeric digits, and if
+  # +exam_template.cover_fields+ is 'user_name', it is the result of attempting to parse alphanumeric characters.
   def match_student(parsed, exam_template)
-    return if parsed.size < 2
-
     case exam_template.cover_fields
     when 'id_number'
-      Student.joins(:user).find_by('user.id_number': parsed[1])
+      Student.joins(:user).find_by('user.id_number': parsed)
     when 'user_name'
-      Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed[0]))
+      Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed))
     end
   end
 

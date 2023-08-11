@@ -1,5 +1,6 @@
 import React from "react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {AnnotationPanel} from "./annotation_panel";
 import {FeedbackFilePanel} from "./feedback_file_panel";
@@ -130,11 +131,10 @@ export class LeftPane extends React.Component {
                     this.props.result_id
                   )}
                 >
-                  <input
-                    type="submit"
-                    value={I18n.t("automated_tests.run_tests")}
-                    disabled={!this.props.can_run_tests}
-                  />
+                  <button type="submit" disabled={!this.props.can_run_tests}>
+                    <FontAwesomeIcon icon="fa-solid fa-rocket" />
+                    {I18n.t("automated_tests.run_tests")}
+                  </button>
                   <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
                 </form>
               </div>
@@ -176,6 +176,7 @@ export class LeftPane extends React.Component {
               overallComment={this.props.remark_overall_comment || ""}
               studentView={this.props.student_view}
               course_id={this.props.course_id}
+              submission_id={this.props.submission_id}
             />
           </div>
         </TabPanel>

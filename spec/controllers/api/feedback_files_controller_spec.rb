@@ -89,7 +89,7 @@ describe Api::FeedbackFilesController do
             course_id: course.id
           }
           expect(
-            JSON.parse(response.body).map { |h| h['id'] }
+            response.parsed_body.pluck('id')
           ).to contain_exactly(*feedback_files.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end

@@ -1058,7 +1058,7 @@ describe CriteriaController do
 
           get :download, params: { course_id: course.id, assignment_id: assignment.id }
 
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
 
         it 'sends the correct information' do

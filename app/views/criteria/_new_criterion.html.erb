@@ -15,19 +15,19 @@
       <%= radio_button_tag(:criterion_type,
                            'RubricCriterion',
                            checked = true) %>
-      <%= image_tag('icons/table.png', title: t('criteria.rubric'))%>
+      <i class="fa-solid fa-table"></i>
       <%= label_tag('criterion_type_RubricCriterion',
                     t('criteria.rubric')) %>
       <%= radio_button_tag(:criterion_type,
                            'FlexibleCriterion',
                            checked = false) %>
-      <span class="flexible-criteria-icon" title=<%= t('criteria.flexible') %>> ⅔ </span>
+      <span title=<%= t('criteria.flexible') %>> ⅔ </span>
       <%= label_tag('criterion_type_FlexibleCriterion',
                     t('criteria.flexible')) %>
       <%= radio_button_tag(:criterion_type,
                            'CheckboxCriterion',
                            checked = false) %>
-      <%= image_tag('icons/check_box.png', title: t('criteria.checkbox'))%>
+      <i class="fa-solid fa-square-check"></i>
       <%= label_tag('criterion_type_CheckboxCriterion',
                     t('criteria.checkbox')) %>
     </p>

@@ -169,10 +169,10 @@ class GroupsController < ApplicationController
                                    lower(last_name) like ? OR
                                    lower(user_name) like ? OR
                                    id_number like ?) AND roles.id NOT IN (?)',
-                                 "#{params[:term].downcase}%",
-                                 "#{params[:term].downcase}%",
-                                 "#{params[:term].downcase}%",
-                                 "#{params[:term]}%",
+                                 "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
+                                 "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
+                                 "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
+                                 "#{ApplicationRecord.sanitize_sql_like(params[:term])}%",
                                  Membership.select(:role_id)
                                            .joins(:grouping)
                                            .where(groupings: { assessment_id: params[:assignment_id] }))
@@ -200,7 +200,8 @@ class GroupsController < ApplicationController
       if student.nil? || "#{student.first_name} #{student.last_name}" != params[:names]
         student = current_course.students.joins(:user).where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-          params[:names].downcase, params[:names].downcase
+          ApplicationRecord.sanitize_sql_like(params[:names].downcase),
+          ApplicationRecord.sanitize_sql_like(params[:names].downcase)
         ).first
       end
       if student.nil?
@@ -220,6 +221,10 @@ class GroupsController < ApplicationController
       @assignment = Assignment.find(params[:a_id])
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
+    if next_grouping.nil?
+      head :not_found
+      return
+    end
     names = next_grouping.non_rejected_student_memberships.map do |u|
       u.user.display_name
     end
