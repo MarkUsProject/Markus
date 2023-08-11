@@ -82,6 +82,10 @@ export class PDFViewer extends React.PureComponent {
         annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
     }
 
+    if (annotation.is_remark) {
+      content += ` (${I18n.t("results.annotation.remark_flag")})`;
+    }
+
     this.annotation_manager.addAnnotation(
       annotation.annotation_text_id,
       safe_marked(content),
@@ -92,7 +96,8 @@ export class PDFViewer extends React.PureComponent {
         y2: annotation.y_range.end,
         page: annotation.page,
       },
-      annotation.id
+      annotation.id,
+      annotation.is_remark
     );
   };
 
