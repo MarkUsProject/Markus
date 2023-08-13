@@ -1,6 +1,10 @@
 # Changelog
 
 ## [unreleased]
+- Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
+- Display error message on file upload failure (#6703)
+
+## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)
 - Add OCR for parsing scanned exam uploads (#6433)
 - Move submission-specific results/ routes to be under submissions/ (#6434)
@@ -36,7 +40,10 @@
 - Display due date and submission time in result "Submission Info" tab (#6698)
 - Added "Help" link to the MarkUs page header dropdown (#6702)
 - Prevent TAs that aren't assigned to grade a given criterion from assigning a grade to that criterion (#6699)
-- Display error message on file upload failure (#6703)
+- Replace byebug gem with debug gem (#6705)
+
+## [v2.2.4]
+- Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)

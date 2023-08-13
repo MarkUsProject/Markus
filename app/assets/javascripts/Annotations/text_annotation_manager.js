@@ -15,8 +15,8 @@ class TextAnnotationManager extends AnnotationManager {
   /**
    * Add the given annotation to a range of source code lines.
    */
-  addAnnotation(annotation_text_id, content, range, annotation_id) {
-    super.addAnnotation(annotation_text_id, content, range, annotation_id);
+  addAnnotation(annotation_text_id, content, range, annotation_id, is_remark) {
+    super.addAnnotation(annotation_text_id, content, range, annotation_id, is_remark);
 
     let lineStart = range.start;
     let lineEnd = range.end;
@@ -57,7 +57,8 @@ class TextAnnotationManager extends AnnotationManager {
       },
       () => {
         this.annotation_text_displayer.hide();
-      }
+      },
+      this.annotations[annotationId].is_remark
     );
   }
 
