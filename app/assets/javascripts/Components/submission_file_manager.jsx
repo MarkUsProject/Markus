@@ -5,6 +5,7 @@ import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
 import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
 import {getType} from "mime/lite";
+import {flashMessage} from "../flash";
 
 class SubmissionFileManager extends React.Component {
   constructor(props) {
@@ -123,7 +124,12 @@ class SubmissionFileManager extends React.Component {
         contentType: false, // tell jQuery not to set contentType
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
-        .then(this.endAction);
+        .then(this.endAction)
+        .fail(jqXHR => {
+          if (jqXHR.getResponseHeader("x-message-error") == null) {
+            flashMessage(I18n.t("upload_errors.generic"), "error");
+          }
+        });
     }
   };
 

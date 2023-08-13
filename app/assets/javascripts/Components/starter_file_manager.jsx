@@ -4,7 +4,7 @@ import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {renderFlashMessages} from "../flash";
+import {flashMessage} from "../flash";
 
 function blurOnEnter(event) {
   if (event.key === "Enter") {
@@ -97,7 +97,11 @@ class StarterFileManager extends React.Component {
       contentType: false, // tell jQuery not to set contentType
     })
       .then(this.fetchData)
-      .fail(() => renderFlashMessages({error: I18n.t("upload_errors.generic")}))
+      .fail(jqXHR => {
+        if (jqXHR.getResponseHeader("x-message-error") == null) {
+          flashMessage(I18n.t("upload_errors.generic"), "error");
+        }
+      })
       .always(() =>
         this.setState({
           showFileUploadModal: false,
