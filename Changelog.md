@@ -1,8 +1,9 @@
 # Changelog
 
 ## [unreleased]
-- Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display error message on file upload failure (#6703)
+- Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
+- Display detailed messages about grace period deductions for an assignment on student interface (#6706)
 
 ## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)
@@ -44,6 +45,7 @@
 
 ## [v2.2.4]
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
+
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
