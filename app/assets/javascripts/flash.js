@@ -34,14 +34,18 @@ const renderFlashMessages = message_data => {
   FLASH_KEYS.forEach(key => {
     let message = message_data[key];
     if (message) {
-      message = `<p>${message.replaceAll("\n", "<br/>")}</p>`;
-      const flashDiv = document.getElementsByClassName(key)[0];
-      const contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
-      contents.innerHTML = "";
-      contents.insertAdjacentHTML("beforeend", message);
-      flashDiv.style.display = "block";
+      flashMessage(message, key);
     }
   });
+};
+
+const flashMessage = (message, key) => {
+  message = `<p>${message.replaceAll("\n", "<br/>")}</p>`;
+  const flashDiv = document.getElementsByClassName(key)[0];
+  const contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
+  contents.innerHTML = "";
+  contents.insertAdjacentHTML("beforeend", message);
+  flashDiv.style.display = "block";
 };
 
 const hideFlashMessages = () => {
@@ -59,4 +63,5 @@ export {
   generateFlashMessageContentsUsingStatus,
   renderFlashMessages,
   hideFlashMessages,
+  flashMessage,
 };
