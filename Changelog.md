@@ -42,6 +42,7 @@
 - Added "Help" link to the MarkUs page header dropdown (#6702)
 - Prevent TAs that aren't assigned to grade a given criterion from assigning a grade to that criterion (#6699)
 - Replace byebug gem with debug gem (#6705)
+- Added persistence to the filter modal (#6697)
 
 ## [v2.2.4]
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)

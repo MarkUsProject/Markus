@@ -16,6 +16,7 @@
           grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
           role: '<%= @current_role.class.name %>',
+          user_id: '<%= @current_role.id %>',
         }
       );
 
