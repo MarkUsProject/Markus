@@ -4,6 +4,7 @@
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
+- Add filter for empty/non-empty submissions in submissions table (#6711)
 
 ## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)
