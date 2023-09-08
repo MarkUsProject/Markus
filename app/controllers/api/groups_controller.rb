@@ -305,6 +305,45 @@ module Api
       render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
     end
 
+    def extension
+      grouping = Grouping.find_by(group_id:params[:id], assignment:params[:assignment_id])
+      case request.method
+      when "DELETE"
+        grouping.extension.destroy
+        # Successfully deleted the extension record; render success
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      when "POST", "PUT"
+        params = extension_params
+        params[:time_delta] = time_delta_params
+        if request.method == "POST"
+          if grouping.extension.nil?
+            extension = Extension.new(params)
+            extension.grouping=grouping
+            extension.save!
+            # Successfully created the extension record; render success
+            render 'shared/http_status', locals: { code: '201', message:
+              HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+          else
+            # cannot create extension as it already exists; render failure
+            render 'shared/http_status', locals: { code: '422', message:
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          end
+        elsif request.method == "PUT"
+          if grouping.extension.present?
+            grouping.extension.update(params)
+            # Successfully updated the extension record; render success
+            render 'shared/http_status', locals: { code: '200', message:
+              HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+          else
+            # cannot update extension as it does not exists; render failure
+            render 'shared/http_status', locals: { code: '422', message:
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          end
+        end
+      end
+    end
+
     private
 
     def assignment
@@ -325,6 +364,15 @@ module Api
         :line_end,
         :line_start
       ])
+    end
+
+    def time_delta_params
+      params = extension_params[:time_delta]
+      Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
+    end
+
+    def extension_params
+      params.require(:extension).permit({time_delta: [:weeks, :days, :hours, :minutes]}, :apply_penalty, :note)
     end
   end
 end

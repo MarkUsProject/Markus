@@ -58,6 +58,11 @@ Rails.application.routes.draw do
             put 'update_marking_state'
             delete 'remove_extra_marks'
           end
+          member do
+            post 'extension'
+            put 'extension'
+            delete 'extension'
+          end
         end
         resources :starter_file_groups, only: [:index, :create]
         member do
