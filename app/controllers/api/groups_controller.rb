@@ -309,12 +309,22 @@ module Api
       grouping = Grouping.find_by(group_id:params[:id], assignment:params[:assignment_id])
       case request.method
       when "DELETE"
-        grouping.extension.destroy
-        # Successfully deleted the extension record; render success
-        render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        if grouping.extension.present?
+          grouping.extension.destroy
+          # Successfully deleted the extension record; render success
+          render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        else
+          # cannot delete a non existent; render failure
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+        end
       when "POST", "PUT"
         params = extension_params
+        if params[:time_delta].nil? || params[:time_delta].empty?
+          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.time_delta_empty')}, status: :unprocessable_entity
+          return
+        end
         params[:time_delta] = time_delta_params
         if request.method == "POST"
           if grouping.extension.nil?
