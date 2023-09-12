@@ -311,13 +311,12 @@ module Api
       when "DELETE"
         if grouping.extension.present?
           grouping.extension.destroy
-          # Successfully deleted the extension record; render success
+          # Successfully deleted the extension; render success
           render 'shared/http_status', locals: { code: '200', message:
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
         else
-          # cannot delete a non existent; render failure
-          render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          # cannot delete a non existent extension; render failure
+          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty')}, status: :unprocessable_entity
         end
       when "POST", "PUT"
         params = extension_params
@@ -336,8 +335,7 @@ module Api
               HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
           else
             # cannot create extension as it already exists; render failure
-            render 'shared/http_status', locals: { code: '422', message:
-              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_exist')}, status: :unprocessable_entity
           end
         elsif request.method == "PUT"
           if grouping.extension.present?
@@ -347,8 +345,7 @@ module Api
               HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
           else
             # cannot update extension as it does not exists; render failure
-            render 'shared/http_status', locals: { code: '422', message:
-              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty')}, status: :unprocessable_entity
           end
         end
       end

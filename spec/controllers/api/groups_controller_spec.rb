@@ -3,6 +3,17 @@ describe Api::GroupsController do
   let(:assignment) { create :assignment }
   let(:group) { create :group }
   let(:tag) { create :tag, course: course }
+  let(:extension) {
+    {
+      time_delta:{
+        weeks: 4,
+        days: 1,
+        hours: 0
+      },
+      apply_penalty:"true",
+      note:"random notes"
+    }
+  }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -31,6 +42,11 @@ describe Api::GroupsController do
 
     it 'should fail to authenticate a PUT remove_tag request' do
       get :add_tag, params: { assignment_id: assignment.id, id: group.id, course_id: course.id, tag_id: tag.id }
+      expect(response).to have_http_status(403)
+    end
+
+    it 'should fail to authenticate a POST extension request' do
+      post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
       expect(response).to have_http_status(403)
     end
   end
@@ -656,6 +672,65 @@ describe Api::GroupsController do
                                 course_id: course.id, tag_id: tag.id + 1 }
         expect(response).to have_http_status(404)
         expect(grouping.tags.first).to be(nil)
+      end
+    end
+
+    context "Extension" do
+      let!(:grouping) { create :grouping, group: group, assignment: assignment }
+      context "POST" do
+        it 'POST a new extension should work' do
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(201)
+        end
+        it 'POST a new extension that already exists in db should not work' do
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(422)
+        end
+      end
+      context "PUT" do
+        it 'should update extension' do
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          put :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(200)
+        end
+        it 'should not be able to update a non existent extension' do
+          put :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(422)
+        end
+      end
+      context "DELETE" do
+        it 'should delete extension' do
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          delete :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(200)
+        end
+        it 'should not be able to delete a non existent extension' do
+          delete :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(422)
+        end
+      end
+      context "Time delta" do
+        it 'should not allow time delta to be nil' do
+          extension =
+            {
+              apply_penalty:"true",
+              note:"random notes"
+            }
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(422)
+        end
+        it 'should not allow time delta to be empty' do
+          extension =
+            {
+              time_delta:{
+              },
+              apply_penalty:"true",
+              note:"random notes"
+            }
+          post :extension, params: { assignment_id: assignment.id, course_id: course.id, id:group.id, extension:extension }
+          expect(response).to have_http_status(422)
+        end
       end
     end
   end
