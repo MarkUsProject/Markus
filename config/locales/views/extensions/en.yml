@@ -8,4 +8,3 @@ en:
       time_delta_empty: Time delta needs to be provided
       extension_empty: The extension does not exist
       extension_exist: The extension already exist
-
