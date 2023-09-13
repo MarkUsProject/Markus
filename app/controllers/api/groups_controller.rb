@@ -306,9 +306,9 @@ module Api
     end
 
     def extension
-      grouping = Grouping.find_by(group_id:params[:id], assignment:params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:id], assignment: params[:assignment_id])
       case request.method
-      when "DELETE"
+      when 'DELETE'
         if grouping.extension.present?
           grouping.extension.destroy
           # Successfully deleted the extension; render success
@@ -316,36 +316,40 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
         else
           # cannot delete a non existent extension; render failure
-          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty')}, status: :unprocessable_entity
+          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty') },
+                                       status: :unprocessable_entity
         end
-      when "POST", "PUT"
-        params = extension_params
-        if params[:time_delta].nil? || params[:time_delta].empty?
-          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.time_delta_empty')}, status: :unprocessable_entity
+      when 'POST', 'PUT'
+        extension_values = extension_params
+        if extension_values[:time_delta].blank?
+          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.time_delta_empty') },
+                                       status: :unprocessable_entity
           return
         end
-        params[:time_delta] = time_delta_params
-        if request.method == "POST"
+        extension_values[:time_delta] = time_delta_params
+        if request.method == 'POST'
           if grouping.extension.nil?
-            extension = Extension.new(params)
-            extension.grouping=grouping
+            extension = Extension.new(extension_values)
+            extension.grouping = grouping
             extension.save!
             # Successfully created the extension record; render success
             render 'shared/http_status', locals: { code: '201', message:
               HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
           else
             # cannot create extension as it already exists; render failure
-            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_exist')}, status: :unprocessable_entity
+            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_exist') },
+                                         status: :unprocessable_entity
           end
-        elsif request.method == "PUT"
+        elsif request.method == 'PUT'
           if grouping.extension.present?
-            grouping.extension.update(params)
+            grouping.extension.update(extension_values)
             # Successfully updated the extension record; render success
             render 'shared/http_status', locals: { code: '200', message:
               HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
           else
             # cannot update extension as it does not exists; render failure
-            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty')}, status: :unprocessable_entity
+            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty') },
+                                         status: :unprocessable_entity
           end
         end
       end
@@ -379,7 +383,7 @@ module Api
     end
 
     def extension_params
-      params.require(:extension).permit({time_delta: [:weeks, :days, :hours, :minutes]}, :apply_penalty, :note)
+      params.require(:extension).permit({ time_delta: [:weeks, :days, :hours, :minutes] }, :apply_penalty, :note)
     end
   end
 end
