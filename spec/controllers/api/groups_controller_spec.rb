@@ -690,25 +690,25 @@ describe Api::GroupsController do
             expect(grouping.reload.extension.time_delta).to eq(99_999)
           end
         end
-        context 'PUT' do
+        context 'PATCH' do
           it 'should update extension - check note attribute' do
-            put :extension,
-                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
-                          extension: extension_params }
+            patch :extension,
+                  params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                            extension: extension_params }
             expect(grouping.reload.extension.note).to eq(extension_params[:note])
           end
           it 'should have correct conversion of time_delta' do
-            put :extension,
-                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
-                          extension: extension_params }
+            patch :extension,
+                  params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                            extension: extension_params }
             params = extension_params[:time_delta]
             expected_duration = Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
             expect(grouping.reload.extension.time_delta).to eq(expected_duration)
           end
           it 'should update apply_penalty' do
-            put :extension,
-                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
-                          extension: extension_params }
+            patch :extension,
+                  params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                            extension: extension_params }
             expect(grouping.reload.extension.apply_penalty).to eq(extension_params[:apply_penalty])
           end
         end
@@ -716,31 +716,6 @@ describe Api::GroupsController do
           it 'should delete extension' do
             delete :extension, params: { assignment_id: assignment.id, course_id: course.id, id: group.id }
             expect(grouping.reload.extension).to be_nil
-          end
-        end
-        context 'PUT - Time delta' do
-          it 'should not allow time delta to be nil' do
-            extension_params =
-              {
-                apply_penalty: true,
-                note: 'random notes'
-              }
-            put :extension,
-                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
-                          extension: extension_params }
-            expect(response).to have_http_status(422)
-          end
-          it 'should not allow time delta to be empty' do
-            extension_params =
-              {
-                time_delta: {},
-                apply_penalty: true,
-                note: 'random notes'
-              }
-            put :extension,
-                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
-                          extension: extension_params }
-            expect(response).to have_http_status(422)
           end
         end
       end
@@ -757,15 +732,16 @@ describe Api::GroupsController do
           expect(response).to have_http_status(201)
         end
       end
-      context 'PUT' do
+      context 'PATCH' do
         it 'should not work for a non existent extension' do
           put :extension,
               params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
           expect(grouping.reload.extension).to be_nil
         end
         it 'should not work for a non existent extension - response status check' do
-          put :extension,
-              params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
+          patch :extension,
+                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                          extension: extension_params }
           expect(response).to have_http_status(422)
         end
       end

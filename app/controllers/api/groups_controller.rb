@@ -310,49 +310,47 @@ module Api
       case request.method
       when 'DELETE'
         if grouping.extension.present?
-          grouping.extension.destroy
+          grouping.extension.destroy!
           # Successfully deleted the extension; render success
           render 'shared/http_status', locals: { code: '200', message:
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
         else
           # cannot delete a non existent extension; render failure
-          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty') },
-                                       status: :unprocessable_entity
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          nil
         end
-      when 'POST', 'PUT'
+      when 'POST'
         extension_values = extension_params
-        if extension_values[:time_delta].blank?
-          render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.time_delta_empty') },
-                                       status: :unprocessable_entity
-          return
+        extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
+        if grouping.extension.nil?
+          grouping.create_extension!(extension_values)
+          # Successfully created the extension record; render success
+          render 'shared/http_status', locals: { code: '201', message:
+            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+        else
+          # cannot create extension as it already exists; render failure
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          nil
         end
-        extension_values[:time_delta] = time_delta_params
-        if request.method == 'POST'
-          if grouping.extension.nil?
-            extension = Extension.new(extension_values)
-            extension.grouping = grouping
-            extension.save!
-            # Successfully created the extension record; render success
-            render 'shared/http_status', locals: { code: '201', message:
-              HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
-          else
-            # cannot create extension as it already exists; render failure
-            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_exist') },
-                                         status: :unprocessable_entity
-          end
-        elsif request.method == 'PUT'
-          if grouping.extension.present?
-            grouping.extension.update(extension_values)
-            # Successfully updated the extension record; render success
-            render 'shared/http_status', locals: { code: '200', message:
-              HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
-          else
-            # cannot update extension as it does not exists; render failure
-            render 'shared/http_status', locals: { code: '422', message: I18n.t('extensions.api.extension_empty') },
-                                         status: :unprocessable_entity
-          end
+      when 'PATCH'
+        extension_values = extension_params
+        extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
+        if grouping.extension.present?
+          grouping.extension.update!(extension_values)
+          # Successfully updated the extension record; render success
+          render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        else
+          # cannot update extension as it does not exists; render failure
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          nil
         end
       end
+    rescue ActiveRecord::RecordInvalid => e
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     end
 
     private

@@ -4,7 +4,7 @@
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
-- Added feature for Extensions API (#6743)
+- Added API routes for Extensions API (#6743)
 
 ## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)

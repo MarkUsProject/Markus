@@ -1,10 +1,6 @@
 ---
 en:
   extensions:
-    api:
-      extension_empty: The extension does not exist
-      extension_exist: The extension already exist
-      time_delta_empty: Time delta needs to be provided
     apply_penalty: Apply late submission policy when collecting this group's submissions
     create_extension: Extension added
     delete_extension: Extension removed

@@ -60,7 +60,7 @@ Rails.application.routes.draw do
           end
           member do
             post 'extension'
-            put 'extension'
+            patch 'extension'
             delete 'extension'
           end
         end
