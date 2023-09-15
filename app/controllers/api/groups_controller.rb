@@ -318,12 +318,11 @@ module Api
           # cannot delete a non existent extension; render failure
           render 'shared/http_status', locals: { code: '422', message:
             HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
-          nil
         end
       when 'POST'
-        extension_values = extension_params
-        extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
         if grouping.extension.nil?
+          extension_values = extension_params
+          extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
           grouping.create_extension!(extension_values)
           # Successfully created the extension record; render success
           render 'shared/http_status', locals: { code: '201', message:
@@ -332,12 +331,11 @@ module Api
           # cannot create extension as it already exists; render failure
           render 'shared/http_status', locals: { code: '422', message:
             HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
-          nil
         end
       when 'PATCH'
-        extension_values = extension_params
-        extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
         if grouping.extension.present?
+          extension_values = extension_params
+          extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
           grouping.extension.update!(extension_values)
           # Successfully updated the extension record; render success
           render 'shared/http_status', locals: { code: '200', message:
@@ -346,7 +344,6 @@ module Api
           # cannot update extension as it does not exists; render failure
           render 'shared/http_status', locals: { code: '422', message:
             HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
-          nil
         end
       end
     rescue ActiveRecord::RecordInvalid => e
