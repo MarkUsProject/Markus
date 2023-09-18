@@ -3,6 +3,17 @@ describe Api::GroupsController do
   let(:assignment) { create :assignment }
   let(:group) { create :group }
   let(:tag) { create :tag, course: course }
+  let(:extension_params) do
+    {
+      time_delta: {
+        weeks: rand(1..10),
+        days: rand(1..10),
+        hours: rand(1..10)
+      },
+      apply_penalty: true,
+      note: 'global random notes'
+    }
+  end
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -31,6 +42,12 @@ describe Api::GroupsController do
 
     it 'should fail to authenticate a PUT remove_tag request' do
       get :add_tag, params: { assignment_id: assignment.id, id: group.id, course_id: course.id, tag_id: tag.id }
+      expect(response).to have_http_status(403)
+    end
+
+    it 'should fail to authenticate a POST extension request' do
+      post :extension,
+           params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
       expect(response).to have_http_status(403)
     end
   end
@@ -656,6 +673,106 @@ describe Api::GroupsController do
                                 course_id: course.id, tag_id: tag.id + 1 }
         expect(response).to have_http_status(404)
         expect(grouping.tags.first).to be(nil)
+      end
+    end
+
+    context 'Extension' do
+      let!(:grouping) { create :grouping, group: group, assignment: assignment }
+      context 'When an Extension exist' do
+        let!(:extension) do
+          create :extension, grouping: grouping, time_delta: 99_999, note: 'local random notes', apply_penalty: false
+        end
+        context 'POST' do
+          it 'should not work with an existing extension' do
+            post :extension,
+                 params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                           extension: extension_params }
+            expect(grouping.reload.extension.time_delta).to eq(99_999)
+          end
+        end
+        context 'PATCH' do
+          it 'should update extension - check note attribute' do
+            patch :extension,
+                  params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                            extension: extension_params }
+            expect(grouping.reload.extension.note).to eq(extension_params[:note])
+          end
+          it 'should have correct conversion of time_delta' do
+            patch :extension,
+                  params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                            extension: extension_params }
+            params = extension_params[:time_delta]
+            expected_duration = Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
+            expect(grouping.reload.extension.time_delta).to eq(expected_duration)
+          end
+          it 'should update apply_penalty' do
+            patch :extension,
+                  params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                            extension: extension_params }
+            expect(grouping.reload.extension.apply_penalty).to eq(extension_params[:apply_penalty])
+          end
+        end
+        context 'DELETE' do
+          it 'should delete extension' do
+            delete :extension, params: { assignment_id: assignment.id, course_id: course.id, id: group.id }
+            expect(grouping.reload.extension).to be_nil
+          end
+        end
+      end
+
+      context 'When an Extension does not already exist' do
+        it 'POST a new extension should work' do
+          post :extension,
+               params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
+          expect(grouping.reload.extension).not_to be_nil
+        end
+        it 'POST a new extension should work - response status check' do
+          post :extension,
+               params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
+          expect(response).to have_http_status(201)
+        end
+      end
+      context 'PATCH' do
+        it 'should not work for a non existent extension' do
+          put :extension,
+              params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
+          expect(grouping.reload.extension).to be_nil
+        end
+        it 'should not work for a non existent extension - response status check' do
+          patch :extension,
+                params: { assignment_id: assignment.id, course_id: course.id, id: group.id,
+                          extension: extension_params }
+          expect(response).to have_http_status(422)
+        end
+      end
+      context 'DELETE' do
+        it 'should not work for a non existent extension' do
+          delete :extension, params: { assignment_id: assignment.id, course_id: course.id, id: group.id }
+          expect(response).to have_http_status(422)
+        end
+      end
+      context 'POST - Time delta' do
+        it 'should not allow time delta to be nil' do
+          extension_params =
+            {
+              apply_penalty: true,
+              note: 'random notes'
+            }
+          post :extension,
+               params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
+          expect(response).to have_http_status(422)
+        end
+        it 'should not allow time delta to be empty' do
+          extension_params =
+            {
+              time_delta: {},
+              apply_penalty: true,
+              note: 'random notes'
+            }
+          post :extension,
+               params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
+          expect(response).to have_http_status(422)
+        end
       end
     end
   end

@@ -305,6 +305,51 @@ module Api
       render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
     end
 
+    def extension
+      grouping = Grouping.find_by(group_id: params[:id], assignment: params[:assignment_id])
+      case request.method
+      when 'DELETE'
+        if grouping.extension.present?
+          grouping.extension.destroy!
+          # Successfully deleted the extension; render success
+          render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        else
+          # cannot delete a non existent extension; render failure
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+        end
+      when 'POST'
+        if grouping.extension.nil?
+          extension_values = extension_params
+          extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
+          grouping.create_extension!(extension_values)
+          # Successfully created the extension record; render success
+          render 'shared/http_status', locals: { code: '201', message:
+            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+        else
+          # cannot create extension as it already exists; render failure
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+        end
+      when 'PATCH'
+        if grouping.extension.present?
+          extension_values = extension_params
+          extension_values[:time_delta] = time_delta_params if extension_values[:time_delta].present?
+          grouping.extension.update!(extension_values)
+          # Successfully updated the extension record; render success
+          render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+        else
+          # cannot update extension as it does not exists; render failure
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+    end
+
     private
 
     def assignment
@@ -325,6 +370,15 @@ module Api
         :line_end,
         :line_start
       ])
+    end
+
+    def time_delta_params
+      params = extension_params[:time_delta]
+      Extension::PARTS.sum { |part| params[part].to_i.public_send(part) }
+    end
+
+    def extension_params
+      params.require(:extension).permit({ time_delta: [:weeks, :days, :hours, :minutes] }, :apply_penalty, :note)
     end
   end
 end
