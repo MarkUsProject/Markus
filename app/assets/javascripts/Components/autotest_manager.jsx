@@ -35,6 +35,11 @@ class AutotestManager extends React.Component {
                 category: {
                   "ui:title": I18n.t("automated_tests.category"),
                 },
+                extra_info: {
+                  criterion: {
+                    "ui:enumDisabled": [""],
+                  },
+                },
                 feedback_file_names: {
                   "ui:classNames": "feedback-file-names",
                   "ui:options": {orderable: false},
