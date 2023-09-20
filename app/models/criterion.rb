@@ -208,6 +208,44 @@ class Criterion < ApplicationRecord
     marks.empty? ? 0 : DescriptiveStatistics.standard_deviation(marks)
   end
 
+  # Configures +assignment+ with the uploaded criteria +data+
+  # Returns the number of successful criteria uploaded
+  def self.upload_criteria_from_yaml(assignment, data)
+    assignment.criteria.destroy_all
+
+    # Create criteria based on the parsed data.
+    successes = 0
+    pos = 1
+    crit_format_errors = []
+    data.each do |criterion_yml|
+      type = criterion_yml[1]['type']
+      begin
+        if type&.casecmp('rubric') == 0
+          criterion = RubricCriterion.load_from_yml(criterion_yml)
+        elsif type&.casecmp('flexible') == 0
+          criterion = FlexibleCriterion.load_from_yml(criterion_yml)
+        elsif type&.casecmp('checkbox') == 0
+          criterion = CheckboxCriterion.load_from_yml(criterion_yml)
+        else
+          raise RuntimeError
+        end
+
+        criterion.assessment_id = assignment.id
+        criterion.position = pos
+        criterion.save!
+        pos += 1
+        successes += 1
+      rescue ActiveRecord::RecordInvalid, RuntimeError # E.g., both visibility options are false.
+        crit_format_errors << criterion_yml[0]
+      end
+    end
+    unless crit_format_errors.empty?
+      raise "#{I18n.t('criteria.errors.invalid_format')} #{crit_format_errors.join(', ')}"
+    end
+    reset_marking_states(assignment.id)
+    successes
+  end
+
   private
 
   # Checks if the criterion is visible to either the ta or the peer reviewer.
@@ -222,5 +260,14 @@ class Criterion < ApplicationRecord
 
   def update_result_marking_states
     UpdateResultsMarkingStatesJob.perform_later(assessment_id, :incomplete)
+  end
+
+  # Resets the marking state for all results for the given assignment with id +assessment_id+.
+  def reset_marking_states(assessment_id)
+    Result.joins(submission: :grouping)
+          .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)
+          .find_each do |result|
+      result.update(marking_state: Result::MARKING_STATES[:incomplete])
+    end
   end
 end

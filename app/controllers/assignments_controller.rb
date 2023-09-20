@@ -1,7 +1,6 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
-  include CriteriaHelper
   include AnnotationCategoriesHelper
   include AutomatedTestsHelper
   responders :flash
@@ -615,7 +614,7 @@ class AssignmentsController < ApplicationController
         annotations_prop = build_hash_from_zip(zipfile, :annotations)
         assignment.save!
         Tag.from_yml(tag_prop, current_course, assignment.id, allow_ta_upload: true)
-        upload_criteria_from_yaml(assignment, criteria_prop)
+        Criterion.upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam || assignment.is_peer_review?
         config_starter_files(assignment, zipfile)
