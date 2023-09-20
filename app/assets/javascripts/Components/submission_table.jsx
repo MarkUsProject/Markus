@@ -174,8 +174,29 @@ class RawSubmissionTable extends React.Component {
     {
       Header: I18n.t("submissions.commit_date"),
       accessor: "submission_time",
-      filterable: false,
+      id: "submission_time",
+      filterable: true,
       sortMethod: dateSort,
+      Filter: selectFilter,
+      filterMethod: (filter, row) => {
+        if (filter.value === "all") {
+          return true;
+        } else if (filter.value === "false") {
+          return !row[filter.id];
+        } else {
+          return !!row[filter.id];
+        }
+      },
+      filterOptions: [
+        {
+          value: "true",
+          text: I18n.t("submissions.commit_date_filter.collected"),
+        },
+        {
+          value: "false",
+          text: I18n.t("submissions.commit_date_filter.not_collected"),
+        },
+      ],
     },
     {
       Header: I18n.t("submissions.grace_credits_used"),
