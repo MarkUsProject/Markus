@@ -242,8 +242,17 @@ class Criterion < ApplicationRecord
     unless crit_format_errors.empty?
       raise "#{I18n.t('criteria.errors.invalid_format')} #{crit_format_errors.join(', ')}"
     end
-    reset_marking_states(assignment.id)
+    Criterion.reset_marking_states(assignment.id)
     successes
+  end
+
+  # Resets the marking state for all results for the given assignment with id +assessment_id+.
+  def self.reset_marking_states(assessment_id)
+    Result.joins(submission: :grouping)
+          .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)
+          .find_each do |result|
+      result.update(marking_state: Result::MARKING_STATES[:incomplete])
+    end
   end
 
   private
@@ -260,14 +269,5 @@ class Criterion < ApplicationRecord
 
   def update_result_marking_states
     UpdateResultsMarkingStatesJob.perform_later(assessment_id, :incomplete)
-  end
-
-  # Resets the marking state for all results for the given assignment with id +assessment_id+.
-  def reset_marking_states(assessment_id)
-    Result.joins(submission: :grouping)
-          .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)
-          .find_each do |result|
-      result.update(marking_state: Result::MARKING_STATES[:incomplete])
-    end
   end
 end
