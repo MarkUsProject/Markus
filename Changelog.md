@@ -7,6 +7,7 @@
 - Add filter for empty/non-empty submissions in submissions table (#6711)
 - Fix bug where autotest settings would not appear if there were no assignment criteria (#6718)
 - Added API routes for Extensions API (#6743)
+- Fix premature page reloading when autotest settings are saved (#6744)
 
 ## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)
