@@ -936,7 +936,7 @@ describe AnnotationCategoriesController do
     context 'YAML download' do
       it 'correctly downloads annotation_category information with deductive information' do
         assignment = create(:assignment_with_deductive_annotations)
-        yml_data = annotation_categories_to_yml(assignment.annotation_categories)
+        yml_data = AnnotationCategory.annotation_categories_to_yml(assignment.annotation_categories)
         yml_options = { filename: "#{assignment.short_identifier}_annotations.yml",
                         disposition: 'attachment' }
         expect(@controller).to receive(:send_data).with(yml_data, yml_options) {
