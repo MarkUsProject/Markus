@@ -32,6 +32,9 @@ en:
       this_revision: Collect and Grade This Revision
       undo_results_loss_warning: 'This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error. WARNING: All grading work done since the previous Collect All Submissions operation will be lost.'
     commit_date: Submission Date
+    commit_date_filter:
+      collected: Has files collected
+      not_collected: No files collected
     download_zipped_file:
       file_missing: No file named %{zip_file} found. Please try preparing this file for download again.
     errors:

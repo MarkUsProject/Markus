@@ -19,10 +19,8 @@ class AutomatedTestsController < ApplicationController
       flash_message(:error, e.message)
       raise ActiveRecord::Rollback
     end
-    @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment, test_specs)
-    session[:job_id] = @current_job.job_id
-    # TODO: the page is not correctly drawn when using render
-    redirect_to action: 'manage', assignment_id: params[:assignment_id]
+    current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment, test_specs)
+    render json: { job_id: current_job.job_id }
   end
 
   # Manage is called when the Automated Test UI is loaded
