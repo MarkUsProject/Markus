@@ -79,6 +79,7 @@ class AutotestManager extends React.Component {
       non_regenerating_tokens: false,
       unlimited_tokens: false,
       loading: true,
+      submitted: false,
       showFileUploadModal: false,
       showSpecUploadModal: false,
       uploadTarget: undefined,
@@ -99,7 +100,7 @@ class AutotestManager extends React.Component {
       )
     )
       .then(data => data.json())
-      .then(data => this.setState({...data, loading: false}));
+      .then(data => this.setState({...data, loading: false, submitted: false}));
   };
 
   fetchFileDataOnly = () => {
@@ -250,6 +251,7 @@ class AutotestManager extends React.Component {
       },
       schema_form_data: this.state.formData,
     };
+    this.setState({form_changed: false, submitted: true});
     $.post({
       url: Routes.course_assignment_automated_tests_path(
         this.props.course_id,
@@ -258,9 +260,8 @@ class AutotestManager extends React.Component {
       data: JSON.stringify(data),
       processData: false,
       contentType: "application/json",
-    }).then(() => {
-      this.toggleFormChanged(false);
-      window.location.reload();
+    }).then(res => {
+      poll_job(res["job_id"], this.fetchData);
     });
   };
 
@@ -476,7 +477,7 @@ class AutotestManager extends React.Component {
         <p>
           <input
             type="submit"
-            value={I18n.t("save")}
+            value={this.state.submitted ? I18n.t("working") : I18n.t("save")}
             onClick={this.onSubmit}
             disabled={!this.state.form_changed}
           ></input>
