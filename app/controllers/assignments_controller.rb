@@ -2,7 +2,6 @@ class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
   include CriteriaHelper
-  include AnnotationCategoriesHelper
   include AutomatedTestsHelper
   responders :flash
   before_action { authorize! }
