@@ -242,7 +242,7 @@ class Criterion < ApplicationRecord
     unless crit_format_errors.empty?
       raise "#{I18n.t('criteria.errors.invalid_format')} #{crit_format_errors.join(', ')}"
     end
-    Criterion.reset_marking_states(assignment.id)
+    self.reset_marking_states(assignment.id)
     successes
   end
 
