@@ -1,5 +1,4 @@
 describe AnnotationCategoriesController do
-  include AnnotationCategoriesHelper
   let(:course) { assignment.course }
   let(:assignment) { create(:assignment) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
