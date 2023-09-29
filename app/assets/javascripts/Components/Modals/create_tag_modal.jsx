@@ -5,7 +5,6 @@ class CreateTagModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isOpen: false,
       name: "",
       description: "",
       maxCharsName: 30,
@@ -13,13 +12,9 @@ class CreateTagModal extends React.Component {
     };
   }
 
-  openModal = () => {
-    this.setState({isOpen: true});
-  };
-
-  closeModal = () => {
-    this.setState({isOpen: false});
-  };
+  // closeModal = () => {
+  //   this.setState({isOpen: false});
+  // };
 
   handleNameChange = event => {
     const newName = event.target.value.slice(0, this.state.maxCharsName);
@@ -31,62 +26,102 @@ class CreateTagModal extends React.Component {
     this.setState({description: newDescription});
   };
 
-  handleSubmit = () => {
+  onSubmit = event => {
+    event.preventDefault();
     const data = {
-      name: this.state.name,
-      description: this.state.description,
+      authenticity_token: this.props.authenticityToken,
+      tag: {
+        name: this.state.name,
+        description: this.state.description,
+      },
+      grouping_id: this.props.grouping_id,
+      commit: "Save",
     };
-    $.ajax({
-      url: Routes.course_tags_path(this.props.course_id, this.props.assignment_id),
-      type: "POST",
-      data: data,
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+    fetch(
+      Routes.course_tags_path(this.props.course_id, {assignment_id: this.props.assignment_id}),
+      options
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        // Handle success
+        console.log("Form submitted successfully:", data);
+      })
+      .catch(error => {
+        // Handle errors
+        console.error("Error submitting form:", error);
+      });
+    this.setState({
+      name: "",
+      description: "",
     });
+    this.props.closeModal();
   };
 
   render() {
     return (
-      this.props.readyState !== "loading" && (
-        <div>
-          <Modal
-            isOpen={this.state.isOpen}
-            onRequestClose={this.closeModal}
-            contentLabel="Tag Modal"
-            onSubmit={this.handleSubmit}
-          >
-            <span className="close" onClick={this.closeModal}>
-              &times;
-            </span>
-            <div>
-              {/*Pass in I18n*/}
-              <label htmlFor="name">{this.props.nameLabel}</label>
-              <textarea
-                id="name"
-                value={this.state.name}
-                onChange={this.handleNameChange}
-                maxLength={this.state.maxCharsName}
-              />
-              <p>Characters remaining: {this.state.maxCharsName - this.state.name.length}</p>
+      this.props.loading !== "loading" && (
+        <Modal
+          className="react-modal dialog"
+          isOpen={this.props.isOpen}
+          onRequestClose={this.props.closeModal}
+          id="create_new_tag"
+        >
+          <h1>Create Tag</h1>
+          <form onSubmit={this.onSubmit}>
+            <div className={"modal-container-vertical"}>
+              <div className={"modal-container"}>
+                {/*TODO Use I18n*/}
+                <label htmlFor="tag_name">{this.props.nameLabel}</label>
+                <textarea
+                  id="tag_name"
+                  value={this.state.name}
+                  onChange={this.handleNameChange}
+                  maxLength={this.state.maxCharsName}
+                />
+                <p>Characters remaining: {this.state.maxCharsName - this.state.name.length}</p>
+              </div>
+              <div className={"modal-container"}>
+                <label className="alignleft" htmlFor="tag_description">
+                  {this.props.descriptionLabel}
+                </label>
+                <textarea
+                  id="tag_description"
+                  className="clear-alignment"
+                  value={this.state.description}
+                  onChange={this.handleDescriptionChange}
+                  maxLength={this.state.maxCharsDescription}
+                />
+                <p id="descript_amount" className="alignright">
+                  Characters remaining:{" "}
+                  {this.state.maxCharsDescription - this.state.description.length}
+                </p>
+              </div>
             </div>
-            <div>
-              <label htmlFor="description">{this.props.descriptionLabel}</label>
-              <textarea
-                id="description"
-                value={this.state.description}
-                onChange={this.handleDescriptionChange}
-                maxLength={this.state.maxCharsDescription}
-              />
-              <p>
-                Characters remaining:{" "}
-                {this.state.maxCharsDescription - this.state.description.length}
-              </p>
-            </div>
-          </Modal>
-        </div>
+            <button type="submit" value="Submit">
+              Submit
+            </button>
+            <button type="reset" onClick={this.props.closeModal}>
+              Cancel
+            </button>
+          </form>
+        </Modal>
       )
     );
   }
 }
 
-export function makeCreateTagModal(elem, props) {
-  return React.render(<CreateTagModal {...props} />, elem);
-}
+// export function makeCreateTagModal(elem, props) {
+//   return render(<CreateTagModal {...props} />, elem);
+// }
+
+export default CreateTagModal;

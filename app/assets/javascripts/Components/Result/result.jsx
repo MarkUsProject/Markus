@@ -5,6 +5,7 @@ import {LeftPane} from "./left_pane";
 import {RightPane} from "./right_pane";
 import {SubmissionSelector} from "./submission_selector";
 import CreateModifyAnnotationPanel from "../Modals/create_modify_annotation_panel_modal";
+import CreateTagModal from "../Modals/create_tag_modal";
 import {pathToNode} from "../Helpers/range_selector";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
@@ -53,6 +54,7 @@ class Result extends React.Component {
       grouping_id: props.grouping_id,
       can_release: false,
       filterData: INITIAL_FILTER_MODAL_STATE,
+      isCreateTagModalOpen: false,
     };
 
     this.leftPane = React.createRef();
@@ -60,8 +62,10 @@ class Result extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    console.log("jeremy result component");
     window.modal = new ModalMarkus("#annotation_dialog");
     window.modalNotesGroup = new ModalMarkus("#notes_dialog");
+    // window.modal_create_new_tag = new ModalMarkus("#create_new_tag");
     window.modal_create_new_tag = new ModalMarkus("#create_new_tag");
 
     document.addEventListener("fullscreenchange", () => {
@@ -859,6 +863,16 @@ class Result extends React.Component {
     );
   };
 
+  handleCreateTagButtonClick = () => {
+    this.setState({isCreateTagModalOpen: true});
+  };
+
+  closeCreateTagModal = () => {
+    this.setState({isCreateTagModalOpen: false}, () => {
+      this.fetchData();
+    });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -910,6 +924,17 @@ class Result extends React.Component {
           criterionSummaryData={this.state.criterionSummaryData}
         />
         <div key="panes-content" id="panes-content">
+          <CreateTagModal
+            assignment_id={this.state.assignment_id}
+            course_id={this.props.course_id}
+            grouping_id={this.state.grouping_id}
+            loading={this.state.loading}
+            nameLabel={"Name"}
+            descriptionLabel={"Description"}
+            isOpen={this.state.isCreateTagModalOpen}
+            closeModal={this.closeCreateTagModal}
+            authenticityToken={AUTH_TOKEN}
+          />
           <div id="panes">
             <div id="left-pane">
               <LeftPane
@@ -967,6 +992,7 @@ class Result extends React.Component {
                 criterionSummaryData={this.state.criterionSummaryData}
                 current_tags={this.state.current_tags}
                 due_date={this.state.due_date}
+                handleCreateTagButtonClick={this.handleCreateTagButtonClick}
                 extra_marks={this.state.extra_marks}
                 extraMarkSubtotal={this.state.extraMarkSubtotal}
                 grace_token_deductions={this.state.grace_token_deductions}

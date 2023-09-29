@@ -62,6 +62,7 @@ export class RightPane extends React.Component {
               submission_time={this.props.submission_time}
               notes_count={this.props.notes_count}
               remark_submitted={this.props.remark_submitted}
+              handleCreateTagButtonClick={this.props.handleCreateTagButtonClick}
               addTag={this.props.addTag}
               removeTag={this.props.removeTag}
               newNote={this.props.newNote}
