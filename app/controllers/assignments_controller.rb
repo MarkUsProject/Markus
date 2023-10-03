@@ -86,7 +86,7 @@ class AssignmentsController < ApplicationController
     @student = current_role
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     @prs = current_role.grouping_for(@assignment.parent_assignment.id)
-        &.peer_reviews&.where(results: { released_to_students: true })
+                       &.peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
     end
