@@ -17,6 +17,7 @@ Rails.application.config.after_initialize do
   def process_requirements(requirements_file)
     File.open(requirements_file).each_line.filter_map do |line|
       line.strip!
+      line.tr!('-_', '')
       line.start_with?('#') || line.length.zero? ? nil : line
     end
   end
@@ -31,9 +32,11 @@ Rails.application.config.after_initialize do
 
     if status.success?
       installed = installed.lines.map(&:chomp)
+      installed.each { |p| p.tr!('-_', '') }
 
       jupyter_requirements = process_requirements(Rails.root.join('requirements-jupyter.txt'))
       scanner_requirements = process_requirements(Rails.root.join('requirements-scanner.txt'))
+      qr_requirements = process_requirements(Rails.root.join('requirements-qr.txt'))
 
       if (jupyter_requirements - installed).empty?
         Rails.application.config.nbconvert_enabled = true
@@ -41,6 +44,12 @@ Rails.application.config.after_initialize do
         warn 'MARKUS WARNING: not all packages required to process jupyter notebooks are installed. ' \
              'Jupyter notebook rendering will be disabled. ' \
              "To enable notebook rendering run: #{pip} install -r #{Rails.root.join('requirements-jupyter.txt')}"
+      end
+      unless (qr_requirements - installed).empty?
+        warn 'MARKUS WARNING: not all packages required to process scanned exams ' \
+             'are installed. Exam scanning will not be enabled. ' \
+             'To enable exam scanning  run: ' \
+             "#{pip} install -r #{Rails.root.join('requirements-qr.txt')}"
       end
       if (scanner_requirements - installed).empty?
         Rails.application.config.scanner_enabled = true
