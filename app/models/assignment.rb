@@ -82,6 +82,8 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
+  has_many :tas, through: :ta_memberships, source: :role
+
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
     @prev_assignment_file_ids = assignment_files.ids
@@ -745,11 +747,6 @@ class Assignment < Assessment
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
     criteria.count > 0 ? criteria.last.position + 1 : 1
-  end
-
-  # Returns all the TAs associated with the assignment
-  def tas
-    Ta.find(ta_memberships.map(&:role_id))
   end
 
   # Returns all the submissions that have not been graded (completed).
