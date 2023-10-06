@@ -56,7 +56,7 @@ Rails.application.config.after_initialize do
       else
         warn 'MARKUS WARNING: not all packages required to automatically match students for scanned exams ' \
              'are installed. Automatic student matching will be disabled. ' \
-             'To enable automatic student matching  run: ' \
+             'To enable automatic student matching run: ' \
              "#{pip} install -r #{Rails.root.join('requirements-scanner.txt')}"
       end
     else
