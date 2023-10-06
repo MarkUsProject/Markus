@@ -3,12 +3,15 @@ import {render} from "react-dom";
 
 import ReactTable from "react-table";
 
+import CreateTagModal from "./Modals/create_tag_modal";
+
 class TagTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       tags: [],
       loading: true,
+      isCreateTagModalOpen: false,
     };
   }
 
@@ -92,14 +95,41 @@ class TagTable extends React.Component {
     },
   ];
 
+  onCreateTagButtonClick = () => {
+    this.setState({isCreateTagModalOpen: true});
+  };
+
+  closeCreateTagModal = () => {
+    this.setState({isCreateTagModalOpen: false}, () => {
+      this.fetchData();
+    });
+  };
+
+  // see TODO in create_tag_modal.jsx
   render() {
     return (
-      <ReactTable
-        data={this.state.tags}
-        columns={this.columns()}
-        defaultSorted={[{id: "name"}]}
-        loading={this.state.loading}
-      />
+      <React.Fragment>
+        <button type="submit" onClick={this.onCreateTagButtonClick}>
+          {I18n.t("helpers.submit.create", {
+            model: I18n.t("activerecord.models.tag.one"),
+          })}
+        </button>
+        <CreateTagModal
+          assignment_id={this.props.assignment_id}
+          course_id={this.props.course_id}
+          appElement={document.getElementById("root") || undefined}
+          loading={this.state.loading}
+          isOpen={this.state.isCreateTagModalOpen}
+          closeModal={this.closeCreateTagModal}
+          authenticityToken={AUTH_TOKEN}
+        />
+        <ReactTable
+          data={this.state.tags}
+          columns={this.columns()}
+          defaultSorted={[{id: "name"}]}
+          loading={this.state.loading}
+        />
+      </React.Fragment>
     );
   }
 }

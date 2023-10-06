@@ -62,11 +62,8 @@ class Result extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    console.log("jeremy result component");
     window.modal = new ModalMarkus("#annotation_dialog");
     window.modalNotesGroup = new ModalMarkus("#notes_dialog");
-    // window.modal_create_new_tag = new ModalMarkus("#create_new_tag");
-    window.modal_create_new_tag = new ModalMarkus("#create_new_tag");
 
     document.addEventListener("fullscreenchange", () => {
       this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
@@ -929,8 +926,6 @@ class Result extends React.Component {
             course_id={this.props.course_id}
             grouping_id={this.state.grouping_id}
             loading={this.state.loading}
-            nameLabel={"Name"}
-            descriptionLabel={"Description"}
             isOpen={this.state.isCreateTagModalOpen}
             closeModal={this.closeCreateTagModal}
             authenticityToken={AUTH_TOKEN}
