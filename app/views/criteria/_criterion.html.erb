@@ -20,13 +20,13 @@
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.class %><%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
-      <i class="fa-solid fa-chalkboard-user icon-left" title="Graders and Instructors"></i>
-      <i class="fa-solid fa-comments" title="Peer Reviewers"></i>
+      <i class="fa-solid fa-chalkboard-user icon-left" title="<%= t('criteria.help_ta_visibility_message') %>"></i>
+      <i class="fa-solid fa-comments" title="<%= t('criteria.help_peer_visibility_message') %>"></i>
     <% elsif criterion.ta_visible %>
-      <i class="fa-solid fa-chalkboard-user" title="Graders and Instructors"></i>
+      <i class="fa-solid fa-chalkboard-user" title="<%= t('criteria.help_ta_visibility_message') %>"></i>
     <% else %>
       <span class="empty-16px icon-left">&nbsp;</span>
-      <i class="fa-solid fa-comments" title="Peer Reviewers"></i>
+      <i class="fa-solid fa-comments" title="<%= t('criteria.help_peer_visibility_message') %>"></i>
     <% end %>
   </span>
 </li>
