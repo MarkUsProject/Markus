@@ -48,7 +48,7 @@ Rails.application.config.after_initialize do
       unless (qr_requirements - installed).empty?
         warn 'MARKUS WARNING: not all packages required to process scanned exams ' \
              'are installed. Exam scanning will not be enabled. ' \
-             'To enable exam scanning  run: ' \
+             'To enable exam scanning run: ' \
              "#{pip} install -r #{Rails.root.join('requirements-qr.txt')}"
       end
       if (scanner_requirements - installed).empty?
