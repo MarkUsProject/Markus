@@ -4,6 +4,7 @@
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
+- Allow MathJAX to process environments (e.g., align) (#6762)
 
 ## [v2.3.1]
 - Add filter for empty/non-empty submissions in submissions table (#6711)
