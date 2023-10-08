@@ -193,7 +193,7 @@ class AnnotationCategoriesController < ApplicationController
                 filename: "#{@assignment.short_identifier}_annotations.csv",
                 disposition: 'attachment'
     when 'yml'
-      send_data annotation_categories_to_yml(@annotation_categories),
+      send_data AnnotationCategory.annotation_categories_to_yml(@annotation_categories),
                 filename: "#{@assignment.short_identifier}_annotations.yml",
                 disposition: 'attachment'
     else
@@ -227,7 +227,7 @@ class AnnotationCategoriesController < ApplicationController
           end
         elsif data[:type] == '.yml'
           begin
-            successes = upload_annotations_from_yaml(data[:contents], @assignment)
+            successes = AnnotationCategory.upload_annotations_from_yaml(data[:contents], @assignment, current_role)
             if successes > 0
               flash_message(:success, t('annotation_categories.upload.success',
                                         annotation_category_number: successes))
