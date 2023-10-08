@@ -1,12 +1,13 @@
 # Changelog
 
 ## [unreleased]
-- Convert helper methods of the module `app/helpers/annotations_categories_helper` into class methods of the
-`AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
-`upload_annotations_from_yaml` (#6747)
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
+- Modified and moved helper methods from `CriteriaHelper` into static methods in the `Criterion` class (#6746)
+- Convert helper methods of the module `app/helpers/annotations_categories_helper` into class methods of the
+  `AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
+  `upload_annotations_from_yaml` (#6747)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
@@ -16,7 +17,6 @@
 - Fix bug where autotest settings would not appear if there were no assignment criteria (#6718)
 - Added API routes for Extensions API (#6743)
 - Fix premature page reloading when autotest settings are saved (#6744)
-- Modified and moved helper methods from `CriteriaHelper` into static methods in the `Criterion` class (#6746)
 
 ## [v2.3.0]
 - Do not destroy pending group memberships if the group is given an extension (#6582)
