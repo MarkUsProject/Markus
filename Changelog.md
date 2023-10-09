@@ -8,6 +8,7 @@
 - Convert helper methods of the module `app/helpers/annotations_categories_helper` into class methods of the
   `AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
   `upload_annotations_from_yaml` (#6747)
+- Added tooltips to criteria type and visibility icons (#6753)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
