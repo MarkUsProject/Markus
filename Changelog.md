@@ -10,6 +10,7 @@
   `upload_annotations_from_yaml` (#6747)
 - Added tooltips to criteria type and visibility icons (#6753)
 - Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
+- Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
