@@ -21,6 +21,9 @@ updates:
     - 5.19.0
     - 5.24.2
   - groups:
+      babel:
+        patterns:
+          - "@babel*"
       fortawesome:
         patterns:
           - "@fortawesome*"
