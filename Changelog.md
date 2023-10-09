@@ -9,6 +9,7 @@
   `AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
   `upload_annotations_from_yaml` (#6747)
 - Added tooltips to criteria type and visibility icons (#6753)
+- Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
