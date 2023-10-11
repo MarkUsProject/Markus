@@ -6,6 +6,8 @@ describe SplitPdfJob do
     FileUtils.mkdir_p File.join(exam_template.base_path, 'raw')
     FileUtils.mkdir_p File.join(exam_template.base_path, 'error')
     FileUtils.rm_rf(File.join(exam_template.base_path, 'error'))
+    FileUtils.rm_rf(File.join(exam_template.base_path, 'complete'))
+    FileUtils.rm_rf(File.join(exam_template.base_path, 'incomplete'))
   end
 
   it 'correctly splits a PDF with 20 valid test papers, where all pages are in order' do
@@ -193,6 +195,139 @@ describe SplitPdfJob do
         expect(split_pdf_log2.split_pages.where(status: 'Duplicate page ignored').size).to eq 6
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
         expect(error_dir_entries.length).to eq 0
+      end
+    end
+  end
+
+  context 'when an uploaded test is missing pages, including the cover page' do
+    # File contains pages 2, 4, 6
+    # Template division: Q1: 3-3, Q2: 4-4, Q3: 5-6
+    let(:group) { Group.find_by(group_name: 'midterm1-v2-test_paper_104') }
+    let(:grouping) { exam_template.assignment.groupings.find_by(group_id: group.id) }
+
+    let!(:_job) do
+      filename = 'midterm_scan_104_evens.pdf'
+      split_pdf_log = exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 3,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        role: instructor
+      )
+      FileUtils.cp "db/data/scanned_exams/#{filename}",
+                   File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor)
+    end
+
+    it 'creates a blank COVER.pdf' do
+      grouping.access_repo do |repo|
+        revision = repo.get_latest_revision
+        cover_pdf_raw = repo.download_as_string(
+          revision.files_at_path(exam_template.assignment.repository_folder)['COVER.pdf']
+        )
+        cover_pdf = CombinePDF.parse(cover_pdf_raw)
+        expect(cover_pdf.pages.size).to eq 0
+      end
+    end
+
+    it 'creates partial template division pdfs' do
+      grouping.access_repo do |repo|
+        revision = repo.get_latest_revision
+        expected_pages = { 'Q1.pdf' => 0, 'Q2.pdf' => 1, 'Q3.pdf' => 1 }
+        files = revision.files_at_path(exam_template.assignment.repository_folder)
+        expected_pages.each do |filename, expected_page_num|
+          expect(files.key?(filename)).to be true
+          pdf_raw = repo.download_as_string(
+            revision.files_at_path(exam_template.assignment.repository_folder)[filename]
+          )
+          pdf = CombinePDF.parse(pdf_raw)
+          expect(pdf.pages.size).to eq expected_page_num
+        end
+      end
+    end
+
+    it 'creates a complete EXTRA.pdf' do
+      grouping.access_repo do |repo|
+        revision = repo.get_latest_revision
+        pdf_raw = repo.download_as_string(
+          revision.files_at_path(exam_template.assignment.repository_folder)['EXTRA.pdf']
+        )
+        pdf = CombinePDF.parse(pdf_raw)
+        expect(pdf.pages.size).to eq 1
+      end
+    end
+  end
+
+  context 'when an uploaded test has pages in two different files' do
+    # Files contains pages [1, 3, 5] and [2, 4, 6]
+    # Template division: Q1: 3-3, Q2: 4-4, Q3: 5-6
+    let(:group) { Group.find_by(group_name: 'midterm1-v2-test_paper_104') }
+    let(:grouping) { exam_template.assignment.groupings.find_by(group_id: group.id) }
+
+    let!(:_job) do
+      filename = 'midterm_scan_104_evens.pdf'
+      split_pdf_log1 = exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 3,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        role: instructor
+      )
+      FileUtils.cp "db/data/scanned_exams/#{filename}",
+                   File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log1.id}.pdf")
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log1, filename, instructor)
+
+      filename = 'midterm_scan_104_odds.pdf'
+      split_pdf_log2 = exam_template.split_pdf_logs.create(
+        filename: filename,
+        original_num_pages: 3,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        role: instructor
+      )
+      FileUtils.cp "db/data/scanned_exams/#{filename}",
+                   File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor)
+    end
+
+    it 'creates a complete COVER.pdf' do
+      grouping.access_repo do |repo|
+        revision = repo.get_latest_revision
+        cover_pdf_raw = repo.download_as_string(
+          revision.files_at_path(exam_template.assignment.repository_folder)['COVER.pdf']
+        )
+        cover_pdf = CombinePDF.parse(cover_pdf_raw)
+        expect(cover_pdf.pages.size).to eq 1
+      end
+    end
+
+    it 'creates complete template division pdfs' do
+      grouping.access_repo do |repo|
+        revision = repo.get_latest_revision
+        expected_pages = { 'Q1.pdf' => 1, 'Q2.pdf' => 1, 'Q3.pdf' => 2 }
+        files = revision.files_at_path(exam_template.assignment.repository_folder)
+        expected_pages.each do |filename, expected_page_num|
+          expect(files.key?(filename)).to be true
+          pdf_raw = repo.download_as_string(
+            revision.files_at_path(exam_template.assignment.repository_folder)[filename]
+          )
+          pdf = CombinePDF.parse(pdf_raw)
+          expect(pdf.pages.size).to eq expected_page_num
+        end
+      end
+    end
+
+    it 'creates a complete EXTRA.pdf' do
+      grouping.access_repo do |repo|
+        revision = repo.get_latest_revision
+        pdf_raw = repo.download_as_string(
+          revision.files_at_path(exam_template.assignment.repository_folder)['EXTRA.pdf']
+        )
+        pdf = CombinePDF.parse(pdf_raw)
+        expect(pdf.pages.size).to eq 1
       end
     end
   end
