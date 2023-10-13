@@ -114,15 +114,17 @@ class TagTable extends React.Component {
             model: I18n.t("activerecord.models.tag.one"),
           })}
         </button>
-        <CreateTagModal
-          assignment_id={this.props.assignment_id}
-          course_id={this.props.course_id}
-          appElement={document.getElementById("root") || undefined}
-          loading={this.state.loading}
-          isOpen={this.state.isCreateTagModalOpen}
-          closeModal={this.closeCreateTagModal}
-          authenticityToken={AUTH_TOKEN}
-        />
+        {this.state.isCreateTagModalOpen && (
+          <CreateTagModal
+            assignment_id={this.props.assignment_id}
+            course_id={this.props.course_id}
+            appElement={document.getElementById("root") || undefined}
+            loading={this.state.loading}
+            isOpen={this.state.isCreateTagModalOpen}
+            closeModal={this.closeCreateTagModal}
+            authenticityToken={AUTH_TOKEN}
+          />
+        )}
         <ReactTable
           data={this.state.tags}
           columns={this.columns()}

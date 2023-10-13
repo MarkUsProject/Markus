@@ -91,7 +91,10 @@ class CreateTagModal extends React.Component {
           </h1>
           <form onSubmit={this.onSubmit}>
             <div className={"modal-container-vertical"}>
-              <p className="alignleft">{I18n.t("activerecord.attributes.tags.name")}:</p>
+              <p className="alignleft">
+                {I18n.t("activerecord.attributes.tags.name")} ({this.state.name.length} /{" "}
+                {this.state.maxCharsName})
+              </p>
               <textarea
                 required={true}
                 id="tag_name"
@@ -100,10 +103,10 @@ class CreateTagModal extends React.Component {
                 onChange={this.handleNameChange}
                 maxLength={this.state.maxCharsName}
               />
-              <p id="name_amount" className="alignright">
-                {this.state.name.length} / {this.state.maxCharsName}
+              <p className="alignleft">
+                {I18n.t("activerecord.attributes.tags.description")} (
+                {this.state.description.length} / {this.state.maxCharsDescription})
               </p>
-              <p className="alignleft">{I18n.t("activerecord.attributes.tags.description")}:</p>
               <textarea
                 id="tag_description"
                 className="clear-alignment"
@@ -111,9 +114,6 @@ class CreateTagModal extends React.Component {
                 onChange={this.handleDescriptionChange}
                 maxLength={this.state.maxCharsDescription}
               />
-              <p id="description_amount" className="alignright">
-                {this.state.description.length} / {this.state.maxCharsDescription}
-              </p>
             </div>
             <div className={"modal-container"}>
               <button type="submit" value="Submit" disabled={!this.state.name}>
