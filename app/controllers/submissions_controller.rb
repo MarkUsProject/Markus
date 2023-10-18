@@ -690,7 +690,8 @@ class SubmissionsController < ApplicationController
       groupings = groupings.joins(:ta_memberships).where('memberships.role_id': current_role.id)
     end
 
-    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id, download_submissions_url)
+    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id,
+                                                        download_submissions_url)
     session[:job_id] = @current_job.job_id
 
     render 'shared/_poll_job'

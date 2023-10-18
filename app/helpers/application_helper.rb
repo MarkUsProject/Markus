@@ -12,7 +12,7 @@ module ApplicationHelper
     type = :notice unless available_types.include?(type)
     # If a flash with that type doesn't exist, create a new array
     flash_type[type] ||= []
-    content = kwargs.empty? ? "<p>#{text.to_s.gsub("\n", ' ')}</p>" : render_to_string(**kwargs).split("\n").join
+    content = kwargs.empty? ? "<p>#{text.to_s.tr("\n", ' ')}</p>" : render_to_string(**kwargs).split("\n").join
     # If the message doesn't already exist, add it
     flash_type[type].push(content) unless flash_type[type].include?(content)
   end

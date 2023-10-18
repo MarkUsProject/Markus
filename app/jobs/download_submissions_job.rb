@@ -1,7 +1,6 @@
 # Prepares submission files from a list of groupings for download
 # by zipping them up into a single zipfile
 class DownloadSubmissionsJob < ApplicationJob
-
   def self.show_status(status)
     if status[:progress] == status[:total]
       I18n.t('poll_job.download_submissions_finalizing')
@@ -11,15 +10,17 @@ class DownloadSubmissionsJob < ApplicationJob
   end
 
   def self.completed_message(status)
-    renderer=ApplicationController.renderer.new(https: true)
-    renderer.render(partial: 'submissions/download_zip_file', locals: { download_submissions_url: status[:download_submissions_url] })
+    renderer = ApplicationController.renderer.new(https: true)
+    renderer.render(partial: 'submissions/download_zip_file',
+                    locals: { download_submissions_url: status[:download_submissions_url] })
   end
 
   before_enqueue do |job|
-    self.status.update(assignment_id: job.arguments[2], course_id: job.arguments[3], download_submissions_url: job.arguments[4])
+    self.status.update(assignment_id: job.arguments[2], course_id: job.arguments[3],
+                       download_submissions_url: job.arguments[4])
   end
 
-  def perform(grouping_ids, zip_path, _assignment_id, _course_id, download_submissions_url)
+  def perform(grouping_ids, zip_path, _assignment_id, _course_id, _download_submissions_url)
     ## delete the old file if it exists
     FileUtils.rm_f(zip_path)
 
