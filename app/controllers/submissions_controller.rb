@@ -684,14 +684,14 @@ class SubmissionsController < ApplicationController
 
     zip_path = zipped_grouping_file_name(assignment)
 
-    download_submissions_url = download_zipped_file_course_assignment_submissions_url(course.id, assignment.id)
+    download_sub_url = download_zipped_file_course_assignment_submissions_url(course.id, assignment.id)
 
     if current_role.ta?
       groupings = groupings.joins(:ta_memberships).where('memberships.role_id': current_role.id)
     end
 
     @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id,
-                                                        download_submissions_url)
+                                                        download_sub_url)
     session[:job_id] = @current_job.job_id
 
     render 'shared/_poll_job'

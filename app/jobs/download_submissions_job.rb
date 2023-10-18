@@ -12,15 +12,15 @@ class DownloadSubmissionsJob < ApplicationJob
   def self.completed_message(status)
     renderer = ApplicationController.renderer.new(https: true)
     renderer.render(partial: 'submissions/download_zip_file',
-                    locals: { download_submissions_url: status[:download_submissions_url] })
+                    locals: { download_sub_url: status[:download_sub_url] })
   end
 
   before_enqueue do |job|
     self.status.update(assignment_id: job.arguments[2], course_id: job.arguments[3],
-                       download_submissions_url: job.arguments[4])
+                       download_sub_url: job.arguments[4])
   end
 
-  def perform(grouping_ids, zip_path, _assignment_id, _course_id, _download_submissions_url)
+  def perform(grouping_ids, zip_path, _assignment_id, _course_id, _download_sub_url)
     ## delete the old file if it exists
     FileUtils.rm_f(zip_path)
 
