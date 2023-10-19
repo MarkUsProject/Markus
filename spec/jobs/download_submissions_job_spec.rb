@@ -7,7 +7,7 @@ describe DownloadSubmissionsJob do
       grouping
     end
   end
-  let(:download_sub_url) {}
+  let(:download_sub_url) { '' }
 
   context 'when running as a background job' do
     let(:job_args) { [groupings.map(&:id), 'zip_path.zip', assignment.id] }
