@@ -12,7 +12,8 @@
 - Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 - Ensure starter files are passed to autotester in sorted order (#6771)
-- Allow inactive grader groups to be displayed (#6778)
+- Allow inactive grader groups to be displayed and create a red flash message (through ```graders_controller```) to
+prevent adding inactive graders to a group (#6778)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
