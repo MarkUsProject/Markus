@@ -98,21 +98,27 @@ class GradersController < ApplicationController
 
       case params[:global_actions]
       when 'assign'
-        if params[:skip_empty_submissions] == 'true'
-          # If the instructor wants to skip empty submissions, filter
-          # groups with empty submissions into a new array
-          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
-          if filtered_grouping_ids.count != grouping_ids.count
-            found_empty_submission = true
+        begin
+          if params[:skip_empty_submissions] == 'true'
+            # If the instructor wants to skip empty submissions, filter
+            # groups with empty submissions into a new array
+            filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+            if filtered_grouping_ids.count != grouping_ids.count
+              found_empty_submission = true
+            end
           end
+          if found_empty_submission
+            assign_all_graders(filtered_grouping_ids, grader_ids)
+            flash_now(:info, I18n.t('graders.group_submission_no_files'))
+            head :ok
+          else
+            assign_all_graders(grouping_ids, grader_ids)
+          end
+        rescue StandardError => e
+          flash_now(:error, e.message)
+          head :bad_request
         end
-        if found_empty_submission
-          assign_all_graders(filtered_grouping_ids, grader_ids)
-          flash_now(:info, I18n.t('graders.group_submission_no_files'))
-          head :ok
-        else
-          assign_all_graders(grouping_ids, grader_ids)
-        end
+
       when 'unassign'
         unassign_graders(grouping_ids, grader_ids)
       when 'random_assign'
@@ -183,6 +189,13 @@ class GradersController < ApplicationController
   end
 
   def assign_all_graders(grouping_ids, grader_ids)
+    grader_ids.each do |id|
+      grader = Ta.find(id)
+      if grader.hidden
+        raise I18n.t('groups.invite_member.errors.inactive_grader', user_name: grader.user_name)
+      end
+    end
+
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
   end
 
