@@ -729,7 +729,7 @@ class GradersActionBox extends React.Component {
 
     return (
       <div className="rt-action-box">
-        <span className={"flex-row-expand"}>
+        <span>
           <input
             id="show_hidden"
             name="show_hidden"
