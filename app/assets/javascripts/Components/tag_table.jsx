@@ -4,6 +4,7 @@ import {render} from "react-dom";
 import ReactTable from "react-table";
 
 import CreateTagModal from "./Modals/create_tag_modal";
+import EditTagModal from "./Modals/edit_tag_modal";
 
 class TagTable extends React.Component {
   constructor(props) {
@@ -12,6 +13,10 @@ class TagTable extends React.Component {
       tags: [],
       loading: true,
       isCreateTagModalOpen: false,
+      isEditTagModalOpen: false,
+      currentTagId: "",
+      currentTagName: "",
+      currentTagDescription: "",
     };
   }
 
@@ -42,10 +47,20 @@ class TagTable extends React.Component {
       });
   };
 
+  // edit = tag_id => {
+  //   $.get({
+  //     url: Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id),
+  //     dataType: "script",
+  //   });
+  // };
+
   edit = tag_id => {
-    $.get({
-      url: Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id),
-      dataType: "script",
+    const currentTag = this.state.tags.find(tag => tag.id === tag_id);
+    this.setState({
+      isEditTagModalOpen: true,
+      currentTagId: tag_id,
+      currentTagName: currentTag.name,
+      currentTagDescription: currentTag.description,
     });
   };
 
@@ -105,6 +120,12 @@ class TagTable extends React.Component {
     });
   };
 
+  closeEditTagModal = () => {
+    this.setState({isEditTagModalOpen: false}, () => {
+      this.fetchData();
+    });
+  };
+
   // see TODO in create_tag_modal.jsx
   render() {
     return (
@@ -114,23 +135,33 @@ class TagTable extends React.Component {
             model: I18n.t("activerecord.models.tag.one"),
           })}
         </button>
-        {this.state.isCreateTagModalOpen && (
-          <CreateTagModal
-            assignment_id={this.props.assignment_id}
-            course_id={this.props.course_id}
-            appElement={document.getElementById("root") || undefined}
-            loading={this.state.loading}
-            isOpen={this.state.isCreateTagModalOpen}
-            closeModal={this.closeCreateTagModal}
-            authenticityToken={AUTH_TOKEN}
-          />
-        )}
         <ReactTable
           data={this.state.tags}
           columns={this.columns()}
           defaultSorted={[{id: "name"}]}
           loading={this.state.loading}
         />
+        {this.state.isCreateTagModalOpen && (
+          <CreateTagModal
+            assignment_id={this.props.assignment_id}
+            course_id={this.props.course_id}
+            loading={this.state.loading}
+            isOpen={this.state.isCreateTagModalOpen}
+            closeModal={this.closeCreateTagModal}
+          />
+        )}
+        {this.state.isEditTagModalOpen && (
+          <EditTagModal
+            assignment_id={this.props.assignment_id}
+            course_id={this.props.course_id}
+            tag_id={this.state.currentTagId}
+            loading={this.state.loading}
+            isOpen={this.state.isEditTagModalOpen}
+            closeModal={this.closeEditTagModal}
+            currentTagName={this.state.currentTagName}
+            currentTagDescription={this.state.currentTagDescription}
+          />
+        )}
       </React.Fragment>
     );
   }

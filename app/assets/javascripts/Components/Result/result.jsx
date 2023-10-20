@@ -928,7 +928,6 @@ class Result extends React.Component {
             loading={this.state.loading}
             isOpen={this.state.isCreateTagModalOpen}
             closeModal={this.closeCreateTagModal}
-            authenticityToken={AUTH_TOKEN}
           />
           <div id="panes">
             <div id="left-pane">

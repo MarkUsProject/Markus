@@ -47,9 +47,11 @@ class TagsController < ApplicationController
 
   def update
     tag = record
-    tag.update(params.require(:tag).permit(:name, :description))
-
-    respond_with tag, location: -> { request.headers['Referer'] || root_path }
+    if tag.update(params.require(:tag).permit(:name, :description))
+      flash_message(:success, I18n.t('flash.actions.update.success', resource_name: tag.model_name.human))
+    else
+      flash_message(:error, I18n.t('flash.actions.update.error', resource_name: tag.model_name.human))
+    end
   end
 
   def destroy

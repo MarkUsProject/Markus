@@ -1,12 +1,12 @@
 import React from "react";
 import Modal from "react-modal";
 
-class CreateTagModal extends React.Component {
+export default class EditTagModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      description: "",
+      name: this.props.currentTagName,
+      description: this.props.currentTagDescription,
       maxCharsName: 30,
       maxCharsDescription: 120,
     };
@@ -33,41 +33,38 @@ class CreateTagModal extends React.Component {
         name: this.state.name,
         description: this.state.description,
       },
-      grouping_id: this.props.grouping_id,
-      commit: "Save",
+      course_id: this.props.course_id,
+      id: this.props.tag_id,
+      submit: "Save",
     };
     const options = {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": AUTH_TOKEN,
       },
       body: JSON.stringify(data),
     };
-    fetch(
-      Routes.course_tags_path(this.props.course_id, {assignment_id: this.props.assignment_id}),
-      options
-    )
+    fetch(Routes.course_tag_path(this.props.course_id, this.props.tag_id), options)
       .catch(error => {
         console.error("Error submitting form: ", error);
       })
-      .finally(() => {
-        this.setState(
-          {
-            name: "",
-            description: "",
-          },
-          () => {
-            this.props.closeModal();
-          }
-        );
+      .then(() => {
+        this.props.closeModal();
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 
   /**
    * TODO:
    * React related:
+   * 2) "appElement={document.getElementById('root') || undefined}" needed? Better alternatives?
    * 3) dim background when modal open? Possible props from react-modal / css?
+   * 4) replace edit tag modal as well
+   * General:
+   * 1) remove unnecessary console logs (if any left) added for debugging
    */
   render() {
     return (
@@ -76,11 +73,10 @@ class CreateTagModal extends React.Component {
           className="react-modal dialog"
           isOpen={this.props.isOpen}
           onRequestClose={this.props.closeModal}
-          id="create_new_tag"
-          data-testid="create_new_tag"
+          id="edit_tag"
         >
           <h1>
-            {I18n.t("helpers.submit.create", {
+            {I18n.t("helpers.submit.update", {
               model: I18n.t("activerecord.models.tag.one"),
             })}
           </h1>
@@ -93,7 +89,6 @@ class CreateTagModal extends React.Component {
               <textarea
                 required={true}
                 id="tag_name"
-                data-testid="tag_name"
                 className="clear-alignment"
                 value={this.state.name}
                 onChange={this.handleNameChange}
@@ -130,4 +125,4 @@ class CreateTagModal extends React.Component {
 //   return render(<CreateTagModal {...props} />, elem);
 // }
 
-export default CreateTagModal;
+// export default CreateTagModal;
