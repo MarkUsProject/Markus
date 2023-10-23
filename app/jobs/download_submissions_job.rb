@@ -10,8 +10,8 @@ class DownloadSubmissionsJob < ApplicationJob
   end
 
   def self.completed_message(status)
-    { partial: 'submissions/download_zip_file', locals: { assignment_id: status[:assignment_id],
-                                                          course_id: status[:course_id] } }
+    { partial: 'submissions/download_zip_file', formats: [:html], locals: { assignment_id: status[:assignment_id],
+                                                                            course_id: status[:course_id] } }
   end
 
   before_enqueue do |job|
