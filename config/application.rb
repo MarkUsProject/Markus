@@ -129,6 +129,8 @@ module Markus
 
     config.action_cable.url = "#{config.relative_url_root}/cable"
 
+    config.action_cable.allowed_request_origins = Settings.web_socket_allowed_request_origins
+
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib

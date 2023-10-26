@@ -43,3 +43,5 @@ autotest:
 lti:
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
+
+web_socket_allowed_request_origins: <%= %w[host.docker.internal] %>
