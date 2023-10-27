@@ -41,3 +41,5 @@ en:
       unavailable: Unavailable
     not_found: 'No user can be found with the user name: %{user_names}'
     verify_settings_update: Your settings have been updated!
+  groups:
+    display_inactive: Display inactive groups

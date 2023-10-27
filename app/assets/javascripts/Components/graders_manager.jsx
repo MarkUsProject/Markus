@@ -23,6 +23,7 @@ class GradersManager extends React.Component {
       sections: {},
       isGraderDistributionModalOpen: false,
       show_hidden: false,
+      show_hidden_groups: false,
       hidden_graders_count: 0,
       inactive_groups_count: 0,
     };
@@ -68,8 +69,7 @@ class GradersManager extends React.Component {
         if (this.criteriaTable) this.criteriaTable.resetSelection();
         var inactive_groups_count = 0;
         res.groups.forEach(group => {
-          console.log(group);
-          if (group.graders.length && group.graders.every(grader => grader.hidden)) {
+          if (group.members.length && group.members.every(member => member[2])) {
             group.inactive = true;
             inactive_groups_count += 1;
           } else {
@@ -293,6 +293,11 @@ class GradersManager extends React.Component {
     this.setState({show_hidden});
   };
 
+  toggleShowHiddenGroups = event => {
+    let show_hidden_groups = event.target.checked;
+    this.setState({show_hidden_groups});
+  };
+
   render() {
     return (
       <div>
@@ -301,7 +306,9 @@ class GradersManager extends React.Component {
           openGraderDistributionModal={this.openGraderDistributionModal}
           unassignAll={this.unassignAll}
           showHidden={this.state.show_hidden}
+          showHiddenGroups={this.state.show_hidden_groups}
           updateShowHidden={this.toggleShowHidden}
+          updateShowHiddenGroups={this.toggleShowHiddenGroups}
           hiddenGradersCount={this.state.loading ? null : this.state.hidden_graders_count}
           hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
         />
@@ -358,7 +365,7 @@ class GradersManager extends React.Component {
                   sections={this.state.sections}
                   numCriteria={this.state.criteria.length}
                   showCoverage={this.state.assign_graders_to_criteria}
-                  showInactive={this.state.show_hidden}
+                  showInactive={this.state.show_hidden_groups}
                 />
               </TabPanel>
               <TabPanel>
@@ -718,18 +725,20 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 
 class GradersActionBox extends React.Component {
   render = () => {
-    let showHiddenTooltip = "";
+    let showHiddenGraderTooltip = "";
+    let showHiddenGroupsTooltip = "";
     if (this.props.hiddenStudentsCount !== null && this.props.hiddenGroupsCount !== null) {
-      showHiddenTooltip = `${I18n.t("graders.inactive_graders_count", {
+      showHiddenGraderTooltip = `${I18n.t("graders.inactive_graders_count", {
         count: this.props.hiddenGradersCount,
-      })}, ${I18n.t("activerecord.attributes.grouping.inactive_groups", {
+      })}`;
+      showHiddenGroupsTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_groups", {
         count: this.props.hiddenGroupsCount,
       })}`;
     }
 
     return (
       <div className="rt-action-box">
-        <span>
+        <span className={"flex-row-expand"}>
           <input
             id="show_hidden"
             name="show_hidden"
@@ -738,8 +747,21 @@ class GradersActionBox extends React.Component {
             onChange={this.props.updateShowHidden}
             className={"hide-user-checkbox"}
           />
-          <label title={showHiddenTooltip} htmlFor="show_hidden">
+          <label title={showHiddenGraderTooltip} htmlFor="show_hidden">
             {I18n.t("tas.display_inactive")}
+          </label>
+        </span>
+        <span>
+          <input
+            id="show_hidden_groups"
+            name="show_hidden_groups"
+            type="checkbox"
+            checked={this.props.showHiddenGroups}
+            onChange={this.props.updateShowHiddenGroups}
+            className={"hide-user-checkbox"}
+          />
+          <label title={showHiddenGroupsTooltip} htmlFor="show_hidden_groups">
+            {I18n.t("groups.display_inactive")}
           </label>
         </span>
         <button onClick={this.props.assignAll}>
