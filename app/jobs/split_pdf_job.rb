@@ -130,8 +130,8 @@ class SplitPdfJob < ApplicationJob
       )
       groupings << grouping
 
-      # Save raw pages
-      if pages.length == exam_template.num_pages
+      # Save raw pages.
+      if File.exist?(File.join(complete_dir, exam_num.to_s)) || pages.length == exam_template.num_pages
         destination = File.join complete_dir, exam_num.to_s
         num_complete += 1
       else
@@ -172,23 +172,31 @@ class SplitPdfJob < ApplicationJob
         split_page.update(status: status)
       end
 
+      # Get all pages in the destination. This lets us combine newly-scanned pages with
+      # any pages for this group that were previously scanned.
+      destination_pages = Dir.glob(File.join(destination, '*.pdf')).map do |path|
+        [Integer(File.basename(path, '.pdf')), CombinePDF.load(path)]
+      end
+
       grouping.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
         txn = repo.get_transaction(exam_template.course.instructors.first.user_name)
 
+        revision = repo.get_latest_revision
         # Pages that belong to a division
         exam_template.template_divisions.each do |division|
           new_pdf = CombinePDF.new
-          pages.each do |page_num, page|
+          destination_pages.each do |page_num, page|
             if division.start <= page_num && page_num <= division.end
               new_pdf << page
             end
           end
-          if File.exist? File.join(assignment_folder, "#{division.label}.pdf")
+          if revision.path_exists? File.join(assignment_folder, "#{division.label}.pdf")
             txn.replace(File.join(assignment_folder,
                                   "#{division.label}.pdf"),
                         new_pdf.to_pdf,
-                        'application/pdf')
+                        'application/pdf',
+                        revision.revision_identifier)
           else
             txn.add(File.join(assignment_folder,
                               "#{division.label}.pdf"),
@@ -198,7 +206,7 @@ class SplitPdfJob < ApplicationJob
         end
 
         # Pages that don't belong to any division
-        extra_pages = pages.reject do |page_num, _|
+        extra_pages = destination_pages.reject do |page_num, _|
           exam_template.template_divisions.any? do |division|
             division.start <= page_num && page_num <= division.end
           end
@@ -211,13 +219,16 @@ class SplitPdfJob < ApplicationJob
           cover_pdf << extra_pages[0][1]
           start_page = 1
         end
-        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
+        extra_pages[start_page..extra_pages.size].each do |_, pdf|
+          extra_pdf << pdf
+        end
 
-        if File.exist? File.join(assignment_folder, 'EXTRA.pdf')
+        if revision.path_exists? File.join(assignment_folder, 'EXTRA.pdf')
           txn.replace(File.join(assignment_folder,
                                 'EXTRA.pdf'),
                       extra_pdf.to_pdf,
-                      'application/pdf')
+                      'application/pdf',
+                      revision.revision_identifier)
         else
           txn.add(File.join(assignment_folder,
                             'EXTRA.pdf'),
@@ -225,11 +236,12 @@ class SplitPdfJob < ApplicationJob
                   'application/pdf')
         end
 
-        if File.exist? File.join(assignment_folder, 'COVER.pdf')
+        if revision.path_exists? File.join(assignment_folder, 'COVER.pdf')
           txn.replace(File.join(assignment_folder,
                                 'COVER.pdf'),
                       cover_pdf.to_pdf,
-                      'application/pdf')
+                      'application/pdf',
+                      revision.revision_identifier)
         else
           txn.add(File.join(assignment_folder,
                             'COVER.pdf'),

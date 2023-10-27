@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.3.3]
+- Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
+- Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
+
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
 
