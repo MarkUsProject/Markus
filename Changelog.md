@@ -1,17 +1,7 @@
 # Changelog
 
-## [unreleased]
-- Display error message on file upload failure (#6703)
-- Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
-- Display detailed messages about grace period deductions for an assignment on student interface (#6706)
-- Modified and moved helper methods from `CriteriaHelper` into static methods in the `Criterion` class (#6746)
-- Convert helper methods of the module `app/helpers/annotations_categories_helper` into class methods of the
-  `AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
-  `upload_annotations_from_yaml` (#6747)
-- Added tooltips to criteria type and visibility icons (#6753)
-- Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
+## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
-- Ensure starter files are passed to autotester in sorted order (#6771)
 - Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
 
 ## [v2.3.2]
