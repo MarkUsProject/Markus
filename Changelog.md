@@ -13,8 +13,7 @@
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 - Ensure starter files are passed to autotester in sorted order (#6771)
 - Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
-- Allow inactive groups in the graders tab to be displayed and create a red flash message (through ```graders_controller```) to
-  prevent adding inactive graders to a group (#6778)
+- Allow inactive groups in the graders tab to be displayed (#6778)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
