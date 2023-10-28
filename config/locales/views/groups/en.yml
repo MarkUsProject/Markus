@@ -38,6 +38,7 @@ en:
         inviting_self: You cannot invite yourself to your own group.
         need_to_create_group: You must create a group before you can invite members.
         not_found: No student '%{user_name}' could be found.
+        inactive_grader: Cannot add '%{user_names}' to group/s because these graders are inactive.
         not_same_section: 'Could not invite %{user_name}: this student is not in your section.'
       success: Invitation(s) successful.
     is_not_valid: Group is not valid
