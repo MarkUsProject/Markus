@@ -25,8 +25,8 @@
 ## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 - Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
-- Prevent assigning inactive graders to a group, throwing a red flash message (through ```graders_controller```)
-  when one tries to do so (#)
+- Bug Fix: Prevent assigning inactive graders to a group, throwing a red flash message (through ```graders_controller```)
+  when one tries to do so (#6801)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
