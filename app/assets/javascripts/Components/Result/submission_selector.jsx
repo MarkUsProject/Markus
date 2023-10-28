@@ -140,11 +140,7 @@ export class SubmissionSelector extends React.Component {
           className="button random-incomplete-submission"
           onClick={this.props.randomIncompleteSubmission}
           title={`${I18n.t("results.random_incomplete_submission")} (Ctrl + Shift + ⇨)`}
-          disabled={
-            this.props.num_collected === this.props.num_marked ||
-            (this.props.marking_state === "incomplete" &&
-              this.props.num_marked === this.props.num_collected - 1)
-          }
+          disabled={this.props.num_collected === this.props.num_marked}
         >
           <FontAwesomeIcon icon="fa-solid fa-dice" className="no-padding" />
         </button>

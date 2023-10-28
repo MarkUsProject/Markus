@@ -11,6 +11,7 @@
 - Added tooltips to criteria type and visibility icons (#6753)
 - Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
 - Ensure starter files are passed to autotester in sorted order (#6771)
+- Ensure the "Random Incomplete Submission" button takes into account criteria assignment for TAs (#6800)
 
 ## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
