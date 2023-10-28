@@ -67,6 +67,7 @@ class GradersManager extends React.Component {
         if (this.gradersTable) this.gradersTable.resetSelection();
         if (this.groupsTable) this.groupsTable.resetSelection();
         if (this.criteriaTable) this.criteriaTable.resetSelection();
+
         var inactive_groups_count = 0;
         res.groups.forEach(group => {
           if (group.members.length && group.members.every(member => member[2])) {
