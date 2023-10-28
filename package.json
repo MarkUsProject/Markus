@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@babel/runtime": "^7.22.6",
-    "@fortawesome/fontawesome-svg-core": "^6.4.0",
-    "@fortawesome/free-brands-svg-icons": "^6.4.0",
-    "@fortawesome/free-regular-svg-icons": "^6.4.0",
-    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@babel/runtime": "^7.23.2",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
+    "@fortawesome/free-regular-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@rails/actioncable": "^7.0.4-3",
     "@rails/ujs": "^7.0.6",
@@ -12,13 +12,13 @@
     "@rjsf/validator-ajv8": "^5.11.2",
     "chart.js": "^4.3.0",
     "core-js": "^3.32.2",
-    "dompurify": "^3.0.0",
+    "dompurify": "^3.0.6",
     "flatpickr": "^4.6.13",
     "heic2any": "^0.0.4",
     "i18n-js": "^4.3.2",
     "jcrop": "^0.0.1",
     "jquery": "^3.7.1",
-    "marked": "^5.0.2",
+    "marked": "^9.1.2",
     "mime": "^3.0.0",
     "moment": "^2.29.3",
     "mousetrap": "^1.6.5",
@@ -34,10 +34,10 @@
     "react-tabs": "^4.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.0",
-    "@babel/plugin-transform-runtime": "^7.22.9",
-    "@babel/preset-env": "^7.22.9",
-    "@babel/preset-react": "^7.22.5",
+    "@babel/core": "^7.23.2",
+    "@babel/plugin-transform-runtime": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.5",
     "babel-jest": "^29.4.3",
@@ -55,7 +55,7 @@
     "sass-loader": "^13.3.2",
     "webpack": "^5.85.0",
     "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.9.0"
+    "webpack-merge": "^5.10.0"
   },
   "browserslist": [
     "defaults"
