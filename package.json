@@ -12,7 +12,7 @@
     "@rjsf/validator-ajv8": "^5.11.2",
     "chart.js": "^4.3.0",
     "core-js": "^3.32.2",
-    "dompurify": "^3.0.0",
+    "dompurify": "^3.0.6",
     "flatpickr": "^4.6.13",
     "heic2any": "^0.0.4",
     "i18n-js": "^4.3.2",
