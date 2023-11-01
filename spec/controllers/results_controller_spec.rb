@@ -2167,7 +2167,8 @@ describe ResultsController do
         test_unauthorized(:get_test_runs_instructors)
       end
     end
-    context 'accessing next_grouping with valid permissions' do
+
+    context 'with valid permissions' do
       let(:grouping1) { create :grouping_with_inviter_and_submission }
       let(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
       let(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
@@ -2178,28 +2179,100 @@ describe ResultsController do
           create :ta_membership, role: ta, grouping: groupings[i]
         end
       end
-      context 'ta and instructor #next_grouping with filters' do
-        before(:each) do
-          create :ta_membership, role: ta, grouping: groupings[3]
+
+      context 'accessing random_incomplete_submissions' do
+        context 'when graders are not assigned to criteria' do
+          it 'returns no result when there are no other incomplete result' do
+            grouping2.current_result.update!(marking_state: Result::MARKING_STATES[:complete])
+            grouping3.current_result.update!(marking_state: Result::MARKING_STATES[:complete])
+            get :random_incomplete_submission,
+                params: { course_id: course.id, grouping_id: grouping1.id, id: grouping1.current_result.id }
+            expect(response.parsed_body.symbolize_keys).to eq({
+              grouping_id: nil, submission_id: nil, result_id: nil
+            })
+          end
+
+          it 'returns an incomplete result when there is another incomplete result' do
+            grouping2.current_result.update!(marking_state: Result::MARKING_STATES[:complete])
+            get :random_incomplete_submission,
+                params: { course_id: course.id, grouping_id: grouping1.id, id: grouping1.current_result.id }
+            expect(response.parsed_body.symbolize_keys).to eq({
+              grouping_id: grouping3.id, submission_id: grouping3.current_submission_used.id,
+              result_id: grouping3.current_result.id
+            })
+          end
         end
-        include_examples 'ta and instructor #next_grouping with filters'
       end
 
-      include_examples 'instructor and ta #next_grouping with different orderings'
-      context 'filter by tas' do
-        let(:ta1) { create :ta }
-        let(:ta2) { create :ta }
-        let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
-        let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
-        let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
-        let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+      context 'when graders are assigned to criteria' do
+        let(:criterion) { create :flexible_criterion, assignment: grouping1.assignment }
+        before do
+          grouping1.assignment.update!(assign_graders_to_criteria: true)
+          grouping1.assignment.groupings.find_each do |grouping|
+            grouping.current_result.marks.find_or_create_by(criterion_id: criterion.id)
+          end
+        end
 
-        context 'when a ta has been picked' do
-          it 'should return the next group with a larger group name and NOT filter by selected ta' do
-            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
-                                          id: grouping1.current_result.id,
-                                          direction: 1, filterData: { tas: [ta1.user.user_name] } }
-            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        context 'when the TA is assigned a criterion' do
+          let!(:criterion_ta_association) { create :criterion_ta_association, ta: ta, criterion: criterion }
+
+          it 'returns no result when all other results have a mark for the assigned criterion' do
+            grouping2.current_result.marks.find_by(criterion_id: criterion.id).update!(mark: 0)
+            grouping3.current_result.marks.find_by(criterion_id: criterion.id).update!(mark: 0)
+            get :random_incomplete_submission,
+                params: { course_id: course.id, grouping_id: grouping1.id, id: grouping1.current_result.id }
+            expect(response.parsed_body.symbolize_keys).to eq({
+              grouping_id: nil, submission_id: nil, result_id: nil
+            })
+          end
+
+          it 'returns an unmarked result when there is another result with no mark for the assigned criterion' do
+            grouping2.current_result.marks.find_by(criterion_id: criterion.id).update!(mark: 0)
+
+            get :random_incomplete_submission,
+                params: { course_id: course.id, grouping_id: grouping1.id, id: grouping1.current_result.id }
+            expect(response.parsed_body.symbolize_keys).to eq({
+              grouping_id: grouping3.id, submission_id: grouping3.current_submission_used.id,
+              result_id: grouping3.current_result.id
+            })
+          end
+        end
+
+        context 'when the TA is not assigned a criterion' do
+          it 'returns no result' do
+            get :random_incomplete_submission,
+                params: { course_id: course.id, grouping_id: grouping1.id, id: grouping1.current_result.id }
+            expect(response.parsed_body.symbolize_keys).to eq({
+              grouping_id: nil, submission_id: nil, result_id: nil
+            })
+          end
+        end
+      end
+
+      context 'accessing next_grouping' do
+        context 'ta and instructor #next_grouping with filters' do
+          before(:each) do
+            create :ta_membership, role: ta, grouping: groupings[3]
+          end
+          include_examples 'ta and instructor #next_grouping with filters'
+        end
+
+        include_examples 'instructor and ta #next_grouping with different orderings'
+        context 'filter by tas' do
+          let(:ta1) { create :ta }
+          let(:ta2) { create :ta }
+          let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
+          let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
+          let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
+          let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+
+          context 'when a ta has been picked' do
+            it 'should return the next group with a larger group name and NOT filter by selected ta' do
+              get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                            id: grouping1.current_result.id,
+                                            direction: 1, filterData: { tas: [ta1.user.user_name] } }
+              expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+            end
           end
         end
       end
