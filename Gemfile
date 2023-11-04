@@ -100,7 +100,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
-  gem 'bullet'
+  gem 'bullet', '~> 7.1.2'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks'

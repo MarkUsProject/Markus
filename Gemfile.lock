@@ -116,7 +116,7 @@ GEM
     brakeman (6.0.1)
     browser (5.3.1)
     builder (3.2.4)
-    bullet (7.0.7)
+    bullet (7.1.2)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     capybara (3.39.2)
@@ -501,7 +501,7 @@ DEPENDENCIES
   binding_of_caller
   bootsnap
   brakeman
-  bullet
+  bullet (~> 7.1.2)
   capybara
   combine_pdf
   config
