@@ -27,6 +27,12 @@ updates:
     fortawesome:
       patterns:
         - "@fortawesome*"
+    rails:
+      patterns:
+        - "@rails*"
+    rjsf:
+      patterns:
+        - "@rjsf*"
 - package-ecosystem: pip
   directory: "/"
   schedule:
