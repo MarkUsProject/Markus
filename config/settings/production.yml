@@ -16,6 +16,8 @@ rails:
     delivery_method: smtp
     smtp_settings: {}
     perform_deliveries: false
+  action_cable:
+    web_socket_allowed_request_origins: <%= %w[] %>
 
 i18n:
   available_locales:
@@ -37,5 +39,3 @@ autotest:
 lti:
   domains: <%= %w[canvas.instructure.com] %>
   token_endpoint: "https://canvas.instructure.com/login/oauth2/token"
-
-web_socket_allowed_request_origins: <%= %w[] %>

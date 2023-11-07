@@ -16,6 +16,8 @@ rails:
     default_url_options:
       host: 'host.docker.internal'
       port: '3000'
+  action_cable:
+    web_socket_allowed_request_origins: <%= %w[] %>
 
 puma:
   worker_timeout: 100000000
@@ -43,5 +45,3 @@ autotest:
 lti:
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
-
-web_socket_allowed_request_origins: <%= %w[host.docker.internal] %>
