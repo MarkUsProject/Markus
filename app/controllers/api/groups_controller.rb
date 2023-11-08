@@ -11,10 +11,14 @@ module Api
     def create
       assignment = Assignment.find(params[:assignment_id])
       begin
-        assignment.add_group_api(params[:new_group_name])
-        # Successfully created the group; render success
-        render 'shared/http_status', locals: { code: '201', message:
-          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+        group = assignment.add_group_api(params[:new_group_name])
+        # We created a new group for that assignment
+        respond_to do |format|
+          format.xml do
+            render xml: group.to_xml(root: 'group', skip_types: 'true')
+          end
+          format.json { render json: group.to_json }
+        end
       rescue StandardError => e
         # cannot create extension as it already exists; render failure
         render 'shared/http_status', locals: { code: '422', message:
