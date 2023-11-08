@@ -5,6 +5,23 @@ module Api
     # Define default fields to display for index and show methods
     DEFAULT_FIELDS = [:id, :group_name].freeze
 
+    # Create an assignment's group
+    # Requires: assignment_id
+    # Optional: filter, fields
+    def create
+      assignment = Assignment.find(params[:assignment_id])
+      begin
+        assignment.add_group_api(params[:new_group_name])
+        # Successfully created the group; render success
+        render 'shared/http_status', locals: { code: '201', message:
+          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+      rescue StandardError => e
+        # cannot create extension as it already exists; render failure
+        render 'shared/http_status', locals: { code: '422', message:
+          e.message }, status: :unprocessable_entity
+      end
+    end
+
     # Returns an assignment's groups along with their attributes
     # Requires: assignment_id
     # Optional: filter, fields
