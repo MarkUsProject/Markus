@@ -107,6 +107,17 @@ describe MainController do
         sign_in instructor
         expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
       end
+      context 'when logged in during lti launch' do
+        let(:lti) { create :lti_deployment }
+        before :each do
+          sign_in instructor
+          cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
+        end
+        it 'redirects to course picker if lti data is present' do
+          get :login
+          expect(response.status).to eq('302')
+        end
+      end
     end
     context 'after logging out' do
       before(:each) do

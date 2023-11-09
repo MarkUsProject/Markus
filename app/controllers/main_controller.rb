@@ -23,7 +23,11 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      if @real_user.admin_user?
+      if cookies.encrypted[:lti_data].present?
+        lti_data = JSON.parse(cookies.encrypted[:lti_data]).symbolize_keys
+        redirect_url = lti_data.key?(:lti_redirect) ? lti_data[:lti_redirect] : root_url
+        redirect_to redirect_url
+      elsif @real_user.admin_user?
         redirect_to(admin_path)
       elsif allowed_to?(:role_is_switched?)
         redirect_to course_assignments_path(session[:role_switch_course_id])
