@@ -27,6 +27,8 @@ rails:
     default_url_options:
       host: 'localhost'
       port: '3000'
+  action_cable:
+    web_socket_allowed_request_origins: <%= %w[] %>
 
 puma:
   workers: 3
