@@ -1173,7 +1173,8 @@ class Assignment < Assessment
                       .group_by(&:first)
                       .transform_values { |arr| arr.filter_map(&:second).sum }
 
-    max_mark = criteria.filter_map(&:max_mark).sum
+    # The sum is converted from a BigDecimal to a float so that when it is passed to the frontend it is not a string
+    max_mark = Float(criteria.filter_map { |c| c.bonus ? nil : c.max_mark }.sum.round(2))
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     collection_dates = all_grouping_collection_dates
