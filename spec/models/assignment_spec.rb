@@ -1967,6 +1967,27 @@ describe Assignment do
           expect(data.pluck(:grace_credits_used).count(nil)).to be 2
         end
       end
+
+      context 'when the assignment has criteria, including bonus criteria' do
+        let!(:criterion1) { create :flexible_criterion, max_mark: 1, assignment: assignment }
+        let!(:criterion2) { create :flexible_criterion, max_mark: 3, assignment: assignment }
+        let!(:criterion3) { create :flexible_criterion, max_mark: 6, assignment: assignment, bonus: true }
+        let!(:submission) { create :submission, grouping: groupings[1], submission_version_used: true }
+        let!(:result) { create :incomplete_result, submission: submission }
+
+        it 'excludes the bonus criterion from calculating the max_mark' do
+          expect(data.pluck(:max_mark)).to eq([4.0] * groupings.size)
+        end
+
+        it 'includes all marks (including bonus marks) for the grouping final_grade' do
+          result.marks.find_by(criterion: criterion1).update!(mark: 1)
+          result.marks.find_by(criterion: criterion2).update!(mark: 2)
+          result.marks.find_by(criterion: criterion3).update!(mark: 6)
+          row = data.find { |r| r[:group_name] == groupings[1].group.group_name }
+          expect(row[:final_grade]).to eq(result.marks.pluck(:mark).sum)
+        end
+      end
+
       context '#zip_automated_test_files' do
         let(:content) { File.read assignment.zip_automated_test_files(instructor) }
         subject { content }
