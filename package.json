@@ -9,7 +9,7 @@
     "@rails/actioncable": "^7.0.4-3",
     "@rails/ujs": "^7.0.6",
     "@rjsf/core": "^5.13.4",
-    "@rjsf/validator-ajv8": "^5.13.2",
+    "@rjsf/validator-ajv8": "^5.13.4",
     "chart.js": "^4.4.0",
     "core-js": "^3.33.2",
     "dompurify": "^3.0.6",
