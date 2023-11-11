@@ -93,6 +93,9 @@ Config.setup do |config|
           required(:perform_deliveries).filled(:bool)
           required(:deliver_later_queue_name).maybe(:string)
         end
+        optional(:action_cable).hash do
+          optional(:web_socket_allowed_request_origins).array(:string)
+        end
       end
       required(:puma).hash do
         required(:workers).filled(:integer, gt?: -1)
