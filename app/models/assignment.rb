@@ -1061,7 +1061,7 @@ class Assignment < Assessment
       }
     end
 
-    {
+    result = {
       groups: groups,
       criteria: criteria,
       graders: graders,
@@ -1070,6 +1070,20 @@ class Assignment < Assessment
       hide_unassigned_criteria: self.hide_unassigned_criteria,
       sections: assignment.course.sections.pluck(:id, :name).to_h
     }
+
+    # ---- NEW CODE TO ADD MEMBERS TO EACH GROUP IN THE CURRENT DATA SET -----
+    members_data = assignment.groupings.left_outer_joins(student_memberships: { role: :user })
+                             .pluck('groupings.id', 'users.user_name', 'memberships.membership_status', 'roles.hidden')
+
+    grouped_data = members_data.group_by { |x| x[0] }
+    grouped_data.each_value { |a| a.each { |b| b.delete_at(0) } }
+
+    # pp grouped_data
+
+    result[:groups].each { |group| group[:members] = grouped_data[group[:_id]] }
+    # ---- END OF NEW CODE -----
+
+    result # returning 'result'
   end
 
   # Retrieve data for submissions table.

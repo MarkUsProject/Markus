@@ -15,30 +15,10 @@ class GradersController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
 
-    # We will complement the data hash returned by the Assignment.current_grader_data method by adding 'groups.members'
-    data = @assignment.current_grader_data
-
-    data[:groups].each do |group|
-      members = Grouping.find(group[:_id]).student_memberships
-
-      # This is the format used to represent members in the Assignment.all_grouping_data used in the
-      # groups_controller#index action, to be consistent and ensure minimum changes are required in the frontend.
-      transformed_members = members.map do |student|
-        [
-          student.user.user_name,
-          student.membership_status,
-          student.role.hidden
-        ]
-      end
-
-      # Adding the "student-members list" as an attribute to "data.groups"
-      group[:members] = transformed_members
-    end
-
     respond_to do |format|
       format.html
       format.json do
-        render json: data
+        render json: @assignment.current_grader_data
       end
     end
   end
