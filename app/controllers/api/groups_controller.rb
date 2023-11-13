@@ -12,7 +12,6 @@ module Api
       assignment = Assignment.find(params[:assignment_id])
       begin
         group = assignment.add_group_api(params[:new_group_name])
-        # We created a new group for that assignment
         respond_to do |format|
           format.xml do
             render xml: group.to_xml(root: 'group', skip_types: 'true')
@@ -20,7 +19,6 @@ module Api
           format.json { render json: group.to_json }
         end
       rescue StandardError => e
-        # cannot create extension as it already exists; render failure
         render 'shared/http_status', locals: { code: '422', message:
           e.message }, status: :unprocessable_entity
       end
