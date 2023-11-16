@@ -1,15 +1,17 @@
 import React from "react";
+import TagModal from "../Helpers/tag_modal";
 import Modal from "react-modal";
+import PropTypes from "prop-types";
 
-class CreateTagModal extends React.Component {
+export default class CreateTagModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       name: "",
       description: "",
-      maxCharsName: 30,
-      maxCharsDescription: 120,
     };
+    this.maxCharsName = 30;
+    this.maxCharsDescription = 120;
   }
 
   componentDidMount() {
@@ -17,12 +19,12 @@ class CreateTagModal extends React.Component {
   }
 
   handleNameChange = event => {
-    const newName = event.target.value.slice(0, this.state.maxCharsName);
+    const newName = event.target.value.slice(0, this.maxCharsName);
     this.setState({name: newName});
   };
 
   handleDescriptionChange = event => {
-    const newDescription = event.target.value.slice(0, this.state.maxCharsDescription);
+    const newDescription = event.target.value.slice(0, this.maxCharsDescription);
     this.setState({description: newDescription});
   };
 
@@ -34,13 +36,12 @@ class CreateTagModal extends React.Component {
         description: this.state.description,
       },
       grouping_id: this.props.grouping_id,
-      commit: "Save",
     };
     const options = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRF-Token": AUTH_TOKEN,
+        "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
       },
       body: JSON.stringify(data),
     };
@@ -49,7 +50,7 @@ class CreateTagModal extends React.Component {
       options
     )
       .catch(error => {
-        console.error("Error submitting form: ", error);
+        console.error(`Error submitting form: ${error.message}`);
       })
       .finally(() => {
         this.setState(
@@ -58,76 +59,36 @@ class CreateTagModal extends React.Component {
             description: "",
           },
           () => {
-            this.props.closeModal();
+            this.props.onRequestClose();
           }
         );
       });
   };
 
-  /**
-   * TODO:
-   * React related:
-   * 3) dim background when modal open? Possible props from react-modal / css?
-   */
   render() {
     return (
-      this.props.loading !== "loading" && (
-        <Modal
-          className="react-modal dialog"
-          isOpen={this.props.isOpen}
-          onRequestClose={this.props.closeModal}
-          id="create_new_tag"
-          data-testid="create_new_tag"
-        >
-          <h1>
-            {I18n.t("helpers.submit.create", {
-              model: I18n.t("activerecord.models.tag.one"),
-            })}
-          </h1>
-          <form onSubmit={this.onSubmit}>
-            <div className={"modal-container-vertical"}>
-              <p className="alignleft">
-                {I18n.t("activerecord.attributes.tags.name")} ({this.state.name.length} /{" "}
-                {this.state.maxCharsName})
-              </p>
-              <textarea
-                required={true}
-                id="tag_name"
-                data-testid="tag_name"
-                className="clear-alignment"
-                value={this.state.name}
-                onChange={this.handleNameChange}
-                maxLength={this.state.maxCharsName}
-              />
-              <p className="alignleft">
-                {I18n.t("activerecord.attributes.tags.description")} (
-                {this.state.description.length} / {this.state.maxCharsDescription})
-              </p>
-              <textarea
-                id="tag_description"
-                className="clear-alignment"
-                value={this.state.description}
-                onChange={this.handleDescriptionChange}
-                maxLength={this.state.maxCharsDescription}
-              />
-            </div>
-            <div className={"modal-container"}>
-              <button type="submit" value="Submit" disabled={!this.state.name}>
-                {I18n.t("save")}
-              </button>
-              <button type="reset" onClick={this.props.closeModal}>
-                {I18n.t("cancel")}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )
+      <TagModal
+        name={this.state.name}
+        description={this.state.description}
+        handleNameChange={this.handleNameChange}
+        handleDescriptionChange={this.handleDescriptionChange}
+        maxCharsName={this.maxCharsName}
+        maxCharsDescription={this.maxCharsDescription}
+        isOpen={this.props.isOpen}
+        onRequestClose={this.props.onRequestClose}
+        tagModalHeading={I18n.t("helpers.submit.create", {
+          model: I18n.t("activerecord.models.tag.one"),
+        })}
+        onSubmit={this.onSubmit}
+      />
     );
   }
 }
 
-// export function makeCreateTagModal(elem, props) {
-//   return render(<CreateTagModal {...props} />, elem);
-// }
-
-export default CreateTagModal;
+CreateTagModal.propType = {
+  isOpen: PropTypes.bool.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+  grouping_id: PropTypes.number,
+  course_id: PropTypes.number.isRequired,
+  assignment_id: PropTypes.number.isRequired,
+};

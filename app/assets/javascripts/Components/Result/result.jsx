@@ -925,9 +925,8 @@ class Result extends React.Component {
             assignment_id={this.state.assignment_id}
             course_id={this.props.course_id}
             grouping_id={this.state.grouping_id}
-            loading={this.state.loading}
             isOpen={this.state.isCreateTagModalOpen}
-            closeModal={this.closeCreateTagModal}
+            onRequestClose={this.closeCreateTagModal}
           />
           <div id="panes">
             <div id="left-pane">

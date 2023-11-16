@@ -47,13 +47,6 @@ class TagTable extends React.Component {
       });
   };
 
-  // edit = tag_id => {
-  //   $.get({
-  //     url: Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id),
-  //     dataType: "script",
-  //   });
-  // };
-
   edit = tag_id => {
     const currentTag = this.state.tags.find(tag => tag.id === tag_id);
     this.setState({
@@ -126,15 +119,16 @@ class TagTable extends React.Component {
     });
   };
 
-  // see TODO in create_tag_modal.jsx
   render() {
     return (
       <React.Fragment>
-        <button type="submit" onClick={this.onCreateTagButtonClick}>
-          {I18n.t("helpers.submit.create", {
-            model: I18n.t("activerecord.models.tag.one"),
-          })}
-        </button>
+        {!this.state.loading && (
+          <button type="submit" onClick={this.onCreateTagButtonClick}>
+            {I18n.t("helpers.submit.create", {
+              model: I18n.t("activerecord.models.tag.one"),
+            })}
+          </button>
+        )}
         <ReactTable
           data={this.state.tags}
           columns={this.columns()}
@@ -145,9 +139,8 @@ class TagTable extends React.Component {
           <CreateTagModal
             assignment_id={this.props.assignment_id}
             course_id={this.props.course_id}
-            loading={this.state.loading}
             isOpen={this.state.isCreateTagModalOpen}
-            closeModal={this.closeCreateTagModal}
+            onRequestClose={this.closeCreateTagModal}
           />
         )}
         {this.state.isEditTagModalOpen && (
@@ -155,9 +148,8 @@ class TagTable extends React.Component {
             assignment_id={this.props.assignment_id}
             course_id={this.props.course_id}
             tag_id={this.state.currentTagId}
-            loading={this.state.loading}
             isOpen={this.state.isEditTagModalOpen}
-            closeModal={this.closeEditTagModal}
+            onRequestClose={this.closeEditTagModal}
             currentTagName={this.state.currentTagName}
             currentTagDescription={this.state.currentTagDescription}
           />

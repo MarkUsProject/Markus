@@ -37,12 +37,15 @@ class TagsController < ApplicationController
     tag_params = params.require(:tag).permit(:name, :description)
     new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find_by(id: params[:assignment_id])))
 
-    if new_tag.save && params[:grouping_id]
-      grouping = Grouping.find(params[:grouping_id])
-      grouping.tags << new_tag
+    if new_tag.save
+      if params[:grouping_id]
+        grouping = Grouping.find(params[:grouping_id])
+        grouping.tags << new_tag
+      end
+      flash_message(:success, I18n.t('flash.actions.create.success', resource_name: new_tag.model_name.human))
+    else
+      flash_message(:error, I18n.t('flash.actions.create.error', resource_name: new_tag.model_name.human))
     end
-
-    respond_with new_tag, location: -> { request.headers['Referer'] || root_path }
   end
 
   def update

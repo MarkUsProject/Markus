@@ -1,14 +1,13 @@
 import React from "react";
 import {render, screen, fireEvent, waitFor, cleanup} from "@testing-library/react";
-import CreateTagModal from "../Modals/create_tag_modal";
+import EditTagModal from "../Modals/edit_tag_modal";
 import Modal from "react-modal";
 import fetchMock from "jest-fetch-mock";
 
-describe("CreateTagModal", () => {
+describe("EditTagModal", () => {
   let props;
   let component;
   let mockToken;
-  let tagName;
 
   beforeAll(() => {
     mockToken = "mockToken";
@@ -19,20 +18,18 @@ describe("CreateTagModal", () => {
 
   beforeEach(() => {
     props = {
-      isOpen: true,
-      onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
-      grouping_id: 1,
       course_id: 1,
       assignment_id: 1,
+      tag_id: 1,
+      isOpen: true,
+      onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
+      currentTagName: "tag 1",
+      currentTagDescription: "",
     };
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-    component = render(<CreateTagModal {...props} />);
-
-    // Enable submit
-    tagName = "Name";
-    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: tagName}});
+    component = render(<EditTagModal {...props} />);
   });
 
   afterEach(() => {
@@ -41,16 +38,15 @@ describe("CreateTagModal", () => {
   });
 
   it("should be called with correct params on successful submit", async () => {
-    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: tagName}});
     const data = {
       tag: {
-        name: tagName,
-        description: "",
+        name: props.currentTagName,
+        description: props.currentTagDescription,
       },
       grouping_id: props.grouping_id,
     };
     const options = {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": mockToken,
@@ -58,9 +54,7 @@ describe("CreateTagModal", () => {
       body: JSON.stringify(data),
     };
     fetchMock.mockOnce(async req => {
-      expect(req.url).toEqual(
-        Routes.course_tags_path(props.course_id, {assignment_id: props.assignment_id})
-      );
+      expect(req.url).toEqual(Routes.course_tag_path(props.course_id, props.tag_id));
       expect(req.method).toBe(options.method);
       expect(req.headers.get("Content-Type")).toEqual(options.headers["Content-Type"]);
       expect(req.headers.get("X-CSRF-Token")).toEqual(options.headers["X-CSRF-Token"]);
@@ -89,10 +83,7 @@ describe("CreateTagModal", () => {
     fireEvent.click(screen.getByText(I18n.t("save")));
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(mockedConsoleError).toHaveBeenNthCalledWith(
-        1,
-        `Error submitting form: ${customError.message}`
-      );
+      expect(mockedConsoleError).toHaveBeenNthCalledWith(1, customError.message);
     });
   });
 });
