@@ -5,6 +5,8 @@ import PropTypes from "prop-types";
 export default class TagModal extends React.Component {
   constructor(props) {
     super(props);
+    this.maxCharsName = 30;
+    this.maxCharsDescription = 120;
   }
 
   render() {
@@ -21,7 +23,7 @@ export default class TagModal extends React.Component {
             <div className="modal-container-vertical">
               <p className="alignleft" data-testid="tag_name_label">
                 {I18n.t("activerecord.attributes.tags.name")} ({this.props.name.length} /
-                {this.props.maxCharsName})
+                {this.maxCharsName})
               </p>
               <textarea
                 required={true}
@@ -31,11 +33,11 @@ export default class TagModal extends React.Component {
                 role="textbox"
                 value={this.props.name}
                 onChange={this.props.handleNameChange}
-                maxLength={this.props.maxCharsName}
+                maxLength={this.maxCharsName}
               />
               <p className="alignleft" data-testid="tag_description_label">
                 {I18n.t("activerecord.attributes.tags.description")} (
-                {this.props.description.length} / {this.props.maxCharsDescription})
+                {this.props.description.length} / {this.maxCharsDescription})
               </p>
               <textarea
                 id="tag_description"
@@ -44,7 +46,7 @@ export default class TagModal extends React.Component {
                 data-testid="tag_description_input"
                 value={this.props.description}
                 onChange={this.props.handleDescriptionChange}
-                maxLength={this.props.maxCharsDescription}
+                maxLength={this.maxCharsDescription}
               />
             </div>
             <div className={"modal-container"}>
@@ -78,8 +80,6 @@ TagModal.propTypes = {
   onRequestClose: PropTypes.func.isRequired,
   tagModalHeading: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  maxCharsName: PropTypes.number.isRequired,
-  maxCharsDescription: PropTypes.number.isRequired,
   handleNameChange: PropTypes.func.isRequired,
   handleDescriptionChange: PropTypes.func.isRequired,
 };

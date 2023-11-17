@@ -10,8 +10,6 @@ export default class EditTagModal extends React.Component {
       name: this.props.currentTagName,
       description: this.props.currentTagDescription,
     };
-    this.maxCharsName = 30;
-    this.maxCharsDescription = 120;
   }
 
   componentDidMount() {
@@ -53,8 +51,6 @@ export default class EditTagModal extends React.Component {
         description={this.state.description}
         handleNameChange={event => this.setState({name: event.target.value})}
         handleDescriptionChange={event => this.setState({description: event.target.value})}
-        maxCharsName={this.maxCharsName}
-        maxCharsDescription={this.maxCharsDescription}
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
         tagModalHeading={I18n.t("helpers.submit.update", {

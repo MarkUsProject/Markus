@@ -62,13 +62,6 @@ class TagsController < ApplicationController
     head :ok
   end
 
-  # Dialog to edit a tag.
-  def edit_tag_dialog
-    @tag = record
-
-    render partial: 'tags/edit_dialog', handlers: [:erb]
-  end
-
   ###  Upload/Download Methods  ###
 
   def download

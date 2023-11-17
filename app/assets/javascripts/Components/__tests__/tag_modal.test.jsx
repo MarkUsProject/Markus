@@ -15,8 +15,6 @@ describe("TagModal", () => {
       onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
       tagModalHeading: "Heading",
       onSubmit: jest.fn().mockImplementation(() => (props.isOpen = false)),
-      maxCharsName: 30,
-      maxCharsDescription: 120,
       handleNameChange: jest.fn().mockImplementation(() => {}),
       handleDescriptionChange: jest.fn().mockImplementation(() => {}),
     };
