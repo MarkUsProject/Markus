@@ -18,16 +18,6 @@ export default class EditTagModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  handleNameChange = event => {
-    const newName = event.target.value.slice(0, this.state.maxCharsName);
-    this.setState({name: newName});
-  };
-
-  handleDescriptionChange = event => {
-    const newDescription = event.target.value.slice(0, this.state.maxCharsDescription);
-    this.setState({description: newDescription});
-  };
-
   onSubmit = event => {
     event.preventDefault();
     const data = {
@@ -61,8 +51,8 @@ export default class EditTagModal extends React.Component {
       <TagModal
         name={this.state.name}
         description={this.state.description}
-        handleNameChange={this.handleNameChange}
-        handleDescriptionChange={this.handleDescriptionChange}
+        handleNameChange={event => this.setState({name: event.target.value})}
+        handleDescriptionChange={event => this.setState({description: event.target.value})}
         maxCharsName={this.maxCharsName}
         maxCharsDescription={this.maxCharsDescription}
         isOpen={this.props.isOpen}

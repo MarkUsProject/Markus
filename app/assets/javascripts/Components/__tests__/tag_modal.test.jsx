@@ -57,6 +57,9 @@ describe("TagModal", () => {
       .queryAllByRole("textbox", {hidden: true})
       .map(textarea => textarea.getAttribute("data-testid"));
     expect(inputDataTestIds.sort()).toEqual(["tag_name_input", "tag_description_input"].sort());
+    // verify maxLength for the inputs
+    expect(screen.getByTestId("tag_name_input")).toHaveAttribute("maxLength", "30");
+    expect(screen.getByTestId("tag_description_input")).toHaveAttribute("maxLength", "120");
   });
 
   describe("When name filled", () => {
