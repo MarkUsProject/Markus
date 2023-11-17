@@ -2580,6 +2580,35 @@ describe Assignment do
         end
       end
     end
+
+    # --- New Test ---
+    # Ensures that the object returned by the Assignment.current_grader_data method has the desired structure
+    # which is expected (contractually) by front end code (that requests this data).
+    context 'structure of output data' do
+      it 'follows required structure' do
+        filled_assignment = create(:assignment_with_peer_review_and_groupings_results)
+
+        result = filled_assignment.current_grader_data
+
+        expect(result).to include(
+          groups: be_an(Array),
+          criteria: be_an(Array),
+          graders: be_an(Array),
+          assign_graders_to_criteria: be_in([true, false]),
+          anonymize_groups: be_in([true, false]),
+          hide_unassigned_criteria: be_in([true, false]),
+          sections: be_a(Hash)
+        )
+
+        result[:groups].each do |group|
+          expect(group).to include(members: be_an(Array))
+
+          group[:members].each do |member|
+            expect(member.length).to eq(3)
+          end
+        end
+      end
+    end
   end
 
   describe '#current_results' do
