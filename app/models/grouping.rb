@@ -725,12 +725,18 @@ class Grouping < ApplicationRecord
   end
 
   def get_random_incomplete(current_role)
-    if current_role.ta?
+    if current_role.ta? && self.assignment.assign_graders_to_criteria
+      assigned_criteria = self.assignment.criteria.joins(:criterion_ta_associations)
+                              .where(criterion_ta_associations: { ta_id: current_role.id })
+
+      results = self.assignment.current_results.joins(:marks, grouping: :ta_memberships)
+                    .where('memberships.role_id': current_role.id, 'marks.criterion_id': assigned_criteria.ids)
+                    .where('marks.mark': nil)
+    elsif current_role.ta?
       results = self.assignment.current_results.joins(grouping: :tas).where(
         marking_state: Result::MARKING_STATES[:incomplete],
         'roles.id': current_role.id
       )
-
     else
       results = self.assignment.current_results.where(
         marking_state: Result::MARKING_STATES[:incomplete]
