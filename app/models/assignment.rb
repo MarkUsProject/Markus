@@ -1072,14 +1072,33 @@ class Assignment < Assessment
     }
 
     # ---- NEW CODE TO ADD MEMBERS TO EACH GROUP IN THE CURRENT DATA SET -----
-    members_data = assignment.groupings.left_outer_joins(student_memberships: { role: :user })
+
+    # Defining the following behavior: if we try to access a group_id (key) that does not exist in the hash, then it
+    # will define a default value (an empty array) for that key.
+    result.default_proc = proc { |h, k| h[k] = [] }
+
+    # Using an inner join, which "cascades" across all nested joins. That is, the join between groupings and
+    # student_memberships is an INNER JOIN, and the same is true for the join between student_membership's and role's,
+    # as well as between role's and user's.
+    # The main reason an INNER JOIN is used is so that we don't get back any groups with no student memberships
+    # (in which case other table columns would be given the value 'nil')
+    members_data = assignment.groupings.joins(student_memberships: { role: :user })
                              .pluck('groupings.id', 'users.user_name', 'memberships.membership_status', 'roles.hidden')
 
+    # grouping the data by 'grouping_id' (the first element of each nested array)
     grouped_data = members_data.group_by { |x| x[0] }
+    # Removing the first element of each nested array (no longer needed)
     grouped_data.each_value { |a| a.each { |b| b.delete_at(0) } }
 
-    # pp grouped_data
+    # This is very important. Since 'grouped_data' is the processed result of an inner join, it will most likely
+    # not include every single grouping (if that grouping has no student_membership's). But we might try to access
+    # the key (id) of a group that does not exist in 'grouped_data' (in particular when we merge with the remaining
+    # data in a few lines). This will initialize an empty array instead of throwing an error.
+    grouped_data.default_proc = proc { |h, k| h[k] = [] }
 
+    # puts grouped_data[737]
+
+    # Final Merge, utilizing the result[:groups]._id attribute
     result[:groups].each { |group| group[:members] = grouped_data[group[:_id]] }
     # ---- END OF NEW CODE -----
 
