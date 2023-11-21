@@ -68,7 +68,7 @@ class GradersManager extends React.Component {
         if (this.groupsTable) this.groupsTable.resetSelection();
         if (this.criteriaTable) this.criteriaTable.resetSelection();
 
-        var inactive_groups_count = 0;
+        let inactive_groups_count = 0;
         res.groups.forEach(group => {
           if (group.members.length && group.members.every(member => member[2])) {
             group.inactive = true;
@@ -728,7 +728,7 @@ class GradersActionBox extends React.Component {
   render = () => {
     let showHiddenGraderTooltip = "";
     let showHiddenGroupsTooltip = "";
-    if (this.props.hiddenStudentsCount !== null && this.props.hiddenGroupsCount !== null) {
+    if (this.props.hiddenGradersCount !== null && this.props.hiddenGroupsCount !== null) {
       showHiddenGraderTooltip = `${I18n.t("graders.inactive_graders_count", {
         count: this.props.hiddenGradersCount,
       })}`;

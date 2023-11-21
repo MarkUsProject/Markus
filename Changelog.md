@@ -15,11 +15,11 @@
 - Ensure bonus marks are not included in assignment "out of" in submissions table (#6836)
 - Ensure assignment "out of" in submissions table is rounded to two decimal places (#6836)
 - Added POST API for Group Creation (#6834)
+- Allow inactive groups in the graders table to be toggled for display (#6778)
 
 ## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 - Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
-- Allow inactive groups in the graders tab to be displayed (#6778)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)
