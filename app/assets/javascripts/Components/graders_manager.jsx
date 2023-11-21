@@ -760,8 +760,13 @@ class GradersActionBox extends React.Component {
             checked={this.props.showHiddenGroups}
             onChange={this.props.updateShowHiddenGroups}
             className={"hide-user-checkbox"}
+            data-testid={"show_hidden_groups"}
           />
-          <label title={showHiddenGroupsTooltip} htmlFor="show_hidden_groups">
+          <label
+            title={showHiddenGroupsTooltip}
+            htmlFor="show_hidden_groups"
+            data-testid={"show_hidden_groups_tooltip"}
+          >
             {I18n.t("groups.display_inactive")}
           </label>
         </span>
@@ -785,3 +790,4 @@ class GradersActionBox extends React.Component {
 export function makeGradersManager(elem, props) {
   render(<GradersManager {...props} />, elem);
 }
+export {GradersManager};
