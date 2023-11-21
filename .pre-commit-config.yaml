@@ -1,6 +1,6 @@
 repos:
   -   repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
+      rev: v4.5.0
       hooks:
         -   id: check-yaml
             exclude: |
@@ -15,7 +15,7 @@ repos:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v15.10.3
+      rev: v15.11.0
       hooks:
         - id: stylelint
           additional_dependencies: [
@@ -33,7 +33,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.56.4
+    rev: v1.57.2
     hooks:
       - id: rubocop
         args: ["--autocorrect"]

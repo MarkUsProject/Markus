@@ -57,7 +57,7 @@ en:
     marks_released: The marks have been released. You cannot change the grades.
     next_submission: Next Submission
     no_feedback_files: "[No feedback files available]"
-    no_incomplete_submission: There are no more incomplete submissions!
+    no_incomplete_submission: There are no other incomplete submissions!
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
     overridden_deductions: Overridden
