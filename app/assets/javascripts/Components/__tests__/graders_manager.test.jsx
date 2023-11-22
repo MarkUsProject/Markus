@@ -28,6 +28,19 @@ describe("For the GradersManager's display of inactive groups", () => {
         graders: [],
         criteria_coverage_count: 0,
       },
+      {
+        _id: 15,
+        members: [
+          ["d2lifese", "inviter", false],
+          ["a3kjcbod", "accepted", false],
+        ],
+        inactive: false,
+        grace_credits: 5,
+        remaining_grace_credits: 4,
+        group_name: "group_0014",
+        graders: [],
+        criteria_coverage_count: 0,
+      },
     ];
     fetch.mockReset();
     fetch.mockResolvedValueOnce({
