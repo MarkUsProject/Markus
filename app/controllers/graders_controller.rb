@@ -87,6 +87,45 @@ class GradersController < ApplicationController
       end
     end
 
+    # '%w' syntax is a Ruby idiom that, preferred over ["...", "...", ...] syntax for its conciseness and readability
+    # It represents an array of strings
+    if %w[assign random_assign].include? params[:global_actions]
+      inactive_graders = [] # used to filter the 'grader_ids' array and to throw a custom flash message error
+
+      # Solving N+1 querying problem by executing the SQL query:
+      # SELECT * FROM roles WHERE id IN (..., ..., ..., ...)
+      # (thus making one database request in the beginning instead of one for each grader id)
+      graders = Ta.where(id: grader_ids)
+
+      # checking for inactive graders
+      graders.each do |grader|
+        if grader.hidden
+          inactive_graders.push(grader)
+        end
+      end
+
+      # Throw red flash message error if any inactive graders exist
+      # Note that after this check we proceed with any 'active' graders (the survivors of graders_id)
+      if inactive_graders.size > 0
+        flash_now(:error,
+                  I18n.t('groups.invite_member.errors.inactive_grader',
+                         user_names: inactive_graders.map(&:user_name).join(', ')))
+      end
+
+      inactive_grader_ids = inactive_graders.map(&:id)
+
+      # Removing id's (from grader_ids) corresponding to inactive graders
+      # The 'reject' method removes all array elements for which the provided block returns true
+      # The '!' indicates that it mutates the original array
+      grader_ids.reject! { |grader_id| inactive_grader_ids.include? grader_id.to_i }
+
+      # inactive_graders.each do |grader|
+      #   grader_ids.de
+      # end
+      # # Reassigning grader_id to only include active graders
+      # grader_ids = active_grader_ids
+    end
+
     case params[:current_table]
     when 'groups_table'
       grouping_ids = params[:groupings]
@@ -188,27 +227,10 @@ class GradersController < ApplicationController
     Grouping.randomly_assign_tas(grouping_ids, grader_ids, weightings, @assignment)
   end
 
+  # This helper is only expected to be invoked from within the global_actions method, which
+  # filters 'grader_ids' to remove inactive graders (in the cases of assign and random_assign)
   def assign_all_graders(grouping_ids, grader_ids)
-    inactive_graders = [] # will be used to throw flash message error
-    active_grader_ids = [] # these will be assigned, regardless of the existence of inactive graders
-
-    grader_ids.each do |id|
-      grader = Ta.find(id)
-      if grader.hidden
-        inactive_graders.push(grader)
-      else
-        active_grader_ids.push(id)
-      end
-    end
-
-    # Adding all active graders
-    Grouping.assign_all_tas(grouping_ids, active_grader_ids, @assignment)
-
-    # Throw red flash message error if any inactive graders exist
-    if inactive_graders.size > 0
-      raise I18n.t('groups.invite_member.errors.inactive_grader',
-                   user_names: inactive_graders.map(&:user_name).join(', '))
-    end
+    Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
   end
 
   def unassign_graders(grouping_ids, grader_ids)
