@@ -5,7 +5,7 @@ import Modal from "react-modal";
 
 describe("TagModal", () => {
   let props;
-  let component;
+  let rerenderComp;
 
   beforeEach(() => {
     props = {
@@ -21,12 +21,13 @@ describe("TagModal", () => {
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-    component = render(<TagModal {...props} />);
+    const {rerender} = render(<TagModal {...props} />);
+    rerenderComp = comp => {
+      rerender(comp);
+    };
   });
 
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(cleanup);
 
   it("should close on Cancel", () => {
     fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: "Name"}});
@@ -55,20 +56,17 @@ describe("TagModal", () => {
       .queryAllByRole("textbox", {hidden: true})
       .map(textarea => textarea.getAttribute("data-testid"));
     expect(inputDataTestIds.sort()).toEqual(["tag_name_input", "tag_description_input"].sort());
-    // verify maxLength for the inputs
+    // verify maxLength for tag name input
     expect(screen.getByTestId("tag_name_input")).toHaveAttribute("maxLength", "30");
-    expect(screen.getByTestId("tag_description_input")).toHaveAttribute("maxLength", "120");
   });
 
   describe("When name filled", () => {
     beforeEach(() => {
-      // cleanup needed here to clean up the previous beforeEach
-      cleanup();
-
-      props.name = "Name";
-      // rerender with the non empty name
-      component = render(<TagModal {...props} />);
+      props.name = "name";
+      rerenderComp(<TagModal {...props} />);
     });
+
+    afterEach(cleanup);
 
     it("should be submittable", async () => {
       await waitFor(() => {

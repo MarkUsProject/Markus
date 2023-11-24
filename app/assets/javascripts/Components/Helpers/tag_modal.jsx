@@ -6,7 +6,6 @@ export default class TagModal extends React.Component {
   constructor(props) {
     super(props);
     this.maxCharsName = 30;
-    this.maxCharsDescription = 120;
   }
 
   render() {
@@ -36,8 +35,7 @@ export default class TagModal extends React.Component {
                 maxLength={this.maxCharsName}
               />
               <p className="alignleft" data-testid="tag_description_label">
-                {I18n.t("activerecord.attributes.tags.description")} (
-                {this.props.description.length} / {this.maxCharsDescription})
+                {I18n.t("activerecord.attributes.tags.description")}
               </p>
               <textarea
                 id="tag_description"
@@ -46,7 +44,6 @@ export default class TagModal extends React.Component {
                 data-testid="tag_description_input"
                 value={this.props.description}
                 onChange={this.props.handleDescriptionChange}
-                maxLength={this.maxCharsDescription}
               />
             </div>
             <div className={"modal-container"}>
