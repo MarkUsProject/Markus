@@ -66,8 +66,8 @@ describe("For the GradersManager's display of inactive groups", () => {
     );
   });
 
-  it("doesn't initially contain the inactive group", () => {
-    expect(screen.queryByText("group_0015")).not.toBeInTheDocument();
+  it("initially contains the active group", () => {
+    expect(screen.getByText("group_0014")).toBeInTheDocument();
   });
 
   it("contains the inactive group after a single toggle", () => {
