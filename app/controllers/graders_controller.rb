@@ -97,19 +97,13 @@ class GradersController < ApplicationController
       # (thus making one database request in the beginning instead of one for each grader id)
       graders = Ta.where(id: grader_ids)
 
+      # First we will add any active graders, and proceed to flash error message if any inactive graders were selected
+
       # checking for inactive graders
       graders.each do |grader|
         if grader.hidden
           inactive_graders.push(grader)
         end
-      end
-
-      # Throw red flash message error if any inactive graders exist
-      # Note that after this check we proceed with any 'active' graders (the survivors of graders_id)
-      if inactive_graders.size > 0
-        flash_now(:error,
-                  I18n.t('groups.invite_member.errors.inactive_grader',
-                         user_names: inactive_graders.map(&:user_name).join(', ')))
       end
 
       inactive_grader_ids = inactive_graders.map(&:id)
@@ -119,11 +113,16 @@ class GradersController < ApplicationController
       # The '!' indicates that it mutates the original array
       grader_ids.reject! { |grader_id| inactive_grader_ids.include? grader_id.to_i }
 
-      # inactive_graders.each do |grader|
-      #   grader_ids.de
-      # end
-      # # Reassigning grader_id to only include active graders
-      # grader_ids = active_grader_ids
+      # Throw red flash message error if any inactive graders exist
+      # Note that after this check we proceed with any 'active' graders (the survivors of graders_id)
+      if inactive_graders.size > 0
+        flash_now(:error,
+                  I18n.t('groups.invite_member.errors.inactive_grader',
+                         user_names: inactive_graders.map(&:user_name).join(', ')))
+        # Decided non to return a status code of 400, because active graders may still be added, up for discussion
+        # head :bad_request # returning a status code of 400
+        # return
+      end
     end
 
     case params[:current_table]
@@ -137,25 +136,20 @@ class GradersController < ApplicationController
 
       case params[:global_actions]
       when 'assign'
-        begin
-          if params[:skip_empty_submissions] == 'true'
-            # If the instructor wants to skip empty submissions, filter
-            # groups with empty submissions into a new array
-            filtered_grouping_ids = filter_empty_submissions(grouping_ids)
-            if filtered_grouping_ids.count != grouping_ids.count
-              found_empty_submission = true
-            end
+        if params[:skip_empty_submissions] == 'true'
+          # If the instructor wants to skip empty submissions, filter
+          # groups with empty submissions into a new array
+          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+          if filtered_grouping_ids.count != grouping_ids.count
+            found_empty_submission = true
           end
-          if found_empty_submission
-            assign_all_graders(filtered_grouping_ids, grader_ids)
-            flash_now(:info, I18n.t('graders.group_submission_no_files'))
-            head :ok
-          else
-            assign_all_graders(grouping_ids, grader_ids)
-          end
-        rescue StandardError => e
-          flash_now(:error, e.message)
-          head :bad_request
+        end
+        if found_empty_submission
+          assign_all_graders(filtered_grouping_ids, grader_ids)
+          flash_now(:info, I18n.t('graders.group_submission_no_files'))
+          head :ok
+        else
+          assign_all_graders(grouping_ids, grader_ids)
         end
 
       when 'unassign'
