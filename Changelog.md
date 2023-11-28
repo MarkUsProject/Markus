@@ -15,6 +15,7 @@
 - Ensure bonus marks are not included in assignment "out of" in submissions table (#6836)
 - Ensure assignment "out of" in submissions table is rounded to two decimal places (#6836)
 - Added POST API for Group Creation (#6834)
+- Autocomplete with active students only for matching process in 'assign scans' (#6844)
 
 ## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
