@@ -672,6 +672,7 @@ describe GroupsController do
                user: create(:end_user, user_name: 'c9test1', first_name: 'first', last_name: 'last',
                                        id_number: '12345'))
       end
+
       let!(:student2) do
         create(:student,
                user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
@@ -681,13 +682,27 @@ describe GroupsController do
                user: create(:end_user, user_name: 'zz396', first_name: 'zzfirst', last_name: 'zzlast',
                                        id_number: '781034'))
       end
+      let!(:student4) do
+        create(:student,
+               user: create(:end_user, user_name: 'c123hello', first_name: 'fhello', last_name: 'lhello',
+                                       id_number: '1284923'), hidden: true)
+      end
       let(:expected) do
         [{ 'id' => student1.id,
            'id_number' => student1.id_number,
            'user_name' => student1.user_name,
            'value' => "#{student1.first_name} #{student1.last_name}" }]
       end
+      it 'does not return matches for inactive user_name' do
+        puts(role.inspect)
+        post_as instructor, :get_names, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'c9',
+                                                  format: :json }
 
+        expect(response.parsed_body).to eq student1
+      end
       it 'returns matches for user_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
@@ -697,7 +712,15 @@ describe GroupsController do
 
         expect(response.parsed_body).to eq expected
       end
+      it 'returns matches for active students only' do
+        post_as instructor, :get_names, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'f',
+                                                  format: :json }
 
+        expect(response.parsed_body).to match_array expected
+      end
       it 'returns matches for first_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
@@ -707,7 +730,6 @@ describe GroupsController do
 
         expect(response.parsed_body).to eq expected
       end
-
       it 'returns matches for last_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
@@ -717,7 +739,6 @@ describe GroupsController do
 
         expect(response.parsed_body).to eq expected
       end
-
       it 'returns matches for id_number' do
         post_as instructor, :get_names, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
