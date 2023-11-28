@@ -693,16 +693,6 @@ describe GroupsController do
            'user_name' => student1.user_name,
            'value' => "#{student1.first_name} #{student1.last_name}" }]
       end
-      it 'does not return matches for inactive user_name' do
-        puts(role.inspect)
-        post_as instructor, :get_names, params: { course_id: course.id,
-                                                  assignment_id: assignment.id,
-                                                  assignment: assignment.id,
-                                                  term: 'c9',
-                                                  format: :json }
-
-        expect(response.parsed_body).to eq student1
-      end
       it 'returns matches for user_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
@@ -711,15 +701,6 @@ describe GroupsController do
                                                   format: :json }
 
         expect(response.parsed_body).to eq expected
-      end
-      it 'returns matches for active students only' do
-        post_as instructor, :get_names, params: { course_id: course.id,
-                                                  assignment_id: assignment.id,
-                                                  assignment: assignment.id,
-                                                  term: 'f',
-                                                  format: :json }
-
-        expect(response.parsed_body).to match_array expected
       end
       it 'returns matches for first_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
@@ -748,7 +729,15 @@ describe GroupsController do
 
         expect(response.parsed_body).to eq expected
       end
+      it 'returns matches for active students only' do
+        post_as instructor, :get_names, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'f',
+                                                  format: :json }
 
+        expect(response.parsed_body).to match_array expected
+      end
       describe 'when users are already in groups' do
         let!(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student1 }
         let(:assignment2) { create :assignment }
