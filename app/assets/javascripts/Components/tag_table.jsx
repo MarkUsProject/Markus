@@ -3,12 +3,20 @@ import {render} from "react-dom";
 
 import ReactTable from "react-table";
 
+import CreateTagModal from "./Modals/create_tag_modal";
+import EditTagModal from "./Modals/edit_tag_modal";
+
 class TagTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       tags: [],
       loading: true,
+      isCreateTagModalOpen: false,
+      isEditTagModalOpen: false,
+      currentTagId: "",
+      currentTagName: "",
+      currentTagDescription: "",
     };
   }
 
@@ -40,9 +48,12 @@ class TagTable extends React.Component {
   };
 
   edit = tag_id => {
-    $.get({
-      url: Routes.edit_tag_dialog_course_tag_path(this.props.course_id, tag_id),
-      dataType: "script",
+    const currentTag = this.state.tags.find(tag => tag.id === tag_id);
+    this.setState({
+      isEditTagModalOpen: true,
+      currentTagId: tag_id,
+      currentTagName: currentTag.name,
+      currentTagDescription: currentTag.description,
     });
   };
 
@@ -92,14 +103,58 @@ class TagTable extends React.Component {
     },
   ];
 
+  onCreateTagButtonClick = () => {
+    this.setState({isCreateTagModalOpen: true});
+  };
+
+  closeCreateTagModal = () => {
+    this.setState({isCreateTagModalOpen: false}, () => {
+      this.fetchData();
+    });
+  };
+
+  closeEditTagModal = () => {
+    this.setState({isEditTagModalOpen: false}, () => {
+      this.fetchData();
+    });
+  };
+
   render() {
     return (
-      <ReactTable
-        data={this.state.tags}
-        columns={this.columns()}
-        defaultSorted={[{id: "name"}]}
-        loading={this.state.loading}
-      />
+      <React.Fragment>
+        {!this.state.loading && (
+          <button type="submit" onClick={this.onCreateTagButtonClick}>
+            {I18n.t("helpers.submit.create", {
+              model: I18n.t("activerecord.models.tag.one"),
+            })}
+          </button>
+        )}
+        <ReactTable
+          data={this.state.tags}
+          columns={this.columns()}
+          defaultSorted={[{id: "name"}]}
+          loading={this.state.loading}
+        />
+        {this.state.isCreateTagModalOpen && (
+          <CreateTagModal
+            assignment_id={this.props.assignment_id}
+            course_id={this.props.course_id}
+            isOpen={this.state.isCreateTagModalOpen}
+            onRequestClose={this.closeCreateTagModal}
+          />
+        )}
+        {this.state.isEditTagModalOpen && (
+          <EditTagModal
+            assignment_id={this.props.assignment_id}
+            course_id={this.props.course_id}
+            tag_id={this.state.currentTagId}
+            isOpen={this.state.isEditTagModalOpen}
+            onRequestClose={this.closeEditTagModal}
+            currentTagName={this.state.currentTagName}
+            currentTagDescription={this.state.currentTagDescription}
+          />
+        )}
+      </React.Fragment>
     );
   }
 }
