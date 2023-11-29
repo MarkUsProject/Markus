@@ -4,6 +4,8 @@
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
+- Moved create and edit tag modals to React (#6742)
+- Added constraint for `Tag` name field: not empty and max 30 characters (#6742)
 - Modified and moved helper methods from `CriteriaHelper` into static methods in the `Criterion` class (#6746)
 - Convert helper methods of the module `app/helpers/annotations_categories_helper` into class methods of the
   `AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
