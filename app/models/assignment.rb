@@ -223,7 +223,11 @@ class Assignment < Assessment
   # checks if the due date for +section+ has passed for this assignment
   # or if the main due date has passed if +section+ is nil.
   def past_collection_date?(section = nil)
-    Time.current > submission_rule.calculate_collection_time(section)
+    if assignment.is_timed
+      Time.current > submission_rule.calculate_collection_time(section) + assignment_properties.duration
+    else
+      Time.current > submission_rule.calculate_collection_time(section)
+    end
   end
 
   def past_all_collection_dates?
