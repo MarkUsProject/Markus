@@ -5,10 +5,6 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
-      $('#add-tag').click(function(e) {
-        modal_create_new.open();
-        e.preventDefault();
-      })
     });
   <% end %>
 <% end %>
@@ -19,9 +15,6 @@
      @assignment.short_identifier) %>
 
 <% @heading_buttons = [
-  { link_text: t('helpers.submit.create', model: Tag.model_name.human),
-    link_path: '#',
-    html_options: { id: 'add-tag' } },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },
