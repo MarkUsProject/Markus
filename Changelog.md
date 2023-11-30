@@ -13,6 +13,7 @@
 - Added tooltips to criteria type and visibility icons (#6753)
 - Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
 - Ensure starter files are passed to autotester in sorted order (#6771)
+- Fix loading results page when group is created after the due date (#6863)
 
 ## [v2.3.4]
 - Ensure the "Random Incomplete Submission" button takes into account criteria assignment for TAs (#6800)
