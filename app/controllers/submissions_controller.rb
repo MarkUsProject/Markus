@@ -306,14 +306,14 @@ class SubmissionsController < ApplicationController
                                 sections: sections))
         else
           flash_now(:warning, t('submissions.grading_can_begin_after_for_sections',
-                                time: l(collection_time + @assignment.assignment_properties.duration),
+                                time: l(collection_time),
                                 sections: sections))
         end
       end
     else
       collection_time = @assignment.submission_rule.calculate_collection_time
       flash_now(:warning, t('submissions.grading_can_begin_after',
-                            time: l(collection_time + @assignment.assignment_properties.duration)))
+                            time: l(collection_time)))
     end
   end
 
