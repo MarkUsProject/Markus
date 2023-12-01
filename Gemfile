@@ -116,13 +116,6 @@ group :development, :test, :production_test do
   gem 'faker' # required for database seeding
 end
 
-# Gems not needed at runtime should go here so that MarkUs does
-# not waste time/memory loading them during boot
-group :offline do
-  gem 'railroady'
-  gem 'rdoc'
-end
-
 # If you  plan to use unicorn servers for production
 # make sure that this group is included. You don't need this
 # group if you are using Phusion Passenger or Puma.

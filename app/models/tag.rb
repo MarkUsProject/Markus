@@ -5,6 +5,7 @@ class Tag < ApplicationRecord
 
   has_one :course, through: :role
   validate :courses_should_match
+  validates :name, presence: true, length: { maximum: 30 }
 
   # Constants
   NUM_CSV_FIELDS = 3

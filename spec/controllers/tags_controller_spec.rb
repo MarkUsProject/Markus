@@ -40,6 +40,13 @@ describe TagsController do
       expect(Tag.find_by(name: 'tag', description: 'tag description')).to_not be_nil
     end
 
+    it 'does not create an invalid tag' do
+      post_as instructor, :create, params: { tag: { name: '', description: 'tag description' },
+                                             assignment_id: assignment.id, course_id: course.id }
+      expect(Tag.find_by(name: '', description: 'tag description')).to be_nil
+      expect(flash[:error][0]).to include(I18n.t('flash.actions.create.error', resource_name: Tag.model_name.human))
+    end
+
     it 'associates the new tag with a grouping when passed grouping_id' do
       post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
                                              grouping_id: grouping.id, course_id: course.id }
