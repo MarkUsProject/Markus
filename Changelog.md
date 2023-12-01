@@ -14,6 +14,7 @@
 - Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
 - Ensure starter files are passed to autotester in sorted order (#6771)
 - Fix loading results page when group is created after the due date (#6863)
+- Bug Fix: Prevent assigning inactive graders to a group (#6801)
 
 ## [v2.3.4]
 - Ensure the "Random Incomplete Submission" button takes into account criteria assignment for TAs (#6800)
@@ -25,8 +26,6 @@
 ## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 - Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
-- Bug Fix: Prevent assigning inactive graders to a group, throwing a red flash message (through ```graders_controller```)
-  when one tries to do so (#6801)
 
 ## [v2.3.2]
 - Allow MathJAX to process environments (e.g., align) (#6762)

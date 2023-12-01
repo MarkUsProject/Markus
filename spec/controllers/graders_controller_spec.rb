@@ -348,12 +348,8 @@ describe GradersController do
           @ta3 = create(:ta)
 
           # Making two new TA's that are 'inactive', to test additional functionality
-          @ta4 = create(:ta)
-          @ta5 = create(:ta)
-          @ta4.hidden = true
-          @ta5.hidden = true
-          @ta4.save
-          @ta5.save
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
         end
 
         it 'and no graders selected' do
@@ -519,7 +515,6 @@ describe GradersController do
                     groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta4, @ta5],
                     weightings: [1, 1], current_table: 'groups_table'
                   }
-
           expect(response).to have_http_status(200)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
@@ -527,7 +522,7 @@ describe GradersController do
         end
         it 'and both active and inactive graders (and multiple groupings) are selected' do
           # In this case, the active graders should be assigned to the specified groups but the inactive
-          # ones should not, and still
+          # ones should not
           post_as @instructor,
                   :global_actions,
                   params: {
@@ -558,12 +553,8 @@ describe GradersController do
           @ta3 = create(:ta)
 
           # Making two new TA's that are 'inactive', to test additional functionality
-          @ta4 = create(:ta)
-          @ta5 = create(:ta)
-          @ta4.hidden = true
-          @ta5.hidden = true
-          @ta4.save
-          @ta5.save
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
         end
 
         it 'and no graders selected' do
@@ -702,7 +693,7 @@ describe GradersController do
 
         it 'and both active and inactive graders (and multiple groupings) are selected' do
           # In this case, the active graders should be assigned to the specified groups but the inactive
-          # ones should not, and still
+          # ones should not.
           post_as @instructor,
                   :global_actions,
                   params: {
@@ -761,12 +752,8 @@ describe GradersController do
           @ta3 = create(:ta)
 
           # Making two new TA's that are 'inactive', to test additional functionality
-          @ta4 = create(:ta)
-          @ta5 = create(:ta)
-          @ta4.hidden = true
-          @ta5.hidden = true
-          @ta4.save
-          @ta5.save
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
         end
 
         it 'and no graders or groupings are selected' do

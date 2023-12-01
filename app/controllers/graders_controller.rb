@@ -87,41 +87,19 @@ class GradersController < ApplicationController
       end
     end
 
-    # '%w' syntax is a Ruby idiom that, preferred over ["...", "...", ...] syntax for its conciseness and readability
-    # It represents an array of strings
     if %w[assign random_assign].include? params[:global_actions]
-      inactive_graders = [] # used to filter the 'grader_ids' array and to throw a custom flash message error
+      inactive_graders = []
 
-      # Solving N+1 querying problem by executing the SQL query:
-      # SELECT * FROM roles WHERE id IN (..., ..., ..., ...)
-      # (thus making one database request in the beginning instead of one for each grader id)
-      graders = Ta.where(id: grader_ids)
+      inactive_graders_hash =
+        current_course.tas.joins(:user).where(roles: { hidden: true }).pluck(:id, :user_name)
+                      .map { |x| [x[0], x[1]] }.to_h
 
-      # First we will add any active graders, and proceed to flash error message if any inactive graders were selected
+      grader_ids.reject! { |grader_id| inactive_graders_hash.key? grader_id.to_i }
 
-      # checking for inactive graders
-      graders.each do |grader|
-        if grader.hidden
-          inactive_graders.push(grader)
-        end
-      end
-
-      inactive_grader_ids = inactive_graders.map(&:id)
-
-      # Removing id's (from grader_ids) corresponding to inactive graders
-      # The 'reject' method removes all array elements for which the provided block returns true
-      # The '!' indicates that it mutates the original array
-      grader_ids.reject! { |grader_id| inactive_grader_ids.include? grader_id.to_i }
-
-      # Throw red flash message error if any inactive graders exist
-      # Note that after this check we proceed with any 'active' graders (the survivors of graders_id)
       if inactive_graders.size > 0
         flash_now(:error,
                   I18n.t('groups.invite_member.errors.inactive_grader',
-                         user_names: inactive_graders.map(&:user_name).join(', ')))
-        # Decided non to return a status code of 400, because active graders may still be added, up for discussion
-        # head :bad_request # returning a status code of 400
-        # return
+                         user_names: inactive_graders_hash.values.join(', ')))
       end
     end
 
@@ -151,7 +129,6 @@ class GradersController < ApplicationController
         else
           assign_all_graders(grouping_ids, grader_ids)
         end
-
       when 'unassign'
         unassign_graders(grouping_ids, grader_ids)
       when 'random_assign'
