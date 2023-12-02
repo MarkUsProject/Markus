@@ -43,7 +43,12 @@ class SubmissionRule < ApplicationRecord
   end
 
   def calculate_collection_time(section = nil)
-    assignment.section_due_date(section) + hours_sum.hours
+    general_ddl = assignment.section_due_date(section) + hours_sum.hours
+    if assignment.is_timed
+      general_ddl + assignment.assignment_properties.duration
+    else
+      general_ddl
+    end
   end
 
   # Return the time after which +grouping+ can be collected.
