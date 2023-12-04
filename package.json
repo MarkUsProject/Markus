@@ -1,4 +1,5 @@
 {
+  "name": "MarkUs",
   "dependencies": {
     "@babel/runtime": "^7.23.5",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
