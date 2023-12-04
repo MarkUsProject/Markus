@@ -1,8 +1,6 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
-  include CriteriaHelper
-  include AnnotationCategoriesHelper
   include AutomatedTestsHelper
   responders :flash
   before_action { authorize! }
@@ -86,7 +84,7 @@ class AssignmentsController < ApplicationController
     @student = current_role
     @grouping = current_role.accepted_grouping_for(@assignment.id)
     @prs = current_role.grouping_for(@assignment.parent_assignment.id)
-        &.peer_reviews&.where(results: { released_to_students: true })
+                       &.peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
     end
@@ -584,7 +582,7 @@ class AssignmentsController < ApplicationController
         f.write yml_criteria.to_yaml
       end
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
-        f.write annotation_categories_to_yml(assignment.annotation_categories)
+        f.write AnnotationCategory.annotation_categories_to_yml(assignment.annotation_categories)
       end
       unless assignment.scanned_exam || assignment.is_peer_review?
         assignment.automated_test_config_to_zip(zipfile, CONFIG_FILES[:automated_tests_dir_entry],
@@ -615,8 +613,8 @@ class AssignmentsController < ApplicationController
         annotations_prop = build_hash_from_zip(zipfile, :annotations)
         assignment.save!
         Tag.from_yml(tag_prop, current_course, assignment.id, allow_ta_upload: true)
-        upload_criteria_from_yaml(assignment, criteria_prop)
-        upload_annotations_from_yaml(annotations_prop, assignment)
+        Criterion.upload_criteria_from_yaml(assignment, criteria_prop)
+        AnnotationCategory.upload_annotations_from_yaml(annotations_prop, assignment, current_role)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam || assignment.is_peer_review?
         config_starter_files(assignment, zipfile)
         assignment.save!

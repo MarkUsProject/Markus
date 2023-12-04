@@ -36,6 +36,7 @@ Brenda Huang
 Brent Simmons
 Brian Bo
 Brian Xu
+Bruce Liu
 Bryan Muscedere
 Bryan Shen
 Camille Guérin
@@ -141,6 +142,7 @@ Mike Gunderloy
 Mike Kang
 Mike Stewart
 Mike Wu
+Mimis Chlympatsos
 Mina Almasry
 Misa Sakamoto
 Misha Schwartz

@@ -1,5 +1,23 @@
 # Changelog
 
+## [v2.4.0]
+- Display error message on file upload failure (#6703)
+- Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
+- Display detailed messages about grace period deductions for an assignment on student interface (#6706)
+- Moved create and edit tag modals to React (#6742)
+- Added constraint for `Tag` name field: not empty and max 30 characters (#6742)
+- Modified and moved helper methods from `CriteriaHelper` into static methods in the `Criterion` class (#6746)
+- Convert helper methods of the module `app/helpers/annotations_categories_helper` into class methods of the
+  `AnnotationCategory` model. The refactored helper methods were `annotation_categories_to_yml` and
+  `upload_annotations_from_yaml` (#6747)
+- Added tooltips to criteria type and visibility icons (#6753)
+- Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
+- Ensure starter files are passed to autotester in sorted order (#6771)
+- Resolved issue 6677 by taking timed assessment's duration into account when determining when grading can begin (#6845)
+- Fix loading results page when group is created after the due date (#6863)
+- Autocomplete with active students only for matching process in 'assign scans' (#6844)
+- Fix member filtering in Groups table (#6842)
+
 ## [v2.3.4]
 - Ensure the "Random Incomplete Submission" button takes into account criteria assignment for TAs (#6800)
 - Ensure bonus marks are not included in assignment "out of" in submissions table (#6836)
@@ -56,6 +74,11 @@
 - Added "Help" link to the MarkUs page header dropdown (#6702)
 - Prevent TAs that aren't assigned to grade a given criterion from assigning a grade to that criterion (#6699)
 - Replace byebug gem with debug gem (#6705)
+- Added persistence to the filter modal (#6697)
+
+## [v2.2.4]
+- Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
+
 
 ## [v2.2.4]
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)

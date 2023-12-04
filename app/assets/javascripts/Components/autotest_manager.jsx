@@ -9,6 +9,7 @@ import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
+import {flashMessage} from "../flash";
 
 const ajvOptionsOverrides = {discriminator: true};
 const validator = customizeValidator({ajvOptionsOverrides});
@@ -141,7 +142,12 @@ class AutotestManager extends React.Component {
     })
       .then(this.fetchFileDataOnly)
       .then(() => this.toggleFormChanged(true))
-      .then(this.endAction);
+      .then(this.endAction)
+      .fail(jqXHR => {
+        if (jqXHR.getResponseHeader("x-message-error") == null) {
+          flashMessage(I18n.t("upload_errors.generic"), "error");
+        }
+      });
   };
 
   handleDeleteFile = fileKeys => {

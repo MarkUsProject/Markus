@@ -1228,13 +1228,15 @@ describe ResultsController do
           instructor_run: data['instructor_run'],
           is_reviewer: data['is_reviewer'],
           student_view: data['student_view'],
-          can_run_tests: data['can_run_tests']
+          can_run_tests: data['can_run_tests'],
+          submission_time: data['submission_time']
         }
         expected_data = {
           instructor_run: true,
           is_reviewer: false,
           student_view: is_student,
-          can_run_tests: false
+          can_run_tests: false,
+          submission_time: I18n.l(submission.revision_timestamp.in_time_zone)
         }
         expect(received_data).to eq(expected_data)
       end
@@ -1287,6 +1289,22 @@ describe ResultsController do
             }.stringify_keys
           end
           expect(data['grace_token_deductions']).to eq(expected_deduction_data)
+        end
+      end
+
+      context 'when there is no submission' do
+        before do
+          submission.update!(
+            revision_identifier: nil,
+            revision_timestamp: nil
+          )
+        end
+
+        it 'sends a submission_time of null' do
+          subject
+          data = response.parsed_body
+
+          expect(data['submission_time']).to be_nil
         end
       end
     end
