@@ -13,6 +13,7 @@ en:
   upload: Upload
   upload_errors:
     blank: Uploaded file is blank.
+    generic: The selected file(s) could not be uploaded.
     invalid_csv_row_format: Invalid row format
     invalid_file_type: Wrong file type uploaded. File must be a %{type} file.
     invalid_rows: 'The following CSV rows were invalid: '

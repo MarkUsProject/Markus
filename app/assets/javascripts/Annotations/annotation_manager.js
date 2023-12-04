@@ -18,13 +18,15 @@ class AnnotationManager {
    * @param content
    * @param range
    * @param annotation_id
+   * @param is_remark
    */
-  addAnnotation(annotation_text_id, content, range, annotation_id) {
+  addAnnotation(annotation_text_id, content, range, annotation_id, is_remark) {
     let annotation_text = this.findOrCreateAnnotationText(annotation_text_id, content);
     let annotation = {
       annotation_id: annotation_id,
       annotation_text: annotation_text,
       range: range,
+      is_remark: is_remark,
     };
     this.annotations[annotation_id] = annotation;
     return annotation;

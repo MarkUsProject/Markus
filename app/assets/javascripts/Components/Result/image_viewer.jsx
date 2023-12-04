@@ -53,6 +53,10 @@ export class ImageViewer extends React.PureComponent {
         annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
     }
 
+    if (annotation.is_remark) {
+      content += ` (${I18n.t("results.annotation.remark_flag")})`;
+    }
+
     let originalImgH = document.getElementById("image_preview").height;
     let originalImgW = document.getElementById("image_preview").width;
     let imgW;
@@ -123,7 +127,8 @@ export class ImageViewer extends React.PureComponent {
           end: Math.floor(midHeightRotated + corners[0][1]),
         },
       },
-      annotation.id
+      annotation.id,
+      annotation.is_remark
     );
   };
 

@@ -70,7 +70,8 @@ export class AnnotationTable extends React.Component {
       Header: I18n.t("annotations.text"),
       accessor: "content",
       Cell: data => {
-        let edit_button = "";
+        let value,
+          edit_button = "";
         if (
           !this.props.released_to_students &&
           !data.original.deduction &&
@@ -86,9 +87,15 @@ export class AnnotationTable extends React.Component {
             </a>
           );
         }
+
+        if (data.original.is_remark) {
+          value = `${data.value} (${I18n.t("results.annotation.remark_flag")})`;
+        } else {
+          value = data.value;
+        }
         return (
           <div>
-            <div dangerouslySetInnerHTML={{__html: safe_marked(data.value)}} />
+            <div dangerouslySetInnerHTML={{__html: safe_marked(value)}} />
             <div className={"alignright"}>{edit_button}</div>
           </div>
         );
