@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.4.1]
+- Internal changes only
+
 ## [v2.4.0]
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
