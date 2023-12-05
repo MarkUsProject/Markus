@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.6'
+gem 'rails', '~> 7.0.8'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -104,7 +104,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 6.0.3'
+  gem 'rspec-rails', '~> 6.1.0'
   gem 'selenium-webdriver'
 end
 
