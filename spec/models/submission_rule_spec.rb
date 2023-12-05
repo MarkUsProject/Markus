@@ -72,6 +72,20 @@ describe SubmissionRule do
     it 'should return a TimeWithZone object' do
       expect(assignment.submission_rule.calculate_collection_time).to be_kind_of(ActiveSupport::TimeWithZone)
     end
+
+    it 'should return due_date + duration for timed assessment' do
+      due_date = 10.hours.ago.change(usec: 0).freeze
+      duration = 20.minutes.freeze
+      assignment.update!(is_timed: true, duration: duration, start_time: 15.hours.ago, due_date: due_date)
+      expect(assignment.submission_rule.calculate_collection_time).to eq(due_date + duration)
+    end
+
+    it 'should return due_date for not timed assessment' do
+      due_date = 10.hours.ago.change(usec: 0).freeze
+      duration = 20.minutes.freeze
+      assignment.update!(is_timed: false, duration: duration, start_time: 15.hours.ago, due_date: due_date)
+      expect(assignment.submission_rule.calculate_collection_time).to eq(due_date)
+    end
   end
 
   context '#calculate_grouping_collection_time' do

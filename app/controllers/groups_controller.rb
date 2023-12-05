@@ -168,7 +168,7 @@ class GroupsController < ApplicationController
                           .where('(lower(first_name) like ? OR
                                    lower(last_name) like ? OR
                                    lower(user_name) like ? OR
-                                   id_number like ?) AND roles.id NOT IN (?)',
+                                   id_number like ?) AND roles.hidden = false AND roles.id NOT IN (?)',
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",

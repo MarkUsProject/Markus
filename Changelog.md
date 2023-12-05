@@ -13,15 +13,17 @@
 - Added tooltips to criteria type and visibility icons (#6753)
 - Replace the function `tas` of the `Assignment` model with a `tas` "has_many" association for that model (#6764)
 - Ensure starter files are passed to autotester in sorted order (#6771)
+- Resolved issue 6677 by taking timed assessment's duration into account when determining when grading can begin (#6845)
 - Fix loading results page when group is created after the due date (#6863)
 - Bug Fix: Prevent assigning inactive graders to a group (#6801)
+- Autocomplete with active students only for matching process in 'assign scans' (#6844)
+- Fix member filtering in Groups table (#6842)
 
 ## [v2.3.4]
 - Ensure the "Random Incomplete Submission" button takes into account criteria assignment for TAs (#6800)
 - Ensure bonus marks are not included in assignment "out of" in submissions table (#6836)
 - Ensure assignment "out of" in submissions table is rounded to two decimal places (#6836)
 - Added POST API for Group Creation (#6834)
-- Fix member filtering in Groups table (#6842)
 
 ## [v2.3.3]
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
