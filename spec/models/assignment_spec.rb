@@ -2575,7 +2575,6 @@ describe Assignment do
       let(:student) { create :student, section: section }
       let(:student2) { create :student, section: section }
       let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
-
       let(:ta) { create :ta }
       it 'returns correct graders' do
         Grouping.assign_all_tas([grouping], [ta.id], assignment)
