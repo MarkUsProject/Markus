@@ -1,7 +1,7 @@
 # Changelog
 
 ## [unreleased]
-- Added new API routes for the create action of SectionsController (#6872)
+- Added new API route for the create action of SectionsController (#6872)
 
 ## [v2.4.1]
 - Internal changes only
