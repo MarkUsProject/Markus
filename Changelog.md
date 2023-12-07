@@ -1,6 +1,12 @@
 # Changelog
 
 ## [unreleased]
+- Bug Fix: Prevent assigning inactive graders to a group (#6801)
+
+## [v2.4.1]
+- Internal changes only
+
+## [v2.4.0]
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
@@ -15,7 +21,6 @@
 - Ensure starter files are passed to autotester in sorted order (#6771)
 - Resolved issue 6677 by taking timed assessment's duration into account when determining when grading can begin (#6845)
 - Fix loading results page when group is created after the due date (#6863)
-- Bug Fix: Prevent assigning inactive graders to a group (#6801)
 - Autocomplete with active students only for matching process in 'assign scans' (#6844)
 - Fix member filtering in Groups table (#6842)
 
