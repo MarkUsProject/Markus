@@ -11,12 +11,13 @@ describe Api::SectionsController do
       it 'should create a new section when given the correct params' do
         post :create, params: { course_id: course.id, section: { name: 'LEC0301' } }
         expect(response).to have_http_status(201)
-        expect(Section.find_by(name: 'LEC0301').name).to eq('LEC0301')
+        expect(course.sections.find_by(name: 'LEC0301').name).to eq('LEC0301')
       end
 
-      it 'should throw a 422 error with when given an invalid param' do
+      it 'should throw a 422 error and not create a section with when given an invalid param' do
         post :create, params: { course_id: course.id, section: { name: '' } }
         expect(response).to have_http_status(422)
+        expect(course.sections.find_by(name: '')).to be_nil
       end
     end
   end
