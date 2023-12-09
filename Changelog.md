@@ -1,8 +1,7 @@
 # Changelog
 
 ## [unreleased]
-- Added new API route for the `create` action of SectionsController (#6872)
-- Added new API route for the `destroy` destroying a Section (#6873)
+- Added new API routes for the `create` and `destroy` actions of SectionsController (#6873)
 
 ## [v2.4.1]
 - Internal changes only
