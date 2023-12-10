@@ -1092,14 +1092,11 @@ class Assignment < Assessment
       sections: assignment.course.sections.pluck(:id, :name).to_h
     }
 
-    result.default_proc = proc { |h, k| h[k] = [] }
-
     members_data = assignment.groupings.joins(student_memberships: { role: :user })
                              .pluck('groupings.id', 'users.user_name', 'memberships.membership_status', 'roles.hidden')
 
     grouped_data = members_data.group_by { |x| x[0] }
     grouped_data.each_value { |a| a.each { |b| b.delete_at(0) } }
-    grouped_data.default_proc = proc { |h, k| h[k] = [] }
 
     result[:groups].each { |group| group[:members] = grouped_data[group[:_id]] }
 
