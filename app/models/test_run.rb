@@ -108,7 +108,8 @@ class TestRun < ApplicationRecord
     test_group_result.feedback_files.create(
       filename: unzipped_feedback_data['filename'],
       mime_type: unzipped_feedback_data['mime_type'],
-      file_content: unzipped_feedback_data['content']
+      file_content: unzipped_feedback_data['content'],
+      submission: test_group_result.test_run&.submission
     )
   end
 

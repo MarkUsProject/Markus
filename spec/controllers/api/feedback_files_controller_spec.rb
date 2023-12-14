@@ -4,8 +4,10 @@ describe Api::FeedbackFilesController do
   let(:assignment) { create :assignment, course: course }
   let(:grouping) { create :grouping_with_inviter_and_submission, assignment: assignment }
   let(:feedback_files) { create_list :feedback_file, 3, submission: grouping.submissions.first }
-  let(:test_run) { create :test_run, grouping: grouping, user: instructor }
-  let(:feedback_files_with_test_run) { create_list :feedback_file_with_test_run, 3, test_run: test_run }
+  let(:test_group_result) { create :test_group_result }
+  let(:feedback_files_with_test_run) do
+    create_list :feedback_file_with_test_run, 3, test_group_result: test_group_result
+  end
 
   context 'An unauthenticated request' do
     before :each do
@@ -91,6 +93,23 @@ describe Api::FeedbackFilesController do
           expect(
             response.parsed_body.pluck('id')
           ).to contain_exactly(*feedback_files.pluck(:id)) # rubocop:disable Rails/PluckId
+        end
+      end
+      context 'when feedback files with no submission exist' do
+        before :each do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          feedback_files
+          feedback_files_with_test_run
+        end
+        it 'should not return info about feedback files if not related to the submission' do
+          get :index, params: {
+            group_id: grouping.group.id,
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
+          }
+          expect(
+            response.parsed_body.pluck('id')
+          ).to_not include(*feedback_files_with_test_run.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end
     end
