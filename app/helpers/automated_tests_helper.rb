@@ -20,7 +20,7 @@ module AutomatedTestsHelper
         },
         criterion: {
           type: :string,
-          enum: (criterion_names.presence || ['']),
+          enum: criterion_names.presence || [''],
           title: Criterion.model_name.human
         }
       },

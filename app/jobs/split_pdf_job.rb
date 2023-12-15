@@ -219,7 +219,7 @@ class SplitPdfJob < ApplicationJob
           cover_pdf << extra_pages[0][1]
           start_page = 1
         end
-        extra_pages[start_page..extra_pages.size].each do |_, pdf|
+        extra_pages[start_page..extra_pages.size].each do |(_, pdf)|
           extra_pdf << pdf
         end
 

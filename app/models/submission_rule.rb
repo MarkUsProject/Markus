@@ -1,7 +1,7 @@
 class SubmissionRule < ApplicationRecord
   class InvalidRuleType < RuntimeError
     def initialize(rule_name)
-      super I18n.t('submission_rules.errors.not_valid_submission_rule', type: rule_name)
+      super(I18n.t('submission_rules.errors.not_valid_submission_rule', type: rule_name))
     end
   end
 

@@ -141,7 +141,7 @@ class GitRevision < Repository::AbstractRevision
       # check entries that were modified
       mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(File.join(path, entry_name), commit) }
       mod_entries = walker_entries.extract!(*mod_keys)
-      mod_entries.each do |_, mod_entry|
+      mod_entries.each_value do |mod_entry|
         mod_entry.last_modified_revision = commit.oid
         mod_entry.last_modified_date = commit.time.in_time_zone
         mod_entry.submitted_date = current_reflog_entry[:time]
