@@ -115,7 +115,7 @@ describe MainController do
         end
         it 'redirects to course picker if lti data is present' do
           get :login
-          expect(response.status).to eq('302')
+          expect(response.status).to eq(302)
         end
       end
     end

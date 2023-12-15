@@ -119,6 +119,7 @@ Rails.application.routes.draw do
       delete 'destroy_lti_deployment'
       post 'sync_roster'
       get 'lti_deployments'
+      get 'lti_settings'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update]
