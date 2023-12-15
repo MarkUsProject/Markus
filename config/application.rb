@@ -17,7 +17,17 @@ ENV['SKIP_LOCAL_GIT_HOOKS'] = 'true'
 module Markus
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 7.0
+    config.load_defaults 7.1
+
+    # Change the format of the cache entry.
+    #
+    # Changing this default means that all new cache entries added to the cache
+    # will have a different format that is not supported by Rails 7.0
+    # applications.
+    #
+    # Only change this value after your application is fully deployed to Rails 7.1
+    # and you have no plans to rollback.
+    config.active_support.cache_format_version = 7.1
 
     # Sensitive parameters which will be filtered from the log file
     config.filter_parameters += [
@@ -128,6 +138,8 @@ module Markus
     end
 
     config.action_cable.url = "#{config.relative_url_root}/cable"
+
+    config.action_cable.allowed_request_origins = Settings.rails.action_cable.web_socket_allowed_request_origins
 
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format

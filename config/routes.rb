@@ -32,7 +32,7 @@ Rails.application.routes.draw do
         end
       end
       resources :assignments, except: [:new, :edit] do
-        resources :groups, except: [:new, :edit, :create, :destroy] do
+        resources :groups, except: [:new, :edit, :destroy] do
           collection do
             get 'annotations'
             get 'group_ids_by_name'

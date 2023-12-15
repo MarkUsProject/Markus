@@ -12,6 +12,7 @@
         <%= stylesheet_link_tag 'jupyterlab-theme-light-extension' %>
         <%= stylesheet_link_tag 'pygments-default' %>
       <% end %>
+      <%= javascript_include_tag 'require', nonce: true %>
       <%= javascript_tag nonce: true do %>
         // Same as mathjax_config.js except skipStartupTypeset is false
         window.MathJax = {
@@ -30,6 +31,7 @@
         };
       <% end %>
       <%= javascript_include_tag 'MathJax_lib/MathJax', nonce: true %>
+      <%= javascript_include_tag 'plotly', nonce: true %>
     <% end %>
   </head>
   <body>

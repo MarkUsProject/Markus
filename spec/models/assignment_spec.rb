@@ -1967,6 +1967,27 @@ describe Assignment do
           expect(data.pluck(:grace_credits_used).count(nil)).to be 2
         end
       end
+
+      context 'when the assignment has criteria, including bonus criteria' do
+        let!(:criterion1) { create :flexible_criterion, max_mark: 1, assignment: assignment }
+        let!(:criterion2) { create :flexible_criterion, max_mark: 3, assignment: assignment }
+        let!(:criterion3) { create :flexible_criterion, max_mark: 6, assignment: assignment, bonus: true }
+        let!(:submission) { create :submission, grouping: groupings[1], submission_version_used: true }
+        let!(:result) { create :incomplete_result, submission: submission }
+
+        it 'excludes the bonus criterion from calculating the max_mark' do
+          expect(data.pluck(:max_mark)).to eq([4.0] * groupings.size)
+        end
+
+        it 'includes all marks (including bonus marks) for the grouping final_grade' do
+          result.marks.find_by(criterion: criterion1).update!(mark: 1)
+          result.marks.find_by(criterion: criterion2).update!(mark: 2)
+          result.marks.find_by(criterion: criterion3).update!(mark: 6)
+          row = data.find { |r| r[:group_name] == groupings[1].group.group_name }
+          expect(row[:final_grade]).to eq(result.marks.pluck(:mark).sum)
+        end
+      end
+
       context '#zip_automated_test_files' do
         let(:content) { File.read assignment.zip_automated_test_files(instructor) }
         subject { content }
@@ -2552,6 +2573,7 @@ describe Assignment do
     context 'groupings that have graders' do
       let(:section) { create :section }
       let(:student) { create :student, section: section }
+      let(:student2) { create :student, section: section }
       let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
       let(:ta) { create :ta }
       it 'returns correct graders' do
@@ -2567,6 +2589,22 @@ describe Assignment do
         }
         expect(received_grader_info).to eq(expected_grader_info)
       end
+      it 'returns correct member data' do
+        grouping.add_member(student2) # adding a second member to the grouping
+        Grouping.assign_all_tas([grouping], [ta.id], assignment)
+
+        received_data = assignment.current_grader_data
+
+        expect(received_data[:groups].size).to eq(1) # there should only be one group
+
+        # What the :members key of each group object in :groups should be (in the 'received_data' object)
+        expected_members_data = [student, student2].map do |s|
+          [s.user.user_name, s.memberships[0].membership_status, s.hidden]
+        end
+        actual_members_data = received_data[:groups][0][:members]
+
+        expect(actual_members_data).to eq(expected_members_data)
+      end
       context 'graders are hidden' do
         it 'returns correct hidden grader info' do
           ta.update!(hidden: true)
@@ -2577,6 +2615,62 @@ describe Assignment do
             hidden: true
           }
           expect(received_grader_info).to eq(expected_grader_info)
+        end
+      end
+    end
+
+    # Ensures that the object returned by the Assignment.current_grader_data method has the desired structure
+    # which is expected (contractually) by front end code (that requests this data).
+    context 'structure of output data' do
+      it 'follows required structure' do
+        filled_assignment = create(:assignment_with_peer_review_and_groupings_results)
+
+        result = filled_assignment.current_grader_data
+
+        expect(result).to include(
+          groups: be_an(Array),
+          criteria: be_an(Array),
+          graders: be_an(Array),
+          assign_graders_to_criteria: be_in([true, false]),
+          anonymize_groups: be_in([true, false]),
+          hide_unassigned_criteria: be_in([true, false]),
+          sections: be_a(Hash)
+        )
+
+        result[:groups].each do |group|
+          expect(group).to include(members: be_an(Array))
+
+          group[:members].each do |member|
+            expect(member.length).to eq(3)
+          end
+        end
+      end
+    end
+
+    # Ensures that the object returned by the Assignment.current_grader_data method has the desired structure
+    # which is expected (contractually) by front end code (that requests this data).
+    context 'structure of output data' do
+      it 'follows required structure' do
+        filled_assignment = create(:assignment_with_peer_review_and_groupings_results)
+
+        result = filled_assignment.current_grader_data
+
+        expect(result).to include(
+          groups: be_an(Array),
+          criteria: be_an(Array),
+          graders: be_an(Array),
+          assign_graders_to_criteria: be_in([true, false]),
+          anonymize_groups: be_in([true, false]),
+          hide_unassigned_criteria: be_in([true, false]),
+          sections: be_a(Hash)
+        )
+
+        result[:groups].each do |group|
+          expect(group).to include(members: be_an(Array))
+
+          group[:members].each do |member|
+            expect(member.length).to eq(3)
+          end
         end
       end
     end

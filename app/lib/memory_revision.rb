@@ -51,7 +51,7 @@ class MemoryRevision < Repository::AbstractRevision
     result = files_at_path(path, with_attrs: with_attrs)
     dirs = directories_at_path(path, with_attrs: with_attrs)
     result.merge!(dirs)
-    dirs.each do |dir_path, _|
+    dirs.each_key do |dir_path|
       result.merge!(tree_at_path(File.join(path, dir_path), with_attrs: with_attrs)
                       .transform_keys! { |sub_path| File.join(dir_path, sub_path) })
     end

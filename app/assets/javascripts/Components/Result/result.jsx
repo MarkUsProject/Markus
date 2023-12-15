@@ -5,6 +5,7 @@ import {LeftPane} from "./left_pane";
 import {RightPane} from "./right_pane";
 import {SubmissionSelector} from "./submission_selector";
 import CreateModifyAnnotationPanel from "../Modals/create_modify_annotation_panel_modal";
+import CreateTagModal from "../Modals/create_tag_modal";
 import {pathToNode} from "../Helpers/range_selector";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
@@ -53,6 +54,7 @@ class Result extends React.Component {
       grouping_id: props.grouping_id,
       can_release: false,
       filterData: INITIAL_FILTER_MODAL_STATE,
+      isCreateTagModalOpen: false,
     };
 
     this.leftPane = React.createRef();
@@ -62,7 +64,6 @@ class Result extends React.Component {
     this.fetchData();
     window.modal = new ModalMarkus("#annotation_dialog");
     window.modalNotesGroup = new ModalMarkus("#notes_dialog");
-    window.modal_create_new_tag = new ModalMarkus("#create_new_tag");
 
     document.addEventListener("fullscreenchange", () => {
       this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
@@ -859,6 +860,16 @@ class Result extends React.Component {
     );
   };
 
+  handleCreateTagButtonClick = () => {
+    this.setState({isCreateTagModalOpen: true});
+  };
+
+  closeCreateTagModal = () => {
+    this.setState({isCreateTagModalOpen: false}, () => {
+      this.fetchData();
+    });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -910,6 +921,13 @@ class Result extends React.Component {
           criterionSummaryData={this.state.criterionSummaryData}
         />
         <div key="panes-content" id="panes-content">
+          <CreateTagModal
+            assignment_id={this.state.assignment_id}
+            course_id={this.props.course_id}
+            grouping_id={this.state.grouping_id}
+            isOpen={this.state.isCreateTagModalOpen}
+            onRequestClose={this.closeCreateTagModal}
+          />
           <div id="panes">
             <div id="left-pane">
               <LeftPane
@@ -967,6 +985,7 @@ class Result extends React.Component {
                 criterionSummaryData={this.state.criterionSummaryData}
                 current_tags={this.state.current_tags}
                 due_date={this.state.due_date}
+                handleCreateTagButtonClick={this.handleCreateTagButtonClick}
                 extra_marks={this.state.extra_marks}
                 extraMarkSubtotal={this.state.extraMarkSubtotal}
                 grace_token_deductions={this.state.grace_token_deductions}
