@@ -2573,6 +2573,7 @@ describe Assignment do
     context 'groupings that have graders' do
       let(:section) { create :section }
       let(:student) { create :student, section: section }
+      let(:student2) { create :student, section: section }
       let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
       let(:ta) { create :ta }
       it 'returns correct graders' do
@@ -2588,6 +2589,22 @@ describe Assignment do
         }
         expect(received_grader_info).to eq(expected_grader_info)
       end
+      it 'returns correct member data' do
+        grouping.add_member(student2) # adding a second member to the grouping
+        Grouping.assign_all_tas([grouping], [ta.id], assignment)
+
+        received_data = assignment.current_grader_data
+
+        expect(received_data[:groups].size).to eq(1) # there should only be one group
+
+        # What the :members key of each group object in :groups should be (in the 'received_data' object)
+        expected_members_data = [student, student2].map do |s|
+          [s.user.user_name, s.memberships[0].membership_status, s.hidden]
+        end
+        actual_members_data = received_data[:groups][0][:members]
+
+        expect(actual_members_data).to eq(expected_members_data)
+      end
       context 'graders are hidden' do
         it 'returns correct hidden grader info' do
           ta.update!(hidden: true)
@@ -2598,6 +2615,62 @@ describe Assignment do
             hidden: true
           }
           expect(received_grader_info).to eq(expected_grader_info)
+        end
+      end
+    end
+
+    # Ensures that the object returned by the Assignment.current_grader_data method has the desired structure
+    # which is expected (contractually) by front end code (that requests this data).
+    context 'structure of output data' do
+      it 'follows required structure' do
+        filled_assignment = create(:assignment_with_peer_review_and_groupings_results)
+
+        result = filled_assignment.current_grader_data
+
+        expect(result).to include(
+          groups: be_an(Array),
+          criteria: be_an(Array),
+          graders: be_an(Array),
+          assign_graders_to_criteria: be_in([true, false]),
+          anonymize_groups: be_in([true, false]),
+          hide_unassigned_criteria: be_in([true, false]),
+          sections: be_a(Hash)
+        )
+
+        result[:groups].each do |group|
+          expect(group).to include(members: be_an(Array))
+
+          group[:members].each do |member|
+            expect(member.length).to eq(3)
+          end
+        end
+      end
+    end
+
+    # Ensures that the object returned by the Assignment.current_grader_data method has the desired structure
+    # which is expected (contractually) by front end code (that requests this data).
+    context 'structure of output data' do
+      it 'follows required structure' do
+        filled_assignment = create(:assignment_with_peer_review_and_groupings_results)
+
+        result = filled_assignment.current_grader_data
+
+        expect(result).to include(
+          groups: be_an(Array),
+          criteria: be_an(Array),
+          graders: be_an(Array),
+          assign_graders_to_criteria: be_in([true, false]),
+          anonymize_groups: be_in([true, false]),
+          hide_unassigned_criteria: be_in([true, false]),
+          sections: be_a(Hash)
+        )
+
+        result[:groups].each do |group|
+          expect(group).to include(members: be_an(Array))
+
+          group[:members].each do |member|
+            expect(member.length).to eq(3)
+          end
         end
       end
     end

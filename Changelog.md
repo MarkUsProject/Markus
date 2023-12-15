@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Allow inactive groups in the graders table to be toggled for display (#6778)
 - Enable plotly rendering for jupyter notebooks (#6871)
 
 ## [v2.4.1]
