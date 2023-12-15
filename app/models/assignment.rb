@@ -676,7 +676,7 @@ class Assignment < Assessment
     CSV.generate do |csv|
       csv << [nil, *headers]
 
-      results.sort_by(&:first).each do |group_name, _test_group|
+      results.sort_by(&:first).each_key do |group_name|
         row = [group_name]
 
         headers.each do |header|
