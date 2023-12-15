@@ -1,0 +1,10 @@
+---
+en:
+  job:
+    status:
+      completed: This job is now complete.
+      failed:
+        message: 'This job failed due to the following error: {{error}}'
+        no_message: This job failed due to an unexpected error.
+      in_progress: This job is in progress.
+      queued: This job is waiting to be run.
