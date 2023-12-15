@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
     should_skip = true
 
     # Check if there's a dup in marks or names
-    levels_attributes.each do |_key, val|
+    levels_attributes.each_value do |val|
       if s1.include?(val[:mark]) || s2.include?(val[:name])
         should_skip = false
         break
@@ -22,7 +22,7 @@ class RubricCriterion < Criterion
     end
 
     if should_skip
-      levels_attributes.each do |_key, val|
+      levels_attributes.each_value do |val|
         val[:skip_uniqueness_validation] = true
       end
     end
