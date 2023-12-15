@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
-import {getType} from "mime/lite";
+import mime from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
 import consumer from "../../../javascript/channels/consumer";
@@ -381,7 +381,7 @@ class TestGroupFeedbackFileTable extends React.Component {
               this.props.course_id,
               row.original.id
             )}
-            mime_type={getType(row["filename"])}
+            mime_type={mime.getType(row["filename"])}
             selectedFileType={row.original.type}
           />
         )}
