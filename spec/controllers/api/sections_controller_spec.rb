@@ -37,8 +37,6 @@ describe Api::SectionsController do
       it 'successfully deletes section' do
         delete :destroy, params: { course_id: course.id, id: section }
         expect(response).to have_http_status(:ok)
-        # The below two check the same thing, not sure which is preferable
-        expect { course.sections.find(section.id) }.to raise_error(ActiveRecord::RecordNotFound)
         expect(course.sections.exists?(section.id)).to be_falsey
       end
     end
