@@ -33,11 +33,18 @@ describe Api::SectionsController do
       end
     end
 
-    context 'Delete' do
+    context 'DELETE destroy' do
       it 'successfully deletes section' do
         delete :destroy, params: { course_id: course.id, id: section }
         expect(response).to have_http_status(:ok)
         expect(course.sections.exists?(section.id)).to be_falsey
+      end
+      it 'does not delete section because the section is non-empty (has students), with 403 code' do
+        student = create(:student)
+        section.students = [student]
+        delete :destroy, params: { course_id: course.id, id: section }
+        expect(response).to have_http_status(:conflict)
+        expect(course.sections.exists?(section.id)).to be_truthy
       end
     end
   end

@@ -17,12 +17,14 @@ module Api
 
       if @section.has_students?
         render 'shared/http_status',
-               locals: { code: '404', message: t('sections.destroy.not_empty'), status: :conflict }
+               locals: { code: :conflict, message: t('sections.destroy.not_empty') },
+               status: :conflict
       else
         @section.assessment_section_properties.each(&:destroy)
         @section.destroy
         render 'shared/http_status',
-               locals: { code: '200', message: t('sections.destroy.success'), status: :ok }
+               locals: { code: '200', message: t('sections.destroy.success') },
+               status: :ok
       end
     end
 
