@@ -676,7 +676,7 @@ class Assignment < Assessment
     CSV.generate do |csv|
       csv << [nil, *headers]
 
-      results.sort_by(&:first).each do |group_name, _test_group|
+      results.sort_by(&:first).each do |(group_name, _test_group)|
         row = [group_name]
 
         headers.each do |header|
@@ -1082,7 +1082,7 @@ class Assignment < Assessment
       }
     end
 
-    {
+    result = {
       groups: groups,
       criteria: criteria,
       graders: graders,
@@ -1091,6 +1091,16 @@ class Assignment < Assessment
       hide_unassigned_criteria: self.hide_unassigned_criteria,
       sections: assignment.course.sections.pluck(:id, :name).to_h
     }
+
+    members_data = assignment.groupings.joins(student_memberships: { role: :user })
+                             .pluck('groupings.id', 'users.user_name', 'memberships.membership_status', 'roles.hidden')
+
+    grouped_data = members_data.group_by { |x| x[0] }
+    grouped_data.each_value { |a| a.each { |b| b.delete_at(0) } }
+
+    result[:groups].each { |group| group[:members] = grouped_data[group[:_id]] }
+
+    result
   end
 
   # Retrieve data for submissions table.
