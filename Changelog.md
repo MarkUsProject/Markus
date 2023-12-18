@@ -4,6 +4,7 @@
 - Allow inactive groups in the graders table to be toggled for display (#6778)
 - Enable plotly rendering for jupyter notebooks (#6871)
 - Bug Fix: Prevent assigning inactive graders to a group (#6801)
+- Added new API routes for the `create` and `destroy` actions of SectionsController (#6873)
 
 ## [v2.4.1]
 - Internal changes only
