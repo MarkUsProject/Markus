@@ -3,6 +3,7 @@
 ## [unreleased]
 - Allow inactive groups in the graders table to be toggled for display (#6778)
 - Enable plotly rendering for jupyter notebooks (#6871)
+- Bug Fix: Prevent assigning inactive graders to a group (#6801)
 
 ## [v2.4.1]
 - Internal changes only
@@ -22,7 +23,6 @@
 - Ensure starter files are passed to autotester in sorted order (#6771)
 - Resolved issue 6677 by taking timed assessment's duration into account when determining when grading can begin (#6845)
 - Fix loading results page when group is created after the due date (#6863)
-- Bug Fix: Prevent assigning inactive graders to a group (#6801)
 - Autocomplete with active students only for matching process in 'assign scans' (#6844)
 - Fix member filtering in Groups table (#6842)
 
