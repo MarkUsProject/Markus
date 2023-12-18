@@ -87,6 +87,11 @@ class GradersController < ApplicationController
       end
     end
 
+    # It appears that the params[:graders] received is always an array of stringed integers instead of integers.
+    # This is the case both from the React front-end (it sends id's as strings; this should be dealt with in
+    # the future), as well as from the requests generated in the RSPEC tests, where it appears that array elements
+    # (in request parameters) are automatically converted to strings for HTTP transmission.
+    # This map handles the required conversion from stringed integers to integers.
     grader_ids.map!(&:to_i)
 
     if %w[assign random_assign].include? params[:global_actions]
