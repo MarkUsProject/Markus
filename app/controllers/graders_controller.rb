@@ -87,14 +87,16 @@ class GradersController < ApplicationController
       end
     end
 
+    grader_ids.map(&:to_i)
+
     if %w[assign random_assign].include? params[:global_actions]
       inactive_graders_hash =
         current_course.tas.joins(:user).where(roles: { hidden: true }).pluck(:id, :user_name)
                       .map { |x| [x[0], x[1]] }.to_h
 
-      inactive_graders_for_flash = inactive_graders_hash.select { |k| grader_ids.include? k.to_s }
+      inactive_graders_for_flash = inactive_graders_hash.select { |k| grader_ids.include? k }
 
-      grader_ids.reject! { |grader_id| inactive_graders_hash.key? grader_id.to_i }
+      grader_ids.reject! { |grader_id| inactive_graders_hash.key? grader_id }
 
       if inactive_graders_for_flash.size > 0
         flash_now(:error,
