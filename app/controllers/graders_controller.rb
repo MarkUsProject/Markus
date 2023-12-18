@@ -87,7 +87,7 @@ class GradersController < ApplicationController
       end
     end
 
-    grader_ids.map(&:to_i)
+    grader_ids.map!(&:to_i)
 
     if %w[assign random_assign].include? params[:global_actions]
       inactive_graders_hash =
