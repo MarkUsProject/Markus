@@ -346,6 +346,10 @@ describe GradersController do
           @ta1 = create(:ta)
           @ta2 = create(:ta)
           @ta3 = create(:ta)
+
+          # Making two new TA's that are 'inactive', to test additional functionality
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
         end
 
         it 'and no graders selected' do
@@ -363,7 +367,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
-                            global_actions: 'random_assign', graders: [@ta1], current_table: 'groups_table' }
+                            global_actions: 'random_assign', graders: [@ta1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
@@ -374,7 +378,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
-                            global_actions: 'random_assign', groupings: [@grouping1], current_table: 'groups_table' }
+                            global_actions: 'random_assign', groupings: [@grouping1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
@@ -385,8 +389,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id,
-                            global_actions: 'random_assign', groupings: [@grouping1], weightings: [1],
-                            graders: [@ta1], current_table: 'groups_table' }
+                            global_actions: 'random_assign', groupings: [@grouping1.id], weightings: [1],
+                            graders: [@ta1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas).to eq []
@@ -397,7 +401,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1],
+                            groupings: [@grouping1.id, @grouping2.id], graders: [@ta1.id],
                             weightings: [1], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
@@ -409,7 +413,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id], graders: [@ta1.id, @ta2.id],
                             weightings: [1, 1], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
@@ -421,7 +425,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id], graders: [@ta1.id, @ta2.id],
                             weightings: [1, 1], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
@@ -434,7 +438,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id], graders: [@ta1.id, @ta2.id],
                             weightings: [1, 0], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id)
@@ -446,7 +450,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id], graders: [@ta1.id, @ta2.id],
                             weightings: [2, 1], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq(@ta1.id).or eq(@ta2.id)
@@ -460,7 +464,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
+                            graders: [@ta1.id, @ta2.id, @ta3.id],
                             weightings: [1, 1, 1], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas.size).to eq 1
@@ -471,7 +476,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id], graders: [@ta1.id, @ta2.id],
                             weightings: [0, 0], current_table: 'groups_table' }
           expect(@grouping1.tas.size).to eq 0
           expect(@grouping2.tas.size).to eq 0
@@ -480,7 +485,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id], graders: [@ta1.id, @ta2.id],
                             weightings: [-1, 1], current_table: 'groups_table' }
           expect(@grouping1.tas.size).to eq 0
           expect(@grouping2.tas.size).to eq 0
@@ -489,7 +494,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id], graders: [@ta1.id, @ta2.id],
                             weightings: [[], 0], current_table: 'groups_table' }
           expect(@grouping1.tas.size).to eq 0
           expect(@grouping2.tas.size).to eq 0
@@ -498,10 +503,44 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id], graders: [@ta1.id, @ta2.id],
                             weightings: ['weight', 0], current_table: 'groups_table' }
           expect(@grouping1.tas.size).to eq 0
           expect(@grouping2.tas.size).to eq 0
+        end
+        it 'and only inactive graders (and multiple groupings) are selected' do
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                    groupings: [@grouping1.id, @grouping2.id, @grouping3.id], graders: [@ta4.id, @ta5.id],
+                    weightings: [1, 1], current_table: 'groups_table'
+                  }
+          expect(response).to have_http_status(200)
+          @assignment.groupings.each do |grouping|
+            expect(grouping.tas).to eq []
+          end
+        end
+        it 'and both active and inactive graders (and multiple groupings) are selected' do
+          # In this case, the active graders should be assigned to the specified groups but the inactive
+          # ones should not
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign',
+                    groupings: [@grouping1.id, @grouping2.id], graders: [@ta1.id, @ta4.id],
+                    weightings: [1, 1], current_table: 'groups_table'
+                  }
+
+          expect(response).to have_http_status(200)
+
+          expect(@grouping1.tas[0].id).to eq(@ta1.id)
+          expect(@grouping2.tas[0].id).to eq(@ta1.id)
+          expect(@grouping3.tas).to eq []
+
+          expect(@grouping1.tas.size).to eq(1)
+          expect(@grouping2.tas.size).to eq(1)
+          expect(@grouping3.tas.size).to eq(0)
         end
       end
 
@@ -513,6 +552,10 @@ describe GradersController do
           @ta1 = create(:ta)
           @ta2 = create(:ta)
           @ta3 = create(:ta)
+
+          # Making two new TA's that are 'inactive', to test additional functionality
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
         end
 
         it 'and no graders selected' do
@@ -530,7 +573,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            graders: [@ta1], current_table: 'groups_table' }
+                            graders: [@ta1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
@@ -541,7 +584,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1], current_table: 'groups_table' }
+                            groupings: [@grouping1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(400)
           @assignment.groupings.each do |grouping|
             expect(grouping.tas).to eq []
@@ -552,7 +595,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1], graders: [@ta1], current_table: 'groups_table' }
+                            groupings: [@grouping1.id], graders: [@ta1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas).to eq []
@@ -563,7 +606,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1], current_table: 'groups_table' }
+                            groupings: [@grouping1.id, @grouping2.id],
+                            graders: [@ta1.id], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas[0].id).to eq @ta1.id
           expect(@grouping2.tas[0].id).to eq @ta1.id
@@ -574,7 +618,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1], graders: [@ta1, @ta2], current_table: 'groups_table' }
+                            groupings: [@grouping1.id], graders: [@ta1.id, @ta2.id], current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 2
           expect(@grouping1.tas).to include(@ta1)
@@ -587,7 +631,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1, @ta2], current_table: 'groups_table' }
+                            groupings: [@grouping1.id, @grouping2.id], graders: [@ta1.id, @ta2.id],
+                            current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 2
           expect(@grouping1.tas).to include(@ta1)
@@ -603,7 +648,8 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1, @grouping2, @grouping3], graders: [@ta1, @ta2, @ta3],
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
+                            graders: [@ta1.id, @ta2.id, @ta3.id],
                             current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 3
@@ -622,7 +668,7 @@ describe GradersController do
           post_as @instructor,
                   :global_actions,
                   params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                            groupings: [@grouping1, @grouping2], graders: [@ta1.id.to_s, @ta2.id.to_s],
+                            groupings: [@grouping1.id, @grouping2.id], graders: [@ta1.id, @ta2.id],
                             current_table: 'groups_table' }
           expect(response).to have_http_status(200)
           expect(@grouping1.tas.length).to eq 2
@@ -633,12 +679,49 @@ describe GradersController do
           expect(@grouping2.tas).to include(@ta2)
           expect(@grouping3.tas).to eq []
         end
+
+        it 'and only inactive graders (and multiple groupings) are selected' do
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
+                    groupings: [@grouping1.id, @grouping2.id], graders: [@ta4.id, @ta5.id],
+                    current_table: 'groups_table'
+                  }
+
+          expect(response).to have_http_status(200)
+          @assignment.groupings.each do |grouping|
+            expect(grouping.tas).to eq []
+          end
+        end
+
+        it 'and both active and inactive graders (and multiple groupings) are selected' do
+          # In this case, the active graders should be assigned to the specified groups but the inactive
+          # ones should not.
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
+                    groupings: [@grouping1.id, @grouping3.id], graders: [@ta2.id, @ta5.id],
+                    current_table: 'groups_table'
+                  }
+
+          expect(response).to have_http_status(200)
+
+          expect(@grouping1.tas[0].id).to eq(@ta2.id)
+          expect(@grouping2.tas).to eq([])
+          expect(@grouping3.tas[0].id).to eq(@ta2.id)
+
+          expect(@grouping1.tas.size).to eq(1)
+          expect(@grouping2.tas.size).to eq(0)
+          expect(@grouping3.tas.size).to eq(1)
+        end
         context 'and skip_empty_submissions is true' do
           before do
             submission
             post_as @instructor, :global_actions, params: { course_id: course.id, assignment_id: @assignment.id,
-                                                            global_actions: 'assign', groupings: [@grouping1],
-                                                            graders: [@ta1.id.to_s], current_table: 'groups_table',
+                                                            global_actions: 'assign', groupings: [@grouping1.id],
+                                                            graders: [@ta1.id], current_table: 'groups_table',
                                                             skip_empty_submissions: 'true' }
           end
           context 'and the group has no submission' do
@@ -671,6 +754,10 @@ describe GradersController do
           @ta1 = create(:ta)
           @ta2 = create(:ta)
           @ta3 = create(:ta)
+
+          # Making two new TA's that are 'inactive', to test additional functionality
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
         end
 
         it 'and no graders or groupings are selected' do
@@ -772,6 +859,27 @@ describe GradersController do
           expect(@grouping2.tas).to eq []
           expect(@grouping3.tas).to eq []
         end
+
+        it 'and inactive graders are selected' do
+          # An instructor should be able to unassign inactive graders from groupings (inactivity only plays
+          # a role in assigning and random-assigning)
+          create(:ta_membership, role: @ta4, grouping: @grouping1)
+          create(:ta_membership, role: @ta5, grouping: @grouping1)
+          create(:ta_membership, role: @ta4, grouping: @grouping2)
+          create(:ta_membership, role: @ta5, grouping: @grouping2)
+          create(:ta_membership, role: @ta4, grouping: @grouping3)
+          create(:ta_membership, role: @ta5, grouping: @grouping3)
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
+                            graders: [@ta4.id, @ta5.id],
+                            current_table: 'groups_table' }
+          expect(response).to have_http_status(200)
+          expect(@grouping1.tas).to eq []
+          expect(@grouping2.tas).to eq []
+          expect(@grouping3.tas).to eq []
+        end
       end
     end
 
@@ -802,7 +910,7 @@ describe GradersController do
             post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
-                              global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
+                              global_actions: 'random_assign', graders: [@ta1.id], current_table: 'criteria_table' }
             expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
@@ -910,7 +1018,7 @@ describe GradersController do
             post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
-                              global_actions: 'assign', graders: [@ta1], current_table: 'criteria_table' }
+                              global_actions: 'assign', graders: [@ta1.id], current_table: 'criteria_table' }
             expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
@@ -1187,7 +1295,7 @@ describe GradersController do
             post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id,
-                              global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
+                              global_actions: 'random_assign', graders: [@ta1.id], current_table: 'criteria_table' }
             expect(response).to have_http_status(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
@@ -1314,7 +1422,7 @@ describe GradersController do
             post_as @instructor,
                     :global_actions,
                     params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
-                              graders: [@ta1], current_table: 'criteria_table' }
+                              graders: [@ta1.id], current_table: 'criteria_table' }
             expect(response).to have_http_status(400)
             @assignment.reload
             @assignment.criteria.each do |criterion|
