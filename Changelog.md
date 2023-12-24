@@ -5,6 +5,7 @@
 - Enable plotly rendering for jupyter notebooks (#6871)
 - Bug Fix: Prevent assigning inactive graders to a group (#6801)
 - Added new API routes for the `create` and `destroy` actions of SectionsController (#6873)
+- Added `destroy` action to `controllers/api/assignments_controller` ()
 
 ## [v2.4.1]
 - Internal changes only

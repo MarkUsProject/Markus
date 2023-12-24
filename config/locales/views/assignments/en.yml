@@ -1,6 +1,8 @@
 ---
 en:
   assignments:
+    assignment_has_groupings: Assignment has groupings.
+    assignment_not_found: No assignment with id '%{invalid_id}'.
     average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
@@ -63,6 +65,7 @@ en:
       title: Starter Files
       upload_confirmation: The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?
       use_original_filename: Use original filename
+    successful_deletion: Assignment with id '%{invalid_id}' has been successfully deleted.
     timed:
       before_start_instructions: Once you start this timed assessment, you will have %{duration_string} to complete it without penalty.
       before_start_instructions_extension: Once you start this timed assessment, you will have %{duration_string} to complete it without penalty (this includes a duration extension of %{extension_string}).
@@ -85,6 +88,3 @@ en:
     upload_config_help_html: "<p>This zip file will configure and create this assignment.</p><p>This does not configure student or grader settings.<br>For more information please visit <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Importing-and-Exporting-Data.md#%{section_id}>this page</a>.</p>"
     upload_file_requirement: Filename %{file_name} is not allowed for this assignment.
     upload_file_requirement_in_folder: Filename %{file_name} in %{file_path} is not allowed for this assignment.
-    assignment_not_found: No assignment with id '%{invalid_id}'.
-    assignment_has_groupings: Assignment has groupings.
-    successful_deletion: Assignment with id '%{invalid_id}' has been successfully deleted.
