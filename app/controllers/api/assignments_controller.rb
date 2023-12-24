@@ -299,6 +299,21 @@ module Api
       upload_file(grouping, only_required_files: assignment.only_required_files)
     end
 
+    def destroy
+      assignment = Assignment.find_by(id: params[:id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message: 'assignment not found' }, status: :not_found
+        # render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
+      elsif assignment.groups.length != 0
+        render 'shared/http_status',
+               locals: { code: :conflict, message: 'Assignment still has groupings!' }, status: :conflict
+      else
+        assignment.destroy
+        render 'shared/http_status',
+               locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      end
+    end
+
     protected
 
     def implicit_authorization_target
