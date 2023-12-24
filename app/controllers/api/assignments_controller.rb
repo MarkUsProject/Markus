@@ -300,17 +300,19 @@ module Api
     end
 
     def destroy
-      assignment = Assignment.find_by(id: params[:id])
+      assignment_id = params[:id]
+      assignment = Assignment.find_by(id: assignment_id)
       if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message: 'assignment not found' }, status: :not_found
-        # render 'shared/http_status', locals: { code: '404', message: I18n.t('tags.not_found') }, status: :not_found
-      elsif assignment.groups.length != 0
+        render 'shared/http_status', locals: { code: '404', message:
+          I18n.t('assignments.assignment_not_found',
+                 invalid_id: assignment_id) }, status: :not_found
+      elsif !assignment.groups.empty?
         render 'shared/http_status',
-               locals: { code: :conflict, message: 'Assignment still has groupings!' }, status: :conflict
+               locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
       else
         assignment.destroy
         render 'shared/http_status',
-               locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+               locals: { code: '200', message: I18n.t('assignments.successful_deletion') }, status: :ok
       end
     end
 
