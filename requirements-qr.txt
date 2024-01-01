@@ -1,1 +1,1 @@
-zxing-cpp==2.1.0
+zxing-cpp==2.2.0
