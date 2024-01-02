@@ -11,7 +11,7 @@
     "@rails/ujs": "^7.1.2",
     "@rjsf/core": "^5.15.0",
     "@rjsf/validator-ajv8": "^5.15.0",
-    "chart.js": "^4.4.0",
+    "chart.js": "^4.4.1",
     "core-js": "^3.35.0",
     "dompurify": "^3.0.6",
     "flatpickr": "^4.6.13",
