@@ -1,2 +1,2 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
-nbconvert==7.11.0
+nbconvert==7.13.1
