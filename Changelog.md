@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Fix feedback file API not returning feedback file IDs correctly (#6875)
 - Allow inactive groups in the graders table to be toggled for display (#6778)
 - Enable plotly rendering for jupyter notebooks (#6871)
 - Bug Fix: Prevent assigning inactive graders to a group (#6801)
