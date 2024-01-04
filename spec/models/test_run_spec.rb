@@ -161,6 +161,17 @@ describe TestRun do
       it 'should create a feedback file from compressed binary data' do
         expect(feedback_files.find_by(filename: 'test_compressed.png').file_content).to eq(png_file_content)
       end
+      context 'when a submission exists' do
+        let(:submission) { create :submission, grouping: grouping }
+        let(:test_run) do
+          create :test_run, status: :in_progress,
+                            grouping: grouping,
+                            autotest_test_id: 1, submission: submission
+        end
+        it 'should associate the files with a submission' do
+          expect(feedback_files.first.submission).to_not be_nil
+        end
+      end
       context 'when feedback files exceed the file size limit' do
         let(:text_file_content) { SecureRandom.alphanumeric(assignment.course.max_file_size + 10) }
         let(:png_file_content) { text_file_content }
