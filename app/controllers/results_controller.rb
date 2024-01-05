@@ -281,12 +281,12 @@ class ResultsController < ApplicationController
 
   def run_tests
     submission = record.submission
-    @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                current_role.id,
-                                                submission.assignment.id,
-                                                [submission.grouping.group_id])
-    session[:job_id] = @current_job.job_id
-    flash_message(:success, I18n.t('automated_tests.test_run_table.tests_running'))
+    flash_message(:notice, I18n.t('automated_tests.autotest_run_job.status.in_progress'))
+    AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                 current_role.id,
+                                 submission.assignment.id,
+                                 [submission.grouping.group_id],
+                                 user: current_user)
   end
 
   ##  Tag Methods  ##

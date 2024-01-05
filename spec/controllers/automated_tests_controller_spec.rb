@@ -360,8 +360,29 @@ describe AutomatedTestsController do
       # TODO: write tests
     end
     context 'POST execute_test_run' do
-      before { post_as role, :execute_test_run, params: params }
-      # TODO: write tests
+      let!(:grouping) { create :grouping, assignment: assignment, inviter: role }
+      context 'when the student is not allowed to run tests' do
+        before do
+          assignment.update!(enable_student_tests: false)
+        end
+
+        it 'does not enqueue an AutotestRunJob' do
+          expect { post_as role, :execute_test_run, params: params }.not_to have_enqueued_job(AutotestRunJob)
+        end
+      end
+
+      context 'when the student is allowed to run tests' do
+        before do
+          assignment.update!(enable_student_tests: true,
+                             unlimited_tokens: true,
+                             token_start_date: 1.day.ago,
+                             remote_autotest_settings_id: 1)
+        end
+
+        it 'enqueues an AutotestRunJob' do
+          expect { post_as role, :execute_test_run, params: params }.to have_enqueued_job(AutotestRunJob)
+        end
+      end
     end
     context 'GET get_test_runs_students' do
       before { post_as role, :get_test_runs_students, params: params }

@@ -1679,6 +1679,27 @@ describe SubmissionsController do
       end
     end
   end
+
+  describe '#run_tests' do
+    let(:assignment) { create(:assignment) }
+    let(:instructor) { create(:instructor) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let!(:submission) { create(:version_used_submission, grouping: grouping, is_empty: false) }
+
+    before do
+      assignment.update!(enable_test: true,
+                         enable_student_tests: true,
+                         unlimited_tokens: true,
+                         token_start_date: 1.day.ago,
+                         remote_autotest_settings_id: 1)
+    end
+
+    it 'enqueues an AutotestRunJob' do
+      params = { course_id: assignment.course_id, assignment_id: assignment.id, groupings: [grouping.id] }
+      expect { post_as instructor, :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
+    end
+  end
+
   def self.test_assigns_not_nil(key)
     it "should assign #{key}" do
       expect(assigns(key)).not_to be_nil

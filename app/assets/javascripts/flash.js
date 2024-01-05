@@ -5,18 +5,18 @@ const generateFlashMessageContentsUsingStatus = status_data => {
   switch (status_data["status"]) {
     case "failed":
       if (!status_data["exception"] || !status_data["exception"]["message"]) {
-        message_data["error"] = I18n.t("submissions.collect.status.failed.no_message");
+        message_data["error"] = I18n.t("job.status.failed.no_message");
       } else {
-        message_data["error"] = I18n.t("submissions.collect.status.failed.message", {
+        message_data["error"] = I18n.t("job.status.failed.message", {
           error: status_data["exception"]["message"],
         });
       }
       break;
     case "completed":
-      message_data["success"] = I18n.t("submissions.collect.status.completed");
+      message_data["success"] = I18n.t("job.status.completed");
       break;
     case "queued":
-      message_data["notice"] = I18n.t("submissions.collect.status.queued");
+      message_data["notice"] = I18n.t("job.status.queued");
       break;
     default:
       let progress = status_data["progress"];
