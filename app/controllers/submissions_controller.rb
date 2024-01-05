@@ -252,12 +252,12 @@ class SubmissionsController < ApplicationController
     begin
       if !group_ids.empty?
         if flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { assignment: assignment })).value
-          @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                      current_role.id,
-                                                      assignment.id,
-                                                      group_ids)
-          session[:job_id] = @current_job.job_id
-          success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
+          AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                       current_role.id,
+                                       assignment.id,
+                                       group_ids,
+                                       user: current_user)
+          success = I18n.t('automated_tests.autotest_run_job.status.in_progress')
         end
       else
         error = I18n.t('automated_tests.need_submission')

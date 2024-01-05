@@ -12,7 +12,7 @@ import {
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
 import consumer from "/app/javascript/channels/consumer";
-import {generateFlashMessageContentsUsingStatus, renderFlashMessages} from "../flash";
+import {renderFlashMessages} from "../flash";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -31,7 +31,7 @@ class RawSubmissionTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    this.createCollectSubmissionsChannelSubscription();
+    this.createChannelSubscriptions();
   }
 
   fetchData = () => {
@@ -364,25 +364,47 @@ class RawSubmissionTable extends React.Component {
     }, after_function);
   };
 
-  createCollectSubmissionsChannelSubscription = () => {
+  createChannelSubscriptions = () => {
+    // Subscribe to submission collection job status
     consumer.subscriptions.create(
       {channel: "CollectSubmissionsChannel", course_id: this.props.course_id},
       {
-        connected: () => {
-          // Called when the subscription is ready for use on the server
-        },
-
-        disconnected: () => {
-          // Called when the subscription has been terminated by the server
-        },
-
+        connected: () => {},
+        disconnected: () => {},
         received: data => {
           // Called when there's incoming data on the websocket for this channel
           if (data["status"] != null) {
-            let message_data = generateFlashMessageContentsUsingStatus(data);
+            let message_data = generateMessage(data);
             renderFlashMessages(message_data);
           }
           if (data["update_table"] != null) {
+            this.fetchData();
+          }
+        },
+      }
+    );
+
+    // Subscribe to autotest runs job status
+    consumer.subscriptions.create(
+      {
+        channel: "TestRunsChannel",
+        course_id: this.props.course_id,
+        assignment_id: this.props.assignment_id,
+      },
+      {
+        connected: () => {},
+        disconnected: () => {},
+        received: data => {
+          // Called when there's incoming data on the websocket for this channel
+          if (data["status"] != null) {
+            let message_data = generateMessage(data);
+            renderFlashMessages(message_data);
+          }
+          if (
+            data["update_table"] !== undefined &&
+            data["assignment_ids"] !== undefined &&
+            data["assignment_ids"].includes(this.props.assignment_id)
+          ) {
             this.fetchData();
           }
         },
@@ -598,4 +620,46 @@ class SubmissionsActionBox extends React.Component {
 
 export function makeSubmissionTable(elem, props) {
   return render(<SubmissionTable {...props} />, elem);
+}
+
+function generateMessage(status_data) {
+  let message_data = {};
+  switch (status_data["status"]) {
+    case "failed":
+      if (!status_data["exception"] || !status_data["exception"]["message"]) {
+        message_data["error"] = I18n.t("job.status.failed.no_message");
+      } else {
+        message_data["error"] = I18n.t("job.status.failed.message", {
+          error: status_data["exception"]["message"],
+        });
+      }
+      break;
+    case "completed":
+      if (status_data["job_class"] === "AutotestRunJob") {
+        message_data["success"] = I18n.t("automated_tests.autotest_run_job.status.completed");
+      } else if (status_data["job_class"] === "AutotestResultsJob") {
+        message_data["success"] = I18n.t("automated_tests.autotest_results_job.status.completed");
+      } else {
+        message_data["success"] = I18n.t("job.status.completed");
+      }
+      break;
+    case "queued":
+      message_data["notice"] = I18n.t("job.status.queued");
+      break;
+    default:
+      if (status_data["job_class"] === "SubmissionsJob") {
+        let progress = status_data["progress"];
+        let total = status_data["total"];
+        message_data["notice"] = I18n.t("submissions.collect.status.in_progress", {
+          progress,
+          total,
+        });
+      } else {
+        message_data["notice"] = I18n.t("job.status.in_progress", {progress, total});
+      }
+  }
+  if (status_data["warning_message"]) {
+    message_data["warning"] = status_data["warning_message"];
+  }
+  return message_data;
 }
