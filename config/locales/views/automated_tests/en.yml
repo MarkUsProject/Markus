@@ -1,6 +1,13 @@
 ---
 en:
   automated_tests:
+    autotest_results_job:
+      status:
+        completed: Tests have been run and results are available.
+    autotest_run_job:
+      status:
+        completed: Running tests.
+        in_progress: Setting up tests.
     cancel_tests: Cancel tests
     category: Run by
     display_output:
@@ -43,8 +50,6 @@ en:
     stop_batch: Stop batch
     stop_test: Stop test
     student_tests: Student-Run Tests
-    test_run_table:
-      tests_running: Running tests.
     test_runs_status: Test Runs Status
     test_runs_statuses:
       cancelled: cancelled
@@ -53,6 +58,5 @@ en:
       in_progress: in progress
     testing_disabled: Automated testing is not enabled for this assignment.
     tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
-    tests_running: Running tests. Please refresh this page in a bit to view the results.
     timeout: Timeout (s)
     title: Automated Testing

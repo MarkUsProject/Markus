@@ -1,11 +1,13 @@
 # Changelog
 
 ## [unreleased]
+- Fix feedback file API not returning feedback file IDs correctly (#6875)
 - Allow inactive groups in the graders table to be toggled for display (#6778)
 - Enable plotly rendering for jupyter notebooks (#6871)
 - Bug Fix: Prevent assigning inactive graders to a group (#6801)
 - Added new API routes for the `create` and `destroy` actions of SectionsController (#6873)
-- Added `destroy` action to `controllers/api/assignments_controller` (#6880)
+- Display error message in real-time when running automated tests, rather than waiting for page refresh (#6878)
+- - Added `destroy` action to `controllers/api/assignments_controller` (#6880)
 
 ## [v2.4.1]
 - Internal changes only
