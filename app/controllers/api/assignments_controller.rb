@@ -310,7 +310,7 @@ module Api
         begin
           assignment.destroy
           render 'shared/http_status',
-                 locals: { code: '200', message: I18n.t('assignments.average_annotations') }, status: :ok
+                 locals: { code: '200', message: I18n.t('assignments.successful_deletion') }, status: :ok
         rescue ActiveRecord::DeleteRestrictionError
           render 'shared/http_status',
                  locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
