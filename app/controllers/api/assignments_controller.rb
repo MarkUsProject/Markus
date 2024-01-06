@@ -306,13 +306,15 @@ module Api
         render 'shared/http_status', locals: { code: '404', message:
           I18n.t('assignments.assignment_not_found',
                  invalid_id: assignment_id) }, status: :not_found
-      elsif !assignment.groups.empty?
-        render 'shared/http_status',
-               locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
       else
-        assignment.destroy
-        render 'shared/http_status',
-               locals: { code: '200', message: I18n.t('assignments.successful_deletion') }, status: :ok
+        begin
+          assignment.destroy
+          render 'shared/http_status',
+                 locals: { code: '200', message: I18n.t('assignments.average_annotations') }, status: :ok
+        rescue ActiveRecord::DeleteRestrictionError
+          render 'shared/http_status',
+                 locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
+        end
       end
     end
 

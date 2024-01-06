@@ -514,8 +514,8 @@ describe Api::AssignmentsController do
         delete :destroy, params: { id: assignment.id, course_id: course.id }
         expect(response).to have_http_status(200)
         expect(Assignment.all).to eq([])
+        expect(Assignment.exists?(assignment.id)).to eq(false)
       end
-
       it 'fails to delete assignment because assignment has groups' do
         assignment # since lazy let is used for creating an assignment, I invoke it here to trigger its execution
         # creates a grouping (and thus a group) for the assignment
@@ -525,8 +525,8 @@ describe Api::AssignmentsController do
         delete :destroy, params: { id: assignment.id, course_id: course.id }
         expect(response).to have_http_status(409)
         expect(Assignment.all.length).to eq(original_size)
+        expect(assignment.persisted?).to eq(true)
       end
-
       it 'fails to delete assignment because of invalid id' do
         assignment # since lazy let is used for creating an assignment, I invoke it here to trigger its execution
         original_size = Assignment.all.length
@@ -534,6 +534,7 @@ describe Api::AssignmentsController do
         delete :destroy, params: { id: assignment.id + 1, course_id: course.id }
         expect(response).to have_http_status(404)
         expect(Assignment.all.length).to eq(original_size)
+        expect(assignment.persisted?).to eq(true)
       end
     end
   end
