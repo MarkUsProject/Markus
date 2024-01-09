@@ -180,14 +180,13 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def create_course
-    new_course = Course.find_or_initialize_by(name: params['name'], display_name: params['display_name'])
+    new_course = Course.find_or_initialize_by(name: params['name'])
     unless new_course.new_record?
       flash_message(:error, I18n.t('lti.course_exists'))
       redirect_to choose_course_lti_deployment_path
       return
     end
-    new_course.update(is_hidden: true)
-    new_course.save!
+    new_course.update!(display_name: params['display_name'], is_hidden: true)
     if current_user.admin_user?
       AdminRole.find_or_create_by(user: current_user, course: new_course)
     else

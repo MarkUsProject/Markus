@@ -25,7 +25,7 @@ class MainController < ApplicationController
     if logged_in? && !request.post?
       if cookies.encrypted[:lti_data].present?
         lti_data = JSON.parse(cookies.encrypted[:lti_data]).symbolize_keys
-        redirect_url = lti_data.key?(:lti_redirect) ? lti_data[:lti_redirect] : root_url
+        redirect_url = lti_data.fetch(:lti_redirect, root_url)
         redirect_to redirect_url
       elsif @real_user.admin_user?
         redirect_to(admin_path)
