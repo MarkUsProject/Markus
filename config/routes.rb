@@ -235,6 +235,7 @@ Rails.application.routes.draw do
         get 'grade_distribution'
         get 'download_config_files'
         get 'download_test_results'
+        get 'lti_settings'
         post 'create_lti_grades'
         post 'create_lti_line_items'
       end

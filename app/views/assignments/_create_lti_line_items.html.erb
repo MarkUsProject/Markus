@@ -12,10 +12,10 @@
       <% @lti_deployments.each do |deployment| %>
         <tr>
           <td>
-            <%= f.label deployment.id, I18n.t("lti.lti_deployment", {
+            <%= f.label deployment.id, I18n.t("lti.lti_deployment",
               lti_deployment_name: deployment.lms_course_name,
               lti_host: URI(deployment.lti_client.host).host,
-            }) %>
+            ) %>
           </td>
           <td>
             <% if deployment.lti_line_items.where(assessment: @assignment).exists? %>

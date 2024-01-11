@@ -33,7 +33,7 @@ en:
     line_item_created: Gradebook item created.
     lti_configuration: LTI configuration
     lti_course_link_html: Course linked to external course
-    lti_deployment: "%{lti_deployment_name} on %{lti_host}"
+    lti_deployment: '%{lti_deployment_name} on %{lti_host}'
     lti_settings: LTI Settings
     no_courses: No courses available for matching.
     no_grades: No grades to sync
