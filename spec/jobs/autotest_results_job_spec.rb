@@ -149,7 +149,8 @@ describe AutotestResultsJob do
           context 'when getting results for a completed test' do
             it 'broadcasts a message to the user' do
               expect { described_class.perform_now }
-                .to have_broadcasted_to(student).from_channel(TestRunsChannel).with(body: 'sent')
+                .to have_broadcasted_to(student).from_channel(TestRunsChannel)
+                                                .with(status: 'completed', job_class: 'AutotestResultsJob')
             end
             it 'broadcasts exactly one message' do
               expect { described_class.perform_now }
@@ -161,10 +162,14 @@ describe AutotestResultsJob do
             end
           end
           context 'when a the test was batch run' do
-            let(:test_run2) { create :batch_test_run, grouping: grouping, status: :in_progress }
-            it "doesn't broadcast a message" do
+            let(:test_run2) { create :batch_test_run, grouping: grouping, role: grouping.inviter, status: :in_progress }
+            it 'broadcasts a message to the user' do
               expect { described_class.perform_now }
-                .to have_broadcasted_to(test_run2.role.user).from_channel(TestRunsChannel).exactly 0
+                .to have_broadcasted_to(student).from_channel(TestRunsChannel)
+                                                .with(status: 'completed',
+                                                      job_class: 'AutotestResultsJob',
+                                                      assignment_ids: [grouping.assessment_id],
+                                                      update_table: true)
             end
           end
         end

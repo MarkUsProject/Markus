@@ -5,6 +5,7 @@ import {getType} from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
 import consumer from "../../../javascript/channels/consumer";
+import {renderFlashMessages} from "../flash";
 
 export class TestRunTable extends React.Component {
   constructor(props) {
@@ -85,11 +86,19 @@ export class TestRunTable extends React.Component {
       },
       {
         connected: () => {},
-
         disconnected: () => {},
-
         received: data => {
-          this.fetchData();
+          // Called when there's incoming data on the websocket for this channel
+          if (data["status"] !== null) {
+            let message_data = generateMessage(data);
+            renderFlashMessages(message_data);
+          }
+          if (data["status"] === "completed") {
+            // Note: this gets called after AutotestRunJob completes (when a new
+            // TestRun is created), and after an AutotestResultsJob completed
+            // (when test results are available).
+            this.fetchData();
+          }
         },
       }
     );
@@ -392,4 +401,35 @@ class TestGroupFeedbackFileTable extends React.Component {
 
 export function makeTestRunTable(elem, props) {
   return render(<TestRunTable {...props} />, elem);
+}
+
+function generateMessage(status_data) {
+  let message_data = {};
+  switch (status_data["status"]) {
+    case "failed":
+      if (!status_data["exception"] || !status_data["exception"]["message"]) {
+        message_data["error"] = I18n.t("job.status.failed.no_message");
+      } else {
+        message_data["error"] = I18n.t("job.status.failed.message", {
+          error: status_data["exception"]["message"],
+        });
+      }
+      break;
+    case "completed":
+      if (status_data["job_class"] === "AutotestRunJob") {
+        message_data["success"] = I18n.t("automated_tests.autotest_run_job.status.completed");
+      } else {
+        message_data["success"] = I18n.t("automated_tests.autotest_results_job.status.completed");
+      }
+      break;
+    case "queued":
+      message_data["notice"] = I18n.t("job.status.queued");
+      break;
+    default:
+      message_data["notice"] = I18n.t("automated_tests.autotest_run_job.status.in_progress");
+  }
+  if (status_data["warning_message"]) {
+    message_data["warning"] = status_data["warning_message"];
+  }
+  return message_data;
 }

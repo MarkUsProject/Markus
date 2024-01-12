@@ -4,7 +4,7 @@ describe AutotestRunJob do
   let(:n_groups) { 3 }
   let(:groupings) { create_list(:grouping_with_inviter_and_submission, n_groups, assignment: assignment) }
   let(:groups) { groupings.map(&:group) }
-  let(:user) { create(:instructor) }
+  let(:role) { create(:instructor) }
   before do
     allow_any_instance_of(AutotestSetting).to(
       receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
@@ -14,7 +14,7 @@ describe AutotestRunJob do
     course.save
   end
   context 'when running as a background job' do
-    let(:job_args) { [host_with_port, user.id, assignment.id, groups.map(&:id)] }
+    let(:job_args) { [host_with_port, role.id, assignment.id, groups.map(&:id)] }
     before { allow(AutotestResultsJob).to receive(:set) }
     include_examples 'background job'
   end
@@ -25,7 +25,9 @@ describe AutotestRunJob do
     end
     let(:collected) { true }
     subject do
-      described_class.perform_now(host_with_port, user.id, assignment.id, groups.map(&:id), collected: collected)
+      described_class.perform_now(host_with_port, role.id, assignment.id, groups.map(&:id),
+                                  user: role.user,
+                                  collected: collected)
     end
     context 'tests are set up for an assignment' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
@@ -45,11 +47,12 @@ describe AutotestRunJob do
         end
         it 'should broadcast a message to the user' do
           expect { subject }
-            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).with(body: 'sent')
+            .to have_broadcasted_to(role.user).from_channel(TestRunsChannel)
+                                              .with(status: 'completed', job_class: 'AutotestRunJob')
         end
         it 'should broadcast exactly one message' do
           expect { subject }
-            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).once
+            .to have_broadcasted_to(role.user).from_channel(TestRunsChannel).once
         end
         it 'should not broadcast a message to other users' do
           expect { subject }
@@ -86,9 +89,10 @@ describe AutotestRunJob do
           expected = JSON.parse(dummy_return.body)['test_ids']
           expect(autotest_test_ids).to contain_exactly(*expected)
         end
-        it 'should not broadcast a message' do
+        it 'should broadcast a message to the user' do
           expect { subject }
-            .to have_broadcasted_to(user.user).from_channel(TestRunsChannel).exactly 0
+            .to have_broadcasted_to(role.user).from_channel(TestRunsChannel)
+                                              .with(status: 'completed', job_class: 'AutotestRunJob')
         end
       end
       it 'should enqueue an AutotestResultsJob job' do
@@ -177,7 +181,7 @@ describe AutotestRunJob do
         end
       end
       context 'when the user is a student' do
-        let(:user) { create(:student) }
+        let(:role) { create(:student) }
         it 'should set the correct categories' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
             expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('student')
@@ -216,7 +220,7 @@ describe AutotestRunJob do
         end
       end
       context 'when the user is a ta' do
-        let(:user) { create(:ta) }
+        let(:role) { create(:ta) }
         it 'should set the correct categories' do
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
             expect(JSON.parse(net_obj.body)['categories'].uniq).to contain_exactly('instructor')

@@ -18,6 +18,7 @@ en:
   help: Help
   lti:
     config_error: Error configuring LTI.
+    course_exists: A course with this name already exists on MarkUs. Please select a course to link to.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
     course_not_linked: This course has not been linked with an external course. To link this course with an external course, launch MarkUs from the external LMS.

@@ -55,13 +55,13 @@ class AutomatedTestsController < ApplicationController
                                                    context: { assignment: assignment, grouping: grouping })).value
     if allowed
       grouping.decrease_test_tokens
-      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                  current_role.id,
-                                                  assignment.id,
-                                                  [grouping.group_id],
-                                                  collected: false)
-      session[:job_id] = @current_job.job_id
-      flash_message(:success, I18n.t('automated_tests.test_run_table.tests_running'))
+      flash_message(:notice, I18n.t('automated_tests.autotest_run_job.status.in_progress'))
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                   current_role.id,
+                                   assignment.id,
+                                   [grouping.group_id],
+                                   user: current_user,
+                                   collected: false)
     end
   rescue StandardError => e
     flash_message(:error, e.message)

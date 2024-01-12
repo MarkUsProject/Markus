@@ -85,6 +85,7 @@ Rails.application.routes.draw do
           get 'download_entries'
         end
       end
+      resources :sections, only: [:create, :destroy]
     end
     # Return a 404 when no route is match
     match '*path', controller: 'main_api', action: 'page_not_found', via: :all
@@ -119,6 +120,7 @@ Rails.application.routes.draw do
       delete 'destroy_lti_deployment'
       post 'sync_roster'
       get 'lti_deployments'
+      get 'lti_settings'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update]
@@ -233,6 +235,7 @@ Rails.application.routes.draw do
         get 'grade_distribution'
         get 'download_config_files'
         get 'download_test_results'
+        get 'lti_settings'
         post 'create_lti_grades'
         post 'create_lti_line_items'
       end
@@ -507,24 +510,22 @@ Rails.application.routes.draw do
     end
   end
 
-  unless Rails.env.production?
-    resources :lti_deployments, only: [] do
-      collection do
-        get 'public_jwk'
-        resources :canvas, only: [] do
-          collection do
-            get 'get_config'
-            post 'launch'
-            post 'redirect_login'
-            get 'redirect_login'
-          end
+  resources :lti_deployments, only: [] do
+    collection do
+      get 'public_jwk'
+      resources :canvas, only: [] do
+        collection do
+          get 'get_config'
+          post 'launch'
+          post 'redirect_login'
+          get 'redirect_login'
         end
       end
-      member do
-        get 'choose_course'
-        post 'choose_course'
-        post 'create_course'
-      end
+    end
+    member do
+      get 'choose_course'
+      post 'choose_course'
+      post 'create_course'
     end
   end
 

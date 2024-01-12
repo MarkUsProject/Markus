@@ -21,6 +21,7 @@ en:
     destroy:
       errors:
         do_not_have_a_group: You do not currently have a group.
+    display_inactive: Display inactive groups
     due_date_extension: Due Date Extension
     duration_extension: Duration Extension
     empty: Empty Group
