@@ -1,0 +1,20 @@
+{
+  "testers": [
+    {
+      "tester_type": "rust",
+      "test_data": [
+        {
+          "script_files": ["src/tests.rs"],
+          "category": [
+            "instructor"
+          ],
+          "timeout": 30,
+          "extra_info": {
+            "criterion": "criterion",
+            "name": "Rust Test Group"
+          }
+        }
+      ]
+    }
+  ]
+}
