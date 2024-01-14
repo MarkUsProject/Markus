@@ -3,6 +3,7 @@
 ## [unreleased]
 
 - Fix autotest settings criterion JSON schema validation (#6907)
+- Ensure autotested criteria do not have marks set if tests time out (#6907)
 
 ## [v2.4.2]
 - Fix feedback file API not returning feedback file IDs correctly (#6875)

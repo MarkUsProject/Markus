@@ -120,20 +120,18 @@ class Submission < ApplicationRecord
     result.create_marks # creates marks for any new criteria that may have just been added
     result.marks.each do |mark|
       test_groups = mark.criterion.test_groups
-      if test_groups.empty? # there's at least one manually-assigned mark
+      test_group_results = test_run.test_group_results.where(test_group_id: test_groups.ids)
+      # don't update mark if there are no results, or if there was an error
+      if test_group_results.empty? || test_group_results.exists?(error_type: TestGroupResult::ERROR_TYPE.values)
         complete_marks = false
         next
       end
-      # don't update mark if there is an error
-      next if test_run.test_group_results
-                      .exists?(error_type: TestGroupResult::ERROR_TYPE.slice(:no_results, :test_error).values)
 
       all_marks_earned = 0.0
       all_marks_total = 0.0
-      test_groups.each do |test_group|
-        res = test_run.test_group_results.find_by(test_group: test_group)
-        all_marks_earned += res&.marks_earned || 0.0
-        all_marks_total += res&.marks_total || 0.0
+      test_group_results.each do |res|
+        all_marks_earned += res.marks_earned
+        all_marks_total += res.marks_total
       end
       if all_marks_earned == 0 || all_marks_total == 0
         final_mark = 0.0
