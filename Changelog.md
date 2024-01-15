@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Fix import bug that prevents the peer review table from loading (#6908)
 
 ## [v2.4.2]
 - Fix feedback file API not returning feedback file IDs correctly (#6875)
