@@ -4,7 +4,6 @@
       "tester_type": "rust",
       "test_data": [
         {
-          "script_files": ["src/tests.rs"],
           "category": [
             "instructor"
           ],

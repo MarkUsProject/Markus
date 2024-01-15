@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Added a rust auto-test target (#6906)
 
 ## [v2.4.2]
 - Fix feedback file API not returning feedback file IDs correctly (#6875)
