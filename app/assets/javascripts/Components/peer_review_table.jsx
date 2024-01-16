@@ -3,6 +3,7 @@ import {render} from "react-dom";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class RawPeerReviewTable extends React.Component {
   constructor(props) {
