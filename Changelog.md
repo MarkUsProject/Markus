@@ -1,6 +1,10 @@
 # Changelog
 
 ## [unreleased]
+
+## [v2.4.3]
+- Fix autotest settings criterion JSON schema validation (#6907)
+- Ensure autotested criteria do not have marks set if tests time out (#6907)
 - Fix import bug that prevents the peer review table from loading (#6908)
 
 ## [v2.4.2]

@@ -5,5 +5,6 @@ FactoryBot.define do
     marks_earned { 1 }
     marks_total { 1 }
     time { Faker::Number.number(digits: 4) }
+    error_type { nil }
   end
 end
