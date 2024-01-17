@@ -1,3 +1,4 @@
+require 'net/http'
 module LtiHelper
   # Synchronize LMS user with MarkUs users.
   # if role is not nil, attempt to create users

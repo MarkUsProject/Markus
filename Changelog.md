@@ -1,6 +1,9 @@
 # Changelog
 
 ## [unreleased]
+- Fix import bug that prevents the peer review table from loading (#6908)
+- Fix autotest settings criterion JSON schema validation (#6907)
+- Ensure autotested criteria do not have marks set if tests time out (#6907)
 - Added a rust auto-test target (#6906)
 
 ## [v2.4.2]

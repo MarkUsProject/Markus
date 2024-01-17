@@ -2,7 +2,8 @@ require 'net/http'
 
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names = assignment.ta_criteria.order(:name).pluck(:name)
+    criterion_names = [{ const: nil, title: I18n.t('not_applicable') }]
+    criterion_names += assignment.ta_criteria.order(:name).pluck(:name).map { |c| { const: c, title: c } }
     { type: :object,
       properties: {
         name: {
@@ -19,9 +20,10 @@ module AutomatedTestsHelper
           title: I18n.t('automated_tests.display_output_title')
         },
         criterion: {
-          type: :string,
-          enum: criterion_names.presence || [''],
-          title: Criterion.model_name.human
+          type: %w[string null],
+          title: Criterion.model_name.human,
+          oneOf: criterion_names,
+          default: nil
         }
       },
       required: %w[display_output] }
