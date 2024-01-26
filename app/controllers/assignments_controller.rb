@@ -657,6 +657,18 @@ class AssignmentsController < ApplicationController
     render layout: 'assignment_content'
   end
 
+  # NOTE: an assignment should be deleted only if it has no groups.
+  # However, this logic is handled in the model through an appropriate association feature.
+  # Nevertheless, this method must NOT be called on an assignment with groups.
+  # This is ensured because the only endpoint of this method is the 'delete' button on the Assignment-edit
+  # page, which appears if and only if the assignment has no groups (through erb conditional rendering)
+  def destroy
+    @assignment = @record
+    @assignment.destroy
+    render template: 'assignments/index'
+    # flash_message(:success, t('flash.criteria.destroy.success'))
+  end
+
   private
 
   # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+
