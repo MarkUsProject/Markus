@@ -491,7 +491,7 @@
   <% end %>
 
 <!--Conditional Rendering-->
-  <% if @assignment.groups.length === 0 %>
+  <% if (@assignment.groups.length === 0) and (action_name=="edit")%>
     <%= button_to "Delete",
                   course_assignment_path(@current_course, @assignment),
                   data: { confirm: "Are you sure you want to delete this assignment?" },
