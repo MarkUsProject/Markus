@@ -2,6 +2,7 @@ Aaron Lee
 Abdelhamid Benmouffok
 Adam Goucher
 Aimen Khan
+Aina Merchant
 Alan Rosenthal
 Alessio Di Sandro
 Alexander Kittelberger
@@ -163,6 +164,7 @@ Parker Hutcheson
 Partoo Vafaeikia
 Paymahn Moghadasian
 Peter Guanjie Zhao
+Pranav Rao
 Rafael Padilha
 Rathusshan Kuganesan
 Razvan Vlaicu
