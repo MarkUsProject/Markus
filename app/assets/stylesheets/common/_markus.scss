@@ -301,6 +301,15 @@ button,
     min-width: 70px;
     padding: 0.25em 0.5em;
   }
+
+  &.delete-button {
+    background: #f00;
+    color: #c0c0c0;
+    font-weight: bold;
+    margin: 0 2pt;
+    min-width: 150px;
+    padding: 0.25em 0.5em;
+  }
 }
 
 /** Fieldset */
