@@ -3,6 +3,7 @@ FactoryBot.define do
     association :assignment
     sequence(:name) { |n| "Test Group #{n}" }
     sequence(:position) { |n| n }
+    criterion { nil }
 
     after :create do |test_group|
       test_group.update!(autotest_settings: { 'extra_info' => { 'test_group_id' => test_group.id } })

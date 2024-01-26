@@ -157,4 +157,42 @@ describe Submission do
       end
     end
   end
+
+  describe '#set_autotest_marks' do
+    let(:submission) { create :submission }
+    let(:assignment) { submission.assignment }
+    let(:result) { submission.get_latest_result }
+    let!(:criterion) { create :flexible_criterion, assignment: assignment }
+    let!(:mark) { create :mark, criterion: criterion, result: result }
+    let(:test_group) { create :test_group, assignment: assignment, criterion: criterion }
+    let(:test_run) { create :test_run, grouping: submission.grouping, submission: submission }
+
+    context 'when a TestGroupResult succeeded with no error' do
+      let!(:test_group_result) do
+        create :test_group_result, test_group: test_group, test_run: test_run,
+                                   error_type: nil, marks_earned: 1, marks_total: 1
+      end
+
+      it 'updates the result mark' do
+        assignment.ta_criteria.reload
+        submission.set_autotest_marks
+        mark.reload
+        expect(mark.mark).to eq criterion.max_mark
+      end
+    end
+
+    context 'when a TestGroupResult timed out' do
+      let!(:test_group_result) do
+        create :test_group_result, test_group: test_group, test_run: test_run,
+                                   error_type: TestGroupResult::ERROR_TYPE[:timeout]
+      end
+
+      it 'does not update the result mark' do
+        assignment.ta_criteria.reload
+        submission.set_autotest_marks
+        mark.reload
+        expect(mark.mark).to be_nil
+      end
+    end
+  end
 end

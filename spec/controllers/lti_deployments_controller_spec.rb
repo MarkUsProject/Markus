@@ -82,8 +82,22 @@ describe LtiDeploymentsController do
       it 'sets the course display name' do
         expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
       end
-      it 'creates an instructor role for the user' do
+      it 'creates an admin role for the user' do
         expect(Role.find_by(user: admin_user, course: Course.find_by(name: 'csc108'), type: 'AdminRole')).not_to be_nil
+      end
+    end
+    context 'when a course already exists' do
+      let!(:course) { create :course, display_name: 'Introduction to Computer Science', name: 'csc108' }
+      before :each do
+        session[:lti_deployment_id] = lti_deployment.id
+      end
+      it 'does not create a new course' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.all.count).to eq(1)
+      end
+      it 'does redirect to choose_course' do
+        post_as instructor, :create_course, params: course_params
+        expect(response.status).to eq(302)
       end
     end
   end
