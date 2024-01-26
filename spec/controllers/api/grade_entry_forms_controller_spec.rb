@@ -315,7 +315,7 @@ describe Api::GradeEntryFormsController do
     end
     context 'DELETE Destroy' do
       it 'does not delete a non-existing assignment' do
-        delete :destroy, params: {course_id: course.id, id: -1}
+        delete :destroy, params: { course_id: course.id, id: -1 }
         expect(response).to have_http_status(404)
       end
       it 'successfully deletes a grade entry form with no non-nil grades' do
@@ -323,9 +323,11 @@ describe Api::GradeEntryFormsController do
         first_student = create(:student)
         second_student = create(:student)
         grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
-        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student), grade_entry_item: grade_entry_item, grade: nil)
-        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student), grade_entry_item: grade_entry_item, grade: nil)
-        delete :destroy, params: {course_id: course.id, id: 4}
+        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student),
+                       grade_entry_item: grade_entry_item, grade: nil)
+        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
+                       grade_entry_item: grade_entry_item, grade: nil)
+        delete :destroy, params: { course_id: course.id, id: 4 }
         expect(response).to have_http_status(:ok)
         expect(course.grade_entry_forms.exists?(form.id)).to be_falsey
       end
@@ -334,9 +336,11 @@ describe Api::GradeEntryFormsController do
         first_student = create(:student)
         second_student = create(:student)
         grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
-        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student), grade_entry_item: grade_entry_item, grade: nil)
-        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student), grade_entry_item: grade_entry_item, grade: 0.2)
-        delete :destroy, params: {course_id: course.id, id: 4}
+        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student),
+                       grade_entry_item: grade_entry_item, grade: nil)
+        create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
+                       grade_entry_item: grade_entry_item, grade: 0.2)
+        delete :destroy, params: { course_id: course.id, id: 4 }
         expect(response).to have_http_status(:conflict)
         expect(course.grade_entry_forms.exists?(form.id)).to be_truthy
       end
