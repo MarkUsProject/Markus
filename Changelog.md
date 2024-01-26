@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Fix websocket connection when logged in with remote auth (#6912)
 
 ## [v2.4.3]
 - Fix autotest settings criterion JSON schema validation (#6907)
