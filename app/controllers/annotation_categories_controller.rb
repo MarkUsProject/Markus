@@ -1,6 +1,4 @@
 class AnnotationCategoriesController < ApplicationController
-  include AnnotationCategoriesHelper
-
   respond_to :js
 
   before_action { authorize! }
@@ -13,6 +11,21 @@ class AnnotationCategoriesController < ApplicationController
     # required because MathJax dynamically changes
     # style. # TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
+  end
+
+  def self.prepare_for_conversion(annotation_categories)
+    result = {}
+    annotation_categories.each do |annotation_category|
+      if annotation_category.flexible_criterion.nil?
+        result[annotation_category.annotation_category_name] = [nil]
+        result[annotation_category.annotation_category_name] += annotation_category.annotation_texts.pluck(:content)
+      else
+        annotation_text_info = [annotation_category.flexible_criterion.name]
+        annotation_text_info += annotation_category.annotation_texts.pluck(:content, :deduction).flatten
+        result[annotation_category.annotation_category_name] = annotation_text_info
+      end
+    end
+    result
   end
 
   def self.to_json(annotation_categories)
@@ -29,6 +42,17 @@ class AnnotationCategoriesController < ApplicationController
           }
         end
       }
+    end
+  end
+
+  def self.to_csv(annotation_categories)
+    ac = AnnotationCategoriesController.prepare_for_conversion(annotation_categories)
+    MarkusCsv.generate(
+      ac
+    ) do |annotation_category_name, annotation_texts|
+      # csv format is annotation_category.name, annotation_category.flexible_criterion,
+      # annotation_text.content[, optional: annotation_text.deduction ]
+      annotation_texts.unshift(annotation_category_name)
     end
   end
 
@@ -185,14 +209,7 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
-      ac = prepare_for_conversion(@annotation_categories)
-      file_out = MarkusCsv.generate(
-        ac
-      ) do |annotation_category_name, annotation_texts|
-        # csv format is annotation_category.name, annotation_category.flexible_criterion,
-        # annotation_text.content[, optional: annotation_text.deduction ]
-        annotation_texts.unshift(annotation_category_name)
-      end
+      file_out = AnnotationCategoriesController.to_csv(@annotation_categories)
       send_data file_out,
                 filename: "#{@assignment.short_identifier}_annotations.csv",
                 disposition: 'attachment'
