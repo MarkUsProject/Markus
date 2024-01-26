@@ -11,6 +11,8 @@ class Grade < ApplicationRecord
   validates :grade,
             numericality: { allow_nil: true }, if: :bonus_grade?
 
+  before_destroy -> { throw(:abort) unless grade.nil? }, prepend: true
+
   # Return true if the associated grade_entry_item is a bonus column.
   # If grade_entry_item is NIL or a non-bonus column, return false.
   def bonus_grade?

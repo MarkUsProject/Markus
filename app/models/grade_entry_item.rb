@@ -5,7 +5,7 @@ class GradeEntryItem < ApplicationRecord
 
   has_one :course, through: :grade_entry_form
 
-  has_many :grades, dependent: :delete_all
+  has_many :grades, dependent: :destroy
 
   has_many :grade_entry_students, through: :grades
 
