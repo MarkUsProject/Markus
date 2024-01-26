@@ -15,6 +15,23 @@ class AnnotationCategoriesController < ApplicationController
     p.style_src :self, "'unsafe-inline'"
   end
 
+  def self.to_json(annotation_categories)
+    annotation_categories.map do |cat|
+      {
+        id: cat.id,
+        annotation_category_name: "#{cat.annotation_category_name}" \
+                                  "#{cat.flexible_criterion_id.nil? ? '' : " [#{cat.flexible_criterion.name}]"}",
+        texts: cat.annotation_texts.map do |text|
+          {
+            id: text.id,
+            content: text.content,
+            deduction: text.deduction
+          }
+        end
+      }
+    end
+  end
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_role)
@@ -22,20 +39,7 @@ class AnnotationCategoriesController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        data = @annotation_categories.map do |cat|
-          {
-            id: cat.id,
-            annotation_category_name: "#{cat.annotation_category_name}" \
-                                      "#{cat.flexible_criterion_id.nil? ? '' : " [#{cat.flexible_criterion.name}]"}",
-            texts: cat.annotation_texts.map do |text|
-              {
-                id: text.id,
-                content: text.content,
-                deduction: text.deduction
-              }
-            end
-          }
-        end
+        data = AnnotationCategoriesController.to_json(@annotation_categories)
         render json: data
       end
     end
