@@ -27,6 +27,20 @@ export class AssignmentSummaryTable extends React.Component {
     this.fetchData();
   }
 
+  memberDisplay = (group_name, members) => {
+    if (!(members.length === 1 && members[0][0] === group_name)) {
+      return (
+        " (" +
+        members
+          .map(member => {
+            return member[0];
+          })
+          .join(", ") +
+        ")"
+      );
+    }
+  };
+
   fetchData = () => {
     fetch(Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id), {
       headers: {
@@ -79,9 +93,19 @@ export class AssignmentSummaryTable extends React.Component {
               this.props.course_id,
               row.original.result_id
             );
-            return <a href={path}>{row.original.group_name}</a>;
+            return (
+              <a href={path}>
+                {row.original.group_name}
+                {this.memberDisplay(row.original.group_name, row.original.members)}
+              </a>
+            );
           } else {
-            return <span>{row.original.group_name}</span>;
+            return (
+              <span>
+                {row.original.group_name}
+                {this.memberDisplay(row.original.group_name, row.original.members)}
+              </span>
+            );
           }
         },
         filterMethod: (filter, row) => {
@@ -227,16 +251,6 @@ export class AssignmentSummaryTable extends React.Component {
           SubComponent={row => {
             return (
               <div>
-                <h4>{I18n.t("activerecord.attributes.group.student_memberships")}</h4>
-                <ul>
-                  {row.original.members.map(member => {
-                    return (
-                      <li key={member[0]}>
-                        ({member[0]}) {member[1]} {member[2]}
-                      </li>
-                    );
-                  })}
-                </ul>
                 <h4>{I18n.t("activerecord.models.ta", {count: 2})}</h4>
                 <ul>
                   {row.original.graders.map(grader => {
