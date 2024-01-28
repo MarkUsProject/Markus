@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Fix websocket connection when logged in with remote auth (#6912)
+- Consistent display of group and its members between submissions and summary table (#6917)
 
 ## [v2.4.3]
 - Fix autotest settings criterion JSON schema validation (#6907)
