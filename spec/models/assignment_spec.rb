@@ -2546,6 +2546,7 @@ describe Assignment do
         actual_grouping = assignment.current_grader_data[:groups][0]
         expect(actual_grouping[:_id]).to eq(grouping.id)
         expect(actual_grouping[:section]).to be_nil
+        expect(actual_grouping[:members]).to eq []
       end
     end
 
