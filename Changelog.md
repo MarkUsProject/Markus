@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.4.4]
+- Fix websocket connection when logged in with remote auth (#6912)
+- Fix bug where graders table failed to load when a group had no members (#6916)
+
 ## [v2.4.3]
 - Fix autotest settings criterion JSON schema validation (#6907)
 - Ensure autotested criteria do not have marks set if tests time out (#6907)

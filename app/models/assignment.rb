@@ -1098,7 +1098,9 @@ class Assignment < Assessment
     grouped_data = members_data.group_by { |x| x[0] }
     grouped_data.each_value { |a| a.each { |b| b.delete_at(0) } }
 
-    result[:groups].each { |group| group[:members] = grouped_data[group[:_id]] }
+    result[:groups].each do |group|
+      group[:members] = grouped_data[group[:_id]] || []
+    end
 
     result
   end

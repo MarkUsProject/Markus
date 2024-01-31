@@ -20,4 +20,29 @@ describe ApplicationCable::Connection, type: :channel do
       end
     end
   end
+  context 'when connecting with external auth' do
+    context 'as an instructor' do
+      let(:instructor) { create :instructor }
+      it 'should connect' do
+        connect '/cable', session: { auth_type: 'remote' }, headers: { HTTP_X_FORWARDED_USER: instructor.user_name }
+        expect(connection.current_user.user_name).to eq(instructor.user_name)
+      end
+      context 'when role switched' do
+        let(:ta) { create :ta }
+        it 'should connect as the TA' do
+          connect '/cable', session: { auth_type: 'remote', user_name: ta.user_name },
+                            headers: { HTTP_X_FORWARDED_USER: instructor.user_name }
+          expect(connection.current_user.user_name).to eq(ta.user_name)
+        end
+      end
+    end
+    context 'as a student' do
+      let(:student) { create :student }
+      let(:user_name) { student.user_name }
+      it 'should connect' do
+        connect '/cable', session: { auth_type: 'remote' }, headers: { HTTP_X_FORWARDED_USER: user_name }
+        expect(connection.current_user.user_name).to eq(user_name)
+      end
+    end
+  end
 end
