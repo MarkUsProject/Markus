@@ -6,9 +6,27 @@ describe AnnotationCategoriesController do
   shared_examples 'A grader or instructor accessing the index or find_annotation_text routes' do
     describe '#index' do
       before { create(:annotation_category, assignment: assignment) }
-      it 'should respond with 200' do
+      it 'should respond with 200 if html is requested' do
         get_as role, :index, params: { course_id: course.id, assignment_id: assignment.id }
         expect(response).to have_http_status(200)
+      end
+      it 'should respond with 200 if json is requested' do
+        get_as role,
+               :index, params: { course_id: course.id, assignment_id: assignment.id }, format: :json
+        expect(response).to have_http_status(200)
+      end
+      it 'should return the correct number of annotation categories if json is requested' do
+        get_as role,
+               :index, params: { course_id: course.id, assignment_id: assignment.id }, format: :json
+        expect(response.parsed_body.size).to eq(1)
+      end
+      it 'should return the correct annotation category data if json is requested' do
+        get_as role,
+               :index, params: { course_id: course.id, assignment_id: assignment.id }, format: :json
+        res = response.parsed_body[0]
+        first_annotation_category = assignment.annotation_categories.first
+        expect(res['annotation_category_name']).to eq first_annotation_category.annotation_category_name
+        expect(res['id']).to eq first_annotation_category.id
       end
       it_behaves_like 'role is from a different course' do
         subject { get_as new_role, :index, params: { course_id: course.id, assignment_id: assignment.id } }
@@ -683,11 +701,11 @@ describe AnnotationCategoriesController do
         test_category_name = 'test_category'
         test_content = 'c6conley'
         found_cat = false
-        AnnotationCategory.all.each do |ac|
+        AnnotationCategory.find_each do |ac|
           next unless ac['annotation_category_name'] == test_category_name
 
           found_cat = true
-          expect(AnnotationText.where(annotation_category: ac).take['content']).to eq(test_content)
+          expect(AnnotationText.find_by(annotation_category: ac)['content']).to eq(test_content)
         end
         expect(found_cat).to eq(true)
       end
