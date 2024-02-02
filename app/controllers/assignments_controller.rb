@@ -664,8 +664,13 @@ class AssignmentsController < ApplicationController
   # page, which appears if and only if the assignment has no groups (through erb conditional rendering)
   def destroy
     @assignment = @record
-    @assignment.destroy
-    respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
+    begin
+      @assignment.destroy
+      respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
+    rescue ActiveRecord::DeleteRestrictionError
+      flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
+      redirect_to action: :show
+    end
   end
 
   private
