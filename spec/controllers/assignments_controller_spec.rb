@@ -2014,4 +2014,32 @@ describe AssignmentsController do
       expect(response).to have_http_status(200)
     end
   end
+
+  context '#destroy' do
+    let!(:instructor) { create :instructor }
+    let!(:course) { instructor.course }
+    let!(:assignment) { create :assignment }
+    let(:grouping) { create :grouping, assignment: assignment }
+    it 'should fail to DELETE because of unauthorized request' do
+      delete :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(true)
+    end
+    it 'should fail to DELETE because assignment has groups' do
+      grouping # lazy initialization
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(true)
+      expect(flash[:error]).to eq(["<p>#{I18n.t('assignments.assignment_has_groupings')}</p>"])
+      expect(flash.to_hash.length).to eq(1)
+      expect(flash[:error].length).to eq(1)
+      expect(response).to have_http_status(302)
+    end
+    it 'should successfully DELETE assignment (no groups)' do
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(false)
+      expect(flash[:success]).to eq(I18n.t('flash.actions.destroy.success',
+                                           resource_name: assignment.short_identifier))
+      expect(flash.to_hash.length).to eq(1)
+      expect(response).to have_http_status(302)
+    end
+  end
 end
