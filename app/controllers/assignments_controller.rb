@@ -665,8 +665,7 @@ class AssignmentsController < ApplicationController
   def destroy
     @assignment = @record
     @assignment.destroy
-    render template: 'assignments/index'
-    # flash_message(:success, t('flash.criteria.destroy.success'))
+    respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
   end
 
   private
