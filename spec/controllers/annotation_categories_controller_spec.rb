@@ -5,7 +5,7 @@ describe AnnotationCategoriesController do
 
   shared_examples 'A grader or instructor accessing the index or find_annotation_text routes' do
     describe '#index' do
-      before { create(:annotation_category, assignment: assignment) }
+      before { @index_annotation_category = create(:annotation_category, assignment: assignment) }
       it 'should respond with 200 if html is requested' do
         get_as role, :index, params: { course_id: course.id, assignment_id: assignment.id }
         expect(response).to have_http_status(200)
@@ -24,9 +24,8 @@ describe AnnotationCategoriesController do
         get_as role,
                :index, params: { course_id: course.id, assignment_id: assignment.id }, format: :json
         res = response.parsed_body[0]
-        first_annotation_category = assignment.annotation_categories.first
-        expect(res['annotation_category_name']).to eq first_annotation_category.annotation_category_name
-        expect(res['id']).to eq first_annotation_category.id
+        expect(res['annotation_category_name']).to eq @index_annotation_category.annotation_category_name
+        expect(res['id']).to eq @index_annotation_category.id
       end
       it_behaves_like 'role is from a different course' do
         subject { get_as new_role, :index, params: { course_id: course.id, assignment_id: assignment.id } }
@@ -701,11 +700,11 @@ describe AnnotationCategoriesController do
         test_category_name = 'test_category'
         test_content = 'c6conley'
         found_cat = false
-        AnnotationCategory.find_each do |ac|
+        AnnotationCategory.all.each do |ac|
           next unless ac['annotation_category_name'] == test_category_name
 
           found_cat = true
-          expect(AnnotationText.find_by(annotation_category: ac)['content']).to eq(test_content)
+          expect(AnnotationText.where(annotation_category: ac).take['content']).to eq(test_content)
         end
         expect(found_cat).to eq(true)
       end
