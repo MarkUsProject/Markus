@@ -13,6 +13,8 @@ Rails.application.config.content_security_policy do |policy|
   # Safari doesn't support worker-src and defaults to child-src, blob is required because of the way Safari
   # handles dynamically generated images
   policy.child_src :self, :blob
+  # required for Safari < 16
+  policy.connect_src :self, :wss
   unless Rails.env.production?
     # http and ws are required so that webpack-dev-server can serve assets
     policy.connect_src :self, :http, :ws
