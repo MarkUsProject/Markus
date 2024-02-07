@@ -66,6 +66,11 @@ describe CheckboxCriterion do
       expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
         .to raise_error(CsvInvalidLineError)
     end
+
+    it 'raises an error message on a max mark that is zero' do
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 0], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
   end
 
   context 'for an assignment' do
