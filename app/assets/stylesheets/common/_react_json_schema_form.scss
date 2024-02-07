@@ -77,12 +77,12 @@
     text-align: right;
   }
 
-  label[for*="tester_type"] {
+  label[for*='tester_type'] {
     font-size: 1.4em;
     min-width: max-content;
   }
 
-  select[id*="tester_type"] {
+  select[id*='tester_type'] {
     font-size: 1.4em;
   }
 
@@ -97,7 +97,7 @@
     padding: 0.25em;
   }
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     float: right;
   }
 
@@ -108,11 +108,11 @@
   .form-control {
     min-width: 75pt;
 
-    &[type="text"] {
+    &[type='text'] {
       min-width: 150pt;
     }
 
-    &[multiple=""] {
+    &[multiple=''] {
       vertical-align: middle;
     }
   }
@@ -132,19 +132,19 @@
   }
 
   /* stylelint-disable property-no-vendor-prefix */
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
   /* stylelint-enable property-no-vendor-prefix */
 
-  input[type="number"] {
+  input[type='number'] {
     appearance: textfield;
   }
 
   // Hide specific legends
-  fieldset > legend[id$="extra_info__title"],
+  fieldset > legend[id$='extra_info__title'],
   #root_testers__title {
     display: none;
   }
