@@ -19,7 +19,7 @@
 - Bug Fix: Prevent assigning inactive graders to a group (#6801)
 - Added new API routes for the `create` and `destroy` actions of SectionsController (#6873)
 - Display error message in real-time when running automated tests, rather than waiting for page refresh (#6878)
-- - Added `destroy` action to `controllers/api/assignments_controller` (#6880)
+- Allow deletion of assignments with no groups (#6880)
 
 ## [v2.4.1]
 - Internal changes only
