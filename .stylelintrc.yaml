@@ -1,4 +1,4 @@
-extends: ["stylelint-config-sass-guidelines", "stylelint-config-prettier"]
+extends: ["stylelint-config-sass-guidelines"]
 rules:
   scss/at-extend-no-missing-placeholder: null
   max-nesting-depth: 4
