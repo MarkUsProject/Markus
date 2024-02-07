@@ -373,7 +373,7 @@ class AssignmentsController < ApplicationController
     ]
     grade_distribution = { labels: assignment_labels, datasets: assignment_datasets }
     ta_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
-    ta_datasets = assignment.tas.map do |ta|
+    ta_datasets = assignment.tas.uniq.map do |ta|
       num_marked_label = t('submissions.how_many_marked',
                            num_marked: assignment.get_num_marked(ta.id),
                            num_assigned: assignment.get_num_assigned(ta.id))
