@@ -71,6 +71,13 @@ describe CheckboxCriterion do
       expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 0], @assignment) }
         .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
+
+    it 'raises an error message if the checkbox criterion fails to save' do
+      allow_any_instance_of(CheckboxCriterion).to receive(:save).and_return(false)
+
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 2], @assignment) }
+        .to raise_error(CsvInvalidLineError)
+    end
   end
 
   context 'for an assignment' do
