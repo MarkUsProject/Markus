@@ -193,11 +193,11 @@ module Api
         grade_entry_form.destroy!
         render 'shared/http_status',
                locals: { code: '200',
-                         message: "Grade Entry Form successfully deleted" }, status: :ok
+                         message: 'Grade Entry Form successfully deleted' }, status: :ok
       rescue ActiveRecord::RecordNotDestroyed
         render 'shared/http_status',
                locals: { code: :conflict,
-                         message: "Grade Entry Form contains non-nil grades" }, status: :conflict
+                         message: 'Grade Entry Form contains non-nil grades' }, status: :conflict
       end
     end
   end
