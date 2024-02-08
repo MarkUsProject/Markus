@@ -1,6 +1,4 @@
 class AnnotationCategoriesController < ApplicationController
-  include AnnotationCategoriesHelper
-
   respond_to :js
 
   before_action { authorize! }
@@ -22,20 +20,7 @@ class AnnotationCategoriesController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        data = @annotation_categories.map do |cat|
-          {
-            id: cat.id,
-            annotation_category_name: "#{cat.annotation_category_name}" \
-                                      "#{cat.flexible_criterion_id.nil? ? '' : " [#{cat.flexible_criterion.name}]"}",
-            texts: cat.annotation_texts.map do |text|
-              {
-                id: text.id,
-                content: text.content,
-                deduction: text.deduction
-              }
-            end
-          }
-        end
+        data = AnnotationCategory.to_json(@annotation_categories)
         render json: data
       end
     end
@@ -181,14 +166,7 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
-      ac = prepare_for_conversion(@annotation_categories)
-      file_out = MarkusCsv.generate(
-        ac
-      ) do |annotation_category_name, annotation_texts|
-        # csv format is annotation_category.name, annotation_category.flexible_criterion,
-        # annotation_text.content[, optional: annotation_text.deduction ]
-        annotation_texts.unshift(annotation_category_name)
-      end
+      file_out = AnnotationCategory.to_csv(@annotation_categories)
       send_data file_out,
                 filename: "#{@assignment.short_identifier}_annotations.csv",
                 disposition: 'attachment'
