@@ -36,6 +36,7 @@ module.exports = {
   ],
   resolve: {
     extensions: [".js", ".json", ".jsx"],
+    fallback: {util: false},
     modules: [
       path.resolve(__dirname, "app/assets"),
       path.resolve(__dirname, "vendor/assets"),

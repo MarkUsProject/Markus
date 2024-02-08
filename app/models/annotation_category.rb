@@ -192,4 +192,47 @@ class AnnotationCategory < ApplicationRecord
     end
     successes
   end
+
+  def self.prepare_for_conversion(annotation_categories)
+    result = {}
+    annotation_categories.each do |annotation_category|
+      if annotation_category.flexible_criterion.nil?
+        result[annotation_category.annotation_category_name] = [nil]
+        result[annotation_category.annotation_category_name] += annotation_category.annotation_texts.pluck(:content)
+      else
+        annotation_text_info = [annotation_category.flexible_criterion.name]
+        annotation_text_info += annotation_category.annotation_texts.pluck(:content, :deduction).flatten
+        result[annotation_category.annotation_category_name] = annotation_text_info
+      end
+    end
+    result
+  end
+
+  def self.to_json(categories)
+    categories.map do |cat|
+      {
+        id: cat.id,
+        annotation_category_name: "#{cat.annotation_category_name}" \
+                                  "#{cat.flexible_criterion_id.nil? ? '' : " [#{cat.flexible_criterion.name}]"}",
+        texts: cat.annotation_texts.map do |text|
+          {
+            id: text.id,
+            content: text.content,
+            deduction: text.deduction
+          }
+        end
+      }
+    end
+  end
+
+  def self.to_csv(categories)
+    ac = AnnotationCategory.prepare_for_conversion(categories)
+    MarkusCsv.generate(
+      ac
+    ) do |annotation_category_name, annotation_texts|
+      # csv format is annotation_category.name, annotation_category.flexible_criterion,
+      # annotation_text.content[, optional: annotation_text.deduction ]
+      annotation_texts.unshift(annotation_category_name)
+    end
+  end
 end
