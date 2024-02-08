@@ -28,7 +28,7 @@ export class AssignmentSummaryTable extends React.Component {
   }
 
   memberDisplay = (group_name, members) => {
-    if (!(members.length === 1 && members[0][0] === group_name)) {
+    if (members.length !== 0 && !(members.length === 1 && members[0][0] === group_name)) {
       return (
         " (" +
         members
