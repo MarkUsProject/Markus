@@ -82,7 +82,7 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  has_many :tas, through: :ta_memberships, source: :role
+  has_many :tas, -> { distinct }, through: :ta_memberships, source: :role
 
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
