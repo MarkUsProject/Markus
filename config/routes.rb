@@ -390,7 +390,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :grade_entry_forms, except: [:index, :destroy] do
+    resources :grade_entry_forms, except: [:index] do
       collection do
         get 'student_interface'
       end
