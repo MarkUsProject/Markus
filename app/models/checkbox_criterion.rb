@@ -36,7 +36,7 @@ class CheckboxCriterion < Criterion
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)
-    rescue ArgumentError
+    rescue ArgumentError, TypeError
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 

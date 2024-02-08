@@ -72,6 +72,11 @@ describe CheckboxCriterion do
         .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
 
+    it 'raises an error message on a max mark that is nil' do
+      expect { CheckboxCriterion.create_or_update_from_csv_row(['name', nil], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
     it 'raises an error message if the checkbox criterion fails to save' do
       allow_any_instance_of(CheckboxCriterion).to receive(:save).and_return(false)
 
