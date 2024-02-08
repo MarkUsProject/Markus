@@ -24,6 +24,8 @@ class AutotestManager extends React.Component {
         testers: {
           items: {
             "ui:classNames": "tester-item",
+            "ui:placeholder": I18n.t("automated_tests.tester", {count: 1}),
+            "ui:title": I18n.t("automated_tests.tester", {count: 1}),
             env_data: {
               pip_requirements: {
                 "ui:widget": "textarea",
@@ -31,6 +33,8 @@ class AutotestManager extends React.Component {
             },
             test_data: {
               items: {
+                "ui:placeholder": I18n.t("automated_tests.test_group", {count: 1}),
+                "ui:title": I18n.t("automated_tests.test_group", {count: 1}),
                 "ui:order": ["extra_info", "*"],
                 "ui:options": {label: false},
                 category: {
@@ -435,7 +439,7 @@ class AutotestManager extends React.Component {
         </fieldset>
         <fieldset>
           <legend>
-            <span>{"Testers"}</span>
+            <span>{I18n.t("automated_tests.tester", {count: 2})}</span>
           </legend>
           <div className={"rt-action-box upload-download"}>
             <a href={this.specsDownloadURL()} className={"button"}>
@@ -515,6 +519,11 @@ function AddButton(props) {
     registry: {translateString},
     ...btnProps
   } = props;
+  let label = (uiSchema.items && uiSchema.items["ui:title"]) || "";
+  if (label) {
+    label = `${I18n.t("add")} ${label}`;
+  }
+  console.log(props);
   return (
     <div className="row">
       <p className={`col-xs-3 col-xs-offset-9 text-right`}>
@@ -524,7 +533,7 @@ function AddButton(props) {
           title={translateString(TranslatableString.AddButton)}
           {...btnProps}
         >
-          <FontAwesomeIcon icon="fa-solid fa-add" />
+          {label || <FontAwesomeIcon icon="fa-solid fa-add" />}
         </button>
       </p>
     </div>
