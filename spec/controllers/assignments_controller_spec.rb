@@ -1179,6 +1179,30 @@ describe AssignmentsController do
           expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
         end
       end
+      context 'with multiple TAs and memberships' do
+        let(:ta2) { create :ta }
+        before do
+          Grouping.assign_all_tas(assignment.groupings, Ta.all, assignment)
+          get_as role, :grade_distribution, params: params
+        end
+        it 'should contain the right data' do
+          response.parsed_body['ta_data']['datasets'].each do |data_response|
+            data = data_response['data']
+            tas = assignment.tas.uniq
+            curr_ta = nil
+            tas.each do |ta|
+              if data_response['label'].include?("#{ta.first_name} #{ta.last_name}")
+                curr_ta = ta
+              end
+            end
+            expect(curr_ta.grade_distribution_array(assignment, 20)).to eq(data)
+          end
+        end
+        it 'should contain one entry per ta' do
+          tas = assignment.tas.uniq
+          expect(response.parsed_body['ta_data']['datasets'].length).to eq(tas.length)
+        end
+      end
     end
 
     context 'criteria_summary' do
