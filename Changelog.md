@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Add workaround for CSP in Safari < 16 (#6947)
+- Fixed bug where TA Summary table failed to display members (#6949)
 
 ## [v2.4.4]
 - Fix websocket connection when logged in with remote auth (#6912)

@@ -2079,6 +2079,13 @@ describe Assignment do
         end
       end
 
+      it 'has group with members' do
+        Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+        data = assignment_tag.summary_json(ta)[:data]
+        expect(data[0][:members]).not_to be_empty
+        expect(data[0][:members][0]).not_to include(nil)
+      end
+
       it 'has tags correct info' do
         Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
