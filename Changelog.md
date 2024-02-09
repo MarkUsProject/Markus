@@ -2,6 +2,8 @@
 
 ## [unreleased]
 - Add workaround for CSP in Safari < 16 (#6947)
+- Improve add button labels on autotest settings page (#6948)
+- Fix bug where grader distribution graph displays graders multiple times (#6950)
 - Fixed bug where TA Summary table failed to display members (#6949)
 
 ## [v2.4.4]
