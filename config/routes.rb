@@ -85,7 +85,7 @@ Rails.application.routes.draw do
           get 'download_entries'
         end
       end
-      resources :sections, only: [:create, :destroy]
+      resources :sections, only: [:create, :destroy, :index, :show, :update]
     end
     # Return a 404 when no route is match
     match '*path', controller: 'main_api', action: 'page_not_found', via: :all
