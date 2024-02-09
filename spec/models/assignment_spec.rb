@@ -17,6 +17,7 @@ describe Assignment do
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_groups).dependent(:destroy) }
     it { is_expected.to belong_to(:course) }
+    it { is_expected.to have_many(:tas).through(:ta_memberships) }
 
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
