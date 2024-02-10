@@ -541,9 +541,10 @@ class Assignment < Assessment
                              .left_outer_joins(inviter: :section)
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
-    members = groupings.joins(accepted_students: :user)
-                       .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
-                       .group_by { |x| x[:id] }
+    members = Grouping.joins(accepted_students: :user)
+                      .where(id: groupings)
+                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .group_by { |x| x[:id] }
     tag_data = groupings
                .joins(:tags)
                .pluck_to_hash(:id, 'tags.name')
