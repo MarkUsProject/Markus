@@ -82,7 +82,7 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  has_many :tas, through: :ta_memberships, source: :role
+  has_many :tas, -> { distinct }, through: :ta_memberships, source: :role
 
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
@@ -1098,7 +1098,9 @@ class Assignment < Assessment
     grouped_data = members_data.group_by { |x| x[0] }
     grouped_data.each_value { |a| a.each { |b| b.delete_at(0) } }
 
-    result[:groups].each { |group| group[:members] = grouped_data[group[:_id]] }
+    result[:groups].each do |group|
+      group[:members] = grouped_data[group[:_id]] || []
+    end
 
     result
   end
