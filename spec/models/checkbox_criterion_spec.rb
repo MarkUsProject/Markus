@@ -47,7 +47,7 @@ describe CheckboxCriterion do
     end
   end
 
-  context 'With non-existent criteria' do
+  context 'With bad CSV line input' do
     before :each do
       @assignment = create(:assignment)
     end
