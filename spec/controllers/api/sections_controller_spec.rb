@@ -17,7 +17,7 @@ describe Api::SectionsController do
     end
     it 'fails to update section' do
       old_name = section.name
-      put :destroy, params: { course_id: course.id, id: section.id, name: 'LEC999' }
+      put :update, params: { course_id: course.id, id: section.id, name: 'LEC999' }
       expect(response).to have_http_status(403)
       expect(section.name).to equal(old_name) # both equal and eq work here
     end
@@ -141,6 +141,20 @@ describe Api::SectionsController do
             expect(json_keys).to match_array model_attrs
           end
         end
+      end
+    end
+    context 'DELETE destroy' do
+      it 'successfully deletes section' do
+        delete :destroy, params: { course_id: course.id, id: section }
+        expect(response).to have_http_status(:ok)
+        expect(course.sections.exists?(section.id)).to be_falsey
+      end
+      it 'does not delete section because the section is non-empty (has students), with 403 code' do
+        student = create(:student)
+        section.students = [student]
+        delete :destroy, params: { course_id: course.id, id: section }
+        expect(response).to have_http_status(:conflict)
+        expect(course.sections.exists?(section.id)).to be_truthy
       end
     end
   end
