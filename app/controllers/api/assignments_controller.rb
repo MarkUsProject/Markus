@@ -300,8 +300,7 @@ module Api
     end
 
     def destroy
-      assignment_id = params[:id]
-      assignment = Assignment.find_by(id: assignment_id)
+      assignment = record
       if assignment.nil?
         render 'shared/http_status', locals: { code: '404', message:
           I18n.t('assignments.assignment_not_found',

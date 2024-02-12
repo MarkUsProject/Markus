@@ -657,11 +657,6 @@ class AssignmentsController < ApplicationController
     render layout: 'assignment_content'
   end
 
-  # NOTE: an assignment should be deleted only if it has no groups.
-  # However, this logic is handled in the model through an appropriate association feature.
-  # Nevertheless, this method must NOT be called on an assignment with groups.
-  # This is ensured because the only endpoint of this method is the 'delete' button on the Assignment-edit
-  # page, which appears if and only if the assignment has no groups (through erb conditional rendering)
   def destroy
     @assignment = @record
     begin
@@ -669,7 +664,7 @@ class AssignmentsController < ApplicationController
       respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
     rescue ActiveRecord::DeleteRestrictionError
       flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
-      redirect_to action: :show
+      redirect_back fallback_location: { action: :edit, id: @assignment.id }
     end
   end
 
