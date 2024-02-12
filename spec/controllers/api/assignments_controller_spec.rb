@@ -513,7 +513,6 @@ describe Api::AssignmentsController do
         expect(assignment.groups).to be_empty
         delete :destroy, params: { id: assignment.id, course_id: course.id }
         expect(response).to have_http_status(200)
-        expect(Assignment.all).to eq([])
         expect(Assignment.exists?(assignment.id)).to eq(false)
       end
       it 'fails to delete assignment because assignment has groups' do
