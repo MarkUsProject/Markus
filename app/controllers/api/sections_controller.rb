@@ -18,7 +18,7 @@ module Api
     end
 
     def update
-      section = Section.find_by(id: params[:id]) # or @section = record?
+      section = record
       if section.update(params.permit(:name))
         render 'shared/http_status', locals: { code: '200', message:
           t('sections.update.success', name: section.name) }, status: :ok
