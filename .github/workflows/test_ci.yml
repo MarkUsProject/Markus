@@ -87,7 +87,11 @@ jobs:
         run: bundle exec rake javascript:build
       - name: Set up database
         run: bundle exec rails db:migrate
-      - name: Install chrome and chromedriver
+      - name: Install chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: '121.0.6167.85'
+      - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: '121.0.6167.85'
