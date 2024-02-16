@@ -6,6 +6,7 @@ en:
     average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
+    deletion_confirmation: Are you sure you want to delete this assignment?
     due_date:
       final_due_date_passed: The deadline, including late or grace periods, has passed.
       marking_overwrite_warning_html: "<strong>Any previous grading work will be lost.</strong>"
@@ -66,7 +67,6 @@ en:
       upload_confirmation: The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?
       use_original_filename: Use original filename
     successful_deletion: Assignment with id '%{invalid_id}' has been successfully deleted.
-    deletion_confirmation: Are you sure you want to delete this assignment?
     timed:
       before_start_instructions: Once you start this timed assessment, you will have %{duration_string} to complete it without penalty.
       before_start_instructions_extension: Once you start this timed assessment, you will have %{duration_string} to complete it without penalty (this includes a duration extension of %{extension_string}).
