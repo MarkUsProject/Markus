@@ -2,6 +2,8 @@
 
 ## [unreleased]
 - Allow deletion of assignments with no groups (#6880)
+
+## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
 - Improve add button labels on autotest settings page (#6948)
 - Fix bug where grader distribution graph displays graders multiple times (#6950)

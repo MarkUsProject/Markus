@@ -33,15 +33,15 @@ class CheckboxCriterion < Criterion
     # create a new one.
     criterion = assignment.criteria.find_or_create_by(name: name, type: 'CheckboxCriterion')
 
-    # Check that max is not a string.
+    # Check that the maximum mark is a valid number.
     begin
       criterion.max_mark = Float(working_row.shift)
-    rescue ArgumentError
+    rescue ArgumentError, TypeError
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
-    # Check that the maximum mark given is a valid number.
-    if criterion.max_mark.nil? || criterion.max_mark.zero?
+    # Check that the maximum mark given is greater than 0.
+    if criterion.max_mark.zero?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
