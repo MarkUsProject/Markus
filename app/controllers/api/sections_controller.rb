@@ -10,7 +10,7 @@ module Api
     end
 
     def show
-      section = current_course.sections.find(params[:id])
+      section = record
       respond_to do |format|
         format.json { render json: section }
         format.xml { render xml: section }

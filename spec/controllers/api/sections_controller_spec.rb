@@ -19,7 +19,7 @@ describe Api::SectionsController do
       old_name = section.name
       put :update, params: { course_id: course.id, id: section.id, name: 'LEC999' }
       expect(response).to have_http_status(403)
-      expect(section.name).to equal(old_name) # both equal and eq work here
+      expect(section.name).to equal(old_name)
     end
     it 'fails to get sections index' do
       get :index, params: { course_id: course.id }
