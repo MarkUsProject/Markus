@@ -301,19 +301,13 @@ module Api
 
     def destroy
       assignment = record
-      if assignment.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          I18n.t('assignments.assignment_not_found',
-                 invalid_id: assignment_id) }, status: :not_found
-      else
-        begin
-          assignment.destroy
-          render 'shared/http_status',
-                 locals: { code: '200', message: I18n.t('assignments.successful_deletion') }, status: :ok
-        rescue ActiveRecord::DeleteRestrictionError
-          render 'shared/http_status',
-                 locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
-        end
+      begin
+        assignment.destroy
+        render 'shared/http_status',
+               locals: { code: '200', message: I18n.t('assignments.successful_deletion') }, status: :ok
+      rescue ActiveRecord::DeleteRestrictionError
+        render 'shared/http_status',
+               locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
       end
     end
 

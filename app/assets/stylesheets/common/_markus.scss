@@ -301,12 +301,12 @@ button,
     min-width: 70px;
     padding: 0.25em 0.5em;
   }
-}
 
-#assignment-delete {
-  background: $severe-error;
-  color: $background-main;
-  font-weight: bold;
+  &.danger-button {
+    background: $severe-error;
+    color: $background-main;
+    font-weight: bold;
+  }
 }
 
 /** Fieldset */

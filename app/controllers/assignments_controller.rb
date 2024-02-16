@@ -658,7 +658,7 @@ class AssignmentsController < ApplicationController
   end
 
   def destroy
-    @assignment = @record
+    @assignment = record
     begin
       @assignment.destroy
       respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
