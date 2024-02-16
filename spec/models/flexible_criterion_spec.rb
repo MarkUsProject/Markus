@@ -28,7 +28,7 @@ describe FlexibleCriterion do
     it { is_expected.not_to allow_value(-100.0).for(:max_mark) }
   end
 
-  context 'With non-existent criteria' do
+  context 'With bad CSV line input' do
     before :each do
       @assignment = create(:assignment)
     end
@@ -45,6 +45,22 @@ describe FlexibleCriterion do
 
     it 'raises an error message on an invalid maximum value' do
       expect { FlexibleCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
+        .to raise_error(CsvInvalidLineError)
+    end
+
+    it 'raised an error message if the maximum value is 0' do
+      expect { FlexibleCriterion.create_or_update_from_csv_row(%w[name 0], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it 'raised an error message if the maximum value is nil' do
+      expect { FlexibleCriterion.create_or_update_from_csv_row(['name', nil], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it "raises an error message if the criterion doesn't save" do
+      allow_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
+      expect { FlexibleCriterion.create_or_update_from_csv_row(['name', 1.0], @assignment) }
         .to raise_error(CsvInvalidLineError)
     end
   end
