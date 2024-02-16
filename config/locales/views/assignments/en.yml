@@ -2,7 +2,6 @@
 en:
   assignments:
     assignment_has_groupings: Assignment has groupings.
-    assignment_not_found: No assignment with id '%{invalid_id}'.
     average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
