@@ -209,7 +209,7 @@ Rails.application.routes.draw do
 
     resources :annotation_categories, only: [:show, :destroy, :update]
 
-    resources :assignments, except: [:destroy] do
+    resources :assignments do
       collection do
         get 'delete_rejected'
         get 'batch_runs'

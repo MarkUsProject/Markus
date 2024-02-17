@@ -74,7 +74,7 @@ class Assignment < Assessment
   has_many :student_memberships, through: :groupings
 
   has_many :submissions, through: :groupings
-  has_many :groups, through: :groupings
+  has_many :groups, through: :groupings, dependent: :restrict_with_exception
 
   has_many :notes, as: :noteable, dependent: :destroy
 
