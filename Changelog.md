@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Allow deletion of assignments with no groups (#6880)
 
 ## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
