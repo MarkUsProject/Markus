@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Allow deletion of assignments with no groups (#6880)
+- Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 
 ## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
