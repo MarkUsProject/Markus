@@ -269,9 +269,7 @@ class GroupsController < ApplicationController
   def upload
     assignment = Assignment.find(params[:assignment_id])
     begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      data = process_file_upload(['.csv'])
     rescue StandardError => e
       flash_message(:error, e.message)
     else

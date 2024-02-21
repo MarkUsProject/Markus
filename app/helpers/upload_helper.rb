@@ -1,6 +1,6 @@
 # Helpers for handling uploading data files for various models.
 module UploadHelper
-  def process_file_upload
+  def process_file_upload(allowed_filetypes = %w[.csv .yaml .yml])
     encoding = params[:encoding] || 'UTF-8'
     upload_file = params.require(:upload_file)
 
@@ -8,7 +8,12 @@ module UploadHelper
       raise StandardError, I18n.t('upload_errors.blank')
     end
 
-    filetype = File.extname(upload_file.original_filename)
+    if allowed_filetypes.size == 1
+      filetype = allowed_filetypes[0]
+    else
+      filetype = File.extname(upload_file.original_filename)
+    end
+
     if filetype == '.csv'
       {
         type: '.csv',
