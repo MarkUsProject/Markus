@@ -102,7 +102,7 @@ class TagsController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = Tag.from_csv(data[:file].read, current_course, assignment&.id)
+        result = Tag.from_csv(data[:contents], current_course, assignment&.id)
         flash_csv_result(result)
       elsif data[:type] == '.yml'
         result = Tag.from_yml(data[:contents], current_course, assignment&.id)

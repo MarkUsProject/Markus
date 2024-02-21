@@ -106,15 +106,14 @@ class StudentsController < ApplicationController
 
   def upload
     begin
-      process_file_upload(['.csv'])
-    rescue StandardError => e
-      flash_message(:error, e.message)
-    else
+      data = process_file_upload(['.csv'])
       @current_job = UploadRolesJob.perform_later(Student,
                                                   current_course,
-                                                  params[:upload_file].read,
-                                                  params[:encoding])
+                                                  data[:contents],
+                                                  data[:encoding])
       session[:job_id] = @current_job.job_id
+    rescue StandardError => e
+      flash_message(:error, e.message)
     end
     redirect_to action: 'index'
   end

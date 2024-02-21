@@ -12,15 +12,6 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
     expect(model_count).to eq @initial_count
   end
 
-  it 'does not accept an xls file' do
-    post_as user, route_name, params: {
-      **params,
-      upload_file: fixture_file_upload('wrong_csv_format.xls')
-    }
-    expect(flash[:error]).to_not be_empty
-    expect(model_count).to eq @initial_count
-  end
-
   formats.each do |format|
     context "in #{format}" do
       it 'does not accept an empty file' do

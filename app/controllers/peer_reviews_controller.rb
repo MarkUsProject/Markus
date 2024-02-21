@@ -187,7 +187,7 @@ class PeerReviewsController < ApplicationController
       flash_message(:error, e.message)
     else
       assignment = Assignment.find(params[:assignment_id])
-      result = PeerReview.from_csv(assignment, data[:file].read)
+      result = PeerReview.from_csv(assignment, data[:contents])
       flash_csv_result(result)
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]

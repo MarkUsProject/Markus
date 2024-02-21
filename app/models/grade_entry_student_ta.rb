@@ -49,7 +49,7 @@ class GradeEntryStudentTa < ApplicationRecord
     grade_entry_students = grade_entry_form.grade_entry_students.joins(:user).pluck('users.user_name',
                                                                                     :id).to_h
 
-    result = MarkusCsv.parse(csv_data.read) do |row|
+    result = MarkusCsv.parse(csv_data) do |row|
       raise CsvInvalidLineError if row.empty?
       grade_entry_student_id = grade_entry_students[row.first]
       raise CsvInvalidLineError if grade_entry_student_id.nil?

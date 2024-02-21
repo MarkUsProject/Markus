@@ -149,7 +149,7 @@ class CriteriaController < ApplicationController
     end
 
     begin
-      data = process_file_upload(['.yaml', '.yml'])
+      data = process_file_upload(['.yml'])
     rescue Psych::SyntaxError => e
       flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
     rescue StandardError => e

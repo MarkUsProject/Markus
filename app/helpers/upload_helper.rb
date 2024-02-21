@@ -1,6 +1,6 @@
 # Helpers for handling uploading data files for various models.
 module UploadHelper
-  def process_file_upload(allowed_filetypes = %w[.csv .yaml .yml])
+  def process_file_upload(allowed_filetypes = %w[.csv .yml])
     encoding = params[:encoding] || 'UTF-8'
     upload_file = params.require(:upload_file)
 
@@ -17,7 +17,7 @@ module UploadHelper
     if filetype == '.csv'
       {
         type: '.csv',
-        file: upload_file,
+        contents: upload_file.read,
         encoding: encoding
       }
     elsif %w[.yml .yaml].include? filetype

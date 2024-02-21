@@ -221,8 +221,8 @@ class GradeEntryFormsController < ApplicationController
       flash_message(:error, e.message)
     else
       overwrite = params[:overwrite]
-      grades_file = data[:file]
-      result = @grade_entry_form.from_csv(grades_file.read, overwrite)
+      grades_file = data[:contents]
+      result = @grade_entry_form.from_csv(grades_file, overwrite)
       flash_csv_result(result)
     end
     redirect_to action: 'grades', id: @grade_entry_form.id

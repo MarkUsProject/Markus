@@ -31,9 +31,9 @@ class GradersController < ApplicationController
     else
       assignment = Assignment.find(params[:assignment_id])
       if params[:groupings]
-        result = TaMembership.from_csv(assignment, data[:file], params[:remove_existing_mappings])
+        result = TaMembership.from_csv(assignment, data[:contents], params[:remove_existing_mappings])
       elsif params[:criteria]
-        result = CriterionTaAssociation.from_csv(assignment, data[:file], params[:remove_existing_mappings])
+        result = CriterionTaAssociation.from_csv(assignment, data[:contents], params[:remove_existing_mappings])
       end
 
       flash_csv_result(result)

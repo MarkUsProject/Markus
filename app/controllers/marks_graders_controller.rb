@@ -75,7 +75,7 @@ class MarksGradersController < ApplicationController
       flash_message(:error, e.message)
     else
       grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-      result = GradeEntryStudentTa.from_csv(grade_entry_form, data[:file], params[:remove_existing_mappings])
+      result = GradeEntryStudentTa.from_csv(grade_entry_form, data[:contents], params[:remove_existing_mappings])
 
       flash_csv_result(result)
     end

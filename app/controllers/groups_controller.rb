@@ -274,7 +274,7 @@ class GroupsController < ApplicationController
       flash_message(:error, e.message)
     else
       group_rows = []
-      result = MarkusCsv.parse(data[:file].read, encoding: params[:encoding]) do |row|
+      result = MarkusCsv.parse(data[:contents], encoding: data[:encoding]) do |row|
         next if row.blank?
         raise CsvInvalidLineError if row[0].blank?
 
