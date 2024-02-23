@@ -1179,6 +1179,30 @@ describe AssignmentsController do
           expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
         end
       end
+      context 'with multiple TAs and memberships' do
+        let(:ta2) { create :ta }
+        before do
+          Grouping.assign_all_tas(assignment.groupings, Ta.all, assignment)
+          get_as role, :grade_distribution, params: params
+        end
+        it 'should contain the right data' do
+          response.parsed_body['ta_data']['datasets'].each do |data_response|
+            data = data_response['data']
+            tas = assignment.tas.uniq
+            curr_ta = nil
+            tas.each do |ta|
+              if data_response['label'].include?("#{ta.first_name} #{ta.last_name}")
+                curr_ta = ta
+              end
+            end
+            expect(curr_ta.grade_distribution_array(assignment, 20)).to eq(data)
+          end
+        end
+        it 'should contain one entry per ta' do
+          tas = assignment.tas.uniq
+          expect(response.parsed_body['ta_data']['datasets'].length).to eq(tas.length)
+        end
+      end
     end
 
     context 'criteria_summary' do
@@ -2012,6 +2036,34 @@ describe AssignmentsController do
       post_as instructor, :create_lti_grades,
               params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
       expect(response).to have_http_status(200)
+    end
+  end
+
+  context '#destroy' do
+    let!(:instructor) { create :instructor }
+    let!(:course) { instructor.course }
+    let!(:assignment) { create :assignment }
+    let(:grouping) { create :grouping, assignment: assignment }
+    it 'should fail to DELETE because of unauthorized request' do
+      delete :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(true)
+    end
+    it 'should fail to DELETE because assignment has groups' do
+      grouping # lazy initialization
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(true)
+      expect(flash[:error]).to eq(["<p>#{I18n.t('assignments.assignment_has_groupings')}</p>"])
+      expect(flash.to_hash.length).to eq(1)
+      expect(flash[:error].length).to eq(1)
+      expect(response).to have_http_status(302)
+    end
+    it 'should successfully DELETE assignment (no groups)' do
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(false)
+      expect(flash[:success]).to eq(I18n.t('flash.actions.destroy.success',
+                                           resource_name: assignment.short_identifier))
+      expect(flash.to_hash.length).to eq(1)
+      expect(response).to have_http_status(302)
     end
   end
 end

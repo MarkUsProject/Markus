@@ -731,7 +731,7 @@ describe GradeEntryFormsController do
   end
   context 'DELETE Destroy' do
     let(:user) { create(:instructor) }
-    it 'does not delete a non-existing assignment' do
+    it 'does not delete a non-existing grade entry form' do
       delete_as user, :destroy, params: { course_id: course.id, id: -1 }
       expect(response).to have_http_status(404)
     end

@@ -1,9 +1,16 @@
 # Changelog
 
 ## [unreleased]
+- Allow deletion of assignments with no groups (#6880)
+- Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
+- Enable the deletion of Grade Entry Forms that have no grades (#6915)
+
+## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
 - Improve add button labels on autotest settings page (#6948)
-- Enable the deletion of Grade Entry Forms (#6915)
+- Fix bug where grader distribution graph displays graders multiple times (#6950)
+- Fixed bug where TA Summary table failed to display members (#6949)
+- Make display of group member information consistent across submissions and summary table (#6917)
 
 ## [v2.4.4]
 - Fix websocket connection when logged in with remote auth (#6912)

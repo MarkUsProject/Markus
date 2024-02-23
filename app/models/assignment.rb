@@ -74,7 +74,7 @@ class Assignment < Assessment
   has_many :student_memberships, through: :groupings
 
   has_many :submissions, through: :groupings
-  has_many :groups, through: :groupings
+  has_many :groups, through: :groupings, dependent: :restrict_with_exception
 
   has_many :notes, as: :noteable, dependent: :destroy
 
@@ -82,7 +82,7 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  has_many :tas, through: :ta_memberships, source: :role
+  has_many :tas, -> { distinct }, through: :ta_memberships, source: :role
 
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids
@@ -541,9 +541,10 @@ class Assignment < Assessment
                              .left_outer_joins(inviter: :section)
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
-    members = groupings.joins(accepted_students: :user)
-                       .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
-                       .group_by { |x| x[:id] }
+    members = Grouping.joins(accepted_students: :user)
+                      .where(id: groupings)
+                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .group_by { |x| x[:id] }
     tag_data = groupings
                .joins(:tags)
                .pluck_to_hash(:id, 'tags.name')

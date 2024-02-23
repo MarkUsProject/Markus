@@ -3,7 +3,7 @@ en:
   grade_entry_forms:
     add_column: Add a column
     successfully_deleted: Marks Spreadsheet was successfully deleted.
-    delete: Delete
+    failed_deletion: Failed to delete Marks Spreadsheet.
     csv:
       overwrite: Overwrite existing grades and columns?
     grade_entry_item_distribution: Column Grade Distribution

@@ -188,6 +188,11 @@ describe Api::AssignmentsController do
       put :update, params: { id: assignment.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
+
+    it 'should fail to authenticate a DELETE destroy request' do
+      delete :destroy, params: { id: assignment.id, course_id: course.id }
+      expect(response).to have_http_status(403)
+    end
   end
 
   context 'An authenticated instructor request requesting' do
@@ -502,6 +507,32 @@ describe Api::AssignmentsController do
         expect(response).to have_http_status(403)
       end
     end
+    context 'DELETE assignment' do
+      it 'should successfully delete assignment because the assignment has no groups' do
+        expect(assignment.groups).to be_empty
+        delete :destroy, params: { id: assignment.id, course_id: course.id }
+        expect(response).to have_http_status(200)
+        expect(Assignment.exists?(assignment.id)).to eq(false)
+      end
+      it 'fails to delete assignment because assignment has groups' do
+        create :grouping, assignment: assignment, start_time: nil
+        expect(assignment.groups).to_not be_empty
+        original_size = Assignment.all.length
+        delete :destroy, params: { id: assignment.id, course_id: course.id }
+        expect(response).to have_http_status(409)
+        expect(Assignment.all.length).to eq(original_size)
+        expect(assignment.persisted?).to eq(true)
+      end
+      it 'fails to delete assignment because of invalid id' do
+        assignment # since lazy let is used for creating an assignment, it is invoked here to trigger its execution
+        original_size = Assignment.all.length
+        # Since we only have one assignment, it is guaranteed that assignment.id + 1 is an invalid id
+        delete :destroy, params: { id: assignment.id + 1, course_id: course.id }
+        expect(response).to have_http_status(404)
+        expect(Assignment.all.length).to eq(original_size)
+        expect(assignment.persisted?).to eq(true)
+      end
+    end
   end
 
   context 'An authenticated student request' do
@@ -670,6 +701,13 @@ describe Api::AssignmentsController do
         end
       end
     end
+
+    context 'DELETE destroy' do
+      it 'should fail to authenticate a DELETE destroy request' do
+        delete :destroy, params: { id: assignment.id, course_id: course.id }
+        expect(response).to have_http_status(403)
+      end
+    end
   end
 
   context 'An authenticated ta request' do
@@ -702,6 +740,13 @@ describe Api::AssignmentsController do
           keys = Hash.from_xml(response.body).dig('assignments', 'assignment').keys.map(&:to_sym)
           expect(keys).to match_array Api::AssignmentsController::DEFAULT_FIELDS
         end
+      end
+    end
+
+    context 'DELETE destroy' do
+      it 'should fail to authenticate a DELETE destroy request' do
+        delete :destroy, params: { id: assignment.id, course_id: course.id }
+        expect(response).to have_http_status(403)
       end
     end
   end
