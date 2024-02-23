@@ -661,6 +661,8 @@ class AssignmentsController < ApplicationController
     @assignment = record
     begin
       @assignment.destroy
+      # this fixes the problem of the flash no appearing when you delete an assignment right after creating it
+      flash.delete(:success)
       respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
     rescue ActiveRecord::DeleteRestrictionError
       flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
