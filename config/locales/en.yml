@@ -37,7 +37,7 @@ en:
       file_conflicts: 'Your changes have not been made.  The following file conflicts were detected:'
       file_too_large: The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB.
       invalid_file_name: Invalid file name on submitted file
-      invalid_folder_name: Invalid folder name on submitted folder
+      invalid_folder_name: "Invalid folder name on submitted folder: %{folder_name}"
       missing_file: Could not download %{file_name}.  File may be missing.
       missing_files: 'You still need to submit %{file} required file(s) for this assignment:'
       no_action_detected: No actions were detected in the last submit.  Nothing was changed.
