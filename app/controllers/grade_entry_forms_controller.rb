@@ -302,8 +302,13 @@ class GradeEntryFormsController < ApplicationController
 
   def destroy
     @grade_entry_form = record
-    @grade_entry_form.destroy
-    flash_message(:success, t('grade_entry_forms.successfully_deleted'))
-    redirect_to course_assignments_path(@current_course)
+    begin
+      @grade_entry_form.destroy!
+      redirect_to course_assignments_path(@current_course)
+      flash_message(:success, t('grade_entry_forms.successfully_deleted'))
+    rescue ActiveRecord::RecordNotDestroyed
+      redirect_to edit_course_grade_entry_form_path(@current_course, params[:id])
+      flash_message(:error, t('grade_entry_forms.failed_deletion'))
+    end
   end
 end

@@ -87,14 +87,14 @@
     <%= f.submit (f.object.new_record? ? t('helpers.submit.create', model: GradeEntryForm.model_name.human) :
                                          t('helpers.submit.update', model: GradeEntryForm.model_name.human)),
                  data: { disable_with: t('working') } %>
-    <% if @grade_entry_form.id != nil %>
-      <% deletable = @grade_entry_form.count_non_nil == 0 %>
-      <%= button_to t('delete'),
-                    course_grade_entry_form_path(@current_course.id, @grade_entry_form.id),
-                    method: deletable ? :delete : nil,
-                    class: deletable ? 'danger-button' : nil,
-                    disabled: !deletable
-      %>
-    <% end %>
   </p>
+<% end %>
+
+<% if @grade_entry_form.id != nil %>
+  <% deletable = @grade_entry_form.count_non_nil == 0 %>
+  <%= button_to t(:delete),
+                course_grade_entry_form_path(@current_course.id, @grade_entry_form.id),
+                method: :delete,
+                disabled: !deletable
+  %>
 <% end %>
