@@ -2,16 +2,15 @@
 en:
   grade_entry_forms:
     add_column: Add a column
-    successfully_deleted: Marks Spreadsheet was successfully deleted.
-    failed_deletion: Failed to delete Marks Spreadsheet.
     csv:
       overwrite: Overwrite existing grades and columns?
+    failed_deletion: Failed to delete Marks Spreadsheet.
     grade_entry_item_distribution: Column Grade Distribution
     grades:
       marking_state: State
+      non_nil_grade_exists: Marks Spreadsheet contains non-nil grades.
       select_a_student: You must select at least one student to update.
       successfully_changed: Successfully updated %{numGradeEntryStudentsChanged} students.
-      non_nil_grade_exists: Marks Spreadsheet contains non-nil grades.
     message_placeholder: Please enter a message that you would like to have displayed to the students. Note it is displayed regardless of marks being released.
     none: There are currently no marks spreadsheets.
     required_fields_html: Required Fields <span class='required_field'>*</span>
@@ -19,3 +18,4 @@ en:
       mark_message: 'Your mark:'
       no_results: There are no marks available yet.
       title: 'Marks:'
+    successfully_deleted: Marks Spreadsheet was successfully deleted.
