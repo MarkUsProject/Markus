@@ -217,3 +217,19 @@
     </p>
   <% end %>
 <% end %>
+
+<% if action_name == "edit" %>
+  <% has_groups = @assignment.groups.length != 0 %>
+  <%= button_to t(:delete),
+                course_assignment_path(@current_course, @assignment),
+                {
+                  data: { confirm: I18n.t("assignments.deletion_confirmation") },
+                  method: 'delete',
+                  class: has_groups ? nil : 'danger-button',
+                  form_class: 'display-inline-block',
+                  title: has_groups ? I18n.t('assignments.assignment_has_groupings') :
+                           I18n.t('helpers.submit.delete', model: Assignment.model_name.human),
+                  disabled: has_groups
+                }
+  %>
+<% end %>
