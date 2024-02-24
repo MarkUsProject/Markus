@@ -11,6 +11,7 @@ en:
       marking_state: State
       select_a_student: You must select at least one student to update.
       successfully_changed: Successfully updated %{numGradeEntryStudentsChanged} students.
+      non_nil_grade_exists: Marks Spreadsheet contains non-nil grades.
     message_placeholder: Please enter a message that you would like to have displayed to the students. Note it is displayed regardless of marks being released.
     none: There are currently no marks spreadsheets.
     required_fields_html: Required Fields <span class='required_field'>*</span>

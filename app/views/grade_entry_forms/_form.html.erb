@@ -90,11 +90,12 @@
   </p>
 <% end %>
 
-<% if @grade_entry_form.id != nil %>
-  <% deletable = @grade_entry_form.count_non_nil == 0 %>
+<% unless @grade_entry_form.id.nil? %>
+  <% not_deletable = @grade_entry_form.grades.where.not(grade: nil).exists? %>
   <%= button_to t(:delete),
                 course_grade_entry_form_path(@current_course.id, @grade_entry_form.id),
                 method: :delete,
-                disabled: !deletable
+                title: not_deletable ? t('grade_entry_forms.grades.non_nil_grade_exists') : nil,
+                disabled: not_deletable
   %>
 <% end %>

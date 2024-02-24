@@ -20,6 +20,8 @@ class GradeEntryForm < Assessment
 
   after_create :create_all_grade_entry_students
 
+  before_destroy -> { throw(:abort) if self.grades.where.not(grade: nil).exists? }, prepend: true
+
   # Set the default order of spreadsheets: in ascending order of id
   default_scope { order('id ASC') }
 
