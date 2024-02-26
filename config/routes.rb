@@ -26,7 +26,7 @@ Rails.application.routes.draw do
           put 'update_by_username'
         end
       end
-      resources :grade_entry_forms, only: [:show, :index, :create, :update] do
+      resources :grade_entry_forms, only: [:show, :index, :create, :update, :destroy] do
         member do
           put 'update_grades'
         end
@@ -390,7 +390,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :grade_entry_forms, except: [:index, :destroy] do
+    resources :grade_entry_forms, except: [:index] do
       collection do
         get 'student_interface'
       end

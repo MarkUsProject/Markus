@@ -729,4 +729,35 @@ describe GradeEntryFormsController do
       end
     end
   end
+  context 'DELETE Destroy' do
+    let(:user) { create(:instructor) }
+    it 'does not delete a non-existing grade entry form' do
+      delete_as user, :destroy, params: { course_id: course.id, id: -1 }
+      expect(response).to have_http_status(404)
+    end
+    it 'successfully deletes a grade entry form with no non-nil grades' do
+      form = create :grade_entry_form, course_id: course.id, id: 4
+      first_student = create(:student)
+      second_student = create(:student)
+      grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student),
+                     grade_entry_item: grade_entry_item, grade: nil)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
+                     grade_entry_item: grade_entry_item, grade: nil)
+      delete_as user, :destroy, params: { course_id: course.id, id: 4 }
+      expect(course.grade_entry_forms.exists?(form.id)).to be_falsey
+    end
+    it 'does not delete a grade entry form with non-nil grades' do
+      form = create :grade_entry_form, course_id: course.id, id: 4
+      first_student = create(:student)
+      second_student = create(:student)
+      grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student),
+                     grade_entry_item: grade_entry_item, grade: nil)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
+                     grade_entry_item: grade_entry_item, grade: 0.2)
+      delete_as user, :destroy, params: { course_id: course.id, id: 4 }
+      expect(course.grade_entry_forms.exists?(form.id)).to be_truthy
+    end
+  end
 end
