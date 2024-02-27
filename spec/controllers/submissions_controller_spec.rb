@@ -403,6 +403,58 @@ describe SubmissionsController do
       end
     end
 
+    context 'uploads a .git file' do
+      let(:unzip) { 'true' }
+      it 'should not be allowed' do
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          new_files: ['.git'] }
+        expect(response).to have_http_status :unprocessable_entity
+      end
+      it 'should not be allowed in a zip file' do
+        zip_file = fixture_file_upload('test_zip_git_file.zip', 'application/zip')
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
+        expect(response).to have_http_status :unprocessable_entity
+      end
+      it 'should not create a .git file in the repo' do
+        zip_file = fixture_file_upload('test_zip_git_file.zip', 'application/zip')
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          new_files: [zip_file], unzip: unzip }
+        tree = @grouping.group.access_repo do |repo|
+          repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
+        end
+        expect(tree['test_zip_git_file']).to be_nil
+      end
+    end
+
+    context 'uploads a .git folder' do
+      let(:unzip) { 'true' }
+      it 'should not be allowed' do
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          new_folders: ['.git'] }
+        expect(response).to have_http_status :unprocessable_entity
+      end
+      it 'should not be allowed in a zip file' do
+        zip_file = fixture_file_upload('test_zip_git_folder.zip', 'application/zip')
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
+        expect(response).to have_http_status :unprocessable_entity
+      end
+      it 'should not create a .git directory in the repo' do
+        zip_file = fixture_file_upload('test_zip_git_folder.zip', 'application/zip')
+        post_as @student, :update_files,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          new_files: [zip_file], unzip: unzip }
+        tree = @grouping.group.access_repo do |repo|
+          repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
+        end
+        expect(tree['test_zip_git_folder']).to be_nil
+      end
+    end
+
     context 'uploading a zip file' do
       let(:unzip) { 'true' }
       let(:tree) do
