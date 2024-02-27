@@ -43,6 +43,12 @@ module RepositoryHelper
       messages << [:invalid_filename, f.original_filename]
       return false, messages
     end
+    Pathname.new(filename).each_filename do |file_name|
+      if file_name.casecmp('.git').zero?
+        messages << [:invalid_filename, file_name]
+        return false, messages
+      end
+    end
     subdir_path, filename = File.split(filename)
     filename = FileHelper.sanitize_file_name(filename)
     file_path = current_path.join(subdir_path).join(filename).to_s
@@ -136,8 +142,16 @@ module RepositoryHelper
     # check if only required files are allowed for a submission
     # allowed folders = paths in required files
     if required_files.present? && required_files.none? { |file| file.starts_with?(folder_path) }
+      folder_path = format_folder_path folder_path
       messages << [:invalid_folder_name, folder_path]
       return false, messages
+    end
+
+    Pathname.new(folder_path).each_filename do |file_name|
+      if file_name.casecmp('.git').zero?
+        messages << [:invalid_folder_name, file_name]
+        return false, messages
+      end
     end
 
     txn.add_path(folder_path)
@@ -148,6 +162,13 @@ module RepositoryHelper
     else
       [true, messages]
     end
+  end
+
+  def format_folder_path(folder_path)
+    folder_arr = folder_path.split('/')
+    folder_arr = folder_arr.drop(1)
+    folder_str = folder_arr.join('/')
+    folder_str << '/'
   end
 
   def remove_folders(folders, user, repo, path: '/', txn: nil)
@@ -226,7 +247,7 @@ module RepositoryHelper
       when :too_small
         flash_message(:warning, I18n.t('student.submission.empty_file_warning', file_name: other_info))
       when :invalid_filename
-        flash_message(:error, I18n.t('student.submission.invalid_file_name'))
+        flash_message(:error, I18n.t('student.submission.invalid_file_name', file_name: other_info))
       when :extra_files
         full_file_path = other_info[0].rpartition('/')
         file_name = full_file_path.last
@@ -244,7 +265,7 @@ module RepositoryHelper
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
       when :invalid_folder_name
-        flash_message(:error, I18n.t('student.submission.invalid_folder_name'))
+        flash_message(:error, I18n.t('student.submission.invalid_folder_name', folder_name: other_info))
       end
     end
   end

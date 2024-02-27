@@ -11,6 +11,7 @@
 - Fix bug where grader distribution graph displays graders multiple times (#6950)
 - Fixed bug where TA Summary table failed to display members (#6949)
 - Make display of group member information consistent across submissions and summary table (#6917)
+- Disallow students from uploading .git folder in their repository (#6963)
 
 ## [v2.4.4]
 - Fix websocket connection when logged in with remote auth (#6912)
