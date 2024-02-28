@@ -4,8 +4,10 @@
 - Allow deletion of assignments with no groups (#6880)
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
-- Disallow students from uploading .git file and .git folder in their repository (#6963)
 
+## [v2.4.6]
+- Disallow students from uploading .git file and .git folder in their repository (#6963)
+-
 ## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
 - Improve add button labels on autotest settings page (#6948)
