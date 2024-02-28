@@ -76,12 +76,8 @@ class MarksGradersController < ApplicationController
     else
       grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
       result = GradeEntryStudentTa.from_csv(grade_entry_form, data[:file], params[:remove_existing_mappings])
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+
+      flash_csv_result(result)
     end
     redirect_to course_grade_entry_form_marks_graders_path(current_course, params[:grade_entry_form_id])
   end

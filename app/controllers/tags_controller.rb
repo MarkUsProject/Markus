@@ -103,8 +103,7 @@ class TagsController < ApplicationController
     else
       if data[:type] == '.csv'
         result = Tag.from_csv(data[:file].read, current_course, assignment&.id)
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+        flash_csv_result(result)
       elsif data[:type] == '.yml'
         result = Tag.from_yml(data[:contents], current_course, assignment&.id)
         if result.is_a?(StandardError)

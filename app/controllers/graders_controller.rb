@@ -35,12 +35,8 @@ class GradersController < ApplicationController
       elsif params[:criteria]
         result = CriterionTaAssociation.from_csv(assignment, data[:file], params[:remove_existing_mappings])
       end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+
+      flash_csv_result(result)
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
