@@ -5,6 +5,10 @@ en:
       annotation_category:
         annotation_category_name: Category name
         flexible_criterion: Associated Criterion (Flexible type only)
+    errors:
+      models:
+        annotation_category:
+          cannot_update_flex: Cannot update annotation category flexible criterion once results are released
     models:
       annotation_category:
         one: Annotation Category
