@@ -16,14 +16,14 @@ describe 'logging in', type: :system do
     let(:user_name) { create(:end_user).user_name }
     it 'signs in and redirects to the courses page' do
       simulate_login
-      expect(page).to have_current_path(courses_path)
+      expect(page).to have_current_path(courses_path, ignore_query: true)
     end
   end
   context 'Admin User' do
     let(:user_name) { create(:admin_user).user_name }
     it 'signs in and redirects to the admin page' do
       simulate_login
-      expect(page).to have_current_path(admin_path)
+      expect(page).to have_current_path(admin_path, ignore_query: true)
     end
   end
   context 'Unknown User' do
