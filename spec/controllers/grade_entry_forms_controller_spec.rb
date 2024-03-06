@@ -30,6 +30,10 @@ describe GradeEntryFormsController do
 
       @file_total_included = fixture_file_upload('grade_entry_forms/total_column_included.csv', 'text/csv')
 
+      @file_good_wrong_ext = fixture_file_upload('grade_entry_forms/good.pdf', 'text/csv')
+
+      @file_good_no_ext = fixture_file_upload('grade_entry_forms/good', 'text/csv')
+
       @student = grade_entry_form_with_data.grade_entry_students
                                            .joins(:user)
                                            .find_by('users.user_name': 'c8shosta')
@@ -66,6 +70,46 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good, overwrite: true }
+      expect(response).to have_http_status(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
+      )
+
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')
+      expect(new_item.out_of).to eq 100
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
+
+      # Check that the existing column and grade no longer exist.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to be_nil
+      expect(@student.grades.find_by(grade_entry_item: @original_item)).to be_nil
+    end
+
+    it 'can accept valid CSV file with the wrong file extension' do
+      post_as role, :upload,
+              params: { course_id: course.id, id: grade_entry_form_with_data.id,
+                        upload_file: @file_good_wrong_ext, overwrite: true }
+      expect(response).to have_http_status(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
+      )
+
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')
+      expect(new_item.out_of).to eq 100
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
+
+      # Check that the existing column and grade no longer exist.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to be_nil
+      expect(@student.grades.find_by(grade_entry_item: @original_item)).to be_nil
+    end
+
+    it 'can accept valid CSV file with no file extension' do
+      post_as role, :upload,
+              params: { course_id: course.id, id: grade_entry_form_with_data.id,
+                        upload_file: @file_good_no_ext, overwrite: true }
       expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(

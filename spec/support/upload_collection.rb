@@ -26,10 +26,35 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
 
       unless background
         # This is not checked right away if the file content is sent to a background job for later processing
-        it "does not accept an invalid file even with a .#{format} extension" do
+        it "does not accept an invalid file with a .#{format} extension" do
           post_as user, route_name, params: {
             **params,
             upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.#{format}")
+          }
+
+          expect(flash[:error]).to_not be_empty
+          expect(model_count).to eq @initial_count
+        end
+      end
+
+      unless background
+        it "does not accept an invalid file with an extension different from .#{format}" do
+          # test with PDF because PDF is never a valid file format
+          post_as user, route_name, params: {
+            **params,
+            upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.pdf")
+          }
+
+          expect(flash[:error]).to_not be_empty
+          expect(model_count).to eq @initial_count
+        end
+      end
+
+      unless background
+        it 'does not accept an invalid file with no extension' do
+          post_as user, route_name, params: {
+            **params,
+            upload_file: fixture_file_upload("upload_shared_files/bad_#{format}")
           }
 
           expect(flash[:error]).to_not be_empty

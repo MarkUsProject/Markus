@@ -57,38 +57,48 @@ describe GradersController do
         #           Group 3,c7benjam
         @group_grader_map_file = fixture_file_upload('group_csvs/group_grader_map.csv')
       end
+      ['.csv', '.pdf', ''].each do |extension|
+        ext_string = extension.empty? ? 'none' : extension
+        it "and all graders and groups are valid in a file with extension #{ext_string}" do
+          file = if extension.empty?
+                   fixture_file_upload('group_csvs/group_grader_map',
+                                       'text/csv')
+                 else
+                   fixture_file_upload(
+                     "group_csvs/group_grader_map#{extension}", 'text/csv'
+                   )
+                 end
+          @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+          @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+          @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
+          @grouping1 = create(:grouping,
+                              assignment: @assignment,
+                              group: create(:group, course: @assignment.course, group_name: 'test_group'))
+          @grouping2 = create(:grouping,
+                              assignment: @assignment,
+                              group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
+          @grouping3 = create(:grouping,
+                              assignment: @assignment,
+                              group: create(:group, course: @assignment.course, group_name: 'Group 3'))
+          @grouping4 = create(:grouping,
+                              assignment: @assignment,
+                              group: create(:group, course: @assignment.course, group_name: 'Group 4'))
+          @grouping4.tas << @ta1
+          post_as @instructor,
+                  :upload,
+                  params: { course_id: course.id, assignment_id: @assignment.id,
+                            upload_file: file, groupings: true }
 
-      it 'and all graders and groups are valid' do
-        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
-        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
-        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
-        @grouping1 = create(:grouping,
-                            assignment: @assignment,
-                            group: create(:group, course: @assignment.course, group_name: 'test_group'))
-        @grouping2 = create(:grouping,
-                            assignment: @assignment,
-                            group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
-        @grouping3 = create(:grouping,
-                            assignment: @assignment,
-                            group: create(:group, course: @assignment.course, group_name: 'Group 3'))
-        @grouping4 = create(:grouping,
-                            assignment: @assignment,
-                            group: create(:group, course: @assignment.course, group_name: 'Group 4'))
-        @grouping4.tas << @ta1
-        post_as @instructor,
-                :upload,
-                params: { course_id: course.id, assignment_id: @assignment.id,
-                          upload_file: @group_grader_map_file, groupings: true }
-
-        expect(response).to be_redirect
-        expect(@grouping1.tas.count).to eq 2
-        expect(@grouping1.tas).to include(@ta1)
-        expect(@grouping1.tas).to include(@ta2)
-        expect(@grouping2.tas.count).to eq 1
-        expect(@grouping2.tas).to include(@ta1)
-        expect(@grouping3.tas.count).to eq 1
-        expect(@grouping3.tas).to include(@ta3)
-        expect(@grouping4.tas.count).to eq 1 # Didn't delete existing mappings
+          expect(response).to be_redirect
+          expect(@grouping1.tas.count).to eq 2
+          expect(@grouping1.tas).to include(@ta1)
+          expect(@grouping1.tas).to include(@ta2)
+          expect(@grouping2.tas.count).to eq 1
+          expect(@grouping2.tas).to include(@ta1)
+          expect(@grouping3.tas.count).to eq 1
+          expect(@grouping3.tas).to include(@ta3)
+          expect(@grouping4.tas.count).to eq 1 # Didn't delete existing mappings
+        end
       end
 
       it 'and a successful call updates repository permissions exactly once' do

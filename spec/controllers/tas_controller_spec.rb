@@ -7,12 +7,17 @@ describe TasController do
       let(:params) { { course_id: course.id } }
     end
 
-    it 'calls perform_later on a background job' do
-      expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
-      post_as instructor,
-              :upload,
-              params: { course_id: course.id, upload_file: fixture_file_upload('tas/form_good.csv', 'text/csv') }
+    ['.csv', '', '.pdf'].each do |extension|
+      ext_string = extension.empty? ? 'none' : extension
+      it "calls perform_later on a background job on a valid CSV file with extension #{ext_string}" do
+        expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
+        post_as instructor,
+                :upload,
+                params: { course_id: course.id,
+                          upload_file: fixture_file_upload("tas/form_good#{extension}", 'text/csv') }
+      end
     end
+
     it_behaves_like 'role is from a different course' do
       let(:role) { instructor }
       subject do
