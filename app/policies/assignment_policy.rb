@@ -58,6 +58,14 @@ class AssignmentPolicy < ApplicationPolicy
     !record.token_start_date.nil? && Time.current >= record.token_start_date
   end
 
+  def token_end_date?
+    !record.token_end_date.nil?
+  end
+
+  def before_token_end_date?
+    Time.current < record.token_end_date
+  end
+
   def create_group?
     !check?(:collection_date_passed?) &&
       check?(:students_form_groups?) &&

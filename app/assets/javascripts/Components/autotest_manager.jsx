@@ -73,6 +73,7 @@ class AutotestManager extends React.Component {
       enable_test: true,
       enable_student_tests: true,
       token_start_date: "",
+      token_end_date: "",
       tokens_per_period: 0,
       token_period: 0,
       non_regenerating_tokens: false,
@@ -226,6 +227,11 @@ class AutotestManager extends React.Component {
     this.setState({token_start_date: newDate}, () => this.toggleFormChanged(true));
   };
 
+  handleTokenEndDateChange = selectedDates => {
+    const newDate = selectedDates[0] || "";
+    this.setState({token_end_date: newDate}, () => this.toggleFormChanged(true));
+  };
+
   handleTokensPerPeriodChange = event => {
     this.setState({tokens_per_period: event.target.value}, () => this.toggleFormChanged(true));
   };
@@ -243,6 +249,7 @@ class AutotestManager extends React.Component {
         enable_test: this.state.enable_test,
         enable_student_tests: this.state.enable_student_tests,
         token_start_date: this.state.token_start_date,
+        token_end_date: this.state.token_end_date,
         tokens_per_period: this.state.tokens_per_period,
         token_period: this.state.token_period,
         non_regenerating_tokens: this.state.non_regenerating_tokens,
@@ -358,6 +365,21 @@ class AutotestManager extends React.Component {
             id="token_start_date"
             value={this.state.token_start_date}
             onChange={this.handleTokenStartDateChange}
+            options={{
+              altInput: true,
+              altFormat: I18n.t("time.format_string.flatpickr"),
+              dateFormat: "Z",
+              disabled: !this.state.enable_test || !this.state.enable_student_tests,
+              plugins: [labelPlugin()], // Ensure id is applied to visible input
+            }}
+          />
+          <label className="inline_label" htmlFor="token_end_date">
+            {I18n.t("activerecord.attributes.assignment.token_end_date")}
+          </label>
+          <Flatpickr
+            id="token_end_date"
+            value={this.state.token_end_date}
+            onChange={this.handleTokenEndDateChange}
             options={{
               altInput: true,
               altFormat: I18n.t("time.format_string.flatpickr"),

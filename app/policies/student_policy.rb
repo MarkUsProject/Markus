@@ -13,8 +13,14 @@ class StudentPolicy < RolePolicy
     unless grouping.nil?
       allowed &&= check?(:member?, grouping) &&
                   check?(:not_in_progress?, grouping) &&
-                  check?(:tokens_available?, grouping) &&
-                  check?(:before_due_date?, grouping)
+                  check?(:tokens_available?, grouping)
+    end
+    unless grouping.nil? || assignment.nil?
+      if check?(:token_end_date?, assignment)
+        allowed &&= check?(:before_token_end_date)
+      else
+        allowed &&= check?(:before_due_date?, grouping)
+      end
     end
     allowed &&= check?(:before_release?, submission) unless submission.nil?
     allowed
