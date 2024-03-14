@@ -17,7 +17,7 @@ module UploadHelper
     if filetype == '.csv'
       {
         type: '.csv',
-        contents: upload_file.read,
+        contents: upload_file.read.encode(Encoding::UTF_8, encoding),
         encoding: encoding
       }
     elsif %w[.yml .yaml].include? filetype

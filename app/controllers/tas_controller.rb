@@ -63,10 +63,11 @@ class TasController < ApplicationController
   def upload
     begin
       data = process_file_upload(['.csv'])
-      @current_job = UploadRolesJob.perform_later(Ta, current_course, data[:contents], data[:encoding])
-      session[:job_id] = @current_job.job_id
     rescue StandardError => e
       flash_message(:error, e.message)
+    else
+      @current_job = UploadRolesJob.perform_later(Ta, current_course, data[:contents], data[:encoding])
+      session[:job_id] = @current_job.job_id
     end
     redirect_to action: 'index'
   end
