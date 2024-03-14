@@ -45,7 +45,7 @@ describe StudentsController do
 
       ['.csv', '', '.pdf'].each do |extension|
         ext_string = extension.empty? ? 'none' : extension
-        it "calls perform_later on a background job on a valid file with extension #{ext_string}" do
+        it "calls perform_later on a background job on a valid file with extension '#{ext_string}'" do
           file = fixture_file_upload("students/form_good#{extension}", 'text/csv')
           expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
           post_as instructor,

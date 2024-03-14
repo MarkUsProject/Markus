@@ -59,15 +59,8 @@ describe GradersController do
       end
       ['.csv', '.pdf', ''].each do |extension|
         ext_string = extension.empty? ? 'none' : extension
-        it "and all graders and groups are valid in a file with extension #{ext_string}" do
-          file = if extension.empty?
-                   fixture_file_upload('group_csvs/group_grader_map',
-                                       'text/csv')
-                 else
-                   fixture_file_upload(
-                     "group_csvs/group_grader_map#{extension}", 'text/csv'
-                   )
-                 end
+        it "and all graders and groups are valid in a file with extension '#{ext_string}'" do
+          file = fixture_file_upload("group_csvs/group_grader_map#{extension}", 'text/csv')
           @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
           @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
           @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))

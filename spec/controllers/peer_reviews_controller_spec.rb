@@ -66,7 +66,7 @@ describe PeerReviewsController do
       end
       ['.csv', '', '.pdf'].each do |extension|
         ext_string = extension.empty? ? 'none' : extension
-        context "with a valid upload file and extension #{ext_string}" do
+        context "with a valid upload file and extension '#{ext_string}'" do
           before :each do
             post_as instructor,
                     :assign_groups,

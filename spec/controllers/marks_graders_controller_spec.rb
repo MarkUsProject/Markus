@@ -24,7 +24,7 @@ describe MarksGradersController do
 
     ['.csv', '', '.pdf'].each do |extension|
       ext_string = extension.empty? ? 'none' : extension
-      it "accepts a valid file with extension #{ext_string} and can preserve existing TA mappings" do
+      it "accepts a valid file with extension '#{ext_string}' and can preserve existing TA mappings" do
         file = fixture_file_upload("marks_graders/form_good#{extension}", 'text/csv')
         create(:student, user: create(:end_user, user_name: 'c5granad'))
         ges = grade_entry_form_with_data.grade_entry_students
@@ -55,7 +55,7 @@ describe MarksGradersController do
         expect(ges.tas.count).to eq 1
       end
 
-      it "accepts a valid file with extension #{ext_string} and can remove existing TA mappings" do
+      it "accepts a valid file with extension '#{ext_string}' and can remove existing TA mappings" do
         create(:student, user: create(:end_user, user_name: 'c5granad'))
         ges = grade_entry_form_with_data.grade_entry_students
                                         .joins(:user)

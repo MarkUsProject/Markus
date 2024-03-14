@@ -404,7 +404,7 @@ describe GroupsController do
 
       ['.csv', '', '.pdf'].each do |extension|
         ext_string = extension.empty? ? 'none' : extension
-        it "accepts a valid CSV file with extension #{ext_string}" do
+        it "accepts a valid CSV file with extension '#{ext_string}'" do
           expect do
             post_as instructor, :upload, params: { course_id: course.id,
                                                    assignment_id: @assignment.id,
