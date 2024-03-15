@@ -5,4 +5,12 @@ class StarterFileGroupPolicy < ApplicationPolicy
   def manage?
     check?(:manage_assessments?, role)
   end
+
+  def download_file?
+    role.instructor? || role.ta?
+  end
+
+  def download_files?
+    role.instructor? || role.ta?
+  end
 end

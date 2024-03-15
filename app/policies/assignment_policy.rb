@@ -103,4 +103,20 @@ class AssignmentPolicy < ApplicationPolicy
         check?(:start_timed_assignment?, role.accepted_grouping_for(record.id), with: GroupingPolicy))
     )
   end
+
+  def starter_file?
+    role.instructor? || role.ta?
+  end
+
+  def download_starter_file_mappings?
+    role.instructor? || role.ta?
+  end
+
+  def download_sample_starter_files?
+    role.instructor? || role.ta?
+  end
+
+  def populate_starter_file_manager?
+    role.instructor? || role.ta?
+  end
 end
