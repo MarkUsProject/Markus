@@ -2043,7 +2043,17 @@ describe AssignmentsController do
     let!(:instructor) { create :instructor }
     let!(:course) { instructor.course }
     let!(:assignment) { create :assignment }
+
+    # lazy initialized: this will be used to check that associated entities were destroyed
     let(:grouping) { create :grouping, assignment: assignment }
+    let(:checkbox_criterion) { create :checkbox_criterion, assignment: assignment }
+    let(:rubric_criterion) { create :rubric_criterion, assignment: assignment }
+    let(:test_group) { create :test_group, assignment: assignment }
+    let(:annotation_category) { create :annotation_category, assignment: assignment }
+    let(:assignment_file) { create :assignment_file, assignment: assignment }
+    let(:exam_template) { create :exam_template_midterm, assignment: assignment }
+    let(:starter_file_group) { create :starter_file_group, assignment: assignment }
+
     it 'should fail to DELETE because of unauthorized request' do
       delete :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(true)
@@ -2064,6 +2074,29 @@ describe AssignmentsController do
                                            resource_name: assignment.short_identifier))
       expect(flash.to_hash.length).to eq(1)
       expect(response).to have_http_status(302)
+    end
+    it 'should remove associated entities on destroy' do
+      # These were lazily initialized, so in order to actually be created we need to "use" them
+      checkbox_criterion
+      rubric_criterion
+      test_group
+      annotation_category
+      assignment_file
+      exam_template
+      starter_file_group
+
+      # Deleting the assignment - should be successful since there are not groupings
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+      expect(Assignment.exists?(assignment.id)).to be(false)
+
+      # Ensuring that all associated models were also deleted
+      expect(Criterion.exists?(checkbox_criterion.id)).to be(false)
+      expect(Criterion.exists?(rubric_criterion.id)).to be(false)
+      expect(TestGroup.exists?(test_group.id)).to be(false)
+      expect(AnnotationCategory.exists?(annotation_category.id)).to be(false)
+      expect(AssignmentFile.exists?(assignment_file.id)).to be(false)
+      expect(ExamTemplate.exists?(exam_template.id)).to be(false)
+      expect(StarterFileGroup.exists?(starter_file_group.id)).to be(false)
     end
   end
 end
