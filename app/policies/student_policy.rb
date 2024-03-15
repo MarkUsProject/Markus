@@ -16,8 +16,8 @@ class StudentPolicy < RolePolicy
                   check?(:tokens_available?, grouping)
     end
     unless grouping.nil? || assignment.nil?
-      if check?(:token_end_date?, assignment)
-        allowed &&= check?(:before_token_end_date)
+      if !assignment.token_end_date.nil?
+        allowed &&= check?(:before_token_end_date?, assignment)
       else
         allowed &&= check?(:before_due_date?, grouping)
       end

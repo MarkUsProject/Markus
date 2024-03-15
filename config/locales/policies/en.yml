@@ -30,6 +30,7 @@ en:
         tests_enabled?: Tests are not enabled for this assessment.
         tests_set_up?: You cannot run tests because the test framework is not configured.
         tokens_released?: You cannot run tests because tokens are not available yet.
+        before_token_end_date?: The token end date for this assignment has passed.
         view?: You are not allowed to view and manage assessments.
         view_test_options?: You do not have permission to view automated testing options.
         work_alone?: You cannot work alone for this assignment. The minimum group size is %{group_min}.

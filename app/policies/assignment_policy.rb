@@ -63,7 +63,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def before_token_end_date?
-    Time.current < record.token_end_date
+    Time.current <= record.token_end_date
   end
 
   def create_group?

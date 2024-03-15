@@ -397,7 +397,8 @@ CREATE TABLE public.assignment_properties (
     url_submit boolean DEFAULT false NOT NULL,
     autotest_settings json,
     api_submit boolean DEFAULT false NOT NULL,
-    release_with_urls boolean DEFAULT false NOT NULL
+    release_with_urls boolean DEFAULT false NOT NULL,
+    token_end_date timestamp(6) without time zone
 );
 
 
@@ -3290,6 +3291,13 @@ CREATE INDEX index_assignment_properties_on_default_starter_file_group_id ON pub
 
 
 --
+-- Name: index_assignment_properties_on_token_end_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_assignment_properties_on_token_end_date ON public.assignment_properties USING btree (token_end_date);
+
+
+--
 -- Name: index_courses_on_autotest_setting_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4375,6 +4383,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240313191809'),
 ('20230713153536'),
 ('20230303030615'),
 ('20230109190029'),

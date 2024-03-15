@@ -80,6 +80,7 @@ class AutotestSetup
           repository_folder: @assg_short_id,
           enable_test: true,
           token_start_date: Time.current,
+          token_end_date: Time.current,
           token_period: 1,
           enable_student_tests: true,
           unlimited_tokens: true
