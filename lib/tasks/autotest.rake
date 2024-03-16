@@ -39,8 +39,8 @@ class AutotestSetup
   def initialize(root_dir)
     # setup instance variables (mostly paths to directories)
     @assg_short_id = "autotest_#{File.basename(root_dir)}"
-    script_dir = File.join(root_dir, 'script_files')
-    @test_scripts = Dir.glob(File.join(script_dir, '*'))
+    @script_dir = File.join(root_dir, 'script_files')
+    @test_scripts = Dir.glob(File.join(@script_dir, '*'))
     @specs_file = File.join(root_dir, 'specs.json')
     @specs_data = JSON.parse(File.read(@specs_file))
 
@@ -102,8 +102,10 @@ class AutotestSetup
     test_file_destination = @assignment.autotest_files_dir
     FileUtils.makedirs test_file_destination
 
+    return unless File.directory?(@script_dir)
+
     # copy test scripts and specs files into the destination directory
-    FileUtils.cp @test_scripts, test_file_destination
+    FileUtils.copy_entry @script_dir, test_file_destination
   end
 
   def create_marking_scheme
@@ -127,6 +129,24 @@ class AutotestSetup
     )
   end
 
+  def create_submission_files(transaction, glob)
+    glob.each do |file_path|
+      if File.directory?(file_path)
+        transaction.add_path(file_path)
+
+        next_glob = Dir.glob(File.join(file_path, '*'))
+
+        create_submission_files(transaction, next_glob)
+      else
+        File.open(file_path, 'r') do |file|
+          file_rel_path = Pathname.new(file_path).relative_path_from Pathname.new(@student_dir)
+          repo_path = File.join(@assignment.repository_folder, file_rel_path)
+          transaction.add(repo_path, file.read, '')
+        end
+      end
+    end
+  end
+
   def create_submission
     return if @assignment.groupings.exists?
 
@@ -136,13 +156,7 @@ class AutotestSetup
     grouping = Grouping.find_by(group_id: group, assessment_id: @assignment.id)
     grouping.access_repo do |repo|
       transaction = repo.get_transaction(student.user_name)
-      @student_files.each do |file_path|
-        File.open(file_path, 'r') do |file|
-          file_rel_path = Pathname.new(file_path).relative_path_from Pathname.new(@student_dir)
-          repo_path = File.join(@assignment.repository_folder, file_rel_path)
-          transaction.add(repo_path, file.read, '')
-        end
-      end
+      create_submission_files(transaction, @student_files)
       repo.commit(transaction)
     end
     # create new submission for each grouping
