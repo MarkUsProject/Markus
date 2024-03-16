@@ -22,7 +22,7 @@ class CriterionTaAssociation < ApplicationRecord
     end
 
     new_ta_mappings = []
-    result = MarkusCsv.parse(csv_data.read) do |row|
+    result = MarkusCsv.parse(csv_data) do |row|
       raise CsvInvalidLineError if row.empty?
       criterion_name, *ta_user_names = row
 

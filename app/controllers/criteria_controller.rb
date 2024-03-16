@@ -149,20 +149,18 @@ class CriteriaController < ApplicationController
     end
 
     begin
-      data = process_file_upload
+      data = process_file_upload(['.yml'])
     rescue Psych::SyntaxError => e
       flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      if data[:type] == '.yml'
-        ApplicationRecord.transaction do
-          successes = Criterion.upload_criteria_from_yaml(assignment, data[:contents])
-          flash_message(:success, I18n.t('upload_success', count: successes)) if successes > 0
-        rescue StandardError => e
-          flash_message(:error, e.message)
-          raise ActiveRecord::Rollback
-        end
+      ApplicationRecord.transaction do
+        successes = Criterion.upload_criteria_from_yaml(assignment, data[:contents])
+        flash_message(:success, I18n.t('upload_success', count: successes)) if successes > 0
+      rescue StandardError => e
+        flash_message(:error, e.message)
+        raise ActiveRecord::Rollback
       end
     end
     redirect_to action: 'index', assignment_id: assignment.id
