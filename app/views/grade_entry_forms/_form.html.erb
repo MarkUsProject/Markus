@@ -89,3 +89,13 @@
                  data: { disable_with: t('working') } %>
   </p>
 <% end %>
+
+<% unless @grade_entry_form.new_record? %>
+  <% not_deletable = @grade_entry_form.grades.where.not(grade: nil).exists? %>
+  <%= button_to t('delete'),
+                course_grade_entry_form_path(@current_course.id, @grade_entry_form.id),
+                method: :delete,
+                title: not_deletable ? t('grade_entry_forms.grades.non_nil_grade_exists') : nil,
+                disabled: not_deletable
+  %>
+<% end %>

@@ -17,6 +17,7 @@ describe Assignment do
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_groups).dependent(:destroy) }
     it { is_expected.to belong_to(:course) }
+    it { is_expected.to have_many(:tas).through(:ta_memberships) }
 
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
@@ -2079,6 +2080,13 @@ describe Assignment do
         end
       end
 
+      it 'has group with members' do
+        Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+        data = assignment_tag.summary_json(ta)[:data]
+        expect(data[0][:members]).not_to be_empty
+        expect(data[0][:members][0]).not_to include(nil)
+      end
+
       it 'has tags correct info' do
         Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
@@ -2546,6 +2554,7 @@ describe Assignment do
         actual_grouping = assignment.current_grader_data[:groups][0]
         expect(actual_grouping[:_id]).to eq(grouping.id)
         expect(actual_grouping[:section]).to be_nil
+        expect(actual_grouping[:members]).to eq []
       end
     end
 

@@ -179,5 +179,26 @@ module Api
         end
       end
     end
+
+    def destroy
+      # check if the grade entry form exists
+      grade_entry_form = record
+      if grade_entry_form.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'Grade Entry Form not found' }, status: :not_found
+        return
+      end
+      # delete the grade entry form
+      begin
+        grade_entry_form.destroy!
+        render 'shared/http_status',
+               locals: { code: '200',
+                         message: 'Grade Entry Form successfully deleted' }, status: :ok
+      rescue ActiveRecord::RecordNotDestroyed
+        render 'shared/http_status',
+               locals: { code: :conflict,
+                         message: 'Grade Entry Form contains non-nil grades' }, status: :conflict
+      end
+    end
   end
 end

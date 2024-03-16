@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.1.2'
+gem 'rails', '~> 7.1.3'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -47,7 +47,7 @@ gem 'redis', '~> 4.8.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 5.3.0'
+gem 'rmagick', '~> 5.4.4'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -104,7 +104,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 6.1.0'
+  gem 'rspec-rails', '~> 6.1.1'
   gem 'selenium-webdriver'
 end
 

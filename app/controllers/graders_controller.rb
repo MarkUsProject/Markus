@@ -25,24 +25,18 @@ class GradersController < ApplicationController
 
   def upload
     begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      data = process_file_upload(['.csv'])
     rescue StandardError => e
       flash_message(:error, e.message)
     else
       assignment = Assignment.find(params[:assignment_id])
       if params[:groupings]
-        result = TaMembership.from_csv(assignment, data[:file], params[:remove_existing_mappings])
+        result = TaMembership.from_csv(assignment, data[:contents], params[:remove_existing_mappings])
       elsif params[:criteria]
-        result = CriterionTaAssociation.from_csv(assignment, data[:file], params[:remove_existing_mappings])
+        result = CriterionTaAssociation.from_csv(assignment, data[:contents], params[:remove_existing_mappings])
       end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+
+      flash_csv_result(result)
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end

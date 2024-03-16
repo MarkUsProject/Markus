@@ -47,7 +47,7 @@ describe CheckboxCriterion do
     end
   end
 
-  context 'With non-existent criteria' do
+  context 'With bad CSV line input' do
     before :each do
       @assignment = create(:assignment)
     end
@@ -64,6 +64,23 @@ describe CheckboxCriterion do
 
     it 'raises an error message on an invalid maximum value' do
       expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
+        .to raise_error(CsvInvalidLineError)
+    end
+
+    it 'raises an error message on a max mark that is zero' do
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 0], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it 'raises an error message on a max mark that is nil' do
+      expect { CheckboxCriterion.create_or_update_from_csv_row(['name', nil], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it 'raises an error message if the checkbox criterion fails to save' do
+      allow_any_instance_of(CheckboxCriterion).to receive(:save).and_return(false)
+
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 2], @assignment) }
         .to raise_error(CsvInvalidLineError)
     end
   end

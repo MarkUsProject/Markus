@@ -1,10 +1,30 @@
 # Changelog
 
 ## [unreleased]
-- Fix import bug that prevents the peer review table from loading (#6908)
+- Allow deletion of assignments with no groups (#6880)
+- Added a rust auto-test target (#6906)
+- Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
+- Enable the deletion of Grade Entry Forms that have no grades (#6915)
+- Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
+
+## [v2.4.6]
+- Disallow students from uploading .git file and .git folder in their repository (#6963)
+-
+## [v2.4.5]
+- Add workaround for CSP in Safari < 16 (#6947)
+- Improve add button labels on autotest settings page (#6948)
+- Fix bug where grader distribution graph displays graders multiple times (#6950)
+- Fixed bug where TA Summary table failed to display members (#6949)
+- Make display of group member information consistent across submissions and summary table (#6917)
+
+## [v2.4.4]
+- Fix websocket connection when logged in with remote auth (#6912)
+- Fix bug where graders table failed to load when a group had no members (#6916)
+
+## [v2.4.3]
 - Fix autotest settings criterion JSON schema validation (#6907)
 - Ensure autotested criteria do not have marks set if tests time out (#6907)
-- Added a rust auto-test target (#6906)
+- Fix import bug that prevents the peer review table from loading (#6908)
 
 ## [v2.4.2]
 - Fix feedback file API not returning feedback file IDs correctly (#6875)

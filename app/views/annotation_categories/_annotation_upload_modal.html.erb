@@ -12,7 +12,7 @@
                                id: 'annotation_upload',
                                upload_id: 'upload_file',
                                button_id: 'button_upload', nonce: true %>
-    <p><%= file_field_tag :upload_file, required: true %></p>
+    <p><%= file_field_tag :upload_file, required: true, accept: '.csv,.yml,.yaml' %></p>
     <div>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
