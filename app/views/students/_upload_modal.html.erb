@@ -16,7 +16,7 @@
   </p>
   <%= form_tag upload_course_students_path(@current_course), { multipart: true } do %>
     <div>
-      <%= file_field_tag 'upload_file' %>
+      <%= file_field_tag 'upload_file', accept: '.csv' %>
     </div>
 
     <div>

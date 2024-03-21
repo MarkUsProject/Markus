@@ -1,6 +1,6 @@
 describe PeerReviewsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  TEMP_CSV_FILE_PATH = '_temp_peer_review.csv'.freeze
+  TEMP_CSV_FILE_PATH = '_temp_peer_review'.freeze
   let(:course) { @assignment_with_pr.course }
   before :each do
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
@@ -64,36 +64,38 @@ describe PeerReviewsController do
       include_examples 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @pr_id, model: PeerReview } }
       end
+      ['.csv', '', '.pdf'].each do |extension|
+        ext_string = extension.empty? ? 'none' : extension
+        context "with a valid upload file and extension '#{ext_string}'" do
+          before :each do
+            post_as instructor,
+                    :assign_groups,
+                    params: { actionString: 'random_assign',
+                              selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                              selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                              assignment_id: @pr_id,
+                              course_id: course.id,
+                              numGroupsToAssign: 1 }
+            get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
+            @downloaded_text = response.body
+            PeerReview.all.destroy_all
+            @path = File.join(self.class.file_fixture_path, "#{TEMP_CSV_FILE_PATH}#{extension}")
+            # Now allow uploading by placing the data in a temporary file and reading
+            # the data back through 'uploading' (requires a clean database)
+            File.write(@path, @downloaded_text)
+            csv_upload = fixture_file_upload("#{TEMP_CSV_FILE_PATH}#{extension}", 'text/csv')
 
-      context 'with a valid upload file' do
-        before :each do
-          post_as instructor,
-                  :assign_groups,
-                  params: { actionString: 'random_assign',
-                            selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                            selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                            assignment_id: @pr_id,
-                            course_id: course.id,
-                            numGroupsToAssign: 1 }
-          get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
-          @downloaded_text = response.body
-          PeerReview.all.destroy_all
-          @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
-          # Now allow uploading by placing the data in a temporary file and reading
-          # the data back through 'uploading' (requires a clean database)
-          File.write(@path, @downloaded_text)
-          csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
+            post_as instructor, :upload,
+                    params: { course_id: course.id, assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
+          end
 
-          post_as instructor, :upload,
-                  params: { course_id: course.id, assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
-        end
+          after :each do
+            File.delete(@path)
+          end
 
-        after :each do
-          File.delete(@path)
-        end
-
-        it 'has the correct number of peer reviews' do
-          expect(@assignment_with_pr.peer_reviews.count).to eq 3
+          it 'has the correct number of peer reviews' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq 3
+          end
         end
       end
     end

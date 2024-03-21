@@ -182,18 +182,13 @@ class PeerReviewsController < ApplicationController
 
   def upload
     begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      data = process_file_upload(['.csv'])
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      if data[:type] == '.csv'
-        assignment = Assignment.find(params[:assignment_id])
-        result = PeerReview.from_csv(assignment, data[:file].read)
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
-      end
+      assignment = Assignment.find(params[:assignment_id])
+      result = PeerReview.from_csv(assignment, data[:contents])
+      flash_csv_result(result)
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end

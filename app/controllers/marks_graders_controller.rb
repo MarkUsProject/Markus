@@ -70,20 +70,14 @@ class MarksGradersController < ApplicationController
   # Assign TAs to Students via a csv file
   def upload
     begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      data = process_file_upload(['.csv'])
     rescue StandardError => e
       flash_message(:error, e.message)
     else
       grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-      result = GradeEntryStudentTa.from_csv(grade_entry_form, data[:file], params[:remove_existing_mappings])
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+      result = GradeEntryStudentTa.from_csv(grade_entry_form, data[:contents], params[:remove_existing_mappings])
+
+      flash_csv_result(result)
     end
     redirect_to course_grade_entry_form_marks_graders_path(current_course, params[:grade_entry_form_id])
   end

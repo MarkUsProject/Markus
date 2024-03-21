@@ -38,6 +38,11 @@ module ApplicationHelper
     result
   end
 
+  def flash_csv_result(result)
+    flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+    flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+  end
+
   def markdown(text)
     options = { filter_html: false, hard_wrap: true,
                 link_attributes: { rel: 'nofollow', target: '_blank' },

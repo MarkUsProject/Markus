@@ -209,7 +209,7 @@ class GradeEntryForm < Assessment
 
   def update_grade_entry_items(names, totals, overwrite)
     if names.size != totals.size || names.empty? || totals.empty?
-      raise "Invalid header rows: '#{names}' and '#{totals}'."
+      raise CsvInvalidLineError, "Invalid header rows: '#{names}' and '#{totals}'."
     end
 
     updated_items = []

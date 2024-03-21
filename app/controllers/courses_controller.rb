@@ -141,9 +141,8 @@ class CoursesController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = current_course.upload_assignment_list('csv', data[:file].read)
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+        result = current_course.upload_assignment_list('csv', data[:contents])
+        flash_csv_result(result)
       elsif data[:type] == '.yml'
         result = current_course.upload_assignment_list('yml', data[:contents])
         if result.is_a?(StandardError)
