@@ -72,18 +72,17 @@ class Assignment < Assessment
           dependent: :destroy,
           foreign_key: :parent_assessment_id,
           inverse_of: :parent_assignment
-  has_many :peer_reviews, dependent: :destroy, through: :groupings
-  has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews, dependent: :destroy
+  has_many :peer_reviews, through: :groupings
+  has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
 
   has_many :current_submissions_used,
            through: :groupings,
-           source: :current_submission_used,
-           dependent: :destroy
+           source: :current_submission_used
 
-  has_many :ta_memberships, through: :groupings, dependent: :destroy
-  has_many :student_memberships, through: :groupings, dependent: :destroy
+  has_many :ta_memberships, through: :groupings
+  has_many :student_memberships, through: :groupings
 
-  has_many :submissions, through: :groupings, dependent: :destroy
+  has_many :submissions, through: :groupings
 
   has_many :notes, as: :noteable, dependent: :destroy
 
