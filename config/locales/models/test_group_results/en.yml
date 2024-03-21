@@ -4,4 +4,4 @@ en:
     attributes:
       test_group_result:
         extra_info: Extra Info
-        no_test_results: "No Test Results"
+        no_test_results: No Test Results
