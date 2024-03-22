@@ -119,4 +119,9 @@ class AssignmentPolicy < ApplicationPolicy
   def populate_starter_file_manager?
     role.instructor? || role.ta?
   end
+
+  # needed specifically for TA read-only mode
+  def see_starter_files?
+    role.instructor? || role.ta?
+  end
 end

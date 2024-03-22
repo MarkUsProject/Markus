@@ -42,19 +42,27 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                                                      assessment.id %>
-    <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
-      <li <% if ['criteria',
-                 'annotation_categories',
-                 'automated_tests',
-                 'exam_templates'].include?(controller.controller_name) ||
+    <% if allowed_to?(:manage?, with: AssignmentPolicy) ||  allowed_to?(:see_starter_files?, with: AssignmentPolicy) %>
+    <li <% if ['criteria',
+               'annotation_categories',
+               'automated_tests',
+               'exam_templates'].include?(controller.controller_name) ||
         (controller.controller_name == 'assignments' &&
-          controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
-          class='active'
-          <% end %>
-      >
-        <%= link_to t('menu.settings'),
-                    edit_course_assignment_path(@current_course, target_id) %>
-      </li>
+        controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
+        class='active'
+        <% end %>
+    >
+      <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+          <%= link_to t('menu.settings'),
+                      edit_course_assignment_path(@current_course, target_id) %>
+      <% elsif allowed_to?(:see_starter_files?, with: AssignmentPolicy) %>
+          <%= link_to t('menu.settings'),
+                      starter_file_course_assignment_path(@current_course, target_id) %>
+      <% end %>
+    </li>
+    <% end %>
+
+    <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'groups' %>'>
         <%= link_to Group.model_name.human.pluralize,
                     course_assignment_groups_path(@current_course, target_id) %>
