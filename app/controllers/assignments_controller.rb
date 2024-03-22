@@ -450,7 +450,8 @@ class AssignmentsController < ApplicationController
              sections: section_data,
              available_after_due: assignment.starter_files_after_due,
              starterfileType: assignment.starter_file_type,
-             defaultStarterFileGroup: assignment.default_starter_file_group&.id || '' }
+             defaultStarterFileGroup: assignment.default_starter_file_group&.id || '',
+             readOnly: !allowed_to?(:manage?) }
     render json: data
   end
 

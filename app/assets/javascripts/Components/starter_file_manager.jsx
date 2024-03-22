@@ -22,6 +22,7 @@ class StarterFileManager extends React.Component {
       showFileUploadModal: false,
       starterfileType: "simple",
       defaultStarterFileGroup: "",
+      readOnly: true,
       files: {},
       sections: {},
       form_changed: false,
@@ -225,7 +226,7 @@ class StarterFileManager extends React.Component {
                 groupUploadTarget={id}
                 files={files}
                 noFilesMessage={I18n.t("submissions.no_files_available")}
-                readOnly={false}
+                readOnly={this.state.readOnly}
                 onCreateFiles={this.handleCreateFiles}
                 onDeleteFile={this.handleDeleteFile}
                 onCreateFolder={this.handleCreateFolder}
@@ -245,6 +246,7 @@ class StarterFileManager extends React.Component {
                 key={"delete_starter_file_group_button"}
                 className={"button"}
                 onClick={() => this.deleteStarterFileGroup(id)}
+                disabled={this.state.readOnly}
               >
                 <FontAwesomeIcon icon="fa-solid fa-trash" />
               </button>
@@ -283,7 +285,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"simple"}
               checked={this.state.starterfileType === "simple"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.state.readOnly}
               onChange={() => {
                 this.setState({starterfileType: "simple"}, () => this.toggleFormChanged(true));
               }}
@@ -298,7 +300,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"sections"}
               checked={this.state.starterfileType === "sections"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.state.readOnly}
               onChange={() => {
                 this.setState({starterfileType: "sections"}, () => this.toggleFormChanged(true));
               }}
@@ -313,7 +315,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"group"}
               checked={this.state.starterfileType === "group"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.state.readOnly}
               onChange={() => {
                 this.setState({starterfileType: "group"}, () => this.toggleFormChanged(true));
               }}
@@ -328,7 +330,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"shuffle"}
               checked={this.state.starterfileType === "shuffle"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.state.readOnly}
               onChange={() => {
                 this.setState({starterfileType: "shuffle"}, () => this.toggleFormChanged(true));
               }}
@@ -352,7 +354,7 @@ class StarterFileManager extends React.Component {
               )
             }
             value={this.state.defaultStarterFileGroup}
-            disabled={!this.state.files.length}
+            disabled={!this.state.files.length || this.state.readOnly}
           >
             {Object.entries(this.state.files).map(data => {
               const {id, name} = data[1];
@@ -383,7 +385,7 @@ class StarterFileManager extends React.Component {
                     <select
                       onChange={this.updateSectionStarterFile}
                       value={selected}
-                      disabled={!this.state.files.length}
+                      disabled={!this.state.files.length || this.state.readOnly}
                     >
                       <option value={`${row.original.section_id}_`} />
                       {Object.entries(this.state.files).map(data => {
@@ -458,6 +460,7 @@ class StarterFileManager extends React.Component {
                 () => this.toggleFormChanged(true)
               );
             }}
+            disabled={this.state.readOnly}
           />
           {I18n.t("assignments.starter_file.available_after_due")}
         </label>
@@ -480,6 +483,7 @@ class StarterFileManager extends React.Component {
             key={"create_starter_file_group_button"}
             className={"button"}
             onClick={this.createStarterFileGroup}
+            disabled={this.state.readOnly}
           >
             <FontAwesomeIcon icon="fa-solid fa-add" />
           </button>
@@ -530,7 +534,7 @@ class StarterFileManager extends React.Component {
               type={"submit"}
               value={I18n.t("save")}
               onClick={this.saveStateChanges}
-              disabled={!this.state.form_changed}
+              disabled={!this.state.form_changed || this.state.readOnly}
             ></input>
           </p>
         </fieldset>
