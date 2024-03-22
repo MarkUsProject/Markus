@@ -196,6 +196,15 @@ describe AssignmentPolicy do
     failed 'when token start date is nil'
   end
 
+  describe_rule :before_token_end_date? do
+    succeed 'when current date is before the token end date' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { token_end_date: 1.hour.from_now } }
+    end
+    failed 'when current date is after the token end date' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { token_end_date: 1.hour.ago } }
+    end
+  end
+
   describe_rule :create_group? do
     let(:role) { create :student }
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
