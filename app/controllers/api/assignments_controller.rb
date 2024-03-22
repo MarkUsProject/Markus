@@ -299,6 +299,18 @@ module Api
       upload_file(grouping, only_required_files: assignment.only_required_files)
     end
 
+    def destroy
+      assignment = record
+      begin
+        assignment.destroy
+        render 'shared/http_status',
+               locals: { code: '200', message: I18n.t('assignments.successful_deletion') }, status: :ok
+      rescue ActiveRecord::DeleteRestrictionError
+        render 'shared/http_status',
+               locals: { code: :conflict, message: I18n.t('assignments.assignment_has_groupings') }, status: :conflict
+      end
+    end
+
     protected
 
     def implicit_authorization_target

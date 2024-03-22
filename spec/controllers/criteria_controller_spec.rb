@@ -836,6 +836,8 @@ describe CriteriaController do
              name: 'Checkbox Criterion')
     end
     let(:mixed_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
+    let(:mixed_file_no_ext) { fixture_file_upload('criteria/upload_yml_mixed', 'text/yaml') }
+    let(:mixed_file_wrong_ext) { fixture_file_upload('criteria/upload_yml_mixed.pdf', 'text/yaml') }
     let(:invalid_mixed_file) { fixture_file_upload('criteria/upload_yml_mixed_invalid.yaml', 'text/yaml') }
     let(:missing_levels_file) { fixture_file_upload('criteria/upload_yml_missing_levels.yaml', 'text/yaml') }
     let(:empty_file) { fixture_file_upload('empty_file', 'text/yaml') }
@@ -1003,6 +1005,39 @@ describe CriteriaController do
 
         expect(assignment.criteria.where(type: 'RubricCriterion').first.max_mark).to eq(4.6)
       end
+
+      it 'creates criteria correctly when a valid yml file with no extension is uploaded' do
+        post_as instructor, :upload,
+                params: { course_id: course.id, assignment_id: assignment.id, upload_file: mixed_file_no_ext }
+
+        expect(assignment.criteria.pluck(:name)).to contain_exactly('cr30',
+                                                                    'cr20',
+                                                                    'cr100',
+                                                                    'cr80',
+                                                                    'cr60',
+                                                                    'cr90',
+                                                                    'cr40',
+                                                                    'cr50')
+        expect(flash[:success].map { |f| extract_text f })
+          .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
+      end
+
+      it 'creates criteria correctly when a valid yml file with the wrong extension is uploaded' do
+        post_as instructor, :upload,
+                params: { course_id: course.id, assignment_id: assignment.id, upload_file: mixed_file_wrong_ext }
+
+        expect(assignment.criteria.pluck(:name)).to contain_exactly('cr30',
+                                                                    'cr20',
+                                                                    'cr100',
+                                                                    'cr80',
+                                                                    'cr60',
+                                                                    'cr90',
+                                                                    'cr40',
+                                                                    'cr50')
+        expect(flash[:success].map { |f| extract_text f })
+          .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
+      end
+
       it 'does not create criteria with format errors in entries' do
         post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
                                                upload_file: invalid_mixed_file }

@@ -30,6 +30,10 @@ describe GradeEntryFormsController do
 
       @file_total_included = fixture_file_upload('grade_entry_forms/total_column_included.csv', 'text/csv')
 
+      @file_good_wrong_ext = fixture_file_upload('grade_entry_forms/good.pdf', 'text/csv')
+
+      @file_good_no_ext = fixture_file_upload('grade_entry_forms/good', 'text/csv')
+
       @student = grade_entry_form_with_data.grade_entry_students
                                            .joins(:user)
                                            .find_by('users.user_name': 'c8shosta')
@@ -66,6 +70,46 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good, overwrite: true }
+      expect(response).to have_http_status(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
+      )
+
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')
+      expect(new_item.out_of).to eq 100
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
+
+      # Check that the existing column and grade no longer exist.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to be_nil
+      expect(@student.grades.find_by(grade_entry_item: @original_item)).to be_nil
+    end
+
+    it 'can accept valid CSV file with the wrong file extension' do
+      post_as role, :upload,
+              params: { course_id: course.id, id: grade_entry_form_with_data.id,
+                        upload_file: @file_good_wrong_ext, overwrite: true }
+      expect(response).to have_http_status(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
+      )
+
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')
+      expect(new_item.out_of).to eq 100
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
+
+      # Check that the existing column and grade no longer exist.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to be_nil
+      expect(@student.grades.find_by(grade_entry_item: @original_item)).to be_nil
+    end
+
+    it 'can accept valid CSV file with no file extension' do
+      post_as role, :upload,
+              params: { course_id: course.id, id: grade_entry_form_with_data.id,
+                        upload_file: @file_good_no_ext, overwrite: true }
       expect(response).to have_http_status(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
@@ -727,6 +771,37 @@ describe GradeEntryFormsController do
           end
         end
       end
+    end
+  end
+  context 'DELETE Destroy' do
+    let(:user) { create(:instructor) }
+    it 'does not delete a non-existing grade entry form' do
+      delete_as user, :destroy, params: { course_id: course.id, id: -1 }
+      expect(response).to have_http_status(404)
+    end
+    it 'successfully deletes a grade entry form with no non-nil grades' do
+      form = create :grade_entry_form, course_id: course.id, id: 4
+      first_student = create(:student)
+      second_student = create(:student)
+      grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student),
+                     grade_entry_item: grade_entry_item, grade: nil)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
+                     grade_entry_item: grade_entry_item, grade: nil)
+      delete_as user, :destroy, params: { course_id: course.id, id: 4 }
+      expect(course.grade_entry_forms.exists?(form.id)).to be_falsey
+    end
+    it 'does not delete a grade entry form with non-nil grades' do
+      form = create :grade_entry_form, course_id: course.id, id: 4
+      first_student = create(:student)
+      second_student = create(:student)
+      grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: first_student),
+                     grade_entry_item: grade_entry_item, grade: nil)
+      create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
+                     grade_entry_item: grade_entry_item, grade: 0.2)
+      delete_as user, :destroy, params: { course_id: course.id, id: 4 }
+      expect(course.grade_entry_forms.exists?(form.id)).to be_truthy
     end
   end
 end

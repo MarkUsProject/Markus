@@ -1,6 +1,33 @@
 module Api
   # Api controller responsible for CRUD operations for the Section model
   class SectionsController < MainApiController
+    def index
+      sections = current_course.sections
+      respond_to do |format|
+        format.json { render json: sections }
+        format.xml { render xml: sections }
+      end
+    end
+
+    def show
+      section = record
+      respond_to do |format|
+        format.json { render json: section }
+        format.xml { render xml: section }
+      end
+    end
+
+    def update
+      section = record
+      if section.update(params.permit(:name))
+        render 'shared/http_status', locals: { code: '200', message:
+          t('sections.update.success', name: section.name) }, status: :ok
+      else
+        render 'shared/http_status', locals: { code: '400', message:
+          t('sections.update.error', name: section.name) }, status: :bad_request
+      end
+    end
+
     def create
       section = current_course.sections.new(section_params)
       if section.save

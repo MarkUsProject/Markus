@@ -301,6 +301,12 @@ button,
     min-width: 70px;
     padding: 0.25em 0.5em;
   }
+
+  &.danger-button {
+    background: $severe-error;
+    color: $background-main;
+    font-weight: bold;
+  }
 }
 
 /** Fieldset */

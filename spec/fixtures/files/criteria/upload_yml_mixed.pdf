@@ -1,0 +1,71 @@
+cr30:
+  type: rubric
+  max_mark: 5.0
+  levels:
+    Beginner:
+      mark: 0.0
+      description: Fail
+    Hmm:
+      mark: 1.0
+      description: Almost fail
+    Average:
+      mark: 2.0
+      description: Not bad
+    Good:
+      mark: 3.0
+      description: Alright
+    Excellent:
+      mark: 5.0
+      description: Impressive
+  ta_visible: false
+  peer_visible: true
+  bonus: true
+cr20:
+  type: Flexible
+  max_mark: 2.0
+  description: I am flexible
+  ta_visible: true
+  peer_visible: true
+cr100:
+  type: checkbox
+  max_mark: 5.0
+  description: I am checkbox
+  bonus: true
+cr40:
+  type: Checkbox
+  max_mark: 5.0
+  description: Another checkbox.
+cr80:
+  type: flexible
+  max_mark: 10.0
+  ta_visible: true
+  peer_visible: true
+cr50:
+  type: Flexible
+  max_mark: 1.0
+  description: Another flexible.
+  bonus: true
+cr60:
+  type: flexible
+  max_mark: 10.0
+cr90:
+  type: rubric
+  max_mark: 4.6
+  levels:
+    Beginner:
+      mark: 0.0
+      description: The essay is very poorly organized structure and gives no new information.
+    Capable:
+      mark: 1.1
+      description: The essay is poorly organized but gives new information.
+    Accomplished:
+      mark: 2.2
+      description: The essay is well-structure and conveys new information clearly.
+    level 3 criterion:
+      mark: 4.0
+      description: level 3 description
+    level 4 criterion:
+      mark: 4.6
+      description: level 4 description
+  ta_visible: true
+  peer_visible: false
