@@ -402,15 +402,19 @@ describe GroupsController do
         let(:params) { { course_id: course.id, assignment_id: @assignment.id } }
       end
 
-      it 'accepts a valid file' do
-        expect do
-          post_as instructor, :upload, params: { course_id: course.id,
-                                                 assignment_id: @assignment.id,
-                                                 upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv') }
-        end.to have_enqueued_job(CreateGroupsJob)
-        expect(response).to have_http_status(302)
-        expect(flash[:error]).to be_blank
-        expect(response).to redirect_to(action: 'index')
+      ['.csv', '', '.pdf'].each do |extension|
+        ext_string = extension.empty? ? 'none' : extension
+        it "accepts a valid CSV file with extension '#{ext_string}'" do
+          expect do
+            post_as instructor, :upload, params: { course_id: course.id,
+                                                   assignment_id: @assignment.id,
+                                                   upload_file: fixture_file_upload("groups/form_good#{extension}",
+                                                                                    'text/csv') }
+          end.to have_enqueued_job(CreateGroupsJob)
+          expect(response).to have_http_status(302)
+          expect(flash[:error]).to be_blank
+          expect(response).to redirect_to(action: 'index')
+        end
       end
 
       it 'does not accept files with invalid columns' do
