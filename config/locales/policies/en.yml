@@ -18,6 +18,7 @@ en:
         view_ta_subtabs?: You are not authorized to perform this action.
       assignment:
         autogenerate_group_name?: This assignment does automatically generate group names.
+        before_token_end_date?: The token end date for this assignment has passed.
         collection_date_passed?: 'Could not create group: the due date for this assignment has passed.'
         create_group?: You cannot form a group at this time.
         index?: You are not authorized to perform this action.
@@ -30,7 +31,6 @@ en:
         tests_enabled?: Tests are not enabled for this assessment.
         tests_set_up?: You cannot run tests because the test framework is not configured.
         tokens_released?: You cannot run tests because tokens are not available yet.
-        before_token_end_date?: The token end date for this assignment has passed.
         view?: You are not allowed to view and manage assessments.
         view_test_options?: You do not have permission to view automated testing options.
         work_alone?: You cannot work alone for this assignment. The minimum group size is %{group_min}.

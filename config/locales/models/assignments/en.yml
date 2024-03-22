@@ -31,9 +31,9 @@ en:
         short_identifier: Short Identifier
         start_time: Start time
         student_form_groups: Students may form their own groups
+        token_end_date: Tokens will be unavailable on
         token_period: Tokens regenerate after
         token_start_date: Tokens available on
-        token_end_date: Tokens will be unavailable on
         tokens_per_period: Tokens per group
         unlimited_tokens: Unlimited tokens
         url_submit: Allow students to submit URLs
