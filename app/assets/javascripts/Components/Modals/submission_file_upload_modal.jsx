@@ -29,8 +29,44 @@ class SubmissionFileUploadModal extends React.Component {
   };
 
   handleRenameChange = event => {
-    this.setState({renameTo: event.target.value});
+    const newFilename = event.target.value;
+    const originalFilename = this.state.newFiles[0].name; // Assuming only one file is uploaded
+    const originalExtension = originalFilename.split(".").pop();
+    const newExtension = newFilename.split(".").pop();
+
+    if (originalExtension !== newExtension) {
+      const confirmChange = window.confirm(
+        "Changing the file extension may render the file unusable. Are you sure you want to proceed?"
+      );
+      if (!confirmChange) {
+        // Reset the input value to the original filename to prevent extension change
+        event.target.value = originalFilename;
+        return;
+      }
+    }
+    this.setState({renameTo: newFilename});
   };
+
+  // handleRenameChange = event => {
+  //   this.setState({ renameTo: event.target.value });
+  // };
+  //
+  // handleBlur = () => {
+  //   const newFilename = this.state.renameTo;
+  //   const originalFilename = this.state.newFiles[0].name; // Assuming only one file is uploaded
+  //   const originalExtension = originalFilename.split('.').pop();
+  //   const newExtension = newFilename.split('.').pop();
+  //
+  //   if (originalExtension !== newExtension) {
+  //     const confirmChange = window.confirm(
+  //       "Changing the file extension may render the file unusable. Are you sure you want to proceed?"
+  //     );
+  //     if (!confirmChange) {
+  //       // Reset the input value to the original filename to prevent extension change
+  //       this.setState({ renameTo: "" });
+  //     }
+  //   }
+  // };
 
   fileRenameInputBox = () => {
     let fileRenameInput;
@@ -91,6 +127,7 @@ class SubmissionFileUploadModal extends React.Component {
           type={"text"}
           name={"filename"}
           onChange={this.handleRenameChange}
+          onBlur={this.handleBlur}
           disabled={this.state.newFiles.length !== 1}
           title={I18n.t("submissions.student.one_file_allowed")}
           id={"rename-box"}
