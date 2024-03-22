@@ -668,7 +668,7 @@ class AssignmentsController < ApplicationController
       flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
       redirect_back fallback_location: { action: :edit, id: @assignment.id }
     rescue StandardError => e
-      flash_message(:error, "Problem with deletion: #{e.message}")
+      flash_message(:error, I18n.t('activerecord.errors.models.assignment_deletion', problem_message: e.message))
       redirect_back fallback_location: { action: :edit, id: @assignment.id }
     end
   end
