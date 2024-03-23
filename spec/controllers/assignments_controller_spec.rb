@@ -858,8 +858,8 @@ describe AssignmentsController do
     end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 403 error' do
-        is_expected.to respond_with(:forbidden)
+      it 'should return a 200 status code' do
+        is_expected.to respond_with(:ok)
       end
     end
     context 'a student' do
@@ -880,7 +880,8 @@ describe AssignmentsController do
                      starterfileType: assignment.starter_file_type,
                      defaultStarterFileGroup: '',
                      files: [],
-                     sections: [] }
+                     sections: [],
+                     readOnly: false }
         expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
       end
       context 'the file data' do
@@ -921,13 +922,14 @@ describe AssignmentsController do
     end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 404 error' do
-        is_expected.to respond_with(:forbidden)
+      it 'should return a 200 status code' do
+        is_expected.to respond_with(:ok)
       end
     end
     context 'a student' do
       let(:role) { create :student }
-      it 'should return a 404 error' do
+      before { get_as role, :populate_starter_file_manager, params: params }
+      it 'should return a 403 error' do
         is_expected.to respond_with(:forbidden)
       end
     end
@@ -1080,14 +1082,14 @@ describe AssignmentsController do
     end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 404 error' do
+      it 'should return a 200 status code' do
         subject
-        expect(response).to have_http_status(403)
+        expect(response).to have_http_status(200)
       end
     end
     context 'a student' do
       let(:role) { create :student }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end
@@ -1379,9 +1381,9 @@ describe AssignmentsController do
     context 'a grader' do
       context 'without assignment management permissions' do
         let(:role) { create :ta }
-        it 'should respond with 403' do
+        it 'should respond with 200' do
           subject
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(200)
         end
       end
       context 'with assignment management permissions' do

@@ -44,7 +44,7 @@ class StarterFileManager extends React.Component {
         this.props.course_id,
         this.props.assignment_id
       ),
-      {headers: {Accept: "aaplication/json"}}
+      {headers: {Accept: "application/json"}}
     )
       .then(reponse => {
         if (reponse.ok) {
