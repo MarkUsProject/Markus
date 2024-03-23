@@ -836,8 +836,10 @@ describe AssignmentsController do
     before(:each) { get_as role, :starter_file, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an instructor' do
-      let(:role) { create :instructor }
+    shared_examples 'a user with permission to view the starter file page' do
+      it 'should return a 200 status code' do
+        is_expected.to respond_with(:ok)
+      end
       context 'the assignment exists' do
         it 'should render the starter_file view' do
           expect(response).to render_template(:starter_file)
@@ -856,11 +858,13 @@ describe AssignmentsController do
         end
       end
     end
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      include_examples 'a user with permission to view the starter file page'
+    end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 200 status code' do
-        is_expected.to respond_with(:ok)
-      end
+      include_examples 'a user with permission to view the starter file page'
     end
     context 'a student' do
       let(:role) { create :student }
@@ -874,7 +878,7 @@ describe AssignmentsController do
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
 
-    shared_examples 'a user with permission to manage assessments' do
+    shared_examples 'a user with permission to view starter files' do
       it 'should return a 200 status code' do
         is_expected.to respond_with(:ok)
       end
@@ -924,11 +928,11 @@ describe AssignmentsController do
     end
     context 'an instructor' do
       let(:role) { create :instructor }
-      include_examples 'a user with permission to manage assessments'
+      include_examples 'a user with permission to view starter files'
     end
     context 'a grader' do
       let(:role) { create :ta }
-      include_examples 'a user with permission to manage assessments'
+      include_examples 'a user with permission to view starter files'
     end
     context 'a student' do
       let(:role) { create :student }
@@ -1069,11 +1073,14 @@ describe AssignmentsController do
     subject { get_as role, :download_starter_file_mappings, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an instructor' do
-      let(:role) { create :instructor }
+    shared_examples 'a user with permission to download starter file mappings' do
       let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:grouping) { create :grouping_with_inviter, assignment: assignment }
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
+      it 'should return a 200 status code' do
+        subject
+        expect(response).to have_http_status(200)
+      end
       it 'should contain mappings' do
         expect(@controller).to receive(:send_data) do |file_content|
           mappings = file_content.split("\n")[1..-1].map { |m| m.split(',') }
@@ -1083,12 +1090,14 @@ describe AssignmentsController do
         subject
       end
     end
+
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      include_examples 'a user with permission to download starter file mappings'
+    end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 200 status code' do
-        subject
-        expect(response).to have_http_status(200)
-      end
+      include_examples 'a user with permission to download starter file mappings'
     end
     context 'a student' do
       let(:role) { create :student }
@@ -1382,17 +1391,8 @@ describe AssignmentsController do
       end
     end
     context 'a grader' do
-      context 'without assignment management permissions' do
-        let(:role) { create :ta }
-        it 'should respond with 200' do
-          subject
-          expect(response).to have_http_status(200)
-        end
-      end
-      context 'with assignment management permissions' do
-        let(:role) { create :ta, manage_assessments: true }
-        include_examples 'download sample starter files'
-      end
+      let(:role) { create :ta }
+      include_examples 'download sample starter files'
     end
     context 'an instructor' do
       let(:role) { create :instructor }
