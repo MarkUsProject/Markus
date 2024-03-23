@@ -870,9 +870,21 @@ describe AssignmentsController do
     end
   end
   describe '#populate_starter_file_manager' do
-    shared_examples 'the starter file manager is populated correctly' do
+    before { get_as role, :populate_starter_file_manager, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { course_id: assignment.course.id, id: assignment.id } }
+
+    shared_examples 'a user with permission to manage assessments' do
       it 'should return a 200 status code' do
         is_expected.to respond_with(:ok)
+      end
+      it 'should contain the right values' do
+        expected = { available_after_due: true,
+                     starterfileType: assignment.starter_file_type,
+                     defaultStarterFileGroup: '',
+                     files: [],
+                     sections: [] }
+        expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
       end
       context 'the file data' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
@@ -910,59 +922,16 @@ describe AssignmentsController do
         end
       end
     end
-
-    let(:assignment) { create :assignment }
-    let(:params) { { course_id: assignment.course.id, id: assignment.id } }
     context 'an instructor' do
-      before { get_as role, :populate_starter_file_manager, params: params }
       let(:role) { create :instructor }
-      include_examples 'the starter file manager is populated correctly'
-      it 'should contain the right values' do
-        expected = { available_after_due: true,
-                     starterfileType: assignment.starter_file_type,
-                     defaultStarterFileGroup: '',
-                     files: [],
-                     sections: [],
-                     readOnly: false }
-        expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
-      end
+      include_examples 'a user with permission to manage assessments'
     end
-    context 'a grader without manage permissions' do
-      before { get_as role, :populate_starter_file_manager, params: params }
+    context 'a grader' do
       let(:role) { create :ta }
-      include_examples 'the starter file manager is populated correctly'
-      it 'should contain the right values' do
-        expected = { available_after_due: true,
-                     starterfileType: assignment.starter_file_type,
-                     defaultStarterFileGroup: '',
-                     files: [],
-                     sections: [],
-                     readOnly: true }
-        expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
-      end
-    end
-    context 'a grader with manage permissions' do
-      let(:role) { create :ta }
-      let(:grader_permission) { role.grader_permission }
-      before do
-        grader_permission.manage_assessments = true
-        grader_permission.save
-        get_as role, :populate_starter_file_manager, params: params
-      end
-      include_examples 'the starter file manager is populated correctly'
-      it 'should contain the right values' do
-        expected = { available_after_due: true,
-                     starterfileType: assignment.starter_file_type,
-                     defaultStarterFileGroup: '',
-                     files: [],
-                     sections: [],
-                     readOnly: false }
-        expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
-      end
+      include_examples 'a user with permission to manage assessments'
     end
     context 'a student' do
       let(:role) { create :student }
-      before { get_as role, :populate_starter_file_manager, params: params }
       it 'should return a 403 error' do
         is_expected.to respond_with(:forbidden)
       end

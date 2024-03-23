@@ -39,7 +39,6 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
       available_after_due: true,
       starterfileType: "sections",
       defaultStarterFileGroup: 1,
-      readOnly: readOnly,
     };
 
     // for the case where this is read only, we don't want to have the form as
@@ -52,7 +51,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
     beforeEach(() => {
       fetch.resetMocks();
       fetch.mockResponseOnce(JSON.stringify(pageInfo));
-      wrapper = mount(<StarterFileManager course_id={1} assignment_id={1} />);
+      wrapper = mount(<StarterFileManager course_id={1} assignment_id={1} read_only={readOnly} />);
     });
 
     it(`all buttons on the page are ${readOnly ? "disabled" : "enabled"}`, () => {
@@ -90,7 +89,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
       wrapper.update();
       let dropdowns = wrapper.find(".starter-file-dropdown");
 
-      // one for each section, plus one for the default starter file group,
+      // one for each section, plus one for the default starter file group
       expect(dropdowns.length).toEqual(pageInfo.sections.length + 1);
 
       dropdowns.forEach(dropdown => {
