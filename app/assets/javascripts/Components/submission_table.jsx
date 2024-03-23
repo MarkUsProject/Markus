@@ -301,7 +301,7 @@ class RawSubmissionTable extends React.Component {
     }).then(this.fetchData);
   };
 
-  prepareGroupingFiles = () => {
+  prepareGroupingFiles = print => {
     if (window.confirm(I18n.t("submissions.marking_incomplete_warning"))) {
       $.post({
         url: Routes.zip_groupings_files_course_assignment_submissions_url(
@@ -310,6 +310,7 @@ class RawSubmissionTable extends React.Component {
         ),
         data: {
           groupings: this.props.selection,
+          print: print,
         },
       });
     }
@@ -426,7 +427,8 @@ class RawSubmissionTable extends React.Component {
           collectSubmissions={() => {
             this.setState({showCollectSubmissionsModal: true});
           }}
-          downloadGroupingFiles={this.prepareGroupingFiles}
+          printGroupingFiles={() => this.prepareGroupingFiles(true)}
+          downloadGroupingFiles={() => this.prepareGroupingFiles(false)}
           showReleaseUrls={() => this.setState({showReleaseUrlsModal: true})}
           selection={this.props.selection}
           runTests={this.runTests}
@@ -603,12 +605,26 @@ class SubmissionsActionBox extends React.Component {
       </button>
     );
 
+    let printGroupingFilesButton = (
+      <button
+        onClick={this.props.printGroupingFiles}
+        disabled={this.props.disabled}
+        title={I18n.t("print_the", {item: I18n.t("activerecord.models.submission.other")})}
+      >
+        <FontAwesomeIcon icon="fa-solid fa-print" />
+        <span className="button-text">
+          {I18n.t("print_the", {item: I18n.t("activerecord.models.submission.other")})}
+        </span>
+      </button>
+    );
+
     return (
       <div className="rt-action-box">
         {completeButton}
         {incompleteButton}
         {collectButton}
         {downloadGroupingFilesButton}
+        {printGroupingFilesButton}
         {runTestsButton}
         {releaseMarksButton}
         {unreleaseMarksButton}
