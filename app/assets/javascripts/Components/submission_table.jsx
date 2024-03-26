@@ -11,7 +11,7 @@ import {
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
-import consumer from "/app/javascript/channels/consumer";
+import consumer from "../../../../app/javascript/channels/consumer";
 import {renderFlashMessages} from "../flash";
 
 class RawSubmissionTable extends React.Component {
@@ -266,6 +266,7 @@ class RawSubmissionTable extends React.Component {
   // Custom getTrProps function to highlight submissions that have been collected.
   getTrProps = (state, ri, ci, instance) => {
     if (
+      ri === undefined ||
       ri.original.marking_state === undefined ||
       ri.original.marking_state === "not_collected" ||
       ri.original.marking_state === "before_due_date"
@@ -559,14 +560,19 @@ class SubmissionsActionBox extends React.Component {
     displayInactiveGroupsCheckbox = (
       <>
         <input
-          id="show_hidden"
-          name="show_hidden"
+          id="show_inactive_groups"
+          name="show_inactive_groups"
           type="checkbox"
           checked={this.props.showInactiveGroups}
           onChange={this.props.updateShowInactiveGroups}
           className={"hide-user-checkbox"}
+          data-testid={"show_inactive_groups"}
         />
-        <label title={displayInactiveGroupsTooltip} htmlFor="show_hidden">
+        <label
+          title={displayInactiveGroupsTooltip}
+          htmlFor="show_inactive_groups"
+          data-testid={"show_inactive_groups_tooltip"}
+        >
           {I18n.t("submissions.groups.display_inactive")}
         </label>
       </>
@@ -731,3 +737,5 @@ function generateMessage(status_data) {
   }
   return message_data;
 }
+
+export {SubmissionTable};
