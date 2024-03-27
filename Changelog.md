@@ -5,10 +5,11 @@
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
 - Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
+- Fixed long annotations being cut off in the annotation table (#7001)
 
 ## [v2.4.6]
 - Disallow students from uploading .git file and .git folder in their repository (#6963)
--
+
 ## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
 - Improve add button labels on autotest settings page (#6948)
