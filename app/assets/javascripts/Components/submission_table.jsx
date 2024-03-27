@@ -79,12 +79,12 @@ class RawSubmissionTable extends React.Component {
 
   onFilteredChange = (filtered, column) => {
     const summaryTable = this.checkboxTable.getWrappedInstance();
-    if (column.id == "marking_state") {
-      const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
-      this.setState({markingStateFilter: markingStateFilter});
-    } else {
+    if (column.id != "marking_state") {
       const markingStates = getMarkingStates(summaryTable.state.sortedData);
       this.setState({marking_states: markingStates});
+    } else {
+      const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
+      this.setState({markingStateFilter: markingStateFilter});
     }
 
     this.setState({filtered});
