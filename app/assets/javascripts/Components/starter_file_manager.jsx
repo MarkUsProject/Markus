@@ -242,6 +242,7 @@ class StarterFileManager extends React.Component {
                 canFilter={false}
               />
               <button
+                aria-label="sfg-action-button"
                 key={"delete_starter_file_group_button"}
                 className={"button"}
                 onClick={() => this.deleteStarterFileGroup(id)}
@@ -353,6 +354,7 @@ class StarterFileManager extends React.Component {
               )
             }
             className="starter-file-dropdown"
+            aria-label="starter-file-dropdown"
             value={this.state.defaultStarterFileGroup}
             disabled={!this.state.files.length || this.props.read_only}
           >
@@ -387,6 +389,7 @@ class StarterFileManager extends React.Component {
                       value={selected}
                       disabled={!this.state.files.length || this.props.read_only}
                       className="starter-file-dropdown"
+                      aria-label="starter-file-dropdown"
                     >
                       <option value={`${row.original.section_id}_`} />
                       {Object.entries(this.state.files).map(data => {
@@ -455,6 +458,7 @@ class StarterFileManager extends React.Component {
           <input
             type={"checkbox"}
             checked={this.state.available_after_due}
+            data-testid="available_after_due_checkbox"
             onChange={() => {
               this.setState(
                 prev => ({available_after_due: !prev.available_after_due}),
@@ -481,6 +485,7 @@ class StarterFileManager extends React.Component {
           </legend>
           {this.renderFileManagers()}
           <button
+            aria-label="sfg-action-button"
             key={"create_starter_file_group_button"}
             className={"button"}
             onClick={this.createStarterFileGroup}
@@ -534,6 +539,7 @@ class StarterFileManager extends React.Component {
             <input
               type={"submit"}
               value={I18n.t("save")}
+              data-testid={"save_button"}
               onClick={this.saveStateChanges}
               disabled={!this.state.form_changed || this.props.read_only}
             ></input>

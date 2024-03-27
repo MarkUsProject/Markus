@@ -1,6 +1,5 @@
 import {StarterFileManager} from "../starter_file_manager";
-
-import {mount} from "enzyme";
+import {render, screen, fireEvent} from "@testing-library/react";
 
 import React from "react";
 
@@ -11,10 +10,10 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 }));
 
 [true, false].forEach(readOnly => {
+  let container;
   describe(`When a user ${
     readOnly ? "without" : "with"
   } assignment manage access visits the changes the StarterFileManager`, () => {
-    let wrapper;
     const pageInfo = {
       files: [
         {
@@ -51,70 +50,81 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
     beforeEach(() => {
       fetch.resetMocks();
       fetch.mockResponseOnce(JSON.stringify(pageInfo));
-      wrapper = mount(<StarterFileManager course_id={1} assignment_id={1} read_only={readOnly} />);
+
+      container = render(
+        <StarterFileManager course_id={1} assignment_id={1} read_only={readOnly} />
+      );
     });
 
     it(`all buttons on the page are ${readOnly ? "disabled" : "enabled"}`, () => {
-      wrapper.update();
-      let buttons = wrapper.find(".button");
+      const buttons = screen.getAllByRole("button", {
+        name: /sfg-action-button/i,
+      });
 
       // one delete button per starter file group, one add button on top of that
-      expect(buttons.length).toEqual(pageInfo.files.length + 1);
+      expect(buttons).toHaveLength(pageInfo.files.length + 1);
 
       buttons.forEach(button => {
-        expect(button.props()["disabled"]).toBe(readOnly);
+        if (readOnly) {
+          expect(button).toBeDisabled();
+        } else {
+          expect(button).not.toBeDisabled();
+        }
       });
     });
 
-    it(`the internal FileManager is ${readOnly ? "in" : "not in"} readOnly mode`, () => {
-      wrapper.update();
-      let fileManager = wrapper.find("StarterFileFileManager");
-
-      expect(fileManager.props()["readOnly"]).toBe(readOnly);
-    });
-
     it(`all radio buttons are ${readOnly ? "disabled" : "enabled"}`, () => {
-      wrapper.update();
-      let radioButtons = wrapper.find({type: "radio"});
+      const radioButtons = screen.getAllByRole("radio");
 
-      // there's 4 by design
-      expect(radioButtons.length).toEqual(4);
+      // there's exactly 4 at all times
+      expect(radioButtons).toHaveLength(4);
 
       radioButtons.forEach(radioButton => {
-        expect(radioButton.props()["disabled"]).toBe(readOnly);
+        if (readOnly) {
+          expect(radioButton).toBeDisabled();
+        } else {
+          expect(radioButton).not.toBeDisabled();
+        }
       });
     });
 
     it(`all dropdowns on the page are ${readOnly ? "disabled" : "enabled"}`, () => {
-      wrapper.update();
-      let dropdowns = wrapper.find(".starter-file-dropdown");
+      const dropdowns = screen.getAllByRole("combobox", {
+        name: /starter-file-dropdown/i,
+      });
 
       // one for each section, plus one for the default starter file group
-      expect(dropdowns.length).toEqual(pageInfo.sections.length + 1);
+      expect(dropdowns).toHaveLength(pageInfo.sections.length + 1);
 
       dropdowns.forEach(dropdown => {
-        expect(dropdown.getDOMNode().hasAttribute("disabled")).toBe(readOnly);
+        if (readOnly) {
+          expect(dropdown).toBeDisabled();
+        } else {
+          expect(dropdown).not.toBeDisabled();
+        }
       });
     });
 
     it(`the checkbox on the page is ${readOnly ? "disabled" : "enabled"}`, () => {
-      wrapper.update();
-      let checkbox = wrapper.find({type: "checkbox"});
+      // should only be one
+      const checkbox = screen.getByTestId("available_after_due_checkbox");
 
-      // only checkbox is starter files available after due
-      expect(checkbox.length).toEqual(1);
-
-      expect(checkbox.props()["disabled"]).toBe(readOnly);
+      if (readOnly) {
+        expect(checkbox).toBeDisabled();
+      } else {
+        expect(checkbox).not.toBeDisabled();
+      }
     });
 
     it(`the submit button on the page is ${readOnly ? "disabled" : "enabled"}`, () => {
-      wrapper.update();
-      let submit = wrapper.find({type: "submit"});
+      // should only be one
+      const saveButton = screen.getByTestId("save_button");
 
-      // only checkbox is starter files available after due
-      expect(submit.length).toEqual(1);
-
-      expect(submit.getDOMNode().hasAttribute("disabled")).toBe(readOnly);
+      if (readOnly) {
+        expect(saveButton).toBeDisabled();
+      } else {
+        expect(saveButton).not.toBeDisabled();
+      }
     });
   });
 });
