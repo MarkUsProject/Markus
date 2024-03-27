@@ -42,24 +42,24 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                                                      assessment.id %>
-    <% if allowed_to?(:manage?, with: AssignmentPolicy) ||  allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
-    <li <% if ['criteria',
-               'annotation_categories',
-               'automated_tests',
-               'exam_templates'].include?(controller.controller_name) ||
-        (controller.controller_name == 'assignments' &&
-        controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
-        class='active'
+    <% if allowed_to?(:manage?, with: AssignmentPolicy) || allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
+      <li <% if ['criteria',
+                 'annotation_categories',
+                 'automated_tests',
+                 'exam_templates'].include?(controller.controller_name) ||
+          (controller.controller_name == 'assignments' &&
+          controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
+          class='active'
+          <% end %>
+      >
+        <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+            <%= link_to t('menu.settings'),
+                        edit_course_assignment_path(@current_course, target_id) %>
+        <% elsif allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
+            <%= link_to t('menu.settings'),
+                        starter_file_course_assignment_path(@current_course, target_id) %>
         <% end %>
-    >
-      <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
-          <%= link_to t('menu.settings'),
-                      edit_course_assignment_path(@current_course, target_id) %>
-      <% elsif allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
-          <%= link_to t('menu.settings'),
-                      starter_file_course_assignment_path(@current_course, target_id) %>
-      <% end %>
-    </li>
+      </li>
     <% end %>
 
     <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
