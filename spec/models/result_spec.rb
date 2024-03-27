@@ -270,7 +270,7 @@ describe Result do
       end
     end
 
-    context 'when the result has a PDF submission_file' do
+    context 'when the result has a PDF submission file' do
       let!(:submission_file) { create(:pdf_submission_file, submission: result.submission) }
       before do
         allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return(
@@ -289,6 +289,31 @@ describe Result do
         it 'successfully creates a PDF' do
           pdf_file = result.generate_print_pdf
           expect(pdf_file).to be_a CombinePDF::PDF
+        end
+      end
+    end
+
+    context 'when the result has a Jupyter notebook submission file' do
+      let!(:submission_file) { create(:notebook_submission_file, submission: result.submission) }
+
+      before do
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return(
+          file_fixture('submission_files/submission.ipynb').read
+        )
+      end
+
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+
+      context 'when nbconvert fails' do
+        before do
+          allow_any_instance_of(Process::Status).to receive(:success?).and_return(false)
+        end
+
+        it 'raises an error' do
+          expect { result.generate_print_pdf }.to raise_error
         end
       end
     end

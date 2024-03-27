@@ -329,6 +329,29 @@ class Result < ApplicationRecord
       combined_page << annotation_page
     end
 
+    input_files = submission.submission_files.where("filename LIKE '%.ipynb'").order(:path, :filename)
+    grouping.access_repo do |repo|
+      input_files.each do |sf|
+        contents = sf.retrieve_file(repo: repo)
+        tmp_path = File.join(workdir, 'tmp_file.pdf')
+        FileUtils.rm_rf(tmp_path)
+        args = [
+          Rails.application.config.python,
+          '-m', 'nbconvert',
+          '--to', 'webpdf',
+          '--stdin',
+          '--output', File.join(workdir, File.basename(tmp_path.to_s, '.pdf'))  # Can't include the .pdf extension
+        ]
+        _stdout, stderr, status = Open3.capture3(*args, stdin_data: contents)
+        if status.success?
+          input_pdf = CombinePDF.load(tmp_path)
+          combined_pdf << input_pdf
+        else
+          raise stderr
+        end
+      end
+    end
+
     # Finally, insert cover page at the front
     combined_pdf >> CombinePDF.load("#{workdir}/front.pdf")
 
