@@ -3,8 +3,7 @@
  */
 
 import {SubmissionTable} from "../submission_table";
-import {screen, fireEvent} from "@testing-library/react";
-import {mount} from "enzyme";
+import {render, screen, fireEvent} from "@testing-library/react";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
@@ -13,7 +12,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 }));
 
 describe("For the SubmissionTable's display of inactive groups", () => {
-  let groups_sample, wrapper;
+  let groups_sample;
   beforeEach(() => {
     groups_sample = [
       {
@@ -57,7 +56,7 @@ describe("For the SubmissionTable's display of inactive groups", () => {
       }),
     });
 
-    wrapper = mount(
+    render(
       <SubmissionTable
         assignment_id={1}
         course_id={1}
@@ -74,45 +73,27 @@ describe("For the SubmissionTable's display of inactive groups", () => {
   });
 
   it("contains the correct amount of inactive groups in the hidden tooltip", () => {
-    wrapper.update();
-
-    expect(wrapper.find({"data-testid": "show_inactive_groups_tooltip"}).prop("title")).toEqual(
+    expect(screen.getByTestId("show_inactive_groups_tooltip").getAttribute("title")).toEqual(
       "1 inactive group"
     );
   });
 
   it("initially contains the active group", () => {
-    wrapper.update();
-
-    expect(wrapper.text().includes("group_0002")).toBe(true);
+    expect(screen.queryByText("group_0002")).toBeInTheDocument();
   });
 
   it("initially does not contain the inactive group", () => {
-    wrapper.update();
-
-    expect(wrapper.text().includes("group_0001")).toBe(false);
+    expect(screen.queryByText("group_0001")).not.toBeInTheDocument();
   });
 
   it("contains the inactive group after a single toggle", () => {
-    wrapper.update();
-
-    wrapper
-      .find({"data-testid": "show_inactive_groups"})
-      .simulate("change", {target: {checked: true}});
-
-    expect(wrapper.text().includes("group_0001")).toBe(true);
+    fireEvent.click(screen.getByTestId("show_inactive_groups"));
+    expect(screen.queryByText("group_0001")).toBeInTheDocument();
   });
 
   it("doesn't contain the inactive group after two toggles", () => {
-    wrapper.update();
-
-    wrapper
-      .find({"data-testid": "show_inactive_groups"})
-      .simulate("change", {target: {checked: true}});
-    wrapper
-      .find({"data-testid": "show_inactive_groups"})
-      .simulate("change", {target: {checked: false}});
-
-    expect(wrapper.text().includes("group_0001")).toBe(false);
+    fireEvent.click(screen.getByTestId("show_inactive_groups"));
+    fireEvent.click(screen.getByTestId("show_inactive_groups"));
+    expect(screen.queryByText("group_0001")).not.toBeInTheDocument();
   });
 });
