@@ -1,16 +1,13 @@
 # Policy for starter file groups
 class StarterFileGroupPolicy < ApplicationPolicy
   default_rule :manage?
+  alias_rule :download_file?, :download_files?, to: :read?
 
   def manage?
     check?(:manage_assessments?, role)
   end
 
-  def download_file?
-    role.instructor? || role.ta?
-  end
-
-  def download_files?
+  def read?
     role.instructor? || role.ta?
   end
 end

@@ -42,7 +42,7 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                                                      assessment.id %>
-    <% if allowed_to?(:manage?, with: AssignmentPolicy) ||  allowed_to?(:see_starter_files?, with: AssignmentPolicy) %>
+    <% if allowed_to?(:manage?, with: AssignmentPolicy) ||  allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
     <li <% if ['criteria',
                'annotation_categories',
                'automated_tests',
@@ -55,7 +55,7 @@
       <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
           <%= link_to t('menu.settings'),
                       edit_course_assignment_path(@current_course, target_id) %>
-      <% elsif allowed_to?(:see_starter_files?, with: AssignmentPolicy) %>
+      <% elsif allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
           <%= link_to t('menu.settings'),
                       starter_file_course_assignment_path(@current_course, target_id) %>
       <% end %>

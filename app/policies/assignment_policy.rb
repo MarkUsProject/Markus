@@ -4,6 +4,8 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
+  alias_rule :starter_file?, :download_starter_file_mappings?, :download_sample_starter_files?,
+             :populate_starter_file_manager?, to: :read_starter_files?
   authorize :assessment, :test_run_id, optional: true
 
   def index?
@@ -104,24 +106,7 @@ class AssignmentPolicy < ApplicationPolicy
     )
   end
 
-  def starter_file?
-    role.instructor? || role.ta?
-  end
-
-  def download_starter_file_mappings?
-    role.instructor? || role.ta?
-  end
-
-  def download_sample_starter_files?
-    role.instructor? || role.ta?
-  end
-
-  def populate_starter_file_manager?
-    role.instructor? || role.ta?
-  end
-
-  # needed specifically for TA read-only mode
-  def see_starter_files?
+  def read_starter_files?
     role.instructor? || role.ta?
   end
 end
