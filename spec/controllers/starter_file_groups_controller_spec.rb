@@ -16,6 +16,22 @@ describe StarterFileGroupsController do
     end
   end
 
+  shared_examples 'student not permitted but ta permitted' do
+    before { subject }
+    context 'a grader' do
+      let(:role) { create :ta }
+      it 'should be permitted' do
+        expect(response.status).to eq 200
+      end
+    end
+    context 'a student' do
+      let(:role) { create :student }
+      it 'should not be permitted' do
+        expect(response.status).to eq 403
+      end
+    end
+  end
+
   let(:role) { create :instructor }
   let(:assignment) { create :assignment }
   let(:course) { assignment.course }
@@ -48,7 +64,7 @@ describe StarterFileGroupsController do
                                              id: starter_file_group.id,
                                              course_id: course.id }
     end
-    it_behaves_like 'student and ta not permitted'
+    it_behaves_like 'student not permitted but ta permitted'
     before { subject }
     context 'when a file exists' do
       it 'should download a file' do
@@ -80,7 +96,7 @@ describe StarterFileGroupsController do
   describe '#download_files' do
     subject { get_as role, :download_files, params: { course_id: course.id, id: starter_file_group.id } }
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment, structure: {} }
-    it_behaves_like 'student and ta not permitted'
+    it_behaves_like 'student not permitted but ta permitted'
     context 'when the starter file exists' do
       let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
       it 'should send a zip file containing the correct content' do

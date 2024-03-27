@@ -5,7 +5,8 @@
         document.getElementById('starter_file_manager'),
         {
           course_id: <%= @current_course.id %>,
-          assignment_id: <%= @assignment.id %>
+          assignment_id: <%= @assignment.id %>,
+          read_only: <%= !allowed_to?(:manage?) %>
         }
       );
     });
