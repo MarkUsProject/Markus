@@ -63,7 +63,7 @@ class RawSubmissionTable extends React.Component {
           }
         });
 
-        this.toggleShowInactiveGroups(null);
+        this.toggleShowInactiveGroups(null, true);
 
         const markingStates = getMarkingStates(res.groupings);
 
@@ -437,9 +437,16 @@ class RawSubmissionTable extends React.Component {
     );
   };
 
-  toggleShowInactiveGroups = event => {
-    // depends if the function is called organically or not
-    let showInactiveGroups = event ? event.target.checked : false;
+  toggleShowInactiveGroups = (event, init) => {
+    let showInactiveGroups;
+
+    // if this is during page initialization
+    if (init) {
+      // never show inactive groups by default
+      showInactiveGroups = false;
+    } else {
+      showInactiveGroups = event.target.checked;
+    }
 
     let filtered = this.state.filtered.filter(group => {
       group.id !== "inactive";
@@ -564,7 +571,7 @@ class SubmissionsActionBox extends React.Component {
           name="show_inactive_groups"
           type="checkbox"
           checked={this.props.showInactiveGroups}
-          onChange={this.props.updateShowInactiveGroups}
+          onChange={e => this.props.updateShowInactiveGroups(e, false)}
           className={"hide-user-checkbox"}
           data-testid={"show_inactive_groups"}
         />
