@@ -185,7 +185,7 @@ export class AnnotationTable extends React.Component {
           data={this.props.annotations}
           columns={allColumns}
           getTdProps={() => {
-            return {className: "-wrap"}
+            return {className: "-wrap"};
           }}
           filterable
           resizable
