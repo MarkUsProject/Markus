@@ -653,7 +653,7 @@ class ResultsController < ApplicationController
   def print
     pdf_report = record.generate_print_pdf
     send_data pdf_report.to_pdf,
-              filename: "#{record.submission.assignment.short_identifier}_#{record.grouping.group.group_name}.pdf",
+              filename: record.print_pdf_filename,
               type: 'application/pdf'
   end
 

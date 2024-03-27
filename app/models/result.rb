@@ -337,6 +337,24 @@ class Result < ApplicationRecord
     combined_pdf
   end
 
+  # Generate a filename to be used for the printed PDF.
+  # For individual submissions, we use the form "{id_number} - {FAMILY NAME}, {Given Name} ({username}).pdf".
+  # This is the form requested by the University of Toronto Arts & Science Exams Office (for final exams).
+  # For group submissions, we use the form "{group name}.pdf"
+  def print_pdf_filename
+    if submission.grouping.accepted_students.size == 1
+      student = submission.grouping.accepted_students.first.user
+      "#{student.id_number} - #{student.last_name.upcase}, #{student.first_name} (#{student.user_name}).pdf"
+    else
+      members = submission.grouping.accepted_students.includes(:user).map { |s| s.user.user_name }.sort
+      if members.empty?
+        "#{submission.grouping.group.group_name}.pdf"
+      else
+        "#{submission.grouping.group.group_name} (#{members.join(', ')}).pdf"
+      end
+    end
+  end
+
   private
 
   # Do not allow the marking state to be changed to incomplete if the result is released
