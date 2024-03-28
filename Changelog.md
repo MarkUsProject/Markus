@@ -5,6 +5,7 @@
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
 - Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
+- Allow instructors to configure an end date until which students can run automated tests (#6992)
 
 ## [v2.4.6]
 - Disallow students from uploading .git file and .git folder in their repository (#6963)
