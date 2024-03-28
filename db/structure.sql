@@ -3291,13 +3291,6 @@ CREATE INDEX index_assignment_properties_on_default_starter_file_group_id ON pub
 
 
 --
--- Name: index_assignment_properties_on_token_end_date; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_assignment_properties_on_token_end_date ON public.assignment_properties USING btree (token_end_date);
-
-
---
 -- Name: index_courses_on_autotest_setting_id; Type: INDEX; Schema: public; Owner: -
 --
 
