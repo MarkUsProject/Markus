@@ -270,7 +270,11 @@ class TestGroupResultTable extends React.Component {
           [0, 0]
         ),
       Aggregated: row => {
-        return `${row.value[0]} / ${row.value[1]}`;
+        const timeout_reached = row.value[0] === 0 && row.value[1] === 0;
+        const ret_val = timeout_reached
+          ? I18n.t("activerecord.attributes.test_group_result.no_test_results")
+          : `${row.value[0]} / ${row.value[1]}`;
+        return ret_val;
       },
     },
   ];
