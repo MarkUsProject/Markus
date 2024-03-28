@@ -286,8 +286,8 @@ describe LtiHelper do
         ).to_return(body: { id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
                             context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
                                        label: 'tst1', title: 'test course' }, members: memberships[0..1] }.to_json,
-                    headers: { 'Link' => "<http://example.com?page=1>; rel='current',<#{url}?page=1>; rel='next',\
-                      <#{url}?page=2>; rel='first',<#{url}?page=1>; rel='last',<#{url}?page=3>" })
+                    headers: { 'Link' => "<http://example.com?page=1>; rel='current',<#{url}?page=2>; rel='next',\
+                      <#{url}?page=1>; rel='first',<#{url}?page=3>; rel='last'" })
         stub_request(:any, "#{url}?page=2").with(
           headers: {
             'Accept' => '*/*'
@@ -295,8 +295,8 @@ describe LtiHelper do
         ).to_return(body: { id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
                             context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
                                        label: 'tst1', title: 'test course' }, members: [memberships[2]] }.to_json,
-                    headers: { 'Link' => "<http://example.com?page=2>; rel='current',<#{url}?page=2>; rel='next',\
-                      <#{url}?page=3>; rel='first',<#{url}?page=1>; rel='last',<#{url}?page=3>" })
+                    headers: { 'Link' => "<http://example.com?page=2>; rel='current',<#{url}?page=3>; rel='next',\
+                      <#{url}?page=1>; rel='first',<#{url}?page=3>;" })
         stub_request(:any, "#{url}?page=3").with(
           headers: {
             'Accept' => '*/*'
@@ -304,8 +304,8 @@ describe LtiHelper do
         ).to_return(body: { id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
                             context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
                                        label: 'tst1', title: 'test course' }, members: [memberships[3]] }.to_json,
-                    headers: { 'Link' => "<http://example.com?page=3>; rel='current',<#{url}?page=3>; rel='next';\
-                      rel='first',<#{url}?page=1>; rel='last',<#{url}?page=3>" })
+                    headers: { 'Link' => "<http://example.com?page=3>; rel='current',<#{url}?page=1>;\
+                      rel='first',<#{url}?page=3>; rel='last'" })
       end
       it 'does create users' do
         subject

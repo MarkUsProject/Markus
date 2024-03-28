@@ -162,9 +162,9 @@ module LtiHelper
     unless links
       return [member_info['members'], false]
     end
-    split_links = links.split(';')
+    split_links = links.split(',')
     split_next = split_links.find { |link| link.include?('next') }
-    next_link = split_next&.split(',')&.[](1)&.tr('<>', '')&.strip
+    next_link = split_next&.split(';')&.[](0)&.tr('<>', '')&.strip
     next_uri = URI(next_link) if next_link
     follow_link = false
     follow_link = next_uri if next_uri
