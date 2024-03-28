@@ -380,6 +380,7 @@ class AutotestManager extends React.Component {
             id="token_end_date"
             value={this.state.token_end_date}
             onChange={this.handleTokenEndDateChange}
+            placeholder={I18n.t("activerecord.attributes.assignment.use_assignment_due_date")}
             options={{
               altInput: true,
               altFormat: I18n.t("time.format_string.flatpickr"),

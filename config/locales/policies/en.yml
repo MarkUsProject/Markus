@@ -18,7 +18,7 @@ en:
         view_ta_subtabs?: You are not authorized to perform this action.
       assignment:
         autogenerate_group_name?: This assignment does automatically generate group names.
-        before_token_end_date?: The token end date for this assignment has passed.
+        before_token_end_date?: Tokens are no longer available for this assignment.
         collection_date_passed?: 'Could not create group: the due date for this assignment has passed.'
         create_group?: You cannot form a group at this time.
         index?: You are not authorized to perform this action.
