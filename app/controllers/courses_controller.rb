@@ -168,6 +168,9 @@ class CoursesController < ApplicationController
     if params[:include_students] == 'true'
       roles.append(LtiDeployment::LTI_ROLES[:learner])
     end
+    if params[:include_instructors] == 'true'
+      roles.append(LtiDeployment::LTI_ROLES[:instructor])
+    end
     @current_job = LtiRosterSyncJob.perform_later(deployment, @current_course,
                                                   roles,
                                                   can_create_users: allowed_to?(:lti_manage?, with: UserPolicy),

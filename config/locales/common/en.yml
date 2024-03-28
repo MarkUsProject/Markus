@@ -48,6 +48,7 @@ en:
     start_roster_sync: Syncing Roster
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
+    sync_instructors: Sync Instructor roster
     sync_students: Sync Student roster
     sync_tas: Sync TA roster
     unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?

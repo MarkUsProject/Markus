@@ -9,10 +9,12 @@ module LtiHelper
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
-    req = Net::HTTP::Get.new(membership_uri)
-    res = lti_deployment.send_lti_request!(req, membership_uri, auth_data, [LtiDeployment::LTI_SCOPES[:names_role]])
-    member_info = JSON.parse(res.body)
-    user_data = member_info['members'].filter_map do |user|
+    member_info, follow = get_member_data(lti_deployment, membership_uri, auth_data)
+    while follow != false
+      additional_data, follow = get_member_data(lti_deployment, follow, auth_data)
+      member_info.concat(additional_data)
+    end
+    user_data = member_info.filter_map do |user|
       unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
         role_types.none? { |role| user['roles'].include?(role) }
         { user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
@@ -43,6 +45,8 @@ module LtiHelper
       if course_role.nil? && can_create_roles
         if lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:ta])
           course_role = Ta.create!(user: markus_user, course: lti_deployment.course)
+        elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:instructor])
+          course_role = Instructor.create!(user: markus_user, course: lti_deployment.course)
         elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:learner])
           course_role = Student.create!(user: markus_user, course: lti_deployment.course)
         end
@@ -148,5 +152,22 @@ module LtiHelper
     result_req = Net::HTTP::Get.new(results_uri)
     curr_results = lti_line_item.lti_deployment.send_lti_request!(result_req, results_uri, auth_data, scopes)
     JSON.parse(curr_results.body)
+  end
+
+  def get_member_data(lti_deployment, url, auth_data)
+    req = Net::HTTP::Get.new(url)
+    res = lti_deployment.send_lti_request!(req, url, auth_data, [LtiDeployment::LTI_SCOPES[:names_role]])
+    member_info = JSON.parse(res.body)
+    links = res['link']
+    unless links
+      return [member_info['members'], false]
+    end
+    split_links = links.split(',')
+    split_next = split_links.find { |link| link.include?('next') }
+    next_link = split_next&.split(';')&.[](0)&.tr('<>', '')&.strip
+    next_uri = URI(next_link) if next_link
+    follow_link = false
+    follow_link = next_uri if next_uri
+    [member_info['members'], follow_link]
   end
 end
