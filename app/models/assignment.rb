@@ -75,9 +75,8 @@ class Assignment < Assessment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
 
-  has_many :current_submissions_used,
-           through: :groupings,
-           source: :current_submission_used
+  has_many :current_submissions_used, through: :groupings,
+                                      source: :current_submission_used
 
   has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
@@ -90,7 +89,7 @@ class Assignment < Assessment
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  has_many :tas, -> { distinct }, through: :ta_memberships, source: :role, dependent: :destroy
+  has_many :tas, -> { distinct }, through: :ta_memberships, source: :role
 
   before_save do
     @prev_assessment_section_property_ids = assessment_section_properties.ids

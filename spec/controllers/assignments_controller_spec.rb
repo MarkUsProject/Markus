@@ -2069,14 +2069,14 @@ describe AssignmentsController do
       expect(response).to have_http_status(302)
     end
 
-    shared_examples 'handling associated entities upon destroy' do |entity|
+    shared_examples 'handling associated entity upon destroy' do |entity|
       it "should remove associated #{entity}" do
-        # NOTE: the next line assume that an `assignment` is sufficient for the factory of `entity`
+        # NOTE: the next line assumes that an `assignment` is sufficient for the factory of `entity`
         assoc_entity = create entity, assignment: assignment
-        # Deleting the assignment - should be successful since there are not groupings
+        # Deleting the assignment - should be successful since there are no groupings
         delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
         expect(Assignment.exists?(assignment.id)).to be(false)
-        # Ensure that the associated checkbox_criterion was also removed
+        # Ensure that the associated entity was also removed
         expect(assoc_entity.class.exists?(assoc_entity.id)).to be(false)
       end
     end
@@ -2086,7 +2086,7 @@ describe AssignmentsController do
         [:checkbox_criterion, :rubric_criterion, :test_group, :annotation_category, :assignment_file,
          :exam_template_midterm, :starter_file_group]
       selected_associations.each do |entity|
-        include_examples 'handling associated entities upon destroy', entity
+        include_examples 'handling associated entity upon destroy', entity
       end
     end
 
