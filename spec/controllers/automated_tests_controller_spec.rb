@@ -2,7 +2,7 @@ describe AutomatedTestsController do
   include AutomatedTestsHelper
 
   # TODO: add 'role is from a different course' shared tests to each route test below
-  let(:assignment) { create :assignment }
+  let(:assignment) { create :assignment_with_criteria_and_test_results }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
   before do
     allow_any_instance_of(AutotestSetting).to(
@@ -379,8 +379,16 @@ describe AutomatedTestsController do
                              remote_autotest_settings_id: 1)
         end
 
-        it 'enqueues an AutotestRunJob' do
+        it 'enqueues an AutotestRunJob if there exists test-groups runnable by students' do
+          # Making the first test-group "runnable" by students
+          assignment.test_groups[0].update!(autotest_settings: { 'category' => ['student'] })
           expect { post_as role, :execute_test_run, params: params }.to have_enqueued_job(AutotestRunJob)
+        end
+
+        it 'does not enqueue an AutotestRunJob if NO test-groups can be run by students' do
+          # By default in these tests, assignment.test_groups does not even have a category attribute,
+          # which implies that none of the test-groups are runnable by students
+          expect { post_as role, :execute_test_run, params: params }.not_to have_enqueued_job(AutotestRunJob)
         end
       end
     end
