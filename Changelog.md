@@ -5,6 +5,7 @@
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
 - Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
+- Minor improvements in assignment association options (#6989)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 
 ## [v2.4.6]
