@@ -353,7 +353,6 @@ class StarterFileManager extends React.Component {
                 this.toggleFormChanged(true)
               )
             }
-            className="starter-file-dropdown"
             aria-label="starter-file-dropdown"
             value={this.state.defaultStarterFileGroup}
             disabled={!this.state.files.length || this.props.read_only}
@@ -388,7 +387,6 @@ class StarterFileManager extends React.Component {
                       onChange={this.updateSectionStarterFile}
                       value={selected}
                       disabled={!this.state.files.length || this.props.read_only}
-                      className="starter-file-dropdown"
                       aria-label="starter-file-dropdown"
                     >
                       <option value={`${row.original.section_id}_`} />
