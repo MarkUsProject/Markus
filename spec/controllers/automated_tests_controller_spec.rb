@@ -2,7 +2,7 @@ describe AutomatedTestsController do
   include AutomatedTestsHelper
 
   # TODO: add 'role is from a different course' shared tests to each route test below
-  let(:assignment) { create :assignment_with_criteria_and_test_results }
+  let(:assignment) { create :assignment }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
   before do
     allow_any_instance_of(AutotestSetting).to(
@@ -378,17 +378,23 @@ describe AutomatedTestsController do
                              token_start_date: 1.day.ago,
                              remote_autotest_settings_id: 1)
         end
+        context 'and at least one test-group can be run by students' do
+          let(:assignment) { create :assignment_with_test_groups_student_runnable }
+          # we need to "refresh" the :params variable, which was originally defined at the 'describe' level
+          let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
 
-        it 'enqueues an AutotestRunJob if there exists test-groups runnable by students' do
-          # Making the first test-group "runnable" by students
-          assignment.test_groups[0].update!(autotest_settings: { 'category' => ['student'] })
-          expect { post_as role, :execute_test_run, params: params }.to have_enqueued_job(AutotestRunJob)
+          it 'enqueues an AutotestRunJob' do
+            expect { post_as role, :execute_test_run, params: params }.to have_enqueued_job(AutotestRunJob)
+          end
         end
+        context 'and no test-groups can be run by students' do
+          let(:assignment) { create :assignment_with_test_groups_not_student_runnable }
+          # we need to "refresh" the :params variable
+          let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
 
-        it 'does not enqueue an AutotestRunJob if NO test-groups can be run by students' do
-          # By default in these tests, assignment.test_groups does not even have a category attribute,
-          # which implies that none of the test-groups are runnable by students
-          expect { post_as role, :execute_test_run, params: params }.not_to have_enqueued_job(AutotestRunJob)
+          it 'does not enqueue an AutotestRunJob if NO test-groups can be run by students' do
+            expect { post_as role, :execute_test_run, params: params }.not_to have_enqueued_job(AutotestRunJob)
+          end
         end
       end
     end
