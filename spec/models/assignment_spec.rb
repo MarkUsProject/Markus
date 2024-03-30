@@ -1924,12 +1924,12 @@ describe Assignment do
 
         it 'should not include member information for groups without members' do
           expect(data.count).to eq 5
-          expect(data.count { |h| h.key? :members }).to eq 3
+          expect(data.count { |h| h[:members].present? }).to eq 3
         end
 
         it 'should include member information for groups with members' do
           members = groupings.map { |g| g.accepted_students.joins(:user).pluck('users.user_name', 'roles.hidden') }
-          expect(data.pluck(:members).compact).to contain_exactly(*members)
+          expect(data.pluck(:members).compact_blank).to contain_exactly(*members)
         end
       end
 

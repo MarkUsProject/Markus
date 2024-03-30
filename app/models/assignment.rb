@@ -1235,7 +1235,7 @@ class Assignment < Assessment
         end
       end
 
-      base[:members] = member_info.pluck('users.user_name', 'roles.hidden') unless member_info.nil?
+      base[:members] = member_info.nil? ? [] : member_info.pluck('users.user_name', 'roles.hidden')
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 
