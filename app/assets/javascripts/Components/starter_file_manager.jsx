@@ -242,7 +242,7 @@ class StarterFileManager extends React.Component {
                 canFilter={false}
               />
               <button
-                aria-label="sfg-action-button"
+                aria-label={I18n.t("assignments.starter_file.aria_labels.action_button")}
                 key={"delete_starter_file_group_button"}
                 className={"button"}
                 onClick={() => this.deleteStarterFileGroup(id)}
@@ -353,7 +353,7 @@ class StarterFileManager extends React.Component {
                 this.toggleFormChanged(true)
               )
             }
-            aria-label="starter-file-dropdown"
+            aria-label={I18n.t("assignments.starter_file.aria_labels.dropdown")}
             value={this.state.defaultStarterFileGroup}
             disabled={!this.state.files.length || this.props.read_only}
           >
@@ -387,7 +387,7 @@ class StarterFileManager extends React.Component {
                       onChange={this.updateSectionStarterFile}
                       value={selected}
                       disabled={!this.state.files.length || this.props.read_only}
-                      aria-label="starter-file-dropdown"
+                      aria-label={I18n.t("assignments.starter_file.aria_labels.dropdown")}
                     >
                       <option value={`${row.original.section_id}_`} />
                       {Object.entries(this.state.files).map(data => {
@@ -483,7 +483,7 @@ class StarterFileManager extends React.Component {
           </legend>
           {this.renderFileManagers()}
           <button
-            aria-label="sfg-action-button"
+            aria-label={I18n.t("assignments.starter_file.aria_labels.action_button")}
             key={"create_starter_file_group_button"}
             className={"button"}
             onClick={this.createStarterFileGroup}

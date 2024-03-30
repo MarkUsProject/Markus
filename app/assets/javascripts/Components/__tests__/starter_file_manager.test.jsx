@@ -1,5 +1,5 @@
 import {StarterFileManager} from "../starter_file_manager";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 
 import React from "react";
 
@@ -8,6 +8,12 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
     return null;
   },
 }));
+
+// workaround needed for using i18n in jest tests, see
+// https://github.com/fnando/i18n/issues/26#issuecomment-1235751777
+jest.mock("i18n-js", () => {
+  return jest.requireActual("i18n-js/dist/require/index");
+});
 
 [true, false].forEach(readOnly => {
   let container;
@@ -58,7 +64,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
     it(`all buttons on the page are ${readOnly ? "disabled" : "enabled"}`, () => {
       const buttons = screen.getAllByRole("button", {
-        name: /sfg-action-button/i,
+        name: new RegExp(`${I18n.t("assignments.starter_file.aria_labels.action_button")}`),
       });
 
       // one delete button per starter file group, one add button on top of that
@@ -90,7 +96,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
     it(`all dropdowns on the page are ${readOnly ? "disabled" : "enabled"}`, () => {
       const dropdowns = screen.getAllByRole("combobox", {
-        name: /starter-file-dropdown/i,
+        name: new RegExp(`${I18n.t("assignments.starter_file.aria_labels.dropdown")}`),
       });
 
       // one for each section, plus one for the default starter file group
