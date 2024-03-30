@@ -37,7 +37,6 @@ en:
         tokens_per_period: Tokens per group
         unlimited_tokens: Unlimited tokens
         url_submit: Allow students to submit URLs
-        use_assignment_due_date: Leave blank to use assignment due date
         vcs_submit: Allow students to submit through a version control system
     errors:
       models:
