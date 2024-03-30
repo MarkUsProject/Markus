@@ -90,11 +90,11 @@ jobs:
       - name: Install chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: '121.0.6167.85'
+          chrome-version: '123.0.6312.58'
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
         with:
-          chromedriver-version: '121.0.6167.85'
+          chromedriver-version: '123.0.6312.58'
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
       - name: Run rspec tests
