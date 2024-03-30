@@ -40,6 +40,7 @@ en:
         vcs_submit: Allow students to submit through a version control system
     errors:
       models:
+        assignment_deletion: 'Problem with deletion: %{problem_message}'
         assignment_properties:
           attributes:
             is_timed:
