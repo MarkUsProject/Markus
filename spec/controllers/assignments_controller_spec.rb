@@ -2043,7 +2043,10 @@ describe AssignmentsController do
     let!(:instructor) { create :instructor }
     let!(:course) { instructor.course }
     let!(:assignment) { create :assignment }
+
+    # lazy initialized
     let(:grouping) { create :grouping, assignment: assignment }
+
     it 'should fail to DELETE because of unauthorized request' do
       delete :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(true)
@@ -2064,6 +2067,40 @@ describe AssignmentsController do
                                            resource_name: assignment.short_identifier))
       expect(flash.to_hash.length).to eq(1)
       expect(response).to have_http_status(302)
+    end
+
+    shared_examples 'handling associated entity upon destroy' do |entity|
+      it "should remove associated #{entity}" do
+        # NOTE: the next line assumes that an `assignment` is sufficient for the factory of `entity`
+        assoc_entity = create entity, assignment: assignment
+        # Deleting the assignment - should be successful since there are no groupings
+        delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+        expect(Assignment.exists?(assignment.id)).to be(false)
+        # Ensure that the associated entity was also removed
+        expect(assoc_entity.class.exists?(assoc_entity.id)).to be(false)
+      end
+    end
+
+    describe 'successful removal of associated entities' do
+      selected_associations =
+        [:checkbox_criterion, :rubric_criterion, :test_group, :annotation_category, :assignment_file,
+         :exam_template_midterm, :starter_file_group]
+      selected_associations.each do |entity|
+        include_examples 'handling associated entity upon destroy', entity
+      end
+    end
+
+    it 'rescues from StandardError and sets flash message' do
+      allow_any_instance_of(Assignment).to receive(:destroy).and_raise(StandardError.new('some error'))
+
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+
+      expect(flash[:error][0]).to include(
+        I18n.t('activerecord.errors.models.assignment_deletion',
+               problem_message: 'some error')
+      )
+      expect(Assignment.exists?(assignment.id)).to be true
+      expect(response).to redirect_to(edit_course_assignment_path(course.id, assignment.id))
     end
   end
 end
