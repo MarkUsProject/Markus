@@ -836,8 +836,10 @@ describe AssignmentsController do
     before(:each) { get_as role, :starter_file, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an instructor' do
-      let(:role) { create :instructor }
+    shared_examples 'a user with permission to view the starter file page' do
+      it 'should return a 200 status code' do
+        is_expected.to respond_with(:ok)
+      end
       context 'the assignment exists' do
         it 'should render the starter_file view' do
           expect(response).to render_template(:starter_file)
@@ -856,11 +858,13 @@ describe AssignmentsController do
         end
       end
     end
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      include_examples 'a user with permission to view the starter file page'
+    end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 403 error' do
-        is_expected.to respond_with(:forbidden)
-      end
+      include_examples 'a user with permission to view the starter file page'
     end
     context 'a student' do
       let(:role) { create :student }
@@ -873,8 +877,11 @@ describe AssignmentsController do
     before { get_as role, :populate_starter_file_manager, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an instructor' do
-      let(:role) { create :instructor }
+
+    shared_examples 'a user with permission to view starter files' do
+      it 'should return a 200 status code' do
+        is_expected.to respond_with(:ok)
+      end
       it 'should contain the right values' do
         expected = { available_after_due: true,
                      starterfileType: assignment.starter_file_type,
@@ -919,15 +926,17 @@ describe AssignmentsController do
         end
       end
     end
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      include_examples 'a user with permission to view starter files'
+    end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 404 error' do
-        is_expected.to respond_with(:forbidden)
-      end
+      include_examples 'a user with permission to view starter files'
     end
     context 'a student' do
       let(:role) { create :student }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         is_expected.to respond_with(:forbidden)
       end
     end
@@ -1064,11 +1073,14 @@ describe AssignmentsController do
     subject { get_as role, :download_starter_file_mappings, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
-    context 'an instructor' do
-      let(:role) { create :instructor }
+    shared_examples 'a user with permission to download starter file mappings' do
       let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:grouping) { create :grouping_with_inviter, assignment: assignment }
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
+      it 'should return a 200 status code' do
+        subject
+        expect(response).to have_http_status(200)
+      end
       it 'should contain mappings' do
         expect(@controller).to receive(:send_data) do |file_content|
           mappings = file_content.split("\n")[1..-1].map { |m| m.split(',') }
@@ -1078,16 +1090,18 @@ describe AssignmentsController do
         subject
       end
     end
+
+    context 'an instructor' do
+      let(:role) { create :instructor }
+      include_examples 'a user with permission to download starter file mappings'
+    end
     context 'a grader' do
       let(:role) { create :ta }
-      it 'should return a 404 error' do
-        subject
-        expect(response).to have_http_status(403)
-      end
+      include_examples 'a user with permission to download starter file mappings'
     end
     context 'a student' do
       let(:role) { create :student }
-      it 'should return a 404 error' do
+      it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end
@@ -1377,17 +1391,8 @@ describe AssignmentsController do
       end
     end
     context 'a grader' do
-      context 'without assignment management permissions' do
-        let(:role) { create :ta }
-        it 'should respond with 403' do
-          subject
-          expect(response).to have_http_status(403)
-        end
-      end
-      context 'with assignment management permissions' do
-        let(:role) { create :ta, manage_assessments: true }
-        include_examples 'download sample starter files'
-      end
+      let(:role) { create :ta }
+      include_examples 'download sample starter files'
     end
     context 'an instructor' do
       let(:role) { create :instructor }
@@ -2043,7 +2048,10 @@ describe AssignmentsController do
     let!(:instructor) { create :instructor }
     let!(:course) { instructor.course }
     let!(:assignment) { create :assignment }
+
+    # lazy initialized
     let(:grouping) { create :grouping, assignment: assignment }
+
     it 'should fail to DELETE because of unauthorized request' do
       delete :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(true)
@@ -2064,6 +2072,40 @@ describe AssignmentsController do
                                            resource_name: assignment.short_identifier))
       expect(flash.to_hash.length).to eq(1)
       expect(response).to have_http_status(302)
+    end
+
+    shared_examples 'handling associated entity upon destroy' do |entity|
+      it "should remove associated #{entity}" do
+        # NOTE: the next line assumes that an `assignment` is sufficient for the factory of `entity`
+        assoc_entity = create entity, assignment: assignment
+        # Deleting the assignment - should be successful since there are no groupings
+        delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+        expect(Assignment.exists?(assignment.id)).to be(false)
+        # Ensure that the associated entity was also removed
+        expect(assoc_entity.class.exists?(assoc_entity.id)).to be(false)
+      end
+    end
+
+    describe 'successful removal of associated entities' do
+      selected_associations =
+        [:checkbox_criterion, :rubric_criterion, :test_group, :annotation_category, :assignment_file,
+         :exam_template_midterm, :starter_file_group]
+      selected_associations.each do |entity|
+        include_examples 'handling associated entity upon destroy', entity
+      end
+    end
+
+    it 'rescues from StandardError and sets flash message' do
+      allow_any_instance_of(Assignment).to receive(:destroy).and_raise(StandardError.new('some error'))
+
+      delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
+
+      expect(flash[:error][0]).to include(
+        I18n.t('activerecord.errors.models.assignment_deletion',
+               problem_message: 'some error')
+      )
+      expect(Assignment.exists?(assignment.id)).to be true
+      expect(response).to redirect_to(edit_course_assignment_path(course.id, assignment.id))
     end
   end
 end

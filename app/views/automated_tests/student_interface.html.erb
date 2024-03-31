@@ -11,6 +11,11 @@
     <%= l(@assignment.token_start_date) %>
   </p>
 
+  <p>
+    <strong><%= Assignment.human_attribute_name(:token_end_date) %>:</strong>
+    <%= l(@assignment.token_end_date) %>
+  </p>
+
   <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
     <p>
       <strong><%= Assignment.human_attribute_name(:token_period) %>:</strong>

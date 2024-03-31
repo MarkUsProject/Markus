@@ -202,7 +202,7 @@ class AutomatedTestsController < ApplicationController
   private
 
   def required_params
-    [:enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
+    [:enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date, :token_end_date,
      :non_regenerating_tokens, :unlimited_tokens]
   end
 

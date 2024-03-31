@@ -44,7 +44,7 @@
                           course_assignment_criteria_path(@current_course, @assignment) %>
             </li>
           <% end %>
-          <% if allowed_to?(:manage?, with: StarterFileGroupPolicy) %>
+          <% if allowed_to?(:read_starter_files?, with: AssignmentPolicy) %>
             <li <% if controller.controller_name == 'assignments' && controller.action_name == 'starter_file' %>
                 class='active'
                 <% end %>>
