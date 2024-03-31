@@ -4,6 +4,8 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
+  alias_rule :starter_file?, :download_starter_file_mappings?, :download_sample_starter_files?,
+             :populate_starter_file_manager?, to: :read_starter_files?
   authorize :assessment, :test_run_id, optional: true
 
   def index?
@@ -106,5 +108,9 @@ class AssignmentPolicy < ApplicationPolicy
       (!check?(:not_yet_in_group?) &&
         check?(:start_timed_assignment?, role.accepted_grouping_for(record.id), with: GroupingPolicy))
     )
+  end
+
+  def read_starter_files?
+    role.instructor? || role.ta?
   end
 end

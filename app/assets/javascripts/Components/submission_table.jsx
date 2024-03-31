@@ -11,7 +11,7 @@ import {
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
-import consumer from "/app/javascript/channels/consumer";
+import consumer from "../../../../app/javascript/channels/consumer";
 import {renderFlashMessages} from "../flash";
 
 class RawSubmissionTable extends React.Component {
@@ -26,6 +26,8 @@ class RawSubmissionTable extends React.Component {
       showReleaseUrlsModal: false,
       marking_states: markingStates,
       markingStateFilter: "all",
+      inactiveGroupsCount: 0,
+      filtered: [],
     };
   }
 
@@ -50,12 +52,27 @@ class RawSubmissionTable extends React.Component {
       })
       .then(res => {
         this.props.resetSelection();
+
+        let inactive_groups_count = 0;
+        res.groupings.forEach(group => {
+          if (group.members.length && group.members.every(member => member[1])) {
+            group.inactive = true;
+            inactive_groups_count++;
+          } else {
+            group.inactive = false;
+          }
+        });
+
+        this.toggleShowInactiveGroups(false);
+
         const markingStates = getMarkingStates(res.groupings);
+
         this.setState({
           groupings: res.groupings,
           sections: res.sections,
           loading: false,
           marking_states: markingStates,
+          inactiveGroupsCount: inactive_groups_count,
         });
       });
   };
@@ -69,6 +86,8 @@ class RawSubmissionTable extends React.Component {
       const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
       this.setState({markingStateFilter: markingStateFilter});
     }
+
+    this.setState({filtered});
   };
 
   groupNameWithMembers = row => {
@@ -79,7 +98,7 @@ class RawSubmissionTable extends React.Component {
     ) {
       members = "";
     } else {
-      members = ` (${row.original.members.join(", ")})`;
+      members = ` (${row.original.members.map(m => m[0]).join(", ")})`;
     }
     return row.value + members;
   };
@@ -100,6 +119,11 @@ class RawSubmissionTable extends React.Component {
   };
 
   columns = () => [
+    {
+      show: false,
+      accessor: "inactive",
+      id: "inactive",
+    },
     {
       show: false,
       accessor: "_id",
@@ -242,6 +266,7 @@ class RawSubmissionTable extends React.Component {
   // Custom getTrProps function to highlight submissions that have been collected.
   getTrProps = (state, ri, ci, instance) => {
     if (
+      ri === undefined ||
       ri.original.marking_state === undefined ||
       ri.original.marking_state === "not_collected" ||
       ri.original.marking_state === "before_due_date"
@@ -412,6 +437,18 @@ class RawSubmissionTable extends React.Component {
     );
   };
 
+  toggleShowInactiveGroups = showInactiveGroups => {
+    let filtered = this.state.filtered.filter(group => {
+      group.id !== "inactive";
+    });
+
+    if (!showInactiveGroups) {
+      filtered.push({id: "inactive", value: false});
+    }
+
+    this.setState({filtered});
+  };
+
   render() {
     const {loading} = this.state;
 
@@ -436,6 +473,8 @@ class RawSubmissionTable extends React.Component {
           incompleteResults={() => this.setMarkingStates("incomplete")}
           authenticity_token={this.props.authenticity_token}
           release_with_urls={this.props.release_with_urls}
+          inactiveGroupsCount={this.state.inactiveGroupsCount}
+          updateShowInactiveGroups={this.toggleShowInactiveGroups}
         />
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
@@ -448,6 +487,7 @@ class RawSubmissionTable extends React.Component {
           ]}
           filterable
           defaultFiltered={this.props.defaultFiltered}
+          filtered={this.state.filtered}
           onFilteredChange={this.onFilteredChange}
           loading={loading}
           getTrProps={this.getTrProps}
@@ -497,13 +537,43 @@ class SubmissionsActionBox extends React.Component {
   }
 
   render = () => {
-    let completeButton,
+    let displayInactiveGroupsCheckbox,
+      completeButton,
       incompleteButton,
       collectButton,
       runTestsButton,
       releaseMarksButton,
       unreleaseMarksButton,
       showReleaseUrlsButton;
+
+    let displayInactiveGroupsTooltip = "";
+
+    if (this.props.inactiveGroupsCount !== null) {
+      displayInactiveGroupsTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_groups", {
+        count: this.props.inactiveGroupsCount,
+      })}`;
+    }
+
+    displayInactiveGroupsCheckbox = (
+      <>
+        <input
+          id="show_inactive_groups"
+          name="show_inactive_groups"
+          type="checkbox"
+          checked={this.props.showInactiveGroups}
+          onChange={e => this.props.updateShowInactiveGroups(e.target.checked)}
+          className={"hide-user-checkbox"}
+          data-testid={"show_inactive_groups"}
+        />
+        <label
+          title={displayInactiveGroupsTooltip}
+          htmlFor="show_inactive_groups"
+          data-testid={"show_inactive_groups_tooltip"}
+        >
+          {I18n.t("submissions.groups.display_inactive")}
+        </label>
+      </>
+    );
 
     completeButton = (
       <button
@@ -605,6 +675,7 @@ class SubmissionsActionBox extends React.Component {
 
     return (
       <div className="rt-action-box">
+        {displayInactiveGroupsCheckbox}
         {completeButton}
         {incompleteButton}
         {collectButton}
@@ -663,3 +734,5 @@ function generateMessage(status_data) {
   }
   return message_data;
 }
+
+export {SubmissionTable};

@@ -41,6 +41,9 @@ en:
       hidden_option: If the section-specific settings option is checked, the value for individual sections will override this value.
       visible: Visible
     starter_file:
+      aria_labels:
+        action_button: Starter file group action button
+        dropdown: Starter file dropdown
       available_after_due: Starter files are available to students after the due date has passed
       available_after_due_help: For timed assessments, this allows students who do not start the assessment to download starter files after the start window is over.
       changed_at: Starter files were last updated on %{changed_date}
