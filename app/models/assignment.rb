@@ -1164,7 +1164,7 @@ class Assignment < Assessment
       section_data = {}
     else
       member_data = groupings.joins(accepted_students: :user)
-                             .pluck_to_hash('groupings.id', 'users.user_name')
+                             .pluck_to_hash('groupings.id', 'users.user_name', 'roles.hidden')
                              .group_by { |h| h['groupings.id'] }
 
       section_data = groupings.joins(inviter: :section)
@@ -1235,7 +1235,7 @@ class Assignment < Assessment
         end
       end
 
-      base[:members] = member_info.pluck('users.user_name') unless member_info.nil?
+      base[:members] = member_info.nil? ? [] : member_info.pluck('users.user_name', 'roles.hidden')
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 
