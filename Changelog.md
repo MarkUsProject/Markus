@@ -9,10 +9,11 @@
 - Allow instructors to configure an end date until which students can run automated tests (#6992)
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
+- Fixed long annotations being cut off in the annotation table (#7001)
 
 ## [v2.4.6]
 - Disallow students from uploading .git file and .git folder in their repository (#6963)
--
+
 ## [v2.4.5]
 - Add workaround for CSP in Safari < 16 (#6947)
 - Improve add button labels on autotest settings page (#6948)
