@@ -129,4 +129,72 @@ describe("For the SubmissionFileUploadModal", () => {
       expect(wrapper.find(".file-rename-textbox").props().disabled).toBeFalsy();
     });
   });
+  describe("The onSubmit method", () => {
+    // Mock onSubmit function
+    const mockOnSubmit = jest.fn();
+
+    beforeEach(() => {
+      wrapper = shallow(
+        <SubmissionFileUploadModal
+          onlyRequiredFiles={true}
+          requiredFiles={["q1.py", "q2.py", "q3.py", "part1/p1.py"]}
+          uploadTarget={null}
+          onSubmit={mockOnSubmit} // Pass the mocked onSubmit function
+        />
+      );
+    });
+
+    it("should call onSubmit prop with correct arguments when extensions match", () => {
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file.py"}],
+        renameTo: "file.py",
+      });
+
+      // Simulate form submission
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+
+      // Ensure onSubmit is called with expected arguments
+      expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "file.py");
+    });
+
+    it("should not call onSubmit prop when extensions don't match and user cancels", () => {
+      // Mock window.confirm to return false
+      window.confirm = jest.fn(() => false);
+
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file1.py"}],
+        renameTo: "file2.txt",
+      });
+
+      // Simulate form submission
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+
+      // Ensure onSubmit is not called
+      expect(mockOnSubmit).not.toHaveBeenCalled();
+    });
+
+    it("should call onSubmit prop with correct arguments when extensions don't match and user confirms", () => {
+      // Mock window.confirm to return true
+      window.confirm = jest.fn(() => true);
+
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file1.py"}],
+        renameTo: "file2.txt",
+      });
+
+      // Simulate form submission
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+
+      // Ensure onSubmit is called with expected arguments
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        [{name: "file1.py"}],
+        undefined,
+        false,
+        "file2.txt"
+      );
+    });
+  });
 });
