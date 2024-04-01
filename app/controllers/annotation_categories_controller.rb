@@ -193,7 +193,7 @@ class AnnotationCategoriesController < ApplicationController
     else
       AnnotationCategory.transaction do
         if data[:type] == '.csv'
-          result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
+          result = MarkusCsv.parse(data[:contents], encoding: data[:encoding]) do |row|
             next if CSV.generate_line(row).strip.empty?
             AnnotationCategory.add_by_row(row, @assignment, current_role)
           end

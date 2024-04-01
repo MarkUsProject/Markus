@@ -184,6 +184,9 @@ export class AnnotationTable extends React.Component {
           className="auto-overflow"
           data={this.props.annotations}
           columns={allColumns}
+          getTdProps={() => {
+            return {className: "-wrap"};
+          }}
           filterable
           resizable
           defaultSorted={[{id: "deduction"}, {id: "filename"}, {id: "number"}]}

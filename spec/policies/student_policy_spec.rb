@@ -37,13 +37,39 @@ describe StudentPolicy do
         failed 'when there are no tokens available' do
           let(:grouping) { create :grouping_with_inviter, inviter: role, test_tokens: 0 }
         end
-        failed 'when the due date has passed' do
-          let(:assignment) { create :assignment, due_date: 1.day.ago }
-          let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role, test_tokens: 1 }
-        end
       end
       failed 'when the role is not a member' do
         let(:grouping) { create :grouping_with_inviter, test_tokens: 1 }
+      end
+    end
+    context 'authorized with a grouping and an assignment' do
+      let(:context) { { role: role, grouping: grouping, assignment: assignment, real_user: role.user } }
+      let(:assignment) do
+        create :assignment, due_date: assign_due_date, assignment_properties_attributes: assignment_attrs
+      end
+      failed 'when the due date has passed and token end date is nil' do
+        let(:assign_due_date) { 1.hour.ago }
+        let(:assignment_attrs) do
+          { token_start_date: 2.hours.ago, token_end_date: nil,
+            enable_student_tests: true, unlimited_tokens: true }
+        end
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
+      end
+      succeed 'when the token end date has not passed' do
+        let(:assign_due_date) { 2.hours.from_now }
+        let(:assignment_attrs) do
+          { token_start_date: 2.hours.ago, token_end_date: 1.hour.from_now,
+            enable_student_tests: true, unlimited_tokens: true }
+        end
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
+      end
+      failed 'when the token end date has passed' do
+        let(:assign_due_date) { 2.hours.from_now }
+        let(:assignment_attrs) do
+          { token_start_date: 2.hours.ago, token_end_date: 1.hour.ago,
+            enable_student_tests: true, unlimited_tokens: true }
+        end
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
       end
     end
     context 'authorized with a submission' do
