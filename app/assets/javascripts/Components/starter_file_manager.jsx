@@ -43,7 +43,7 @@ class StarterFileManager extends React.Component {
         this.props.course_id,
         this.props.assignment_id
       ),
-      {headers: {Accept: "aaplication/json"}}
+      {headers: {Accept: "application/json"}}
     )
       .then(reponse => {
         if (reponse.ok) {
@@ -225,7 +225,7 @@ class StarterFileManager extends React.Component {
                 groupUploadTarget={id}
                 files={files}
                 noFilesMessage={I18n.t("submissions.no_files_available")}
-                readOnly={false}
+                readOnly={this.props.read_only}
                 onCreateFiles={this.handleCreateFiles}
                 onDeleteFile={this.handleDeleteFile}
                 onCreateFolder={this.handleCreateFolder}
@@ -242,9 +242,11 @@ class StarterFileManager extends React.Component {
                 canFilter={false}
               />
               <button
+                aria-label={I18n.t("assignments.starter_file.aria_labels.action_button")}
                 key={"delete_starter_file_group_button"}
                 className={"button"}
                 onClick={() => this.deleteStarterFileGroup(id)}
+                disabled={this.props.read_only}
               >
                 <FontAwesomeIcon icon="fa-solid fa-trash" />
               </button>
@@ -283,7 +285,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"simple"}
               checked={this.state.starterfileType === "simple"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.props.read_only}
               onChange={() => {
                 this.setState({starterfileType: "simple"}, () => this.toggleFormChanged(true));
               }}
@@ -298,7 +300,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"sections"}
               checked={this.state.starterfileType === "sections"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.props.read_only}
               onChange={() => {
                 this.setState({starterfileType: "sections"}, () => this.toggleFormChanged(true));
               }}
@@ -313,7 +315,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"group"}
               checked={this.state.starterfileType === "group"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.props.read_only}
               onChange={() => {
                 this.setState({starterfileType: "group"}, () => this.toggleFormChanged(true));
               }}
@@ -328,7 +330,7 @@ class StarterFileManager extends React.Component {
               name={"starter_file_type"}
               value={"shuffle"}
               checked={this.state.starterfileType === "shuffle"}
-              disabled={!this.state.files.length}
+              disabled={!this.state.files.length || this.props.read_only}
               onChange={() => {
                 this.setState({starterfileType: "shuffle"}, () => this.toggleFormChanged(true));
               }}
@@ -351,8 +353,9 @@ class StarterFileManager extends React.Component {
                 this.toggleFormChanged(true)
               )
             }
+            aria-label={I18n.t("assignments.starter_file.aria_labels.dropdown")}
             value={this.state.defaultStarterFileGroup}
-            disabled={!this.state.files.length}
+            disabled={!this.state.files.length || this.props.read_only}
           >
             {Object.entries(this.state.files).map(data => {
               const {id, name} = data[1];
@@ -383,7 +386,8 @@ class StarterFileManager extends React.Component {
                     <select
                       onChange={this.updateSectionStarterFile}
                       value={selected}
-                      disabled={!this.state.files.length}
+                      disabled={!this.state.files.length || this.props.read_only}
+                      aria-label={I18n.t("assignments.starter_file.aria_labels.dropdown")}
                     >
                       <option value={`${row.original.section_id}_`} />
                       {Object.entries(this.state.files).map(data => {
@@ -452,12 +456,14 @@ class StarterFileManager extends React.Component {
           <input
             type={"checkbox"}
             checked={this.state.available_after_due}
+            data-testid="available_after_due_checkbox"
             onChange={() => {
               this.setState(
                 prev => ({available_after_due: !prev.available_after_due}),
                 () => this.toggleFormChanged(true)
               );
             }}
+            disabled={this.props.read_only}
           />
           {I18n.t("assignments.starter_file.available_after_due")}
         </label>
@@ -477,9 +483,11 @@ class StarterFileManager extends React.Component {
           </legend>
           {this.renderFileManagers()}
           <button
+            aria-label={I18n.t("assignments.starter_file.aria_labels.action_button")}
             key={"create_starter_file_group_button"}
             className={"button"}
             onClick={this.createStarterFileGroup}
+            disabled={this.props.read_only}
           >
             <FontAwesomeIcon icon="fa-solid fa-add" />
           </button>
@@ -529,8 +537,9 @@ class StarterFileManager extends React.Component {
             <input
               type={"submit"}
               value={I18n.t("save")}
+              data-testid={"save_button"}
               onClick={this.saveStateChanges}
-              disabled={!this.state.form_changed}
+              disabled={!this.state.form_changed || this.props.read_only}
             ></input>
           </p>
         </fieldset>
@@ -644,3 +653,5 @@ class StarterFileFileManager extends React.Component {
 export function makeStarterFileManager(elem, props) {
   render(<StarterFileManager {...props} />, elem);
 }
+
+export {StarterFileManager};
