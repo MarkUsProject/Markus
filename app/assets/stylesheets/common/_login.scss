@@ -1,5 +1,5 @@
-@import 'mixins';
-@import 'constants';
+@import "mixins";
+@import "constants";
 /**
  * Login screen
  */
@@ -29,14 +29,14 @@
     margin: 20px auto 0;
     width: 80%;
 
-    input[type='text'],
-    input[type='password'],
-    input[type='submit'] {
+    input[type="text"],
+    input[type="password"],
+    input[type="submit"] {
       width: 100%;
     }
 
-    input[type='text'],
-    input[type='password'] {
+    input[type="text"],
+    input[type="password"] {
       margin: 0.5em 0;
       padding: 1em;
     }
@@ -44,7 +44,7 @@
     .submit {
       margin: 15px 0 25px;
 
-      input[type='submit'] {
+      input[type="submit"] {
         margin: 0.5em 0;
         padding: 10px;
       }
@@ -70,7 +70,7 @@
     #login-or::after {
       border-bottom: 1px solid;
       border-color: $gridline;
-      content: '';
+      content: "";
       flex: 1 1;
       margin: auto;
     }
@@ -92,7 +92,7 @@
   }
 
   .login-image {
-    background: transparent asset-url('markus_logo.svg') no-repeat center center / contain;
+    background: transparent asset-url("markus_logo.svg") no-repeat center center / contain;
     height: 115px;
     margin: 0 auto;
     width: 220px;
