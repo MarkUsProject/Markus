@@ -35,4 +35,28 @@ Depends:
 # rubygems-integration: required to install ruby gems
   rubygems-integration,
 # tesseract-ocr: required for scanned exams
-  tesseract-ocr (>= 4.1.1-2build2)
+  tesseract-ocr (>= 4.1.1-2build2),
+# pandoc: required for Jupyter notebook to PDF conversion
+  pandoc,
+# libnss3: required for Jupyter notebook to PDF conversion
+  libnss3,
+# libnspr4: required for Jupyter notebook to PDF conversion
+  libnspr4,
+# libatk1.0-0: required for Jupyter notebook to PDF conversion
+  libatk1.0-0,
+# libatk-bridge2.0-0: required for Jupyter notebook to PDF conversion
+  libatk-bridge2.0-0,
+# libxkbcommon0: required for Jupyter notebook to PDF conversion
+  libxkbcommon0,
+# libatspi2.0-0: required for Jupyter notebook to PDF conversion
+  libatspi2.0-0,
+# libxcomposite1: required for Jupyter notebook to PDF conversion
+  libxcomposite1,
+# libxdamage1: required for Jupyter notebook to PDF conversion
+  libxdamage1,
+# libxrandr2: required for Jupyter notebook to PDF conversion
+  libxrandr2,
+# libgbm1: required for Jupyter notebook to PDF conversion
+  libgbm1,
+# libasound2: required for Jupyter notebook to PDF conversion
+  libasound2

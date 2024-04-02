@@ -7,6 +7,7 @@
 - Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
 - Minor improvements in assignment association options (#6989)
 - Allow instructors to configure an end date until which students can run automated tests (#6992)
+- Support Jupyter notebooks for results printing (#6993)
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 - Fixed long annotations being cut off in the annotation table (#7001)
