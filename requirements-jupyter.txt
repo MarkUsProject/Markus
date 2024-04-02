@@ -1,2 +1,7 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
+<<<<<<< HEAD
 nbconvert==7.7.3
+=======
+nbconvert==7.16.1
+playwright==1.41.2
+>>>>>>> 7b403df3f (Support Jupyter notebooks for results printing (#6993))
