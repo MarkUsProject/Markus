@@ -66,3 +66,4 @@ en:
     tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     timeout: Timeout (s)
     title: Automated Testing
+    use_assignment_due_date: Leave blank to use assignment due date
