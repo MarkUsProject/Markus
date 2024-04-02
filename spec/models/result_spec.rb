@@ -351,4 +351,35 @@ describe Result do
       end
     end
   end
+
+  describe '#print_pdf_filename' do
+    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:result) { assignment.current_results.first }
+
+    context 'when the result is for an individual student' do
+      it 'returns a filename containing data for the student' do
+        student = result.submission.grouping.accepted_students.first.user
+        expect(result.print_pdf_filename).to eq(
+          "#{student.id_number} - #{student.last_name.upcase}, #{student.first_name} (#{student.user_name}).pdf"
+        )
+      end
+    end
+
+    context 'when the result is for a group with multiple members' do
+      it 'returns a filename corresponding to the group name and member user names' do
+        grouping = result.submission.grouping
+        create :accepted_student_membership, grouping: grouping
+        members = grouping.accepted_students.includes(:user).map { |s| s.user.user_name }.sort
+        expect(result.print_pdf_filename).to eq "#{grouping.group.group_name} (#{members.join(', ')}).pdf"
+      end
+    end
+
+    context 'when the result is for a group with no members' do
+      it 'returns a filename corresponding to the group name' do
+        grouping = result.submission.grouping
+        grouping.student_memberships.destroy_all
+        expect(result.print_pdf_filename).to eq "#{grouping.group.group_name}.pdf"
+      end
+    end
+  end
 end
