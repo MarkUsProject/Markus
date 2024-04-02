@@ -3,6 +3,7 @@ describe LtiHelper do
   let(:course) { create :course }
   let(:lti_deployment) { create :lti_deployment, course: course }
   before :each do
+    allow(File).to receive(:read).and_call_original
     allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048))
     stub_request(:post, Settings.lti.token_endpoint)
       .with(
@@ -24,68 +25,70 @@ describe LtiHelper do
     let!(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
     let!(:student) { create :student, course: course }
     let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
+    let(:memberships) do
+      [{ status: 'Active', name: 'student.display_name',
+         picture: 'http://example.com/picture.png',
+         given_name: 'student.first_name',
+         family_name: 'student.last_name',
+         lis_person_sourcedid: student.user_name,
+         email: 'student_email',
+         user_id: 'lti_user_id',
+         lti11_legacy_user_id: 'legacy_lti_user_id',
+         roles:
+           [
+             LtiDeployment::LTI_ROLES[:learner]
+           ] },
+       { status: 'Active', name: 'second user',
+         picture: 'http://example.com/picture.png',
+         given_name: 'student.first_name',
+         family_name: 'student.last_name',
+         lis_person_sourcedid: 'second_username',
+         email: 'test@example.com',
+         user_id: 'another_user_id',
+         lti11_legacy_user_id: 'legacy_lti_user_id',
+         roles:
+           [
+             LtiDeployment::LTI_ROLES[:learner]
+           ] },
+       { status: 'Active', name: 'third user',
+         picture: 'http://example.com/picture.png',
+         given_name: 'student.first_name',
+         family_name: 'student.last_name',
+         lis_person_sourcedid: 'third_username',
+         email: 'test2@example.com',
+         user_id: 'third_user_id',
+         lti11_legacy_user_id: 'legacy_lti_user_id',
+         roles:
+           [
+             LtiDeployment::LTI_ROLES[:ta]
+           ] },
+       { status: 'Active', name: 'fourth user',
+         picture: 'http://example.com/picture.png',
+         given_name: 'student.first_name',
+         family_name: 'student.last_name',
+         lis_person_sourcedid: 'fourth_username',
+         email: 'test3@example.com',
+         user_id: 'fourth_user_id',
+         lti11_legacy_user_id: 'legacy_lti_user_id',
+         roles:
+           [
+             LtiDeployment::LTI_ROLES[:instructor]
+           ] }]
+    end
     let(:lti_students) do
       {
         id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
         context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
                    label: 'tst1', title: 'test course' },
-        members: [{ status: 'Active', name: 'student.display_name',
-                    picture: 'http://example.com/picture.png',
-                    given_name: 'student.first_name',
-                    family_name: 'student.last_name',
-                    lis_person_sourcedid: student.user_name,
-                    email: 'student_email',
-                    user_id: 'lti_user_id',
-                    lti11_legacy_user_id: 'legacy_lti_user_id',
-                    roles:
-                      [
-                        LtiDeployment::LTI_ROLES[:learner]
-                      ] },
-                  { status: 'Active', name: 'second user',
-                    picture: 'http://example.com/picture.png',
-                    given_name: 'student.first_name',
-                    family_name: 'student.last_name',
-                    lis_person_sourcedid: 'second_username',
-                    email: 'test@example.com',
-                    user_id: 'another_user_id',
-                    lti11_legacy_user_id: 'legacy_lti_user_id',
-                    roles:
-                      [
-                        LtiDeployment::LTI_ROLES[:learner]
-                      ] },
-                  { status: 'Active', name: 'third user',
-                    picture: 'http://example.com/picture.png',
-                    given_name: 'student.first_name',
-                    family_name: 'student.last_name',
-                    lis_person_sourcedid: 'third_username',
-                    email: 'test2@example.com',
-                    user_id: 'third_user_id',
-                    lti11_legacy_user_id: 'legacy_lti_user_id',
-                    roles:
-                      [
-                        LtiDeployment::LTI_ROLES[:ta]
-                      ] },
-                  { status: 'Active', name: 'fourth user',
-                    picture: 'http://example.com/picture.png',
-                    given_name: 'student.first_name',
-                    family_name: 'student.last_name',
-                    lis_person_sourcedid: 'fourth_username',
-                    email: 'test3@example.com',
-                    user_id: 'fourth_user_id',
-                    lti11_legacy_user_id: 'legacy_lti_user_id',
-                    roles:
-                      [
-                        LtiDeployment::LTI_ROLES[:instructor]
-                      ] }]
+        members: memberships
       }.to_json
     end
-
-    before :each do
-      allow_any_instance_of(LtiDeployment).to(
-        receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_students))
-      )
-    end
     context 'when syncing only learners' do
+      before :each do
+        allow_any_instance_of(LtiDeployment).to(
+          receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_students))
+        )
+      end
       context 'when run by an admin user' do
         subject do
           roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
@@ -143,6 +146,11 @@ describe LtiHelper do
       end
     end
     context 'when syncing learners and TAs' do
+      before :each do
+        allow_any_instance_of(LtiDeployment).to(
+          receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_students))
+        )
+      end
       context 'when run by an admin user' do
         subject do
           roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
@@ -196,6 +204,130 @@ describe LtiHelper do
             subject
             expect(LtiUser.all.count).to eq(3)
           end
+        end
+      end
+    end
+    context 'when syncing learners, TAs, and instructors' do
+      before :each do
+        allow_any_instance_of(LtiDeployment).to(
+          receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_students))
+        )
+      end
+      context 'when run by an admin user' do
+        subject do
+          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
+                                               LtiDeployment::LTI_ROLES[:instructor]],
+                      can_create_users: true, can_create_roles: true
+        end
+        it 'creates a new user' do
+          subject
+          expect(EndUser.all.count).to eq(4)
+        end
+        it 'does create tas' do
+          subject
+          expect(Ta.all.count).to eq(1)
+        end
+        it 'does create instructors' do
+          subject
+          expect(Instructor.all.count).to eq(1)
+        end
+        it 'creates roles with an admin role' do
+          subject
+          expect(Student.all.count).to eq(2)
+        end
+        it 'creates lti users' do
+          subject
+          expect(LtiUser.all.count).to eq(4)
+        end
+      end
+      context 'when run by an instructor' do
+        subject do
+          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
+                                               LtiDeployment::LTI_ROLES[:instructor]],
+                      can_create_users: true, can_create_roles: true
+        end
+        it 'does create users' do
+          subject
+          expect(EndUser.all.count).to eq(4)
+        end
+        it 'does create tas' do
+          subject
+          expect(Ta.all.count).to eq(1)
+        end
+        it 'does create instructors' do
+          subject
+          expect(Instructor.all.count).to eq(1)
+        end
+        context 'with a new enduser' do
+          let!(:new_user) { create :end_user, user_name: 'second_username' }
+          it 'creates roles' do
+            subject
+            expect(Student.all.count).to eq(2)
+          end
+          it 'creates lti users' do
+            subject
+            expect(LtiUser.all.count).to eq(4)
+          end
+        end
+      end
+    end
+    context 'with paginated results' do
+      let(:url) { lti_service_namesrole.url }
+      subject do
+        roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
+                                             LtiDeployment::LTI_ROLES[:instructor]],
+                    can_create_users: true, can_create_roles: true
+      end
+      before(:each) do
+        stub_request(:any, url).with(
+          headers: {
+            'Accept' => '*/*'
+          }, body: {}
+        ).to_return(body: { id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
+                            context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
+                                       label: 'tst1', title: 'test course' }, members: memberships[0..1] }.to_json,
+                    headers: { 'Link' => "<http://example.com?page=1>; rel='current',<#{url}?page=2>; rel='next',\
+                      <#{url}?page=1>; rel='first',<#{url}?page=3>; rel='last'" })
+        stub_request(:any, "#{url}?page=2").with(
+          headers: {
+            'Accept' => '*/*'
+          }, body: {}
+        ).to_return(body: { id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
+                            context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
+                                       label: 'tst1', title: 'test course' }, members: [memberships[2]] }.to_json,
+                    headers: { 'Link' => "<http://example.com?page=2>; rel='current',<#{url}?page=3>; rel='next',\
+                      <#{url}?page=1>; rel='first',<#{url}?page=3>;" })
+        stub_request(:any, "#{url}?page=3").with(
+          headers: {
+            'Accept' => '*/*'
+          }, body: {}
+        ).to_return(body: { id: 'http://test.host/api/lti/courses/1/names_and_roles?role=Learner',
+                            context: { id: '4dde05e8ca1973bcca9bffc13e1548820eee93a3',
+                                       label: 'tst1', title: 'test course' }, members: [memberships[3]] }.to_json,
+                    headers: { 'Link' => "<http://example.com?page=3>; rel='current',<#{url}?page=1>;\
+                      rel='first',<#{url}?page=3>; rel='last'" })
+      end
+      it 'does create users' do
+        subject
+        expect(EndUser.all.count).to eq(4)
+      end
+      it 'does create tas' do
+        subject
+        expect(Ta.all.count).to eq(1)
+      end
+      it 'does create instructors' do
+        subject
+        expect(Instructor.all.count).to eq(1)
+      end
+      context 'with a new enduser' do
+        let!(:new_user) { create :end_user, user_name: 'second_username' }
+        it 'creates roles' do
+          subject
+          expect(Student.all.count).to eq(2)
+        end
+        it 'creates lti users' do
+          subject
+          expect(LtiUser.all.count).to eq(4)
         end
       end
     end
