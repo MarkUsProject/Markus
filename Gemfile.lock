@@ -215,7 +215,7 @@ GEM
     hashdiff (1.1.0)
     highline (2.1.0)
     histogram (0.2.4.1)
-    i18n (1.14.1)
+    i18n (1.14.4)
       concurrent-ruby (~> 1.0)
     i18n-js (4.2.3)
       glob (>= 0.4.0)
