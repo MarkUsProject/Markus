@@ -1317,6 +1317,17 @@ describe SubmissionsController do
                   params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
           is_expected.to respond_with(:success)
         end
+
+        it 'should pass the print parameter to DownloadSubmissionsJob when given' do
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |_gids, _zip_file, _assignment_id, _course_id,
+                                                                        kwargs|
+            expect(kwargs[:print]).to be true
+            DownloadSubmissionsJob.new
+          end
+          post_as assigned_ta, :zip_groupings_files,
+                  params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids, print: 'true' }
+          is_expected.to respond_with(:success)
+        end
       end
 
       describe '#download_zipped_file' do
