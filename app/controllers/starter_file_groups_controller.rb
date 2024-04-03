@@ -13,9 +13,9 @@ class StarterFileGroupsController < ApplicationController
 
   def download_file
     starter_file_group = record
-    file_path = File.join starter_file_group.path, params[:file_name]
+    file_path = FileHelper.checked_join starter_file_group.path, params[:file_name]
     filename = File.basename params[:file_name]
-    if File.exist?(file_path)
+    if file_path.present? && File.exist?(file_path)
       send_file_download file_path, filename: filename
     else
       render plain: t('student.submission.missing_file', file_name: filename)
@@ -43,10 +43,15 @@ class StarterFileGroupsController < ApplicationController
     delete_folders = params[:delete_folders] || []
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
+    target_path = FileHelper.checked_join(starter_file_group.path, params[:path].to_s)
+    if target_path.nil?
+      flash_now(:error, I18n.t('errors.invalid_path'))
+      return
+    end
 
     upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
       if f.is_a?(String) # is a directory
-        folder_path = File.join(starter_file_group.path, params[:path].to_s, f)
+        folder_path = File.join(target_path, f)
         FileUtils.mkdir_p(folder_path)
       else
         if f.size > assignment.course.max_file_size
@@ -57,7 +62,7 @@ class StarterFileGroupsController < ApplicationController
         elsif f.size == 0
           flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
         end
-        file_path = File.join(starter_file_group.path, params[:path].to_s, f.original_filename)
+        file_path = File.join(target_path, f.original_filename)
         file_content = f.read
         File.write(file_path, file_content, mode: 'wb')
       end

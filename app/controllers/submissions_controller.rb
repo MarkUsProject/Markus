@@ -652,23 +652,31 @@ class SubmissionsController < ApplicationController
       grouping = find_appropriate_grouping(assignment.id, params)
       revision_identifier = params[:revision_identifier]
 
-      path = params[:path] || '/'
-      file_contents = grouping.access_repo do |repo|
-        if revision_identifier.nil?
-          revision = repo.get_latest_revision
-        else
-          revision = repo.get_revision(revision_identifier)
+      path = FileHelper.checked_join(assignment.repository_folder, params[:path] || '/')
+      if path.nil?
+        flash_message(:error, I18n.t('errors.invalid_path'))
+      else
+        file_contents = grouping.access_repo do |repo|
+          if revision_identifier.nil?
+            revision = repo.get_latest_revision
+          else
+            revision = repo.get_revision(revision_identifier)
+          end
+          file = revision.files_at_path(path)[params[:file_name]]
+          repo.download_as_string(file)
         end
-        file = revision.files_at_path(File.join(assignment.repository_folder, path))[params[:file_name]]
-        repo.download_as_string(file)
       end
       filename = params[:file_name]
     end
 
-    file_path = "#{assignment.repository_folder}/#{path}/#{filename}"
-    unique_path = "#{grouping.group.repo_name}/#{file_path}.#{revision_identifier}"
     @notebook_type = FileHelper.get_file_type(filename)
-    @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+    if path.nil?
+      @notebook_content = ''
+    else
+      sanitized_filename = ActiveStorage::Filename.new("#{filename}.#{revision_identifier}").sanitized
+      unique_path = File.join(grouping.group.repo_name, path, sanitized_filename)
+      @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+    end
     render layout: 'notebook'
   end
 

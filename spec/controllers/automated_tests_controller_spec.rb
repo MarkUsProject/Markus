@@ -122,6 +122,15 @@ describe AutomatedTestsController do
     context 'GET download_file' do
       before { get_as role, :download_file, params: params }
       # TODO: write tests
+
+      context 'when given an invalid path' do
+        let(:filename) { '../../../a.txt' }
+        let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id, file_name: filename } }
+
+        it 'returns an error message' do
+          expect(response.body).to eq I18n.t('student.submission.missing_file', file_name: filename)
+        end
+      end
     end
     context 'GET download_files' do
       subject { get_as role, :download_files, params: params }
@@ -166,10 +175,10 @@ describe AutomatedTestsController do
     end
     context 'POST upload_files' do
       before do
-        FileUtils.rm_r assignment.autotest_files_dir
+        FileUtils.rm_rf assignment.autotest_files_dir
         post_as role, :upload_files, params: params
       end
-      after { FileUtils.rm_r assignment.autotest_files_dir }
+      after { FileUtils.rm_rf assignment.autotest_files_dir }
       context 'uploading a zip file' do
         let(:params) do
           { course_id: assignment.course.id, assignment_id: assignment.id,
@@ -217,6 +226,20 @@ describe AutomatedTestsController do
               expect(tree).to include('zip_file_with_files/TestShapes.java')
             end
           end
+        end
+      end
+      context 'when the path is invalid' do
+        let(:params) do
+          { course_id: assignment.course.id, assignment_id: assignment.id,
+            unzip: false, new_files: [file_fixture_upload('TestShapes.java')], path: '../../' }
+        end
+
+        it 'flashes an error message' do
+          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+        end
+
+        it 'does not save the file' do
+          expect(File).to_not exist(File.join(assignment.autotest_files_dir, '../..', 'TestShapes.java'))
         end
       end
     end

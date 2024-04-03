@@ -245,6 +245,10 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
         include_examples 'unauthenticated request'
+        it 'should respond with a success code' do
+          subject
+          expect(response).to have_http_status(:created)
+        end
         it 'should add a file to the group' do
           subject
           expect(starter_file_group.files_and_dirs).to include 'a'
@@ -269,6 +273,17 @@ describe Api::StarterFileGroupsController do
       it 'should return a 404 error' do
         subject
         expect(response).to have_http_status(404)
+      end
+    end
+    context 'when the path given is invalid' do
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+
+      it 'returns a 422 status code' do
+        post :create_file, params: { filename: '../../../a',
+                                     file_content: 'a',
+                                     course_id: course.id,
+                                     id: starter_file_group.id }
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
