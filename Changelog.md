@@ -13,6 +13,11 @@
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 - Fixed long annotations being cut off in the annotation table (#7001)
 
+## [v2.4.7]
+- Support Jupyter notebooks for results printing (#6993)
+- Enable bulk download of print PDFs for an assignments (#6998)
+- Fixed long annotations being cut off in the annotation table (#7001)
+
 ## [v2.4.6]
 - Disallow students from uploading .git file and .git folder in their repository (#6963)
 
