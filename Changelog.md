@@ -8,10 +8,10 @@
 - Minor improvements in assignment association options (#6989)
 - Allow instructors to configure an end date until which students can run automated tests (#6992)
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
-- Enable bulk download of print PDFs for an assignments (#6998)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 
 ## [v2.4.7]
+- Enable bulk download of print PDFs for an assignments (#6998)
 - Fixed long annotations being cut off in the annotation table (#7001)
 
 ## [v2.4.6]
