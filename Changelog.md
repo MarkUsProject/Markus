@@ -1,15 +1,5 @@
 # Changelog
 
-## [unreleased]
-- Allow deletion of assignments with no groups (#6880)
-- Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
-- Enable the deletion of Grade Entry Forms that have no grades (#6915)
-- Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
-- Minor improvements in assignment association options (#6989)
-- Allow instructors to configure an end date until which students can run automated tests (#6992)
-- Gave TAs read-only access to starter file information under assignment settings (#6996)
-- Allow inactive groups in the submissions table to be toggled for display (#7000)
-
 ## [v2.4.7]
 - Support Jupyter notebooks for results printing (#6993)
 - Enable bulk download of print PDFs for an assignments (#6998)
