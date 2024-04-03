@@ -116,6 +116,17 @@ describe SubmissionsController do
       end
     end
 
+    it 'cannot add files outside the repository' do
+      file = fixture_file_upload('Shapes.java', 'text/java')
+      bad_path = '../../'
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id, new_files: [file], path: bad_path }
+
+      expect(response).to have_http_status :bad_request
+      expect(File).to_not exist(File.join(@grouping.group.repo_path, @grouping.assignment.repository_folder,
+                                          bad_path, 'Shapes.java'))
+    end
+
     context 'submitting a url' do
       describe 'should add url files' do
         before :each do
@@ -1536,6 +1547,23 @@ describe SubmissionsController do
                                                         revision_identifier: submission.revision_identifier }
       end
       it_behaves_like 'notebook types'
+    end
+
+    context 'called with an invalid path' do
+      let(:filename) { 'example.ipynb' }
+      subject do
+        get_as instructor, :notebook_content, params: { course_id: course.id,
+                                                        assignment_id: assignment.id,
+                                                        file_name: filename,
+                                                        grouping_id: grouping.id,
+                                                        revision_identifier: submission.revision_identifier,
+                                                        path: '../..' }
+      end
+
+      it 'flashes an error message' do
+        subject
+        expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+      end
     end
   end
 

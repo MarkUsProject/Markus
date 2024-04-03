@@ -83,6 +83,13 @@ describe StarterFileGroupsController do
         expect(response.body).to eq I18n.t('student.submission.missing_file', file_name: filename)
       end
     end
+    context 'when the filename is invalid' do
+      let(:filename) { '../../q2.txt' }
+
+      it 'should download a file with a warning message' do
+        expect(response.body).to eq(I18n.t('student.submission.missing_file', file_name: 'q2.txt'))
+      end
+    end
   end
   describe '#update' do
     subject { put_as role, :update, params: { name: 'b', course_id: course.id, id: starter_file_group.id } }
@@ -174,6 +181,18 @@ describe StarterFileGroupsController do
         expect(starter_file_group.files_and_dirs).to include('q1/new_nested_folder')
         expect(Dir.exist?(starter_file_group.path + 'q1/new_nested_folder')).to be true
       end
+
+      context 'when the folder path is invalid' do
+        let(:new_folders) { %w[../../hello] }
+
+        it 'flashes an error message' do
+          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+        end
+
+        it 'does not create the folder' do
+          expect(Dir).to_not exist(File.expand_path(File.join(assignment.autotest_files_dir, '../../hello')))
+        end
+      end
     end
     context 'deleting a file' do
       let(:delete_files) { %w[q2.txt q1/q1.txt] }
@@ -191,6 +210,16 @@ describe StarterFileGroupsController do
       end
       it 'should not delete a starter file entry for the nested file' do
         expect(starter_file_group.starter_file_entries.pluck(:path)).to include('q1')
+      end
+
+      context 'when the file path is invalid' do
+        let(:delete_files) { %w[../../../../../LICENSE] }
+        it 'flashes an error message' do
+          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+        end
+        it 'does not delete the file' do
+          expect(File).to exist(File.expand_path(File.join(assignment.autotest_files_dir, '../../../../../LICENSE')))
+        end
       end
     end
     context 'deleting a folder' do
@@ -211,6 +240,32 @@ describe StarterFileGroupsController do
       end
       it 'should not delete a starter file entry for the nested file' do
         expect(starter_file_group.starter_file_entries.pluck(:path)).to include('q2')
+      end
+
+      context 'when the folder path is invalid' do
+        let(:delete_folders) { %w[../../../../../doc] }
+        it 'flashes an error message' do
+          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+        end
+        it 'does not delete the folder' do
+          expect(Dir).to exist(File.expand_path(File.join(assignment.autotest_files_dir, '../../../../../doc')))
+        end
+      end
+    end
+    context 'when the path is invalid' do
+      subject do
+        put_as role, :update_files, params: { course_id: course.id,
+                                              id: starter_file_group.id,
+                                              unzip: unzip,
+                                              new_folders: new_folders,
+                                              delete_folders: delete_folders,
+                                              delete_files: delete_files,
+                                              new_files: new_files,
+                                              path: '../../' }
+      end
+      it 'should flash an error message' do
+        subject
+        expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
       end
     end
   end

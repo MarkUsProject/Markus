@@ -245,6 +245,10 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
         include_examples 'unauthenticated request'
+        it 'should respond with a success code' do
+          subject
+          expect(response).to have_http_status(:created)
+        end
         it 'should add a file to the group' do
           subject
           expect(starter_file_group.files_and_dirs).to include 'a'
@@ -269,6 +273,24 @@ describe Api::StarterFileGroupsController do
       it 'should return a 404 error' do
         subject
         expect(response).to have_http_status(404)
+      end
+    end
+    context 'when the path given is invalid' do
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+
+      before do
+        post :create_file, params: { filename: '../../../a',
+                                     file_content: 'a',
+                                     course_id: course.id,
+                                     id: starter_file_group.id }
+      end
+
+      it 'returns a 422 status code' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'does not create the file' do
+        expect(File).not_to exist(File.expand_path(File.join(starter_file_group.path, '../../../a')))
       end
     end
   end
@@ -307,6 +329,23 @@ describe Api::StarterFileGroupsController do
         expect(response).to have_http_status(404)
       end
     end
+    context 'when the path given is invalid' do
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+
+      before do
+        post :create_folder, params: { folder_path: '../../../a',
+                                       course_id: course.id,
+                                       id: starter_file_group.id }
+      end
+
+      it 'returns a 422 status code' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'does not create the folder' do
+        expect(Dir).not_to exist(File.expand_path(File.join(starter_file_group.path, '../../../a')))
+      end
+    end
   end
   describe '#remove_file' do
     subject do
@@ -341,6 +380,23 @@ describe Api::StarterFileGroupsController do
       it 'should return a 404 error' do
         subject
         expect(response).to have_http_status(404)
+      end
+    end
+    context 'when the path given is invalid' do
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+
+      before do
+        post :remove_file, params: { filename: '../../../../../LICENSE',
+                                     course_id: course.id,
+                                     id: starter_file_group.id }
+      end
+
+      it 'returns a 422 status code' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'does not delete the file' do
+        expect(File).to exist(File.expand_path(File.join(starter_file_group.path, '../../../../../LICENSE')))
       end
     end
   end
@@ -380,6 +436,23 @@ describe Api::StarterFileGroupsController do
       it 'should return a 404 error' do
         subject
         expect(response).to have_http_status(404)
+      end
+    end
+    context 'when the path given is invalid' do
+      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+
+      before do
+        post :remove_folder, params: { folder_path: '../../../../../doc',
+                                       course_id: course.id,
+                                       id: starter_file_group.id }
+      end
+
+      it 'returns a 422 status code' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'does not delete the folder' do
+        expect(Dir).to exist(File.expand_path(File.join(starter_file_group.path, '../../../../../doc')))
       end
     end
   end
