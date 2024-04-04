@@ -30,11 +30,11 @@ describe AssignmentsController do
 
   context '#start_timed_assignment' do
     let(:course) { assignment.course }
-    let(:assignment) { create :timed_assignment }
+    let(:assignment) { create(:timed_assignment) }
     context 'as a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       context 'when a grouping exists' do
-        let!(:grouping) { create :grouping_with_inviter, assignment: assignment, start_time: nil, inviter: role }
+        let!(:grouping) { create(:grouping_with_inviter, assignment: assignment, start_time: nil, inviter: role) }
         it 'should respond with 302' do
           put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id }
           expect(response).to have_http_status :redirect
@@ -58,14 +58,14 @@ describe AssignmentsController do
       context 'when a grouping does not exist' do
         before { put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id } }
         xcontext 'when the group_max is 1' do
-          let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 1 } }
+          let(:assignment) { create(:timed_assignment, assignment_properties_attributes: { group_max: 1 }) }
           it 'should create a grouping' do
             expect(role.student_memberships.size).to eq 1
             expect(role.groupings.first.assessment_id).to eq assignment.id
           end
         end
         context 'when the group_max is > 1' do
-          let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 2 } }
+          let(:assignment) { create(:timed_assignment, assignment_properties_attributes: { group_max: 2 }) }
           it 'should respond with 403' do
             expect(response).to have_http_status 403
           end
@@ -73,14 +73,14 @@ describe AssignmentsController do
       end
     end
     context 'as an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       it 'should respond with 403' do
         put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id }
         expect(response).to have_http_status 403
       end
     end
     context 'as an grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       it 'should respond with 403' do
         put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id }
         expect(response).to have_http_status 403
@@ -241,8 +241,8 @@ describe AssignmentsController do
 
       context 'where there are some assessments' do
         before :each do
-          3.times { create(:assignment_with_criteria_and_results) }
-          2.times { create(:grade_entry_form_with_data) }
+          create_list(:assignment_with_criteria_and_results, 3)
+          create_list(:grade_entry_form_with_data, 2)
         end
 
         it 'responds with a success' do
@@ -264,8 +264,8 @@ describe AssignmentsController do
 
       context 'where there are some assessments' do
         before :each do
-          3.times { create(:assignment_with_criteria_and_results) }
-          2.times { create(:grade_entry_form_with_data) }
+          create_list(:assignment_with_criteria_and_results, 3)
+          create_list(:grade_entry_form_with_data, 2)
         end
 
         it 'responds with a success' do
@@ -291,7 +291,7 @@ describe AssignmentsController do
             assignment = create(:assignment_with_criteria_and_results)
             create(:accepted_student_membership, role: role, grouping: assignment.groupings.first)
           end
-          2.times { create(:grade_entry_form_with_data) }
+          create_list(:grade_entry_form_with_data, 2)
         end
 
         it 'responds with a success' do
@@ -306,7 +306,7 @@ describe AssignmentsController do
             assignment = create(:assignment_with_criteria_and_results)
             create(:accepted_student_membership, role: role, grouping: assignment.groupings.first)
           end
-          2.times { create(:grade_entry_form_with_data) }
+          create_list(:grade_entry_form_with_data, 2)
           Assignment.first.update(is_hidden: true)
           GradeEntryForm.first.update(is_hidden: true)
         end
@@ -322,7 +322,7 @@ describe AssignmentsController do
   context '#set_boolean_graders_options' do
     let!(:assignment) { create(:assignment) }
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       let(:value) { !assignment.assignment_properties[attribute] }
 
       before :each do
@@ -385,14 +385,14 @@ describe AssignmentsController do
       end
       context 'a timed assessment' do
         context 'before the due date' do
-          let(:assignment) { create :timed_assignment, due_date: 1.hour.from_now }
+          let(:assignment) { create(:timed_assignment, due_date: 1.hour.from_now) }
           it('should respond with success') { expect(response).to have_http_status(:success) }
           it 'should not create a grouping' do
             expect(role.student_memberships.size).to eq 0
           end
         end
         xcontext 'after the due date' do
-          let(:assignment) { create :timed_assignment, due_date: 1.hour.ago }
+          let(:assignment) { create(:timed_assignment, due_date: 1.hour.ago) }
           it('should respond with success') { expect(response).to have_http_status(:success) }
           it 'should create a grouping' do
             expect(role.student_memberships.size).to eq 1
@@ -490,8 +490,8 @@ describe AssignmentsController do
   end
 
   shared_examples 'An authorized role updating the assignment' do
-    let(:assignment) { create :assignment }
-    let(:submission_rule) { create :penalty_decay_period_submission_rule, assignment: build(:assignment) }
+    let(:assignment) { create(:assignment) }
+    let(:submission_rule) { create(:penalty_decay_period_submission_rule, assignment: build(:assignment)) }
     let(:params) do
       example_form_params[:id] = assignment.id
       example_form_params[:course_id] = assignment.course.id
@@ -695,9 +695,9 @@ describe AssignmentsController do
           }
         }
       end
-      let(:submission_rule) { create :penalty_period_submission_rule, assignment: build(:assignment) }
+      let(:submission_rule) { create(:penalty_period_submission_rule, assignment: build(:assignment)) }
       let(:assignment) { submission_rule.assignment }
-      let!(:period) { create :period, submission_rule: submission_rule }
+      let!(:period) { create(:period, submission_rule: submission_rule) }
       it 'should delete other penalty periods' do
         put_as role, :update, params: params
         expect { period.reload }.to raise_exception(ActiveRecord::RecordNotFound)
@@ -803,9 +803,9 @@ describe AssignmentsController do
   end
 
   describe 'when the role is student' do
-    let(:course) { create :course }
-    let(:role) { create :student, course: course }
-    let(:assignment) { create :assignment_for_student_tests, course: course }
+    let(:course) { create(:course) }
+    let(:role) { create(:student, course: course) }
+    let(:assignment) { create(:assignment_for_student_tests, course: course) }
     let(:grouping) { create(:grouping_with_inviter, inviter: role, assignment: assignment) }
     let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
 
@@ -834,7 +834,7 @@ describe AssignmentsController do
 
   describe '#starter_file' do
     before(:each) { get_as role, :starter_file, params: params }
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
     shared_examples 'a user with permission to view the starter file page' do
       it 'should return a 200 status code' do
@@ -859,15 +859,15 @@ describe AssignmentsController do
       end
     end
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       include_examples 'a user with permission to view the starter file page'
     end
     context 'a grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       include_examples 'a user with permission to view the starter file page'
     end
     context 'a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       it 'should return a 403 error' do
         is_expected.to respond_with(:forbidden)
       end
@@ -875,7 +875,7 @@ describe AssignmentsController do
   end
   describe '#populate_starter_file_manager' do
     before { get_as role, :populate_starter_file_manager, params: params }
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
 
     shared_examples 'a user with permission to view starter files' do
@@ -891,7 +891,7 @@ describe AssignmentsController do
         expect(response.parsed_body).to eq(expected.transform_keys(&:to_s))
       end
       context 'the file data' do
-        let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
         let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
         it 'should contain the right keys' do
           file_data = response.parsed_body['files'].first.keys
@@ -912,9 +912,9 @@ describe AssignmentsController do
         end
       end
       context 'the section data' do
-        let(:starter_file_group) { create :starter_file_group, assignment: assignment }
-        let(:section) { create :section }
-        let(:ssfg) { create :section_starter_file_group, starter_file_group: starter_file_group, section: section }
+        let(:starter_file_group) { create(:starter_file_group, assignment: assignment) }
+        let(:section) { create(:section) }
+        let(:ssfg) { create(:section_starter_file_group, starter_file_group: starter_file_group, section: section) }
         let(:params) { { course_id: assignment.course.id, id: ssfg.starter_file_group.assignment.id } }
         it 'should contain the right values' do
           file_data = response.parsed_body['sections'].first
@@ -927,15 +927,15 @@ describe AssignmentsController do
       end
     end
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       include_examples 'a user with permission to view starter files'
     end
     context 'a grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       include_examples 'a user with permission to view starter files'
     end
     context 'a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       it 'should return a 403 error' do
         is_expected.to respond_with(:forbidden)
       end
@@ -943,13 +943,13 @@ describe AssignmentsController do
   end
   describe '#update_starter_file' do
     subject { post_as role, :update_starter_file, params: params }
-    let!(:assignment) { create :assignment }
-    let!(:grouping) { create :grouping, assignment: assignment }
+    let!(:assignment) { create(:assignment) }
+    let!(:grouping) { create(:grouping, assignment: assignment) }
     let(:starter_file_group1) do
-      create :starter_file_group, assignment: assignment, name: 'name', entry_rename: 'name', use_rename: false
+      create(:starter_file_group, assignment: assignment, name: 'name', entry_rename: 'name', use_rename: false)
     end
-    let(:starter_file_group2) { create :starter_file_group, assignment: assignment }
-    let(:section) { create :section }
+    let(:starter_file_group2) { create(:starter_file_group, assignment: assignment) }
+    let(:section) { create(:section) }
     let(:base_params) do
       { id: assignment.id,
         course_id: role.course.id,
@@ -963,7 +963,7 @@ describe AssignmentsController do
     end
     let(:params) { base_params }
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       it 'should update starter_file_type' do
         expect { subject }.to change { assignment.reload.starter_file_type }.from('simple').to('shuffle')
       end
@@ -1055,14 +1055,14 @@ describe AssignmentsController do
       end
     end
     context 'a grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
@@ -1071,11 +1071,11 @@ describe AssignmentsController do
   end
   describe '#download_starter_file_mappings' do
     subject { get_as role, :download_starter_file_mappings, params: params }
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
     shared_examples 'a user with permission to download starter file mappings' do
-      let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
-      let!(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let!(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
+      let!(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
       it 'should return a 200 status code' do
         subject
@@ -1092,15 +1092,15 @@ describe AssignmentsController do
     end
 
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       include_examples 'a user with permission to download starter file mappings'
     end
     context 'a grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       include_examples 'a user with permission to download starter file mappings'
     end
     context 'a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       it 'should return a 403 error' do
         subject
         expect(response).to have_http_status(403)
@@ -1109,8 +1109,8 @@ describe AssignmentsController do
   end
 
   describe '#grade_distribution' do
-    let(:assignment) { create :assignment_with_criteria_and_results_and_tas }
-    let(:role) { create :instructor }
+    let(:assignment) { create(:assignment_with_criteria_and_results_and_tas) }
+    let(:role) { create(:instructor) }
     let(:params) { { course_id: assignment.course.id, id: assignment.id } }
 
     before { get_as role, :grade_distribution, params: params }
@@ -1194,7 +1194,7 @@ describe AssignmentsController do
         end
       end
       context 'with multiple TAs and memberships' do
-        let(:ta2) { create :ta }
+        let(:ta2) { create(:ta) }
         before do
           Grouping.assign_all_tas(assignment.groupings, Ta.all, assignment)
           get_as role, :grade_distribution, params: params
@@ -1259,12 +1259,12 @@ describe AssignmentsController do
   end
 
   describe '#switch' do
-    let(:assignment) { create :assignment }
-    let(:assignment2) { create :assignment }
+    let(:assignment) { create(:assignment) }
+    let(:assignment2) { create(:assignment) }
     let(:course) { assignment.course }
-    let(:grouping) { create :grouping, assignment: assignment }
-    let(:submission) { create :submission, grouping: grouping }
-    let(:result) { create :incomplete_result, submission: submission }
+    let(:grouping) { create(:grouping, assignment: assignment) }
+    let(:submission) { create(:submission, grouping: grouping) }
+    let(:result) { create(:incomplete_result, submission: submission) }
 
     shared_examples 'switch assignment tests' do
       before { controller.request.headers.merge(HTTP_REFERER: referer) }
@@ -1333,7 +1333,7 @@ describe AssignmentsController do
     end
 
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       let(:non_assignment_url) { ->(params) { course_assignment_graders_url(params) } }
       let(:fallback_url) { ->(params) { edit_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
@@ -1342,7 +1342,7 @@ describe AssignmentsController do
       include_examples 'switch assignment tests'
     end
     context 'a grader' do
-      let(:role) { create :ta, manage_assessments: true }
+      let(:role) { create(:ta, manage_assessments: true) }
       let(:non_assignment_url) { ->(params) { course_assignment_graders_url(params) } }
       let(:fallback_url) { ->(params) { summary_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
@@ -1351,7 +1351,7 @@ describe AssignmentsController do
       include_examples 'switch assignment tests'
     end
     context 'a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       let(:non_assignment_url) { ->(params) { course_assignment_submissions_url(params) } }
       let(:fallback_url) { ->(params) { course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { file_manager_course_assignment_submissions_url(params) } }
@@ -1361,14 +1361,14 @@ describe AssignmentsController do
     end
   end
   describe '#download_sample_starter_files' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     subject do
       get_as role, :download_sample_starter_files, params: { course_id: assignment.course.id, id: assignment.id }
     end
     shared_examples 'download sample starter files' do
       let(:structure) { { 'q1/': nil, 'q1/q1.txt': 'q1 content', 'q2.txt': 'q2 content' } }
       # NOTE: other starter_file_type are not tested because they involve randomness and so are not deterministic
-      before { create :starter_file_group_with_entries, assignment: assignment, structure: structure }
+      before { create(:starter_file_group_with_entries, assignment: assignment, structure: structure) }
       it 'should send a zip file containing the correct content' do
         expect(controller).to receive(:send_file) do |file_path|
           Zip::File.open(Rails.root + file_path) do |zipfile|
@@ -1384,28 +1384,28 @@ describe AssignmentsController do
       end
     end
     context 'a student' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       it 'should respond with 403' do
         subject
         expect(response).to have_http_status(403)
       end
     end
     context 'a grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       include_examples 'download sample starter files'
     end
     context 'an instructor' do
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       include_examples 'download sample starter files'
     end
   end
 
   describe '#download_config_files' do
-    let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+    let!(:assignment) { create(:assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45')) }
     # criterion name matches automated-test-specs.json
-    let!(:criteria) { create :checkbox_criterion, assignment: assignment, name: 'Optimal' }
-    let!(:annotation) { create :annotation_category, assignment: assignment }
-    let!(:starter_files) { create :starter_file_group_with_entries, assignment: assignment }
+    let!(:criteria) { create(:checkbox_criterion, assignment: assignment, name: 'Optimal') }
+    let!(:annotation) { create(:annotation_category, assignment: assignment) }
+    let!(:starter_files) { create(:starter_file_group_with_entries, assignment: assignment) }
     subject do
       get_as user, :download_config_files,
              params: { id: downloaded_assignment.id, course_id: downloaded_assignment.course.id }
@@ -1513,8 +1513,8 @@ describe AssignmentsController do
         end
 
         it 'should have a valid tags file' do
-          tag1 = create :tag, assessment_id: assignment.id
-          tag2 = create :tag, assessment_id: assignment.id
+          tag1 = create(:tag, assessment_id: assignment.id)
+          tag2 = create(:tag, assessment_id: assignment.id)
           subject
           tags = read_file_from_zip(response.body, 'tags.yml')
           tags = tags.map(&:symbolize_keys)
@@ -1570,7 +1570,7 @@ describe AssignmentsController do
 
     # Check to ensure appropriate access is given
     context 'a student' do
-      let(:user) { create :student }
+      let(:user) { create(:student) }
       it 'should respond with 403' do
         subject
         expect(response).to have_http_status(403)
@@ -1578,19 +1578,19 @@ describe AssignmentsController do
     end
     context 'a grader' do
       context 'without assignment management permissions' do
-        let(:user) { create :ta }
+        let(:user) { create(:ta) }
         it 'should respond with 403' do
           subject
           expect(response).to have_http_status(403)
         end
       end
       context 'with assignment management permissions' do
-        let(:user) { create :ta, manage_assessments: true }
+        let(:user) { create(:ta, manage_assessments: true) }
         include_examples 'download sample config files'
       end
     end
     context 'an instructor' do
-      let(:user) { create :instructor }
+      let(:user) { create(:instructor) }
       include_examples 'download sample config files'
     end
   end
@@ -1768,7 +1768,7 @@ describe AssignmentsController do
 
     # Check to ensure appropriate access is given
     context 'a student' do
-      let(:user) { create :student }
+      let(:user) { create(:student) }
       it 'should respond with 403' do
         subject
         expect(response).to have_http_status(403)
@@ -1776,25 +1776,25 @@ describe AssignmentsController do
     end
     context 'a grader' do
       context 'without assignment management permissions' do
-        let(:user) { create :ta }
+        let(:user) { create(:ta) }
         it 'should respond with 403' do
           subject
           expect(response).to have_http_status(403)
         end
       end
       context 'with assignment management permissions' do
-        let(:user) { create :ta, manage_assessments: true }
+        let(:user) { create(:ta, manage_assessments: true) }
         include_examples 'check valid assignment config files'
       end
     end
     context 'an instructor' do
-      let(:user) { create :instructor }
+      let(:user) { create(:instructor) }
       include_examples 'check valid assignment config files'
     end
   end
 
   describe 'download_and_upload_config_file' do
-    let(:user) { create :instructor }
+    let(:user) { create(:instructor) }
 
     shared_examples 'assignment content is copied over' do
       it 'copies over the main assignment attributes' do
@@ -1876,18 +1876,18 @@ describe AssignmentsController do
     end
 
     context 'Normal assignment with everything' do
-      let!(:assignment) { create :assignment, due_date: Time.zone.parse('2042-02-10 15:30:45') }
-      let!(:criteria) { create :flexible_criterion, assignment: assignment }
-      let!(:annotation) { create :annotation_category, assignment: assignment }
-      let!(:submission_rule) { create :grace_period_submission_rule, assignment: assignment }
-      let!(:assignment_file1) { create :assignment_file, assignment: assignment }
-      let!(:assignment_file2) { create :assignment_file, filename: 'sample.txt', assignment: assignment }
-      let!(:tag1) { create :tag, assessment_id: assignment.id }
-      let!(:tag2) { create :tag, assessment_id: assignment.id }
-      let!(:tag3) { create :tag, assessment_id: assignment.id }
-      let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:assignment) { create(:assignment, due_date: Time.zone.parse('2042-02-10 15:30:45')) }
+      let!(:criteria) { create(:flexible_criterion, assignment: assignment) }
+      let!(:annotation) { create(:annotation_category, assignment: assignment) }
+      let!(:submission_rule) { create(:grace_period_submission_rule, assignment: assignment) }
+      let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+      let!(:assignment_file2) { create(:assignment_file, filename: 'sample.txt', assignment: assignment) }
+      let!(:tag1) { create(:tag, assessment_id: assignment.id) }
+      let!(:tag2) { create(:tag, assessment_id: assignment.id) }
+      let!(:tag3) { create(:tag, assessment_id: assignment.id) }
+      let!(:starter_group1) { create(:starter_file_group_with_entries, assignment: assignment) }
       let!(:starter_group1_files) { starter_group1.files_and_dirs }
-      let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group2) { create(:starter_file_group_with_entries, assignment: assignment) }
       let!(:starter_group2_files) { starter_group2.files_and_dirs }
       let!(:assignment_properties) do
         create_automated_test(assignment)
@@ -1961,17 +1961,19 @@ describe AssignmentsController do
     end
 
     context 'Peer review assignment with everything' do
-      let!(:parent_assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:parent_assignment) do
+        create(:assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45'))
+      end
       let!(:assignment) { Assignment.find_by(parent_assessment_id: parent_assignment.id) }
-      let!(:criteria) { create :flexible_criterion, assignment: assignment }
-      let!(:annotation) { create :annotation_category, assignment: assignment }
-      let!(:tag1) { create :tag, assessment_id: assignment.id }
-      let!(:tag2) { create :tag, assessment_id: assignment.id }
-      let!(:tag3) { create :tag, assessment_id: assignment.id }
-      let!(:tag4) { create :tag, assessment_id: parent_assignment.id }
-      let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:criteria) { create(:flexible_criterion, assignment: assignment) }
+      let!(:annotation) { create(:annotation_category, assignment: assignment) }
+      let!(:tag1) { create(:tag, assessment_id: assignment.id) }
+      let!(:tag2) { create(:tag, assessment_id: assignment.id) }
+      let!(:tag3) { create(:tag, assessment_id: assignment.id) }
+      let!(:tag4) { create(:tag, assessment_id: parent_assignment.id) }
+      let!(:starter_group1) { create(:starter_file_group_with_entries, assignment: assignment) }
       let!(:starter_group1_files) { starter_group1.files_and_dirs }
-      let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group2) { create(:starter_file_group_with_entries, assignment: assignment) }
       let!(:starter_group2_files) { starter_group2.files_and_dirs }
       let!(:assignment_properties) { assignment.assignment_properties }
       let!(:parent_assignment_properties) { parent_assignment.assignment_properties }
@@ -2020,18 +2022,18 @@ describe AssignmentsController do
   end
 
   describe '#create_lti_grades' do
-    let!(:course) { create :course }
-    let(:instructor) { create :instructor, course: course }
-    let!(:lti) { create :lti_deployment, course: course }
-    let(:assignment) { create :assignment_with_criteria_and_results }
+    let!(:course) { create(:course) }
+    let(:instructor) { create(:instructor, course: course) }
+    let!(:lti) { create(:lti_deployment, course: course) }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:scope) { LtiDeployment::LTI_SCOPES['names_role'] }
-    let!(:lti_service_lineitem) { create :lti_service_lineitem, lti_deployment: lti }
-    let(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti }
+    let!(:lti_service_lineitem) { create(:lti_service_lineitem, lti_deployment: lti) }
+    let(:lti_service_namesrole) { create(:lti_service_namesrole, lti_deployment: lti) }
     let(:status) { 'Active' }
     before :each do
       Result.joins(grouping: :assignment)
             .where('assignment.id': assignment.id).update!(released_to_students: true)
-      User.find_each { |usr| create :lti_user, user: usr, lti_client: lti.lti_client }
+      User.find_each { |usr| create(:lti_user, user: usr, lti_client: lti.lti_client) }
     end
     it 'redirects if not logged in' do
       post :create_lti_grades, params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
@@ -2045,12 +2047,12 @@ describe AssignmentsController do
   end
 
   context '#destroy' do
-    let!(:instructor) { create :instructor }
+    let!(:instructor) { create(:instructor) }
     let!(:course) { instructor.course }
-    let!(:assignment) { create :assignment }
+    let!(:assignment) { create(:assignment) }
 
     # lazy initialized
-    let(:grouping) { create :grouping, assignment: assignment }
+    let(:grouping) { create(:grouping, assignment: assignment) }
 
     it 'should fail to DELETE because of unauthorized request' do
       delete :destroy, params: { course_id: course.id, id: assignment.id }
@@ -2077,7 +2079,7 @@ describe AssignmentsController do
     shared_examples 'handling associated entity upon destroy' do |entity|
       it "should remove associated #{entity}" do
         # NOTE: the next line assumes that an `assignment` is sufficient for the factory of `entity`
-        assoc_entity = create entity, assignment: assignment
+        assoc_entity = create(entity, assignment: assignment)
         # Deleting the assignment - should be successful since there are no groupings
         delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
         expect(Assignment.exists?(assignment.id)).to be(false)

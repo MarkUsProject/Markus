@@ -4,7 +4,7 @@ describe StarterFileEntry do
   it { is_expected.to have_many(:groupings).through(:grouping_starter_file_entries) }
   it { is_expected.to have_one(:course) }
 
-  let(:starter_file_entry) { create :starter_file_entry }
+  let(:starter_file_entry) { create(:starter_file_entry) }
   context 'more validations' do
     it 'should be valid when the entry exists on disk' do
       expect(starter_file_entry).to be_valid
@@ -30,7 +30,7 @@ describe StarterFileEntry do
     end
     context 'when the entry is a folder' do
       let(:content) { { 'subdir/': nil, 'subdir2/': nil, 'subdir/file.txt': 'other content' } }
-      let(:starter_file_entry) { create :starter_file_entry, is_file: false, extra_structure: content }
+      let(:starter_file_entry) { create(:starter_file_entry, is_file: false, extra_structure: content) }
       it 'should contain the correct entries' do
         entries = content.keys.map { |c| (starter_file_entry.full_path + c.to_s).realpath }
         expect(starter_file_entry.files_and_dirs).to contain_exactly(starter_file_entry.full_path, *entries)
@@ -41,7 +41,7 @@ describe StarterFileEntry do
   describe '#add_files_to_zip_file' do
     let(:zip_path) { Rails.root.join('tmp/test-file.zip') }
     let(:content) { { subdir: nil, subdir2: nil, 'subdir/file.txt': 'other content' } }
-    let(:starter_file_entry) { create :starter_file_entry, is_file: false, extra_structure: content }
+    let(:starter_file_entry) { create(:starter_file_entry, is_file: false, extra_structure: content) }
     it 'should add files to an open zip file' do
       FileUtils.rm_f(zip_path)
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|

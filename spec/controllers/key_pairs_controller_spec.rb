@@ -1,5 +1,5 @@
 describe KeyPairsController do
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
 
   before :each do
     allow(Settings.repository).to receive(:type).and_return('git')

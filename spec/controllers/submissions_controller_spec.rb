@@ -881,7 +881,7 @@ describe SubmissionsController do
       end
 
       context 'when at least one submission can be collected' do
-        let(:instructor2) { create :instructor }
+        let(:instructor2) { create(:instructor) }
         let(:params) do
           { course_id: course.id,
             assignment_id: @assignment.id,
@@ -1291,16 +1291,16 @@ describe SubmissionsController do
     end
 
     describe 'prepare and download a zip file' do
-      let(:assignment) { create :assignment }
+      let(:assignment) { create(:assignment) }
       let(:grouping_ids) do
         create_list(:grouping_with_inviter, 3, assignment: assignment).map.with_index do |grouping, i|
           submit_file(grouping.assignment, grouping, "file#{i}", "file#{i}'s content\n")
           grouping.id
         end
       end
-      let(:unassigned_ta) { create :ta }
+      let(:unassigned_ta) { create(:ta) }
       let(:assigned_ta) do
-        ta = create :ta
+        ta = create(:ta)
         grouping_ids # make sure groupings are created
         assignment.groupings.each do |grouping|
           create(:ta_membership, role: ta, grouping: grouping)
@@ -1386,7 +1386,7 @@ describe SubmissionsController do
   end
 
   describe 'An unauthenticated or unauthorized role' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     it 'should not be able to download the repository checkout commands' do
       get :download_repo_checkout_commands, params: { course_id: course.id, assignment_id: assignment.id }
       is_expected.to respond_with(:redirect)
@@ -1563,7 +1563,7 @@ describe SubmissionsController do
     end
 
     context 'called with a collected submission' do
-      let(:submission_file) { create :submission_file, submission: submission, filename: filename }
+      let(:submission_file) { create(:submission_file, submission: submission, filename: filename) }
       subject do
         get_as instructor, :notebook_content,
                params: { course_id: course.id, assignment_id: assignment.id, select_file_id: submission_file.id }
@@ -1729,8 +1729,8 @@ describe SubmissionsController do
     end
   end
   describe '#download_summary' do
-    let(:assignment) { create :assignment }
-    let!(:groupings) { create_list :grouping_with_inviter_and_submission, 2, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let!(:groupings) { create_list(:grouping_with_inviter_and_submission, 2, assignment: assignment) }
     let(:returned_group_names) do
       header = nil
       groups = []
@@ -1746,7 +1746,7 @@ describe SubmissionsController do
     subject { get_as role, 'download_summary', params: { course_id: course.id, assignment_id: assignment.id } }
     context 'an instructor' do
       before { subject }
-      let(:role) { create :instructor }
+      let(:role) { create(:instructor) }
       it 'should be allowed' do
         expect(response).to have_http_status(:success)
       end
@@ -1761,7 +1761,7 @@ describe SubmissionsController do
       end
     end
     context 'a grader' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       it 'should be allowed' do
         subject
         expect(response).to have_http_status(:success)
@@ -1773,14 +1773,14 @@ describe SubmissionsController do
         end
       end
       context 'who has been assigned a single grouping' do
-        before { create :ta_membership, role: role, grouping: groupings.first }
+        before { create(:ta_membership, role: role, grouping: groupings.first) }
         it 'should download the group info for the assigned group' do
           subject
           expect(returned_group_names).to contain_exactly(groupings.first.group.group_name)
         end
       end
       context 'who has been assigned all groupings' do
-        before { groupings.each { |g| create :ta_membership, role: role, grouping: g } }
+        before { groupings.each { |g| create(:ta_membership, role: role, grouping: g) } }
         it 'should download the group info for the assigned group' do
           subject
           expect(returned_group_names).to contain_exactly(*groupings.map { |g| g.group.group_name })
@@ -1796,7 +1796,7 @@ describe SubmissionsController do
     end
     context 'a student' do
       before { subject }
-      let(:role) { create :student }
+      let(:role) { create(:student) }
       it 'should be forbidden' do
         expect(response).to have_http_status(403)
       end
@@ -1840,19 +1840,19 @@ describe SubmissionsController do
   SAMPLE_FILE_NAME = 'file.java'.freeze
   context 'file_download tests' do
     let(:course) { assignment.course }
-    let(:assignment) { create :assignment }
-    let(:student) { create :student, grace_credits: 2 }
-    let(:instructor) { create :instructor }
-    let(:ta) { create :ta }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
-    let(:submission) { create :version_used_submission, grouping: grouping }
+    let(:assignment) { create(:assignment) }
+    let(:student) { create(:student, grace_credits: 2) }
+    let(:instructor) { create(:instructor) }
+    let(:ta) { create(:ta) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: student) }
+    let(:submission) { create(:version_used_submission, grouping: grouping) }
     let(:incomplete_result) { submission.current_result }
-    let(:complete_result) { create :complete_result, submission: submission }
-    let(:submission_file) { create :submission_file, submission: submission }
+    let(:complete_result) { create(:complete_result, submission: submission) }
+    let(:submission_file) { create(:submission_file, submission: submission) }
     let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
-    let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+    let(:rubric_mark) { create(:rubric_mark, result: incomplete_result, criterion: rubric_criterion) }
     let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
-    let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+    let(:flexible_mark) { create(:flexible_mark, result: incomplete_result, criterion: flexible_criterion) }
     let(:from_codeviewer) { nil }
 
     shared_examples 'download files' do
@@ -1907,7 +1907,7 @@ describe SubmissionsController do
         end
       end
       context 'show in browser is true' do
-        let(:submission_file) { create :submission_file, filename: filename, submission: submission }
+        let(:submission_file) { create(:submission_file, filename: filename, submission: submission) }
         subject do
           get :download_file, params: { course_id: course.id,
                                         select_file_id: submission_file.id,
@@ -2075,11 +2075,11 @@ describe SubmissionsController do
         end
       end
       context 'that has been assigned to grade the group\'s result' do
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+        let!(:ta_membership) { create(:ta_membership, role: ta, grouping: grouping) }
         include_examples 'shared ta and instructor tests'
       end
       context 'that can manage submissions' do
-        let(:ta) { create :ta, manage_submissions: true }
+        let(:ta) { create(:ta, manage_submissions: true) }
         include_examples 'shared ta and instructor tests'
       end
     end
@@ -2097,13 +2097,13 @@ describe SubmissionsController do
           it { expect(response).to have_http_status(:forbidden) }
         end
 
-        let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
+        let(:assignment) { create(:assignment_with_peer_review_and_groupings_results) }
         let(:incomplete_result) { assignment.groupings.first.current_result }
         let(:submission) { incomplete_result.submission }
         context 'role is a reviewer for the current result' do
           let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
           let(:student) { reviewer_grouping.accepted_students.first }
-          before { create :peer_review, reviewer: reviewer_grouping, result: incomplete_result }
+          before { create(:peer_review, reviewer: reviewer_grouping, result: incomplete_result) }
           context 'from_codeviewer is true' do
             let(:from_codeviewer) { true }
             include_examples 'download files'
@@ -2143,26 +2143,26 @@ describe SubmissionsController do
   end
   context 'editing remark request status' do
     let(:course) { assignment.course }
-    let(:assignment) { create :assignment }
-    let(:student) { create :student, grace_credits: 2 }
-    let(:instructor) { create :instructor }
-    let(:ta) { create :ta }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
-    let(:submission) { create :version_used_submission, grouping: grouping }
+    let(:assignment) { create(:assignment) }
+    let(:student) { create(:student, grace_credits: 2) }
+    let(:instructor) { create(:instructor) }
+    let(:ta) { create(:ta) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: student) }
+    let(:submission) { create(:version_used_submission, grouping: grouping) }
     let(:incomplete_result) { submission.current_result }
-    let(:complete_result) { create :complete_result, submission: submission }
-    let(:submission_file) { create :submission_file, submission: submission }
+    let(:complete_result) { create(:complete_result, submission: submission) }
+    let(:submission_file) { create(:submission_file, submission: submission) }
     let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
-    let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+    let(:rubric_mark) { create(:rubric_mark, result: incomplete_result, criterion: rubric_criterion) }
     let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
-    let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+    let(:flexible_mark) { create(:flexible_mark, result: incomplete_result, criterion: flexible_criterion) }
     let(:from_codeviewer) { nil }
     describe '#update_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { allow_remarks: true }) }
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       let(:student) { grouping.inviter }
       let(:submission) do
-        s = create :submission, grouping: grouping
+        s = create(:submission, grouping: grouping)
         s.get_original_result.update!(released_to_students: true)
         s
       end
@@ -2218,12 +2218,12 @@ describe SubmissionsController do
     end
 
     describe '#cancel_remark_request' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { allow_remarks: true } }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { allow_remarks: true }) }
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       let(:student) { grouping.inviter }
       let(:submission) do
-        s = create :submission, grouping: grouping, remark_request: 'original message',
-                                remark_request_timestamp: Time.current
+        s = create(:submission, grouping: grouping, remark_request: 'original message',
+                                remark_request_timestamp: Time.current)
         s.make_remark_result
         s.results.reload
         s.remark_result.update!(marking_state: Result::MARKING_STATES[:incomplete])

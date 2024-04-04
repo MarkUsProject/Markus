@@ -18,7 +18,7 @@ describe AutotestCancelJob do
   describe '#perform' do
     subject { described_class.perform_now(assignment.id, test_run_ids) }
     context 'tests are set up for an assignment' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 }) }
       it 'should send an api request to the autotester' do
         expect_any_instance_of(AutotestCancelJob).to receive(:send_request!) do |_job, net_obj, uri|
           expect(net_obj.instance_of?(Net::HTTP::Delete)).to be true

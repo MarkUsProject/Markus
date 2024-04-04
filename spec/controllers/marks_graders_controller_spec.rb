@@ -1,5 +1,5 @@
 describe MarksGradersController do
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:course) { grade_entry_form.course }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }

@@ -1,5 +1,5 @@
 describe Course do
-  let(:course) { create :course }
+  let(:course) { create(:course) }
   context 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { expect(course).to validate_uniqueness_of(:name) }
@@ -98,7 +98,7 @@ describe Course do
       context 'when the course has a single assignment' do
         # NOTE: the created assignment must be reloaded as the value for assignment1.due_date stored in the database is
         # less precise than that stored by ruby.
-        let!(:assignment1) { (create :assignment, due_date: 5.days.ago, course: course).reload }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course).reload }
         it 'should return a yml representation of the assignments in a course with a single assignment' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [create_assignment_symbol_to_value_map(assignment1)] }.to_yaml
@@ -106,9 +106,9 @@ describe Course do
         end
       end
       context 'when the course has multiple assignments' do
-        let!(:assignment1) { (create :assignment, due_date: 5.days.ago, course: course).reload }
-        let!(:assignment2) { (create :assignment, due_date: 1.day.ago, course: course).reload }
-        let!(:assignment3) { (create :assignment, due_date: 8.days.from_now, course: course).reload }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course).reload }
+        let!(:assignment2) { create(:assignment, due_date: 1.day.ago, course: course).reload }
+        let!(:assignment3) { create(:assignment, due_date: 8.days.from_now, course: course).reload }
         it 'should return a yml representation of the assignments in a course with multiple assignments' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [create_assignment_symbol_to_value_map(assignment1),
@@ -127,7 +127,7 @@ describe Course do
         end
       end
       context 'when the course has a single assignment' do
-        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
         it 'should return a csv representation of the assignments in a course with a single assignment' do
           result = course.get_assignment_list('csv').to_s
           expected_result = create_assignment_csv_string(assignment1)
@@ -135,9 +135,9 @@ describe Course do
         end
       end
       context 'when the course has multiple assignments' do
-        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
-        let!(:assignment2) { create :assignment, due_date: 1.day.ago, course: course }
-        let!(:assignment3) { create :assignment, due_date: 8.days.from_now, course: course }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
+        let!(:assignment2) { create(:assignment, due_date: 1.day.ago, course: course) }
+        let!(:assignment3) { create(:assignment, due_date: 8.days.from_now, course: course) }
         it 'should return a csv representation of the assignments in a course with multiple assignments' do
           result = course.get_assignment_list('csv').to_s
           expected_result = ''
@@ -400,13 +400,13 @@ describe Course do
     context 'when a course has one assignment' do
       context 'when the result from the assignment query does not return the assignment' do
         context 'when the assignment is a scanned exam and not hidden' do
-          let(:assignment) { create :assignment_for_scanned_exam }
+          let(:assignment) { create(:assignment_for_scanned_exam) }
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
         end
         context 'when the assignment is hidden' do
-          let(:assignment) { create :assignment, is_hidden: true }
+          let(:assignment) { create(:assignment, is_hidden: true) }
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
@@ -414,13 +414,13 @@ describe Course do
       end
       context 'when an assignment has no require files' do
         context 'when assignment.only_required_files is false' do
-          let(:assignment) { create :assignment, only_required_files: false }
+          let(:assignment) { create(:assignment, only_required_files: false) }
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
         end
         context 'when assignment.only_required_files is true' do
-          let(:assignment) { create :assignment, only_required_files: true }
+          let(:assignment) { create(:assignment, only_required_files: true) }
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
@@ -433,7 +433,7 @@ describe Course do
         end
         context 'when assignment.only_required_files is false' do
           let(:assignment) do
-            create :assignment, assignment_properties_attributes: { only_required_files: false }
+            create(:assignment, assignment_properties_attributes: { only_required_files: false })
           end
           it 'should include both files in the matching lines' do
             repo_folder = assignment.repository_folder
@@ -442,7 +442,7 @@ describe Course do
         end
         context 'when assignment.only_required_files is true' do
           let(:assignment) do
-            create :assignment, assignment_properties_attributes: { only_required_files: true }
+            create(:assignment, assignment_properties_attributes: { only_required_files: true })
           end
           it 'should include both files in the matching lines' do
             repo_folder = assignment.repository_folder
@@ -452,7 +452,7 @@ describe Course do
       end
     end
     context 'when a course has multiple assignments' do
-      let(:assignments) { create_list :assignment, 2, course: course }
+      let(:assignments) { create_list(:assignment, 2, course: course) }
       let(:expected) { assignments.map { |_| [] } }
       before do
         create(:assignment_file, assignment: assignments.last, filename: 'a')
@@ -482,7 +482,7 @@ describe Course do
     end
 
     context 'when one assignment is found' do
-      let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
+      let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
 
       it 'returns the only assignment' do
         result = course.get_current_assignment
@@ -492,8 +492,8 @@ describe Course do
 
     context 'when more than one assignment is found' do
       context 'when there is an assignment due in 3 days' do
-        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
-        let!(:assignment2) { create :assignment, due_date: 3.days.from_now, course: course }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
+        let!(:assignment2) { create(:assignment, due_date: 3.days.from_now, course: course) }
 
         it 'returns the assignment due in 3 days' do
           result = course.get_current_assignment
@@ -503,9 +503,9 @@ describe Course do
       end
 
       context 'when the next assignment is due in more than 3 days' do
-        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
-        let!(:assignment2) { create :assignment, due_date: 1.day.ago, course: course }
-        let!(:assignment3) { create :assignment, due_date: 8.days.from_now, course: course }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
+        let!(:assignment2) { create(:assignment, due_date: 1.day.ago, course: course) }
+        let!(:assignment3) { create(:assignment, due_date: 8.days.from_now, course: course) }
 
         it 'returns the assignment that was most recently due' do
           result = course.get_current_assignment
@@ -515,9 +515,9 @@ describe Course do
       end
 
       context 'when all assignments are due in more than 3 days' do
-        let!(:assignment1) { create :assignment, due_date: 5.days.from_now, course: course }
-        let!(:assignment2) { create :assignment, due_date: 12.days.from_now, course: course }
-        let!(:assignment3) { create :assignment, due_date: 19.days.from_now, course: course }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.from_now, course: course) }
+        let!(:assignment2) { create(:assignment, due_date: 12.days.from_now, course: course) }
+        let!(:assignment3) { create(:assignment, due_date: 19.days.from_now, course: course) }
 
         it 'returns the assignment that is due first' do
           result = course.get_current_assignment
@@ -527,9 +527,9 @@ describe Course do
       end
 
       context 'when all assignments are past the due date' do
-        let!(:assignment1) { create :assignment, due_date: 5.days.ago, course: course }
-        let!(:assignment2) { create :assignment, due_date: 12.days.ago, course: course }
-        let!(:assignment3) { create :assignment, due_date: 19.days.ago, course: course }
+        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
+        let!(:assignment2) { create(:assignment, due_date: 12.days.ago, course: course) }
+        let!(:assignment3) { create(:assignment, due_date: 19.days.ago, course: course) }
 
         it 'returns the assignment that was due most recently' do
           result = course.get_current_assignment
@@ -549,8 +549,8 @@ describe Course do
     end
 
     context 'when there is a student in the course' do
-      let!(:user1) { create :end_user }
-      let!(:student1) { create :student, user: user1, course: course }
+      let!(:user1) { create(:end_user) }
+      let!(:student1) { create(:student, user: user1, course: course) }
       it 'returns the data of the student' do
         result = course.export_student_data_csv
         expect(result).to eq("#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n")
@@ -558,10 +558,10 @@ describe Course do
     end
 
     context 'where there are multiple students in the course' do
-      let!(:user1) { create :end_user }
-      let!(:user2) { create :end_user }
-      let!(:student1) { create :student, user: user1, course: course }
-      let!(:student2) { create :student, user: user2, course: course }
+      let!(:user1) { create(:end_user) }
+      let!(:user2) { create(:end_user) }
+      let!(:student1) { create(:student, user: user1, course: course) }
+      let!(:student2) { create(:student, user: user2, course: course) }
       it 'returns the data of the students' do
         result = course.export_student_data_csv
 
@@ -583,8 +583,8 @@ describe Course do
     end
 
     context 'where there is a student in the course' do
-      let!(:user1) { create :end_user }
-      let!(:student1) { create :student, user: user1, course: course }
+      let!(:user1) { create(:end_user) }
+      let!(:student1) { create(:student, user: user1, course: course) }
       it 'returns the data of the student' do
         result = course.export_student_data_yml
         expected = [{ user_name: user1.user_name,
@@ -598,10 +598,10 @@ describe Course do
     end
 
     context 'when there are multiple students in the course' do
-      let!(:user1) { create :end_user }
-      let!(:user2) { create :end_user }
-      let!(:student1) { create :student, user: user1, course: course }
-      let!(:student2) { create :student, user: user2, course: course }
+      let!(:user1) { create(:end_user) }
+      let!(:user2) { create(:end_user) }
+      let!(:student1) { create(:student, user: user1, course: course) }
+      let!(:student2) { create(:student, user: user2, course: course) }
       it 'returns the data of the students' do
         result = course.export_student_data_yml
 

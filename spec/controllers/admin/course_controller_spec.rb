@@ -260,8 +260,8 @@ describe Admin::CoursesController do
         allow_any_instance_of(AutotestSetting).to receive(:register).and_return('someapikey')
         allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
       end
-      let(:autotest_setting) { create :autotest_setting }
-      let(:course) { create :course, autotest_setting: autotest_setting }
+      let(:autotest_setting) { create(:autotest_setting) }
+      let(:course) { create(:course, autotest_setting: autotest_setting) }
     end
     describe '#test_autotest_connection' do
       subject { get_as admin, :test_autotest_connection, params: { id: course.id } }

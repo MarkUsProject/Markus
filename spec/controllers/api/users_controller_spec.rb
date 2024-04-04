@@ -1,6 +1,6 @@
 describe Api::UsersController do
-  let(:user) { create :admin_user }
-  let(:end_users) { create_list :end_user, 3 }
+  let(:user) { create(:admin_user) }
+  let(:end_users) { create_list(:end_user, 3) }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -90,7 +90,7 @@ describe Api::UsersController do
         end
       end
       context 'a non-admin user' do
-        let(:user) { create :end_user }
+        let(:user) { create(:end_user) }
         it 'should render 403' do
           get :index, format: :json
           expect(response).to have_http_status(:forbidden)
@@ -138,7 +138,7 @@ describe Api::UsersController do
         end
       end
       context 'a non-admin user' do
-        let(:user) { create :end_user }
+        let(:user) { create(:end_user) }
         it 'should render 403' do
           get :show, params: { id: end_users[0].id }, format: :json
           expect(response).to have_http_status(:forbidden)
@@ -152,7 +152,7 @@ describe Api::UsersController do
                                   first_name: new_user.first_name, last_name: new_user.last_name }
         end
         context 'when creating a new end user' do
-          let(:new_user) { build :end_user }
+          let(:new_user) { build(:end_user) }
           it 'should be successful' do
             expect(response).to have_http_status(201)
           end
@@ -161,7 +161,7 @@ describe Api::UsersController do
           end
         end
         context 'when creating a new admin user' do
-          let(:new_user) { build :admin_user }
+          let(:new_user) { build(:admin_user) }
           it 'should be successful' do
             expect(response).to have_http_status(201)
           end
@@ -170,26 +170,26 @@ describe Api::UsersController do
           end
         end
         context 'when trying to create a user who already exists' do
-          let(:new_user) { create :end_user }
+          let(:new_user) { create(:end_user) }
           it 'should raise a 422 error' do
             expect(response).to have_http_status(409)
           end
         end
         context 'when creating a user with an invalid user_name' do
-          let(:new_user) { build :end_user, user_name: '   dragon ..' }
+          let(:new_user) { build(:end_user, user_name: '   dragon ..') }
           it 'should raise a 422 error' do
             expect(response).to have_http_status(422)
           end
         end
         context 'when creating a user with an invalid type' do
-          let(:new_user) { build :end_user, type: 'Dragon' }
+          let(:new_user) { build(:end_user, type: 'Dragon') }
           it 'should raise a 422 error' do
             expect(response).to have_http_status(422)
           end
         end
       end
       context 'a non-admin user' do
-        let(:user) { create :end_user }
+        let(:user) { create(:end_user) }
         it 'should render 403' do
           post :create, format: :json
           expect(response).to have_http_status(:forbidden)
@@ -198,8 +198,8 @@ describe Api::UsersController do
     end
     describe '#update' do
       context 'an admin user' do
-        let(:end_user) { create :end_user }
-        let(:tmp_user) { build :end_user }
+        let(:end_user) { create(:end_user) }
+        let(:tmp_user) { build(:end_user) }
         context 'when updating an existing user' do
           it 'should update a user name' do
             put :update, params: { id: end_user.id, user_name: tmp_user.user_name }
@@ -222,7 +222,7 @@ describe Api::UsersController do
         end
       end
       context 'a non-admin user' do
-        let(:user) { create :end_user }
+        let(:user) { create(:end_user) }
         it 'should render 403' do
           put :update, params: { id: end_users[0].id }, format: :json
           expect(response).to have_http_status(:forbidden)
@@ -231,8 +231,8 @@ describe Api::UsersController do
     end
     describe '#update_by_username' do
       context 'an admin user' do
-        let(:end_user) { create :end_user }
-        let(:tmp_user) { build :end_user }
+        let(:end_user) { create(:end_user) }
+        let(:tmp_user) { build(:end_user) }
         context 'when updating an existing user' do
           it 'should update a first name' do
             put :update_by_username, params: { user_name: end_user.user_name, first_name: tmp_user.first_name }
@@ -249,7 +249,7 @@ describe Api::UsersController do
         end
       end
       context 'a non-admin user' do
-        let(:user) { create :end_user }
+        let(:user) { create(:end_user) }
         it 'should render 403' do
           put :update_by_username, params: { id: end_users[0].id }, format: :json
           expect(response).to have_http_status(:forbidden)

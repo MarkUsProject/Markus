@@ -1,6 +1,6 @@
 describe CriterionTaAssociation do
   context 'validations and associations' do
-    subject { create :criterion_ta_association }
+    subject { create(:criterion_ta_association) }
     it { is_expected.to belong_to :ta }
     it { is_expected.to belong_to :criterion }
     it { is_expected.to belong_to :assignment }
@@ -11,14 +11,14 @@ describe CriterionTaAssociation do
 
   describe '#self.from_csv' do
     let!(:grader) do
-      create :ta, user_attributes: { user_name: 'beaker', last_name: 'beaker', first_name: 'beaker', type: 'EndUser' }
+      create(:ta, user_attributes: { user_name: 'beaker', last_name: 'beaker', first_name: 'beaker', type: 'EndUser' })
     end
     let(:grader2) do
-      create :ta,
-             user_attributes: { user_name: 'drteeth', last_name: 'drteeth', first_name: 'drteeth', type: 'EndUser' }
+      create(:ta,
+             user_attributes: { user_name: 'drteeth', last_name: 'drteeth', first_name: 'drteeth', type: 'EndUser' })
     end
-    let(:criterion) { create :flexible_criterion, name: 'criteria1' }
-    let!(:cta) { create :criterion_ta_association, criterion: criterion, ta: grader2 }
+    let(:criterion) { create(:flexible_criterion, name: 'criteria1') }
+    let!(:cta) { create(:criterion_ta_association, criterion: criterion, ta: grader2) }
     it 'should remove existing criterion ta associations' do
       file = file_fixture('criteria_ta_association/simple.csv')
       CriterionTaAssociation.from_csv(cta.assignment, file.read, true)
@@ -44,7 +44,7 @@ describe CriterionTaAssociation do
     it 'should update criterion coverage counts' do
       file = file_fixture('criteria_ta_association/simple.csv')
       grouping = create(:grouping, assignment: criterion.assignment)
-      create :ta_membership, grouping: grouping, role: grader
+      create(:ta_membership, grouping: grouping, role: grader)
       expect { CriterionTaAssociation.from_csv(cta.assignment, file.read, false) }.to(
         change { grouping.reload.criteria_coverage_count }
       )
@@ -52,7 +52,7 @@ describe CriterionTaAssociation do
     it 'should update assigned groups counts' do
       file = file_fixture('criteria_ta_association/simple.csv')
       grouping = create(:grouping, assignment: criterion.assignment)
-      create :ta_membership, grouping: grouping, role: grader
+      create(:ta_membership, grouping: grouping, role: grader)
       expect { CriterionTaAssociation.from_csv(cta.assignment, file.read, false) }.to(
         change { criterion.reload.assigned_groups_count }
       )

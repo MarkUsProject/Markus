@@ -1,6 +1,6 @@
 describe AutotestSpecsJob do
   let(:host_with_port) { 'http://localhost:3000' }
-  let(:assignment) { create :assignment }
+  let(:assignment) { create(:assignment) }
   let(:dummy_return) { OpenStruct.new(body: { 'settings_id' => 43 }.to_json) }
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, assignment, {}] }
@@ -50,7 +50,7 @@ describe AutotestSpecsJob do
         allow(File).to receive(:read).and_return("123456789\n")
       end
       context 'tests are set up for an assignment' do
-        let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
+        let(:assignment) { create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 }) }
         it 'should send an api request to the autotester' do
           expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj, uri|
             expect(net_obj.instance_of?(Net::HTTP::Put)).to be true

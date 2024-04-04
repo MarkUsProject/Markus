@@ -4,7 +4,7 @@ describe GradeEntryFormsController do
     # initialize student DB entries
     @student = create(:student, user: create(:end_user, user_name: 'c8shosta'))
   end
-  let(:role) { create :instructor }
+  let(:role) { create(:instructor) }
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:course) { grade_entry_form.course }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
@@ -329,8 +329,8 @@ describe GradeEntryFormsController do
       get_as role, :download, params: { course_id: course.id, id: gef }
     end
     context 'when the user is a TA' do
-      let(:role) { create :ta }
-      let(:gef) { create :grade_entry_form_with_data }
+      let(:role) { create(:ta) }
+      let(:gef) { create(:grade_entry_form_with_data) }
       it 'returns no users when the ta is not assigned a user' do
         csv_array = [
           Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
@@ -627,8 +627,8 @@ describe GradeEntryFormsController do
   end
 
   describe '#switch' do
-    let(:gef) { create :grade_entry_form }
-    let(:gef2) { create :grade_entry_form }
+    let(:gef) { create(:grade_entry_form) }
+    let(:gef2) { create(:grade_entry_form) }
 
     shared_examples 'switch assignment tests' do
       before { controller.request.headers.merge(HTTP_REFERER: referer) }
@@ -674,19 +674,19 @@ describe GradeEntryFormsController do
     end
 
     context 'an instructor' do
-      let(:user) { create :instructor }
+      let(:user) { create(:instructor) }
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { edit_course_grade_entry_form_path(params) } }
       include_examples 'switch assignment tests'
     end
     context 'a grader' do
-      let(:user) { create :ta, manage_assessments: true }
+      let(:user) { create(:ta, manage_assessments: true) }
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { grades_course_grade_entry_form_path(params) } }
       include_examples 'switch assignment tests'
     end
     context 'a student' do
-      let(:user) { create :student }
+      let(:user) { create(:student) }
       let(:non_grade_entry_form_url) { nil }
       let(:fallback_url) { ->(params) { student_interface_course_grade_entry_form_url(params) } }
       include_examples 'switch assignment tests'
@@ -727,7 +727,7 @@ describe GradeEntryFormsController do
       end
     end
     context 'a TA' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
       it 'returns a 200 response' do
         subject
         expect(response.status).to eq 200
@@ -780,7 +780,7 @@ describe GradeEntryFormsController do
       expect(response).to have_http_status(404)
     end
     it 'successfully deletes a grade entry form with no non-nil grades' do
-      form = create :grade_entry_form, course_id: course.id, id: 4
+      form = create(:grade_entry_form, course_id: course.id, id: 4)
       first_student = create(:student)
       second_student = create(:student)
       grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
@@ -792,7 +792,7 @@ describe GradeEntryFormsController do
       expect(course.grade_entry_forms.exists?(form.id)).to be_falsey
     end
     it 'does not delete a grade entry form with non-nil grades' do
-      form = create :grade_entry_form, course_id: course.id, id: 4
+      form = create(:grade_entry_form, course_id: course.id, id: 4)
       first_student = create(:student)
       second_student = create(:student)
       grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)

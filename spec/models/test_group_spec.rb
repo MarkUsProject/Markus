@@ -1,5 +1,5 @@
 describe TestGroup do
-  subject { create :test_group, criterion: create(:rubric_criterion) }
+  subject { create(:test_group, criterion: create(:rubric_criterion)) }
   it { is_expected.to belong_to(:assignment) }
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to have_one(:course) }

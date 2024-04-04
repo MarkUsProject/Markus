@@ -1,6 +1,6 @@
 describe Api::RolesController do
-  let(:course) { create :course }
-  let(:instructor) { create :instructor, course: course }
+  let(:course) { create(:course) }
+  let(:instructor) { create(:instructor, course: course) }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -29,8 +29,8 @@ describe Api::RolesController do
     end
   end
   context 'An authenticated request' do
-    let!(:admin) { create :admin_role, course: course }
-    let(:students) { create_list :student, 3, course: course }
+    let!(:admin) { create(:admin_role, course: course) }
+    let(:students) { create_list(:student, 3, course: course) }
 
     shared_examples 'get all users' do
       context 'for a non-existent course' do
@@ -131,8 +131,8 @@ describe Api::RolesController do
     end
 
     shared_examples 'creating' do |method|
-      let(:end_user) { create :end_user }
-      let(:student) { build :student, user: end_user, course: course }
+      let(:end_user) { create(:end_user) }
+      let(:student) { build(:student, user: end_user, course: course) }
       let(:user_name) { student.user_name }
       let(:type) { student.type }
       let(:first_name) { student.first_name }
@@ -160,7 +160,7 @@ describe Api::RolesController do
             expect(created_student).not_to be_nil
           end
           context 'with other params' do
-            let(:section) { create :section }
+            let(:section) { create(:section) }
             let(:other_params) { { section_name: section.name, grace_credits: 5, hidden: true } }
             it 'should set the section' do
               expect(created_student.section.id).to eq section.id
@@ -207,8 +207,8 @@ describe Api::RolesController do
     end
 
     shared_examples 'updating' do
-      let(:student) { create :student, course: course, hidden: false }
-      let(:tmp_student) { build :student, course: course }
+      let(:student) { create(:student, course: course, hidden: false) }
+      let(:tmp_student) { build(:student, course: course) }
 
       context 'for a non-existant course' do
         it 'should return a 404 error' do
@@ -237,7 +237,7 @@ describe Api::RolesController do
           expect(student.last_name).not_to eq(tmp_student.last_name)
         end
         it 'should update a section' do
-          section = create :section
+          section = create(:section)
           put :update, params: { id: student.id, section_name: section.name, course_id: course.id }
           expect(response).to have_http_status(200)
           student.reload
@@ -263,7 +263,7 @@ describe Api::RolesController do
           end
         end
         context 'with a nil section name' do
-          let(:section) { create :section }
+          let(:section) { create(:section) }
           before :each do
             student.update!(section: section)
           end
@@ -326,7 +326,7 @@ describe Api::RolesController do
         include_examples 'finding a user'
 
         context 'for a different course' do
-          let(:student) { create :student, course: create(:course) }
+          let(:student) { create(:student, course: create(:course)) }
           it 'should return a 403 error' do
             get :show, params: { id: student.id, course_id: student.course_id }
             expect(response).to have_http_status(403)
@@ -349,7 +349,7 @@ describe Api::RolesController do
         it_behaves_like 'creating', :create_or_unhide
         context 'for a different course' do
           it 'should return a 403 error' do
-            student = build :student, course: course
+            student = build(:student, course: course)
             post :create_or_unhide, params: { user_name: student.user_name,
                                               type: student.type,
                                               course_id: create(:course).id }
@@ -359,7 +359,7 @@ describe Api::RolesController do
 
         context 'when trying to create a user who already exists' do
           it 'should unhide the user' do
-            student = create :student, course: course, hidden: true
+            student = create(:student, course: course, hidden: true)
             post :create_or_unhide, params: { user_name: student.user_name, type: :student, course_id: course.id }
             expect(student.reload.hidden).to be false
           end
@@ -367,12 +367,12 @@ describe Api::RolesController do
 
         context 'when trying to create an admin who already exists' do
           it 'returns a 403 error' do
-            admin = create :admin_role, course: course, hidden: true
+            admin = create(:admin_role, course: course, hidden: true)
             post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
             expect(response).to have_http_status(403)
           end
           it 'does not unhide the admin' do
-            admin = create :admin_role, course: course, hidden: true
+            admin = create(:admin_role, course: course, hidden: true)
             post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
             expect(admin.reload.hidden).to be true
           end
@@ -380,7 +380,7 @@ describe Api::RolesController do
 
         context 'when trying to create a new admin' do
           it 'returns a 403 error' do
-            admin_user = create :admin_user
+            admin_user = create(:admin_user)
             post :create_or_unhide, params: { user_name: admin_user.user_name,
                                               last_name: admin_user.last_name,
                                               first_name: admin_user.first_name,
@@ -396,7 +396,7 @@ describe Api::RolesController do
 
         context 'for a different course' do
           it 'should return a 403 error' do
-            student = build :student, course: course
+            student = build(:student, course: course)
             post :create, params: { user_name: student.user_name,
                                     type: student.type,
                                     course_id: create(:course).id }
@@ -406,7 +406,7 @@ describe Api::RolesController do
 
         context 'when trying to create a user who already exists' do
           it 'should raise a 422 error' do
-            student = create :student, course: course
+            student = create(:student, course: course)
             post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
             expect(response).to have_http_status(422)
           end
@@ -414,7 +414,7 @@ describe Api::RolesController do
 
         context 'when trying to create a new admin' do
           it 'returns a 403 error' do
-            admin_user = create :admin_user
+            admin_user = create(:admin_user)
             post :create, params: { user_name: admin_user.user_name,
                                     last_name: admin_user.last_name,
                                     first_name: admin_user.first_name,
@@ -429,7 +429,7 @@ describe Api::RolesController do
         include_examples 'updating'
 
         context 'for a different course' do
-          let(:student) { create :student, course: create(:course) }
+          let(:student) { create(:student, course: create(:course)) }
           it 'should return a 403 error' do
             put :update, params: { id: student.id, course_id: student.course_id }
             expect(response).to have_http_status(403)
@@ -437,7 +437,7 @@ describe Api::RolesController do
         end
 
         context 'updating an admin' do
-          let(:admin) { create :admin_role, hidden: false, course: course }
+          let(:admin) { create(:admin_role, hidden: false, course: course) }
           it 'returns a 403 error' do
             put :update, params: { id: admin.id, hidden: true, course_id: course.id }
             expect(response).to have_http_status(403)
@@ -495,7 +495,7 @@ describe Api::RolesController do
 
         context 'when trying to create a user who already exists' do
           it 'should unhide the user' do
-            student = create :student, course: course, hidden: true
+            student = create(:student, course: course, hidden: true)
             post :create_or_unhide, params: { user_name: student.user_name, type: :student, course_id: course.id }
             expect(student.reload.hidden).to be false
           end
@@ -503,12 +503,12 @@ describe Api::RolesController do
 
         context 'when trying to create an admin who already exists' do
           it 'is successful' do
-            admin = create :admin_role, course: course, hidden: true
+            admin = create(:admin_role, course: course, hidden: true)
             post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
             expect(response).to have_http_status(200)
           end
           it 'unhides the admin' do
-            admin = create :admin_role, course: course, hidden: true
+            admin = create(:admin_role, course: course, hidden: true)
             post :create_or_unhide, params: { user_name: admin.user_name, type: :admin_role, course_id: course.id }
             expect(admin.reload.hidden).to be false
           end
@@ -516,7 +516,7 @@ describe Api::RolesController do
 
         context 'when trying to create a new admin' do
           it 'is successful' do
-            admin_user = create :admin_user
+            admin_user = create(:admin_user)
             post :create_or_unhide, params: { user_name: admin_user.user_name,
                                               last_name: admin_user.last_name,
                                               first_name: admin_user.first_name,
@@ -525,7 +525,7 @@ describe Api::RolesController do
             expect(response).to have_http_status(201)
           end
           it 'creates a new admin role' do
-            admin_user = create :admin_user
+            admin_user = create(:admin_user)
             post :create_or_unhide, params: { user_name: admin_user.user_name,
                                               last_name: admin_user.last_name,
                                               first_name: admin_user.first_name,
@@ -542,7 +542,7 @@ describe Api::RolesController do
 
         context 'when trying to create a user who already exists' do
           it 'should raise a 422 error' do
-            student = create :student, course: course
+            student = create(:student, course: course)
             post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
             expect(response).to have_http_status(422)
           end
@@ -550,7 +550,7 @@ describe Api::RolesController do
 
         context 'when trying to create a new admin' do
           it 'is successful' do
-            admin_user = create :admin_user
+            admin_user = create(:admin_user)
             post :create, params: { user_name: admin_user.user_name,
                                     last_name: admin_user.last_name,
                                     first_name: admin_user.first_name,
@@ -559,7 +559,7 @@ describe Api::RolesController do
             expect(response).to have_http_status(201)
           end
           it 'creates a new admin role' do
-            admin_user = create :admin_user
+            admin_user = create(:admin_user)
             post :create, params: { user_name: admin_user.user_name,
                                     last_name: admin_user.last_name,
                                     first_name: admin_user.first_name,
@@ -575,7 +575,7 @@ describe Api::RolesController do
         include_examples 'updating'
 
         context 'updating an admin' do
-          let(:admin) { create :admin_role, hidden: false, course: course }
+          let(:admin) { create(:admin_role, hidden: false, course: course) }
           it 'is successful' do
             put :update, params: { id: admin.id, hidden: true, course_id: course.id }
             expect(response).to have_http_status(200)

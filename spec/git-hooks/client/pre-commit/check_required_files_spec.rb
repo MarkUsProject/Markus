@@ -235,7 +235,7 @@ describe '03-check_required_files.sh client git hook' do
           end
         end
         context 'for a different assignment' do
-          let(:assignment2) { create :assignment, course: course }
+          let(:assignment2) { create(:assignment, course: course) }
           before :each do
             GitRepository.access(repo.connect_string) do |open_repo|
               txn = open_repo.get_transaction('MarkUs')

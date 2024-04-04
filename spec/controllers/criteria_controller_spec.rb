@@ -1,10 +1,10 @@
 describe CriteriaController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   let(:course) { instructor.course }
-  let(:assignment) { create :assignment }
-  let(:grouping) { create :grouping, assignment: assignment }
-  let(:submission) { create :submission, grouping: grouping }
+  let(:assignment) { create(:assignment) }
+  let(:grouping) { create(:grouping, assignment: assignment) }
+  let(:submission) { create(:submission, grouping: grouping) }
 
   shared_examples 'callbacks' do
     before :each do
@@ -762,7 +762,7 @@ describe CriteriaController do
         end
 
         context 'when there exists criteria not under current assignment' do
-          let(:assignment2) { create :assignment }
+          let(:assignment2) { create(:assignment) }
           let(:rubric_criterion) do
             create(:rubric_criterion, assignment: assignment, position: 1)
           end

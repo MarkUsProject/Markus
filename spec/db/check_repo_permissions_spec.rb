@@ -1,17 +1,17 @@
 describe 'Check Repo Permissions Function' do
-  let(:grouping) { create :grouping }
+  let(:grouping) { create(:grouping) }
   let(:course_name) { grouping.course.name }
   let(:repo_name) { grouping.group.repo_name }
-  let(:section) { create :section }
+  let(:section) { create(:section) }
 
   context 'role does not exist' do
-    let(:role) { build :instructor }
+    let(:role) { build(:instructor) }
     it 'should fail' do
       expect(script_success?).to be_falsy
     end
   end
   context 'role is an Instructor' do
-    let(:role) { create :instructor }
+    let(:role) { create(:instructor) }
     context 'when the grouping exists' do
       it 'should succeed' do
         expect(script_success?).to be_truthy
@@ -19,16 +19,16 @@ describe 'Check Repo Permissions Function' do
     end
     context 'when the grouping does not exist' do
       let(:course_name) { role.course.name }
-      let(:grouping) { build :grouping }
+      let(:grouping) { build(:grouping) }
       it 'should succeed' do
         # This allows git to report that the repo doesn't exist (a more useful error message than "not allowed")
         expect(script_success?).to be_truthy
       end
     end
     context 'when requested course is different' do
-      let(:course) { create :course }
-      let(:assignment) { create :assignment, course: course }
-      let(:grouping) { create :grouping, assignment: assignment }
+      let(:course) { create(:course) }
+      let(:assignment) { create(:assignment, course: course) }
+      let(:grouping) { create(:grouping, assignment: assignment) }
       it 'should fail' do
         expect(script_success?).to be_falsy
       end
@@ -40,14 +40,14 @@ describe 'Check Repo Permissions Function' do
       end
     end
     context 'when the instructor is hidden' do
-      let(:role) { create :instructor, hidden: true }
+      let(:role) { create(:instructor, hidden: true) }
       it 'should fail' do
         expect(script_success?).to be_falsy
       end
     end
   end
   context 'role is an AdminRole' do
-    let(:role) { create :admin_role }
+    let(:role) { create(:admin_role) }
     context 'when the grouping exists' do
       it 'should succeed' do
         expect(script_success?).to be_truthy
@@ -55,7 +55,7 @@ describe 'Check Repo Permissions Function' do
     end
     context 'when the grouping does not exist' do
       let(:course_name) { role.course.name }
-      let(:grouping) { build :grouping }
+      let(:grouping) { build(:grouping) }
       it 'should succeed' do
         # This allows git to report that the repo doesn't exist (a more useful error message than "not allowed")
         expect(script_success?).to be_truthy
@@ -63,10 +63,10 @@ describe 'Check Repo Permissions Function' do
     end
   end
   context 'role is a Ta' do
-    let(:role) { create :ta }
+    let(:role) { create(:ta) }
     context 'when the grouping exists' do
       context 'when the Ta is assigned as a grader' do
-        before { create :ta_membership, role: role, grouping: grouping }
+        before { create(:ta_membership, role: role, grouping: grouping) }
         context 'when the groups are anonymized' do
           before { grouping.assignment.update! anonymize_groups: true }
           it 'should fail' do
@@ -97,19 +97,19 @@ describe 'Check Repo Permissions Function' do
     end
     context 'when the grouping does not exist' do
       let(:course_name) { role.course.name }
-      let(:grouping) { build :grouping }
+      let(:grouping) { build(:grouping) }
       it 'should fail' do
         expect(script_success?).to be_falsy
       end
     end
   end
   context 'role is a Student' do
-    let(:role) { create :student }
+    let(:role) { create(:student) }
     context 'the grouping exists' do
       context 'vcs submit is true' do
         before { grouping.assignment.update! vcs_submit: true }
         context 'the student is an accepted member of the group' do
-          before { create :accepted_student_membership, role: role, grouping: grouping }
+          before { create(:accepted_student_membership, role: role, grouping: grouping) }
           context 'the assignment is not hidden for everyone' do
             it 'should succeed' do
               expect(script_success?).to be_truthy
@@ -129,7 +129,7 @@ describe 'Check Repo Permissions Function' do
           end
           context 'the assignment is hidden for the section' do
             before do
-              create :assessment_section_properties, assessment: grouping.assignment, section: section, is_hidden: true
+              create(:assessment_section_properties, assessment: grouping.assignment, section: section, is_hidden: true)
               role.update! section_id: section.id
             end
             it 'should fail' do
@@ -138,7 +138,8 @@ describe 'Check Repo Permissions Function' do
           end
           context 'the assignment is not hidden for the section' do
             before do
-              create :assessment_section_properties, assessment: grouping.assignment, section: section, is_hidden: false
+              create(:assessment_section_properties, assessment: grouping.assignment, section: section,
+                                                     is_hidden: false)
               role.update! section_id: section.id
             end
             it 'should succeed' do
@@ -175,19 +176,19 @@ describe 'Check Repo Permissions Function' do
           end
         end
         context 'the student is an inviter member of the group' do
-          before { create :inviter_student_membership, role: role, grouping: grouping }
+          before { create(:inviter_student_membership, role: role, grouping: grouping) }
           it 'should succeed' do
             expect(script_success?).to be_truthy
           end
         end
         context 'the student is a pending member of the group' do
-          before { create :student_membership, role: role, grouping: grouping }
+          before { create(:student_membership, role: role, grouping: grouping) }
           it 'should fail' do
             expect(script_success?).to be_falsy
           end
         end
         context 'the student is a rejected member of the group' do
-          before { create :rejected_student_membership, role: role, grouping: grouping }
+          before { create(:rejected_student_membership, role: role, grouping: grouping) }
           it 'should fail' do
             expect(script_success?).to be_falsy
           end
@@ -207,7 +208,7 @@ describe 'Check Repo Permissions Function' do
     end
     context 'when the grouping does not exist' do
       let(:course_name) { role.course.name }
-      let(:grouping) { build :grouping }
+      let(:grouping) { build(:grouping) }
       it 'should fail' do
         expect(script_success?).to be_falsy
       end

@@ -118,10 +118,10 @@ describe Submission do
   end
 
   describe '#get_visible_result' do
-    let(:submission) { create :submission }
-    let(:released_result) { create :released_result, submission: submission }
-    let(:remark_result) { create :remark_result, submission: submission }
-    let(:released_remark_result) { create :remark_result, submission: submission, released_to_students: true }
+    let(:submission) { create(:submission) }
+    let(:released_result) { create(:released_result, submission: submission) }
+    let(:remark_result) { create(:remark_result, submission: submission) }
+    let(:released_remark_result) { create(:remark_result, submission: submission, released_to_students: true) }
     context 'when the remark result is released' do
       before do
         released_remark_result
@@ -159,18 +159,18 @@ describe Submission do
   end
 
   describe '#set_autotest_marks' do
-    let(:submission) { create :submission }
+    let(:submission) { create(:submission) }
     let(:assignment) { submission.assignment }
     let(:result) { submission.get_latest_result }
-    let!(:criterion) { create :flexible_criterion, assignment: assignment }
-    let!(:mark) { create :mark, criterion: criterion, result: result }
-    let(:test_group) { create :test_group, assignment: assignment, criterion: criterion }
-    let(:test_run) { create :test_run, grouping: submission.grouping, submission: submission }
+    let!(:criterion) { create(:flexible_criterion, assignment: assignment) }
+    let!(:mark) { create(:mark, criterion: criterion, result: result) }
+    let(:test_group) { create(:test_group, assignment: assignment, criterion: criterion) }
+    let(:test_run) { create(:test_run, grouping: submission.grouping, submission: submission) }
 
     context 'when a TestGroupResult succeeded with no error' do
       let!(:test_group_result) do
-        create :test_group_result, test_group: test_group, test_run: test_run,
-                                   error_type: nil, marks_earned: 1, marks_total: 1
+        create(:test_group_result, test_group: test_group, test_run: test_run,
+                                   error_type: nil, marks_earned: 1, marks_total: 1)
       end
 
       it 'updates the result mark' do
@@ -183,8 +183,8 @@ describe Submission do
 
     context 'when a TestGroupResult timed out' do
       let!(:test_group_result) do
-        create :test_group_result, test_group: test_group, test_run: test_run,
-                                   error_type: TestGroupResult::ERROR_TYPE[:timeout]
+        create(:test_group_result, test_group: test_group, test_run: test_run,
+                                   error_type: TestGroupResult::ERROR_TYPE[:timeout])
       end
 
       it 'does not update the result mark' do

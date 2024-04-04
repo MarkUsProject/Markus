@@ -1,5 +1,5 @@
 describe Note do
-  subject { create :note }
+  subject { create(:note) }
   it { should validate_presence_of(:notes_message) }
   it { should belong_to(:noteable) }
   it { should belong_to(:role) }

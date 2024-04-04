@@ -2,7 +2,7 @@ describe TagsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
 
   let(:assignment) { create(:assignment) }
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   let(:course) { instructor.course }
 
   describe '#index' do

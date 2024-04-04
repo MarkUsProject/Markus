@@ -1,8 +1,8 @@
 describe AutomatedTestsHelper do
   include ApplicationHelper
   describe '.update_test_groups_from_specs' do
-    let(:assignment) { create :assignment }
-    let(:criterion) { build :flexible_criterion, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let(:criterion) { build(:flexible_criterion, assignment: assignment) }
     let(:specs) do
       { 'testers' => [
         {

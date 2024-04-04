@@ -15,13 +15,13 @@ describe PeerReview do
   end
 
   it 'should not allow associations to belong to different assignments' do
-    result = create :complete_result
+    result = create(:complete_result)
     reviewer = create(:grouping, assignment: create(:assignment))
     expect(build(:peer_review, result: result, reviewer: reviewer)).not_to be_valid
   end
 
   describe 'with a single student reviewee' do
-    let(:assignment) { create :assignment_with_peer_review }
+    let(:assignment) { create(:assignment_with_peer_review) }
     before :each do
       @grouping1 = create(:grouping, assignment: assignment)
       @student = create(:student)

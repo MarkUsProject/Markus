@@ -1,6 +1,6 @@
 describe ApplicationPolicy do
   let(:context) { { role: role, real_user: role.user } }
-  let(:role) { create :instructor }
+  let(:role) { create(:instructor) }
   let(:policy) { ApplicationPolicy.new(**context) }
 
   describe_rule :manage? do
@@ -13,10 +13,10 @@ describe ApplicationPolicy do
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:role) { create :ta, manage_assessments: true }
+        let(:role) { create(:ta, manage_assessments: true) }
       end
       failed 'that cannot manage assessments' do
-        let(:role) { create :ta, manage_assessments: false }
+        let(:role) { create(:ta, manage_assessments: false) }
       end
     end
     failed 'role is a student' do

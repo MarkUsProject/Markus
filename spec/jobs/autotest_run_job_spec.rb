@@ -30,13 +30,13 @@ describe AutotestRunJob do
                                   collected: collected)
     end
     context 'tests are set up for an assignment' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 }) }
       let(:dummy_return) { OpenStruct.new(body: { 'test_ids' => (1..n_groups).to_a }.to_json) }
       before do
         allow_any_instance_of(AutotestRunJob).to receive(:send_request!).and_return(dummy_return)
       end
       context 'if there is only one group' do
-        let(:user2) { create :instructor }
+        let(:user2) { create(:instructor) }
         let(:n_groups) { 1 }
         it 'should not create a batch' do
           expect { subject }.not_to(change { TestBatch.count })
@@ -129,11 +129,11 @@ describe AutotestRunJob do
         end
       end
       context 'where there is a starter file associated with the group' do
-        let(:starter_file_group) { create :starter_file_group, assignment: assignment }
-        let(:starter_file_entries) { create_list :starter_file_entry, 3, starter_file_group: starter_file_group }
+        let(:starter_file_group) { create(:starter_file_group, assignment: assignment) }
+        let(:starter_file_entries) { create_list(:starter_file_entry, 3, starter_file_group: starter_file_group) }
         before do
           groupings.each do |g|
-            starter_file_entries.each { |s| create :grouping_starter_file_entry, grouping: g, starter_file_entry: s }
+            starter_file_entries.each { |s| create(:grouping_starter_file_entry, grouping: g, starter_file_entry: s) }
           end
         end
         it 'should send the correct data' do

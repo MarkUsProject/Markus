@@ -7,7 +7,7 @@ describe GraderPermission do
     context 'When the user is instructor' do
       let(:user) { create(:instructor) }
       it 'should raise an invalid record error' do
-        expect { create :grader_permission, role_id: user.id }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { create(:grader_permission, role_id: user.id) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
     # Creating a TA will automatically create associated grader_permission
@@ -19,7 +19,7 @@ describe GraderPermission do
     context 'When the user is student' do
       let(:user) { create(:student) }
       it 'should raise an invalid record error' do
-        expect { create :grader_permission, role_id: user.id }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { create(:grader_permission, role_id: user.id) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end

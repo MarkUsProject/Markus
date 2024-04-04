@@ -100,7 +100,7 @@ describe Assignment do
 
   describe 'peer review assignment' do
     it 'should not allow the parent and pr assignments to be from different courses' do
-      courses = create_list :course, 2
+      courses = create_list(:course, 2)
       a = build(:assignment, course: courses.first, parent_assignment: build(:assignment, course: courses.second))
       expect(a).not_to be_valid
     end
@@ -115,7 +115,7 @@ describe Assignment do
 
   describe 'nested attributes' do
     it 'accepts nested attributes for required files (assignment_files)' do
-      course = create :course
+      course = create(:course)
       attrs = {
         course_id: course.id,
         short_identifier: 't',
@@ -137,7 +137,7 @@ describe Assignment do
     it 'makes an attempt to update repository permissions when cloning groupings' do
       a1 = create(:assignment, assignment_properties_attributes: { vcs_submit: true })
       a2 = create(:assignment, course: a1.course, assignment_properties_attributes: { vcs_submit: true })
-      create :grouping_with_inviter, assignment: a2
+      create(:grouping_with_inviter, assignment: a2)
       expect(Repository.get_class).to receive(:update_permissions_after)
       a1.clone_groupings_from(a2.id)
     end
@@ -189,18 +189,12 @@ describe Assignment do
 
         context 'when rubric criteria are found' do
           before do
-            @ta_criteria = Array.new(2) { create(:rubric_criterion, assignment: @assignment) }
-            @peer_criteria = Array.new(2) do
-              create(:rubric_criterion,
-                     assignment: @assignment,
-                     ta_visible: false,
-                     peer_visible: true)
-            end
-            @ta_and_peer_criteria = Array.new(2) do
-              create(:rubric_criterion,
-                     assignment: @assignment,
-                     peer_visible: true)
-            end
+            @ta_criteria = create_list(:rubric_criterion, 2, assignment: @assignment)
+            @peer_criteria = create_list(:rubric_criterion, 2, assignment: @assignment,
+                                                               ta_visible: false,
+                                                               peer_visible: true)
+            @ta_and_peer_criteria = create_list(:rubric_criterion, 2, assignment: @assignment,
+                                                                      peer_visible: true)
           end
 
           it 'shows the criteria visible to tas only' do
@@ -359,7 +353,7 @@ describe Assignment do
   describe '#valid_groupings and #invalid_groupings' do
     before :each do
       @assignment = create(:assignment)
-      @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
+      @groupings = create_list(:grouping, 2, assignment: @assignment)
     end
 
     context 'when no groups are valid' do
@@ -465,7 +459,7 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @assignment)
-      @students = Array.new(2) { create(:student) }
+      @students = create_list(:student, 2)
     end
 
     context 'when all students are ungrouped' do
@@ -501,7 +495,7 @@ describe Assignment do
 
     context 'when there are multiple groupings' do
       before :each do
-        @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
+        @groupings = create_list(:grouping, 2, assignment: @assignment)
       end
 
       context 'and no TAs have been assigned' do
@@ -626,7 +620,7 @@ describe Assignment do
   end
 
   context 'An Assignment' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before :each do
       @assignment = create(:assignment,
                            assignment_properties_attributes: {
@@ -852,12 +846,7 @@ describe Assignment do
               g = create(:grouping, assignment: @assignment)
               s = create(:version_used_submission, grouping: g)
               r = s.current_result
-              2.times do
-                create(:rubric_mark, result: r, assignment: @assignment) # this is create marks under rubric criterion
-                # if we create(:flexible_mark, groping: g)
-                # or create(:checkbox_mark, grouping: g)
-                # they should work as well
-              end
+              create_list(:rubric_mark, 2, result: r, assignment: @assignment)
               r.reload
               r.marking_state = Result::MARKING_STATES[:complete]
               r.save
@@ -888,9 +877,7 @@ describe Assignment do
               2.times do
                 s = create(:submission, grouping: g)
                 r = s.get_latest_result
-                2.times do
-                  create(:rubric_mark, result: r, assignment: @assignment)
-                end
+                create_list(:rubric_mark, 2, result: r, assignment: @assignment)
                 r.reload
                 r.marking_state = Result::MARKING_STATES[:complete]
                 r.save
@@ -952,7 +939,7 @@ describe Assignment do
 
     context 'when multiple groups have submitted' do
       before :each do
-        @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
+        @groupings = create_list(:grouping, 2, assignment: @assignment)
         @groupings.each do |group|
           create(:version_used_submission, grouping: group)
           group.reload
@@ -1020,7 +1007,7 @@ describe Assignment do
 
   describe '#section_start_time' do
     context 'with AssessmentSectionProperties disabled' do
-      let(:assignment) { create :timed_assignment }
+      let(:assignment) { create(:timed_assignment) }
 
       context 'when no section is specified' do
         it 'returns the start time of the assignment' do
@@ -1037,7 +1024,7 @@ describe Assignment do
     end
 
     context 'with AssessmentSectionProperties enabled' do
-      let(:assignment) { create :timed_assignment, assignment_properties_attributes: { section_due_dates_type: true } }
+      let(:assignment) { create(:timed_assignment, assignment_properties_attributes: { section_due_dates_type: true }) }
 
       context 'when no section is specified' do
         it 'returns the start time of the assignment' do
@@ -1046,7 +1033,7 @@ describe Assignment do
       end
 
       context 'when a section is specified' do
-        let(:section) { create :section }
+        let(:section) { create(:section) }
 
         context 'that does not have AssessmentSectionProperties' do
           it 'returns the start time of the assignment' do
@@ -1387,7 +1374,7 @@ describe Assignment do
 
       describe 'two AssessmentSectionProperties' do
         before :each do
-          @sections = Array.new(2) { create(:section) }
+          @sections = create_list(:section, 2)
           @assessment_section_properties = @sections.map do |section|
             AssessmentSectionProperties.create(section: section, assessment: @assignment)
           end
@@ -1431,7 +1418,7 @@ describe Assignment do
   describe '#grade_distribution_array' do
     before :each do
       @assignment = create(:assignment)
-      5.times { create(:rubric_criterion, assignment: @assignment) }
+      create_list(:rubric_criterion, 5, assignment: @assignment)
     end
 
     context 'when there are no submitted marks' do
@@ -1601,7 +1588,7 @@ describe Assignment do
   end
 
   describe '#results_average' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
@@ -1629,7 +1616,7 @@ describe Assignment do
   end
 
   describe '#results_median' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
@@ -1657,7 +1644,7 @@ describe Assignment do
   end
 
   describe '#results_fails' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
@@ -1680,7 +1667,7 @@ describe Assignment do
   end
 
   describe '#results_zeros' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
@@ -1703,7 +1690,7 @@ describe Assignment do
   end
 
   describe '#standard_deviation' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before do
       allow(assignment).to receive(:max_mark).and_return(11)
     end
@@ -1726,12 +1713,12 @@ describe Assignment do
   end
 
   describe '#current_submission_data' do
-    let(:assignment) { create :assignment }
-    let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let!(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment) }
 
     context 'a TA user' do
-      let(:ta) { create :ta }
-      let!(:ta_membership) { create :ta_membership, grouping: groupings[0], role: ta }
+      let(:ta) { create(:ta) }
+      let!(:ta_membership) { create(:ta_membership, grouping: groupings[0], role: ta) }
 
       it 'should return results for groupings a TA is grading only' do
         data = assignment.current_submission_data(ta)
@@ -1740,9 +1727,9 @@ describe Assignment do
       end
 
       context 'when hide_unassigned_criteria is true' do
-        let(:assigned_criteria) { create :flexible_criterion, assignment: assignment, max_mark: 3 }
-        let(:unassigned_criteria) { create :flexible_criterion, assignment: assignment, max_mark: 1 }
-        let!(:criterion_ta_association) { create :criterion_ta_association, criterion: assigned_criteria, ta: ta }
+        let(:assigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 3) }
+        let(:unassigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 1) }
+        let!(:criterion_ta_association) { create(:criterion_ta_association, criterion: assigned_criteria, ta: ta) }
         it 'should only include assigned criteria in max_mark' do
           assignment.update(hide_unassigned_criteria: true)
           data = assignment.current_submission_data(ta)
@@ -1751,7 +1738,7 @@ describe Assignment do
       end
 
       context 'when a grace period deduction has been applied' do
-        let(:assignment) { create :assignment, submission_rule: create(:grace_period_submission_rule) }
+        let(:assignment) { create(:assignment, submission_rule: create(:grace_period_submission_rule)) }
         let!(:grace_period_deduction) do
           create(:grace_period_deduction,
                  membership: groupings[0].accepted_student_memberships.first,
@@ -1764,9 +1751,9 @@ describe Assignment do
       end
 
       context 'there is an extra mark' do
-        let(:submission) { create :version_used_submission, grouping: groupings[0] }
-        let(:result) { create :complete_result, submission: submission }
-        let!(:extra_mark) { create :extra_mark_points, result: result }
+        let(:submission) { create(:version_used_submission, grouping: groupings[0]) }
+        let(:result) { create(:complete_result, submission: submission) }
+        let!(:extra_mark) { create(:extra_mark_points, result: result) }
         it 'should include the extra mark in the total' do
           final_grade = submission.current_result.get_total_mark
           data = assignment.current_submission_data(ta)
@@ -1774,7 +1761,7 @@ describe Assignment do
           expect(data.count { |h| h.key? :final_grade }).to eq 1
         end
         context 'when the extra mark has a negative value' do
-          let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
+          let!(:extra_mark) { create(:extra_mark_points, result: result, extra_mark: -100) }
           it 'should not reduce the total mark below zero' do
             data = assignment.current_submission_data(ta)
             expect(data.pluck(:final_grade)).to include(0)
@@ -1785,19 +1772,19 @@ describe Assignment do
     end
 
     context 'a Student role' do
-      let(:student) { create :student }
+      let(:student) { create(:student) }
       it 'should return no results' do
         expect(assignment.current_submission_data(student)).to eq []
       end
     end
 
     context 'an Instructor user' do
-      let(:instructor) { create :instructor }
-      let(:tags) { create_list :tag, 3, role: instructor }
+      let(:instructor) { create(:instructor) }
+      let(:tags) { create_list(:tag, 3, role: instructor) }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
       let(:data) { assignment.reload.current_submission_data(instructor) }
-      let(:submission) { create :version_used_submission, grouping: groupings[0] }
-      let(:released_result) { create :released_result, submission: submission }
+      let(:submission) { create(:version_used_submission, grouping: groupings[0]) }
+      let(:released_result) { create(:released_result, submission: submission) }
 
       it 'should return results for all assignment groupings' do
         expect(data.size).to eq groupings.size
@@ -1903,15 +1890,15 @@ describe Assignment do
       end
 
       context 'there is an extra mark' do
-        let(:result) { create :complete_result, submission: submission }
-        let!(:extra_mark) { create :extra_mark_points, result: result }
+        let(:result) { create(:complete_result, submission: submission) }
+        let!(:extra_mark) { create(:extra_mark_points, result: result) }
         it 'should include the extra mark in the total' do
           final_grade = submission.current_result.get_total_mark
           expect(data.pluck(:final_grade)).to include(final_grade)
           expect(data.count { |h| h.key? :final_grade }).to eq 1
         end
         context 'when the extra mark has a negative value' do
-          let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
+          let!(:extra_mark) { create(:extra_mark_points, result: result, extra_mark: -100) }
           it 'should not reduce the total mark below zero' do
             expect(data.pluck(:final_grade)).to include(0)
             expect(data.count { |h| h.key? :final_grade }).to eq 1
@@ -1920,7 +1907,7 @@ describe Assignment do
       end
 
       context 'there are groups without members' do
-        let!(:empty_groupings) { create_list :grouping, 2, assignment: assignment }
+        let!(:empty_groupings) { create_list(:grouping, 2, assignment: assignment) }
 
         it 'should not include member information for groups without members' do
           expect(data.count).to eq 5
@@ -1934,7 +1921,7 @@ describe Assignment do
       end
 
       context 'there are groups with members in a given section' do
-        let(:section_groupings) { create_list :grouping_with_inviter, 2, assignment: assignment }
+        let(:section_groupings) { create_list(:grouping_with_inviter, 2, assignment: assignment) }
         let!(:sections) { section_groupings.map { |g| (s = create(:section)) && g.inviter.update(section: s) && s } }
 
         it 'should include section information for groups in a section' do
@@ -1953,7 +1940,7 @@ describe Assignment do
       end
 
       context 'the assignment uses grace credit deductions' do
-        let(:assignment) { create :assignment, submission_rule: create(:grace_period_submission_rule) }
+        let(:assignment) { create(:assignment, submission_rule: create(:grace_period_submission_rule)) }
         let!(:grace_period_deduction) do
           create(:grace_period_deduction,
                  membership: groupings[0].accepted_student_memberships.first,
@@ -1970,11 +1957,11 @@ describe Assignment do
       end
 
       context 'when the assignment has criteria, including bonus criteria' do
-        let!(:criterion1) { create :flexible_criterion, max_mark: 1, assignment: assignment }
-        let!(:criterion2) { create :flexible_criterion, max_mark: 3, assignment: assignment }
-        let!(:criterion3) { create :flexible_criterion, max_mark: 6, assignment: assignment, bonus: true }
-        let!(:submission) { create :submission, grouping: groupings[1], submission_version_used: true }
-        let!(:result) { create :incomplete_result, submission: submission }
+        let!(:criterion1) { create(:flexible_criterion, max_mark: 1, assignment: assignment) }
+        let!(:criterion2) { create(:flexible_criterion, max_mark: 3, assignment: assignment) }
+        let!(:criterion3) { create(:flexible_criterion, max_mark: 6, assignment: assignment, bonus: true) }
+        let!(:submission) { create(:submission, grouping: groupings[1], submission_version_used: true) }
+        let!(:result) { create(:incomplete_result, submission: submission) }
 
         it 'excludes the bonus criterion from calculating the max_mark' do
           expect(data.pluck(:max_mark)).to eq([4.0] * groupings.size)
@@ -1999,7 +1986,7 @@ describe Assignment do
 
   describe '#summary_test_results' do
     context 'an assignment with no test results' do
-      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
 
       it 'should return {}' do
         summary_test_results = assignment.summary_test_results
@@ -2008,7 +1995,7 @@ describe Assignment do
     end
 
     context 'an assignment with test results' do
-      let(:assignment) { create :assignment_with_criteria_and_test_results }
+      let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
       it 'has the correct group and test names' do
         summary_test_results = JSON.parse(assignment.summary_test_result_json)
@@ -2049,8 +2036,8 @@ describe Assignment do
 
   describe '#summary_json' do
     context 'a Student user' do
-      let(:assignment) { create :assignment }
-      let(:student) { create :student }
+      let(:assignment) { create(:assignment) }
+      let(:student) { create(:student) }
 
       it 'should return {}' do
         expect(assignment.summary_json(student)).to be_empty
@@ -2058,11 +2045,11 @@ describe Assignment do
     end
 
     context 'a TA user' do
-      let(:ta) { create :ta }
-      let(:assignment_tag) { create :assignment }
-      let(:tags) { create_list :tag, 3, role: ta }
+      let(:ta) { create(:ta) }
+      let(:assignment_tag) { create(:assignment) }
+      let(:tags) { create_list(:tag, 3, role: ta) }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
-      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
+      let!(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment_tag) }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -2096,11 +2083,11 @@ describe Assignment do
     end
 
     context 'an Instructor user' do
-      let(:instructor) { create :instructor }
-      let(:assignment_tag) { create :assignment }
-      let(:tags) { create_list :tag, 3, role: instructor }
+      let(:instructor) { create(:instructor) }
+      let(:assignment_tag) { create(:assignment) }
+      let(:tags) { create_list(:tag, 3, role: instructor) }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
-      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
+      let!(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment_tag) }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results_and_tas)
@@ -2158,7 +2145,7 @@ describe Assignment do
 
         context 'with an extra mark' do
           let(:grouping) { @assignment.groupings.first }
-          let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result }
+          let!(:extra_mark) { create(:extra_mark_points, result: grouping.current_result) }
           it 'should included the extra mark value' do
             data = @assignment.summary_json(instructor)[:data]
             grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
@@ -2170,7 +2157,7 @@ describe Assignment do
             expect(grouping_data[:final_grade]).to eq(grouping.current_result.get_total_mark)
           end
           context 'when the extra mark has a negative value' do
-            let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result, extra_mark: -100 }
+            let!(:extra_mark) { create(:extra_mark_points, result: grouping.current_result, extra_mark: -100) }
             it 'should not reduce the total mark below zero' do
               data = @assignment.summary_json(instructor)[:data]
               grouping_data = data.detect { |d| d[:group_name] == grouping.group.group_name }
@@ -2178,7 +2165,7 @@ describe Assignment do
             end
           end
           context 'and another extra mark' do
-            let!(:extra_mark_percentage) { create :extra_mark, result: grouping.current_result }
+            let!(:extra_mark_percentage) { create(:extra_mark, result: grouping.current_result) }
             let(:percentage_extra) { (extra_mark_percentage.extra_mark * @assignment.max_mark / 100).round(2) }
             it 'should included both extra mark values' do
               data = @assignment.summary_json(instructor)[:data]
@@ -2199,8 +2186,8 @@ describe Assignment do
 
   describe '#summary_csv' do
     context 'a Student user' do
-      let(:assignment) { create :assignment }
-      let(:student) { create :student }
+      let(:assignment) { create(:assignment) }
+      let(:student) { create(:student) }
 
       it 'should return ""' do
         expect(assignment.summary_csv(student)).to be_empty
@@ -2208,8 +2195,8 @@ describe Assignment do
     end
 
     context 'a TA user' do
-      let(:ta) { create :ta }
-      let(:assignment) { create :assignment }
+      let(:ta) { create(:ta) }
+      let(:assignment) { create(:assignment) }
 
       it 'should return ""' do
         expect(assignment.summary_csv(ta)).to be_empty
@@ -2217,8 +2204,8 @@ describe Assignment do
     end
 
     context 'an Instructor user' do
-      let(:instructor) { create :instructor }
-      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:instructor) { create(:instructor) }
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:summary) { CSV.parse assignment.summary_csv(instructor) }
 
       shared_examples 'check csv content' do
@@ -2246,7 +2233,7 @@ describe Assignment do
         include_examples 'check csv content'
       end
       context 'when criteria are created after marking' do
-        before { create :flexible_criterion, assignment: assignment }
+        before { create(:flexible_criterion, assignment: assignment) }
         include_examples 'check csv content'
       end
     end
@@ -2279,20 +2266,20 @@ describe Assignment do
     end
   end
   describe '#starter_file_path' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     it 'should return a path that includes the assignment id' do
       expect(File.basename(assignment.starter_file_path)).to eq assignment.id.to_s
     end
   end
   describe '#default_starter_file_group' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     context 'no starter file groups' do
       it 'should return nil' do
         expect(assignment.default_starter_file_group).to be_nil
       end
     end
     context 'starter file groups exist' do
-      let!(:starter_file_groups) { create_list :starter_file_group, 3, assignment: assignment }
+      let!(:starter_file_groups) { create_list(:starter_file_group, 3, assignment: assignment) }
       context 'default_starter_file_group_id is nil' do
         it 'should return the first starter file group' do
           expect(assignment.default_starter_file_group).to eq starter_file_groups.min_by(&:id)
@@ -2308,9 +2295,9 @@ describe Assignment do
     end
   end
   describe '#starter_file_mappings' do
-    let(:assignment) { create :assignment }
-    let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
-    let!(:groupings) { create_list :grouping_with_inviter, 2, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let!(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
+    let!(:groupings) { create_list(:grouping_with_inviter, 2, assignment: assignment) }
     it 'returns the right data' do
       expected = groupings.flat_map do |g|
         %w[q1 q2.txt].map do |entry|
@@ -2546,10 +2533,10 @@ describe Assignment do
   end
 
   describe '#current_grader_data' do
-    let!(:assignment) { create :assignment }
+    let!(:assignment) { create(:assignment) }
 
     context 'groupings with no members' do
-      let!(:grouping) { create :grouping, assignment: assignment }
+      let!(:grouping) { create(:grouping, assignment: assignment) }
       it 'should not have sections' do
         actual_grouping = assignment.current_grader_data[:groups][0]
         expect(actual_grouping[:_id]).to eq(grouping.id)
@@ -2559,8 +2546,8 @@ describe Assignment do
     end
 
     context 'groupings with inviters that do not belong to a section' do
-      let!(:student) { create :student }
-      let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+      let!(:student) { create(:student) }
+      let!(:grouping) { create(:grouping_with_inviter, inviter: student, assignment: assignment) }
       it 'should not have sections' do
         actual_grouping = assignment.current_grader_data[:groups][0]
         expect(actual_grouping[:_id]).to eq(grouping.id)
@@ -2569,9 +2556,9 @@ describe Assignment do
     end
 
     context 'groupings that have inviters that do belong to sections' do
-      let!(:section) { create :section }
-      let!(:student) { create :student, section: section }
-      let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+      let!(:section) { create(:section) }
+      let!(:student) { create(:student, section: section) }
+      let!(:grouping) { create(:grouping_with_inviter, inviter: student, assignment: assignment) }
       it 'should have sections' do
         actual_grouping = assignment.current_grader_data[:groups][0]
         expect(actual_grouping[:_id]).to eq(grouping.id)
@@ -2580,11 +2567,11 @@ describe Assignment do
     end
 
     context 'groupings that have graders' do
-      let(:section) { create :section }
-      let(:student) { create :student, section: section }
-      let(:student2) { create :student, section: section }
-      let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
-      let(:ta) { create :ta }
+      let(:section) { create(:section) }
+      let(:student) { create(:student, section: section) }
+      let(:student2) { create(:student, section: section) }
+      let(:grouping) { create(:grouping_with_inviter, inviter: student, assignment: assignment) }
+      let(:ta) { create(:ta) }
       it 'returns correct graders' do
         Grouping.assign_all_tas([grouping], [ta.id], assignment)
         expect(assignment.current_grader_data[:graders][0][:_id]).to eq(ta.id)

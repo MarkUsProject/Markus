@@ -1,7 +1,7 @@
 describe CreateGroupsJob do
-  let(:assignment) { create :assignment }
-  let(:student1) { create :student }
-  let(:student2) { create :student }
+  let(:assignment) { create(:assignment) }
+  let(:student1) { create(:student) }
+  let(:student2) { create(:student) }
   let(:group_name) { 'group1' }
 
   after :each do
@@ -70,7 +70,7 @@ describe CreateGroupsJob do
       end
     end
     context 'and group limit is set to 2' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 2 } }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { group_min: 1, group_max: 2 }) }
       before :each do
         @data = [['group1', student1.user_name, student2.user_name]]
       end
@@ -108,11 +108,11 @@ describe CreateGroupsJob do
   end
 
   context 'where the group already exists' do
-    let(:group) { create :group, course: assignment.course }
+    let(:group) { create(:group, course: assignment.course) }
 
     context 'and the grouping already exists for that assignment' do
       it 'should not create a new grouping' do
-        create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
+        create(:grouping_with_inviter, group: group, assignment: assignment, inviter: student1)
         data = [[group.group_name, student1.user_name]]
         expect { CreateGroupsJob.perform_now(assignment, data) }.not_to(change { Grouping.count })
       end
@@ -120,9 +120,9 @@ describe CreateGroupsJob do
 
     context 'and the grouping already exists for another assignment' do
       context 'and the repo name and membership is the same' do
-        let!(:grouping) { create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1 }
+        let!(:grouping) { create(:grouping_with_inviter, group: group, assignment: assignment, inviter: student1) }
         context 'and the assignment is in the same course' do
-          let(:assignment2) { create :assignment, course: assignment.course }
+          let(:assignment2) { create(:assignment, course: assignment.course) }
           it 'should create a new grouping' do
             data = [[group.group_name, student1.user_name]]
             expect { CreateGroupsJob.perform_now(assignment2, data) }.to change { Grouping.count }.by 1
@@ -130,7 +130,7 @@ describe CreateGroupsJob do
         end
         context 'and the assignment is in a different course' do
           skip 'enable this when there is a validation checking if students are in the same course' do
-            let(:assignment2) { create :assignment }
+            let(:assignment2) { create(:assignment) }
             it 'should raise a validation error' do
               data = [[group.group_name, student1.user_name]]
               expect { CreateGroupsJob.perform_now(assignment2, data) }.to raise_exception(ActiveRecord::RecordInvalid)
@@ -140,9 +140,9 @@ describe CreateGroupsJob do
       end
 
       context 'and the membership is different' do
-        let!(:grouping) { create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1 }
+        let!(:grouping) { create(:grouping_with_inviter, group: group, assignment: assignment, inviter: student1) }
         context 'and the assignment is in the same course' do
-          let(:assignment2) { create :assignment, course: assignment.course }
+          let(:assignment2) { create(:assignment, course: assignment.course) }
           it 'should not create a new grouping' do
             data = [[group.group_name, student1.user_name, student2.user_name]]
             expect { CreateGroupsJob.perform_now(assignment2, data) }.not_to(change { Grouping.count })
@@ -150,7 +150,7 @@ describe CreateGroupsJob do
         end
         context 'and the assignment is in a different course' do
           skip 'enable this when there is a validation checking if students are in the same course' do
-            let(:assignment2) { create :assignment }
+            let(:assignment2) { create(:assignment) }
             it 'should raise a validation error' do
               data = [[group.group_name, student1.user_name, student2.user_name]]
               expect { CreateGroupsJob.perform_now(assignment2, data) }.to raise_exception(ActiveRecord::RecordInvalid)
@@ -160,15 +160,17 @@ describe CreateGroupsJob do
       end
 
       context 'and the assignment does not allow students to work in groups > 1' do
-        let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 1 } }
+        let(:assignment) { create(:assignment, assignment_properties_attributes: { group_min: 1, group_max: 1 }) }
         context 'and the repo name is different and the group is named after the inviter' do
-          let(:group) { create :group, group_name: group_name, repo_name: 'some_other_repo', course: assignment.course }
+          let(:group) do
+            create(:group, group_name: group_name, repo_name: 'some_other_repo', course: assignment.course)
+          end
           before do
-            create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
+            create(:grouping_with_inviter, group: group, assignment: assignment, inviter: student1)
           end
           context 'and the group name is the same as the inviter user' do
             let(:group_name) { student1.user_name }
-            let(:assignment2) { create :assignment, course: assignment.course }
+            let(:assignment2) { create(:assignment, course: assignment.course) }
             it 'should create a new grouping' do
               data = [[group.group_name, student1.user_name]]
               expect { CreateGroupsJob.perform_now(assignment2, data) }.to(change { Grouping.count }.by(1))

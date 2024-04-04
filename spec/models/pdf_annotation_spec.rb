@@ -1,5 +1,5 @@
 describe PdfAnnotation do
-  subject { create :pdf_annotation }
+  subject { create(:pdf_annotation) }
   it { is_expected.to validate_presence_of(:x1) }
   it { is_expected.to validate_presence_of(:y1) }
   it { is_expected.to validate_presence_of(:x2) }
@@ -14,7 +14,7 @@ describe PdfAnnotation do
   include_examples 'course associations'
 
   describe '#get_data' do
-    let(:annotation) { create :pdf_annotation }
+    let(:annotation) { create(:pdf_annotation) }
     let(:extra_keys) { Set[:x_range, :y_range, :page] }
     it_behaves_like 'gets annotation data'
   end

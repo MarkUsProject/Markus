@@ -14,7 +14,7 @@
 
 describe Student do
   context 'A good Student model' do
-    subject { create :student }
+    subject { create(:student) }
     it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
     it 'will have many accepted groupings' do
       is_expected.to have_many(:accepted_groupings).through(:memberships)
@@ -253,7 +253,7 @@ describe Student do
           end
 
           context 'a timed assignment' do
-            let(:assignment) { create :timed_assignment }
+            let(:assignment) { create(:timed_assignment) }
             let(:group) do
               @student.create_group_for_working_alone_student(assignment.id)
               @student.groupings.find_by(assessment_id: assignment.id).group

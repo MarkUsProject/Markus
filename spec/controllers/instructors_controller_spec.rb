@@ -1,8 +1,8 @@
 describe InstructorsController do
   let(:course) { instructor.course }
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   let(:role) { instructor }
-  let(:end_user) { create :end_user }
+  let(:end_user) { create(:end_user) }
 
   context 'An Instructor should' do
     context '#new' do
@@ -64,7 +64,7 @@ describe InstructorsController do
           }
         end
         context 'as an admin' do
-          let(:admin) { create :admin_user }
+          let(:admin) { create(:admin_user) }
           it 'should change the default visibility status' do
             post_as admin, :create, params: params
             instructor = end_user.roles.first
@@ -80,7 +80,7 @@ describe InstructorsController do
         end
       end
       context 'when a end_user does not exist' do
-        let(:end_user) { build :end_user }
+        let(:end_user) { build(:end_user) }
         subject do
           post_as instructor, :create,
                   params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
@@ -95,7 +95,7 @@ describe InstructorsController do
         end
       end
       context 'when trying to assign to a non end user' do
-        let(:admin_user) { create :admin_user }
+        let(:admin_user) { create(:admin_user) }
         subject do
           post_as instructor, :create,
                   params: { course_id: course.id, role: { end_user: { user_name: admin_user.user_name } } }
@@ -122,7 +122,7 @@ describe InstructorsController do
                 params: { course_id: course.id, id: role, role: { end_user: { user_name: new_end_user.user_name } } }
       end
       context 'when the new user exists' do
-        let(:new_end_user) { create :end_user }
+        let(:new_end_user) { create(:end_user) }
         it 'should change the user' do
           subject
           expect(role.reload.user).to eq(new_end_user)
@@ -141,7 +141,7 @@ describe InstructorsController do
         end
       end
       context 'when the user does not exist' do
-        let(:new_end_user) { build :end_user }
+        let(:new_end_user) { build(:end_user) }
         it 'should not change the user' do
           old_user = role.user
           subject
@@ -153,7 +153,7 @@ describe InstructorsController do
         end
       end
       context 'when trying to assign to a non end user' do
-        let(:new_end_user) { create :admin_user }
+        let(:new_end_user) { create(:admin_user) }
         it 'should not change the user' do
           old_user = role.user
           subject

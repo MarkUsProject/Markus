@@ -11,7 +11,7 @@ describe Result do
     it { is_expected.to callback(:check_for_nil_marks).before(:save) }
     it { is_expected.to have_one(:course) }
 
-    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:result) { assignment.current_results.first }
     context 'check_for_nil_marks' do
       context 'when the result is complete' do
@@ -60,15 +60,15 @@ describe Result do
   end
 
   shared_context 'get subtotals context' do
-    let!(:assignment) { create :assignment_with_criteria_and_results }
+    let!(:assignment) { create(:assignment_with_criteria_and_results) }
   end
   shared_context 'get subtotal context' do
-    let(:result) { create :incomplete_result }
+    let(:result) { create(:incomplete_result) }
     let(:assignment) { result.submission.grouping.assignment }
-    let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
-    let(:criterion2) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
-    let!(:mark) { create :flexible_mark, criterion: criterion, result: result, mark: 5, assignment: assignment }
-    let!(:mark2) { create :flexible_mark, criterion: criterion2, result: result, mark: 7, assignment: assignment }
+    let(:criterion) { create(:flexible_criterion, assignment: assignment, max_mark: 10) }
+    let(:criterion2) { create(:flexible_criterion, assignment: assignment, max_mark: 10) }
+    let!(:mark) { create(:flexible_mark, criterion: criterion, result: result, mark: 5) }
+    let!(:mark2) { create(:flexible_mark, criterion: criterion2, result: result, mark: 7) }
   end
   shared_examples 'get subtotal only' do |method_name|
     context 'there are no extra marks' do
@@ -78,11 +78,11 @@ describe Result do
     end
     context 'one criterion is peer_visible only' do
       let(:criterion) do
-        create :flexible_criterion,
+        create(:flexible_criterion,
                assignment: result.submission.grouping.assignment,
                max_mark: 10,
                ta_visible: false,
-               peer_visible: true
+               peer_visible: true)
       end
       context 'the result is a review' do
         before { allow(result).to receive(:is_a_review?).and_return(true) }
@@ -196,7 +196,7 @@ describe Result do
   end
 
   describe '#view_token_expired?' do
-    let(:result) { create :complete_result, view_token_expiry: expiry }
+    let(:result) { create(:complete_result, view_token_expiry: expiry) }
     subject { result.view_token_expired? }
     context 'no view token expiry exists for the result' do
       let(:expiry) { nil }
@@ -250,7 +250,7 @@ describe Result do
   end
 
   describe '#generate_print_pdf' do
-    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:result) { assignment.current_results.first }
 
     context 'when the result has marks and no PDF submission files' do
@@ -353,7 +353,7 @@ describe Result do
   end
 
   describe '#print_pdf_filename' do
-    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:result) { assignment.current_results.first }
 
     context 'when the result is for an individual student' do
@@ -368,7 +368,7 @@ describe Result do
     context 'when the result is for a group with multiple members' do
       it 'returns a filename corresponding to the group name and member user names' do
         grouping = result.submission.grouping
-        create :accepted_student_membership, grouping: grouping
+        create(:accepted_student_membership, grouping: grouping)
         members = grouping.accepted_students.includes(:user).map { |s| s.user.user_name }.sort
         expect(result.print_pdf_filename).to eq "#{grouping.group.group_name} (#{members.join(', ')}).pdf"
       end

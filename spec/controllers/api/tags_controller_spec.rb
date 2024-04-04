@@ -1,9 +1,9 @@
 describe Api::TagsController do
-  let(:course) { create :course }
-  let(:assignment) { create :assignment_with_criteria_and_results, course: course }
-  let(:grouping) { create :grouping, assignment: assignment }
-  let!(:tag) { create :tag, course: course, groupings: [grouping] }
-  let(:instructor) { create :instructor, course: course }
+  let(:course) { create(:course) }
+  let(:assignment) { create(:assignment_with_criteria_and_results, course: course) }
+  let(:grouping) { create(:grouping, assignment: assignment) }
+  let!(:tag) { create(:tag, course: course, groupings: [grouping]) }
+  let(:instructor) { create(:instructor, course: course) }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'

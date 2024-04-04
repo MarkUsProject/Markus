@@ -2,7 +2,7 @@ describe CourseSummariesController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   include CourseSummariesHelper
   context 'An instructor' do
-    let(:instructor) { create :instructor }
+    let(:instructor) { create(:instructor) }
     let(:course) { instructor.course }
 
     describe '#download_csv_grades_report' do
@@ -90,9 +90,9 @@ describe CourseSummariesController do
         before :each do
           assignments = create_list(:assignment_with_criteria_and_results, 3)
           create(:grouping_with_inviter_and_submission, assignment: assignments[0])
-          2.times { create(:grade_entry_form_with_data) }
+          create_list(:grade_entry_form_with_data, 2)
           create(:grade_entry_form)
-          create :marking_scheme, assessments: Assessment.all
+          create(:marking_scheme, assessments: Assessment.all)
 
           get_as instructor, :populate, params: { course_id: course.id }, format: :json
           @response_data = response.parsed_body.deep_symbolize_keys
@@ -174,7 +174,7 @@ describe CourseSummariesController do
   end
 
   context 'A grader' do
-    let(:grader) { create :ta }
+    let(:grader) { create(:ta) }
     it 'not be able to CSV graders report' do
       get_as grader, :download_csv_grades_report, params: { course_id: grader.course.id }
       expect(response).to have_http_status(403)
@@ -182,7 +182,7 @@ describe CourseSummariesController do
   end
 
   context 'A student' do
-    let(:student) { create :student }
+    let(:student) { create(:student) }
     let(:course) { student.course }
     it 'not be able to access grades report' do
       get_as student, :download_csv_grades_report, params: { course_id: course.id }
@@ -191,9 +191,9 @@ describe CourseSummariesController do
 
     describe '#populate' do
       before :each do
-        3.times { create(:assignment_with_criteria_and_results) }
-        2.times { create(:grade_entry_form_with_data) }
-        create :marking_scheme, assessments: Assessment.all
+        create_list(:assignment_with_criteria_and_results, 3)
+        create_list(:grade_entry_form_with_data, 2)
+        create(:marking_scheme, assessments: Assessment.all)
         @student2 = Student.first
       end
       context 'when assessments are hidden' do
@@ -281,14 +281,14 @@ describe CourseSummariesController do
     describe '#grade_distribution' do
       let(:role) { create(:instructor) }
       let(:course) { role.course }
-      before { create :student, course: course }
+      before { create(:student, course: course) }
       it('should respond with 200 (ok)') do
-        create :marking_scheme, assessments: Assessment.all
+        create(:marking_scheme, assessments: Assessment.all)
         get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expect(response).to have_http_status 200
       end
       it 'returns correct data' do
-        marking_scheme = create :marking_scheme, assessments: Assessment.all
+        marking_scheme = create(:marking_scheme, assessments: Assessment.all)
         expected = {}
         expected[:datasets] = [{ data: marking_scheme.students_grade_distribution(role) }]
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
@@ -310,7 +310,7 @@ describe CourseSummariesController do
         expect(response.parsed_body).to eq expected.as_json
       end
       it 'returns correct data when there is multiple marking schemes' do
-        marking_schemes = create_list :marking_scheme, 2, assessments: Assessment.all
+        marking_schemes = create_list(:marking_scheme, 2, assessments: Assessment.all)
         expected = {}
         expected[:datasets] = marking_schemes.map { |m| { data: m.students_grade_distribution(role) } }
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }

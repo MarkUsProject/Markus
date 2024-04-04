@@ -7,7 +7,7 @@ describe RubricCriterion do
 
   describe '#update_levels' do
     # At creation, rubric already has 5 levels
-    let(:rubric) { create :rubric_criterion }
+    let(:rubric) { create(:rubric_criterion) }
 
     context 'when the properties with uniqueness validations are changed in a way
 that two properties A and B have switched values' do

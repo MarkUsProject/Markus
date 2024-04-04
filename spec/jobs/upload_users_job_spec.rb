@@ -24,12 +24,12 @@ describe UploadUsersJob do
 
       context 'when a user in the file already exists' do
         before do
-          create :end_user,
+          create(:end_user,
                  user_name: 'frasid',
                  last_name: 'Fraser',
                  first_name: 'Sidney',
                  id_number: '',
-                 email: 'sf@test.com'
+                 email: 'sf@test.com')
         end
         it 'does not create additional valid users' do
           expect { subject }.to change { user_type.count }.to 4

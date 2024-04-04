@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :exam_template_midterm, class: ExamTemplate do
+  factory :exam_template_midterm, class: 'ExamTemplate' do
     association :assignment, factory: :assignment_for_scanned_exam
     filename { 'midterm1-v2-test.pdf' }
     num_pages { 6 }

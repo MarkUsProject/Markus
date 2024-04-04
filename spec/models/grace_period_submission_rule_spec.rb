@@ -14,7 +14,7 @@ describe GracePeriodSubmissionRule do
       before :each do
         pretend_now_is(collection_time) { grouping }
       end
-      let(:submission) { create :version_used_submission, grouping: grouping, is_empty: true }
+      let(:submission) { create(:version_used_submission, grouping: grouping, is_empty: true) }
       let(:collection_time) { due_date - 5.days }
       it 'does not deduct credits' do
         expect { apply_rule }.not_to(change { grouping.inviter.grace_period_deductions.count })
@@ -28,7 +28,7 @@ describe GracePeriodSubmissionRule do
       before :each do
         pretend_now_is(collection_time) { grouping }
       end
-      let(:submission) { create :version_used_submission, grouping: grouping, is_empty: true }
+      let(:submission) { create(:version_used_submission, grouping: grouping, is_empty: true) }
       let(:collection_time) { due_date + 12.hours }
       it 'does not deduct credits' do
         expect { apply_rule }.not_to(change { grouping.inviter.grace_period_deductions.count })
@@ -61,10 +61,10 @@ describe GracePeriodSubmissionRule do
       # takes the newer assignment submission as the submission time.  Therefore, grace days are being
       # taken off when it shouldn't have.
       let(:due_date2) { due_date + 5.days }
-      let(:assignment2) { create :assignment, due_date: due_date2 }
-      let(:grouping2) { create :grouping_with_inviter, assignment: assignment2 }
-      let(:rule2) { create :grace_period_submission_rule, assignment: assignment2 }
-      let!(:periods2) { create_list :period, 2, submission_rule: rule2, hours: 24 }
+      let(:assignment2) { create(:assignment, due_date: due_date2) }
+      let(:grouping2) { create(:grouping_with_inviter, assignment: assignment2) }
+      let(:rule2) { create(:grace_period_submission_rule, assignment: assignment2) }
+      let!(:periods2) { create_list(:period, 2, submission_rule: rule2, hours: 24) }
       context 'when submitting on time before grace period of previous assignment is over' do
         before :each do
           # The Student submits their files before the due date

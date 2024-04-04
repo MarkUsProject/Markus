@@ -1,9 +1,9 @@
 describe Api::GroupsController do
-  let!(:course) { create :course }
-  let(:assignment) { create :assignment }
-  let(:group) { create :group }
-  let(:grouping) { create :grouping }
-  let(:tag) { create :tag, course: course }
+  let!(:course) { create(:course) }
+  let(:assignment) { create(:assignment) }
+  let(:group) { create(:group) }
+  let(:grouping) { create(:grouping) }
+  let(:tag) { create(:tag, course: course) }
   let(:extension_params) do
     {
       time_delta: {
@@ -53,15 +53,15 @@ describe Api::GroupsController do
     end
   end
   context 'An authenticated request requesting' do
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:instructor) { create :instructor }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:instructor) { create(:instructor) }
     before :each do
       instructor.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
     shared_examples 'for a different course' do
       context 'an instructor for a different course' do
-        let(:instructor) { create :instructor, course: create(:course) }
+        let(:instructor) { create(:instructor, course: create(:course)) }
         it 'should return a 403 error' do
           expect(response).to have_http_status(403)
         end
@@ -165,7 +165,7 @@ describe Api::GroupsController do
         end
         context 'with multiple assignments' do
           before :each do
-            5.times { create :grouping_with_inviter, assignment: assignment }
+            5.times { create(:grouping_with_inviter, assignment: assignment) }
             get :index, params: { assignment_id: assignment.id, course_id: course.id }
           end
           it 'should return xml content about all assignments' do
@@ -195,7 +195,7 @@ describe Api::GroupsController do
           include_examples 'for a different course'
         end
         context 'with multiple groupings' do
-          let(:groupings) { Array.new(5) { create :grouping_with_inviter, assignment: assignment } }
+          let(:groupings) { Array.new(5) { create(:grouping_with_inviter, assignment: assignment) } }
           context 'for all groupings' do
             before { get :index, params: { assignment_id: assignment.id, course_id: course.id } }
             it 'should return content about all groupings' do
@@ -276,7 +276,7 @@ describe Api::GroupsController do
     end
     context 'POST add_new_members' do
       context 'when adding a student to an existing group with a member already' do
-        let(:student) { create :student }
+        let(:student) { create(:student) }
         before :each do
           post :add_members, params: { id: grouping.group.id,
                                        assignment_id: grouping.assignment.id,
@@ -294,8 +294,8 @@ describe Api::GroupsController do
         end
       end
       context 'when adding a student to an existing group without a member already' do
-        let(:grouping) { create :grouping, assignment: assignment }
-        let(:student) { create :student }
+        let(:grouping) { create(:grouping, assignment: assignment) }
+        let(:student) { create(:student) }
         before :each do
           post :add_members, params: { id: grouping.group.id,
                                        assignment_id: grouping.assignment.id,
@@ -313,8 +313,8 @@ describe Api::GroupsController do
         end
       end
       context 'when adding a student to a group without a grouping for this assignment' do
-        let(:grouping) { create :grouping }
-        let(:student) { create :student }
+        let(:grouping) { create(:grouping) }
+        let(:student) { create(:student) }
         before :each do
           post :add_members, params: { id: grouping.group.id,
                                        assignment_id: assignment.id,
@@ -624,10 +624,10 @@ describe Api::GroupsController do
       end
     end
     describe 'GET annotations' do
-      let(:grouping) { create :grouping, assignment: assignment }
-      let(:submission) { create :version_used_submission, grouping: grouping }
-      let(:submission_file) { create :submission_file, submission: submission }
-      let!(:annotation) { create :text_annotation, submission_file: submission_file }
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+      let(:submission_file) { create(:submission_file, submission: submission) }
+      let!(:annotation) { create(:text_annotation, submission_file: submission_file) }
       let(:response_type) { 'application/xml' }
       before do
         request.env['HTTP_ACCEPT'] = response_type
@@ -645,10 +645,10 @@ describe Api::GroupsController do
     end
 
     describe 'POST add_annotations' do
-      let(:assignment) { create :assignment }
-      let(:grouping) { create :grouping, assignment: assignment }
-      let(:submission) { create :version_used_submission, grouping: grouping }
-      let(:submission_file) { create :submission_file, submission: submission }
+      let(:assignment) { create(:assignment) }
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+      let(:submission_file) { create(:submission_file, submission: submission) }
       let(:response_type) { 'application/xml' }
 
       it 'creates new annotations for a submission file that exists' do
@@ -688,8 +688,8 @@ describe Api::GroupsController do
     end
     context 'PUT remove_tag' do
       let(:response_type) { 'application/xml' }
-      let(:tag) { create :tag, assessment: assignment }
-      let(:grouping) { create :grouping, group: group, tags: [tag], assignment: assignment }
+      let(:tag) { create(:tag, assessment: assignment) }
+      let(:grouping) { create(:grouping, group: group, tags: [tag], assignment: assignment) }
 
       before do
         request.env['HTTP_ACCEPT'] = response_type
@@ -723,8 +723,8 @@ describe Api::GroupsController do
 
     context 'PUT add_tag' do
       let(:response_type) { 'application/xml' }
-      let!(:tag) { create :tag, assessment: assignment }
-      let(:grouping) { create :grouping, group: group, tags: [], assignment: assignment }
+      let!(:tag) { create(:tag, assessment: assignment) }
+      let(:grouping) { create(:grouping, group: group, tags: [], assignment: assignment) }
       before do
         request.env['HTTP_ACCEPT'] = response_type
       end
@@ -753,10 +753,10 @@ describe Api::GroupsController do
     end
 
     context 'Extension' do
-      let!(:grouping) { create :grouping, group: group, assignment: assignment }
+      let!(:grouping) { create(:grouping, group: group, assignment: assignment) }
       context 'When an Extension exist' do
         let!(:extension) do
-          create :extension, grouping: grouping, time_delta: 99_999, note: 'local random notes', apply_penalty: false
+          create(:extension, grouping: grouping, time_delta: 99_999, note: 'local random notes', apply_penalty: false)
         end
         context 'POST' do
           it 'should not work with an existing extension' do

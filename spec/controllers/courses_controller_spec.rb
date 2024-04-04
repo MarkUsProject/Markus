@@ -1,8 +1,8 @@
 describe CoursesController do
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   let(:course) { instructor.course }
-  let(:student) { create :student, course: course }
-  let(:ta) { create :ta, course: course }
+  let(:student) { create(:student, course: course) }
+  let(:ta) { create(:ta, course: course) }
 
   describe 'role switching methods' do
     let(:subject) do
@@ -10,7 +10,7 @@ describe CoursesController do
     end
 
     describe '#switch_role' do
-      let(:temp_user) { create :end_user }
+      let(:temp_user) { create(:end_user) }
 
       it 'fails when no username is provided' do
         post_as instructor, :switch_role, params: { id: course.id }
@@ -25,10 +25,10 @@ describe CoursesController do
       end
 
       context 'when switching to users not in the course' do
-        let(:course2) { create :course }
-        let(:instructor2) { create :instructor, course: course2 }
-        let(:student2) { create :student, course: course2 }
-        let(:ta2) { create :ta, course: course2 }
+        let(:course2) { create(:course) }
+        let(:instructor2) { create(:instructor, course: course2) }
+        let(:student2) { create(:student, course: course2) }
+        let(:ta2) { create(:ta, course: course2) }
 
         it 'fails the switch to an instructor' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: instructor2.user_name }
@@ -47,7 +47,7 @@ describe CoursesController do
       end
 
       context 'when switching to instructors in the course' do
-        let(:second_instructor) { create :instructor, course: course }
+        let(:second_instructor) { create(:instructor, course: course) }
 
         it 'fails the switch to the current instructor' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: instructor.user_name }
@@ -66,7 +66,7 @@ describe CoursesController do
         end
 
         context 'if the current user is an admin' do
-          let(:admin_role) { create :admin_role, course: course }
+          let(:admin_role) { create(:admin_role, course: course) }
 
           it 'fails the switch to the current admin' do
             post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin_role.user_name }
@@ -87,7 +87,7 @@ describe CoursesController do
       end
 
       context 'when switching to a student in the course' do
-        let(:end_user) { create :student, course: course }
+        let(:end_user) { create(:student, course: course) }
 
         before :each do
           subject
@@ -111,7 +111,7 @@ describe CoursesController do
       end
 
       context 'when switching to a TA in the course' do
-        let(:end_user) { create :ta, course: course }
+        let(:end_user) { create(:ta, course: course) }
 
         before :each do
           subject
@@ -143,7 +143,7 @@ describe CoursesController do
       end
 
       context 'when previously switched to a TA in the course' do
-        let(:end_user) { create :ta, course: course }
+        let(:end_user) { create(:ta, course: course) }
 
         it 'succeeds and has a redirect status' do
           expect(response).to have_http_status(:found)
@@ -163,7 +163,7 @@ describe CoursesController do
       end
 
       context 'when previously switched to a student in the course' do
-        let(:end_user) { create :student, course: course }
+        let(:end_user) { create(:student, course: course) }
 
         it 'succeeds and has a redirect status' do
           expect(response).to have_http_status(:found)
@@ -309,7 +309,7 @@ describe CoursesController do
         end
 
         context 'Student' do
-          let(:user) { create :student }
+          let(:user) { create(:student) }
           include_examples 'cannot update course'
         end
       end
@@ -476,13 +476,13 @@ describe CoursesController do
   end
 
   describe 'visiting index page' do
-    let(:course1) { create :course, is_hidden: false }
-    let(:course2) { create :course, is_hidden: false }
-    let(:end_user) { create :end_user }
+    let(:course1) { create(:course, is_hidden: false) }
+    let(:course2) { create(:course, is_hidden: false) }
+    let(:end_user) { create(:end_user) }
 
     context 'Student' do
-      let!(:student2c1) { create :student, course: course1, user: end_user }
-      let!(:student2c2) { create :student, course: course2, user: end_user }
+      let!(:student2c1) { create(:student, course: course1, user: end_user) }
+      let!(:student2c2) { create(:student, course: course2, user: end_user) }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
         parsed_body = response.parsed_body['data']
@@ -492,8 +492,8 @@ describe CoursesController do
     end
 
     context 'TA' do
-      let!(:ta2c1) { create :ta, course: course1, user: end_user }
-      let!(:ta2c2) { create :ta, course: course2, user: end_user }
+      let!(:ta2c1) { create(:ta, course: course1, user: end_user) }
+      let!(:ta2c2) { create(:ta, course: course2, user: end_user) }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
         parsed_body = response.parsed_body['data']
@@ -503,8 +503,8 @@ describe CoursesController do
     end
 
     context 'Instructor' do
-      let!(:instructor2c1) { create :instructor, course: course1, user: end_user }
-      let!(:instructor2c2) { create :instructor, course: course2, user: end_user }
+      let!(:instructor2c1) { create(:instructor, course: course1, user: end_user) }
+      let!(:instructor2c2) { create(:instructor, course: course2, user: end_user) }
       it 'responds with a list sorted by courses.name' do
         get_as end_user, :index, params: { format: 'json' }
         parsed_body = response.parsed_body['data']
@@ -514,8 +514,8 @@ describe CoursesController do
     end
   end
   describe 'destroying lti deployments' do
-    let!(:lti_deployment) { create :lti_deployment, course: course }
-    let(:admin_role) { create :admin_role, course: course }
+    let!(:lti_deployment) { create(:lti_deployment, course: course) }
+    let(:admin_role) { create(:admin_role, course: course) }
     it 'redirects if the user is not logged in' do
       delete :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
       expect(response).to have_http_status(302)
@@ -541,22 +541,22 @@ describe CoursesController do
       expect(LtiDeployment.count).to eq(0)
     end
     context 'with dependent line items' do
-      let!(:lti_line_item) { create :lti_line_item, lti_deployment: lti_deployment }
+      let!(:lti_line_item) { create(:lti_line_item, lti_deployment: lti_deployment) }
       it 'deletes the line item' do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
         expect(LtiLineItem.count).to eq(0)
       end
     end
     context 'with dependent services' do
-      let!(:lti_names_roles) { create :lti_service_namesrole, lti_deployment: lti_deployment }
-      let!(:lti_line_item_service) { create :lti_service_lineitem, lti_deployment: lti_deployment }
+      let!(:lti_names_roles) { create(:lti_service_namesrole, lti_deployment: lti_deployment) }
+      let!(:lti_line_item_service) { create(:lti_service_lineitem, lti_deployment: lti_deployment) }
       it 'deletes the dependent objects' do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
         expect(LtiService.count).to eq(0)
       end
     end
     context 'with lti users' do
-      let!(:lti_user) { create :lti_user, user: student.user }
+      let!(:lti_user) { create(:lti_user, user: student.user) }
       it 'does not delete users' do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
         expect(LtiUser.count).to eq(1)
@@ -564,7 +564,7 @@ describe CoursesController do
     end
   end
   describe 'get lti deployments' do
-    let!(:lti_deployment) { create :lti_deployment, course: course }
+    let!(:lti_deployment) { create(:lti_deployment, course: course) }
     it 'returns the deployment' do
       get_as instructor, :lti_deployments, params: { id: course.id }
       expect(response.parsed_body[0]['id']).to eq(lti_deployment.id)

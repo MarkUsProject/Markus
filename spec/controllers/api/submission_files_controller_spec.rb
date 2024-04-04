@@ -1,15 +1,15 @@
 describe Api::SubmissionFilesController do
-  let(:course) { create :course }
-  let(:assignment) { create :assignment, course: course }
-  let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+  let(:course) { create(:course) }
+  let(:assignment) { create(:assignment, course: course) }
+  let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
   let(:group) { grouping.group }
   let(:file_content) { Array.new(2) { Faker::TvShows::HeyArnold.quote } }
   let(:file_names) { Array.new(2) { Faker::File.file_name(dir: '') } }
-  let(:instructor) { create :instructor, course: course }
+  let(:instructor) { create(:instructor, course: course) }
 
   shared_examples 'for a different course' do
     context 'instructor in a different course' do
-      let(:instructor) { create :instructor, course: create(:course) }
+      let(:instructor) { create(:instructor, course: create(:course)) }
       it 'should return a 403 error' do
         expect(response).to have_http_status(403)
       end

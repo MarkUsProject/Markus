@@ -280,23 +280,23 @@ describe AnnotationCategory do
     end
   end
   describe '.visible_categories' do
-    let(:assignment) { create :assignment }
-    let(:criterion) { create :flexible_criterion, assignment: assignment }
-    let(:criterion2) { create :flexible_criterion, assignment: assignment }
-    let!(:annotation_category) { create :annotation_category, assignment: assignment, flexible_criterion: criterion }
-    let!(:annotation_category2) { create :annotation_category, assignment: assignment, flexible_criterion: criterion2 }
-    let!(:annotation_category3) { create :annotation_category, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let(:criterion) { create(:flexible_criterion, assignment: assignment) }
+    let(:criterion2) { create(:flexible_criterion, assignment: assignment) }
+    let!(:annotation_category) { create(:annotation_category, assignment: assignment, flexible_criterion: criterion) }
+    let!(:annotation_category2) { create(:annotation_category, assignment: assignment, flexible_criterion: criterion2) }
+    let!(:annotation_category3) { create(:annotation_category, assignment: assignment) }
 
     shared_examples 'visible category for instructor and student' do
       context 'an instructor user' do
-        let(:user) { create :instructor }
+        let(:user) { create(:instructor) }
         it 'should return all three annotation categories' do
           category_ids = AnnotationCategory.ids
           expect(AnnotationCategory.visible_categories(assignment, user).ids).to contain_exactly(*category_ids)
         end
       end
       context 'a student user' do
-        let(:user) { create :student }
+        let(:user) { create(:student) }
         it 'should return no annotation categories' do
           expect(AnnotationCategory.visible_categories(assignment, user)).to be_empty
         end
@@ -306,7 +306,7 @@ describe AnnotationCategory do
       before { assignment.assignment_properties.update!(assign_graders_to_criteria: true) }
       include_examples 'visible category for instructor and student'
       context 'a grader user' do
-        let(:user) { create :ta }
+        let(:user) { create(:ta) }
         context 'not assigned to any criteria' do
           it 'should return only the unassociated annotation category' do
             ids = AnnotationCategory.visible_categories(assignment, user).ids
@@ -314,7 +314,7 @@ describe AnnotationCategory do
           end
         end
         context 'assigned to one of the associated criteria' do
-          before { create :criterion_ta_association, ta: user, criterion: criterion }
+          before { create(:criterion_ta_association, ta: user, criterion: criterion) }
           it 'should return the unassociated annotation category and the one assigned to the grader' do
             expected_ids = [annotation_category.id, annotation_category3.id]
             expect(AnnotationCategory.visible_categories(assignment, user).ids).to contain_exactly(*expected_ids)
@@ -325,7 +325,7 @@ describe AnnotationCategory do
     context 'criteria are not assigned to graders' do
       include_examples 'visible category for instructor and student'
       context 'a grader user' do
-        let(:user) { create :ta }
+        let(:user) { create(:ta) }
         it 'should return all three annotation categories' do
           category_ids = AnnotationCategory.ids
           expect(AnnotationCategory.visible_categories(assignment, user).ids).to contain_exactly(*category_ids)

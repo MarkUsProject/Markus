@@ -1,6 +1,6 @@
 describe Grouping do
   describe 'associations' do
-    subject { create :grouping }
+    subject { create(:grouping) }
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }
@@ -24,7 +24,7 @@ describe Grouping do
   end
 
   describe 'a default grouping' do
-    let(:grouping) { create :grouping }
+    let(:grouping) { create(:grouping) }
 
     it 'does not have any ta for marking' do
       expect(grouping.has_ta_for_marking?).to be false
@@ -71,7 +71,7 @@ describe Grouping do
     let(:groupings) do
       Array.new(4) { create(:grouping, assignment: assignment) }
     end
-    let(:tas) { Array.new(2) { create(:ta) } }
+    let(:tas) { create_list(:ta, 2) }
     let(:grouping_ids) { groupings.map(&:id) }
     let(:ta_ids) { tas.map(&:id) }
     let(:weightings) { Array.new(tas.size) { 1 } }
@@ -280,7 +280,7 @@ describe Grouping do
       end
 
       context 'with assigned TAs' do
-        let!(:tas) { Array.new(2) { create(:ta) } }
+        let!(:tas) { create_list(:ta, 2) }
 
         before :each do
           create_ta_memberships(grouping, tas)
@@ -464,9 +464,9 @@ describe Grouping do
 
     describe '#update_assigned_tokens' do
       let(:assignment) do
-        create :assignment, assignment_properties_attributes: { token_start_date: 1.day.ago, tokens_per_period: 6 }
+        create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago, tokens_per_period: 6 })
       end
-      let!(:grouping) { create :grouping, assignment: assignment, test_tokens: 5 }
+      let!(:grouping) { create(:grouping, assignment: assignment, test_tokens: 5) }
 
       before { assignment.reload }
 
@@ -829,7 +829,7 @@ describe Grouping do
         end
 
         context 'with two students submitting an assignment' do
-          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          let!(:accepted_membership) { create(:accepted_student_membership, grouping: grouping) }
           describe '#student_membership_number' do
             it 'returns 2' do
               expect(grouping.student_membership_number).to eq(2)
@@ -862,7 +862,7 @@ describe Grouping do
         end
 
         context 'with two students submitting an assignment' do
-          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          let!(:accepted_membership) { create(:accepted_student_membership, grouping: grouping) }
           describe '#grace_period_deduction_single' do
             it 'shows one grace credit deduction because submission is late' do
               apply_rule
@@ -882,7 +882,7 @@ describe Grouping do
         end
 
         context 'with two students submitting an assignment' do
-          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          let!(:accepted_membership) { create(:accepted_student_membership, grouping: grouping) }
           describe '#grace_period_deduction_single' do
             it 'shows two grace credit deduction because submission was submitted in second grace period' do
               apply_rule
@@ -896,7 +896,7 @@ describe Grouping do
 
   describe '#due_date' do
     shared_examples 'timed assignment due date' do
-      let(:assignment) { create :timed_assignment }
+      let(:assignment) { create(:timed_assignment) }
       let(:due_date) { due_date_obj.due_date || assignment.due_date }
       let(:start_time) { due_date_obj.start_time || assignment.start_time }
       context 'before the grouping has started' do
@@ -915,8 +915,8 @@ describe Grouping do
       end
     end
 
-    let(:assignment) { create :assignment }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
     context 'with an assignment due date' do
       it 'should return the assigment due date' do
         expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
@@ -929,7 +929,7 @@ describe Grouping do
       end
 
       context 'and a grouping extension' do
-        let(:extension) { create :extension, grouping: grouping }
+        let(:extension) { create(:extension, grouping: grouping) }
 
         it 'should return the assignment due date plus the extension' do
           expected_due_date = assignment.due_date + extension.time_delta
@@ -937,7 +937,7 @@ describe Grouping do
         end
 
         context 'with a timed assignment' do
-          let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+          let(:extension) { create(:extension, grouping: grouping, time_delta: 1.hour) }
           let(:due_date_obj) { assignment }
           let(:addition) { extension.time_delta }
           it_behaves_like 'timed assignment due date'
@@ -945,9 +945,9 @@ describe Grouping do
       end
 
       context 'and a section due date' do
-        let(:section) { create :section }
+        let(:section) { create(:section) }
         let!(:assessment_section_properties) do
-          create :assessment_section_properties, assessment: assignment, section: section, due_date: 2.minutes.ago
+          create(:assessment_section_properties, assessment: assignment, section: section, due_date: 2.minutes.ago)
         end
 
         before :each do
@@ -970,7 +970,7 @@ describe Grouping do
           end
 
           context 'and a grouping extension' do
-            let(:extension) { create :extension, grouping: grouping }
+            let(:extension) { create(:extension, grouping: grouping) }
 
             it 'should return the assignment due date plus the extension' do
               expected_due_date = assignment.due_date + extension.time_delta
@@ -995,10 +995,10 @@ describe Grouping do
           end
 
           context 'and a grouping extension' do
-            let(:extension) { create :extension, grouping: grouping }
+            let(:extension) { create(:extension, grouping: grouping) }
 
             context 'with a timed assignment' do
-              let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+              let(:extension) { create(:extension, grouping: grouping, time_delta: 1.hour) }
               let(:addition) { extension.time_delta }
               let(:due_date_obj) { assessment_section_properties }
               it_behaves_like 'timed assignment due date'
@@ -1016,7 +1016,7 @@ describe Grouping do
 
   describe '#past_assessment_start_time?' do
     let(:assignment) { create(:timed_assignment) }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
     context 'when assignment start time has passed' do
       it 'should return true' do
         expect(grouping.past_assessment_start_time?).to eq true
@@ -1029,11 +1029,11 @@ describe Grouping do
       end
     end
     context 'when a section exists' do
-      let(:section) { create :section }
+      let(:section) { create(:section) }
       let(:assessment_section_properties) do
-        create :assessment_section_properties, assessment: assignment, section: section
+        create(:assessment_section_properties, assessment: assignment, section: section)
       end
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       before do
         grouping.inviter.update!(section_id: section.id)
         assignment.update!(section_due_dates_type: true)
@@ -1222,7 +1222,7 @@ describe Grouping do
       end
 
       it 'should include feedback files associated with the test run' do
-        feedback_file = create :feedback_file_with_test_run, test_group_result: test_run.test_group_results.first
+        feedback_file = create(:feedback_file_with_test_run, test_group_result: test_run.test_group_results.first)
 
         expected = [
           {
@@ -1244,16 +1244,18 @@ describe Grouping do
   end
 
   context 'getting test run data' do
-    let(:grouping) { create :grouping_with_inviter }
-    let(:test_run) { create :test_run, grouping: grouping, role: test_runner, submission: submission }
+    let(:grouping) { create(:grouping_with_inviter) }
+    let(:test_run) { create(:test_run, grouping: grouping, role: test_runner, submission: submission) }
     let(:display_output) { 'instructors' }
-    let(:test_group) { create :test_group, assignment: grouping.assignment, display_output: display_output }
-    let(:test_group_result) { create :test_group_result, test_run: test_run, test_group: test_group, extra_info: 'AAA' }
-    let!(:test_result) { create :test_result, test_group_result: test_group_result }
+    let(:test_group) { create(:test_group, assignment: grouping.assignment, display_output: display_output) }
+    let(:test_group_result) do
+      create(:test_group_result, test_run: test_run, test_group: test_group, extra_info: 'AAA')
+    end
+    let!(:test_result) { create(:test_result, test_group_result: test_group_result) }
 
     context 'tests run by instructors' do
-      let(:test_runner) { create :instructor }
-      let(:submission) { create :version_used_submission }
+      let(:test_runner) { create(:instructor) }
+      let(:submission) { create(:version_used_submission) }
       describe '#test_runs_instructors' do
         let(:data) { grouping.test_runs_instructors(submission) }
         it_behaves_like 'test run data', true, true, true
@@ -1263,11 +1265,11 @@ describe Grouping do
         context 'when display_output is instructors' do
           it_behaves_like 'test run data', true, false
           context 'when there are multiple test group_results' do
-            let(:test_run2) { create :test_run, grouping: grouping, role: test_runner, submission: submission }
+            let(:test_run2) { create(:test_run, grouping: grouping, role: test_runner, submission: submission) }
             let(:test_group_result2) do
-              create :test_group_result, test_run: test_run2, test_group: test_group, extra_info: 'AAA'
+              create(:test_group_result, test_run: test_run2, test_group: test_group, extra_info: 'AAA')
             end
-            let!(:test_result2) { create :test_result, test_group_result: test_group_result2 }
+            let!(:test_result2) { create(:test_result, test_group_result: test_group_result2) }
             it 'should only return data from one test run' do
               expect(data.count).to eq 1
             end
@@ -1321,7 +1323,7 @@ describe Grouping do
   end
   describe '#has_non_empty_submission?' do
     context 'with a submission' do
-      let(:grouping) { create :grouping_with_inviter_and_submission }
+      let(:grouping) { create(:grouping_with_inviter_and_submission) }
       context 'and it is empty' do
         it 'returns false' do
           grouping.current_submission_used.update!(is_empty: true)
@@ -1336,21 +1338,21 @@ describe Grouping do
       end
     end
     context 'with no submission' do
-      let(:grouping) { create :grouping }
+      let(:grouping) { create(:grouping) }
       it 'returns false' do
         expect(grouping.has_non_empty_submission?).to be false
       end
     end
   end
   describe '#select_starter_file_entries' do
-    let(:assignment) { create :assignment, assignment_properties_attributes: { starter_file_type: starter_file_type } }
-    let(:section) { create :section }
-    let(:student) { create :student, section: section }
-    let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+    let(:assignment) { create(:assignment, assignment_properties_attributes: { starter_file_type: starter_file_type }) }
+    let(:section) { create(:section) }
+    let(:student) { create(:student, section: section) }
+    let(:grouping) { create(:grouping_with_inviter, inviter: student, assignment: assignment) }
     let!(:starter_file_groups) do
-      create_list :starter_file_group_with_entries, 3, assignment: assignment, use_rename: true
+      create_list(:starter_file_group_with_entries, 3, assignment: assignment, use_rename: true)
     end
-    let(:ssfg) { create :section_starter_file_group, starter_file_group: starter_file_groups.last, section: section }
+    let(:ssfg) { create(:section_starter_file_group, starter_file_group: starter_file_groups.last, section: section) }
     context 'when starter_file_type is simple' do
       let(:starter_file_type) { 'simple' }
       it 'should return the entries from the default starter file group' do
@@ -1368,8 +1370,8 @@ describe Grouping do
       context 'when the grouping\'s inviter does not belong to a section' do
         it 'should return the entries from the default starter file group' do
           entries = assignment.default_starter_file_group.starter_file_entries
-          student2 = create :student
-          grouping_without_section = create :grouping_with_inviter, inviter: student2, assignment: assignment
+          student2 = create(:student)
+          grouping_without_section = create(:grouping_with_inviter, inviter: student2, assignment: assignment)
           expect(grouping_without_section.select_starter_file_entries).to contain_exactly(*entries)
         end
       end
@@ -1377,7 +1379,7 @@ describe Grouping do
       context 'when the grouping does not have an inviter' do
         it 'should return the entries from the default starter file group' do
           entries = assignment.default_starter_file_group.starter_file_entries
-          grouping_without_inviter = create :grouping, assignment: assignment
+          grouping_without_inviter = create(:grouping, assignment: assignment)
           expect(grouping_without_inviter.select_starter_file_entries).to contain_exactly(*entries)
         end
       end
@@ -1401,10 +1403,10 @@ describe Grouping do
     end
   end
   describe '#reset_starter_file_entries' do
-    let(:assignment) { create :assignment }
-    let(:student) { create :student }
-    let!(:starter_file_groups) { create_list :starter_file_group_with_entries, 2, assignment: assignment }
-    let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let(:student) { create(:student) }
+    let!(:starter_file_groups) { create_list(:starter_file_group_with_entries, 2, assignment: assignment) }
+    let!(:grouping) { create(:grouping_with_inviter, inviter: student, assignment: assignment) }
     before { assignment.assignment_properties.update! default_starter_file_group_id: starter_file_groups.first.id }
     context 'when the starter_file_changed is true' do
       before { grouping.update! starter_file_changed: true }
@@ -1455,8 +1457,8 @@ describe Grouping do
     end
 
     context 'when a grouping is created' do
-      let(:grouping_without_inviter) { build :grouping, assignment: assignment }
-      let(:inviter) { create :inviter_student_membership, grouping: grouping_without_inviter }
+      let(:grouping_without_inviter) { build(:grouping, assignment: assignment) }
+      let(:inviter) { create(:inviter_student_membership, grouping: grouping_without_inviter) }
 
       it 'is called' do
         expect(grouping_without_inviter).to receive(:reset_starter_file_entries)
@@ -1505,9 +1507,9 @@ describe Grouping do
     end
   end
   describe '#reset_starter_file_entries' do
-    let(:assignment) { create :assignment }
-    let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
-    let(:grouping) { create :grouping, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let!(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
+    let(:grouping) { create(:grouping, assignment: assignment) }
     it 'should be called when creating a grouping' do
       expect_any_instance_of(Grouping).to receive(:reset_starter_file_entries)
       grouping
@@ -1523,7 +1525,7 @@ describe Grouping do
     end
   end
   describe '#access_repo' do
-    let(:grouping) { create :grouping }
+    let(:grouping) { create(:grouping) }
     it 'should make sure the assignment folder exists' do
       grouping.group.access_repo { |repo| repo.get_latest_revision.files.clear }
       grouping.access_repo do |repo|
@@ -1532,10 +1534,10 @@ describe Grouping do
     end
   end
   describe '#get_next_group as instructor' do
-    let(:role) { create :instructor }
-    let(:assignment) { create :assignment }
-    let!(:grouping1) { create :grouping_with_inviter_and_submission, assignment: assignment }
-    let!(:grouping2) { create :grouping_with_inviter_and_submission, assignment: assignment }
+    let(:role) { create(:instructor) }
+    let(:assignment) { create(:assignment) }
+    let!(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let!(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
     it 'should let one navigate right if there is a result directly to the right' do
       groupings = assignment.groupings.joins(:group).order('group_name')
       new_grouping = groupings.first.get_next_grouping(role, false)
@@ -1557,8 +1559,8 @@ describe Grouping do
       expect(new_grouping).to be(nil)
     end
     describe 'with collected results separated by an uncollected results' do
-      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
-      let!(:grouping3) { create :grouping_with_inviter_and_submission, assignment: assignment, is_collected: true }
+      let!(:grouping2) { create(:grouping, assignment: assignment, is_collected: false) }
+      let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
       it 'should let me navigate to the right if any result exists towards the right' do
         groupings = assignment.groupings.joins(:group).order('group_name')
         new_grouping = groupings.first.get_next_grouping(role, false)
@@ -1572,14 +1574,14 @@ describe Grouping do
     end
   end
   describe '#get_next_group as ta' do
-    let(:assignment) { create :assignment }
-    let(:role) { create :ta }
-    let!(:grouping1) { create :grouping_with_inviter_and_submission, assignment: assignment }
-    let!(:grouping2) { create :grouping_with_inviter_and_submission, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let(:role) { create(:ta) }
+    let!(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let!(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
     let(:groupings) { [grouping1, grouping2] }
     before(:each) do
       2.times do |i|
-        create :ta_membership, role: role, grouping: groupings[i]
+        create(:ta_membership, role: role, grouping: groupings[i])
       end
     end
     it 'should let one navigate right if there is a result directly to the right' do
@@ -1603,10 +1605,10 @@ describe Grouping do
       expect(new_grouping).to be(nil)
     end
     describe 'with collected results separated by an uncollected results' do
-      let!(:grouping2) { create :grouping, assignment: assignment, is_collected: false }
-      let!(:grouping3) { create :grouping_with_inviter_and_submission, assignment: assignment }
+      let!(:grouping2) { create(:grouping, assignment: assignment, is_collected: false) }
+      let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
       before(:each) do
-        create :ta_membership, role: role, grouping: grouping3
+        create(:ta_membership, role: role, grouping: grouping3)
       end
       it 'should let me navigate to the right if any result exists towards the right' do
         groupings = assignment.groupings.joins(:group).order('group_name')
@@ -1621,10 +1623,10 @@ describe Grouping do
     end
   end
   describe '#get_random_incomplete' do
-    let!(:grouping1) { create :grouping_with_inviter_and_submission }
-    let!(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
-    let!(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
-    let!(:grouping4) { create :grouping, assignment: grouping1.assignment }
+    let!(:grouping1) { create(:grouping_with_inviter_and_submission) }
+    let!(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+    let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+    let!(:grouping4) { create(:grouping, assignment: grouping1.assignment) }
 
     shared_examples 'role is an instructor or ta' do
       context 'there are no more incomplete submissions accessible to role' do
@@ -1643,10 +1645,10 @@ describe Grouping do
       end
     end
     context 'when role is a ta' do
-      let!(:role) { create :ta }
+      let!(:role) { create(:ta) }
       before(:each) do
-        create :ta_membership, grouping: grouping2, role: role
-        create :ta_membership, grouping: grouping3, role: role
+        create(:ta_membership, grouping: grouping2, role: role)
+        create(:ta_membership, grouping: grouping3, role: role)
       end
 
       it 'should only pick a random group from the groupings role can grade' do
@@ -1654,14 +1656,14 @@ describe Grouping do
       end
 
       it 'should only pick a random group from the groupings whose current result is incomplete' do
-        create :ta_membership, grouping: grouping1, role: role
+        create(:ta_membership, grouping: grouping1, role: role)
         grouping3.current_result.update(marking_state: Result::MARKING_STATES[:complete])
         expect(grouping2.get_random_incomplete(role).id).to eq(grouping1.id)
       end
       include_examples 'role is an instructor or ta'
     end
     context 'when role is an instructor' do
-      let!(:role) { create :instructor }
+      let!(:role) { create(:instructor) }
       it 'should pick from all groupings with an incomplete marking_state (that isn\'t the current grouping)' do
         grouping1.current_result.update(marking_state: Result::MARKING_STATES[:complete])
         expect(grouping2.get_random_incomplete(role).id).to eq(grouping3.id)

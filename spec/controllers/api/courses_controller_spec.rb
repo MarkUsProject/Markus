@@ -1,5 +1,5 @@
 describe Api::CoursesController do
-  let(:course) { create :course }
+  let(:course) { create(:course) }
 
   shared_examples 'Get #index' do |role|
     context 'when expecting xml response' do
@@ -76,7 +76,7 @@ describe Api::CoursesController do
       end
 
       context 'with a single course' do
-        let!(:role) { create role, user: user, course: course }
+        let!(:role) { create(role, user: user, course: course) }
 
         it 'should be successful' do
           get :index
@@ -160,7 +160,7 @@ describe Api::CoursesController do
   end
 
   context 'An instructor user in the course' do
-    let!(:user) { build :end_user }
+    let!(:user) { build(:end_user) }
     before do
       user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
@@ -185,7 +185,7 @@ describe Api::CoursesController do
   end
 
   context 'An authenticated student request' do
-    let(:user) { build :end_user }
+    let(:user) { build(:end_user) }
     before do
       user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
@@ -194,7 +194,7 @@ describe Api::CoursesController do
   end
 
   context 'An authenticated TA request' do
-    let(:user) { build :end_user }
+    let(:user) { build(:end_user) }
     before do
       user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
@@ -203,7 +203,7 @@ describe Api::CoursesController do
   end
 
   context 'an admin user' do
-    let(:admin_user) { create :admin_user }
+    let(:admin_user) { create(:admin_user) }
     before do
       admin_user.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin_user.api_key.strip}"
@@ -224,7 +224,7 @@ describe Api::CoursesController do
         end
 
         context 'with a single course' do
-          let!(:course) { create :course }
+          let!(:course) { create(:course) }
 
           it 'should be successful' do
             get :index
@@ -284,7 +284,7 @@ describe Api::CoursesController do
         end
 
         context 'with a single course' do
-          let!(:course) { create :course }
+          let!(:course) { create(:course) }
 
           it 'should be successful' do
             get :index
@@ -336,7 +336,7 @@ describe Api::CoursesController do
       end
     end
     context '#update' do
-      let(:course) { create :course }
+      let(:course) { create(:course) }
       let(:params) { { id: course.id, name: 'test', display_name: 'test', is_hidden: true } }
       before { put :update, params: params }
       it 'updates the course with the right attributes' do
@@ -344,7 +344,7 @@ describe Api::CoursesController do
       end
     end
     context '#update_autotest_url' do
-      let(:course) { create :course }
+      let(:course) { create(:course) }
       subject { put :update_autotest_url, params: { id: course.id, url: 'http://example.com' } }
       it 'should call AutotestResetUrlJob' do
         expect(AutotestResetUrlJob).to receive(:perform_now) do |course_, url|
@@ -359,8 +359,8 @@ describe Api::CoursesController do
         allow_any_instance_of(AutotestSetting).to receive(:register).and_return('someapikey')
         allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
       end
-      let(:autotest_setting) { create :autotest_setting }
-      let(:course) { create :course, autotest_setting: autotest_setting }
+      let(:autotest_setting) { create(:autotest_setting) }
+      let(:course) { create(:course, autotest_setting: autotest_setting) }
     end
     describe '#test_autotest_connection' do
       subject { get :test_autotest_connection, params: { id: course.id } }

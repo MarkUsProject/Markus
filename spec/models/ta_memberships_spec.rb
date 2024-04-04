@@ -1,15 +1,15 @@
 describe TaMembership do
-  subject { create :ta_membership }
+  subject { create(:ta_membership) }
   it { is_expected.to have_one(:course) }
   include_examples 'course associations'
   it 'should belong to a ta' do
     expect(create(:ta_membership, role: create(:ta))).to be_valid
   end
   it 'should not belong to an instructor' do
-    expect { create :ta_membership, role: create(:instructor) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect { create(:ta_membership, role: create(:instructor)) }.to raise_error(ActiveRecord::RecordInvalid)
   end
   it 'should not belong to an student' do
-    expect { create :ta_membership, role: create(:student) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect { create(:ta_membership, role: create(:student)) }.to raise_error(ActiveRecord::RecordInvalid)
   end
 
   context 'should update permissions' do

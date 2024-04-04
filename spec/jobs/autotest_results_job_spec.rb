@@ -1,5 +1,5 @@
 describe AutotestResultsJob do
-  let(:assignment) { create :assignment }
+  let(:assignment) { create(:assignment) }
   let(:grouping) { create(:grouping, assignment: assignment) }
   let(:test_runs) { create_list(:test_run, 3, grouping: grouping, status: :in_progress) }
 
@@ -44,7 +44,7 @@ describe AutotestResultsJob do
     end
     subject { described_class.perform_now }
     context 'tests are set up for an assignment' do
-      let(:assignment) { create :assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 } }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 }) }
       let(:dummy_return) { Net::HTTPSuccess.new(1.0, '200', 'OK') }
       let(:body) { '{}' }
       before { allow(dummy_return).to receive(:body) { body } }
@@ -135,13 +135,13 @@ describe AutotestResultsJob do
           end
         end
         shared_examples 'web socket table update' do
-          let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-          let(:test_run1) { create :test_run, grouping: grouping, status: :in_progress }
-          let(:test_run2) { create :student_test_run, grouping: grouping, status: :in_progress }
-          let(:test_run3) { create :test_run, grouping: grouping, status: :in_progress }
+          let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+          let(:test_run1) { create(:test_run, grouping: grouping, status: :in_progress) }
+          let(:test_run2) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+          let(:test_run3) { create(:test_run, grouping: grouping, status: :in_progress) }
           let(:test_runs) { [test_run1, test_run2, test_run3] }
           let(:student) { grouping.inviter.user }
-          let(:student2) { (create :student).user }
+          let(:student2) { create(:student).user }
           before(:each) do
             allow_any_instance_of(TestRun).to receive(:update_results!)
             allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
@@ -162,7 +162,9 @@ describe AutotestResultsJob do
             end
           end
           context 'when a the test was batch run' do
-            let(:test_run2) { create :batch_test_run, grouping: grouping, role: grouping.inviter, status: :in_progress }
+            let(:test_run2) do
+              create(:batch_test_run, grouping: grouping, role: grouping.inviter, status: :in_progress)
+            end
             it 'broadcasts a message to the user' do
               expect { described_class.perform_now }
                 .to have_broadcasted_to(student).from_channel(TestRunsChannel)
@@ -174,10 +176,10 @@ describe AutotestResultsJob do
           end
         end
         shared_examples 'web sockets test in progress' do
-          let(:grouping) { create :grouping_with_inviter }
-          let(:test_run1) { create :test_run, grouping: grouping, status: :in_progress }
-          let(:test_run2) { create :student_test_run, grouping: grouping, status: :in_progress }
-          let(:test_run3) { create :test_run, grouping: grouping, status: :in_progress }
+          let(:grouping) { create(:grouping_with_inviter) }
+          let(:test_run1) { create(:test_run, grouping: grouping, status: :in_progress) }
+          let(:test_run2) { create(:student_test_run, grouping: grouping, status: :in_progress) }
+          let(:test_run3) { create(:test_run, grouping: grouping, status: :in_progress) }
           let(:test_runs) { [test_run1, test_run2, test_run3] }
           let(:student) { grouping.inviter.user }
           it 'should not broadcast anything' do
@@ -225,14 +227,14 @@ describe AutotestResultsJob do
         end
         context 'when there is a test run with the same autotest_test_id in a different course' do
           let(:status_return) { { 1 => 'finished' } }
-          let(:other_course) { create :course, autotest_setting: create(:autotest_setting) }
-          let(:other_role) { create :instructor, course: other_course }
+          let(:other_course) { create(:course, autotest_setting: create(:autotest_setting)) }
+          let(:other_role) { create(:instructor, course: other_course) }
           let(:other_assignment) do
-            create :assignment,
+            create(:assignment,
                    assignment_properties_attributes: { remote_autotest_settings_id: 11 },
-                   course: other_course
+                   course: other_course)
           end
-          let(:other_grouping) { create :grouping, assignment: other_assignment }
+          let(:other_grouping) { create(:grouping, assignment: other_assignment) }
           let(:test_runs) { [] }
           let(:other_test_runs) do
             [

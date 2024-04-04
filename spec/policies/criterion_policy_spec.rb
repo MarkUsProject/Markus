@@ -6,10 +6,10 @@ describe CriterionPolicy do
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:role) { create :ta, manage_assessments: true }
+        let(:role) { create(:ta, manage_assessments: true) }
       end
       failed 'that cannot manage assessments' do
-        let(:role) { create :ta, manage_assessments: false }
+        let(:role) { create(:ta, manage_assessments: false) }
       end
     end
     failed 'role is a student' do

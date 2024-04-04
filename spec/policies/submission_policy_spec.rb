@@ -8,10 +8,10 @@ describe SubmissionPolicy do
     end
     context 'role is a ta' do
       succeed 'that can manage submissions' do
-        let(:role) { create :ta, manage_submissions: true }
+        let(:role) { create(:ta, manage_submissions: true) }
       end
       failed 'that cannot manage submissions' do
-        let(:role) { create :ta, manage_submissions: false }
+        let(:role) { create(:ta, manage_submissions: false) }
       end
     end
     failed 'role is a student' do
@@ -37,10 +37,10 @@ describe SubmissionPolicy do
     end
     context 'role is a ta' do
       succeed 'that can run tests' do
-        let(:role) { create :ta, run_tests: true }
+        let(:role) { create(:ta, run_tests: true) }
       end
       failed 'that cannot run tests' do
-        let(:role) { create :ta, run_tests: false }
+        let(:role) { create(:ta, run_tests: false) }
       end
     end
     failed 'role is a student' do
@@ -51,7 +51,7 @@ describe SubmissionPolicy do
   describe_rule :manage_subdirectories? do
     [:student, :ta, :instructor].each do |role_type|
       succeed "as a #{role_type}" do
-        let(:role) { create role_type }
+        let(:role) { create(role_type) }
       end
     end
   end
@@ -59,7 +59,7 @@ describe SubmissionPolicy do
   describe_rule :notebook_content? do
     [:student, :ta, :instructor].each do |role_type|
       context "as a #{role_type}" do
-        let(:role) { create role_type }
+        let(:role) { create(role_type) }
         succeed 'scanner dependencies are installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
         end
@@ -75,29 +75,29 @@ describe SubmissionPolicy do
       let(:role) { create(:instructor) }
     end
     context 'role is a ta' do
-      let(:complete_result) { create :complete_result, submission: create(:submission, grouping: grouping) }
+      let(:complete_result) { create(:complete_result, submission: create(:submission, grouping: grouping)) }
       let(:record) { complete_result.submission }
-      let(:grouping) { create :grouping_with_inviter, inviter: create(:student), assignment: assignment }
-      let(:assignment) { create :assignment_with_peer_review }
+      let(:grouping) { create(:grouping_with_inviter, inviter: create(:student), assignment: assignment) }
+      let(:assignment) { create(:assignment_with_peer_review) }
       succeed 'when they can manage submissions' do
         let!(:role) { create(:ta, manage_submissions: true) }
       end
       succeed 'when they are assigned to grade the given group\'s submission' do
         let!(:role) { create(:ta) }
-        let!(:ta_membership) { create :ta_membership, role: role, grouping: grouping }
+        let!(:ta_membership) { create(:ta_membership, role: role, grouping: grouping) }
       end
       failed 'when they aren\'t assigned to grade the given group\'s submission' do
         let(:role) { create(:ta) }
       end
     end
     context 'role is a student' do
-      let(:assignment) { create :assignment_with_peer_review_and_groupings_results }
+      let(:assignment) { create(:assignment_with_peer_review_and_groupings_results) }
       let(:current_result) { assignment.groupings.first.current_result }
       let(:record) { current_result.submission }
       context 'role is a reviewer for the current result' do
         let(:reviewer_grouping) { assignment.pr_assignment.groupings.first }
         let(:role) { reviewer_grouping.accepted_students.first }
-        before { create :peer_review, reviewer: reviewer_grouping, result: current_result }
+        before { create(:peer_review, reviewer: reviewer_grouping, result: current_result) }
         succeed 'from_codeviewer is true' do
           let(:context) { { role: role, real_user: role.user, from_codeviewer: true } }
         end
@@ -116,7 +116,7 @@ describe SubmissionPolicy do
     end
   end
   describe_rule :change_remark_status? do
-    let(:record) { create :complete_result }
+    let(:record) { create(:complete_result) }
     failed 'role is an instructor' do
       let(:role) { create(:instructor) }
     end
@@ -124,11 +124,11 @@ describe SubmissionPolicy do
       let(:role) { create(:ta) }
     end
     failed 'role is a student who is not part of the grouping' do
-      let(:role) { create :student }
+      let(:role) { create(:student) }
     end
     describe 'role is a student who is part of the grouping' do
-      let(:role) { create :student }
-      let(:grouping) { create :grouping_with_inviter_and_submission, inviter: role }
+      let(:role) { create(:student) }
+      let(:grouping) { create(:grouping_with_inviter_and_submission, inviter: role) }
       let(:result) { grouping.current_result }
       let(:record) { result.submission }
       let(:assignment) { record.grouping.assignment }

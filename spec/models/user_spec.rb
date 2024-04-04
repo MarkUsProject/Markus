@@ -17,13 +17,13 @@ describe User do
   it { is_expected.to have_many(:lti_users) }
 
   describe 'AutotestUser' do
-    subject { create :autotest_user }
+    subject { create(:autotest_user) }
     it { is_expected.to allow_value('A!a.sa').for(:user_name) }
     it { is_expected.to allow_value('.autotest').for(:user_name) }
   end
 
   describe 'uniqueness validation' do
-    subject { create :end_user }
+    subject { create(:end_user) }
     it { is_expected.to validate_uniqueness_of :user_name }
   end
 
@@ -119,11 +119,11 @@ describe User do
     end
   end
   describe '#admin_courses' do
-    let(:course1) { create :course }
-    let(:course2) { create :course }
-    let(:admin) { create :admin_user }
-    let(:instructor1) { create :instructor, course: course1 }
-    let(:student) { create :student, course: course2 }
+    let(:course1) { create(:course) }
+    let(:course2) { create(:course) }
+    let(:admin) { create(:admin_user) }
+    let(:instructor1) { create(:instructor, course: course1) }
+    let(:student) { create(:student, course: course2) }
 
     it 'returns only courses where an instructor is an admin' do
       expect(instructor1.user.admin_courses).to contain_exactly(course1)

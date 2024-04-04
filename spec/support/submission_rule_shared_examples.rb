@@ -1,9 +1,9 @@
 shared_context 'submission_rule' do
   let(:due_date) { Time.zone.parse('July 23 2009 5:00PM') }
-  let(:assignment) { create :assignment, due_date: due_date }
-  let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-  let(:rule) { create rule_type, assignment: assignment }
-  let!(:periods) { create_list :period, 2, submission_rule: rule, hours: 24, interval: 24 }
+  let(:assignment) { create(:assignment, due_date: due_date) }
+  let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+  let(:rule) { create(rule_type, assignment: assignment) }
+  let!(:periods) { create_list(:period, 2, submission_rule: rule, hours: 24, interval: 24) }
 
   after :each do
     destroy_repos
