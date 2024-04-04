@@ -1,5 +1,5 @@
 describe Criterion do
-  let(:assignment) { create :assignment_with_criteria_and_results }
+  let(:assignment) { create(:assignment_with_criteria_and_results) }
   describe 'reset marking states' do
     before('resets marking states with at least one result') do
       assignment.current_results do |result|

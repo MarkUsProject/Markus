@@ -8,7 +8,7 @@ describe GradeEntryItem do
     it { is_expected.to validate_presence_of(:name) }
 
     describe 'uniqueness validation' do
-      subject { create :grade_entry_item }
+      subject { create(:grade_entry_item) }
       it { is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id) }
     end
 
@@ -36,7 +36,7 @@ describe GradeEntryItem do
   # Make sure different grade entry forms can have grade entry items
   # with the same name
   it 'allows same column name for different grade entry forms' do
-    course = create :course
+    course = create(:course)
     grade_entry_form1 = GradeEntryForm.create!(short_identifier: 'a',
                                                due_date: 1.day.from_now,
                                                description: '1',

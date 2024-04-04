@@ -1,8 +1,8 @@
 describe Api::SectionsController do
   include AutomatedTestsHelper
 
-  let(:section) { create :section }
-  let(:instructor) { create :instructor }
+  let(:section) { create(:section) }
+  let(:instructor) { create(:instructor) }
   let(:course) { section.course }
 
   context 'An unauthorized attempt' do

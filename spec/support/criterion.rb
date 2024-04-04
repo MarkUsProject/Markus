@@ -7,10 +7,10 @@ shared_examples 'a criterion' do
 
   describe 'callbacks' do
     describe '#update_result_marking_states' do
-      let(:assignment) { create :assignment }
+      let(:assignment) { create(:assignment) }
       it 'should trigger job' do
         expect(UpdateResultsMarkingStatesJob).to receive(:perform_later).with(assignment.id, :incomplete)
-        create criterion_factory_name, assignment: assignment
+        create(criterion_factory_name, assignment: assignment)
       end
     end
   end
@@ -20,7 +20,7 @@ shared_examples 'a criterion' do
     let(:criteria) do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end
-    let(:tas) { Array.new(2) { create(:ta) } }
+    let(:tas) { create_list(:ta, 2) }
     let(:ta_ids) { tas.map(&:id) }
     let(:criterion_ids) { criteria.map(&:id) }
     let(:criterion_one_id) { [criteria[0].id] }
@@ -177,7 +177,7 @@ shared_examples 'a criterion' do
       end
 
       context 'with assigned TAs' do
-        let!(:tas) { Array.new(2) { create(:ta) } }
+        let!(:tas) { create_list(:ta, 2) }
 
         before :each do
           Criterion.assign_all_tas([criterion.id], tas.map(&:id), criterion.assignment)
@@ -282,10 +282,10 @@ shared_examples 'a criterion' do
   end
 
   describe 'update max_mark' do
-    let(:assignment) { create :assignment }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:submission) { create :version_used_submission, grouping: grouping }
-    let(:result) { create :incomplete_result, submission: submission }
+    let(:assignment) { create(:assignment) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:submission) { create(:version_used_submission, grouping: grouping) }
+    let(:result) { create(:incomplete_result, submission: submission) }
     let(:mark) do
       mark = result.marks.first
       mark.update!(mark: 1)
@@ -325,10 +325,10 @@ shared_examples 'a criterion' do
   end
 
   context 'when deleting a criterion' do
-    let(:assignment) { create :assignment }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:submission) { create :version_used_submission, grouping: grouping }
-    let(:result) { create :incomplete_result, submission: submission }
+    let(:assignment) { create(:assignment) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:submission) { create(:version_used_submission, grouping: grouping) }
+    let(:result) { create(:incomplete_result, submission: submission) }
     let(:mark) do
       mark = result.marks.first
       mark.update!(mark: 1)
@@ -358,7 +358,7 @@ shared_examples 'a criterion' do
     end
 
     context 'when there is a percentage extra mark for the result' do
-      let!(:extra_mark) { create :extra_mark, result: result, extra_mark: 10 }
+      let!(:extra_mark) { create(:extra_mark, result: result, extra_mark: 10) }
       it 'result total marks get updated and percentage bonuses get recalculated' do
         removed_value = mark.mark
         previous_total = mark.mark + other_mark.mark

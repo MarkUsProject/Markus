@@ -1,6 +1,6 @@
 describe Api::GradeEntryFormsController do
-  let(:course) { create :course }
-  let(:grade_entry_form) { create :grade_entry_form, course: course }
+  let(:course) { create(:course) }
+  let(:grade_entry_form) { create(:grade_entry_form, course: course) }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -30,7 +30,7 @@ describe Api::GradeEntryFormsController do
   end
   context 'An authenticated request requesting' do
     before :each do
-      instructor = create :instructor, course: course
+      instructor = create(:instructor, course: course)
       instructor.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
     end
@@ -59,7 +59,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with a single grade entry form in a different course' do
           before do
-            create :grade_entry_form, course: create(:course)
+            create(:grade_entry_form, course: create(:course))
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -71,7 +71,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with multiple assignments' do
           before :each do
-            create_list :grade_entry_form, 5, course: course
+            create_list(:grade_entry_form, 5, course: course)
             get :index, params: { course_id: course.id }
           end
           it 'should return xml content about all grade entry forms' do
@@ -86,7 +86,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with multiple grade entry forms in a different course' do
           before :each do
-            create_list :grade_entry_form, 5, course: create(:course)
+            create_list(:grade_entry_form, 5, course: create(:course))
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -119,7 +119,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with a single grade entry form in a different course' do
           before do
-            create :grade_entry_form, course: create(:course)
+            create(:grade_entry_form, course: create(:course))
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -131,7 +131,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with multiple grade entry forms' do
           before :each do
-            create_list :grade_entry_form, 5, course: course
+            create_list(:grade_entry_form, 5, course: course)
             get :index, params: { course_id: course.id }
           end
           it 'should return xml content about all grade entry forms' do
@@ -144,7 +144,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with a multiple grade entry forms in a different course' do
           before do
-            create_list :grade_entry_form, 5, course: create(:course)
+            create_list(:grade_entry_form, 5, course: create(:course))
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -178,7 +178,7 @@ describe Api::GradeEntryFormsController do
       end
       context 'requesting a grade entry form in a different course' do
         it 'should response with 403' do
-          grade_entry_form = create :grade_entry_form, course: create(:course)
+          grade_entry_form = create(:grade_entry_form, course: create(:course))
           get :show, params: { id: grade_entry_form.id, course_id: grade_entry_form.course_id }
           expect(response).to have_http_status(403)
         end
@@ -248,7 +248,7 @@ describe Api::GradeEntryFormsController do
       end
       context 'where short_identifier is already taken' do
         it 'should respond with 409' do
-          grade_entry_form = create :grade_entry_form, course: course
+          grade_entry_form = create(:grade_entry_form, course: course)
           post :create, params: { **params, short_identifier: grade_entry_form.short_identifier }
           expect(response).to have_http_status(409)
         end
@@ -277,7 +277,7 @@ describe Api::GradeEntryFormsController do
         expect(response).to have_http_status(404)
       end
       context 'for a different course' do
-        let(:grade_entry_form) { create :grade_entry_form, course: create(:course) }
+        let(:grade_entry_form) { create(:grade_entry_form, course: create(:course)) }
         it 'should response with 403' do
           new_desc = grade_entry_form.description + 'more!'
           put :update, params: { id: grade_entry_form.id, description: new_desc, course_id: grade_entry_form.course.id }
@@ -286,7 +286,7 @@ describe Api::GradeEntryFormsController do
       end
     end
     context 'PUT update_grades' do
-      let(:student) { create :student }
+      let(:student) { create(:student) }
       let(:grade_params) do
         { short_identifier: 'A0', course_id: course.id, description: 'Test',
           due_date: '2012-03-26 18:04:39', is_hidden: false,
@@ -296,7 +296,7 @@ describe Api::GradeEntryFormsController do
             { name: 'col2', out_of: 2, bonus: true }
           ] }
       end
-      let!(:grade_entry_item) { create :grade_entry_item, grade_entry_form: grade_entry_form, out_of: 5, name: 'col1' }
+      let!(:grade_entry_item) { create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 5, name: 'col1') }
       it 'creates new grades' do
         put :update_grades,
             params: { course_id: course.id, id: grade_entry_form.id, user_name: student.user_name,
@@ -319,7 +319,7 @@ describe Api::GradeEntryFormsController do
         expect(response).to have_http_status(404)
       end
       it 'successfully deletes a grade entry form with no non-nil grades' do
-        form = create :grade_entry_form, course_id: course.id, id: 4
+        form = create(:grade_entry_form, course_id: course.id, id: 4)
         first_student = create(:student)
         second_student = create(:student)
         grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)
@@ -332,7 +332,7 @@ describe Api::GradeEntryFormsController do
         expect(course.grade_entry_forms.exists?(form.id)).to be_falsey
       end
       it 'does not delete a grade entry form with non-nil grades' do
-        form = create :grade_entry_form, course_id: course.id, id: 4
+        form = create(:grade_entry_form, course_id: course.id, id: 4)
         first_student = create(:student)
         second_student = create(:student)
         grade_entry_item = create(:grade_entry_item, out_of: 10, grade_entry_form: form)

@@ -2,7 +2,7 @@ describe AutomatedTestsController do
   include AutomatedTestsHelper
 
   # TODO: add 'role is from a different course' shared tests to each route test below
-  let(:assignment) { create :assignment }
+  let(:assignment) { create(:assignment) }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
   before do
     allow_any_instance_of(AutotestSetting).to(
@@ -419,13 +419,13 @@ describe AutomatedTestsController do
     end
   end
   context 'as a student' do
-    let(:role) { create :student }
+    let(:role) { create(:student) }
     context 'GET student_interface' do
       before { get_as role, :student_interface, params: params }
       # TODO: write tests
     end
     context 'POST execute_test_run' do
-      let!(:grouping) { create :grouping, assignment: assignment, inviter: role }
+      let!(:grouping) { create(:grouping, assignment: assignment, inviter: role) }
       context 'when the student is not allowed to run tests' do
         before do
           assignment.update!(enable_student_tests: false)

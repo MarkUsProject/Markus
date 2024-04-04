@@ -2,7 +2,7 @@ describe AutotestResetUrlJob do
   include AutomatedTestsHelper
   let(:host_with_port) { 'http://localhost:3000' }
   let(:url) { 'http://example.com' }
-  let(:course) { create :course }
+  let(:course) { create(:course) }
   context 'when running as a background job' do
     let(:job_args) { [course, url, host_with_port] }
     include_examples 'background job'
@@ -27,7 +27,7 @@ describe AutotestResetUrlJob do
       context 'when assignments exist for the course' do
         before do
           3.times do |i|
-            create :assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i }
+            create(:assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i })
           end
         end
         it 'should reset the remote_autotest_settings_id for all assignments' do
@@ -49,7 +49,7 @@ describe AutotestResetUrlJob do
       context 'when assignments exist for the course' do
         before do
           3.times do |i|
-            create :assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i }
+            create(:assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i })
           end
         end
         it 'should not reset the remote_autotest_settings_id for all assignments' do
@@ -67,8 +67,8 @@ describe AutotestResetUrlJob do
           before do
             allow_any_instance_of(AutotestResetUrlJob).to receive(:update_credentials)
             3.times do |i|
-              create :assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
-                                                                                      autotest_settings: '{}' }
+              create(:assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
+                                                                                      autotest_settings: '{}' })
             end
           end
           it 'should update the remote_autotest_settings_id for all assignments' do
@@ -86,10 +86,10 @@ describe AutotestResetUrlJob do
           before do
             allow_any_instance_of(AutotestResetUrlJob).to receive(:update_credentials)
             2.times do |i|
-              create :assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
-                                                                                      autotest_settings: '{}' }
+              create(:assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
+                                                                                      autotest_settings: '{}' })
             end
-            create :assignment, course: course
+            create(:assignment, course: course)
           end
           it 'should update the remote_autotest_settings_id for all assignments' do
             expect(AutotestSpecsJob).to receive(:perform_now).exactly(2).times
@@ -106,8 +106,8 @@ describe AutotestResetUrlJob do
         context 'when assignments exist for the course and all have autotest settings' do
           before do
             3.times do |i|
-              create :assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
-                                                                                      autotest_settings: '{}' }
+              create(:assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
+                                                                                      autotest_settings: '{}' })
             end
           end
           it 'should update the remote_autotest_settings_id for all assignments' do
@@ -118,10 +118,10 @@ describe AutotestResetUrlJob do
         context 'when assignments exist for the course and some have autotest settings' do
           before do
             2.times do |i|
-              create :assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
-                                                                                      autotest_settings: '{}' }
+              create(:assignment, course: course, assignment_properties_attributes: { remote_autotest_settings_id: i,
+                                                                                      autotest_settings: '{}' })
             end
-            create :assignment, course: course
+            create(:assignment, course: course)
           end
           it 'should update the remote_autotest_settings_id for all assignments' do
             expect(AutotestSpecsJob).to receive(:perform_now).exactly(2).times

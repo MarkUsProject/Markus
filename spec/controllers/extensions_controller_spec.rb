@@ -1,11 +1,11 @@
 describe ExtensionsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   describe 'as an instructor' do
-    let(:instructor) { create :instructor }
-    let(:grouping) { create :grouping }
+    let(:instructor) { create(:instructor) }
+    let(:grouping) { create(:grouping) }
     let(:course) { instructor.course }
     describe '#update' do
-      let(:extension) { create :extension, grouping: grouping }
+      let(:extension) { create(:extension, grouping: grouping) }
       let(:params) do
         parts = extension.to_parts
         {
@@ -94,7 +94,7 @@ describe ExtensionsController do
     end
     describe '#destroy' do
       context 'and the extension exists' do
-        let(:extension) { create :extension, grouping: grouping }
+        let(:extension) { create(:extension, grouping: grouping) }
         it 'should delete the extension' do
           extension # make sure the object is created before the call
           expect do

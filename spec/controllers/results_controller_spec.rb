@@ -1,19 +1,19 @@
 describe ResultsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:course) { assignment.course }
-  let(:assignment) { create :assignment }
-  let(:student) { create :student, grace_credits: 2 }
-  let(:instructor) { create :instructor }
-  let(:ta) { create :ta }
-  let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
-  let(:submission) { create :version_used_submission, grouping: grouping }
+  let(:assignment) { create(:assignment) }
+  let(:student) { create(:student, grace_credits: 2) }
+  let(:instructor) { create(:instructor) }
+  let(:ta) { create(:ta) }
+  let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: student) }
+  let(:submission) { create(:version_used_submission, grouping: grouping) }
   let(:incomplete_result) { submission.current_result }
-  let(:complete_result) { create :complete_result, submission: submission }
-  let(:submission_file) { create :submission_file, submission: submission }
+  let(:complete_result) { create(:complete_result, submission: submission) }
+  let(:submission_file) { create(:submission_file, submission: submission) }
   let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
-  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
+  let(:rubric_mark) { create(:rubric_mark, result: incomplete_result, criterion: rubric_criterion) }
   let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
-  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
+  let(:flexible_mark) { create(:flexible_mark, result: incomplete_result, criterion: flexible_criterion) }
   let(:from_codeviewer) { nil }
 
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
@@ -45,21 +45,21 @@ describe ResultsController do
   end
 
   shared_examples 'ta and instructor #next_grouping with filters' do
-    let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+    let(:grouping1) { create(:grouping_with_inviter_and_submission, is_collected: true) }
     let(:grouping2) do
-      create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
     end
     let(:grouping3) do
-      create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+      create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
     end
-    let(:grouping4) { create :grouping, assignment: grouping1.assignment }
+    let(:grouping4) { create(:grouping, assignment: grouping1.assignment) }
     let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
 
     context 'when annotation text filter is applied' do
-      let(:annotation_text) { create :annotation_text, content: 'aa_' }
+      let(:annotation_text) { create(:annotation_text, content: 'aa_') }
       before(:each) do
-        create :text_annotation, annotation_text: annotation_text, result: grouping1.current_result
-        create :text_annotation, annotation_text: annotation_text, result: grouping3.current_result
+        create(:text_annotation, annotation_text: annotation_text, result: grouping1.current_result)
+        create(:text_annotation, annotation_text: annotation_text, result: grouping3.current_result)
       end
 
       context 'when there are no more filtered submissions in the specified direction' do
@@ -112,7 +112,7 @@ describe ResultsController do
     end
 
     context 'section filter' do
-      let(:section) { create :section }
+      let(:section) { create(:section) }
       before(:each) do
         groupings[0].inviter.update(section: section)
         groupings[1].inviter.update(section: nil)
@@ -148,19 +148,19 @@ describe ResultsController do
     context 'marking state filter' do
       context 'when remark request is selected' do
         let(:grouping2) do
-          result = create :incomplete_result
+          result = create(:incomplete_result)
           result.submission.update(submission_version_used: true)
           result.grouping.update(assignment: grouping1.assignment)
           result.grouping
         end
         let(:grouping3) do
-          remark_result = create :remark_result
+          remark_result = create(:remark_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
         let(:grouping4) do
-          remark_result = create :remark_result
+          remark_result = create(:remark_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
@@ -193,19 +193,19 @@ describe ResultsController do
 
       context 'when released is selected' do
         let(:grouping2) do
-          result = create :incomplete_result
+          result = create(:incomplete_result)
           result.submission.update(submission_version_used: true)
           result.grouping.update(assignment: grouping1.assignment)
           result.grouping
         end
         let(:grouping3) do
-          remark_result = create :complete_result
+          remark_result = create(:complete_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
         let(:grouping4) do
-          remark_result = create :released_result
+          remark_result = create(:released_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
@@ -221,13 +221,13 @@ describe ResultsController do
 
       context 'when complete is selected' do
         let(:grouping2) do
-          result = create :released_result
+          result = create(:released_result)
           result.submission.update(submission_version_used: true)
           result.grouping.update(assignment: grouping1.assignment)
           result.grouping
         end
         let(:grouping3) do
-          remark_result = create :remark_result, marking_state: Result::MARKING_STATES[:complete]
+          remark_result = create(:remark_result, marking_state: Result::MARKING_STATES[:complete])
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
@@ -249,19 +249,19 @@ describe ResultsController do
       end
       context 'when in progress is selected' do
         let(:grouping2) do
-          result = create :remark_result
+          result = create(:remark_result)
           result.submission.update(submission_version_used: true)
           result.grouping.update(assignment: grouping1.assignment)
           result.grouping
         end
         let(:grouping3) do
-          remark_result = create :released_result
+          remark_result = create(:released_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
         let(:grouping4) do
-          remark_result = create :incomplete_result
+          remark_result = create(:incomplete_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
@@ -285,19 +285,19 @@ describe ResultsController do
 
       context 'when markingState is left blank' do
         let(:grouping2) do
-          result = create :incomplete_result
+          result = create(:incomplete_result)
           result.submission.update(submission_version_used: true)
           result.grouping.update(assignment: grouping1.assignment)
           result.grouping
         end
         let(:grouping3) do
-          remark_result = create :remark_result
+          remark_result = create(:remark_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
         end
         let(:grouping4) do
-          remark_result = create :remark_result
+          remark_result = create(:remark_result)
           remark_result.submission.update(submission_version_used: true)
           remark_result.grouping.update(assignment: grouping1.assignment)
           remark_result.grouping
@@ -313,8 +313,8 @@ describe ResultsController do
     end
 
     context 'when filtering by tags' do
-      let(:tag1) { create :tag, groupings: [grouping1, grouping3], name: 'tag1' }
-      let(:tag2) { create :tag, groupings: [grouping2, grouping3], name: 'tag2' }
+      let(:tag1) { create(:tag, groupings: [grouping1, grouping3], name: 'tag1') }
+      let(:tag2) { create(:tag, groupings: [grouping2, grouping3], name: 'tag2') }
 
       context 'when a tag has been picked' do
         it 'should return the next group with a larger group name that satisfies the constraints' do
@@ -353,18 +353,18 @@ describe ResultsController do
 
     context 'when filtering by total mark' do
       let(:grouping4) do
-        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+        create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
       end
       let(:assignment) { grouping1.assignment }
-      let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let(:criterion) { create(:flexible_criterion, assignment: assignment, max_mark: 10) }
       let!(:mark2) do
-        create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 6
+        create(:flexible_mark, criterion: criterion, result: grouping2.current_result, mark: 6)
       end
       let!(:mark3) do
-        create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 10
+        create(:flexible_mark, criterion: criterion, result: grouping3.current_result, mark: 10)
       end
       let!(:mark4) do
-        create :flexible_mark, criterion: criterion, result: grouping4.current_result, assignment: assignment, mark: 5
+        create(:flexible_mark, criterion: criterion, result: grouping4.current_result, mark: 5)
       end
 
       context 'when no range is provided' do
@@ -427,12 +427,12 @@ describe ResultsController do
 
     context 'when filtering by total extra mark' do
       let(:grouping4) do
-        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+        create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
       end
       let(:assignment) { grouping1.assignment }
-      let!(:mark2) { create :extra_mark_points, result: grouping2.current_result, extra_mark: 6 }
-      let!(:mark3) { create :extra_mark_points, result: grouping3.current_result, extra_mark: 10 }
-      let!(:mark4) { create :extra_mark_points, result: grouping4.current_result, extra_mark: 5 }
+      let!(:mark2) { create(:extra_mark_points, result: grouping2.current_result, extra_mark: 6) }
+      let!(:mark3) { create(:extra_mark_points, result: grouping3.current_result, extra_mark: 10) }
+      let!(:mark4) { create(:extra_mark_points, result: grouping4.current_result, extra_mark: 5) }
 
       context 'when no range is provided' do
         it 'should return the next grouping without constraints' do
@@ -494,15 +494,15 @@ describe ResultsController do
 
     context 'when filtering by criteria' do
       let(:assignment) { grouping1.assignment }
-      let!(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+      let!(:criterion) { create(:flexible_criterion, assignment: assignment, max_mark: 10) }
       let!(:mark1a) do
-        create :flexible_mark, criterion: criterion, result: grouping1.current_result, assignment: assignment, mark: 1
+        create(:flexible_mark, criterion: criterion, result: grouping1.current_result, mark: 1)
       end
       let!(:mark2a) do
-        create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 2
+        create(:flexible_mark, criterion: criterion, result: grouping2.current_result, mark: 2)
       end
       let!(:mark3a) do
-        create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 3
+        create(:flexible_mark, criterion: criterion, result: grouping3.current_result, mark: 3)
       end
 
       context 'when a single criteria is specified' do
@@ -589,14 +589,12 @@ describe ResultsController do
       end
 
       context 'when multiple criteria are specified' do
-        let!(:criterion2) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+        let!(:criterion2) { create(:flexible_criterion, assignment: assignment, max_mark: 10) }
         let!(:mark1b) do
-          create :flexible_mark, criterion: criterion2, result: grouping1.current_result, assignment: assignment,
-                                 mark: 1
+          create(:flexible_mark, criterion: criterion2, result: grouping1.current_result, mark: 1)
         end
         let!(:mark3b) do
-          create :flexible_mark, criterion: criterion2, result: grouping3.current_result, assignment: assignment,
-                                 mark: 3
+          create(:flexible_mark, criterion: criterion2, result: grouping3.current_result, mark: 3)
         end
         context 'when both max and min are specified' do
           it 'should not select the next grouping whose result does not have a mark for the second criterion' do
@@ -608,8 +606,7 @@ describe ResultsController do
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
           it 'should not select the next grouping whose result does not satisfy the conditions' do
-            create :flexible_mark, criterion: criterion2, result: grouping2.current_result,
-                                   assignment: assignment, mark: 5
+            create(:flexible_mark, criterion: criterion2, result: grouping2.current_result, mark: 5)
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
                                           direction: 1,
@@ -618,8 +615,7 @@ describe ResultsController do
             expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
           end
           it 'should select the next grouping whose result satisfies the conditions' do
-            create :flexible_mark, criterion: criterion2, result: grouping2.current_result,
-                                   assignment: assignment, mark: 5
+            create(:flexible_mark, criterion: criterion2, result: grouping2.current_result, mark: 5)
             get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
                                           id: grouping1.current_result.id,
                                           direction: 1,
@@ -634,12 +630,12 @@ describe ResultsController do
 
   shared_examples 'instructor and ta #next_grouping with different orderings' do
     context 'with 3 groupings' do
-      let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+      let(:grouping1) { create(:grouping_with_inviter_and_submission, is_collected: true) }
       let(:grouping2) do
-        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+        create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
       end
       let(:grouping3) do
-        create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+        create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
       end
       let(:groupings) { [grouping1, grouping2, grouping3] }
 
@@ -679,12 +675,12 @@ describe ResultsController do
             end
 
             context 'when the next ordered submission shares has the same submission date as the current one' do
-              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping1) { create(:grouping_with_inviter_and_submission, is_collected: true) }
               let(:grouping2) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               let(:grouping3) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
 
               before(:each) do
@@ -715,12 +711,12 @@ describe ResultsController do
             end
 
             context 'when the previous ordered submission shares has the same submission date as the current one' do
-              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping1) { create(:grouping_with_inviter_and_submission, is_collected: true) }
               let(:grouping2) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               let(:grouping3) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               before(:each) do
                 3.times do |i|
@@ -752,12 +748,12 @@ describe ResultsController do
             end
 
             context 'when the next ordered submission shares has the same submission date as the current one' do
-              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping1) { create(:grouping_with_inviter_and_submission, is_collected: true) }
               let(:grouping2) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               let(:grouping3) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               before(:each) do
                 3.times do |i|
@@ -788,12 +784,12 @@ describe ResultsController do
             end
 
             context 'when the previous ordered submission shares has the same submission date as the current one' do
-              let(:grouping1) { create :grouping_with_inviter_and_submission, is_collected: true }
+              let(:grouping1) { create(:grouping_with_inviter_and_submission, is_collected: true) }
               let(:grouping2) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               let(:grouping3) do
-                create :grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true
+                create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment, is_collected: true)
               end
               before(:each) do
                 3.times do |i|
@@ -816,15 +812,15 @@ describe ResultsController do
 
       context 'order by total mark' do
         let(:assignment) { grouping1.assignment }
-        let(:criterion) { create :flexible_criterion, assignment: assignment, max_mark: 10 }
+        let(:criterion) { create(:flexible_criterion, assignment: assignment, max_mark: 10) }
         let!(:mark1) do
-          create :flexible_mark, criterion: criterion, result: grouping1.current_result, assignment: assignment, mark: 1
+          create(:flexible_mark, criterion: criterion, result: grouping1.current_result, mark: 1)
         end
         let!(:mark2) do
-          create :flexible_mark, criterion: criterion, result: grouping2.current_result, assignment: assignment, mark: 2
+          create(:flexible_mark, criterion: criterion, result: grouping2.current_result, mark: 2)
         end
         let!(:mark3) do
-          create :flexible_mark, criterion: criterion, result: grouping3.current_result, assignment: assignment, mark: 3
+          create(:flexible_mark, criterion: criterion, result: grouping3.current_result, mark: 3)
         end
 
         context 'Ascending Order' do
@@ -976,7 +972,7 @@ describe ResultsController do
         let(:result) { assignment.groupings.first.current_result }
         let(:submission) { result.submission }
         let(:mark) { assignment.groupings.first.current_result.marks.first }
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: assignment.groupings.first }
+        let!(:ta_membership) { create(:ta_membership, role: ta, grouping: assignment.groupings.first) }
         it 'sets override to true for mark if input value is not null' do
           patch :update_mark, params: { course_id: course.id,
                                         id: result.id, criterion_id: mark.criterion_id,
@@ -1028,7 +1024,7 @@ describe ResultsController do
       context 'when duplicate marks exist' do
         # NOTE: this should not occur but it does happen because of concurrent requests and the fact that
         #       the find_or_create_by method is not atomic and neither are database writes
-        let(:mark2) { build :mark, result: flexible_mark.result, criterion: flexible_mark.criterion }
+        let(:mark2) { build(:mark, result: flexible_mark.result, criterion: flexible_mark.criterion) }
         before do
           mark2.save(validate: false)
           patch :update_mark, params: { course_id: course.id,
@@ -1102,7 +1098,7 @@ describe ResultsController do
     context 'accessing an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
       let(:mark) { assignment.groupings.first.current_result.marks.first }
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: assignment.groupings.first }
+      let!(:ta_membership) { create(:ta_membership, role: ta, grouping: assignment.groupings.first) }
       it 'returns annotation data with criteria information' do
         post :get_annotations, params: { course_id: course.id,
                                          id: assignment.groupings.first.current_result,
@@ -1264,10 +1260,10 @@ describe ResultsController do
 
       context 'with grace token deductions' do
         let!(:grace_period_deduction1) do
-          create :grace_period_deduction, membership: grouping.memberships.find_by(role: student)
+          create(:grace_period_deduction, membership: grouping.memberships.find_by(role: student))
         end
         let!(:grace_period_deduction2) do
-          create :grace_period_deduction, membership: grouping.memberships.find_by(role: student2)
+          create(:grace_period_deduction, membership: grouping.memberships.find_by(role: student2))
         end
         it 'sends grace token deduction data' do
           subject
@@ -1352,7 +1348,7 @@ describe ResultsController do
     include_examples 'showing json data', true
     context '#view_token_check' do
       let(:role) { create(:student) }
-      let(:grouping) { create :grouping_with_inviter_and_submission, inviter: student }
+      let(:grouping) { create(:grouping_with_inviter_and_submission, inviter: student) }
       let(:record) { grouping.current_result }
       let(:assignment) { record.grouping.assignment }
       let(:view_token) { nil }
@@ -1545,7 +1541,7 @@ describe ResultsController do
     end
 
     describe '#refresh_view_tokens' do
-      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:results) { assignment.current_results }
       let(:ids) { results.ids }
       subject do
@@ -1564,7 +1560,7 @@ describe ResultsController do
         expect(response.parsed_body).to eq results.pluck(:id, :view_token).to_h.transform_keys(&:to_s)
       end
       context 'some result ids are not associated with the assignment' do
-        let(:extra_result) { create :complete_result }
+        let(:extra_result) { create(:complete_result) }
         let(:ids) { results.ids + [extra_result.id] }
         it { is_expected.to have_http_status(:success) }
         it 'should regenerate view tokens for all results for the assignment' do
@@ -1585,7 +1581,7 @@ describe ResultsController do
       end
     end
     describe '#update_view_token_expiry' do
-      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:results) { assignment.current_results }
       let(:ids) { results.ids }
       let(:expiry_datetime) { 1.hour.from_now }
@@ -1615,7 +1611,7 @@ describe ResultsController do
         end
       end
       context 'some result ids are not associated with the assignment' do
-        let(:extra_result) { create :complete_result }
+        let(:extra_result) { create(:complete_result) }
         let(:ids) { results.ids + [extra_result.id] }
         it { is_expected.to have_http_status(:success) }
         it 'should set the expiry date for all results for the assignment' do
@@ -1638,7 +1634,7 @@ describe ResultsController do
     end
 
     describe '#download_view_tokens' do
-      let(:assignment) { create :assignment_with_criteria_and_results }
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:results) { assignment.current_results }
       let(:ids) { results.ids }
       before { results.update_all view_token_expiry: 1.day.ago }
@@ -1673,7 +1669,7 @@ describe ResultsController do
       end
       it_behaves_like 'csv contains the right stuff'
       context 'some result ids are not associated with the assignment' do
-        let(:extra_result) { create :complete_result }
+        let(:extra_result) { create(:complete_result) }
         let(:ids) { results.ids + [extra_result.id] }
         it { is_expected.to have_http_status(:success) }
         it_behaves_like 'csv contains the right stuff'
@@ -1835,22 +1831,22 @@ describe ResultsController do
     end
 
     context 'accessing next_grouping' do
-      let(:grouping1) { create :grouping_with_inviter_and_submission }
-      let(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
-      let(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
-      let(:grouping4) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:grouping1) { create(:grouping_with_inviter_and_submission) }
+      let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+      let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+      let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
       let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
       before(:each) { groupings }
       include_examples 'ta and instructor #next_grouping with filters'
       include_examples 'instructor and ta #next_grouping with different orderings'
 
       context 'filter by tas' do
-        let(:ta1) { create :ta }
-        let(:ta2) { create :ta }
-        let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
-        let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
-        let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
-        let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+        let(:ta1) { create(:ta) }
+        let(:ta2) { create(:ta) }
+        let!(:ta_membership1) { create(:ta_membership, role: ta1, grouping: grouping1) }
+        let!(:ta_membership2) { create(:ta_membership, role: ta1, grouping: grouping3) }
+        let!(:ta_membership3) { create(:ta_membership, role: ta2, grouping: grouping3) }
+        let!(:ta_membership4) { create(:ta_membership, role: ta2, grouping: grouping2) }
 
         context 'when a ta has been picked' do
           it 'should return the next group with a larger group name that satisfies the constraints' do
@@ -1946,7 +1942,7 @@ describe ResultsController do
       let!(:grace_period_deduction) do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+      let!(:ta_membership) { create(:ta_membership, role: ta, grouping: grouping) }
       before :each do
         assignment.assignment_properties.update(anonymize_groups: true)
         get :show, params: { course_id: course.id, id: incomplete_result.id }, xhr: true
@@ -1970,7 +1966,7 @@ describe ResultsController do
         assignment = create(:assignment_with_deductive_annotations)
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         non_deductive_category = create(:annotation_category, assignment: assignment)
-        create :ta_membership, role: ta, grouping: assignment.groupings.first
+        create(:ta_membership, role: ta, grouping: assignment.groupings.first)
         post :show, params: { course_id: course.id,
                               id: assignment.groupings.first.current_result,
                               format: :json }, xhr: true
@@ -1984,7 +1980,7 @@ describe ResultsController do
     context 'when criteria are assigned to this grader' do
       let(:data) { response.parsed_body }
       let(:params) { { course_id: course.id, id: incomplete_result.id } }
-      let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+      let!(:ta_membership) { create(:ta_membership, role: ta, grouping: grouping) }
       before :each do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: rubric_mark.criterion, ta: ta)
@@ -2005,7 +2001,7 @@ describe ResultsController do
           end
           assignment.assignment_properties.update(assign_graders_to_criteria: true)
           create(:criterion_ta_association, criterion: other_criterion, ta: ta)
-          create :ta_membership, role: ta, grouping: assignment.groupings.first
+          create(:ta_membership, role: ta, grouping: assignment.groupings.first)
           other_category = create(:annotation_category,
                                   assignment: assignment,
                                   flexible_criterion_id: other_criterion.id)
@@ -2045,7 +2041,7 @@ describe ResultsController do
 
     context 'accessing update_mark' do
       context 'when is assigned to grade the given group\'s submission' do
-        let!(:ta_membership) { create :ta_membership, role: ta, grouping: grouping }
+        let!(:ta_membership) { create(:ta_membership, role: ta, grouping: grouping) }
         it 'should not count completed groupings that are not assigned to the TA' do
           grouping2 = create(:grouping_with_inviter, assignment: assignment)
           create(:version_used_submission, grouping: grouping2)
@@ -2201,14 +2197,14 @@ describe ResultsController do
     end
 
     context 'with valid permissions' do
-      let(:grouping1) { create :grouping_with_inviter_and_submission }
-      let(:grouping2) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
-      let(:grouping3) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
-      let(:grouping4) { create :grouping_with_inviter_and_submission, assignment: grouping1.assignment }
+      let(:grouping1) { create(:grouping_with_inviter_and_submission) }
+      let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+      let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+      let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
       let(:groupings) { [grouping1, grouping2, grouping3, grouping4] }
       before(:each) do
         3.times do |i|
-          create :ta_membership, role: ta, grouping: groupings[i]
+          create(:ta_membership, role: ta, grouping: groupings[i])
         end
       end
 
@@ -2237,7 +2233,7 @@ describe ResultsController do
       end
 
       context 'when graders are assigned to criteria' do
-        let(:criterion) { create :flexible_criterion, assignment: grouping1.assignment }
+        let(:criterion) { create(:flexible_criterion, assignment: grouping1.assignment) }
         before do
           grouping1.assignment.update!(assign_graders_to_criteria: true)
           grouping1.assignment.groupings.find_each do |grouping|
@@ -2246,7 +2242,7 @@ describe ResultsController do
         end
 
         context 'when the TA is assigned a criterion' do
-          let!(:criterion_ta_association) { create :criterion_ta_association, ta: ta, criterion: criterion }
+          let!(:criterion_ta_association) { create(:criterion_ta_association, ta: ta, criterion: criterion) }
 
           it 'returns no result when all other results have a mark for the assigned criterion' do
             grouping2.current_result.marks.find_by(criterion_id: criterion.id).update!(mark: 0)
@@ -2284,19 +2280,19 @@ describe ResultsController do
       context 'accessing next_grouping' do
         context 'ta and instructor #next_grouping with filters' do
           before(:each) do
-            create :ta_membership, role: ta, grouping: groupings[3]
+            create(:ta_membership, role: ta, grouping: groupings[3])
           end
           include_examples 'ta and instructor #next_grouping with filters'
         end
 
         include_examples 'instructor and ta #next_grouping with different orderings'
         context 'filter by tas' do
-          let(:ta1) { create :ta }
-          let(:ta2) { create :ta }
-          let!(:ta_membership1) { create :ta_membership, role: ta1, grouping: grouping1 }
-          let!(:ta_membership2) { create :ta_membership, role: ta1, grouping: grouping3 }
-          let!(:ta_membership3) { create :ta_membership, role: ta2, grouping: grouping3 }
-          let!(:ta_membership4) { create :ta_membership, role: ta2, grouping: grouping2 }
+          let(:ta1) { create(:ta) }
+          let(:ta2) { create(:ta) }
+          let!(:ta_membership1) { create(:ta_membership, role: ta1, grouping: grouping1) }
+          let!(:ta_membership2) { create(:ta_membership, role: ta1, grouping: grouping3) }
+          let!(:ta_membership3) { create(:ta_membership, role: ta2, grouping: grouping3) }
+          let!(:ta_membership4) { create(:ta_membership, role: ta2, grouping: grouping2) }
 
           context 'when a ta has been picked' do
             it 'should return the next group with a larger group name and NOT filter by selected ta' do

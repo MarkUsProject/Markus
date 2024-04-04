@@ -1,5 +1,5 @@
 describe SubmissionsJob do
-  let(:assignment) { create :assignment }
+  let(:assignment) { create(:assignment) }
   let(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment) }
 
   context 'when running as a background job' do
@@ -93,7 +93,7 @@ describe SubmissionsJob do
   end
 
   context 'when creating a submission for a scanned exam' do
-    let(:assignment) { create :assignment_for_scanned_exam }
+    let(:assignment) { create(:assignment_for_scanned_exam) }
     before :each do
       groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', submission_date, 'test.txt', 'aaa') }
       SubmissionsJob.perform_now(groupings)
@@ -120,7 +120,7 @@ describe SubmissionsJob do
   end
 
   context 'when collecting submissions with collect_current set to true' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create(:assignment) }
     before :each do
       groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', submission_date, 'test.txt', 'aaa') }
       SubmissionsJob.perform_now(groupings, collect_current: true)
@@ -137,7 +137,7 @@ describe SubmissionsJob do
     end
 
     context 'when collected after due date' do
-      let(:assignment) { create :assignment, due_date: 1.week.ago }
+      let(:assignment) { create(:assignment, due_date: 1.week.ago) }
       let(:submission_date) { Time.current.to_s }
       it 'collects the most recent revision' do
         groupings.each do |g|
@@ -148,7 +148,7 @@ describe SubmissionsJob do
       end
     end
     context 'when collected before due date' do
-      let(:assignment) { create :assignment, due_date: 1.hour.from_now }
+      let(:assignment) { create(:assignment, due_date: 1.hour.from_now) }
       let(:submission_date) { Time.current.to_s }
       it 'collects the latest revision' do
         groupings.each do |g|
@@ -161,8 +161,8 @@ describe SubmissionsJob do
   end
 
   context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
-    let(:instructor) { create :instructor }
-    let(:instructor2) { create :instructor }
+    let(:instructor) { create(:instructor) }
+    let(:instructor2) { create(:instructor) }
 
     context 'without errors when collecting submissions' do
       it 'broadcasts status updates for each collected submission, once upon completion, and once to update the ' \
@@ -247,14 +247,14 @@ describe SubmissionsJob do
     end
   end
   context 'when notify_socket flag is not set' do
-    let(:instructor) { create :instructor }
+    let(:instructor) { create(:instructor) }
     it "doesn't broadcast a message" do
       expect { SubmissionsJob.perform_now(groupings, enqueuing_user: instructor.user) }
         .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
     end
   end
   context 'when enqueuing user is not set' do
-    let(:instructor) { create :instructor }
+    let(:instructor) { create(:instructor) }
     it "doesn't broadcast a message" do
       expect { SubmissionsJob.perform_now(groupings, notify_socket: true) }
         .to have_broadcasted_to(instructor.user).from_channel(CollectSubmissionsChannel).exactly 0
@@ -263,7 +263,7 @@ describe SubmissionsJob do
 
   xcontext 'when applying a late penalty' do
     # TODO: the following tests are failing on travis occasionally. Figure out why and re-enable them.
-    let!(:period) { create :period, submission_rule: submission_rule, hours: 2 }
+    let!(:period) { create(:period, submission_rule: submission_rule, hours: 2) }
     before :each do
       groupings.each do |g|
         submit_file_at_time(g.assignment, g.group, 'test', (g.due_date + 1.hour).to_s, 'test.txt', 'aaa')
@@ -271,11 +271,11 @@ describe SubmissionsJob do
       end
     end
     context 'for a grace period deduction' do
-      let(:submission_rule) { create :grace_period_submission_rule, assignment: assignment }
+      let(:submission_rule) { create(:grace_period_submission_rule, assignment: assignment) }
       before :each do
         groupings.each do |g|
           g.inviter_membership.user.update(grace_credits: 5)
-          create :grace_period_deduction, membership: g.inviter_membership
+          create(:grace_period_deduction, membership: g.inviter_membership)
         end
       end
       it 'should remove any previous deductions' do
@@ -292,7 +292,7 @@ describe SubmissionsJob do
       end
     end
     context 'for a penalty decay deduction' do
-      let(:submission_rule) { create :penalty_decay_period_submission_rule, assignment: assignment }
+      let(:submission_rule) { create(:penalty_decay_period_submission_rule, assignment: assignment) }
       it 'should add a deduction' do
         SubmissionsJob.perform_now(groupings, apply_late_penalty: true)
         groupings.each do |g|
@@ -301,7 +301,7 @@ describe SubmissionsJob do
       end
     end
     context 'for a penalty period deduction' do
-      let(:submission_rule) { create :penalty_period_submission_rule, assignment: assignment }
+      let(:submission_rule) { create(:penalty_period_submission_rule, assignment: assignment) }
       it 'should add a deduction' do
         SubmissionsJob.perform_now(groupings, apply_late_penalty: true)
         groupings.each do |g|

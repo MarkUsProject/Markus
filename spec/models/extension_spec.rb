@@ -1,6 +1,6 @@
 describe Extension do
-  let(:grouping) { create :grouping }
-  let(:extension) { create :extension, grouping: grouping }
+  let(:grouping) { create(:grouping) }
+  let(:extension) { create(:extension, grouping: grouping) }
   it { is_expected.to belong_to(:grouping) }
   it { is_expected.to have_one(:course) }
   describe 'check validations' do
@@ -15,7 +15,7 @@ describe Extension do
   end
   describe 'check callbacks' do
     it 'should mark the group as instructor approved on creation' do
-      create :student_membership, grouping: grouping
+      create(:student_membership, grouping: grouping)
       expect { extension }.to change { grouping.instructor_approved }.to(true)
     end
   end

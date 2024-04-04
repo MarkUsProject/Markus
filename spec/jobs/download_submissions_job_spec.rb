@@ -1,5 +1,5 @@
 describe DownloadSubmissionsJob do
-  let(:assignment) { create :assignment }
+  let(:assignment) { create(:assignment) }
   let(:groupings) do
     create_list(:grouping_with_inviter, 3, assignment: assignment).map do |grouping|
       gid = grouping.id
@@ -13,7 +13,7 @@ describe DownloadSubmissionsJob do
     include_examples 'background job'
   end
 
-  let(:groupings_without_files) { create_list :grouping, 3 }
+  let(:groupings_without_files) { create_list(:grouping, 3) }
 
   context 'when print is false' do
     it 'should create a zip file containing all submission files for the given groupings' do

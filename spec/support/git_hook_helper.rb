@@ -7,8 +7,8 @@ shared_context 'git' do
 end
 
 shared_context 'git_hooks' do
-  let!(:course) { create :course }
-  let!(:assignment) { create :assignment, course: course }
+  let!(:course) { create(:course) }
+  let!(:assignment) { create(:assignment, course: course) }
   let(:repo) { build(:git_repository) }
   let(:repo_path) { repo.tmp_repo }
   let(:repo_bare_path) { repo.get_repos_path }

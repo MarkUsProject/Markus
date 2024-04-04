@@ -58,7 +58,7 @@ describe UsersController do
   end
 
   describe 'User is not an instructor in at least one course' do
-    let(:role) { create :ta }
+    let(:role) { create(:ta) }
     include_examples 'settings'
   end
 end

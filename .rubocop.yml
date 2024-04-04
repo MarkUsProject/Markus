@@ -1,6 +1,7 @@
 require:
   - rubocop-rails
   - rubocop-performance
+  - rubocop-factory_bot
 
 AllCops:
   Exclude:
@@ -10,6 +11,12 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
   TargetRubyVersion: 2.7
+
+FactoryBot/AssociationStyle:
+  EnforcedStyle: explicit
+
+FactoryBot/ConsistentParenthesesStyle:
+  EnforcedStyle: require_parentheses
 
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
@@ -171,6 +178,12 @@ Rails/SkipsModelValidations:
 
 Rails/UniqueValidationWithoutIndex:
   Enabled: false
+
+#RSpec/Capybara:  # We don't use capybara
+#  Enabled: false
+#
+#RSpec/FactoryBot:  # Extracted into rubocop-factory_bot gem
+#  Enabled: false
 
 Security/IoMethods:
   Enabled: true

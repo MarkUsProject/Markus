@@ -34,18 +34,18 @@ describe Annotation do
         grouping.current_result
       end
       it 'should allow it to be created' do
-        expect { create :text_annotation, result: result, is_remark: true }.not_to raise_error
+        expect { create(:text_annotation, result: result, is_remark: true) }.not_to raise_error
       end
     end
     context 'with a released result' do
-      let(:annotation) { create :text_annotation, result: create(:released_result) }
+      let(:annotation) { create(:text_annotation, result: create(:released_result)) }
       it 'should prevent it being created' do
         expect { annotation }.to raise_error(ActiveRecord::RecordNotSaved)
       end
     end
     context 'without remark result or a released result' do
       it 'should prevent it being created' do
-        expect { create :text_annotation }.not_to raise_error
+        expect { create(:text_annotation) }.not_to raise_error
       end
     end
   end
@@ -68,14 +68,14 @@ describe Annotation do
       end
     end
     context 'with a released result' do
-      let(:annotation) { create :text_annotation }
+      let(:annotation) { create(:text_annotation) }
       it 'should prevent it being destroyed' do
         annotation.result.update!(released_to_students: true)
         expect { annotation.reload.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
       end
     end
     context 'without remark result or a released result' do
-      let(:annotation) { create :text_annotation }
+      let(:annotation) { create(:text_annotation) }
       it 'should prevent it being destroyed' do
         expect { annotation.reload.destroy! }.not_to raise_error
       end

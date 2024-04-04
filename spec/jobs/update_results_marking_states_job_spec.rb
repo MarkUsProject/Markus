@@ -1,5 +1,5 @@
 describe UpdateResultsMarkingStatesJob do
-  let!(:assignment) { create :assignment_with_criteria_and_results }
+  let!(:assignment) { create(:assignment_with_criteria_and_results) }
   let(:assignment_id) { assignment.id }
   let(:status) { :incomplete }
   context 'when running as a background job' do
@@ -33,7 +33,7 @@ describe UpdateResultsMarkingStatesJob do
       end
     end
     context 'where there are results for a different assignment' do
-      let!(:assignment2) { create :assignment_with_criteria_and_results }
+      let!(:assignment2) { create(:assignment_with_criteria_and_results) }
       let(:assignment_id) { assignment2.id }
       let(:results) { Result.includes(submission: :grouping).where(groupings: { assessment_id: assignment.id }) }
       it 'should not update results' do

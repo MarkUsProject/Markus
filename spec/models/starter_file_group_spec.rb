@@ -1,6 +1,6 @@
 describe StarterFileGroup do
   describe 'validations' do
-    subject { create :starter_file_group }
+    subject { create(:starter_file_group) }
 
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:section_starter_file_groups) }
@@ -12,7 +12,7 @@ describe StarterFileGroup do
   end
 
   context 'more validations' do
-    let(:starter_file_group) { create :starter_file_group }
+    let(:starter_file_group) { create(:starter_file_group) }
     it 'should validate presence of entry rename if use_rename is true' do
       expect(build(:starter_file_group, entry_rename: nil, use_rename: true)).not_to be_valid
     end
@@ -64,9 +64,9 @@ describe StarterFileGroup do
       expect(assignment.starter_file_updated_at).to be_within(1.second).of(Time.current)
     end
     context 'setting the name when it is nil' do
-      let(:assignment) { create :assignment }
-      let(:assignment2) { create :assignment }
-      let(:starter_file_group) { create :starter_file_group, assignment: assignment, name: nil }
+      let(:assignment) { create(:assignment) }
+      let(:assignment2) { create(:assignment) }
+      let(:starter_file_group) { create(:starter_file_group, assignment: assignment, name: nil) }
 
       it 'returns the default name when there are no starter file groups' do
         expect(starter_file_group.name).to eq I18n.t('assignments.starter_file.new_starter_file_group')
@@ -103,7 +103,7 @@ describe StarterFileGroup do
   end
 
   describe '#path' do
-    let(:starter_file_group) { create :starter_file_group }
+    let(:starter_file_group) { create(:starter_file_group) }
     it 'should return an absolute path to an entry on disk' do
       id = starter_file_group.id.to_s
       expect(starter_file_group.path).to eq Pathname.new(starter_file_group.assignment.starter_file_path) + id
@@ -112,15 +112,15 @@ describe StarterFileGroup do
   end
 
   describe '#files_and_dirs' do
-    let(:starter_file_group) { create :starter_file_group_with_entries }
+    let(:starter_file_group) { create(:starter_file_group_with_entries) }
     it 'should contain the correct entries' do
       expect(starter_file_group.files_and_dirs).to contain_exactly('q1', 'q1/q1.txt', 'q2.txt')
     end
   end
 
   describe '#zip_starter_file_files' do
-    let(:starter_file_group) { create :starter_file_group_with_entries }
-    let(:user) { create :instructor }
+    let(:starter_file_group) { create(:starter_file_group_with_entries) }
+    let(:user) { create(:instructor) }
     it 'should contain the correct entries' do
       zip_path = starter_file_group.zip_starter_file_files(user)
       Zip::File.open(zip_path) do |zip_file|
@@ -132,7 +132,7 @@ describe StarterFileGroup do
   end
 
   describe '#update_entries' do
-    let(:starter_file_group) { create :starter_file_group_with_entries }
+    let(:starter_file_group) { create(:starter_file_group_with_entries) }
     it 'should delete entries when a file is deleted' do
       FileUtils.rm_f starter_file_group.path + 'q2.txt'
       starter_file_group.update_entries

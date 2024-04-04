@@ -1,5 +1,5 @@
 describe UpdateRepoMaxFileSizeJob do
-  let(:course) { create :course, max_file_size: rand(0..5_000_000_000) }
+  let(:course) { create(:course, max_file_size: rand(0..5_000_000_000)) }
   context 'when running as a background job' do
     let(:job_args) { [course.id] }
     include_examples 'background job'
@@ -12,7 +12,7 @@ describe UpdateRepoMaxFileSizeJob do
     end
     after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
 
-    let!(:groups) { create_list :group, 3, course: course }
+    let!(:groups) { create_list(:group, 3, course: course) }
     it 'should update every repo' do
       count = 0
       allow_any_instance_of(Repository::Transaction).to receive(:replace) { count += 1 }

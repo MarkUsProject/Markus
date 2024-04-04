@@ -6,10 +6,10 @@ describe GradeEntryFormPolicy do
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:role) { create :ta, manage_assessments: true }
+        let(:role) { create(:ta, manage_assessments: true) }
       end
       failed 'that cannot manage assessments' do
-        let(:role) { create :ta, manage_assessments: false }
+        let(:role) { create(:ta, manage_assessments: false) }
       end
     end
     failed 'role is a student' do
@@ -21,7 +21,7 @@ describe GradeEntryFormPolicy do
       let(:role) { create(:instructor) }
     end
     succeed 'that can manage assessments' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
     end
     failed 'user is a student' do
       let(:role) { create(:student) }
@@ -32,7 +32,7 @@ describe GradeEntryFormPolicy do
       let(:role) { create(:instructor) }
     end
     failed 'that can manage assessments' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
     end
     succeed 'user is a student' do
       let(:role) { create(:student) }
@@ -43,7 +43,7 @@ describe GradeEntryFormPolicy do
       let(:role) { create(:instructor) }
     end
     succeed 'that can manage assessments' do
-      let(:role) { create :ta }
+      let(:role) { create(:ta) }
     end
     succeed 'user is a student' do
       let(:role) { create(:student) }

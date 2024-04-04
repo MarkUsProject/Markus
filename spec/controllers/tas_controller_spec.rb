@@ -1,5 +1,5 @@
 describe TasController do
-  let(:instructor) { create :instructor, user: create(:end_user, user_name: :instructor) }
+  let(:instructor) { create(:instructor, user: create(:end_user, user_name: :instructor)) }
   let(:course) { instructor.course }
 
   context '#upload' do
@@ -30,7 +30,7 @@ describe TasController do
 
   context '#download' do
     subject { get_as(instructor, :download, format: format_str, params: { course_id: course.id }) }
-    let!(:tas) { create_list :ta, 4, course: course }
+    let!(:tas) { create_list(:ta, 4, course: course) }
     context 'csv' do
       let(:format_str) { 'csv' }
       let(:csv_options) { { type: 'text/csv', filename: 'ta_list.csv', disposition: 'attachment' } }
@@ -119,7 +119,7 @@ describe TasController do
       }
     end
     context 'when a end_user exists' do
-      let(:end_user) { create :end_user }
+      let(:end_user) { create(:end_user) }
       context 'when the role is in the same course' do
         before { post_as instructor, :create, params: params }
         context 'When permissions are selected' do
@@ -172,7 +172,7 @@ describe TasController do
     end
     context 'when a end_user does not exist' do
       before { post_as instructor, :create, params: params }
-      let(:end_user) { build :end_user }
+      let(:end_user) { build(:end_user) }
       it 'should not create a Ta' do
         expect(Ta.count).to eq(0)
       end
@@ -211,7 +211,7 @@ describe TasController do
     let(:grader) { create(:ta, course: course) }
     subject { post_as grader, :update, params: params }
     context 'when updating user visibility' do
-      let(:new_end_user) { create :end_user }
+      let(:new_end_user) { create(:end_user) }
       context 'as an instructor' do
         let(:params) do
           {

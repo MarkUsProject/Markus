@@ -1,13 +1,13 @@
 describe Api::AssignmentsController do
   include AutomatedTestsHelper
 
-  let(:course) { create :course }
-  let(:assignment) { create :assignment, course: course }
+  let(:course) { create(:course) }
+  let(:assignment) { create(:assignment, course: course) }
 
   shared_examples 'GET #index' do
-    let(:assignment_different_course) { create :assignment, course: create(:course) }
-    let(:assignments) { create_list :assignment, 5, course: course }
-    let(:assignments_different_course) { create_list :assignment, 5, course: create(:course) }
+    let(:assignment_different_course) { create(:assignment, course: create(:course)) }
+    let(:assignments) { create_list(:assignment, 5, course: course) }
+    let(:assignments_different_course) { create_list(:assignment, 5, course: create(:course)) }
 
     context 'when expecting an xml response' do
       before do
@@ -196,7 +196,7 @@ describe Api::AssignmentsController do
   end
 
   context 'An authenticated instructor request requesting' do
-    let!(:instructor) { create :instructor, course: course }
+    let!(:instructor) { create(:instructor, course: course) }
     before do
       instructor.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{instructor.api_key.strip}"
@@ -206,7 +206,7 @@ describe Api::AssignmentsController do
       include_examples 'GET #index'
 
       context 'with a single hidden assignment' do
-        let(:assignment_hidden) { create :assignment, course: course, is_hidden: true }
+        let(:assignment_hidden) { create(:assignment, course: course, is_hidden: true) }
 
         it 'should be successful' do
           assignment_hidden
@@ -269,7 +269,7 @@ describe Api::AssignmentsController do
         end
       end
       context 'requesting an assignment in a different course' do
-        let(:assignment) { create :assignment, course: create(:course) }
+        let(:assignment) { create(:assignment, course: create(:course)) }
         it 'should response with 403' do
           get :show, params: { id: assignment.id, course_id: assignment.course.id }
           expect(response).to have_http_status(403)
@@ -359,7 +359,7 @@ describe Api::AssignmentsController do
       end
       context 'where short_identifier is already taken' do
         it 'should respond with 409' do
-          post :create, params: { **params, short_identifier: (create :assignment, course: course).short_identifier }
+          post :create, params: { **params, short_identifier: create(:assignment, course: course).short_identifier }
           expect(response).to have_http_status(409)
         end
       end
@@ -393,7 +393,7 @@ describe Api::AssignmentsController do
         expect(response).to have_http_status(404)
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment, course: create(:course) }
+        let(:assignment) { create(:assignment, course: create(:course)) }
         it 'should response with 403' do
           new_desc = assignment.description + 'more!'
           put :update, params: { id: assignment.id, course_id: assignment.course.id, description: new_desc }
@@ -410,7 +410,7 @@ describe Api::AssignmentsController do
         expect(response).to have_http_status(200)
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment, course: create(:course) }
+        let(:assignment) { create(:assignment, course: create(:course)) }
         it 'should response with 403' do
           get :test_files, params: { id: assignment.id, course_id: assignment.course.id }
           expect(response).to have_http_status(403)
@@ -446,7 +446,7 @@ describe Api::AssignmentsController do
         expect(response.status).to eq 404
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment, course: create(:course) }
+        let(:assignment) { create(:assignment, course: create(:course)) }
         it 'should response with 403' do
           get :test_specs, params: { id: assignment.id, course_id: assignment.course.id }
           expect(response).to have_http_status(403)
@@ -493,7 +493,7 @@ describe Api::AssignmentsController do
         expect(response.status).to eq 404
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment, course: create(:course) }
+        let(:assignment) { create(:assignment, course: create(:course)) }
         it 'should response with 403' do
           post :update_test_specs, params: { id: assignment.id, course_id: assignment.course.id, specs: '{}' }
           expect(response).to have_http_status(403)
@@ -515,7 +515,7 @@ describe Api::AssignmentsController do
         expect(Assignment.exists?(assignment.id)).to eq(false)
       end
       it 'fails to delete assignment because assignment has groups' do
-        create :grouping, assignment: assignment, start_time: nil
+        create(:grouping, assignment: assignment, start_time: nil)
         expect(assignment.groups).to_not be_empty
         original_size = Assignment.all.length
         delete :destroy, params: { id: assignment.id, course_id: course.id }
@@ -536,7 +536,7 @@ describe Api::AssignmentsController do
   end
 
   context 'An authenticated student request' do
-    let(:student) { create :student, course: course }
+    let(:student) { create(:student, course: course) }
     before do
       student.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{student.api_key.strip}"
@@ -546,7 +546,7 @@ describe Api::AssignmentsController do
       include_examples 'GET #index'
 
       context 'with a single hidden assignment' do
-        let(:assignment_hidden) { create :assignment, course: course, is_hidden: true }
+        let(:assignment_hidden) { create(:assignment, course: course, is_hidden: true) }
 
         it 'should be successful' do
           assignment_hidden
@@ -576,7 +576,7 @@ describe Api::AssignmentsController do
 
       describe 'group creation' do
         context 'when the student is not yet in a group' do
-          let(:student) { create :student, course: course }
+          let(:student) { create(:student, course: course) }
 
           it 'creates a new group for the student' do
             subject
@@ -685,7 +685,7 @@ describe Api::AssignmentsController do
           end
 
           context 'the file is not required' do
-            let!(:test_file) { create :assignment_file, assessment_id: assignment.id }
+            let!(:test_file) { create(:assignment_file, assessment_id: assignment.id) }
 
             it 'responds with 422' do
               subject
@@ -696,7 +696,7 @@ describe Api::AssignmentsController do
           end
 
           context 'the file is required' do
-            let!(:test_file) { create :assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id }
+            let!(:test_file) { create(:assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id) }
             include_examples 'submits successfully'
           end
         end
@@ -726,7 +726,7 @@ describe Api::AssignmentsController do
   end
 
   context 'An authenticated ta request' do
-    let!(:ta) { create :ta, course: course }
+    let!(:ta) { create(:ta, course: course) }
     before do
       ta.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{ta.api_key.strip}"
@@ -735,7 +735,7 @@ describe Api::AssignmentsController do
       include_examples 'GET #index'
 
       context 'with a single hidden assignment' do
-        let(:assignment_hidden) { create :assignment, course: course, is_hidden: true }
+        let(:assignment_hidden) { create(:assignment, course: course, is_hidden: true) }
 
         it 'should be successful' do
           assignment_hidden

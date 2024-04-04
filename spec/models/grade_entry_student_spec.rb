@@ -1,8 +1,8 @@
 describe GradeEntryStudent do
   describe 'validations' do
     subject do
-      student = create :student
-      create :grade_entry_form
+      student = create(:student)
+      create(:grade_entry_form)
       student.grade_entry_students.first
     end
     it { is_expected.to have_one(:course) }
@@ -11,8 +11,8 @@ describe GradeEntryStudent do
 
   describe 'assigning and unassigning TAs' do
     let(:form) { create(:grade_entry_form) }
-    let(:students) { Array.new(2) { create(:student) } }
-    let(:tas) { Array.new(2) { create(:ta) } }
+    let(:students) { create_list(:student, 2) }
+    let(:tas) { create_list(:ta, 2) }
     let(:student_ids) { students.map(&:id) }
     let(:ta_ids) { tas.map(&:id) }
 

@@ -4,7 +4,7 @@ describe SectionsController do
       @student = create(:student)
     end
 
-    let(:section) { create :section }
+    let(:section) { create(:section) }
     let(:course) { section.course }
 
     it 'on index' do
@@ -39,8 +39,8 @@ describe SectionsController do
       @instructor = create(:instructor)
     end
 
-    let(:section) { create :section }
-    let(:section2) { create :section }
+    let(:section) { create(:section) }
+    let(:section2) { create(:section) }
     let(:course) { section.course }
 
     it 'on index' do

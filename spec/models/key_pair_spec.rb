@@ -18,7 +18,7 @@ describe KeyPair do
   context 'callbacks' do
     it 'should strip the public_key before validation' do
       key = '    ssh-rsa something   '
-      key_pair = build :key_pair, public_key: key
+      key_pair = build(:key_pair, public_key: key)
       expect(key_pair.public_key).to eq key
       key_pair.validate
       expect(key_pair.public_key).to eq key.strip

@@ -9,7 +9,7 @@ describe PeerReviewsController do
     @selected_reviewee_group_ids = @assignment_with_pr.groupings.ids
   end
   context '#peer_review_mapping & #upload' do
-    let(:instructor) { create :instructor }
+    let(:instructor) { create(:instructor) }
 
     describe '#peer_review_mapping' do
       before :each do

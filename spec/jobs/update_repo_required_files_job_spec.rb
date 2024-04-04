@@ -1,6 +1,6 @@
 describe UpdateRepoRequiredFilesJob do
-  let(:assignment) { create :assignment }
-  let(:user) { create :instructor }
+  let(:assignment) { create(:assignment) }
+  let(:user) { create(:instructor) }
   context 'when running as a background job' do
     let(:job_args) { [assignment.id] }
     include_examples 'background job'
@@ -9,7 +9,7 @@ describe UpdateRepoRequiredFilesJob do
   context 'updating required files' do
     include_context 'git'
 
-    let!(:groupings) { create_list :grouping, 3, assignment: assignment }
+    let!(:groupings) { create_list(:grouping, 3, assignment: assignment) }
     it 'should update every repo' do
       count = 0
       allow_any_instance_of(Repository::Transaction).to receive(:replace) { count += 1 }

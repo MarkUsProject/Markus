@@ -202,9 +202,7 @@ describe SubmissionRule do
       @submission_rule = create(:grace_period_submission_rule)
 
       # Randomly create five periods for this SubmissionRule (ids unsorted):
-      5.times do |_|
-        create(:period, submission_rule: @submission_rule)
-      end
+      create_list(:period, 5, submission_rule: @submission_rule)
     end
 
     it 'should sort in ascending order' do
@@ -217,9 +215,7 @@ describe SubmissionRule do
       @submission_rule = create(:penalty_period_submission_rule)
 
       # Randomly create five periods for this SubmissionRule (ids unsorted):
-      5.times do |_|
-        create(:period, submission_rule: @submission_rule)
-      end
+      create_list(:period, 5, submission_rule: @submission_rule)
     end
 
     it 'should sort in ascending order' do

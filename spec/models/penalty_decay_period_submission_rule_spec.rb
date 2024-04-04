@@ -9,7 +9,7 @@ describe PenaltyDecayPeriodSubmissionRule do
       before :each do
         pretend_now_is(collection_time) { grouping }
       end
-      let(:submission) { create :version_used_submission, grouping: grouping, is_empty: true }
+      let(:submission) { create(:version_used_submission, grouping: grouping, is_empty: true) }
       let(:collection_time) { due_date - 5.days }
       it 'should not create an extra mark' do
         expect { apply_rule }.not_to(change { result.extra_marks.count })

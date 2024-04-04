@@ -1,5 +1,5 @@
 describe CanvasController do
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   describe '#get_config', :get_config do
     it 'should respond with success when not logged in' do
       get :get_config

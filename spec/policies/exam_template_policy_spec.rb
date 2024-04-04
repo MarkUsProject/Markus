@@ -12,7 +12,7 @@ describe ExamTemplatePolicy do
     end
     context 'role is a ta' do
       context 'that can manage assessments' do
-        let(:role) { create :ta, manage_assessments: true }
+        let(:role) { create(:ta, manage_assessments: true) }
         succeed 'scanner dependencies are installed' do
           before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(true) }
         end
@@ -21,7 +21,7 @@ describe ExamTemplatePolicy do
         end
       end
       failed 'that cannot manage assessments' do
-        let(:role) { create :ta, manage_assessments: false }
+        let(:role) { create(:ta, manage_assessments: false) }
       end
     end
     failed 'role is a student' do
@@ -34,10 +34,10 @@ describe ExamTemplatePolicy do
     end
     context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:role) { create :ta, manage_assessments: true }
+        let(:role) { create(:ta, manage_assessments: true) }
       end
       failed 'that cannot manage assessments' do
-        let(:role) { create :ta, manage_assessments: false }
+        let(:role) { create(:ta, manage_assessments: false) }
       end
     end
     failed 'role is a student' do

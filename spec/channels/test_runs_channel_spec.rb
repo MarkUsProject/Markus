@@ -1,9 +1,9 @@
 describe TestRunsChannel, type: :channel do
   shared_examples 'can subscribe' do
     let(:assignment) do
-      create :assignment_for_student_tests, assignment_properties_attributes:
+      create(:assignment_for_student_tests, assignment_properties_attributes:
         { token_start_date: 1.hour.ago, enable_student_tests: true, remote_autotest_settings_id: 1,
-          tokens_per_period: 1 }
+          tokens_per_period: 1 })
     end
     before(:each) do
       subscribe course_id: role.course_id, assignment_id: assignment.id
@@ -16,7 +16,7 @@ describe TestRunsChannel, type: :channel do
     end
   end
   context 'when the role is a student' do
-    let(:role) { create :student }
+    let(:role) { create(:student) }
     let(:current_user) { role.user }
     before(:each) do
       stub_connection(current_user: current_user)
@@ -32,13 +32,13 @@ describe TestRunsChannel, type: :channel do
     end
   end
   context 'when the role is a ta' do
-    let(:role) { create :ta, run_tests: true }
+    let(:role) { create(:ta, run_tests: true) }
     let(:current_user) { role.user }
     before(:each) do
       stub_connection(current_user: current_user)
     end
     context 'when the ta cannot run tests' do
-      let(:role) { create :ta, run_tests: false }
+      let(:role) { create(:ta, run_tests: false) }
       it 'should not establish a subscription' do
         subscribe course_id: role.course_id
         expect(subscription).to be_rejected
@@ -49,14 +49,14 @@ describe TestRunsChannel, type: :channel do
     end
   end
   context 'when the role is an instructor' do
-    let(:role) { create :instructor }
+    let(:role) { create(:instructor) }
     let(:current_user) { role.user }
     before(:each) do
       stub_connection(current_user: current_user)
     end
     context 'when the instructor cannot run tests' do
       let(:assignment) do
-        create :assignment, assignment_properties_attributes: { enable_test: false }
+        create(:assignment, assignment_properties_attributes: { enable_test: false })
       end
       it 'should not establish a subscription' do
         subscribe course_id: role.course_id, assignment_id: assignment.id
@@ -68,7 +68,7 @@ describe TestRunsChannel, type: :channel do
     end
   end
   context 'when the user in conjunction with the course_id do not identify a role' do
-    let(:role) { create :instructor }
+    let(:role) { create(:instructor) }
     let(:current_user) { role.user }
     before(:each) do
       stub_connection(current_user: current_user)

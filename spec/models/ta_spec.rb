@@ -1,5 +1,5 @@
 describe Ta do
-  subject { create :ta }
+  subject { create(:ta) }
   it { is_expected.to have_one(:grader_permission).dependent(:destroy) }
   it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
   describe '#percentage_grades_array' do
@@ -58,7 +58,7 @@ describe Ta do
   end
 
   context 'Associated grader permission validation' do
-    subject { create :ta }
+    subject { create(:ta) }
     it { is_expected.to validate_presence_of :grader_permission }
   end
 

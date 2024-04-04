@@ -8,7 +8,7 @@ describe Mark do
   it { is_expected.to have_one(:course) }
 
   it 'should not allow associations to belong to different assignments' do
-    mark = create :rubric_mark
+    mark = create(:rubric_mark)
     mark.criterion = create(:rubric_criterion)
     expect(subject).not_to be_valid
   end
@@ -208,8 +208,7 @@ describe Mark do
                              assignment: assignment)
       create(:mark,
              criterion_id: new_criterion.id,
-             result: result,
-             assignment: assignment)
+             result: result)
       new_annotation_text = create(:annotation_text_with_deduction,
                                    annotation_category: new_criterion.annotation_categories.first)
       create(:text_annotation,

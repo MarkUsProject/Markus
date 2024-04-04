@@ -1,6 +1,6 @@
 describe Group do
   describe 'validations' do
-    subject { build :group }
+    subject { build(:group) }
 
     it { is_expected.to belong_to(:course) }
 

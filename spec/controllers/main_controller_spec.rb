@@ -1,10 +1,10 @@
 describe MainController do
   include SessionHandler
-  let(:student) { create :student }
-  let(:ta) { create :ta }
-  let(:instructor) { create :instructor }
-  let(:instructor2) { create :instructor }
-  let(:admin_user) { create :admin_user }
+  let(:student) { create(:student) }
+  let(:ta) { create(:ta) }
+  let(:instructor) { create(:instructor) }
+  let(:instructor2) { create(:instructor) }
+  let(:admin_user) { create(:admin_user) }
   context 'A non-authenticated user' do
     it 'should not be able to login with a blank username' do
       post :login, params: { user_login: '', user_password: 'a' }
@@ -99,7 +99,7 @@ describe MainController do
       end
     end
     context 'logging in during an LTI launch' do
-      let(:lti) { create :lti_deployment }
+      let(:lti) { create(:lti_deployment) }
       before :each do
         cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
       end
@@ -108,7 +108,7 @@ describe MainController do
         expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
       end
       context 'when logged in during lti launch' do
-        let(:lti) { create :lti_deployment }
+        let(:lti) { create(:lti_deployment) }
         before :each do
           sign_in instructor
           cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
@@ -200,11 +200,11 @@ describe MainController do
     end
   end
   context 'when role switched' do
-    let(:course1) { create :course }
-    let(:course2) { create :course }
-    let(:instructor) { create :instructor, course_id: course1.id }
-    let(:instructor2) { create :instructor, course_id: course2.id }
-    let(:student) { create :student, course_id: course1.id }
+    let(:course1) { create(:course) }
+    let(:course2) { create(:course) }
+    let(:instructor) { create(:instructor, course_id: course1.id) }
+    let(:instructor2) { create(:instructor, course_id: course2.id) }
+    let(:student) { create(:student, course_id: course1.id) }
     before :each do
       @controller = CoursesController.new
       post_as instructor, :switch_role, params: { id: course1.id, effective_user_login: student.user_name }

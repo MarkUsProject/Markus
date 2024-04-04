@@ -39,7 +39,7 @@ describe MarkingSchemesController do
          assignment_with_criteria_and_results]
       end
       before do
-        create :marking_scheme, assessments: assessments
+        create(:marking_scheme, assessments: assessments)
         get_as instructor, :populate, params: { course_id: course.id }, format: :json
       end
       it 'returns a hash with the correct keys' do

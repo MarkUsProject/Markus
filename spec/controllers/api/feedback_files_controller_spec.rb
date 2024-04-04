@@ -1,12 +1,12 @@
 describe Api::FeedbackFilesController do
-  let(:course) { create :course }
-  let(:instructor) { create :instructor, course: course }
-  let(:assignment) { create :assignment, course: course }
-  let(:grouping) { create :grouping_with_inviter_and_submission, assignment: assignment }
-  let(:feedback_files) { create_list :feedback_file, 3, submission: grouping.submissions.first }
-  let(:test_group_result) { create :test_group_result }
+  let(:course) { create(:course) }
+  let(:instructor) { create(:instructor, course: course) }
+  let(:assignment) { create(:assignment, course: course) }
+  let(:grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+  let(:feedback_files) { create_list(:feedback_file, 3, submission: grouping.submissions.first) }
+  let(:test_group_result) { create(:test_group_result) }
   let(:feedback_files_with_test_run) do
-    create_list :feedback_file_with_test_run, 3, test_group_result: test_group_result
+    create_list(:feedback_file_with_test_run, 3, test_group_result: test_group_result)
   end
 
   context 'An unauthenticated request' do

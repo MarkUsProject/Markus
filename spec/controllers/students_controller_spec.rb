@@ -2,7 +2,7 @@ describe StudentsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:course) { instructor.course }
   describe 'User is an instructor' do
-    let(:instructor) { create :instructor }
+    let(:instructor) { create(:instructor) }
     let(:student) { create(:student, grace_credits: 5) }
 
     context '#index' do
@@ -21,7 +21,7 @@ describe StudentsController do
     end
 
     context '#update' do
-      let(:section) { create :section, { course_id: course.id } }
+      let(:section) { create(:section, { course_id: course.id }) }
       let(:params) do
         {
           role: { end_user: { user_name: student.user_name }, id: student.id, hidden: !student.hidden,
@@ -64,7 +64,7 @@ describe StudentsController do
     end
 
     describe '#bulk_modify' do
-      let(:section) { create :section, { course_id: course.id } }
+      let(:section) { create(:section, { course_id: course.id }) }
       let(:shared_params) { { student_ids: students.map(&:id), course_id: course.id } }
 
       context 'when the action is update_section' do
@@ -164,7 +164,7 @@ describe StudentsController do
     end
   end
   describe 'role is a student' do
-    let(:role) { create :student }
+    let(:role) { create(:student) }
     shared_examples 'changing particular mailer settings' do
       it 'can be enabled in settings' do
         role.update!(setting => false)

@@ -14,7 +14,7 @@ describe GradeEntryForm do
   it { is_expected.not_to allow_value('abcd').for(:due_date) }
 
   describe 'uniqueness validation' do
-    subject { create :grade_entry_form }
+    subject { create(:grade_entry_form) }
     it { is_expected.to validate_uniqueness_of(:short_identifier).scoped_to(:course_id) }
   end
 
@@ -264,7 +264,7 @@ describe GradeEntryForm do
   describe '#results_average' do
     let(:form) { create(:grade_entry_form) }
     let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
-    let!(:students) { create_list :student, 6 }
+    let!(:students) { create_list(:student, 6) }
 
     before do
       form.grade_entry_students.order(:id).each_with_index do |ges, ind|
@@ -322,7 +322,7 @@ describe GradeEntryForm do
   describe '#results_median' do
     let(:form) { create(:grade_entry_form) }
     let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
-    let!(:students) { create_list :student, 6 }
+    let!(:students) { create_list(:student, 6) }
 
     before do
       form.grade_entry_students.each_with_index do |ges, ind|

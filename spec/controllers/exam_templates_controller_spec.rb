@@ -156,8 +156,8 @@ describe ExamTemplatesController do
     end
 
     describe '#fix_error' do
-      let(:split_pdf_log) { create :split_pdf_log, exam_template: exam_template }
-      let(:split_page) { create :split_page, split_pdf_log: split_pdf_log }
+      let(:split_pdf_log) { create(:split_pdf_log, exam_template: exam_template) }
+      let(:split_page) { create(:split_page, split_pdf_log: split_pdf_log) }
       let(:split_page_id) { split_page.id }
       let(:copy_number) { 1 }
       let(:page_number) { 1 }

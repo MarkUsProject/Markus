@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :rubric_criterion do
     sequence(:name) { |n| "Rubric criterion #{n}" }
-    association :assignment, factory: :assignment
+    association :assignment
     max_mark { 4.0 }
     ta_visible { true }
     peer_visible { false }

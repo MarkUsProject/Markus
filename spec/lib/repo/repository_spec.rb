@@ -52,32 +52,32 @@ describe Repository::AbstractRepository do
   end
   describe '#visibility_hash' do
     let(:assessment_section_property) do
-      create :assessment_section_properties,
+      create(:assessment_section_properties,
              is_hidden: true,
              assessment: assignments.first,
-             section: sections.first
+             section: sections.first)
     end
     let(:assessment_section_property2) do
-      create :assessment_section_properties,
+      create(:assessment_section_properties,
              is_hidden: false,
              assessment: assignments.first,
-             section: sections.second
+             section: sections.second)
     end
     let(:assessment_section_property3) do
-      create :assessment_section_properties,
+      create(:assessment_section_properties,
              is_hidden: nil,
              assessment: assignments.second,
-             section: sections.first
+             section: sections.first)
     end
     let(:assessment_section_property4) do
-      create :assessment_section_properties,
+      create(:assessment_section_properties,
              is_hidden: nil,
              assessment: assignments.second,
-             section: sections.second
+             section: sections.second)
     end
     context 'when all assignments are hidden' do
-      let!(:assignments) { create_list :assignment, 2, is_hidden: true }
-      let!(:sections) { create_list :section, 2 }
+      let!(:assignments) { create_list(:assignment, 2, is_hidden: true) }
+      let!(:sections) { create_list(:section, 2) }
       shared_examples 'default tests' do
         it 'should return false for all sections' do
           assignments.each do |assignment|
@@ -110,8 +110,8 @@ describe Repository::AbstractRepository do
       end
     end
     context 'when no assignments are hidden' do
-      let!(:assignments) { create_list :assignment, 2, is_hidden: false }
-      let!(:sections) { create_list :section, 2 }
+      let!(:assignments) { create_list(:assignment, 2, is_hidden: false) }
+      let!(:sections) { create_list(:section, 2) }
       shared_examples 'default tests' do
         it 'should return false for all sections' do
           assignments.each do |assignment|
@@ -143,9 +143,9 @@ describe Repository::AbstractRepository do
       end
     end
     context 'when one assignment is hidden' do
-      let!(:hidden_assignment) { create :assignment, is_hidden: true }
-      let!(:shown_assignment) { create :assignment, is_hidden: false }
-      let!(:sections) { create_list :section, 2 }
+      let!(:hidden_assignment) { create(:assignment, is_hidden: true) }
+      let!(:shown_assignment) { create(:assignment, is_hidden: false) }
+      let!(:sections) { create_list(:section, 2) }
       it 'should return false for all sections' do
         sections.each do |section|
           expect(Repository.get_class.visibility_hash[shown_assignment.id][section.id]).to be true
@@ -159,23 +159,23 @@ describe Repository::AbstractRepository do
     end
   end
   describe '#get_repo_auth_records' do
-    let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
-    let(:assignment2) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
-    let!(:groupings1) { create_list :grouping_with_inviter, 3, assignment: assignment1 }
-    let!(:groupings2) { create_list :grouping_with_inviter, 3, assignment: assignment2 }
+    let(:assignment1) { create(:assignment, assignment_properties_attributes: { vcs_submit: false }) }
+    let(:assignment2) { create(:assignment, assignment_properties_attributes: { vcs_submit: false }) }
+    let!(:groupings1) { create_list(:grouping_with_inviter, 3, assignment: assignment1) }
+    let!(:groupings2) { create_list(:grouping_with_inviter, 3, assignment: assignment2) }
     context 'all assignments with vcs_submit == false' do
       it 'should be empty' do
         expect(Repository.get_class.get_repo_auth_records).to be_empty
       end
     end
     context 'one assignment with vcs_submit == true' do
-      let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
+      let(:assignment1) { create(:assignment, assignment_properties_attributes: { vcs_submit: true }) }
       it 'should only contain valid memberships' do
         ids = groupings1.map { |g| g.inviter.id }
         expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
       end
       context 'when there is a pending membership' do
-        let!(:membership) { create :student_membership, grouping: groupings1.first }
+        let!(:membership) { create(:student_membership, grouping: groupings1.first) }
         it 'should not contain the pending membership' do
           ids = groupings1.map { |g| g.inviter.id }
           expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
@@ -184,7 +184,7 @@ describe Repository::AbstractRepository do
       context 'when the assignment belongs to a hidden course' do
         let(:assignment1) do
           course = create(:course, is_hidden: true)
-          create :assignment, assignment_properties_attributes: { vcs_submit: true }, course: course
+          create(:assignment, assignment_properties_attributes: { vcs_submit: true }, course: course)
         end
         it 'should be empty' do
           expect(Repository.get_class.get_repo_auth_records).to be_empty
@@ -192,8 +192,8 @@ describe Repository::AbstractRepository do
       end
     end
     context 'both assignments with vcs_submit == true and is_timed == true' do
-      let(:assignment1) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
-      let(:assignment2) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+      let(:assignment1) { create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }) }
+      let(:assignment2) { create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }) }
       it 'should be empty' do
         expect(Repository.get_class.get_repo_auth_records).to be_empty
       end
@@ -208,7 +208,7 @@ describe Repository::AbstractRepository do
         end
         context 'when the timed assessment due date has ended' do
           let(:assignment1) do
-            create :timed_assignment, assignment_properties_attributes: { vcs_submit: true }, due_date: 1.minute.ago
+            create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }, due_date: 1.minute.ago)
           end
           it 'should contain all members of all groups' do
             inviter_ids = groupings1.map { |g| g.inviter.id }
@@ -220,20 +220,20 @@ describe Repository::AbstractRepository do
   end
 
   describe '#get_all_permissions' do
-    let!(:course) { create :course }
+    let!(:course) { create(:course) }
     let(:assignment) { create(:assignment_with_criteria_and_results_and_tas) }
 
     context 'instructor permissions' do
-      let!(:instructor) { create :instructor, hidden: false }
+      let!(:instructor) { create(:instructor, hidden: false) }
       it 'correctly retrieves permissions for instructors' do
-        instructor2 = create :instructor
+        instructor2 = create(:instructor)
         accessible_path = File.join(course.name, '*')
         expect(Repository.get_class.get_all_permissions[accessible_path]).to(
           match_array([instructor.user_name, instructor2.user_name])
         )
       end
       it 'does not retrieve permissions for inactive instructors' do
-        create :instructor, hidden: true
+        create(:instructor, hidden: true)
         accessible_path = File.join(course.name, '*')
         expect(Repository.get_class.get_all_permissions[accessible_path]).to(
           match_array([instructor.user_name])

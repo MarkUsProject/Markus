@@ -1,23 +1,17 @@
 FactoryBot.define do
   factory :mark do
-    result do
-      create :complete_result, submission: create(:submission, grouping: create(:grouping, assignment: assignment))
-    end
-
-    transient do
-      assignment { build :assignment }
-    end
+    association :result, factory: :complete_result
 
     factory :rubric_mark do
-      criterion { create :rubric_criterion, assignment: assignment }
+      criterion { association :rubric_criterion, assignment: result.submission.grouping.assignment }
     end
 
     factory :flexible_mark do
-      criterion { create :flexible_criterion, assignment: assignment }
+      criterion { association :flexible_criterion, assignment: result.submission.grouping.assignment }
     end
 
     factory :checkbox_mark do
-      criterion { create :checkbox_criterion, assignment: assignment }
+      criterion { association :checkbox_criterion, assignment: result.submission.grouping.assignment }
     end
   end
 end

@@ -1,5 +1,5 @@
 shared_examples 'lti deployment controller' do
-  let(:instructor) { create :instructor }
+  let(:instructor) { create(:instructor) }
   let!(:client_id) { 'LMS defined ID' }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
   let(:host) { 'https://test.host' }

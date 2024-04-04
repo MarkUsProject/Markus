@@ -18,12 +18,12 @@ describe LtiSyncJob do
                                             token_type: 'Bearer',
                                             expires_in: 3600 }.to_json)
   end
-  let(:course) { create :course }
-  let(:lti_deployment) { create :lti_deployment, course: course }
-  let!(:lti_service_namesrole) { create :lti_service_namesrole, lti_deployment: lti_deployment }
-  let!(:student) { create :student, course: course }
+  let(:course) { create(:course) }
+  let(:lti_deployment) { create(:lti_deployment, course: course) }
+  let!(:lti_service_namesrole) { create(:lti_service_namesrole, lti_deployment: lti_deployment) }
+  let!(:student) { create(:student, course: course) }
   let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
-  let(:assessment) { create :assignment_with_criteria_and_results, course: course }
+  let(:assessment) { create(:assignment_with_criteria_and_results, course: course) }
 
   context 'when running as a background job' do
     let(:job_args) { [[lti_deployment.id], assessment, course] }

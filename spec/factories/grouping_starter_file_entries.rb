@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :grouping_starter_file_entry do
     transient do
-      assignment { build :assignment }
-      starter_file_group { build :starter_file_group, assignment: assignment }
+      assignment { association :assignment, strategy: :build }
+      starter_file_group { association :starter_file_group, assignment: assignment, strategy: :build }
       grouping { nil }
       starter_file_entry { nil }
     end

@@ -1,6 +1,6 @@
 describe LtiDeploymentsController do
-  let(:instructor) { create :instructor }
-  let(:admin_user) { create :admin_user }
+  let(:instructor) { create(:instructor) }
+  let(:admin_user) { create(:admin_user) }
   let(:target_link_uri) { 'https://example.com/authorize_redirect' }
   before do
     allow(File).to receive(:read).and_call_original
@@ -8,9 +8,9 @@ describe LtiDeploymentsController do
   end
 
   describe '#choose_course' do
-    let!(:course) { create :course }
-    let(:instructor) { create :instructor, course: course }
-    let!(:lti) { create :lti_deployment }
+    let!(:course) { create(:course) }
+    let(:instructor) { create(:instructor, course: course) }
+    let!(:lti) { create(:lti_deployment) }
 
     describe 'get' do
       it 'is inaccessible unless logged in' do
@@ -42,8 +42,8 @@ describe LtiDeploymentsController do
           expect(lti.course).to eq(course)
         end
         context 'when the user does not have permission to link' do
-          let(:course2) { create :course }
-          let(:instructor2) { create :instructor, course: course2 }
+          let(:course2) { create(:course) }
+          let(:instructor2) { create(:instructor, course: course2) }
           it 'does not allow users to link courses they are not instructors for' do
             post_as instructor2, :choose_course, params: { id: lti.id, course: course.id }
             post_as instructor2, :choose_course, params: { id: lti.id, course: course.id }
@@ -54,7 +54,7 @@ describe LtiDeploymentsController do
     end
   end
   describe '#new_course' do
-    let!(:lti_deployment) { create :lti_deployment }
+    let!(:lti_deployment) { create(:lti_deployment) }
     let(:course_params) { { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: 'csc108' } }
     context 'as an instructor' do
       before :each do
@@ -87,7 +87,7 @@ describe LtiDeploymentsController do
       end
     end
     context 'when a course already exists' do
-      let!(:course) { create :course, display_name: 'Introduction to Computer Science', name: 'csc108' }
+      let!(:course) { create(:course, display_name: 'Introduction to Computer Science', name: 'csc108') }
       before :each do
         session[:lti_deployment_id] = lti_deployment.id
       end

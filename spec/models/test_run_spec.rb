@@ -1,5 +1,5 @@
 describe TestRun do
-  subject { create :test_run, status: :in_progress }
+  subject { create(:test_run, status: :in_progress) }
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to belong_to(:test_batch).optional }
   it { is_expected.to belong_to(:submission).optional }
@@ -11,11 +11,11 @@ describe TestRun do
     describe 'autotest_test_id_uniqueness' do
       before do
         allow_any_instance_of(AutotestSetting).to receive(:register_autotester)
-        create :course, autotest_setting: create(:autotest_setting)
+        create(:course, autotest_setting: create(:autotest_setting))
         create(:test_run, autotest_test_id: 1, status: :in_progress)
       end
       context 'a test run exists with the same associated autotest_settings' do
-        let(:test_run) { create :test_run, autotest_test_id: autotest_test_id, status: :in_progress }
+        let(:test_run) { create(:test_run, autotest_test_id: autotest_test_id, status: :in_progress) }
         context 'and the same autotest_test_id' do
           let(:autotest_test_id) { 1 }
           it 'should not be valid' do
@@ -31,14 +31,14 @@ describe TestRun do
       end
 
       context 'a test run exists with a different associated autotest_settings' do
-        let(:other_course) { create :course, autotest_setting: create(:autotest_setting) }
-        let(:other_role) { create :instructor, course: other_course }
+        let(:other_course) { create(:course, autotest_setting: create(:autotest_setting)) }
+        let(:other_role) { create(:instructor, course: other_course) }
         let(:other_assignment) do
-          create :assignment,
+          create(:assignment,
                  assignment_properties_attributes: { remote_autotest_settings_id: 11 },
-                 course: other_course
+                 course: other_course)
         end
-        let(:other_grouping) { create :grouping, assignment: other_assignment }
+        let(:other_grouping) { create(:grouping, assignment: other_assignment) }
         let(:test_run) do
           build(:test_run, grouping: other_grouping, role: other_role,
                            autotest_test_id: autotest_test_id, status: :in_progress)
@@ -64,7 +64,7 @@ describe TestRun do
   describe '#cancel' do
     before { test_run.cancel }
     context 'is in progress' do
-      let(:test_run) { create :test_run, status: :in_progress, autotest_test_id: 1 }
+      let(:test_run) { create(:test_run, status: :in_progress, autotest_test_id: 1) }
       it 'should update the status to cancelled' do
         expect(test_run.reload.status).to eq('cancelled')
       end
@@ -73,7 +73,7 @@ describe TestRun do
       end
     end
     context 'is not in progress' do
-      let(:test_run) { create :test_run }
+      let(:test_run) { create(:test_run) }
       it 'should not update the status to cancelled' do
         expect(test_run.reload.status).to eq('complete')
       end
@@ -83,7 +83,7 @@ describe TestRun do
     let(:problems) { 'some problem' }
     before { test_run.failure(problems) }
     context 'is in progress' do
-      let(:test_run) { create :test_run, status: :in_progress, autotest_test_id: 1 }
+      let(:test_run) { create(:test_run, status: :in_progress, autotest_test_id: 1) }
       it 'should update the status to cancelled' do
         expect(test_run.reload.status).to eq('failed')
       end
@@ -92,7 +92,7 @@ describe TestRun do
       end
     end
     context 'is not in progress' do
-      let(:test_run) { create :test_run }
+      let(:test_run) { create(:test_run) }
       it 'should not update the status to cancelled' do
         expect(test_run.reload.status).to eq('complete')
       end
@@ -104,11 +104,11 @@ describe TestRun do
     end
   end
   describe '#update_results!' do
-    let(:assignment) { create :assignment }
-    let(:grouping) { create :grouping, assignment: assignment }
-    let(:test_run) { create :test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1 }
-    let(:criterion) { create :flexible_criterion, max_mark: 2, assignment: assignment }
-    let(:test_group) { create :test_group, criterion: criterion, assignment: assignment }
+    let(:assignment) { create(:assignment) }
+    let(:grouping) { create(:grouping, assignment: assignment) }
+    let(:test_run) { create(:test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1) }
+    let(:criterion) { create(:flexible_criterion, max_mark: 2, assignment: assignment) }
+    let(:test_group) { create(:test_group, criterion: criterion, assignment: assignment) }
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
@@ -162,11 +162,11 @@ describe TestRun do
         expect(feedback_files.find_by(filename: 'test_compressed.png').file_content).to eq(png_file_content)
       end
       context 'when a submission exists' do
-        let(:submission) { create :submission, grouping: grouping }
+        let(:submission) { create(:submission, grouping: grouping) }
         let(:test_run) do
-          create :test_run, status: :in_progress,
+          create(:test_run, status: :in_progress,
                             grouping: grouping,
-                            autotest_test_id: 1, submission: submission
+                            autotest_test_id: 1, submission: submission)
         end
         it 'should associate the files with a submission' do
           expect(feedback_files.first.submission).to_not be_nil
@@ -403,8 +403,8 @@ describe TestRun do
         end
       end
       context 'when it is associated with a submission' do
-        let(:submission) { create :version_used_submission, grouping: grouping }
-        let(:test_run) { create :test_run, status: :in_progress, submission: submission }
+        let(:submission) { create(:version_used_submission, grouping: grouping) }
+        let(:test_run) { create(:test_run, status: :in_progress, submission: submission) }
         it 'should create now criteria marks' do
           expect { test_run.update_results!(results) }.to(change { criterion.reload.marks })
         end
