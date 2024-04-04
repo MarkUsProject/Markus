@@ -550,7 +550,7 @@ class Assignment < Assessment
                              .group_by { |x| x[:id] }
     members = Grouping.joins(accepted_students: :user)
                       .where(id: groupings)
-                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name', 'roles.hidden')
                       .group_by { |x| x[:id] }
     tag_data = groupings
                .joins(:tags)
@@ -595,7 +595,9 @@ class Assignment < Assessment
         group_name = grouping_data[g.id][0]['groups.group_name']
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
-                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+                               .map do |s|
+          [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
+        end
       end
 
       tag_info = tag_data.fetch(g.id, [])
