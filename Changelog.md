@@ -10,11 +10,13 @@
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 
+## [v2.4.8]
+- Validate user-provided paths (#7025)
+
 ## [v2.4.7]
 - Support Jupyter notebooks for results printing (#6993)
 - Enable bulk download of print PDFs for an assignments (#6998)
 - Fixed long annotations being cut off in the annotation table (#7001)
-- Validate user-provided paths (#7025)
 
 ## [v2.4.6]
 - Disallow students from uploading .git file and .git folder in their repository (#6963)
