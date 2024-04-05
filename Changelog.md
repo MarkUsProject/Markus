@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.4.8]
+- Validate user-provided paths (#7025)
+
 ## [v2.4.7]
 - Support Jupyter notebooks for results printing (#6993)
 - Enable bulk download of print PDFs for an assignments (#6998)

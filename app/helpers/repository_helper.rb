@@ -52,6 +52,12 @@ module RepositoryHelper
     subdir_path, filename = File.split(filename)
     filename = FileHelper.sanitize_file_name(filename)
     file_path = current_path.join(subdir_path).join(filename).to_s
+
+    unless File.expand_path(file_path).start_with?(File.expand_path(path))
+      messages << [:invalid_filename, f.original_filename]
+      return false, messages
+    end
+
     new_files << file_path
     # Sometimes the file pointer of file_object is at the end of the file.
     # In order to avoid empty uploaded files, rewind it to be safe.
@@ -113,6 +119,12 @@ module RepositoryHelper
       basename = FileHelper.sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
+
+      unless File.expand_path(file_path).start_with?(File.expand_path(path))
+        messages << [:invalid_filename, File.join(subdir_path, basename)]
+        return false, messages
+      end
+
       txn.remove(file_path, current_revision.to_s, keep_folder: keep_folder)
     end
 
@@ -138,6 +150,12 @@ module RepositoryHelper
 
     folder_path = current_path.join(folder_path)
     folder_path = folder_path.to_s
+
+    unless File.expand_path(folder_path).start_with?(File.expand_path(path))
+      folder_path = format_folder_path folder_path
+      messages << [:invalid_folder_name, folder_path]
+      return false, messages
+    end
 
     # check if only required files are allowed for a submission
     # allowed folders = paths in required files
@@ -189,6 +207,11 @@ module RepositoryHelper
     files = []
     folders.each do |folder_path|
       folder_path = current_path.join(folder_path).to_s
+      unless File.expand_path(folder_path).start_with?(File.expand_path(path))
+        messages << [:invalid_folder_name, folder_path]
+        return false, messages
+      end
+
       next if dirs.include? folder_path
 
       repo.get_revision(current_revision.to_s).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
