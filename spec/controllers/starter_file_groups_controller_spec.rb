@@ -268,5 +268,21 @@ describe StarterFileGroupsController do
         expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
       end
     end
+    context 'when the path is invalid' do
+      subject do
+        put_as role, :update_files, params: { course_id: course.id,
+                                              id: starter_file_group.id,
+                                              unzip: unzip,
+                                              new_folders: new_folders,
+                                              delete_folders: delete_folders,
+                                              delete_files: delete_files,
+                                              new_files: new_files,
+                                              path: '../../' }
+      end
+      it 'should flash an error message' do
+        subject
+        expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+      end
+    end
   end
 end
