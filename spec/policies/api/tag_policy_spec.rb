@@ -1,5 +1,6 @@
 describe Api::TagPolicy do
   let(:context) { { role: role, real_user: role.user } }
+
   describe_rule :index do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }

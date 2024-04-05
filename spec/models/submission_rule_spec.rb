@@ -12,45 +12,45 @@ shared_examples 'due_date_calculations' do |assignment_past, section_past, secti
 
   before { assignment.reload }
 
-  context '#can_collect_all_now?' do
+  describe '#can_collect_all_now?' do
     it "should return #{assignment_past && section_past}" do
       expect(assignment.submission_rule.can_collect_all_now?).to eq(assignment_past && section_past)
     end
   end
 
-  context '#can_collect_grouping_now?(grouping) with section' do
+  describe '#can_collect_grouping_now?(grouping) with section' do
     it "should return #{section_past}" do
       expect(assignment.submission_rule.can_collect_grouping_now?(grouping_with_section)).to eq(section_past)
     end
   end
 
-  context '#can_collect_grouping_now?(grouping) without section' do
+  describe '#can_collect_grouping_now?(grouping) without section' do
     it "should return #{assignment_past}" do
       expect(assignment.submission_rule.can_collect_grouping_now?(grouping_without_section)).to eq(assignment_past)
     end
   end
 
-  context '#get_collection_time(section)' do
+  describe '#get_collection_time(section)' do
     it "should return #{section_due_date_str}" do
       due_date = section_due_date_due_date
       expect(assignment.submission_rule.get_collection_time(section)).to be_within(1.second).of(due_date)
     end
   end
 
-  context '#get_collection_time(nil) (i.e. global due date)' do
+  describe '#get_collection_time(nil) (i.e. global due date)' do
     it "should return #{assignment_due_date_str}" do
       expect(assignment.submission_rule.get_collection_time).to be_within(1.second).of(assignment_due_date)
     end
   end
 
-  context '#calculate_grouping_collection_time(grouping) with section' do
+  describe '#calculate_grouping_collection_time(grouping) with section' do
     it "should return #{section_due_date_str}" do
       time = assignment.submission_rule.calculate_grouping_collection_time(grouping_with_section)
       expect(time).to be_within(1.second).of(section_due_date_due_date)
     end
   end
 
-  context '#calculate_grouping_collection_time(grouping) w/o section' do
+  describe '#calculate_grouping_collection_time(grouping) w/o section' do
     it "should return #{assignment_due_date_str}" do
       time = assignment.submission_rule.calculate_grouping_collection_time(grouping_without_section)
       expect(time).to be_within(1.second).of(assignment_due_date)
@@ -60,17 +60,18 @@ end
 
 describe SubmissionRule do
   it { is_expected.to have_one(:course) }
+
   context 'A newly initialized submission rule' do
     it 'belongs to an assignment' do
-      is_expected.to belong_to(:assignment)
+      expect(subject).to belong_to(:assignment)
     end
   end
 
-  context '#calculate_collection_time' do
+  describe '#calculate_collection_time' do
     let(:assignment) { create(:assignment) }
 
     it 'should return a TimeWithZone object' do
-      expect(assignment.submission_rule.calculate_collection_time).to be_kind_of(ActiveSupport::TimeWithZone)
+      expect(assignment.submission_rule.calculate_collection_time).to be_a(ActiveSupport::TimeWithZone)
     end
 
     it 'should return due_date + duration for timed assessment' do
@@ -88,14 +89,14 @@ describe SubmissionRule do
     end
   end
 
-  context '#calculate_grouping_collection_time' do
+  describe '#calculate_grouping_collection_time' do
     let(:assignment) { create(:assignment) }
     let(:grouping_with_inviter) { create(:grouping_with_inviter) }
 
     it 'should return a TimeWithZone object if called with a grouping argument' do
       expect(assignment.submission_rule
         .calculate_grouping_collection_time(grouping_with_inviter))
-        .to be_kind_of(ActiveSupport::TimeWithZone)
+        .to be_a(ActiveSupport::TimeWithZone)
     end
   end
 
@@ -110,87 +111,98 @@ describe SubmissionRule do
     let(:grouping_without_section) do
       create(:grouping_with_inviter, inviter: inviter_without_section, assignment: assignment)
     end
+
     context 'are enabled' do
       let(:assignment) { create(:assignment, assignment_properties_attributes: { section_due_dates_type: true }) }
 
       context 'and Assignment Due Date is in the past' do
-        before :each do
+        before do
           assignment.update!(due_date: 2.days.ago)
         end
 
         context 'and Section Due Date is in the past' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.ago)
           end
+
           include_examples 'due_date_calculations', true, true
         end
 
         context 'and Section Due Date is in the future' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.from_now)
           end
+
           include_examples 'due_date_calculations', true, false
         end
       end
 
       context 'and Assignment Due Date is in the future' do
-        before :each do
+        before do
           assignment.update!(due_date: 2.days.from_now)
         end
 
         context 'and Section Due Date is in the past' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.ago)
           end
+
           include_examples 'due_date_calculations', false, true
         end
 
         context 'and Section Due Date is in the future' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.from_now)
           end
+
           include_examples 'due_date_calculations', false, false
         end
       end
     end
+
     context 'are disabled' do
       let(:assignment) { create(:assignment, assignment_properties_attributes: { section_due_dates_type: false }) }
+
       context 'and Assignment Due Date is in the past' do
-        before :each do
+        before do
           assignment.update!(due_date: 2.days.ago)
         end
 
         context 'and Section Due Date is in the past' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.ago)
           end
+
           include_examples 'due_date_calculations', true, true, section_enabled: false
         end
 
         context 'and Section Due Date is in the future' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.from_now)
           end
+
           include_examples 'due_date_calculations', true, true, section_enabled: false
         end
       end
 
       context 'and Assignment Due Date is in the future' do
-        before :each do
+        before do
           assignment.update!(due_date: 2.days.from_now)
         end
 
         context 'and Section Due Date is in the past' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.ago)
           end
+
           include_examples 'due_date_calculations', false, false, section_enabled: false
         end
 
         context 'and Section Due Date is in the future' do
-          before :each do
+          before do
             section_due_date.update!(due_date: 1.day.from_now)
           end
+
           include_examples 'due_date_calculations', false, false, section_enabled: false
         end
       end
@@ -198,7 +210,7 @@ describe SubmissionRule do
   end
 
   context 'Grace period ids' do
-    before(:each) do
+    before do
       @submission_rule = create(:grace_period_submission_rule)
 
       # Randomly create five periods for this SubmissionRule (ids unsorted):
@@ -211,7 +223,7 @@ describe SubmissionRule do
   end
 
   context 'Penalty period ids' do
-    before(:each) do
+    before do
       @submission_rule = create(:penalty_period_submission_rule)
 
       # Randomly create five periods for this SubmissionRule (ids unsorted):
@@ -236,7 +248,7 @@ describe SubmissionRule do
   end
 
   context 'Assignment with a coming due date and with a past section due date' do
-    before(:each) do
+    before do
       # the assignment due date is to come...
       @assignment = create(:assignment,
                            due_date: 2.days.from_now,

@@ -1,6 +1,6 @@
 describe MemoryRepository do
   context 'writes to repository permissions file' do
-    before :all do
+    before do
       @repo_loc = 'mock_repo'
       @students = [:student1, :student2]
       MemoryRepository.public_send :update_permissions_file, { @repo_loc => @students }

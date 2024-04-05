@@ -108,7 +108,7 @@ RSpec.configure do |config|
     SimpleCov.command_name 'system'
   end
 
-  config.after :each do |test|
+  config.after do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
     FactoryBot.rewind_sequences
   end

@@ -1,6 +1,7 @@
 describe UserPolicy do
   let(:context) { { real_user: user, user: user } }
   let(:user) { 1 } # user doesn't actually matter for any of these policies but needs to be set
+
   describe_rule :manage? do
     failed
   end
@@ -30,6 +31,7 @@ describe UserPolicy do
     end
     context 'as an admin user' do
       let(:context) { { real_user: user, user: user } }
+
       succeed 'user is an admin user' do
         let(:user) { create(:admin_user) }
       end

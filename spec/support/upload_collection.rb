@@ -1,7 +1,7 @@
 shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], background: false,
                                                      route_name: :upload, uploader: :instructor|
   let!(:user) { create(uploader) }
-  before :each do
+  before do
     @initial_count = model_count
   end
 
@@ -32,7 +32,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
             upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.#{format}")
           }
 
-          expect(flash[:error]).to_not be_empty
+          expect(flash[:error]).not_to be_empty
           expect(model_count).to eq @initial_count
         end
       end
@@ -45,7 +45,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
             upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.pdf")
           }
 
-          expect(flash[:error]).to_not be_empty
+          expect(flash[:error]).not_to be_empty
           expect(model_count).to eq @initial_count
         end
       end
@@ -57,7 +57,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], back
             upload_file: fixture_file_upload("upload_shared_files/bad_#{format}")
           }
 
-          expect(flash[:error]).to_not be_empty
+          expect(flash[:error]).not_to be_empty
           expect(model_count).to eq @initial_count
         end
       end

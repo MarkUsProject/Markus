@@ -1,9 +1,11 @@
 describe Note do
   subject { create(:note) }
-  it { should validate_presence_of(:notes_message) }
-  it { should belong_to(:noteable) }
-  it { should belong_to(:role) }
+
+  it { is_expected.to validate_presence_of(:notes_message) }
+  it { is_expected.to belong_to(:noteable) }
+  it { is_expected.to belong_to(:role) }
   it { is_expected.to have_one(:course) }
+
   include_examples 'course associations'
 
   context 'noteables_exist?' do
@@ -20,6 +22,7 @@ describe Note do
     it 'returns true for the notable\'s course' do
       expect(Note.noteables_exist?(noteable.course.id)).to be true
     end
+
     it 'returns false for a different course' do
       course = create(:course)
       expect(Note.noteables_exist?(course.id)).to be false

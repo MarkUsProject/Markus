@@ -42,7 +42,7 @@ describe CourseSummariesController do
             end
           end
         end
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
       end
 
       context 'tests the second csv row which contains out of values' do
@@ -87,7 +87,7 @@ describe CourseSummariesController do
 
     describe '#populate' do
       context 'when there are no remark requests' do
-        before :each do
+        before do
           assignments = create_list(:assignment_with_criteria_and_results, 3)
           create(:grouping_with_inviter_and_submission, assignment: assignments[0])
           create_list(:grade_entry_form_with_data, 2)
@@ -155,6 +155,7 @@ describe CourseSummariesController do
           expect(returned_averages).to eq averages
         end
       end
+
       context 'when at least one result is a remark result' do
         it do
           assignment = create(:assignment_with_criteria_and_results_with_remark)
@@ -175,29 +176,32 @@ describe CourseSummariesController do
 
   context 'A grader' do
     let(:grader) { create(:ta) }
+
     it 'not be able to CSV graders report' do
       get_as grader, :download_csv_grades_report, params: { course_id: grader.course.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
   context 'A student' do
     let(:student) { create(:student) }
     let(:course) { student.course }
+
     it 'not be able to access grades report' do
       get_as student, :download_csv_grades_report, params: { course_id: course.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
 
     describe '#populate' do
-      before :each do
+      before do
         create_list(:assignment_with_criteria_and_results, 3)
         create_list(:grade_entry_form_with_data, 2)
         create(:marking_scheme, assessments: Assessment.all)
         @student2 = Student.first
       end
+
       context 'when assessments are hidden' do
-        before :each do
+        before do
           Assessment.find_each do |a|
             a.update(is_hidden: true)
           end
@@ -230,6 +234,7 @@ describe CourseSummariesController do
           expect(r['data'][0]['user_name']).to eq student.user_name
         end
       end
+
       context 'when no marks are released' do
         let(:populate) { get_as @student2, :populate, params: { course_id: course.id }, format: :json }
         let(:response_data) { response.parsed_body.deep_symbolize_keys }
@@ -271,8 +276,10 @@ describe CourseSummariesController do
         context 'when display_median_to_students not set for any assignment' do
           it_behaves_like 'check_graph_data'
         end
+
         context 'when display_median_to_students set for some assignments' do
           before { Assignment.order(id: :asc).first.assignment_properties.update(display_median_to_students: true) }
+
           it_behaves_like 'check_graph_data'
         end
       end
@@ -281,12 +288,15 @@ describe CourseSummariesController do
     describe '#grade_distribution' do
       let(:role) { create(:instructor) }
       let(:course) { role.course }
+
       before { create(:student, course: course) }
+
       it('should respond with 200 (ok)') do
         create(:marking_scheme, assessments: Assessment.all)
         get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
-        expect(response).to have_http_status 200
+        expect(response).to have_http_status :ok
       end
+
       it 'returns correct data' do
         marking_scheme = create(:marking_scheme, assessments: Assessment.all)
         expected = {}
@@ -301,6 +311,7 @@ describe CourseSummariesController do
         get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expect(response.parsed_body).to eq expected.as_json
       end
+
       it 'returns correct data with no marking schemes' do
         get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expected = {}
@@ -309,6 +320,7 @@ describe CourseSummariesController do
         expected[:summary] = []
         expect(response.parsed_body).to eq expected.as_json
       end
+
       it 'returns correct data when there is multiple marking schemes' do
         marking_schemes = create_list(:marking_scheme, 2, assessments: Assessment.all)
         expected = {}

@@ -1,5 +1,6 @@
 describe RolePolicy do
   let(:context) { { role: role, real_user: role.user } }
+
   describe_rule :manage? do
     succeed 'role is instructor' do
       let(:role) { create(:instructor) }

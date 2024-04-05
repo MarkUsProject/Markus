@@ -19,6 +19,7 @@ describe NotePolicy do
     end
     context 'role is ta' do
       let(:role) { create(:ta) }
+
       succeed 'role is the note creator' do
         let(:record) { create(:note, role: role) }
       end
@@ -26,8 +27,10 @@ describe NotePolicy do
         let(:record) { create(:note) }
       end
     end
+
     context 'role is student' do
       let(:role) { create(:student) }
+
       succeed 'role is the note creator' do
         let(:record) { create(:note, role: role) }
       end

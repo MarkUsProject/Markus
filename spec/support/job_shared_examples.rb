@@ -3,6 +3,7 @@ shared_examples 'background job' do
     clear_enqueued_jobs
     clear_performed_jobs
   end
+
   after do
     clear_enqueued_jobs
     clear_performed_jobs
@@ -33,6 +34,7 @@ shared_examples 'autotest jobs' do
         AutomatedTestsHelper::AutotestApi::LimitExceededException
       )
     end
+
     it 'reschedules the job one minute later' do
       expect(described_class).to receive(:set).with(wait: 1.minute).once.and_call_original
       expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once

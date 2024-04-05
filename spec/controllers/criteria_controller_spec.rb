@@ -7,13 +7,14 @@ describe CriteriaController do
   let(:submission) { create(:submission, grouping: grouping) }
 
   shared_examples 'callbacks' do
-    before :each do
+    before do
       @assignment = create(:assignment_with_criteria_and_results)
       @crit = create(criterion, assignment: @assignment, max_mark: 3.0)
       @assignment.groupings.each do |grouping|
         create(:mark, result: grouping.current_result, mark: @crit.max_mark, criterion: @crit)
       end
     end
+
     describe 'An authenticated and authorized instructor doing a DELETE' do
       it 'should update the relevant assignment\'s stats' do
         old_average = @assignment.results_average
@@ -27,6 +28,7 @@ describe CriteriaController do
         expect(@assignment.results_average).to be >= old_average
       end
     end
+
     context 'when changing the bonus' do
       it 'should be able to update the bonus value' do
         get_as instructor,
@@ -54,13 +56,12 @@ describe CriteriaController do
 
   describe 'Using Checkbox Criterion' do
     let(:criterion) { :checkbox_criterion }
+
     include_examples 'callbacks'
   end
 
   describe 'Using Flexible Criteria' do
     let(:criterion) { :flexible_criterion }
-    include_examples 'callbacks'
-
     let(:flexible_criterion) do
       create(:flexible_criterion,
              assignment: assignment,
@@ -73,126 +74,130 @@ describe CriteriaController do
              position: 2,
              name: 'Flexible Criterion 2')
     end
+
+    include_examples 'callbacks'
+
     describe 'An unauthenticated and unauthorized user doing a GET' do
-      context '#index' do
+      describe '#index' do
         it 'should respond with redirect' do
           get :index, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#new' do
+      describe '#new' do
         it 'should respond with redirect' do
           get :new, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#edit' do
+      describe '#edit' do
         it 'should respond with redirect' do
           get :edit, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#update' do
+      describe '#update' do
         it 'should respond with redirect' do
           put :update, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#destroy' do
+      describe '#destroy' do
         it 'should respond with redirect' do
           delete :destroy, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#update_positions' do
+      describe '#update_positions' do
         it 'should respond with redirect' do
           get :update_positions, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
       context 'with an assignment' do
         context 'and a submission' do
-          context '#edit' do
+          describe '#edit' do
             it 'should respond with redirect' do
               get :edit, params: { course_id: course.id, id: 1 }
-              is_expected.to respond_with :redirect
+              expect(subject).to respond_with :redirect
             end
           end
         end
       end
 
-      context '#download' do
+      describe '#download' do
         it 'should respond with redirect' do
           get :download, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
     end
 
     describe 'An unauthenticated and unauthorized user doing a POST' do
-      context '#index' do
+      describe '#index' do
         it 'should respond with redirect' do
           post :index, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#new' do
+      describe '#new' do
         it 'should respond with redirect' do
           post :new, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#update' do
+      describe '#update' do
         it 'should respond with redirect' do
           put :update, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#edit' do
+      describe '#edit' do
         it 'should respond with redirect' do
           post :edit, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#destroy' do
+      describe '#destroy' do
         it 'should respond with redirect' do
           delete :destroy, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
     end
 
     describe 'An authenticated and authorized instructor doing a GET' do
-      context '#index' do
-        before(:each) do
+      describe '#index' do
+        before do
           get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
         end
+
         it 'should respond assign assignment and criteria' do
           expect(assigns(:assignment)).to be_truthy
           expect(assigns(:criteria)).to be_truthy
         end
 
         it 'should render the edit template' do
-          is_expected.to render_template(:index)
+          expect(subject).to render_template(:index)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#new' do
-        before(:each) do
+      describe '#new' do
+        before do
           get_as instructor,
                  :new,
                  params: { course_id: course.id, assignment_id: assignment.id },
@@ -204,16 +209,16 @@ describe CriteriaController do
         end
 
         it 'should render the new template' do
-          is_expected.to render_template(:new)
+          expect(subject).to render_template(:new)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#edit' do
-        before(:each) do
+      describe '#edit' do
+        before do
           get_as instructor,
                  :edit,
                  params: { course_id: course.id, id: flexible_criterion.id },
@@ -225,19 +230,19 @@ describe CriteriaController do
         end
 
         it 'should render edit template' do
-          is_expected.to render_template(:edit)
+          expect(subject).to render_template(:edit)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#update' do
+      describe '#update' do
         context 'with errors' do
-          before(:each) do
-            expect_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
-            expect_any_instance_of(FlexibleCriterion).to(
+          before do
+            allow_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
+            allow_any_instance_of(FlexibleCriterion).to(
               receive(:errors).and_return(ActiveModel::Errors.new(flexible_criterion))
             )
 
@@ -253,12 +258,12 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            is_expected.to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_entity)
           end
         end
 
         context 'without errors' do
-          before(:each) do
+          before do
             get_as instructor,
                    :update,
                    params: { course_id: course.id, id: flexible_criterion.id,
@@ -271,36 +276,37 @@ describe CriteriaController do
           end
 
           it 'should render the update template' do
-            is_expected.to render_template(:update)
+            expect(subject).to render_template(:update)
           end
         end
       end
     end
 
     describe 'An authenticated and authorized instructor doing a POST' do
-      context '#index' do
-        before(:each) do
+      describe '#index' do
+        before do
           post_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
         end
+
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
           expect(assigns(:criteria)).to be_truthy
         end
 
         it 'should render the index template' do
-          is_expected.to render_template(:index)
+          expect(subject).to render_template(:index)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#create' do
+      describe '#create' do
         context 'with save error' do
-          before(:each) do
-            expect_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
-            expect_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
+          before do
+            allow_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
+            allow_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id,
@@ -308,77 +314,84 @@ describe CriteriaController do
                               new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
+
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
 
           it 'should respond with unprocessable entity' do
-            is_expected.to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_entity)
           end
         end
 
         context 'without error on an assignment as the first criterion' do
-          before(:each) do
+          before do
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id, flexible_criterion: { name: 'first' },
                               new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
                     format: :js
           end
+
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
+
           it 'should render the create template' do
-            is_expected.to render_template(:'criteria/create')
+            expect(subject).to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
-            is_expected.to respond_with(:success)
+            expect(subject).to respond_with(:success)
           end
         end
 
         context 'without error on an assignment that already has criteria' do
-          before(:each) do
+          before do
+            create(:checkbox_criterion, assignment: assignment)
             post_as instructor,
                     :create,
-                    params: { course_id: course.id, assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                    params: { course_id: course.id, assignment_id: assignment.id,
+                              flexible_criterion: { name: 'second' }, new_criterion_prompt: 'second',
+                              criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
                     format: :js
           end
+
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
+
           it 'should render the create template' do
-            is_expected.to render_template(:'criteria/create')
+            expect(subject).to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
-            is_expected.to respond_with(:success)
+            expect(subject).to respond_with(:success)
           end
         end
       end
 
-      context '#edit' do
-        before(:each) do
+      describe '#edit' do
+        before do
           post_as instructor,
                   :edit,
                   params: { course_id: course.id, id: flexible_criterion.id },
                   format: :js
         end
 
-        it ' should respond with appropriate content' do
+        it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
         end
 
         it 'should render the edit template' do
-          is_expected.to render_template(:edit)
+          expect(subject).to render_template(:edit)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
@@ -388,18 +401,18 @@ describe CriteriaController do
                 params: { course_id: course.id, criterion: [flexible_criterion2.id, flexible_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
-        is_expected.to render_template
-        is_expected.to respond_with(:success)
+        expect(subject).to render_template
+        expect(subject).to respond_with(:success)
 
         c1 = FlexibleCriterion.find(flexible_criterion.id)
-        expect(c1.position).to eql(2)
+        expect(c1.position).to be(2)
         c2 = FlexibleCriterion.find(flexible_criterion2.id)
-        expect(c2.position).to eql(1)
+        expect(c2.position).to be(1)
       end
     end
 
     describe 'An authenticated and authorized instructor doing a DELETE' do
-      it ' should be able to delete the criterion' do
+      it 'should be able to delete the criterion' do
         delete_as instructor,
                   :destroy,
                   params: { course_id: course.id, id: flexible_criterion.id },
@@ -407,7 +420,7 @@ describe CriteriaController do
         expect(assigns(:criterion)).to be_truthy
         i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
         expect(i18t_strings).to eql(flash[:success].map { |f| extract_text f })
-        is_expected.to respond_with(:success)
+        expect(subject).to respond_with(:success)
 
         expect { FlexibleCriterion.find(flexible_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -416,8 +429,6 @@ describe CriteriaController do
 
   describe 'Using Rubric Criteria' do
     let(:criterion) { :rubric_criterion }
-    include_examples 'callbacks'
-
     let(:rubric_criterion) do
       create(:rubric_criterion,
              assignment: assignment,
@@ -430,126 +441,130 @@ describe CriteriaController do
              position: 2,
              name: 'Rubric Criterion 2')
     end
+
+    include_examples 'callbacks'
+
     describe 'An unauthenticated and unauthorized user doing a GET' do
-      context '#index' do
+      describe '#index' do
         it 'should respond with redirect' do
           get :index, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#new' do
+      describe '#new' do
         it 'should respond with redirect' do
           get :new, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#edit' do
+      describe '#edit' do
         it 'should respond with redirect' do
           get :edit, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
 
         context 'with an assignment' do
           context 'and a submission' do
-            context '#edit' do
+            describe '#edit' do
               it 'should respond with redirect' do
                 get :edit, params: { course_id: course.id, assignment_id: assignment.id, id: 1 }
-                is_expected.to respond_with :redirect
+                expect(subject).to respond_with :redirect
               end
             end
           end
         end
       end
 
-      context '#destroy' do
+      describe '#destroy' do
         it 'should respond with redirect' do
           delete :destroy, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#update' do
+      describe '#update' do
         it 'should respond with redirect' do
           put :update, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#update_positions' do
+      describe '#update_positions' do
         it 'should respond with redirect' do
           get :update_positions, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#download' do
+      describe '#download' do
         it 'should respond with redirect' do
           get :download, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
     end
 
     describe 'An unauthenticated and unauthorized user doing a POST' do
-      context '#index' do
+      describe '#index' do
         it 'should respond with redirect' do
           post :index, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#new' do
+      describe '#new' do
         it 'should respond with redirect' do
           post :new, params: { course_id: course.id, assignment_id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#edit' do
+      describe '#edit' do
         it 'should respond with redirect' do
           post :edit, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#update' do
+      describe '#update' do
         it 'should respond with redirect' do
           put :update, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
 
-      context '#destroy' do
+      describe '#destroy' do
         it 'should respond with redirect' do
           delete :destroy, params: { course_id: course.id, id: 1 }
-          is_expected.to respond_with :redirect
+          expect(subject).to respond_with :redirect
         end
       end
     end
 
     describe 'An authenticated and authorized instructor doing a GET' do
-      context '#index' do
-        before(:each) do
+      describe '#index' do
+        before do
           get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
         end
+
         it 'should respond assign assignment and criteria' do
           expect(assigns(:assignment)).to be_truthy
           expect(assigns(:criteria)).to be_truthy
         end
 
         it 'should render the edit template' do
-          is_expected.to render_template(:index)
+          expect(subject).to render_template(:index)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#new' do
-        before(:each) do
+      describe '#new' do
+        before do
           get_as instructor,
                  :new,
                  params: { course_id: course.id, assignment_id: assignment.id },
@@ -561,16 +576,16 @@ describe CriteriaController do
         end
 
         it 'should render the new template' do
-          is_expected.to render_template(:new)
+          expect(subject).to render_template(:new)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#edit' do
-        before(:each) do
+      describe '#edit' do
+        before do
           get_as instructor,
                  :edit,
                  params: { course_id: course.id, id: rubric_criterion.id },
@@ -582,19 +597,19 @@ describe CriteriaController do
         end
 
         it 'should render edit template' do
-          is_expected.to render_template(:edit)
+          expect(subject).to render_template(:edit)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#update' do
+      describe '#update' do
         context 'with errors' do
-          before(:each) do
-            expect_any_instance_of(RubricCriterion).to receive(:save).and_return(false)
-            expect_any_instance_of(RubricCriterion).to(
+          before do
+            allow_any_instance_of(RubricCriterion).to receive(:save).and_return(false)
+            allow_any_instance_of(RubricCriterion).to(
               receive(:errors).and_return(ActiveModel::Errors.new(rubric_criterion))
             )
             get_as instructor,
@@ -609,12 +624,12 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            is_expected.to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_entity)
           end
         end
 
         context 'without errors' do
-          before(:each) do
+          before do
             get_as instructor,
                    :update,
                    params: { course_id: course.id, id: rubric_criterion.id,
@@ -627,113 +642,119 @@ describe CriteriaController do
           end
 
           it 'should render the update template' do
-            is_expected.to render_template(:update)
+            expect(subject).to render_template(:update)
           end
         end
       end
     end
 
     describe 'An authenticated and authorized instructor doing a POST' do
-      context '#index' do
-        before(:each) do
+      describe '#index' do
+        before do
           post_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
         end
+
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
           expect(assigns(:criteria)).to be_truthy
         end
 
         it 'should render the index template' do
-          is_expected.to render_template(:index)
+          expect(subject).to render_template(:index)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
-      context '#create' do
+      describe '#create' do
         context 'with save error' do
-          before(:each) do
-            expect_any_instance_of(RubricCriterion).to receive(:save).and_return(false)
-            expect_any_instance_of(RubricCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
+          before do
+            allow_any_instance_of(RubricCriterion).to receive(:save).and_return(false)
+            allow_any_instance_of(RubricCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id, max_mark_prompt: 10,
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
                     format: :js
           end
+
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
 
           it 'should respond with unprocessable entity' do
-            is_expected.to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_entity)
           end
         end
 
         context 'without error on an assignment as the first criterion' do
-          before(:each) do
+          before do
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id,
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
+
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
+
           it 'should render the create template' do
-            is_expected.to render_template(:'criteria/create')
+            expect(subject).to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
-            is_expected.to respond_with(:success)
+            expect(subject).to respond_with(:success)
           end
         end
 
         context 'without error on an assignment that already has criteria' do
-          before(:each) do
+          before do
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id, rubric_criterion: { name: 'first' },
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
+
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
+
           it 'should render the create template' do
-            is_expected.to render_template(:'criteria/create')
+            expect(subject).to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
-            is_expected.to respond_with(:success)
+            expect(subject).to respond_with(:success)
           end
         end
       end
 
-      context '#edit' do
-        before(:each) do
+      describe '#edit' do
+        before do
           post_as instructor,
                   :edit,
                   params: { course_id: course.id, id: rubric_criterion.id },
                   format: :js
         end
 
-        it ' should respond with appropriate content' do
+        it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
         end
 
         it 'should render the edit template' do
-          is_expected.to render_template(:edit)
+          expect(subject).to render_template(:edit)
         end
 
         it 'should respond with success' do
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
@@ -745,19 +766,20 @@ describe CriteriaController do
           let(:rubric_criterion2) do
             create(:rubric_criterion, assignment: assignment, position: 2)
           end
+
           it 'should be able to update_positions' do
             post_as instructor,
                     :update_positions,
                     params: { course_id: course.id, criterion: [rubric_criterion2.id, rubric_criterion.id],
                               assignment_id: assignment.id },
                     format: :js
-            is_expected.to render_template
-            is_expected.to respond_with(:success)
+            expect(subject).to render_template
+            expect(subject).to respond_with(:success)
 
             c1 = RubricCriterion.find(rubric_criterion.id)
-            expect(c1.position).to eql(2)
+            expect(c1.position).to be(2)
             c2 = RubricCriterion.find(rubric_criterion2.id)
-            expect(c2.position).to eql(1)
+            expect(c2.position).to be(1)
           end
         end
 
@@ -772,6 +794,7 @@ describe CriteriaController do
           let(:rubric_criterion3) do
             create(:rubric_criterion, assignment: assignment2, position: 3)
           end
+
           before do
             post_as instructor,
                     :update_positions,
@@ -785,11 +808,11 @@ describe CriteriaController do
 
           it 'does not update position' do
             c1 = RubricCriterion.find(rubric_criterion.id)
-            expect(c1.position).to eql(1)
+            expect(c1.position).to be(1)
             c2 = RubricCriterion.find(rubric_criterion2.id)
-            expect(c2.position).to eql(2)
+            expect(c2.position).to be(2)
             c3 = RubricCriterion.find(rubric_criterion3.id)
-            expect(c3.position).to eql(3)
+            expect(c3.position).to be(3)
           end
 
           it 'displays an error message' do
@@ -801,7 +824,7 @@ describe CriteriaController do
     end
 
     describe 'An authenticated and authorized instructor doing a DELETE' do
-      it ' should be able to delete the criterion' do
+      it 'should be able to delete the criterion' do
         delete_as instructor,
                   :destroy,
                   params: { course_id: course.id, id: rubric_criterion.id },
@@ -809,7 +832,7 @@ describe CriteriaController do
         expect(assigns(:criterion)).to be_truthy
         i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
         expect(i18t_string).to eql(flash[:success].map { |f| extract_text f })
-        is_expected.to respond_with(:success)
+        expect(subject).to respond_with(:success)
 
         expect { RubricCriterion.find(rubric_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -1093,7 +1116,7 @@ describe CriteriaController do
 
           get :download, params: { course_id: course.id, assignment_id: assignment.id }
 
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
 
         it 'sends the correct information' do
@@ -1108,7 +1131,7 @@ describe CriteriaController do
     end
   end
 
-  context '#upload' do
+  describe '#upload' do
     include_examples 'a controller supporting upload', formats: [:yml] do
       let(:params) { { course_id: course.id, assignment_id: assignment.id } }
     end

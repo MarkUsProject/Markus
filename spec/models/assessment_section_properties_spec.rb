@@ -1,15 +1,17 @@
 describe AssessmentSectionProperties do
   describe 'ActiveRecord associations' do
     subject { create(:assessment_section_properties) }
+
     it { is_expected.to belong_to(:section) }
     it { is_expected.to belong_to(:assessment) }
     it { is_expected.to have_one(:course) }
+
     include_examples 'course associations'
   end
 
   describe '.due_date_for(section, assignment)' do
     context 'when an assignment has SectionDueDates disabled' do
-      before :each do
+      before do
         @assignment = create(:assignment,
                              due_date: 2.days.from_now,
                              assignment_properties_attributes: { section_due_dates_type: false })
@@ -22,7 +24,7 @@ describe AssessmentSectionProperties do
     end
 
     context 'when an assignment has SectionDueDates enabled' do
-      before :each do
+      before do
         @assignment = create(:assignment,
                              due_date: 2.days.from_now,
                              assignment_properties_attributes: { section_due_dates_type: true })
@@ -36,7 +38,7 @@ describe AssessmentSectionProperties do
       end
 
       context 'and the section has a due date set' do
-        before :each do
+        before do
           @section = create(:section)
           AssessmentSectionProperties.create(section: @section,
                                              assessment: @assignment,

@@ -8,58 +8,63 @@ describe MarkingSchemesController do
   let(:course) { instructor.course }
 
   describe 'An unauthenticated and unauthorized user' do
-    context '#index' do
+    describe '#index' do
       it 'should respond with redirect' do
         get :index, params: { course_id: course.id }
-        is_expected.to respond_with :redirect
+        expect(subject).to respond_with :redirect
       end
     end
 
-    context '#new' do
+    describe '#new' do
       it 'should respond with redirect' do
         post :new, params: { course_id: course.id }
-        is_expected.to respond_with :redirect
+        expect(subject).to respond_with :redirect
       end
     end
 
-    context '#populate' do
+    describe '#populate' do
       it 'should respond with redirect' do
         get :populate, params: { course_id: course.id }
-        is_expected.to respond_with :redirect
+        expect(subject).to respond_with :redirect
       end
     end
   end
 
   describe 'An authorized user' do
-    context '#populate' do
+    describe '#populate' do
       let(:assessments) do
         [grade_entry_form,
          grade_entry_form_with_data,
          assignment,
          assignment_with_criteria_and_results]
       end
+
       before do
         create(:marking_scheme, assessments: assessments)
         get_as instructor, :populate, params: { course_id: course.id }, format: :json
       end
+
       it 'returns a hash with the correct keys' do
         expect(response.parsed_body.keys).to contain_exactly('data', 'columns')
       end
+
       it 'returns a nested data hash with the correct keys' do
         expected_keys = %w[id name assessment_weights edit_link delete_link]
-        expect(response.parsed_body['data'][0].keys).to contain_exactly(*expected_keys)
+        expect(response.parsed_body['data'][0].keys).to match_array(expected_keys)
       end
+
       it 'should contain the correct weights' do
         expected_assessment_ids = assessments.map { |a| a.id.to_s }
-        expect(response.parsed_body['data'][0]['assessment_weights'].keys).to contain_exactly(*expected_assessment_ids)
+        expect(response.parsed_body['data'][0]['assessment_weights'].keys).to match_array(expected_assessment_ids)
       end
+
       it 'should contain the correct column accessors' do
         accessors = response.parsed_body['columns'].pluck('accessor')
-        expect(accessors).to contain_exactly(*assessments.map { |a| "assessment_weights.#{a.id}" })
+        expect(accessors).to match_array(assessments.map { |a| "assessment_weights.#{a.id}" })
       end
     end
 
-    context '#create' do
+    describe '#create' do
       it 'creates a marking scheme with marking weights' do
         params = {
           course_id: course.id,
@@ -93,7 +98,7 @@ describe MarkingSchemesController do
       end
     end
 
-    context '#update' do
+    describe '#update' do
       it 'updates an existing marking scheme with new marking weights' do
         create(:marking_scheme,
                assessments: [grade_entry_form,
@@ -139,22 +144,22 @@ describe MarkingSchemesController do
       end
     end
 
-    context '#new' do
-      before(:each) do
+    describe '#new' do
+      before do
         get_as instructor, :new, params: { course_id: course.id }, format: :js
       end
 
       it 'should render the new template' do
-        is_expected.to render_template(:new)
+        expect(subject).to render_template(:new)
       end
 
       it 'should respond with success' do
-        is_expected.to respond_with(:success)
+        expect(subject).to respond_with(:success)
       end
     end
 
-    context '#edit' do
-      before(:each) do
+    describe '#edit' do
+      before do
         create(
           :marking_scheme,
           assessments: [
@@ -172,16 +177,16 @@ describe MarkingSchemesController do
       end
 
       it 'should render the edit template' do
-        is_expected.to render_template(:edit)
+        expect(subject).to render_template(:edit)
       end
 
       it 'should respond with success' do
-        is_expected.to respond_with(:success)
+        expect(subject).to respond_with(:success)
       end
     end
 
-    context '#destroy' do
-      it ' should be able to delete the marking scheme' do
+    describe '#destroy' do
+      it 'should be able to delete the marking scheme' do
         create(
           :marking_scheme,
           assessments: [
@@ -197,7 +202,7 @@ describe MarkingSchemesController do
                   :destroy,
                   params: { course_id: course.id, id: ms.id },
                   format: :js
-        is_expected.to respond_with(:success)
+        expect(subject).to respond_with(:success)
         expect { MarkingScheme.find(ms.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

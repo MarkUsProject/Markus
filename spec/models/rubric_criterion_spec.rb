@@ -120,7 +120,7 @@ that two properties A and B have switched values' do
   end
 
   context 'A good rubric criterion model' do
-    before(:each) do
+    before do
       @rubric = create(:rubric_criterion)
     end
 
@@ -147,7 +147,7 @@ that two properties A and B have switched values' do
       incomplete_result = create(:incomplete_result, submission: submission)
 
       mark = rubric.marks.where(result_id: incomplete_result.id).first
-      expect(mark).to_not be_nil
+      expect(mark).not_to be_nil
       expect(mark.mark).to be_nil
     end
 
@@ -171,74 +171,50 @@ that two properties A and B have switched values' do
   end
 
   context 'from an assignment without criteria' do
-    before(:each) do
+    before do
       @assignment = create(:assignment)
     end
 
     context 'when parsing a CSV file' do
-      describe 'raise csv line error on an empty row' do
-        it 'raises' do
-          expect do
-            RubricCriterion.create_or_update_from_csv_row([], @assignment)
-          end.to raise_error CsvInvalidLineError
-        end
+      it 'raises CsvInvalidLineError on an empty row' do
+        expect do
+          RubricCriterion.create_or_update_from_csv_row([], @assignment)
+        end.to raise_error CsvInvalidLineError
       end
-    end
 
-    context 'when parsing a CSV file' do
-      describe 'raise csv line error on a 1 element row' do
-        it 'raises' do
-          expect do
-            RubricCriterion.create_or_update_from_csv_row(%w[name], @assignment)
-          end.to raise_error CsvInvalidLineError
-        end
+      it 'raises CsvInvalidLineError on a 1 element row' do
+        expect do
+          RubricCriterion.create_or_update_from_csv_row(%w[name], @assignment)
+        end.to raise_error CsvInvalidLineError
       end
-    end
 
-    context 'when parsing a CSV file' do
-      describe 'raise csv line error on a 2 element row' do
-        it 'raises' do
-          expect do
-            RubricCriterion.create_or_update_from_csv_row(%w[name 1.0], @assignment)
-          end.to raise_error CsvInvalidLineError
-        end
+      it 'raises CsvInvalidLineError on a 2 element row' do
+        expect do
+          RubricCriterion.create_or_update_from_csv_row(%w[name 1.0], @assignment)
+        end.to raise_error CsvInvalidLineError
       end
-    end
 
-    context 'when parsing a CSV file' do
-      describe 'raise csv line error on rows with elements without names for every criterion' do
+      it 'raises CsvInvalidLineError on rows with elements without names for every criterion' do
         row = %w[name 1.0]
         levels = 5
         (0..levels).each do |i|
           row << "name#{i}"
-          it 'raises' do
-            expect do
-              RubricCriterion.create_or_update_from_csv_row(row, @assignment)
-            end.to raise_error ArgumentError
-          end
         end
+        expect do
+          RubricCriterion.create_or_update_from_csv_row(row, @assignment)
+        end.to raise_error ArgumentError
       end
-    end
 
-    context 'when parsing a CSV file' do
-      describe 'raise csv line error on a row with an invalid weight' do
+      it 'raises CsvInvalidLineError on a row with an invalid weight' do
         row = %w[name max_mark l0 l1 l2 l3 l4]
-        it 'raises' do
-          expect do
-            RubricCriterion.create_or_update_from_csv_row(row, @assignment)
-          end.to raise_error ArgumentError
-        end
+        expect do
+          RubricCriterion.create_or_update_from_csv_row(row, @assignment)
+        end.to raise_error ArgumentError
       end
-    end
-  end
-
-  context 'from an assignment without criteria' do
-    before(:each) do
-      @assignment = create(:assignment)
     end
 
     context 'and the row is valid' do
-      before(:each) do
+      before do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
         row = ['criterion 5']
@@ -254,7 +230,7 @@ that two properties A and B have switched values' do
       end
 
       context 'and there is an existing rubric criterion with the same name' do
-        before(:each) do
+        before do
           @criterion = create(:rubric_criterion, assignment: @assignment)
           @criterion.levels.delete_all
           @criterion.set_default_levels
@@ -266,7 +242,7 @@ that two properties A and B have switched values' do
           @criterion.assignment = @assignment
           @criterion.position = @assignment.next_criterion_position
           @criterion.max_mark = 5.0
-          expect(@criterion.save)
+          @criterion.save!
         end
 
         context 'allow a criterion with the same name to overwrite' do
@@ -300,7 +276,7 @@ that two properties A and B have switched values' do
             levels = @criterion.levels
             expect(levels.order(mark: :asc).first.mark).to eq(10)
             expect(levels.order(mark: :asc).last.mark).to eq(14)
-            expect('name4').to eq(levels.order(mark: :asc).last.name)
+            expect(levels.order(mark: :asc).last.name).to eq('name4')
             expect(levels.length).to eq(5)
           end
         end
@@ -314,7 +290,7 @@ that two properties A and B have switched values' do
             levels = @criterion.levels
             expect(levels.order(mark: :asc).first.mark).to eq(10)
             expect(levels.order(mark: :asc).last.mark).to eq(12)
-            expect('Very Poor').to eq(levels.order(mark: :asc).first.name)
+            expect(levels.order(mark: :asc).first.name).to eq('Very Poor')
             expect(levels.length).to eq(3)
           end
         end
@@ -323,7 +299,7 @@ that two properties A and B have switched values' do
   end
 
   context 'A rubric criteria with levels' do
-    before(:each) do
+    before do
       @criterion = create(:rubric_criterion)
     end
 
@@ -360,7 +336,7 @@ that two properties A and B have switched values' do
       describe 'deleting a rubric criterion deletes all levels' do
         it 'not raise error' do
           @criterion.destroy
-          expect(@criterion.destroyed?).to eq true
+          expect(@criterion.destroyed?).to be true
           expect(@criterion.levels).to be_empty
         end
       end
@@ -384,11 +360,13 @@ that two properties A and B have switched values' do
         @criterion.update!(max_mark: 8.0)
         expect(@criterion.levels[1].mark).to eq(2.0)
       end
+
       it 'scale level marks down' do
         expect(@criterion.levels[1].mark).to eq(1.0)
         @criterion.update!(max_mark: 2.0)
         expect(@criterion.levels[1].mark).to eq(0.5)
       end
+
       it 'does not scale level marks that have been manually changed' do
         expect(@criterion.levels[1].mark).to eq(1.0)
         @criterion.levels[1].mark = 3
@@ -398,7 +376,7 @@ that two properties A and B have switched values' do
     end
 
     context 'editing levels edits marks' do
-      before(:each) do
+      before do
         3.times { create(:submission, grouping: create(:grouping, assignment: @criterion.assignment)) }
         @criterion.marks.first.update(mark: 0)
         @criterion.marks.second.update(mark: 1)
@@ -440,7 +418,7 @@ that two properties A and B have switched values' do
 
     context 'validations work properly' do
       context 'when a result is released' do
-        before(:each) do
+        before do
           @marks = @criterion.marks
           results = []
           3.times do
@@ -456,11 +434,13 @@ that two properties A and B have switched values' do
             result.save
           end
         end
+
         describe 'levels can\'t be updated' do
           it 'not raise error' do
             expect(@criterion.levels[0].update(mark: 1.5)).to be false
           end
         end
+
         describe 'rubric criteria can\'t be updated' do
           it 'not raise error' do
             expect(@criterion.update(max_mark: 10)).to be false

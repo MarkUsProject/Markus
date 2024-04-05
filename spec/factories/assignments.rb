@@ -188,13 +188,13 @@ FactoryBot.define do
   factory :assignment_with_test_groups_student_runnable, parent: :assignment do
     after(:create) do |a|
       create(:test_group_student_runnable, assignment: a)
-      2.times { create(:test_group, assignment: a) }
+      create_list(:test_group, 2, assignment: a)
     end
   end
 
   factory :assignment_with_test_groups_not_student_runnable, parent: :assignment do
     after(:create) do |a|
-      3.times { create(:test_group, assignment: a) }
+      create_list(:test_group, 3, assignment: a)
     end
   end
 end

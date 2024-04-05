@@ -9,6 +9,7 @@ describe GradeEntryItem do
 
     describe 'uniqueness validation' do
       subject { create(:grade_entry_item) }
+
       it { is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id) }
     end
 
@@ -65,7 +66,7 @@ describe GradeEntryItem do
     let!(:grade_entry_item) { create(:grade_entry_item, out_of: 10) }
     let!(:grades) { [2, 3, 5, 7, 2, 0] }
 
-    before :each do
+    before do
       grades.each do |grade|
         grade_entry_student = grade_entry_item.grade_entry_form
                                               .grade_entry_students

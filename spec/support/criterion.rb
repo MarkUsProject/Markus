@@ -2,12 +2,13 @@ shared_examples 'a criterion' do
   it { is_expected.to callback(:update_results_with_change).after(:update) }
   it { is_expected.to allow_value(false).for(:bonus) }
   it { is_expected.to allow_value(true).for(:bonus) }
-  it { is_expected.to_not allow_value(nil).for(:bonus) }
+  it { is_expected.not_to allow_value(nil).for(:bonus) }
   it { is_expected.to callback(:update_result_marking_states).after(:create) }
 
   describe 'callbacks' do
     describe '#update_result_marking_states' do
       let(:assignment) { create(:assignment) }
+
       it 'should trigger job' do
         expect(UpdateResultsMarkingStatesJob).to receive(:perform_later).with(assignment.id, :incomplete)
         create(criterion_factory_name, assignment: assignment)
@@ -27,15 +28,15 @@ shared_examples 'a criterion' do
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no criteria' do
-        Criterion.randomly_assign_tas([], [], assignment)
+        expect { Criterion.randomly_assign_tas([], [], assignment) }.not_to raise_error
       end
 
       it 'can randomly bulk assign TAs to no criteria' do
-        Criterion.randomly_assign_tas([], ta_ids, assignment)
+        expect { Criterion.randomly_assign_tas([], ta_ids, assignment) }.not_to raise_error
       end
 
       it 'can randomly bulk assign no TAs to all criteria' do
-        Criterion.randomly_assign_tas(criterion_ids, [], assignment)
+        expect { Criterion.randomly_assign_tas(criterion_ids, [], assignment) }.not_to raise_error
       end
 
       it 'can randomly bulk assign TAs to all criteria' do
@@ -76,15 +77,15 @@ shared_examples 'a criterion' do
 
     describe '.assign_all_tas' do
       it 'can bulk assign no TAs to no criteria' do
-        Criterion.assign_all_tas([], [], assignment)
+        expect { Criterion.assign_all_tas([], [], assignment) }.not_to raise_error
       end
 
       it 'can bulk assign all TAs to no criteria' do
-        Criterion.assign_all_tas([], ta_ids, assignment)
+        expect { Criterion.assign_all_tas([], ta_ids, assignment) }.not_to raise_error
       end
 
       it 'can bulk assign no TAs to all criteria' do
-        Criterion.assign_all_tas(criterion_ids, [], assignment)
+        expect { Criterion.assign_all_tas(criterion_ids, [], assignment) }.not_to raise_error
       end
 
       it 'can bulk assign all TAs to all criteria' do
@@ -126,7 +127,7 @@ shared_examples 'a criterion' do
 
     describe '.unassign_tas' do
       it 'can bulk unassign no TAs' do
-        Criterion.unassign_tas([], assignment)
+        expect { Criterion.unassign_tas([], assignment) }.not_to raise_error
       end
 
       it 'can bulk unassign TAs' do
@@ -179,7 +180,7 @@ shared_examples 'a criterion' do
       context 'with assigned TAs' do
         let!(:tas) { create_list(:ta, 2) }
 
-        before :each do
+        before do
           Criterion.assign_all_tas([criterion.id], tas.map(&:id), criterion.assignment)
         end
 
@@ -204,7 +205,7 @@ shared_examples 'a criterion' do
           end
 
           context 'when only one is assigned a TA' do
-            before(:each) { create_ta_memberships(groupings[0], tas[0]) }
+            before { create_ta_memberships(groupings[0], tas[0]) }
 
             it 'updates assigned groups count to 1' do
               expect_updated_assigned_groups_count_to_eq 1
@@ -212,7 +213,7 @@ shared_examples 'a criterion' do
           end
 
           context 'when only one is assigned multiple TAs' do
-            before(:each) { create_ta_memberships(groupings[0], tas) }
+            before { create_ta_memberships(groupings[0], tas) }
 
             it 'updates assigned groups count to 1' do
               expect_updated_assigned_groups_count_to_eq 1
@@ -220,7 +221,7 @@ shared_examples 'a criterion' do
           end
 
           context 'when `tas.size` are assigned unique TAs' do
-            before :each do
+            before do
               tas.size.times { |i| create_ta_memberships(groupings[i], tas[i]) }
             end
 
@@ -230,7 +231,7 @@ shared_examples 'a criterion' do
           end
 
           context 'when `tas.size` are assigned non-unique TAs' do
-            before(:each) do
+            before do
               tas.size.times { |i| create_ta_memberships(groupings[i], tas) }
             end
 
@@ -240,7 +241,7 @@ shared_examples 'a criterion' do
 
             context 'when TAs are also assigned to groups of another ' \
                     'assignment' do
-              before :each do
+              before do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
                 grouping = create(:grouping, assignment: criterion.assignment)
@@ -265,7 +266,7 @@ shared_examples 'a criterion' do
       let!(:grouping) { create(:grouping, assignment: assignment) }
       let!(:another_grouping) { create(:grouping, assignment: assignment) }
 
-      before :each do
+      before do
         Criterion.assign_all_tas([criterion.id, criterion2.id],
                                  [ta.id], assignment)
         create_ta_memberships([grouping, another_grouping], ta)
@@ -291,8 +292,10 @@ shared_examples 'a criterion' do
       mark.update!(mark: 1)
       mark.reload
     end
+
     describe 'when max_mark not updated' do
       let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
+
       it 'should not scale existing marks' do
         prev_mark = mark.mark
         criterion.max_mark = 10
@@ -301,8 +304,10 @@ shared_examples 'a criterion' do
         expect(mark.mark).to eq prev_mark
       end
     end
+
     describe 'when max_mark is updated' do
       let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
+
       it 'should change existing marks' do
         prev_mark = mark.mark
         criterion.max_mark = 100
@@ -310,6 +315,7 @@ shared_examples 'a criterion' do
         mark.reload
         expect(mark.mark).not_to eq prev_mark
       end
+
       it 'should scale existing marks' do
         prev_mark = mark.mark
         criterion.max_mark *= 10
@@ -358,7 +364,8 @@ shared_examples 'a criterion' do
     end
 
     context 'when there is a percentage extra mark for the result' do
-      let!(:extra_mark) { create(:extra_mark, result: result, extra_mark: 10) }
+      before { create(:extra_mark, result: result, extra_mark: 10) }
+
       it 'result total marks get updated and percentage bonuses get recalculated' do
         removed_value = mark.mark
         previous_total = mark.mark + other_mark.mark
@@ -375,7 +382,7 @@ shared_examples 'a criterion' do
     let(:criterion) { create(criterion_factory_name, assignment: assignment) }
     let(:grades) { assignment.groupings.map { rand(criterion.max_mark + 1) } }
 
-    before :each do
+    before do
       assignment.groupings.each_with_index do |grouping, index|
         result = grouping.current_result
         result.marks.create(criterion: criterion, mark: grades[index])

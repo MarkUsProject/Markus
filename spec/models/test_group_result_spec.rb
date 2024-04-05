@@ -1,5 +1,6 @@
 describe TestGroupResult do
   subject { create(:test_group_result) }
+
   it { is_expected.to have_many(:test_results) }
   it { is_expected.to belong_to(:test_group) }
   it { is_expected.to belong_to(:test_run) }
@@ -10,10 +11,11 @@ describe TestGroupResult do
   it { is_expected.to validate_numericality_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:time) }
   it { is_expected.to have_one(:course) }
+
   include_examples 'course associations'
 
   context 'test group result' do
-    before(:each) do
+    before do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)

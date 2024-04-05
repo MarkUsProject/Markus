@@ -6,6 +6,7 @@ FactoryBot.define do
     after(:build) do |rule, evaluator|
       evaluator.assignment.submission_rule = rule
     end
+
     after(:create) do |rule|
       rule.assignment.save
     end

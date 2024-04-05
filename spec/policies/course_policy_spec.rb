@@ -2,6 +2,7 @@ describe CoursePolicy do
   let(:context) { { role: role, real_user: role.user, user: role.user } }
   let(:role) { create(:instructor) }
   let(:record) { role&.course }
+
   describe_rule :show? do
     succeed 'role is an instructor'
     succeed 'role is a ta' do

@@ -10,6 +10,7 @@ shared_examples 'gets annotation data' do
       expect(Set.new(annotation.get_data(include_creator: false).keys)).to eq keys
     end
   end
+
   context 'when include_creator is true' do
     it 'gets all data including creator' do
       expect(Set.new(annotation.get_data(include_creator: true).keys)).to eq keys + [:creator]

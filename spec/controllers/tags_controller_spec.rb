@@ -9,15 +9,17 @@ describe TagsController do
     let!(:tag) { create(:tag) }
     let!(:assignment_tag) { create(:tag, assessment: assignment) }
     let(:tags) { [tag, assignment_tag] }
+
     context 'only getting the tags for the specified assignment' do
       it 'returns correct JSON data' do
         get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id, format: :json }
         expected = [{ id: assignment_tag.id, name: assignment_tag.name, description: assignment_tag.description,
                       creator: "#{assignment_tag.role.first_name} #{assignment_tag.role.last_name}",
                       use: assignment_tag.groupings.size }.stringify_keys]
-        expect(response.parsed_body).to contain_exactly(*expected)
+        expect(response.parsed_body).to match_array(expected)
       end
     end
+
     context 'getting tags for all assignments' do
       it 'returns correct JSON data' do
         get_as instructor, :index, params: { course_id: course.id, format: :json }
@@ -26,7 +28,7 @@ describe TagsController do
             creator: "#{t.role.first_name} #{t.role.last_name}", use: t.groupings.size }.stringify_keys
         end
 
-        expect(response.parsed_body).to contain_exactly(*expected)
+        expect(response.parsed_body).to match_array(expected)
       end
     end
   end
@@ -37,7 +39,7 @@ describe TagsController do
     it 'creates a new tag' do
       post_as instructor, :create, params: { tag: { name: 'tag', description: 'tag description' },
                                              assignment_id: assignment.id, course_id: course.id }
-      expect(Tag.find_by(name: 'tag', description: 'tag description')).to_not be_nil
+      expect(Tag.find_by(name: 'tag', description: 'tag description')).not_to be_nil
     end
 
     it 'does not create an invalid tag' do
@@ -88,7 +90,7 @@ describe TagsController do
       let(:params) { { course_id: course.id } }
     end
 
-    before :each do
+    before do
       create(:instructor, user: create(:end_user, user_name: 'a'))
 
       @file_good_csv = fixture_file_upload('tags/form_good.csv', 'text/csv')
@@ -100,7 +102,7 @@ describe TagsController do
       post_as instructor, :upload,
               params: { upload_file: @file_good_csv, assignment_id: assignment.id, course_id: course.id }
 
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 2)].map { |f| extract_text f })
@@ -114,7 +116,7 @@ describe TagsController do
       post_as instructor, :upload,
               params: { upload_file: @file_good_yml, assignment_id: assignment.id, course_id: course.id }
 
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
 
@@ -126,8 +128,8 @@ describe TagsController do
       post_as instructor, :upload,
               params: { upload_file: @file_invalid_column, assignment_id: assignment.id, course_id: course.id }
 
-      expect(response).to have_http_status(302)
-      expect(flash[:error]).to_not be_empty
+      expect(response).to have_http_status(:found)
+      expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
     end
   end
@@ -142,7 +144,7 @@ describe TagsController do
         }
       end
 
-      before :each do
+      before do
         @role = create(:student)
         @tag1 = Tag.find_or_create_by(name: 'tag1')
         @tag1.name = 'tag1'
@@ -160,7 +162,7 @@ describe TagsController do
       shared_examples 'upload csv' do
         it 'responds with appropriate status' do
           get_as instructor, :download, params: params, format: 'csv'
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
 
         # parse header object to check for the right disposition
@@ -190,12 +192,16 @@ describe TagsController do
           expect(response.media_type).to eq 'text/csv'
         end
       end
+
       context 'only for an assignment' do
         let(:params) { { course_id: course.id, assignment_id: assignment.id } }
+
         include_examples 'upload csv'
       end
+
       context 'for all assignments' do
         let(:params) { { course_id: course.id } }
+
         include_examples 'upload csv'
       end
     end
@@ -209,7 +215,7 @@ describe TagsController do
         }
       end
 
-      before :each do
+      before do
         @role = create(:student)
         @tag1 = Tag.find_or_create_by(name: 'tag1')
         @tag1.name = 'tag1'
@@ -227,7 +233,7 @@ describe TagsController do
       shared_examples 'upload yml' do
         it 'responds with appropriate status' do
           get_as instructor, :download, params: params, format: 'yml'
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
 
         # parse header object to check for the right disposition
@@ -267,12 +273,16 @@ describe TagsController do
           expect(response.media_type).to eq 'text/yml'
         end
       end
+
       context 'only for an assignment' do
         let(:params) { { course_id: course.id, assignment_id: assignment.id } }
+
         include_examples 'upload yml'
       end
+
       context 'for all assignments' do
         let(:params) { { course_id: course.id } }
+
         include_examples 'upload yml'
       end
     end

@@ -1,5 +1,6 @@
 describe ExtensionPolicy do
   let(:context) { { role: role, real_user: role.user } }
+
   describe_rule :manage? do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }
@@ -12,6 +13,7 @@ describe ExtensionPolicy do
         let(:role) { create(:ta, manage_assessments: false) }
       end
     end
+
     failed 'role is a student' do
       let(:role) { create(:student) }
     end

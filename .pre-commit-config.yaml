@@ -47,6 +47,8 @@ repos:
           - rubocop-rails:2.24.1
           - rubocop-performance:1.21.0
           - rubocop-factory_bot:2.25.1
+          - rubocop-rspec:2.28.0
+          - rubocop-rspec_rails:2.28.2
 
 exclude: vendor
 

@@ -30,6 +30,7 @@ describe Api::CoursePolicy do
         let(:course1) { create(:course) }
         let(:course2) { create(:course) }
         let(:course3) { create(:course) }
+
         succeed 'and at least one is an instructor role' do
           before do
             create(:instructor, user: user, course: course1)
