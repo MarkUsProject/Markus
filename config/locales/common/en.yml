@@ -12,6 +12,8 @@ en:
   delete: Delete
   edit: Edit
   encoding: Encoding
+  errors:
+    invalid_path: Invalid path provided.
   file: File
   filter_by: Filter by %{name}
   forbidden: Forbidden
