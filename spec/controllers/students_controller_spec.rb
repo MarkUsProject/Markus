@@ -1,11 +1,12 @@
 describe StudentsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:course) { instructor.course }
+
   describe 'User is an instructor' do
     let(:instructor) { create(:instructor) }
     let(:student) { create(:student, grace_credits: 5) }
 
-    context '#index' do
+    describe '#index' do
       it 'returns correct student counts' do
         create_list(:student, 3)
         create_list(:student, 4, hidden: true)
@@ -14,13 +15,15 @@ describe StudentsController do
         counts = response.parsed_body['counts']
         expect(counts).to eq('all' => 7, 'active' => 3, 'inactive' => 4)
       end
+
       it_behaves_like 'role is from a different course' do
-        let(:role) { instructor }
         subject { get_as new_role, :index, params: { course_id: course.id, format: :json } }
+
+        let(:role) { instructor }
       end
     end
 
-    context '#update' do
+    describe '#update' do
       let(:section) { create(:section, { course_id: course.id }) }
       let(:params) do
         {
@@ -38,7 +41,7 @@ describe StudentsController do
       end
     end
 
-    context '#upload' do
+    describe '#upload' do
       include_examples 'a controller supporting upload', formats: [:csv], background: true do
         let(:params) { { course_id: course.id } }
       end
@@ -55,11 +58,12 @@ describe StudentsController do
       end
 
       it_behaves_like 'role is from a different course' do
-        let(:role) { instructor }
         subject do
           post_as new_role, :upload, params: { course_id: course.id,
                                                upload_file: fixture_file_upload('students/form_good.csv', 'text/csv') }
         end
+
+        let(:role) { instructor }
       end
     end
 
@@ -87,7 +91,7 @@ describe StudentsController do
           patch_as instructor, :bulk_modify, params: shared_params.merge({ bulk_action: 'hide' })
           students.each do |student|
             student.reload
-            expect(student.hidden).to eq(true)
+            expect(student.hidden).to be(true)
           end
         end
       end
@@ -99,7 +103,7 @@ describe StudentsController do
           patch_as instructor, :bulk_modify, params: shared_params.merge({ bulk_action: 'unhide' })
           students.each do |student|
             student.reload
-            expect(student.hidden).to eq(false)
+            expect(student.hidden).to be(false)
           end
         end
       end
@@ -153,18 +157,22 @@ describe StudentsController do
                     params: { course_id: course.id, id: student.id, deduction_id: deduction.id }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
+
       it_behaves_like 'role is from a different course' do
-        let(:role) { instructor }
         subject do
           delete_as new_role,
                     :delete_grace_period_deduction,
                     params: { course_id: course.id, id: student.id, deduction_id: 100 }
         end
+
+        let(:role) { instructor }
       end
     end
   end
+
   describe 'role is a student' do
     let(:role) { create(:student) }
+
     shared_examples 'changing particular mailer settings' do
       it 'can be enabled in settings' do
         role.update!(setting => false)

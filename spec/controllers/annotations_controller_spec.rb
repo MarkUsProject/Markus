@@ -1,7 +1,20 @@
 describe AnnotationsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
+  let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil) }
+  let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
+  let(:annotation_category) { create(:annotation_category, assignment: assignment) }
+  let(:notebook_submission_file) { create(:notebook_submission_file, submission: submission) }
+  let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
+  let(:image_submission_file) { create(:image_submission_file, submission: submission) }
+  let(:submission_file) { create(:submission_file, submission: submission) }
+  let(:course) { assignment.course }
+  let(:assignment) { submission.assignment }
+  let(:submission) { result.submission }
+  let(:result) { create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
+
   context 'An unauthenticated user' do
     let(:annotation) { create(:text_annotation, result: result) }
+
     it 'on :add_existing_annotation' do
       post :add_existing_annotation, params: { course_id: course.id, submission_file_id: 1 }
       expect(response).to have_http_status(:redirect)
@@ -22,18 +35,6 @@ describe AnnotationsController do
       expect(response).to have_http_status(:redirect)
     end
   end
-
-  let(:result) { create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
-  let(:submission) { result.submission }
-  let(:assignment) { submission.assignment }
-  let(:course) { assignment.course }
-  let(:submission_file) { create(:submission_file, submission: submission) }
-  let(:image_submission_file) { create(:image_submission_file, submission: submission) }
-  let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
-  let(:notebook_submission_file) { create(:notebook_submission_file, submission: submission) }
-  let(:annotation_category) { create(:annotation_category, assignment: assignment) }
-  let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
-  let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil) }
 
   shared_examples 'an authenticated instructor or TA' do
     describe '#add_existing_annotation' do
@@ -58,6 +59,7 @@ describe AnnotationsController do
         expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
+
       it 'successfully creates an html annotation' do
         post_as user,
                 :add_existing_annotation,
@@ -69,6 +71,7 @@ describe AnnotationsController do
         expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
+
       it 'successfully creates a PDF annotation' do
         post_as user,
                 :add_existing_annotation,
@@ -198,7 +201,7 @@ describe AnnotationsController do
                           result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
         expect(result.annotations.reload.size).to eq 1
       end
 
@@ -210,9 +213,10 @@ describe AnnotationsController do
                           result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
         expect(result.annotations.reload.size).to eq 1
       end
+
       it 'successfully creates an html annotation' do
         post_as user,
                 :create,
@@ -225,6 +229,7 @@ describe AnnotationsController do
         expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
+
       it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
@@ -366,19 +371,21 @@ describe AnnotationsController do
                format: :js
         expect(response).to have_http_status(:success)
         expect(anno1.reload.annotation_text.reload.content).to eq 'new content'
-        expect(anno2.reload.annotation_text.reload.content).to_not eq 'new content'
+        expect(anno2.reload.annotation_text.reload.content).not_to eq 'new content'
       end
     end
   end
 
   describe 'an authenticated instructor' do
     let!(:user) { create(:instructor) }
+
     include_examples 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
       let(:result) { assignment.groupings.first.current_result }
       let(:annotation) { result.annotations.first }
+
       it 'can update a deductive annotation\'s content' do
         post_as user,
                 :update,
@@ -404,7 +411,7 @@ describe AnnotationsController do
                           assignment_id: assignment.id },
                 format: :js
         expect(response).to have_http_status(:bad_request)
-        expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
+        expect(annotation.reload.annotation_text.content).not_to eq 'New content!'
       end
 
       it 'can destroy a deductive annotation' do
@@ -434,12 +441,14 @@ describe AnnotationsController do
 
   describe 'an authenticated TA' do
     let!(:user) { create(:ta) }
+
     include_examples 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
       let(:result) { assignment.groupings.first.current_result }
       let(:annotation) { result.annotations.first }
+
       it 'cannot update a deductive annotation' do
         post_as user,
                 :update,
@@ -450,7 +459,7 @@ describe AnnotationsController do
                           assignment_id: assignment.id },
                 format: :js
         expect(response).to have_http_status(:bad_request)
-        expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
+        expect(annotation.reload.annotation_text.content).not_to eq 'New content!'
       end
 
       it 'cannot update a deductive annotation even if assigned to its criterion' do
@@ -467,7 +476,7 @@ describe AnnotationsController do
                           assignment_id: assignment.id },
                 format: :js
         expect(response).to have_http_status(:bad_request)
-        expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
+        expect(annotation.reload.annotation_text.content).not_to eq 'New content!'
       end
 
       it 'cannot destroy a deductive annotation if unassigned to the annotation\'s criterion' do
@@ -536,7 +545,7 @@ describe AnnotationsController do
                           line_end: 1, column_start: 1, column_end: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
-        is_expected.to respond_with(:forbidden)
+        expect(subject).to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 0
       end
     end
@@ -550,7 +559,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
-        is_expected.to respond_with(:forbidden)
+        expect(subject).to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 0
       end
     end
@@ -569,7 +578,7 @@ describe AnnotationsController do
                             result_id: result.id, course_id: course.id },
                   format: :js
 
-        is_expected.to respond_with(:forbidden)
+        expect(subject).to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 1
       end
     end
@@ -587,8 +596,8 @@ describe AnnotationsController do
                params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
                          result_id: result.id, content: 'new content', course_id: course.id },
                format: :js
-        is_expected.to respond_with(:forbidden)
-        expect(anno.annotation_text.reload.content).to_not eq 'new content'
+        expect(subject).to respond_with(:forbidden)
+        expect(anno.annotation_text.reload.content).not_to eq 'new content'
       end
     end
   end

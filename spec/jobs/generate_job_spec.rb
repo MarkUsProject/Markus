@@ -2,17 +2,17 @@ describe GenerateJob do
   let(:instructor) { create(:instructor) }
   let(:exam_template) { create(:exam_template_midterm) }
 
+  let(:file) { file_fixture('scanned_exams/midterm1-v2-test.pdf') }
+
   context 'when running as a background job' do
     let(:job_args) { [exam_template, 2, 0] }
+
     include_examples 'background job'
   end
 
-  let(:file) { file_fixture('scanned_exams/midterm1-v2-test.pdf') }
-
-  context 'when generating pdfs' do
-    before :each do
+  describe '#perform' do
+    before do
       allow(CombinePDF).to(receive(:load).and_wrap_original { |m| m.call file })
-      allow_any_instance_of(CombinePDF::PDF).to receive(:save)
     end
 
     it 'should create a new Prawn Document' do
@@ -71,15 +71,18 @@ describe GenerateJob do
     end
 
     it 'should save a file to disk' do
-      expect_any_instance_of(CombinePDF::PDF).to receive(:save)
       GenerateJob.perform_now(exam_template, 1, 0)
+      expect(File).to exist(File.join(exam_template.tmp_path,
+                                      exam_template.generated_copies_file_name(1, 0)))
     end
 
     it 'should save the correct number of pages' do
-      expect_any_instance_of(CombinePDF::PDF).to receive(:save) do |pdf|
-        expect(pdf.pages.length).to eq(3 * exam_template.num_pages)
-      end
+      pdf_mock = CombinePDF.new
+      expect(CombinePDF).to receive(:new).and_return(pdf_mock)
+
       GenerateJob.perform_now(exam_template, 3, 0)
+
+      expect(pdf_mock.pages.length).to eq 18
     end
   end
 end

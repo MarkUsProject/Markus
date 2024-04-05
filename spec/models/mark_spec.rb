@@ -4,7 +4,7 @@ describe Mark do
 
   it { is_expected.to allow_value(false).for(:override) }
   it { is_expected.to allow_value(true).for(:override) }
-  it { is_expected.to_not allow_value(nil).for(:override) }
+  it { is_expected.not_to allow_value(nil).for(:override) }
   it { is_expected.to have_one(:course) }
 
   it 'should not allow associations to belong to different assignments' do
@@ -17,8 +17,9 @@ describe Mark do
     let(:rubric_mark) do
       build(:rubric_mark, mark: 10)
     end
+
     it 'should not be valid' do
-      expect(rubric_mark).to_not be_valid
+      expect(rubric_mark).not_to be_valid
     end
   end
 
@@ -26,17 +27,19 @@ describe Mark do
     let(:flexible_mark) do
       build(:flexible_mark, mark: 10)
     end
+
     it 'should not be valid' do
-      expect(flexible_mark).to_not be_valid
+      expect(flexible_mark).not_to be_valid
     end
   end
 
-  describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
+  describe 'when mark belongs to checkbox criterion and the max mark is exceeded' do
     let(:checkbox_mark) do
       build(:checkbox_mark, mark: 10)
     end
+
     it 'should not be valid' do
-      expect(checkbox_mark).to_not be_valid
+      expect(checkbox_mark).not_to be_valid
     end
   end
 
@@ -44,8 +47,9 @@ describe Mark do
     let(:rubric_mark) do
       build(:rubric_mark, mark: -1)
     end
+
     it 'should not be valid' do
-      expect(rubric_mark).to_not be_valid
+      expect(rubric_mark).not_to be_valid
     end
   end
 
@@ -53,6 +57,7 @@ describe Mark do
     let(:rubric_mark) do
       create(:rubric_mark, mark: 4)
     end
+
     it 'equals to mark times weight' do
       related_rubric = rubric_mark.criterion
       expect(rubric_mark.mark).to eq(related_rubric.weight)
@@ -61,16 +66,22 @@ describe Mark do
 
   describe '#scale_mark' do
     let(:curr_max_mark) { 10 }
+
     describe 'when mark is a rubric mark' do
       let(:mark) { create(:rubric_mark, mark: 3) }
+
       it_behaves_like 'Scale_mark'
     end
+
     describe 'when mark is a flexible mark' do
       let(:mark) { create(:flexible_mark, mark: 1) }
+
       it_behaves_like 'Scale_mark'
     end
+
     describe 'when mark is a checkbox mark' do
       let(:mark) { create(:checkbox_mark, mark: 1) }
+
       it_behaves_like 'Scale_mark'
     end
   end
@@ -200,7 +211,7 @@ describe Mark do
       mark_without_deductions = result.marks.first
       mark_without_deductions.update_deduction
       mark_without_deductions.reload
-      expect(mark_without_deductions.mark).to eq(nil)
+      expect(mark_without_deductions.mark).to be_nil
     end
 
     it 'does not take into account deductions related to other criteria' do
@@ -221,12 +232,12 @@ describe Mark do
 
     it 'does not update the mark to max_mark value when there are no annotations' do
       result.annotations.destroy_all # update deduction called in annotation callback
-      expect(mark.reload.mark).to eq(nil)
+      expect(mark.reload.mark).to be_nil
     end
 
     it 'does not update the mark to max_mark value when there are only deductive annotations with 0 value deductions' do
       annotation_text.update!(deduction: 0) # update deduction called in annotation_text callback
-      expect(mark.reload.mark).to eq(nil)
+      expect(mark.reload.mark).to be_nil
     end
 
     it 'updates the override of a mark to false when last deductive annotation deleted if the override ' \
@@ -266,6 +277,7 @@ describe Mark do
       expect(mark.deductive_annotations_absent?).to be true
     end
   end
+
   # private methods
   describe '#ensure_not_released_to_students'
   describe '#update_grouping_mark'

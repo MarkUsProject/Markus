@@ -15,54 +15,56 @@
 describe Student do
   context 'A good Student model' do
     subject { create(:student) }
+
     it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
+
     it 'will have many accepted groupings' do
-      is_expected.to have_many(:accepted_groupings).through(:memberships)
+      expect(subject).to have_many(:accepted_groupings).through(:memberships)
     end
 
     it 'will have many pending groupings' do
-      is_expected.to have_many(:pending_groupings).through(:memberships)
+      expect(subject).to have_many(:pending_groupings).through(:memberships)
     end
 
     it 'will have many rejected groupings' do
-      is_expected.to have_many(:rejected_groupings).through(:memberships)
+      expect(subject).to have_many(:rejected_groupings).through(:memberships)
     end
 
     it 'will have many student memberships' do
-      is_expected.to have_many :student_memberships
+      expect(subject).to have_many :student_memberships
     end
 
     it 'will have many accepted memberships' do
-      is_expected.to have_many :accepted_memberships
+      expect(subject).to have_many :accepted_memberships
     end
 
     it 'will have many grace period deductions available' do
-      is_expected.to have_many :grace_period_deductions
+      expect(subject).to have_many :grace_period_deductions
     end
 
     it 'will belong to a section' do
-      is_expected.to belong_to(:section).optional
+      expect(subject).to belong_to(:section).optional
     end
 
     it 'will have some number of grace credits' do
-      is_expected.to validate_numericality_of :grace_credits
+      expect(subject).to validate_numericality_of :grace_credits
     end
 
     it 'has a preference for receives_invite_emails' do
-      should allow_value(true).for(:receives_invite_emails)
-      should allow_value(false).for(:receives_invite_emails)
-      should_not allow_value(nil).for(:receives_invite_emails)
+      expect(subject).to allow_value(true).for(:receives_invite_emails)
+      expect(subject).to allow_value(false).for(:receives_invite_emails)
+      expect(subject).not_to allow_value(nil).for(:receives_invite_emails)
     end
 
     it 'has a preference for receives_results_emails' do
-      should allow_value(true).for(:receives_results_emails)
-      should allow_value(false).for(:receives_results_emails)
-      should_not allow_value(nil).for(:receives_results_emails)
+      expect(subject).to allow_value(true).for(:receives_results_emails)
+      expect(subject).to allow_value(false).for(:receives_results_emails)
+      expect(subject).not_to allow_value(nil).for(:receives_results_emails)
     end
   end
 
   context 'A pair of students in the same group' do
-    before(:each) do
+    before do
       @membership1 = create(:student_membership, membership_status: StudentMembership::STATUSES[:inviter])
       @grouping = @membership1.grouping
       @membership2 = create(:student_membership, grouping: @grouping,
@@ -85,18 +87,18 @@ describe Student do
       allow_any_instance_of(Grouping).to receive(:is_valid?)
 
       # Mock the repository and raise Repository::UserNotFound
-      mock_repo = class_double('Repository::AbstractRepository')
+      mock_repo = class_double(Repository::AbstractRepository)
       allow_any_instance_of(mock_repo).to receive(:close).and_return(true)
       allow_any_instance_of(mock_repo).to receive(:remove_user).and_return(Repository::UserNotFound)
       allow_any_instance_of(Group).to receive(:access_repo).and_yield(mock_repo)
 
-      Student.hide_students(@student_id_list)
+      expect { Student.hide_students(@student_id_list) }.not_to raise_error
     end
 
     [{ type: 'negative', grace_credits: '-10', expected: 0 },
      { type: 'positive', grace_credits: '10', expected: 15 }].each do |item|
       it "should not error when given #{item[:type]} grace credits" do
-        expect(Student.give_grace_credits(@student_id_list, item[:grace_credits]))
+        Student.give_grace_credits(@student_id_list, item[:grace_credits])
 
         expect(item[:expected]).eql?(@student1.grace_credits)
         expect(item[:expected]).eql?(@student2.grace_credits)
@@ -105,7 +107,7 @@ describe Student do
   end
 
   context 'Hidden Students' do
-    before(:each) do
+    before do
       @student1 = create(:student, hidden: true)
       @student2 = create(:student, hidden: true)
 
@@ -132,12 +134,12 @@ describe Student do
       allow_any_instance_of(Grouping).to receive(:is_valid?)
 
       # Mock the repository and raise Repository::UserNotFound
-      mock_repo = class_double('Repository::AbstractRepository')
+      mock_repo = class_double(Repository::AbstractRepository)
       allow_any_instance_of(mock_repo).to receive(:close).and_return(true)
       allow_any_instance_of(mock_repo).to receive(:add_user).and_return(Repository::UserAlreadyExistent)
       allow_any_instance_of(Group).to receive(:access_repo).and_yield(mock_repo)
 
-      Student.unhide_students(@student_id_list)
+      expect { Student.unhide_students(@student_id_list) }.not_to raise_error
     end
   end
 
@@ -152,7 +154,7 @@ describe Student do
   end
 
   context 'A Student' do
-    before(:each) do
+    before do
       @student = create(:student)
     end
 
@@ -170,13 +172,13 @@ describe Student do
     end
 
     context 'with a group name autogenerated assignment' do
-      before(:each) do
+      before do
         @assignment = create(:assignment, assignment_properties_attributes: { group_name_autogenerated: true })
         @grouping = @student.create_autogenerated_name_group(@assignment)
       end
 
       it 'should assert no pending groupings after create' do
-        expect(@student.has_pending_groupings_for?(@assignment.id)).to be_falsey
+        expect(@student).not_to have_pending_groupings_for(@assignment.id)
       end
 
       it 'should create the group in the same course as the assignment' do
@@ -184,17 +186,17 @@ describe Student do
       end
 
       it 'should assert an accepted grouping exists after create' do
-        expect(@student.has_accepted_grouping_for?(@assignment.id)).to_not be_nil
+        expect(@student.has_accepted_grouping_for?(@assignment.id)).not_to be_nil
       end
     end
 
     context 'with a pending membership' do
-      before(:each) do
+      before do
         @membership = create(:student_membership, role: @student)
       end
 
       context 'on an assignment' do
-        before(:each) do
+        before do
           @assignment = @membership.grouping.assignment
         end
 
@@ -210,7 +212,7 @@ describe Student do
           grouping2 = create(:grouping, assignment: @assignment)
           membership2 = create(:student_membership, grouping: grouping2, role: @student)
 
-          expect(@student.join(grouping))
+          @student.join(grouping)
 
           membership = StudentMembership.find_by(grouping_id: grouping.id, role_id: @student.id)
           expect(StudentMembership::STATUSES[:accepted]).to eq(membership.membership_status)
@@ -227,13 +229,13 @@ describe Student do
         end
 
         context 'working alone' do
-          before(:each) do
-            expect(@student.create_group_for_working_alone_student(@assignment.id))
+          before do
+            @student.create_group_for_working_alone_student(@assignment.id)
             @group = Group.find_by(group_name: @student.user_name)
           end
 
           it 'should create the group' do
-            expect(@group).to_not be_nil
+            expect(@group).not_to be_nil
           end
 
           it 'should create the group in the same course as the assignment' do
@@ -249,7 +251,7 @@ describe Student do
           end
 
           it 'have an accepted grouping' do
-            expect(@student.has_accepted_grouping_for?(@assignment.id))
+            expect(@student.has_accepted_grouping_for?(@assignment.id)).to be true
           end
 
           context 'a timed assignment' do
@@ -266,7 +268,7 @@ describe Student do
         end
 
         context 'working alone but has an existing group' do
-          before(:each) do
+          before do
             @grouping = create(:grouping, assignment: @assignment)
             @membership2 = create(:student_membership,
                                   role: @student,
@@ -299,17 +301,17 @@ describe Student do
 
     context 'as a noteable' do
       it 'display for note without seeing an exception' do
-        expect(@student.display_for_note).to_not be_nil
+        expect(@student.display_for_note).not_to be_nil
       end
     end
 
     it 'assert student has a section' do
-      expect(@student.has_section?).to_not be_nil
+      expect(@student.has_section?).not_to be_nil
     end
 
     it "assert student doesn't have a section" do
       student = create(:student, section: nil)
-      expect(student.has_section?).to be_falsey
+      expect(student).not_to have_section
     end
 
     it 'update the section of the students in the list' do

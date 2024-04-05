@@ -19,6 +19,7 @@ describe ApplicationPolicy do
         let(:role) { create(:ta, manage_assessments: false) }
       end
     end
+
     failed 'role is a student' do
       let(:role) { create(:student) }
     end

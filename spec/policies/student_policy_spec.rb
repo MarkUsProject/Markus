@@ -7,6 +7,7 @@ describe StudentPolicy do
     context 'authorized with an assignment' do
       let(:context) { { role: role, assignment: assignment, real_user: role.user } }
       let(:assignment) { create(:assignment, assignment_properties_attributes: assignment_attrs) }
+
       failed 'without student tests enabled' do
         let(:assignment_attrs) { { token_start_date: 1.hour.ago, enable_student_tests: false } }
       end
@@ -27,8 +28,10 @@ describe StudentPolicy do
         end
       end
     end
+
     context 'authorized with a grouping' do
       let(:context) { { role: role, grouping: grouping, real_user: role.user } }
+
       succeed 'when the role is a member' do
         let(:grouping) { create(:grouping_with_inviter, inviter: role, test_tokens: 1) }
         failed 'when there is a test in progress' do
@@ -42,11 +45,13 @@ describe StudentPolicy do
         let(:grouping) { create(:grouping_with_inviter, test_tokens: 1) }
       end
     end
+
     context 'authorized with a grouping and an assignment' do
       let(:context) { { role: role, grouping: grouping, assignment: assignment, real_user: role.user } }
       let(:assignment) do
         create(:assignment, due_date: assign_due_date, assignment_properties_attributes: assignment_attrs)
       end
+
       failed 'when the due date has passed and token end date is nil' do
         let(:assign_due_date) { 1.hour.ago }
         let(:assignment_attrs) do
@@ -72,8 +77,10 @@ describe StudentPolicy do
         let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
       end
     end
+
     context 'authorized with a submission' do
       let(:context) { { role: role, submission: result.submission, real_user: role.user } }
+
       failed 'with a released result' do
         let(:result) { create(:released_result) }
       end
@@ -120,6 +127,7 @@ describe StudentPolicy do
     let(:context) { { role: role, test_run_id: test_run_id, real_user: role.user } }
     context 'when test run created by student' do
       let(:role) { create(:student) }
+
       succeed 'test in progress' do
         let(:test_run) { create(:student_test_run, role: role, status: :in_progress) }
         let(:test_run_id) { test_run.id }
@@ -129,6 +137,7 @@ describe StudentPolicy do
         let(:test_run_id) { test_run.id }
       end
     end
+
     failed 'test not created by student' do
       let(:test_run) { create(:student_test_run, status: :in_progress) }
       let(:test_run_id) { test_run.id }

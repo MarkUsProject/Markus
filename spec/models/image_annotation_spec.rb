@@ -1,5 +1,6 @@
 describe ImageAnnotation do
   subject { create(:image_annotation) }
+
   it { is_expected.to validate_presence_of(:x1) }
   it { is_expected.to validate_presence_of(:y1) }
   it { is_expected.to validate_presence_of(:x2) }
@@ -9,11 +10,13 @@ describe ImageAnnotation do
   it { is_expected.to validate_numericality_of(:x2) }
   it { is_expected.to validate_numericality_of(:y2) }
   it { is_expected.to have_one(:course) }
+
   include_examples 'course associations'
 
   describe '#get_data' do
     let(:annotation) { create(:image_annotation) }
     let(:extra_keys) { Set[:x_range, :y_range] }
+
     it_behaves_like 'gets annotation data'
   end
 

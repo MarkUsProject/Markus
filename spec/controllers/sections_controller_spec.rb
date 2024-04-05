@@ -9,27 +9,27 @@ describe SectionsController do
 
     it 'on index' do
       get_as @student, :index, params: { course_id: course.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'on create new section' do
       post_as @student, :create, params: { course_id: course.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'on edit section' do
       post_as @student, :edit, params: { course_id: course.id, id: section.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'on update new section' do
       post_as @student, :update, params: { course_id: course.id, id: section.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'not be able to delete a section' do
       delete_as @student, :destroy, params: { course_id: course.id, id: section }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
       expect(Section.find(section.id)).to be_truthy
     end
   end
@@ -45,7 +45,7 @@ describe SectionsController do
 
     it 'on index' do
       get_as @instructor, :index, params: { course_id: course.id }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
 
     it 'on create new section' do
@@ -59,7 +59,7 @@ describe SectionsController do
 
     it 'not be able to create a section with the same name as a existing one' do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: section.name } }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map do |f|
                                                                extract_text f
                                                              end)
@@ -68,7 +68,7 @@ describe SectionsController do
     it 'not be able to create a section with a blank name' do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: '' } }
       expect(Section.find_by(name: '')).to be_nil
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map do |f|
                                                                extract_text f
                                                              end)
@@ -76,7 +76,7 @@ describe SectionsController do
 
     it 'on edit section' do
       post_as @instructor, :edit, params: { course_id: course.id, id: section.id }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
 
     it 'be able to update a section name to "no section"' do
@@ -95,7 +95,7 @@ describe SectionsController do
 
     it 'not be able to edit a section name to an existing name' do
       put_as @instructor, :update, params: { course_id: course.id, id: section.id, section: { name: section2.name } }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.update.error')].map do |f|
                                                                extract_text f
                                                              end)

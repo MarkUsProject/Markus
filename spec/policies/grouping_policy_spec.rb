@@ -128,6 +128,7 @@ describe GroupingPolicy do
     end
     failed 'grouping is deletable by the user but there is a submission' do
       before { allow(grouping).to receive(:deletable_by?).and_return true }
+
       let(:grouping) { create(:grouping_with_inviter_and_submission) }
     end
   end
@@ -165,6 +166,7 @@ describe GroupingPolicy do
     context 'role is a student' do
       let(:role) { create(:student) }
       let(:grouping) { create(:grouping, assignment: assignment) }
+
       succeed 'when the assignment is not scanned or a peer review or timed' do
         let(:assignment) { create(:assignment) }
       end
@@ -176,6 +178,7 @@ describe GroupingPolicy do
       end
       context 'when the assignment is timed' do
         let(:assignment) { create(:timed_assignment) }
+
         succeed 'and it has started' do
           let(:grouping) { create(:grouping, assignment: assignment, start_time: 1.minute.ago) }
         end
@@ -195,10 +198,12 @@ describe GroupingPolicy do
       let(:role) { create(:student) }
       let(:past_collection_date) { false }
       let(:past_assessment_start_time) { true }
+
       before do
-        allow(grouping).to receive(:past_collection_date?).and_return past_collection_date
-        allow(grouping).to receive(:past_assessment_start_time?).and_return past_assessment_start_time
+        allow(grouping).to receive_messages(past_collection_date?: past_collection_date,
+                                            past_assessment_start_time?: past_assessment_start_time)
       end
+
       succeed 'assignment has not started, not passed collection date, passed start time'
       failed 'assignment has been started' do
         let(:grouping) { create(:grouping, start_time: 1.minute.ago) }
@@ -222,6 +227,7 @@ describe GroupingPolicy do
     context 'role is a student' do
       let(:role) { create(:student) }
       let(:grouping) { create(:grouping, assignment: assignment) }
+
       context 'when the assignment is not timed' do
         failed 'and is hidden' do
           let(:assignment) { create(:assignment, is_hidden: true) }
@@ -246,8 +252,10 @@ describe GroupingPolicy do
           end
         end
       end
+
       context 'when the assignment is timed' do
         let(:assignment) { create(:timed_assignment) }
+
         succeed 'and it has started' do
           let(:grouping) { create(:grouping, assignment: assignment, start_time: 1.minute.ago) }
         end
@@ -267,6 +275,7 @@ describe GroupingPolicy do
             end
           end
         end
+
         context 'and grouping is before the collection time' do
           failed 'and starter_files_after_due is true' do
             let(:assignment) do
@@ -292,6 +301,7 @@ describe GroupingPolicy do
     context 'role is a student' do
       let(:role) { create(:student) }
       let(:grouping) { create(:grouping, assignment: assignment) }
+
       context 'when the assignment is not timed' do
         succeed 'and version control submission is enabled' do
           let(:assignment) { create(:assignment, assignment_properties_attributes: { vcs_submit: true }) }
@@ -300,8 +310,10 @@ describe GroupingPolicy do
           let(:assignment) { create(:assignment, assignment_properties_attributes: { vcs_submit: false }) }
         end
       end
+
       context 'when the assignment is timed and version control submission is enabled' do
         let(:assignment) { create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }) }
+
         succeed 'and the grouping has started' do
           let(:grouping) { create(:grouping, assignment: assignment, start_time: 1.minute.ago) }
         end

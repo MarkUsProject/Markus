@@ -7,144 +7,163 @@ describe SubmissionFile do
   it { is_expected.to have_one(:course) }
 
   context 'A .java Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.java',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return java' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('java')
     end
+
     it 'return java comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
   context 'A .rb Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.rb',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return ruby' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('ruby')
     end
+
     it 'return ruby comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%W[=begin\n \n=end])
     end
   end
 
   context 'A .py Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.py',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return python' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('python')
     end
+
     it 'return python comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[""" """])
     end
   end
 
   context 'A .js Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.js',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return javascript' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('javascript')
     end
+
     it 'return javascript comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
   context 'A .html Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.html',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return html' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('html')
     end
+
     it 'return html comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[<!-- -->])
     end
   end
 
   context 'A .css Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.css',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return css' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('css')
     end
+
     it 'return css comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
   context 'A .c Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.c',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return c' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('c')
     end
+
     it 'return c comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
   context 'A .tex Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.tex',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return tex' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('tex')
     end
   end
 
   context 'A no extension Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return a unknown file extension' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
+
     it 'return generic comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[## ##])
     end
   end
 
   context 'An unknown Submission file' do
-    before(:each) do
+    before do
       @submission_file = SubmissionFile.create(filename: 'filename.toto',
                                                path: 'path',
                                                submission_id: 1)
     end
+
     it 'return a unknown file extension' do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
+
     it 'return generic comment' do
       expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[## ##])
     end
   end
 
   context 'A supported image' do
-    before(:each) do
+    before do
       # currently supported formats: ['.jpeg', '.jpg', '.gif', '.png']
       @jpeg_file = SubmissionFile.create(filename: 'filename.jpeg',
                                          path: 'path',
@@ -168,15 +187,18 @@ describe SubmissionFile do
                                                 path: 'path',
                                                 submission_id: 7)
     end
+
     it 'return true' do
       expect(@jpeg_file.is_supported_image?).to be true
       expect(@jpg_file.is_supported_image?).to be true
       expect(@gif_file.is_supported_image?).to be true
       expect(@png_file.is_supported_image?).to be true
     end
+
     it 'return false' do
       expect(@unsupported_file.is_supported_image?).to be false
     end
+
     it 'returns \'image\' when checking file type' do
       expect(FileHelper.get_file_type(@jpeg_file.filename)).to eq 'image'
       expect(FileHelper.get_file_type(@jpg_file.filename)).to eq 'image'
@@ -189,27 +211,30 @@ describe SubmissionFile do
 
   context 'Calling the get_annotation_grid method' do
     context 'from a text file' do
-      before(:each) do
+      before do
         @submission_file = SubmissionFile.create(filename: 'filename',
                                                  path: 'path')
       end
+
       it 'return nil' do
-        expect(@submission_file.get_annotation_grid).to be nil
+        expect(@submission_file.get_annotation_grid).to be_nil
       end
     end
 
     context 'from an image file' do
-      before(:each) do
+      before do
         @submission_file = SubmissionFile.create(filename: 'filename.jpeg',
                                                  path: 'path')
       end
+
       context 'with no annotations' do
         it 'return []' do
           expect(@submission_file.get_annotation_grid).to eq([])
         end
       end
+
       context 'with valid annotations' do
-        before(:each) do
+        before do
           @ta = Ta.new(user_attributes: { user_name: 'exist_user',
                                           first_name: 'Nelle',
                                           last_name: 'Varoquaux',
@@ -223,6 +248,7 @@ describe SubmissionFile do
                                           annotation_text: AnnotationText.new({ id: 2 }),
                                           creator: @ta })
         end
+
         it 'return a corresponding array' do
           @submission_file.annotations.push(@annot1)
           @submission_file.annotations.push(@annot2)
@@ -236,17 +262,19 @@ describe SubmissionFile do
     end
 
     context 'from a pdf file' do
-      before(:each) do
+      before do
         @submission_file = SubmissionFile.create(filename: 'filename.pdf',
                                                  path: 'path')
       end
+
       context 'with no annotations' do
         it 'return []' do
           expect(@submission_file.get_annotation_grid).to eq([])
         end
       end
+
       context 'with valid annotations' do
-        before(:each) do
+        before do
           @ta = Ta.new(user_attributes: { user_name: 'exist_user',
                                           first_name: 'Nelle',
                                           last_name: 'Varoquaux',
@@ -260,6 +288,7 @@ describe SubmissionFile do
                                           annotation_text: AnnotationText.new({ id: 2 }),
                                           creator: @ta })
         end
+
         it 'return a corresponding array' do
           @submission_file.annotations.push(@annot1)
           @submission_file.annotations.push(@annot2)
@@ -270,6 +299,7 @@ describe SubmissionFile do
                       y_range: { start: 2, end: 100 } }])
         end
       end
+
       context 'when checking the file type' do
         it 'returns \'pdf\'' do
           expect(FileHelper.get_file_type(@submission_file.filename)).to eq 'pdf'
@@ -290,7 +320,7 @@ describe SubmissionFile do
     end
   end
 
-  context '#add_annotations' do
+  describe '#add_annotations' do
     it 'includes deductive information when deductive annotations applied' do
       pending('retrieve_file() not yet usable in testing, and add_annotations is private.')
       assignment = create(:assignment_with_deductive_annotations)

@@ -1,6 +1,12 @@
 describe LtiSyncJob do
   include LtiHelper
-  before :each do
+
+  let(:course) { create(:course) }
+  let(:lti_deployment) { create(:lti_deployment, course: course) }
+  let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
+  let(:assessment) { create(:assignment_with_criteria_and_results, course: course) }
+
+  before do
     allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048))
     stub_request(:post, Settings.lti.token_endpoint)
       .with(
@@ -17,22 +23,30 @@ describe LtiSyncJob do
                                             scope: scope,
                                             token_type: 'Bearer',
                                             expires_in: 3600 }.to_json)
+
+    create(:lti_service_namesrole, lti_deployment: lti_deployment)
+    create(:student, course: course)
   end
-  let(:course) { create(:course) }
-  let(:lti_deployment) { create(:lti_deployment, course: course) }
-  let!(:lti_service_namesrole) { create(:lti_service_namesrole, lti_deployment: lti_deployment) }
-  let!(:student) { create(:student, course: course) }
-  let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
-  let(:assessment) { create(:assignment_with_criteria_and_results, course: course) }
 
   context 'when running as a background job' do
     let(:job_args) { [[lti_deployment.id], assessment, course] }
+
     include_examples 'background job'
   end
+
+  context 'when running as a background job, with an lti line item' do
+    before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
+
+    let(:job_args) { [[lti_deployment.id], assessment] }
+
+    include_examples 'background job'
+  end
+
   context 'with no lti deployments' do
     let(:job_args) { [[], assessment, course] }
+
     it 'should raise an error' do
-      expect { described_class.perform_now(*job_args) }.to raise_error
+      expect { LtiSyncJob.perform_now(*job_args) }.to raise_error(RuntimeError)
     end
   end
 end

@@ -1,8 +1,10 @@
 describe TestGroup do
   subject { create(:test_group, criterion: create(:rubric_criterion)) }
+
   it { is_expected.to belong_to(:assignment) }
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to have_one(:course) }
+
   include_examples 'course associations'
 
   # For booleans, should validate_presence_of does
@@ -13,13 +15,18 @@ describe TestGroup do
 
   it { is_expected.to validate_presence_of :name }
   it { is_expected.to validate_presence_of :display_output }
+
   it do
-    is_expected.to define_enum_for(:display_output).with_values(TestGroup.display_outputs.keys).with_prefix(:display_to)
+    expect(subject).to(
+      define_enum_for(:display_output)
+        .with_values(TestGroup.display_outputs.keys)
+        .with_prefix(:display_to)
+    )
   end
 
   # create
   context 'A valid test group' do
-    before(:each) do
+    before do
       @asst = create(:assignment,
                      due_date: 2.days.from_now,
                      assignment_properties_attributes: { section_due_dates_type: false })
@@ -34,7 +41,7 @@ describe TestGroup do
 
   # update
   context 'An invalid test group' do
-    before(:each) do
+    before do
       @asst = create(:assignment,
                      due_date: 2.days.from_now,
                      assignment_properties_attributes: { section_due_dates_type: false })

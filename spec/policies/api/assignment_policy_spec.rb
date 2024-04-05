@@ -66,6 +66,7 @@ describe Api::AssignmentPolicy do
 
     context 'role does not belong to course' do
       let(:user) { create(:end_user) }
+
       failed 'role is an instructor' do
         let(:role_other) { create(:instructor, user: user) }
       end

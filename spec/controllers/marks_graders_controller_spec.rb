@@ -4,12 +4,12 @@ describe MarksGradersController do
   let(:course) { grade_entry_form.course }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
 
-  context '#upload' do
+  describe '#upload' do
     include_examples 'a controller supporting upload' do
       let(:params) { { course_id: course.id, grade_entry_form_id: grade_entry_form.id, model: GradeEntryStudentTa } }
     end
 
-    before :each do
+    before do
       # initialize students and a TA (these users must exist in order
       # to align with grader_student_form_good.csv)
       grade_entry_form_with_data
@@ -39,7 +39,7 @@ describe MarksGradersController do
                   upload_file: file
                 }
 
-        expect(response).to have_http_status(302)
+        expect(response).to have_http_status(:found)
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to(action: 'index',
                                         grade_entry_form_id:
@@ -70,7 +70,7 @@ describe MarksGradersController do
                   remove_existing_mappings: true
                 }
 
-        expect(response).to have_http_status(302)
+        expect(response).to have_http_status(:found)
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to(action: 'index',
                                         grade_entry_form_id:
@@ -92,7 +92,7 @@ describe MarksGradersController do
     it 'responds with appropriate status' do
       get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
 
     # parse header object to check for the right disposition

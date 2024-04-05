@@ -1,5 +1,6 @@
 describe AnnotationCategoryPolicy do
   let(:context) { { role: role, real_user: role.user } }
+
   describe_rule :manage? do
     succeed 'when the role is an instructor' do
       let(:role) { build(:instructor) }

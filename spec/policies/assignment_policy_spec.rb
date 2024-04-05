@@ -24,6 +24,7 @@ describe AssignmentPolicy do
         let(:role) { create(:ta, manage_assessments: false) }
       end
     end
+
     failed 'role is a student' do
       let(:role) { create(:student) }
     end
@@ -32,6 +33,7 @@ describe AssignmentPolicy do
   describe_rule :view_test_options? do
     context 'role is an instructor' do
       let(:role) { create(:instructor) }
+
       succeed 'when tests enabled' do
         let(:assignment) { create(:assignment, assignment_properties_attributes: { enable_test: true }) }
       end
@@ -39,9 +41,11 @@ describe AssignmentPolicy do
         let(:assignment) { create(:assignment, assignment_properties_attributes: { enable_test: false }) }
       end
     end
+
     context 'role is a ta' do
       context 'that can run tests' do
         let(:role) { create(:ta, run_tests: true) }
+
         succeed 'when tests enabled' do
           let(:assignment) { create(:assignment, assignment_properties_attributes: { enable_test: true }) }
         end
@@ -49,17 +53,21 @@ describe AssignmentPolicy do
           let(:assignment) { create(:assignment, assignment_properties_attributes: { enable_test: false }) }
         end
       end
+
       failed 'that cannot run tests' do
         let(:role) { create(:ta, run_tests: false) }
       end
     end
+
     context 'role is a student' do
       let(:role) { create(:student) }
+
       failed 'when student tests disabled' do
         let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_student_tests: false }) }
       end
       context 'when student tests enabled' do
         let(:assignment) { build(:assignment, assignment_properties_attributes: properties) }
+
         failed 'when there are no tokens given' do
           let(:properties) { { enable_student_tests: true, unlimited_tokens: false, tokens_per_period: 0 } }
         end
@@ -79,6 +87,7 @@ describe AssignmentPolicy do
     end
     context 'when student tests enabled' do
       let(:assignment) { build(:assignment, assignment_properties_attributes: properties) }
+
       failed 'when there are no tokens given' do
         let(:properties) { { enable_student_tests: true, unlimited_tokens: false, tokens_per_period: 0 } }
       end
@@ -117,6 +126,7 @@ describe AssignmentPolicy do
     context 'when role is a student' do
       let(:context) { { role: role, real_user: role.user, test_run_id: test_run_id } }
       let(:role) { create(:student) }
+
       succeed 'when student can cancel test' do
         let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
@@ -144,6 +154,7 @@ describe AssignmentPolicy do
         let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
         let(:test_run_id) { test_run.id }
+
         succeed 'when student tests enabled' do
           let(:assignment) do
             build(:assignment_for_student_tests, assignment_properties_attributes: { enable_student_tests: true,
@@ -155,6 +166,7 @@ describe AssignmentPolicy do
           let(:assignment) { build(:assignment_for_student_tests) }
         end
       end
+
       context 'when authorized with a grouping' do
         let(:test_run) { create(:student_test_run, grouping: grouping, status: :in_progress) }
         let(:test_run_id) { test_run.id }
@@ -162,6 +174,7 @@ describe AssignmentPolicy do
         let(:assignment) do
           create(:assignment_for_student_tests, assignment_properties_attributes: { unlimited_tokens: true })
         end
+
         succeed 'when the role is a member' do
           let!(:grouping) { create(:grouping_with_inviter, inviter: role, assignment: assignment) }
         end
@@ -170,6 +183,7 @@ describe AssignmentPolicy do
         end
         failed 'when the due date has passed' do
           before { assignment.update!(due_date: 1.day.ago) }
+
           let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: role) }
         end
         succeed 'when the due date has not passed' do
@@ -215,6 +229,7 @@ describe AssignmentPolicy do
       allow(record).to receive(:past_collection_date?).and_return past_collection_date?
       allow(role).to receive(:has_accepted_grouping_for?).and_return has_accepted_grouping_for?
     end
+
     succeed 'when collection date has not passed and students can form groups and the user is not in a group yet'
     failed 'when collection date has passed' do
       let(:past_collection_date?) { true }
@@ -298,6 +313,7 @@ describe AssignmentPolicy do
         let(:role) { create(:ta, manage_assessments: false) }
       end
     end
+
     failed 'role is a student' do
       let(:role) { create(:student) }
     end
@@ -332,9 +348,11 @@ describe AssignmentPolicy do
         end
       end
     end
+
     context 'when the student is in a group' do
       let(:grouping_start_time) { nil }
-      let!(:grouping) do
+
+      before do
         create(:grouping_with_inviter, inviter: role, assignment: assignment, start_time: grouping_start_time)
       end
 
@@ -369,27 +387,34 @@ describe AssignmentPolicy do
 
       succeed 'role is an instructor' do
         before { assignment.update(is_hidden: true) }
+
         let(:context) { { role: instructor_role, real_user: instructor_role.user } }
       end
     end
+
     context 'when the role is a TA' do
       let(:ta_role) { create(:ta) }
+
       succeed 'user is an instructor' do
         before { assignment.update(is_hidden: true) }
+
         let(:context) { { role: ta_role, real_user: ta_role.user } }
       end
     end
+
     context 'when there are no section due dates' do
       succeed 'when the assignment is not hidden'
       failed 'when the assignment is hidden' do
         before { assignment.update(is_hidden: true) }
       end
     end
+
     context 'when there are section due dates' do
       before do
         assignment.assignment_properties.update(section_due_dates_type: true)
         assessment_section_properties
       end
+
       succeed 'when visible with section due date and assignment'
       succeed 'when assignment hidden but section do date ' do
         before { assignment.update(is_hidden: true) }

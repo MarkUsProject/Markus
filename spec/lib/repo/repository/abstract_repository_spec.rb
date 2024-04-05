@@ -1,22 +1,26 @@
 describe Repository::AbstractRepository do
   context 'update repo permissions' do
     before { Thread.current[:requested?] = false } # simulates each test happening in its own thread
+
     context 'repository permissions should be updated' do
       context 'exactly once' do
         it 'for a single update' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
           Repository.get_class.update_permissions
         end
+
         it 'at the end of a batch update' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
           Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
         end
+
         it 'at the end of a batch update only if requested' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
           Repository.get_class.update_permissions_after(only_on_request: true) do
             Repository.get_class.update_permissions
           end
         end
+
         it 'at the end of the most outer nested batch update' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
           Repository.get_class.update_permissions_after do
@@ -24,6 +28,7 @@ describe Repository::AbstractRepository do
           end
         end
       end
+
       context 'multiple times' do
         it 'for multiple updates made by the same thread' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).twice
@@ -32,16 +37,19 @@ describe Repository::AbstractRepository do
         end
       end
     end
+
     context 'repository permissions should not be updated' do
       it 'when not in authoritative mode' do
         allow(Settings.repository).to receive(:is_repository_admin).and_return(false)
         expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
         Repository.get_class.update_permissions
       end
+
       it 'at the end of a batch update if not requested' do
         expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
         Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
       end
+
       it 'at the end of the most outer nested batch update only if requested' do
         expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
         Repository.get_class.update_permissions_after(only_on_request: true) do
@@ -50,6 +58,7 @@ describe Repository::AbstractRepository do
       end
     end
   end
+
   describe '#visibility_hash' do
     let(:assessment_section_property) do
       create(:assessment_section_properties,
@@ -75,9 +84,11 @@ describe Repository::AbstractRepository do
              assessment: assignments.second,
              section: sections.second)
     end
+
     context 'when all assignments are hidden' do
       let!(:assignments) { create_list(:assignment, 2, is_hidden: true) }
       let!(:sections) { create_list(:section, 2) }
+
       shared_examples 'default tests' do
         it 'should return false for all sections' do
           assignments.each do |assignment|
@@ -86,6 +97,7 @@ describe Repository::AbstractRepository do
             end
           end
         end
+
         it 'should return false for no section' do
           assignments.each do |assignment|
             expect(Repository.get_class.visibility_hash[assignment.id][nil]).to be false
@@ -95,23 +107,30 @@ describe Repository::AbstractRepository do
 
       include_examples 'default tests'
       context 'when assignment properties are set with nil is_hidden value' do
-        let!(:assessment_section_properties) { [assessment_section_property3, assessment_section_property4] }
+        before { [assessment_section_property3, assessment_section_property4] }
+
         include_examples 'default tests'
       end
+
       context 'when assignment properties are set with true is_hidden value' do
-        let!(:assessment_section_properties) { [assessment_section_property] }
+        before { [assessment_section_property] }
+
         include_examples 'default tests'
       end
+
       context 'when assignment properties are set with false is_hidden value' do
-        let!(:assessment_section_properties) { [assessment_section_property2] }
+        before { [assessment_section_property2] }
+
         it 'should return true for section 2' do
           expect(Repository.get_class.visibility_hash[assignments.first.id][sections.second.id]).to be true
         end
       end
     end
+
     context 'when no assignments are hidden' do
       let!(:assignments) { create_list(:assignment, 2, is_hidden: false) }
       let!(:sections) { create_list(:section, 2) }
+
       shared_examples 'default tests' do
         it 'should return false for all sections' do
           assignments.each do |assignment|
@@ -120,99 +139,126 @@ describe Repository::AbstractRepository do
             end
           end
         end
+
         it 'should return true for no section' do
           assignments.each do |assignment|
             expect(Repository.get_class.visibility_hash[assignment.id][nil]).to be true
           end
         end
       end
+
       include_examples 'default tests'
       context 'when assignment properties are set with nil is_hidden value' do
-        let!(:assessment_section_properties) { [assessment_section_property3, assessment_section_property4] }
+        before { [assessment_section_property3, assessment_section_property4] }
+
         include_examples 'default tests'
       end
+
       context 'when assignment properties are set with true is_hidden value' do
-        let!(:assessment_section_properties) { [assessment_section_property2] }
+        before { [assessment_section_property2] }
+
         include_examples 'default tests'
       end
+
       context 'when assignment properties are set with false is_hidden value' do
-        let!(:assessment_section_properties) { [assessment_section_property] }
+        before { [assessment_section_property] }
+
         it 'should return false for section 1' do
           expect(Repository.get_class.visibility_hash[assignments.first.id][sections.first.id]).to be false
         end
       end
     end
+
     context 'when one assignment is hidden' do
       let!(:hidden_assignment) { create(:assignment, is_hidden: true) }
       let!(:shown_assignment) { create(:assignment, is_hidden: false) }
       let!(:sections) { create_list(:section, 2) }
+
       it 'should return false for all sections' do
         sections.each do |section|
           expect(Repository.get_class.visibility_hash[shown_assignment.id][section.id]).to be true
           expect(Repository.get_class.visibility_hash[hidden_assignment.id][section.id]).to be false
         end
       end
+
       it 'should indicate which assignment is hidden' do
         expect(Repository.get_class.visibility_hash[shown_assignment.id][nil]).to be true
         expect(Repository.get_class.visibility_hash[hidden_assignment.id][nil]).to be false
       end
     end
   end
+
   describe '#get_repo_auth_records' do
     let(:assignment1) { create(:assignment, assignment_properties_attributes: { vcs_submit: false }) }
     let(:assignment2) { create(:assignment, assignment_properties_attributes: { vcs_submit: false }) }
-    let!(:groupings1) { create_list(:grouping_with_inviter, 3, assignment: assignment1) }
-    let!(:groupings2) { create_list(:grouping_with_inviter, 3, assignment: assignment2) }
+
+    before do
+      create_list(:grouping_with_inviter, 3, assignment: assignment1)
+      create_list(:grouping_with_inviter, 3, assignment: assignment2)
+    end
+
     context 'all assignments with vcs_submit == false' do
       it 'should be empty' do
         expect(Repository.get_class.get_repo_auth_records).to be_empty
       end
     end
+
     context 'one assignment with vcs_submit == true' do
       let(:assignment1) { create(:assignment, assignment_properties_attributes: { vcs_submit: true }) }
+
       it 'should only contain valid memberships' do
-        ids = groupings1.map { |g| g.inviter.id }
-        expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
+        ids = assignment1.groupings.map { |g| g.inviter.id }
+        expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to match_array(ids)
       end
+
       context 'when there is a pending membership' do
-        let!(:membership) { create(:student_membership, grouping: groupings1.first) }
+        before { create(:student_membership, grouping: assignment1.groupings.first) }
+
         it 'should not contain the pending membership' do
-          ids = groupings1.map { |g| g.inviter.id }
-          expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
+          ids = assignment1.groupings.map { |g| g.inviter.id }
+          expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to match_array(ids)
         end
       end
+
       context 'when the assignment belongs to a hidden course' do
         let(:assignment1) do
           course = create(:course, is_hidden: true)
           create(:assignment, assignment_properties_attributes: { vcs_submit: true }, course: course)
         end
+
         it 'should be empty' do
           expect(Repository.get_class.get_repo_auth_records).to be_empty
         end
       end
     end
+
     context 'both assignments with vcs_submit == true and is_timed == true' do
       let(:assignment1) { create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }) }
       let(:assignment2) { create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }) }
+
       it 'should be empty' do
         expect(Repository.get_class.get_repo_auth_records).to be_empty
       end
+
       context 'when one grouping has started their assignment' do
         let!(:grouping) do
-          g = groupings1.first
+          g = assignment1.groupings.first
           g.update!(start_time: 1.hour.ago)
           g.reload
         end
+
         it 'should contain only the members of that group' do
           expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(grouping.inviter.id)
         end
+
         context 'when the timed assessment due date has ended' do
           let(:assignment1) do
             create(:timed_assignment, assignment_properties_attributes: { vcs_submit: true }, due_date: 1.minute.ago)
           end
+
           it 'should contain all members of all groups' do
-            inviter_ids = groupings1.map { |g| g.inviter.id }
-            expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*inviter_ids)
+            inviter_ids = assignment1.groupings.map { |g| g.inviter.id }
+            expect(Repository.get_class.get_repo_auth_records.pluck('roles.id')).to match_array(inviter_ids)
           end
         end
       end
@@ -225,6 +271,7 @@ describe Repository::AbstractRepository do
 
     context 'instructor permissions' do
       let!(:instructor) { create(:instructor, hidden: false) }
+
       it 'correctly retrieves permissions for instructors' do
         instructor2 = create(:instructor)
         accessible_path = File.join(course.name, '*')
@@ -232,6 +279,7 @@ describe Repository::AbstractRepository do
           match_array([instructor.user_name, instructor2.user_name])
         )
       end
+
       it 'does not retrieve permissions for inactive instructors' do
         create(:instructor, hidden: true)
         accessible_path = File.join(course.name, '*')
@@ -261,6 +309,7 @@ describe Repository::AbstractRepository do
         end
         expect(received_grader_permissions).to eq(expected_grader_permissions)
       end
+
       it 'does not retrieve permissions for inactive graders' do
         assignment.ta_memberships.each { |membership| membership.role.update(hidden: true) }
         expect(received_grader_permissions).to eq({})
@@ -291,6 +340,7 @@ describe Repository::AbstractRepository do
         end
         expect(received_student_permissions).to eq(expected_student_permissions)
       end
+
       it 'does not retrieve permissions for inactive students' do
         assignment.student_memberships.each { |membership| membership.role.update(hidden: true) }
         expect(received_student_permissions).to eq({})

@@ -9,7 +9,7 @@ describe Submission do
   context 'automatically create a result' do
     it 'should create result automatically' do
       submission = create(:submission)
-      expect(submission).to_not be_nil
+      expect(submission).not_to be_nil
     end
 
     it 'should have marking automatically set to be incomplete' do
@@ -21,7 +21,7 @@ describe Submission do
       submission = create(:submission)
       submission.update(remark_request_timestamp: Time.current)
       submission.make_remark_result
-      expect(submission.remark_result).to_not be_nil
+      expect(submission.remark_result).not_to be_nil
       expect(submission.remark_result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
     end
   end
@@ -73,7 +73,7 @@ describe Submission do
   end
 
   describe 'submission with a remark result created but not submitted' do
-    before :each do
+    before do
       @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
       @submission = @result.submission
       @submission.update(remark_request_timestamp: Time.current)
@@ -93,7 +93,7 @@ describe Submission do
   end
 
   describe 'A submission with no remark results' do
-    before :each do
+    before do
       @submission = create(:submission)
       @submission.save
     end
@@ -112,7 +112,7 @@ describe Submission do
       s = create(:submission)
       s.update(remark_request_timestamp: Time.current)
       s.make_remark_result
-      expect(s.remark_result).to_not be_nil
+      expect(s.remark_result).not_to be_nil
       expect(s.remark_result.marking_state).to eq Result::MARKING_STATES[:incomplete]
     end
   end
@@ -122,36 +122,44 @@ describe Submission do
     let(:released_result) { create(:released_result, submission: submission) }
     let(:remark_result) { create(:remark_result, submission: submission) }
     let(:released_remark_result) { create(:remark_result, submission: submission, released_to_students: true) }
+
     context 'when the remark result is released' do
       before do
         released_remark_result
       end
+
       it 'should return the remark result' do
         expect(submission.get_visible_result).to eq released_remark_result
       end
     end
+
     context 'when the original result is released' do
       before do
         released_result
         remark_result
       end
+
       it 'should return the original result' do
         expect(submission.get_visible_result).to eq released_result
       end
     end
+
     context 'when the original result is not released' do
       before do
         remark_result
       end
+
       it 'should return the original result' do
         expect(submission.get_visible_result).to eq submission.get_original_result
       end
     end
+
     context 'when there are multiple results released to students' do
       before do
         released_result
         released_remark_result
       end
+
       it 'should return the remark' do
         expect(submission.get_visible_result).to eq released_remark_result
       end
@@ -168,7 +176,7 @@ describe Submission do
     let(:test_run) { create(:test_run, grouping: submission.grouping, submission: submission) }
 
     context 'when a TestGroupResult succeeded with no error' do
-      let!(:test_group_result) do
+      before do
         create(:test_group_result, test_group: test_group, test_run: test_run,
                                    error_type: nil, marks_earned: 1, marks_total: 1)
       end
@@ -182,7 +190,7 @@ describe Submission do
     end
 
     context 'when a TestGroupResult timed out' do
-      let!(:test_group_result) do
+      before do
         create(:test_group_result, test_group: test_group, test_run: test_run,
                                    error_type: TestGroupResult::ERROR_TYPE[:timeout])
       end

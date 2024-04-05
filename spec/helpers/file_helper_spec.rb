@@ -2,7 +2,7 @@ describe FileHelper do
   # Replace unwanted and unconventional characters in a filename to make filename format's consistent
   context 'A new file when submitted' do
     context "containing characters outside what's allowed in a filename" do
-      before :each do
+      before do
         @filenames_to_be_sanitized = [{ expected: 'llll_', orig: 'llllé' },
                                       { expected: '________', orig: 'öä*?`ßÜÄ' },
                                       { expected: '', orig: nil },
@@ -20,7 +20,7 @@ describe FileHelper do
     end
 
     context 'containing only valid characters in a filename' do
-      before :each do
+      before do
         @filenames_not_to_be_sanitized = %w[valid_file.sh
                                             valid_001.file.ext
                                             valid-master.png
@@ -40,6 +40,7 @@ describe FileHelper do
     it 'return java' do
       expect(FileHelper.get_file_type('filename.java')).to eq('java')
     end
+
     it 'return java comment' do
       expect(FileHelper.get_comment_syntax('filename.java')).to eq(%w[/* */])
     end
@@ -49,6 +50,7 @@ describe FileHelper do
     it 'return ruby' do
       expect(FileHelper.get_file_type('filename.rb')).to eq('ruby')
     end
+
     it 'return ruby comment' do
       expect(FileHelper.get_comment_syntax('filename.rb')).to eq(%W[=begin\n \n=end])
     end
@@ -58,6 +60,7 @@ describe FileHelper do
     it 'return python' do
       expect(FileHelper.get_file_type('filename.py')).to eq('python')
     end
+
     it 'return python comment' do
       expect(FileHelper.get_comment_syntax('filename.py')).to eq(%w[""" """])
     end
@@ -67,6 +70,7 @@ describe FileHelper do
     it 'return javascript' do
       expect(FileHelper.get_file_type('filename.js')).to eq('javascript')
     end
+
     it 'return javascript comment' do
       expect(FileHelper.get_comment_syntax('filename.js')).to eq(%w[/* */])
     end
@@ -76,6 +80,7 @@ describe FileHelper do
     it 'return html' do
       expect(FileHelper.get_file_type('filename.html')).to eq('html')
     end
+
     it 'return html comment' do
       expect(FileHelper.get_comment_syntax('filename.html')).to eq(%w[<!-- -->])
     end
@@ -85,6 +90,7 @@ describe FileHelper do
     it 'return css' do
       expect(FileHelper.get_file_type('filename.css')).to eq('css')
     end
+
     it 'return css comment' do
       expect(FileHelper.get_comment_syntax('filename.css')).to eq(%w[/* */])
     end
@@ -94,6 +100,7 @@ describe FileHelper do
     it 'return c' do
       expect(FileHelper.get_file_type('filename.c')).to eq('c')
     end
+
     it 'return c comment' do
       expect(FileHelper.get_comment_syntax('filename.c')).to eq(%w[/* */])
     end
@@ -113,13 +120,14 @@ describe FileHelper do
     it 'return a unknown file extension' do
       expect(FileHelper.get_file_type('filename')).to eq('unknown')
     end
+
     it 'return generic comment' do
       expect(FileHelper.get_comment_syntax('filename')).to eq(%w[## ##])
     end
   end
 
   context 'A supported image' do
-    before(:each) do
+    before do
       # currently supported formats: ['.jpeg', '.jpg', '.gif', '.png']
       @jpeg_file = 'filename.jpeg'
       @jpg_file = 'filename.jpg'

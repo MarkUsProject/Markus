@@ -1,6 +1,6 @@
 require 'erb'
 
-RSpec.describe NotificationMailer, type: :mailer do
+RSpec.describe NotificationMailer do
   include ERB::Util
   RSpec.shared_examples 'an email' do
     it 'renders the disclaimer in the body of the email.' do
@@ -37,7 +37,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
     let(:mail) do
       submission.grouping.reload
-      described_class.with(user: recipient, grouping: submission.grouping).release_email.deliver_now
+      NotificationMailer.with(user: recipient, grouping: submission.grouping).release_email.deliver_now
     end
 
     it 'renders the subject' do
@@ -58,11 +58,11 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:grade_entry_form) { create(:grade_entry_form_with_data) }
     let(:relevant_link) { student_interface_course_grade_entry_form_url(grade_entry_form.course, grade_entry_form) }
     let(:mail) do
-      described_class.with(student: grade_entry_form.grade_entry_students.find_or_create_by(role: recipient),
-                           form: grade_entry_form,
-                           course: grade_entry_form.course)
-                     .release_spreadsheet_email
-                     .deliver_now
+      NotificationMailer.with(student: grade_entry_form.grade_entry_students.find_or_create_by(role: recipient),
+                              form: grade_entry_form,
+                              course: grade_entry_form.course)
+                        .release_spreadsheet_email
+                        .deliver_now
     end
 
     it 'renders the subject' do
@@ -84,9 +84,9 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:grouping) { create(:grouping) }
     let(:relevant_link) { course_assignment_url(grouping.course, grouping.assignment) }
     let(:mail) do
-      described_class.with(invited: recipient, inviter: inviter, grouping: grouping)
-                     .grouping_invite_email
-                     .deliver_now
+      NotificationMailer.with(invited: recipient, inviter: inviter, grouping: grouping)
+                        .grouping_invite_email
+                        .deliver_now
     end
 
     it 'renders the subject' do

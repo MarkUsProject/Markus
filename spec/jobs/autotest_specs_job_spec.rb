@@ -2,8 +2,10 @@ describe AutotestSpecsJob do
   let(:host_with_port) { 'http://localhost:3000' }
   let(:assignment) { create(:assignment) }
   let(:dummy_return) { OpenStruct.new(body: { 'settings_id' => 43 }.to_json) }
+
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, assignment, {}] }
+
     include_examples 'background job'
   end
 
@@ -16,6 +18,7 @@ describe AutotestSpecsJob do
       course.autotest_setting = create(:autotest_setting)
       course.save
     end
+
     shared_examples 'autotest specs job' do
       it 'should set headers' do
         expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj|
@@ -25,6 +28,7 @@ describe AutotestSpecsJob do
         end
         subject
       end
+
       it 'should set the body of the request' do
         rel_url_root = Rails.configuration.relative_url_root
         file_url = "http://localhost:3000#{rel_url_root}/api/courses/#{assignment.course.id}/" \
@@ -37,6 +41,7 @@ describe AutotestSpecsJob do
         end
         subject
       end
+
       it 'should update the remote_autotest_settings_id' do
         allow_any_instance_of(AutotestSpecsJob).to receive(:send_request!).and_return(dummy_return)
         subject
@@ -45,12 +50,15 @@ describe AutotestSpecsJob do
     end
 
     describe '#perform' do
-      subject { described_class.perform_now(host_with_port, assignment, {}) }
+      subject { AutotestSpecsJob.perform_now(host_with_port, assignment, {}) }
+
       before do
         allow(File).to receive(:read).and_return("123456789\n")
       end
+
       context 'tests are set up for an assignment' do
         let(:assignment) { create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 }) }
+
         it 'should send an api request to the autotester' do
           expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj, uri|
             expect(net_obj.instance_of?(Net::HTTP::Put)).to be true
@@ -59,9 +67,11 @@ describe AutotestSpecsJob do
           end
           subject
         end
+
         include_examples 'autotest specs job'
         include_examples 'autotest jobs'
       end
+
       context 'tests are not set up for an assignment' do
         it 'should send an api request to the autotester' do
           expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj, uri|
@@ -71,6 +81,7 @@ describe AutotestSpecsJob do
           end
           subject
         end
+
         include_examples 'autotest specs job'
       end
     end

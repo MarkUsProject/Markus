@@ -15,11 +15,12 @@ describe GradeEntryForm do
 
   describe 'uniqueness validation' do
     subject { create(:grade_entry_form) }
+
     it { is_expected.to validate_uniqueness_of(:short_identifier).scoped_to(:course_id) }
   end
 
   describe '#max_mark' do
-    before(:each) do
+    before do
       @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
     end
 
@@ -34,8 +35,8 @@ describe GradeEntryForm do
   end
 
   # Tests for calculate_total_mark
-  context 'Calculate the total mark for a student: ' do
-    before(:each) do
+  context 'Calculate the total mark for a student:' do
+    before do
       @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
       @grade_entry_items = @grade_entry_form.grade_entry_items
     end
@@ -123,8 +124,8 @@ describe GradeEntryForm do
   end
 
   # Tests for calculate_total_percent
-  context 'Calculate the total percent for a student: ' do
-    before(:each) do
+  context 'Calculate the total percent for a student:' do
+    before do
       @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
       @grade_entry_items = @grade_entry_form.grade_entry_items
     end
@@ -214,8 +215,8 @@ describe GradeEntryForm do
   end
 
   # Tests for all_blank_grades
-  context "Determine whether or not a student's grades are all blank: " do
-    before(:each) do
+  context "Determine whether or not a student's grades are all blank:" do
+    before do
       @grade_entry_form = create(:grade_entry_form_with_multiple_grade_entry_items)
       @grade_entry_items = @grade_entry_form.grade_entry_items
     end
@@ -264,9 +265,9 @@ describe GradeEntryForm do
   describe '#results_average' do
     let(:form) { create(:grade_entry_form) }
     let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
-    let!(:students) { create_list(:student, 6) }
 
     before do
+      create_list(:student, 6)
       form.grade_entry_students.order(:id).each_with_index do |ges, ind|
         grade_entry_items.each_with_index.map do |gei|
           ges.grades.find_or_create_by(grade_entry_item: gei).update(grade: grades[ind])
@@ -277,6 +278,7 @@ describe GradeEntryForm do
 
     describe 'when no grades are nil and all grades are equal' do
       let(:grades) { [1, 1, 1, 1, 1, 1] }
+
       it 'calculates the correct average' do
         expect(form.results_average).to eq(10 * 100 / form.max_mark)
       end
@@ -284,6 +286,7 @@ describe GradeEntryForm do
 
     describe 'when students have different total grades' do
       let(:grades) { [1, 1, 2, 3, 5, 9] }
+
       it 'calculates the correct average' do
         expect(form.results_average).to eq(35 * 100 / form.max_mark)
       end
@@ -306,6 +309,7 @@ describe GradeEntryForm do
 
     describe 'when all grades are nil' do
       let(:grades) { [nil, nil, nil, nil, nil, nil] }
+
       it 'calculates the correct average' do
         expect(form.results_average).to eq 0
       end
@@ -313,6 +317,7 @@ describe GradeEntryForm do
 
     describe 'when some grades are nil' do
       let(:grades) { [nil, 1, nil, 2, nil, 6] }
+
       it 'calculates the correct average (ignores nil grades)' do
         expect(form.results_average).to eq(30 * 100 / form.max_mark)
       end
@@ -322,9 +327,9 @@ describe GradeEntryForm do
   describe '#results_median' do
     let(:form) { create(:grade_entry_form) }
     let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
-    let!(:students) { create_list(:student, 6) }
 
     before do
+      create_list(:student, 6)
       form.grade_entry_students.each_with_index do |ges, ind|
         grade_entry_items.each_with_index.map do |gei|
           ges.grades.find_or_create_by(grade_entry_item: gei).update(grade: grades[ind])
@@ -335,6 +340,7 @@ describe GradeEntryForm do
 
     describe 'when no grades are nil and all grades are equal' do
       let(:grades) { [1, 1, 1, 1, 1, 1] }
+
       it 'calculates the correct median' do
         expect(form.results_median).to eq(10 * 100 / form.max_mark)
       end
@@ -342,6 +348,7 @@ describe GradeEntryForm do
 
     describe 'when students have different total grades' do
       let(:grades) { [1, 1, 2, 3, 5, 9] }
+
       it 'calculates the correct median' do
         expect(form.results_median).to eq(25 * 100 / form.max_mark)
       end
@@ -364,6 +371,7 @@ describe GradeEntryForm do
 
     describe 'when all grades are nil' do
       let(:grades) { [nil, nil, nil, nil, nil, nil] }
+
       it 'calculates the correct median' do
         expect(form.results_median).to eq 0
       end
@@ -371,6 +379,7 @@ describe GradeEntryForm do
 
     describe 'when some grades are nil' do
       let(:grades) { [nil, 1, nil, 2, nil, 6] }
+
       it 'calculates the correct median (ignores nil grades)' do
         expect(form.results_median).to eq(20 * 100 / form.max_mark)
       end

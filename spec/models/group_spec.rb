@@ -18,8 +18,8 @@ describe Group do
     it { is_expected.to allow_value('-22125-k1lj42_').for(:repo_name) }
 
     it do
-      is_expected.not_to allow_value('Mike !Ooh').for(:repo_name).on(:update)
-      is_expected.not_to allow_value('A!a.sa').for(:repo_name).on(:update)
+      expect(subject).not_to allow_value('Mike !Ooh').for(:repo_name).on(:update)
+      expect(subject).not_to allow_value('A!a.sa').for(:repo_name).on(:update)
     end
 
     context 'fails when group_name is one of the reserved locations' do
@@ -109,7 +109,7 @@ describe Group do
       it 'allows access to its repository' do
         group.access_repo do |repo|
           expect(repo).to be_truthy
-          expect(repo.closed?).to be_falsey
+          expect(repo).not_to be_closed
         end
       end
     end

@@ -1,5 +1,6 @@
 describe Course do
   let(:course) { create(:course) }
+
   context 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { expect(course).to validate_uniqueness_of(:name) }
@@ -25,22 +26,28 @@ describe Course do
     describe '#update_repo_max_file_size' do
       # a course should be the only thing created here, if that ever changes, make sure the db is cleaned properly
       after { course.destroy! }
+
       shared_examples 'when not using git repos' do
         before { allow(Settings.repository).to receive(:type).and_return('mem') }
+
         it 'should not schedule a background job' do
           expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
           subject
         end
       end
+
       shared_context 'git repos' do
         before do
           allow(Settings.repository).to receive(:type).and_return('git')
           allow(GitRepository).to receive(:purge_all)
         end
-        after(:each) { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+
+        after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
       end
+
       context 'after creation' do
         subject { course }
+
         context 'when using git repos' do
           include_context 'git repos'
           it 'should schedule a background job' do
@@ -48,24 +55,33 @@ describe Course do
             subject
           end
         end
+
         include_examples 'when not using git repos'
       end
+
       context 'after save to max_file_size' do
-        before { course }
         subject { course.update! max_file_size: course.max_file_size + 10_000 }
+
+        before { course }
+
         context 'when using git repos' do
           include_context 'git repos'
           after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
+
           it 'should schedule a background job' do
             expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later).with(course.id)
             subject
           end
         end
+
         include_examples 'when not using git repos'
       end
+
       context 'after save to something else' do
-        before { course }
         subject { course.update! display_name: "#{course.display_name}abc" }
+
+        before { course }
+
         context 'when using git repos' do
           include_context 'git repos'
           it 'should not schedule a background job' do
@@ -73,9 +89,11 @@ describe Course do
             subject
           end
         end
+
         include_examples 'when not using git repos'
       end
     end
+
     context 'The repository permissions file' do
       context 'should be updated' do
         it 'when changing toggling the hidden status for a course' do
@@ -95,20 +113,24 @@ describe Course do
           expect(result).to eq(expected)
         end
       end
+
       context 'when the course has a single assignment' do
         # NOTE: the created assignment must be reloaded as the value for assignment1.due_date stored in the database is
         # less precise than that stored by ruby.
         let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course).reload }
+
         it 'should return a yml representation of the assignments in a course with a single assignment' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [create_assignment_symbol_to_value_map(assignment1)] }.to_yaml
           expect(result).to eq(expected)
         end
       end
+
       context 'when the course has multiple assignments' do
         let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course).reload }
         let!(:assignment2) { create(:assignment, due_date: 1.day.ago, course: course).reload }
         let!(:assignment3) { create(:assignment, due_date: 8.days.from_now, course: course).reload }
+
         it 'should return a yml representation of the assignments in a course with multiple assignments' do
           result = course.get_assignment_list('yml')
           expected = { assignments: [create_assignment_symbol_to_value_map(assignment1),
@@ -118,6 +140,7 @@ describe Course do
         end
       end
     end
+
     context 'when file_format = csv' do
       context 'when there are no assignments in the course' do
         it 'should return a csv representation of the assignments in a course with no assignments aka an empty' \
@@ -126,18 +149,22 @@ describe Course do
           expect(result).to eq('')
         end
       end
+
       context 'when the course has a single assignment' do
         let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
+
         it 'should return a csv representation of the assignments in a course with a single assignment' do
           result = course.get_assignment_list('csv').to_s
           expected_result = create_assignment_csv_string(assignment1)
           expect(result).to eq(expected_result)
         end
       end
+
       context 'when the course has multiple assignments' do
         let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
         let!(:assignment2) { create(:assignment, due_date: 1.day.ago, course: course) }
         let!(:assignment3) { create(:assignment, due_date: 8.days.from_now, course: course) }
+
         it 'should return a csv representation of the assignments in a course with multiple assignments' do
           result = course.get_assignment_list('csv').to_s
           expected_result = ''
@@ -168,13 +195,15 @@ describe Course do
           expect(assignments_after_upload).to eq(assignments_before_upload)
         end
       end
+
       context 'when the file contains a single assignment' do
         context 'when the assignment already exists and an attribute is changed' do
           let(:assignment) do
             create(:assignment, course: course, short_identifier: 'TEST', message: 'a', is_hidden: false,
                                 description: 'ello', due_date: 5.days.from_now)
           end
-          before(:each) do
+
+          before do
             # desired list of assignment attributes
             assignment_values = Assignment::DEFAULT_FIELDS.map do |f|
               f == :message ? 'b' : assignment.public_send(f)
@@ -191,10 +220,12 @@ describe Course do
           it 'should update the attributes that were changed' do
             expect(assignment.message).to eq('b')
           end
+
           it 'should not create a new assignment' do
             expect(course.assignments.length).to eq(1)
           end
         end
+
         context 'when the assignment is new to the database' do
           let(:desired_attributes) do
             ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
@@ -206,12 +237,14 @@ describe Course do
             course.upload_assignment_list('csv', csv)
             course.assignments.find_by(short_identifier: 'short_identifier')
           end
+
           it 'should set assignment_properties.repository_folder, token_period and ' \
              'unlimited_tokens to pre-determined values' do
             expect(assignment.assignment_properties.repository_folder).to eq('short_identifier')
             expect(assignment.assignment_properties.token_period).to eq(1)
-            expect(assignment.assignment_properties.unlimited_tokens).to eq(false)
+            expect(assignment.assignment_properties.unlimited_tokens).to be(false)
           end
+
           it 'should save the new object to the database with the intended attributes' do
             # Check that all the desired attributes match those stored in the assignment
             Assignment::DEFAULT_FIELDS.length.times do |index|
@@ -222,6 +255,7 @@ describe Course do
           end
         end
       end
+
       context 'when there are multiple assignments' do
         context 'when some rows of the csv are valid and others are invalid' do
           let!(:csv) do
@@ -231,6 +265,7 @@ describe Course do
               ['row_1', 'description', 1.day.from_now.at_beginning_of_minute, 'message'].to_csv +
               ['row_2', 'description', 1.day.from_now.at_beginning_of_minute, 'message'].to_csv
           end
+
           it 'should return a hash mapping \'invalid_lines\' to a string representation of all' \
              'invalid lines and \'valid_lines\' to a string telling us how many valid lines were successfully' \
              'uploaded' do
@@ -242,6 +277,7 @@ describe Course do
             expect(expected_invalid_lines).to eq(actual[:invalid_lines])
             expect(expected_valid_lines).to eq(actual[:valid_lines])
           end
+
           it 'should set the attributes of the rows changed' do
             course.upload_assignment_list('csv', csv)
             course.reload
@@ -251,7 +287,7 @@ describe Course do
               assignment = course.assignments.find_by(short_identifier: "row_#{index + 1}")
 
               # Check that the assignment exists in the database
-              expect(assignment).not_to eq(nil)
+              expect(assignment).not_to be_nil
 
               # Checking that the attributes of the stored object match those specified in row
               4.times do |j|
@@ -264,6 +300,7 @@ describe Course do
         end
       end
     end
+
     context 'when file_format = \'YML\'' do
       context 'when the file contains no assignments' do
         it 'should not change the state of the database' do
@@ -279,13 +316,15 @@ describe Course do
           expect(assignments_after_upload).to eq(assignments_before_upload)
         end
       end
+
       context 'when the file contains a single assignment' do
         context 'when the assignment already exists and an attribute is changed' do
           let(:assignment) do
             create(:assignment, course: course, short_identifier: 'TEST', message: 'a', is_hidden: false,
                                 description: 'ello', due_date: 5.days.from_now)
           end
-          before(:each) do
+
+          before do
             # hash from attribute names to their desired values
             assignment_values = Assignment::DEFAULT_FIELDS.zip(
               Assignment::DEFAULT_FIELDS.map do |f|
@@ -297,13 +336,16 @@ describe Course do
             course.upload_assignment_list('yml', yaml)
             assignment.reload
           end
+
           it 'should update the attributes that were changed' do
             expect(assignment.message).to eq('b')
           end
+
           it 'should not create a new assignment' do
             expect(course.assignments.length).to eq(1)
           end
         end
+
         context 'when the assignment is new to the database' do
           let(:desired_attributes) do
             ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
@@ -316,12 +358,14 @@ describe Course do
             course.upload_assignment_list('yml', yaml)
             course.assignments.find_by(short_identifier: 'short_identifier')
           end
+
           it 'should set assignment_properties.repository_folder, token_period and ' \
              'unlimited_tokens to pre-determined values' do
             expect(assignment.assignment_properties.repository_folder).to eq('short_identifier')
             expect(assignment.assignment_properties.token_period).to eq(1)
-            expect(assignment.assignment_properties.unlimited_tokens).to eq(false)
+            expect(assignment.assignment_properties.unlimited_tokens).to be(false)
           end
+
           it 'should save the new object to the database with the intended attributes' do
             # Check that all attributes stored in the assignment match the desired attributes
             Assignment::DEFAULT_FIELDS.length.times do |index|
@@ -332,6 +376,7 @@ describe Course do
           end
         end
       end
+
       context 'when there are multiple assignments' do
         context 'when some assignments are new, others are old' do
           let!(:new_assignment_attr) do
@@ -365,7 +410,7 @@ describe Course do
             # Check that attributes are properly set for the new assignment
             expect(new_assignment.assignment_properties.repository_folder).to eq('new')
             expect(new_assignment.assignment_properties.token_period).to eq(1)
-            expect(new_assignment.assignment_properties.unlimited_tokens).to eq(false)
+            expect(new_assignment.assignment_properties.unlimited_tokens).to be(false)
 
             Assignment::DEFAULT_FIELDS.length.times do |index|
               expect(new_assignment.public_send(
@@ -373,15 +418,18 @@ describe Course do
                      )).to eq(new_assignment_attr[index])
             end
           end
+
           it 'should correctly update the old assignment\'s attributes with ones specified by the user' do
             expect(old_assignment.description).to eq('Hello')
           end
+
           it 'should return a list with the success status of saving each row to the database' do
             expect(returned).to eq([true, true])
           end
+
           it 'should not add any new courses not specified in the yml file' do
-            expect(old_assignment).not_to eq(nil)
-            expect(new_assignment).not_to eq(nil)
+            expect(old_assignment).not_to be_nil
+            expect(new_assignment).not_to be_nil
             expect(course.assignments.to_a.length).to eq(2)
           end
         end
@@ -392,58 +440,72 @@ describe Course do
   describe '#get_required_files' do
     let(:actual) { assignment.course.get_required_files }
     let(:matching) { actual.lines.filter_map { |line| line.chomp if /^#{assignment.repository_folder}/.match?(line) } }
+
     context 'when a course has no assignments' do
       it 'should return an empty string' do
         expect(course.get_required_files).to eq('')
       end
     end
+
     context 'when a course has one assignment' do
       context 'when the result from the assignment query does not return the assignment' do
         context 'when the assignment is a scanned exam and not hidden' do
           let(:assignment) { create(:assignment_for_scanned_exam) }
+
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
         end
+
         context 'when the assignment is hidden' do
           let(:assignment) { create(:assignment, is_hidden: true) }
+
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
         end
       end
+
       context 'when an assignment has no require files' do
         context 'when assignment.only_required_files is false' do
           let(:assignment) { create(:assignment, only_required_files: false) }
+
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
         end
+
         context 'when assignment.only_required_files is true' do
           let(:assignment) { create(:assignment, only_required_files: true) }
+
           it 'should return an empty string' do
             expect(actual).to eq('')
           end
         end
       end
+
       context 'when an assignment has required files' do
         before do
           create(:assignment_file, assignment: assignment, filename: 'a')
           create(:assignment_file, assignment: assignment, filename: 'b')
         end
+
         context 'when assignment.only_required_files is false' do
           let(:assignment) do
             create(:assignment, assignment_properties_attributes: { only_required_files: false })
           end
+
           it 'should include both files in the matching lines' do
             repo_folder = assignment.repository_folder
             expect(matching).to contain_exactly("#{repo_folder}/a false", "#{repo_folder}/b false")
           end
         end
+
         context 'when assignment.only_required_files is true' do
           let(:assignment) do
             create(:assignment, assignment_properties_attributes: { only_required_files: true })
           end
+
           it 'should include both files in the matching lines' do
             repo_folder = assignment.repository_folder
             expect(matching).to contain_exactly("#{repo_folder}/a true", "#{repo_folder}/b true")
@@ -451,21 +513,27 @@ describe Course do
         end
       end
     end
+
     context 'when a course has multiple assignments' do
       let(:assignments) { create_list(:assignment, 2, course: course) }
       let(:expected) { assignments.map { |_| [] } }
+
       before do
         create(:assignment_file, assignment: assignments.last, filename: 'a')
         create(:assignment_file, assignment: assignments.last, filename: 'b')
       end
+
       context 'and the assignment has no required files' do
         let(:assignment) { assignments.first }
+
         it 'should not find any matching lines for the given assignment' do
           expect(matching).to be_empty
         end
       end
+
       context 'and the assignment has required files' do
         let(:assignment) { assignments.last }
+
         it 'should include both files in the matching lines' do
           repo_folder = assignment.repository_folder
           expect(matching).to contain_exactly("#{repo_folder}/a false", "#{repo_folder}/b false")
@@ -473,6 +541,7 @@ describe Course do
       end
     end
   end
+
   describe '#get_current_assignment' do
     context 'when no assignments are found' do
       it 'returns nil' do
@@ -491,50 +560,45 @@ describe Course do
     end
 
     context 'when more than one assignment is found' do
+      let!(:assignments) do
+        due_dates.map do |due_date|
+          create(:assignment, due_date: due_date, course: course)
+        end
+      end
+
       context 'when there is an assignment due in 3 days' do
-        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
-        let!(:assignment2) { create(:assignment, due_date: 3.days.from_now, course: course) }
+        let(:due_dates) { [5.days.ago, 3.days.from_now] }
 
         it 'returns the assignment due in 3 days' do
           result = course.get_current_assignment
-          # should return assignment 2
-          expect(result).to eq(assignment2)
+          expect(result).to eq(assignments[1])
         end
       end
 
       context 'when the next assignment is due in more than 3 days' do
-        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
-        let!(:assignment2) { create(:assignment, due_date: 1.day.ago, course: course) }
-        let!(:assignment3) { create(:assignment, due_date: 8.days.from_now, course: course) }
+        let(:due_dates) { [5.days.ago, 1.day.ago, 8.days.from_now] }
 
         it 'returns the assignment that was most recently due' do
           result = course.get_current_assignment
-          # should return assignment 2
-          expect(result).to eq(assignment2)
+          expect(result).to eq(assignments[1])
         end
       end
 
       context 'when all assignments are due in more than 3 days' do
-        let!(:assignment1) { create(:assignment, due_date: 5.days.from_now, course: course) }
-        let!(:assignment2) { create(:assignment, due_date: 12.days.from_now, course: course) }
-        let!(:assignment3) { create(:assignment, due_date: 19.days.from_now, course: course) }
+        let(:due_dates) { [5.days.from_now, 12.days.from_now, 19.days.from_now] }
 
         it 'returns the assignment that is due first' do
           result = course.get_current_assignment
-          # should return assignment 1
-          expect(result).to eq(assignment1)
+          expect(result).to eq(assignments[0])
         end
       end
 
       context 'when all assignments are past the due date' do
-        let!(:assignment1) { create(:assignment, due_date: 5.days.ago, course: course) }
-        let!(:assignment2) { create(:assignment, due_date: 12.days.ago, course: course) }
-        let!(:assignment3) { create(:assignment, due_date: 19.days.ago, course: course) }
+        let(:due_dates) { [5.days.ago, 12.days.ago, 19.days.ago] }
 
         it 'returns the assignment that was due most recently' do
           result = course.get_current_assignment
-          # should return assignment 1
-          expect(result).to eq(assignment1)
+          expect(result).to eq(assignments[0])
         end
       end
     end
@@ -550,7 +614,9 @@ describe Course do
 
     context 'when there is a student in the course' do
       let!(:user1) { create(:end_user) }
-      let!(:student1) { create(:student, user: user1, course: course) }
+
+      before { create(:student, user: user1, course: course) }
+
       it 'returns the data of the student' do
         result = course.export_student_data_csv
         expect(result).to eq("#{user1.user_name},#{user1.last_name},#{user1.first_name},,,#{user1.email}\n")
@@ -560,8 +626,12 @@ describe Course do
     context 'where there are multiple students in the course' do
       let!(:user1) { create(:end_user) }
       let!(:user2) { create(:end_user) }
-      let!(:student1) { create(:student, user: user1, course: course) }
-      let!(:student2) { create(:student, user: user2, course: course) }
+
+      before do
+        create(:student, user: user1, course: course)
+        create(:student, user: user2, course: course)
+      end
+
       it 'returns the data of the students' do
         result = course.export_student_data_csv
 
@@ -584,7 +654,9 @@ describe Course do
 
     context 'where there is a student in the course' do
       let!(:user1) { create(:end_user) }
-      let!(:student1) { create(:student, user: user1, course: course) }
+
+      before { create(:student, user: user1, course: course) }
+
       it 'returns the data of the student' do
         result = course.export_student_data_yml
         expected = [{ user_name: user1.user_name,
@@ -600,8 +672,12 @@ describe Course do
     context 'when there are multiple students in the course' do
       let!(:user1) { create(:end_user) }
       let!(:user2) { create(:end_user) }
-      let!(:student1) { create(:student, user: user1, course: course) }
-      let!(:student2) { create(:student, user: user2, course: course) }
+
+      before do
+        create(:student, user: user1, course: course)
+        create(:student, user: user2, course: course)
+      end
+
       it 'returns the data of the students' do
         result = course.export_student_data_yml
 

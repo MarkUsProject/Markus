@@ -4,7 +4,7 @@ describe CheckboxCriterion do
   it_behaves_like 'a criterion'
 
   context 'validations work properly' do
-    before(:each) do
+    before do
       @criterion = create(:checkbox_criterion)
     end
 
@@ -23,7 +23,7 @@ describe CheckboxCriterion do
     it { is_expected.to have_one(:course) }
 
     context 'when a result is released' do
-      before(:each) do
+      before do
         @marks = @criterion.marks
         results = []
         3.times do
@@ -48,7 +48,7 @@ describe CheckboxCriterion do
   end
 
   context 'With bad CSV line input' do
-    before :each do
+    before do
       @assignment = create(:assignment)
     end
 
@@ -86,12 +86,12 @@ describe CheckboxCriterion do
   end
 
   context 'for an assignment' do
-    before :each do
+    before do
       @assignment = create(:assignment)
     end
 
     context 'with criterion from a 2 element row with no description overwritten' do
-      before :each do
+      before do
         @criterion = CheckboxCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
       end
 
@@ -115,7 +115,7 @@ describe CheckboxCriterion do
     end
 
     context 'with criterion from a 3 elements row that includes a description overwritten' do
-      before :each do
+      before do
         @criterion = CheckboxCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
       end
 
@@ -145,7 +145,7 @@ describe CheckboxCriterion do
     end
 
     context 'with three checkbox criteria allows criterion with same name to overwrite' do
-      before :each do
+      before do
         create(:checkbox_criterion,
                assignment: @assignment,
                name: 'criterion1',

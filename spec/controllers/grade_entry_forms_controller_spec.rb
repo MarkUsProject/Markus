@@ -1,9 +1,10 @@
 describe GradeEntryFormsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  before :each do
+  before do
     # initialize student DB entries
     @student = create(:student, user: create(:end_user, user_name: 'c8shosta'))
   end
+
   let(:role) { create(:instructor) }
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:course) { grade_entry_form.course }
@@ -11,7 +12,7 @@ describe GradeEntryFormsController do
   let(:grade_entry_form_with_data_and_total) { create(:grade_entry_form_with_data_and_total) }
 
   describe '#upload' do
-    before :each do
+    before do
       @file_invalid_username =
         fixture_file_upload('grade_entry_forms/invalid_username.csv',
                             'text/csv')
@@ -50,7 +51,7 @@ describe GradeEntryFormsController do
     it 'can accept valid file without overriding existing columns, even if those columns do not appear in the file' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_good }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -62,7 +63,7 @@ describe GradeEntryFormsController do
       expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
 
       # Check that the existing column and grade still exist.
-      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to_not be_nil
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).not_to be_nil
       expect(@student.grades.find_by(grade_entry_item: @original_item).grade).to eq 50
     end
 
@@ -70,7 +71,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good, overwrite: true }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -90,7 +91,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good_wrong_ext, overwrite: true }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -110,7 +111,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good_no_ext, overwrite: true }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -130,49 +131,49 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_good_overwrite, overwrite: true }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
       )
 
       # Check that the existing column still exists, and the student's grade has been changed.
-      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to_not be_nil
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).not_to be_nil
       expect(@student.grades.reload.find_by(grade_entry_item: @original_item).grade).to eq 89
     end
 
     it 'can accept valid file without overriding existing grades' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_good_overwrite }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
       )
 
       # Check that the existing column still exists, and the student's grade has not been changed.
-      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to_not be_nil
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).not_to be_nil
       expect(@student.grades.reload.find_by(grade_entry_item: @original_item).grade).to eq 50
     end
 
     it 'reports rows with an invalid username, but still processes the rest of the file' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_invalid_username }
-      expect(response).to have_http_status(302)
-      expect(flash[:error]).to_not be_empty
+      expect(response).to have_http_status(:found)
+      expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
       )
 
       # Check that the two columns were still created.
-      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')).to_not be_nil
-      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test2')).to_not be_nil
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')).not_to be_nil
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test2')).not_to be_nil
     end
 
     it 'accepts files with additional columns, and can reorder existing columns' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_extra_column }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_course_grade_entry_form_path(course, grade_entry_form_with_data)
@@ -190,7 +191,7 @@ describe GradeEntryFormsController do
     it 'accepts files with a different grade total' do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id, upload_file: @file_different_total }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(grades_course_grade_entry_form_path(course, grade_entry_form_with_data))
 
@@ -203,7 +204,7 @@ describe GradeEntryFormsController do
       post_as role, :upload,
               params: { course_id: course.id, id: grade_entry_form_with_data.id,
                         upload_file: @file_total_included, overwrite: true }
-      expect(response).to have_http_status(302)
+      expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(grades_course_grade_entry_form_path(course, grade_entry_form_with_data))
 
@@ -221,13 +222,13 @@ describe GradeEntryFormsController do
       }
     end
 
-    before :each do
+    before do
       @user = @student.user
     end
 
     it 'returns a 200 status code' do
       get_as role, :download, params: { course_id: course.id, id: grade_entry_form }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
 
     it 'expects a call to send_data' do
@@ -328,9 +329,11 @@ describe GradeEntryFormsController do
       ) { @controller.head :ok }
       get_as role, :download, params: { course_id: course.id, id: gef }
     end
+
     context 'when the user is a TA' do
       let(:role) { create(:ta) }
       let(:gef) { create(:grade_entry_form_with_data) }
+
       it 'returns no users when the ta is not assigned a user' do
         csv_array = [
           Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
@@ -347,11 +350,14 @@ describe GradeEntryFormsController do
         ) { @controller.head :ok }
         get_as role, :download, params: { course_id: course.id, id: gef }
       end
+
       context 'when the ta has been assigned to a student' do
         let(:student) do
           gef.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
         end
-        let!(:grade_entry_student_ta) { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+
+        before { create(:grade_entry_student_ta, ta: role, grade_entry_student: student) }
+
         it 'returns data for only the assigned student' do
           student.grades.first.update(grade: 50.0)
           csv_array = [
@@ -381,7 +387,7 @@ describe GradeEntryFormsController do
   end
 
   shared_examples '#update_grade_entry_students' do
-    before :each do
+    before do
       create(:student, user: create(:end_user, user_name: 'paneroar'))
       @student = grade_entry_form_with_data.grade_entry_students
                                            .joins(:user).find_by('users.user_name': 'c8shosta')
@@ -401,6 +407,7 @@ describe GradeEntryFormsController do
                           release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
+
     it 'sends an email to every student who has grades for this form if more than one do' do
       expect do
         post_as user, :update_grade_entry_students,
@@ -410,6 +417,7 @@ describe GradeEntryFormsController do
                           release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(2)
     end
+
     it 'does not send emails if all the students have results notifications turned off' do
       @student.role.update!(receives_results_emails: false)
       @another.role.update!(receives_results_emails: false)
@@ -419,8 +427,9 @@ describe GradeEntryFormsController do
                           course_id: course.id,
                           students: [@student.id, @another.id],
                           release_results: 'true' }
-      end.to change { ActionMailer::Base.deliveries.count }.by(0)
+      end.not_to(change { ActionMailer::Base.deliveries.count })
     end
+
     it 'sends emails to students that have have results notifications enabled if only some do' do
       @student.role.update!(receives_results_emails: false)
       expect do
@@ -442,16 +451,18 @@ describe GradeEntryFormsController do
 
     it 'allows students to see non hidden grade entry forms' do
       get_as @student, :student_interface, params: { course_id: course.id, id: grade_entry_form.id }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
   end
 
   shared_examples '#manage grade entry forms' do
-    context '#new' do
+    describe '#new' do
       before { get_as user, :new, params: { course_id: course.id } }
-      it('should respond with 200') { expect(response.status).to eq 200 }
+
+      it('should respond with 200') { expect(response).to have_http_status :ok }
     end
-    context '#create' do
+
+    describe '#create' do
       before do
         post_as user, :create,
                 params: {
@@ -463,68 +474,84 @@ describe GradeEntryFormsController do
                   }
                 }
       end
-      it('should respond with 302') { expect(response.status).to eq 302 }
+
+      it('should respond with 302') { expect(response).to have_http_status :found }
     end
-    context '#edit' do
+
+    describe '#edit' do
       before { post_as user, :edit, params: { course_id: course.id, id: grade_entry_form.id } }
-      it('should respond with 200') { expect(response.status).to eq 200 }
+
+      it('should respond with 200') { expect(response).to have_http_status :ok }
     end
-    context '#update' do
+
+    describe '#update' do
       it 'clears date if blank' do
-        expect(grade_entry_form.due_date).to_not be_nil
+        expect(grade_entry_form.due_date).not_to be_nil
         patch_as user, :update,
                  params: { course_id: course.id, id: grade_entry_form.id, grade_entry_form: { due_date: nil } }
         expect(grade_entry_form.reload.due_date).to be_nil
       end
 
       it 'updates date field' do
-        expect(grade_entry_form.due_date).to_not be_nil
+        expect(grade_entry_form.due_date).not_to be_nil
         patch_as user, :update,
                  params: { course_id: course.id, id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
         expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
       end
     end
   end
+
   describe 'When the user is instructor' do
     let(:user) { create(:instructor) }
+
     include_examples '#update_grade_entry_students'
     include_examples '#manage grade entry forms'
     context 'GET student interface' do
       before { get_as user, :student_interface, params: { course_id: course.id, id: grade_entry_form.id } }
-      it('should respond with 403') { expect(response.status).to eq 403 }
+
+      it('should respond with 403') { expect(response).to have_http_status :forbidden }
     end
   end
 
   describe 'When the user is grader' do
     # By default all the grader permissions are set to false
     let(:user) { create(:ta) }
+
     describe 'When the grader is allowed to release and unrelease the grades' do
       let(:user) { create(:ta, manage_assessments: true) }
+
       include_examples '#update_grade_entry_students'
     end
+
     describe 'When the grader is not allowed to release and unrelease the grades' do
       let(:student) do
         grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       end
+
       it 'should respond with 403' do
         post_as user, :update_grade_entry_students,
                 params: { course_id: course.id,
                           id: grade_entry_form_with_data.id,
                           students: [student.id],
                           release_results: 'true' }
-        expect(response.status).to eq 403
+        expect(response).to have_http_status :forbidden
       end
     end
+
     describe 'When the grader is allowed to create, edit and update grade entry forms' do
       let(:user) { create(:ta, manage_assessments: true) }
+
       include_examples '#manage grade entry forms'
     end
+
     describe 'When the grader is not allowed to create, edit and update grade entry forms' do
-      context '#new' do
+      describe '#new' do
         before { get_as user, :new, params: { course_id: course.id } }
-        it('should respond with 403') { expect(response.status).to eq 403 }
+
+        it('should respond with 403') { expect(response).to have_http_status :forbidden }
       end
-      context '#create' do
+
+      describe '#create' do
         before do
           post_as user, :create,
                   params: {
@@ -536,28 +563,35 @@ describe GradeEntryFormsController do
                     }
                   }
         end
-        it('should respond with 403') { expect(response.status).to eq 403 }
+
+        it('should respond with 403') { expect(response).to have_http_status :forbidden }
       end
-      context '#edit' do
+
+      describe '#edit' do
         before { post_as user, :edit, params: { course_id: course.id, id: grade_entry_form.id } }
-        it('should respond with 403') { expect(response.status).to eq 403 }
+
+        it('should respond with 403') { expect(response).to have_http_status :forbidden }
       end
-      context '#update' do
+
+      describe '#update' do
         it 'should respond with 403' do
           patch_as user, :update,
                    params: { course_id: course.id, id: grade_entry_form, grade_entry_form: { due_date: nil } }
-          expect(response.status).to eq 403
+          expect(response).to have_http_status :forbidden
         end
       end
     end
+
     context 'GET student interface' do
       before { get_as user, :student_interface, params: { course_id: course.id, id: grade_entry_form.id } }
-      it('should respond with 403') { expect(response.status).to eq 403 }
+
+      it('should respond with 403') { expect(response).to have_http_status :forbidden }
     end
   end
 
   describe '#grade_distribution' do
     let(:user) { create(:instructor) }
+
     before { get_as user, :grade_distribution, params: { course_id: course.id, id: grade_entry_form_with_data.id } }
 
     it('should return grade distribution data') {
@@ -584,7 +618,7 @@ describe GradeEntryFormsController do
       expect(response.parsed_body['column_distributions']['labels']).to eq new_labels
     }
 
-    it('should respond with 200') { expect(response).to have_http_status 200 }
+    it('should respond with 200') { expect(response).to have_http_status :ok }
 
     it 'should return the expected info summary' do
       name = "#{grade_entry_form_with_data.short_identifier}: #{grade_entry_form_with_data.description}"
@@ -631,42 +665,55 @@ describe GradeEntryFormsController do
     let(:gef2) { create(:grade_entry_form) }
 
     shared_examples 'switch assignment tests' do
+      subject { get_as user, 'switch', params: { course_id: course.id, id: gef2.id } }
+
       before { controller.request.headers.merge(HTTP_REFERER: referer) }
-      subject { expect get_as user, 'switch', params: { course_id: course.id, id: gef2.id } }
+
       context 'referred from a grade entry form url' do
         let(:referer) { course_grade_entry_form_url(course_id: course.id, id: gef.id) }
+
         it 'should redirect to the equivalent assignment page' do
           expect(subject).to redirect_to(course_grade_entry_form_url(course, gef2))
         end
       end
+
       context 'referred from a non grade entry form url' do
         let(:referer) { non_grade_entry_form_url&.call(course_id: course.id, grade_entry_form_id: gef.id) }
+
         it 'should redirect to the equivalent non assignment page' do
           skip if non_grade_entry_form_url.nil?
           expect(subject).to redirect_to(non_grade_entry_form_url.call(course_id: course.id,
                                                                        grade_entry_form_id: gef2.id))
         end
       end
+
       context 'referer is nil' do
         let(:referer) { nil }
+
         it 'should redirect to the fallback url' do
           expect(subject).to redirect_to(fallback_url.call(course_id: course.id, id: gef2.id))
         end
       end
+
       context 'referer is a url that does not include the grade entry form at all' do
         let(:referer) { course_notes_url(course) }
+
         it 'should redirect to the fallback url' do
           expect(subject).to redirect_to(fallback_url.call(course_id: course.id, id: gef2.id))
         end
       end
+
       context 'the referer url is some other site entirely' do
         let(:referer) { 'https://test.com' }
+
         it 'should redirect to the fallback url' do
           expect(subject).to redirect_to(fallback_url.call(course_id: course.id, id: gef2.id))
         end
       end
+
       context 'the referer url is not valid' do
         let(:referer) { '1234567' }
+
         it 'should redirect to the fallback url' do
           expect(subject).to redirect_to(fallback_url.call(course_id: course.id, id: gef2.id))
         end
@@ -677,18 +724,23 @@ describe GradeEntryFormsController do
       let(:user) { create(:instructor) }
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { edit_course_grade_entry_form_path(params) } }
+
       include_examples 'switch assignment tests'
     end
+
     context 'a grader' do
       let(:user) { create(:ta, manage_assessments: true) }
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { grades_course_grade_entry_form_path(params) } }
+
       include_examples 'switch assignment tests'
     end
+
     context 'a student' do
       let(:user) { create(:student) }
       let(:non_grade_entry_form_url) { nil }
       let(:fallback_url) { ->(params) { student_interface_course_grade_entry_form_url(params) } }
+
       include_examples 'switch assignment tests'
     end
   end
@@ -697,74 +749,94 @@ describe GradeEntryFormsController do
     subject do
       get_as role, :populate_grades_table, params: { course_id: course.id, id: grade_entry_form_with_data.id }
     end
+
     context 'an instructor' do
       before { subject }
+
       let(:data_fields) { %w[_id released_to_student user_name first_name last_name hidden section_id] }
+
       it 'returns a 200 response' do
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
+
       it 'returns data' do
         expect(response.parsed_body['data'].length).to be > 0
       end
+
       it 'returns all student data' do
         expect(response.parsed_body['data'].length).to eq course.students.count
       end
+
       it 'returns correct fields' do
         data_fields << grade_entry_form_with_data.grade_entry_items.first.id.to_s
         expect(response.parsed_body['data'][0].keys).to match_array(data_fields)
       end
+
       it 'returns the correct grade' do
         expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
         gei_id = grade_entry_form_with_data.grade_entry_items.first.id.to_s
         expect(response.parsed_body['data'][0][gei_id].round(2)).to eq(expected_grade)
       end
+
       context 'when the total grade is shown' do
         let(:grade_entry_form_with_data) { grade_entry_form_with_data_and_total }
+
         it 'returns the correct total grade' do
           expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
           expect(response.parsed_body['data'][0]['total_marks'].round(2)).to eq(expected_grade)
         end
       end
     end
+
     context 'a TA' do
       let(:role) { create(:ta) }
+
       it 'returns a 200 response' do
         subject
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
+
       context 'who has not been assigned a student' do
         it 'returns data' do
           subject
           expect(response.parsed_body['data'].length).to eq 0
         end
       end
+
       context 'who has been assigned a student' do
         let(:student) do
           grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
         end
+
         before do
           create(:grade_entry_student_ta, ta: role, grade_entry_student: student)
           subject
         end
+
         it 'returns data' do
           expect(response.parsed_body['data'].length).to be > 0
         end
+
         it 'returns the number of students assigned to the ta' do
           expect(response.parsed_body['data'].length).to eq role.grade_entry_students.count
         end
+
         it 'returns the correct set of students' do
           students = role.grade_entry_students
                          .where(grade_entry_form: grade_entry_form_with_data)
                          .joins(:user).pluck('users.user_name')
           expect(response.parsed_body['data'].pluck('user_name')).to match_array(students)
         end
+
         it 'returns the correct grade' do
           expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
           gei_id = grade_entry_form_with_data.grade_entry_items.first.id.to_s
           expect(response.parsed_body['data'][0][gei_id].round(2)).to eq(expected_grade)
         end
+
         context 'when the total grade is shown' do
           let(:grade_entry_form_with_data) { grade_entry_form_with_data_and_total }
+
           it 'returns the correct total grade' do
             expected_grade = grade_entry_form_with_data.grade_entry_items.first.grades.pluck(:grade).sum.round(2)
             expect(response.parsed_body['data'][0]['total_marks'].round(2)).to eq(expected_grade)
@@ -773,12 +845,15 @@ describe GradeEntryFormsController do
       end
     end
   end
+
   context 'DELETE Destroy' do
     let(:user) { create(:instructor) }
+
     it 'does not delete a non-existing grade entry form' do
       delete_as user, :destroy, params: { course_id: course.id, id: -1 }
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(:not_found)
     end
+
     it 'successfully deletes a grade entry form with no non-nil grades' do
       form = create(:grade_entry_form, course_id: course.id, id: 4)
       first_student = create(:student)
@@ -789,8 +864,9 @@ describe GradeEntryFormsController do
       create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
                      grade_entry_item: grade_entry_item, grade: nil)
       delete_as user, :destroy, params: { course_id: course.id, id: 4 }
-      expect(course.grade_entry_forms.exists?(form.id)).to be_falsey
+      expect(course.grade_entry_forms).not_to exist(form.id)
     end
+
     it 'does not delete a grade entry form with non-nil grades' do
       form = create(:grade_entry_form, course_id: course.id, id: 4)
       first_student = create(:student)
@@ -801,7 +877,7 @@ describe GradeEntryFormsController do
       create(:grade, grade_entry_student: form.grade_entry_students.find_by(role: second_student),
                      grade_entry_item: grade_entry_item, grade: 0.2)
       delete_as user, :destroy, params: { course_id: course.id, id: 4 }
-      expect(course.grade_entry_forms.exists?(form.id)).to be_truthy
+      expect(course.grade_entry_forms).to exist(form.id)
     end
   end
 end
