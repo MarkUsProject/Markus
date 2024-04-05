@@ -3,3 +3,6 @@ en:
   modals:
     file_upload:
       unzip: unzip all zip files in place
+      rename_warning: |
+        Changing the file extension may render the file unusable.
+        Are you sure you want to proceed?

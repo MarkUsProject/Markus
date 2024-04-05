@@ -17,21 +17,20 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    const newFilename = this.state.renameTo;
-    const originalFilename = this.state.newFiles[0].name; // Assuming only one file is uploaded
-    const originalExtension = originalFilename.split(".").pop();
-    const newExtension = newFilename.split(".").pop();
+    if (this.state.newFiles.length === 1) {
+      const newFilename = this.state.renameTo;
+      const originalFilename = this.state.newFiles[0].name; // Assuming only one file is uploaded
+      const originalExtension = originalFilename.split(".").pop();
+      const newExtension = newFilename.split(".").pop();
 
-    if (originalExtension !== newExtension) {
-      const confirmChange = window.confirm(
-        "Changing the file extension may render the file unusable. Are you sure you want to proceed?"
-      );
-      if (!confirmChange) {
-        // Prevent form submission if the user cancels the operation
-        return;
+      if (originalExtension !== newExtension) {
+        const confirmChange = window.confirm(I18n.t("modals.file_upload.rename_warning"));
+        if (!confirmChange) {
+          // Prevent form submission if the user cancels the operation
+          return;
+        }
       }
     }
-
     this.props.onSubmit(this.state.newFiles, undefined, this.state.unzip, this.state.renameTo);
   };
 
