@@ -45,7 +45,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr
+          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr pandoc
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
@@ -73,10 +73,12 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}-${{ hashFiles('requirements-qr.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - name: Install python packages
+      - name: Install python packages and playwright dependencies
         run: |
           python3.10 -m venv venv
           ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt -r requirements-qr.txt
+          ./venv/bin/playwright install chromium
+          ./venv/bin/playwright install-deps chromium
       - name: Configure server
         run: |
           sudo rm -f /etc/localtime
