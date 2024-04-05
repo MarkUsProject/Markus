@@ -107,8 +107,6 @@ export class AssignmentSummaryTable extends React.Component {
       const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
       this.setState({markingStateFilter: markingStateFilter});
     }
-
-    this.setState({filtered});
   };
 
   fixedColumns = () => {
@@ -262,44 +260,46 @@ export class AssignmentSummaryTable extends React.Component {
             {I18n.t("submissions.state.complete")}
           </div>
         </div>
-        {this.props.is_instructor && (
-          <div className="rt-action-box">
-            <input
-              id="show_inactive_groups"
-              name="show_inactive_groups"
-              type="checkbox"
-              onChange={e => this.toggleShowInactiveGroups(e.target.checked)}
-              className={"hide-user-checkbox"}
-              data-testid={"show_inactive_groups"}
-            />
-            <label
-              title={displayInactiveGroupsTooltip}
-              htmlFor="show_inactive_groups"
-              data-testid={"show_inactive_groups_tooltip"}
-            >
-              {I18n.t("submissions.groups.display_inactive")}
-            </label>
-            <form
-              action={Routes.summary_course_assignment_path({
-                course_id: this.props.course_id,
-                id: this.props.assignment_id,
-                format: "csv",
-                _options: true,
-              })}
-              method="get"
-            >
-              <button type="submit" name="download">
-                {I18n.t("download")}
+        <div className="rt-action-box">
+          <input
+            id="show_inactive_groups"
+            name="show_inactive_groups"
+            type="checkbox"
+            onChange={e => this.toggleShowInactiveGroups(e.target.checked)}
+            className={"hide-user-checkbox"}
+            data-testid={"show_inactive_groups"}
+          />
+          <label
+            title={displayInactiveGroupsTooltip}
+            htmlFor="show_inactive_groups"
+            data-testid={"show_inactive_groups_tooltip"}
+          >
+            {I18n.t("submissions.groups.display_inactive")}
+          </label>
+          {this.props.is_instructor && (
+            <>
+              <form
+                action={Routes.summary_course_assignment_path({
+                  course_id: this.props.course_id,
+                  id: this.props.assignment_id,
+                  format: "csv",
+                  _options: true,
+                })}
+                method="get"
+              >
+                <button type="submit" name="download">
+                  {I18n.t("download")}
+                </button>
+              </form>
+              <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
+                {I18n.t("download_the", {
+                  item: I18n.t("activerecord.models.test_result.other"),
+                })}
               </button>
-            </form>
-            <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
-              {I18n.t("download_the", {
-                item: I18n.t("activerecord.models.test_result.other"),
-              })}
-            </button>
-            {ltiButton}
-          </div>
-        )}
+              {ltiButton}
+            </>
+          )}
+        </div>
         <ReactTable
           data={data}
           columns={this.fixedColumns().concat(criteriaColumns, [this.bonusColumn])}
