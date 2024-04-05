@@ -50,12 +50,8 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
 
     # If no test groups can be run by students, flash appropriate message and return early
-    test_group_settings = TestGroup.where(assessment_id: assignment.id).pluck(:autotest_settings)
-    # rubocop:disable Rails/Pluck
-    test_group_categories = test_group_settings.map { |settings| settings['category'] }
-    # rubocop:enable Rails/Pluck
+    test_group_categories = assignment.test_groups.pluck(:autotest_settings).pluck('category')
     student_runnable = test_group_categories.any? { |category| category.include? 'student' }
-
     unless student_runnable
       flash_now(:info, I18n.t('automated_tests.no_student_runnable_tests'))
       return
@@ -66,7 +62,6 @@ class AutomatedTestsController < ApplicationController
     allowed = flash_allowance(:error, allowance_to(:run_tests?,
                                                    current_role,
                                                    context: { assignment: assignment, grouping: grouping })).value
-
     if allowed
       grouping.decrease_test_tokens
       flash_message(:notice, I18n.t('automated_tests.autotest_run_job.status.in_progress'))
