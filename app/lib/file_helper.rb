@@ -82,4 +82,13 @@ module FileHelper
       %w[## ##]
     end
   end
+
+  # Join +path+ and +paths+, where +paths+ are potentially untrusted inputs.
+  # Returns +nil+ if the resulting path is outside +path+.
+  def self.checked_join(path, *paths)
+    new_path = File.join(path, *paths)
+    if File.expand_path(new_path).start_with?(File.expand_path(path))
+      new_path
+    end
+  end
 end

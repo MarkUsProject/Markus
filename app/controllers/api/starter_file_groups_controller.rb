@@ -70,12 +70,17 @@ module Api
       else
         content = params[:file_content]
       end
-      file_path = File.join(starter_file_group.path, params[:filename])
-      File.write(file_path, content, mode: 'wb')
-      update_entries_and_warn(starter_file_group)
-      render 'shared/http_status',
-             locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
-             status: :created
+      file_path = FileHelper.checked_join(starter_file_group.path, params[:filename])
+      if file_path.nil?
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+      else
+        File.write(file_path, content, mode: 'wb')
+        update_entries_and_warn(starter_file_group)
+        render 'shared/http_status',
+               locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
+               status: :created
+      end
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
       render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
@@ -90,12 +95,17 @@ module Api
         return
       end
 
-      folder_path = File.join(starter_file_group.path, params[:folder_path])
-      FileUtils.mkdir_p(folder_path)
-      update_entries_and_warn(starter_file_group)
-      render 'shared/http_status',
-             locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
-             status: :created
+      folder_path = FileHelper.checked_join(starter_file_group.path, params[:folder_path])
+      if folder_path.nil?
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+      else
+        FileUtils.mkdir_p(folder_path)
+        update_entries_and_warn(starter_file_group)
+        render 'shared/http_status',
+               locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
+               status: :created
+      end
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
       render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
@@ -109,12 +119,17 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
         return
       end
-      file_path = File.join(starter_file_group.path, params[:filename])
-      File.delete(file_path)
-      update_entries_and_warn(starter_file_group)
-      render 'shared/http_status',
-             locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
-             status: :ok
+      file_path = FileHelper.checked_join(starter_file_group.path, params[:filename])
+      if file_path.nil?
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+      else
+        File.delete(file_path)
+        update_entries_and_warn(starter_file_group)
+        render 'shared/http_status',
+               locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
+               status: :ok
+      end
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
       render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
@@ -129,12 +144,17 @@ module Api
         return
       end
 
-      folder_path = File.join(starter_file_group.path, params[:folder_path])
-      FileUtils.rm_rf(folder_path)
-      update_entries_and_warn(starter_file_group)
-      render 'shared/http_status',
-             locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
-             status: :ok
+      folder_path = FileHelper.checked_join(starter_file_group.path, params[:folder_path])
+      if folder_path.nil?
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+      else
+        FileUtils.rm_rf(folder_path)
+        update_entries_and_warn(starter_file_group)
+        render 'shared/http_status',
+               locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
+               status: :ok
+      end
     rescue StandardError => e
       message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{e.message}"
       render 'shared/http_status', locals: { code: '500', message: message }, status: :internal_server_error
