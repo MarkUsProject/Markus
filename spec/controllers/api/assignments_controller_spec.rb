@@ -564,12 +564,13 @@ describe Api::AssignmentsController do
 
     context 'POST submit_file' do
       let(:student) { create(:grouping_with_inviter, assignment: assignment).inviter }
+      let(:filename) { 'v1/x/y/test.txt' }
       before do
         assignment.update(api_submit: true)
       end
 
       subject do
-        post :submit_file, params: { id: assignment.id, filename: 'v1/x/y/test.txt', mime_type: 'text',
+        post :submit_file, params: { id: assignment.id, filename: filename, mime_type: 'text',
                                      file_content: 'This is a test file', course_id: course.id }
       end
 
@@ -697,6 +698,20 @@ describe Api::AssignmentsController do
           context 'the file is required' do
             let!(:test_file) { create :assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id }
             include_examples 'submits successfully'
+          end
+        end
+
+        context 'when the filename is invalid' do
+          let(:filename) { '../hello' }
+
+          it 'responds with 422' do
+            subject
+            expect(response).to have_http_status(422)
+          end
+
+          it 'does not create a temporary file' do
+            expect(Tempfile).not_to receive(:new)
+            subject
           end
         end
       end

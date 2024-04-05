@@ -116,7 +116,7 @@ describe SubmissionsController do
       end
     end
 
-    it 'cannot add files outside the repository' do
+    it 'cannot add files outside the repository when an invalid path is given' do
       file = fixture_file_upload('Shapes.java', 'text/java')
       bad_path = '../../'
       post_as @student, :update_files,
@@ -125,6 +125,38 @@ describe SubmissionsController do
       expect(response).to have_http_status :bad_request
       expect(File).to_not exist(File.join(@grouping.group.repo_path, @grouping.assignment.repository_folder,
                                           bad_path, 'Shapes.java'))
+    end
+
+    it 'cannot add folders outside the repository assignment folder' do
+      dir = '../hello'
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id, new_folders: [dir], path: '/' }
+
+      expect(response).to have_http_status :unprocessable_entity
+      expect(Dir).to_not exist(File.join(@grouping.group.repo_path, @grouping.assignment.repository_folder,
+                                         dir))
+    end
+
+    it 'cannot delete files outside the repository assignment folder' do
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id,
+                        delete_files: ['../../../../../LICENSE'], path: '/' }
+
+      expect(response).to have_http_status :unprocessable_entity
+      expect(File).to exist(
+                        File.expand_path(File.join(@grouping.group.repo_path, '../../../../../LICENSE'))
+      )
+    end
+
+    it 'cannot delete folders outside the repository assignment folder' do
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id,
+                        delete_folders: ['../../../../../doc'], path: '/' }
+
+      expect(response).to have_http_status :unprocessable_entity
+      expect(Dir).to exist(
+                        File.expand_path(File.join(@grouping.group.repo_path, '../../../../../doc'))
+                      )
     end
 
     context 'submitting a url' do
