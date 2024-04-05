@@ -144,7 +144,7 @@ describe SubmissionsController do
 
       expect(response).to have_http_status :unprocessable_entity
       expect(File).to exist(
-                        File.expand_path(File.join(@grouping.group.repo_path, '../../../../../LICENSE'))
+        File.expand_path(File.join(@grouping.group.repo_path, '../../../../../LICENSE'))
       )
     end
 
@@ -155,8 +155,8 @@ describe SubmissionsController do
 
       expect(response).to have_http_status :unprocessable_entity
       expect(Dir).to exist(
-                        File.expand_path(File.join(@grouping.group.repo_path, '../../../../../doc'))
-                      )
+        File.expand_path(File.join(@grouping.group.repo_path, '../../../../../doc'))
+      )
     end
 
     context 'submitting a url' do
