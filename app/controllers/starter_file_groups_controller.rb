@@ -13,9 +13,9 @@ class StarterFileGroupsController < ApplicationController
 
   def download_file
     starter_file_group = record
-    file_path = File.join starter_file_group.path, params[:file_name]
+    file_path = FileHelper.checked_join starter_file_group.path, params[:file_name]
     filename = File.basename params[:file_name]
-    if File.exist?(file_path)
+    if file_path.present? && File.exist?(file_path)
       send_file_download file_path, filename: filename
     else
       render plain: t('student.submission.missing_file', file_name: filename)
@@ -43,11 +43,20 @@ class StarterFileGroupsController < ApplicationController
     delete_folders = params[:delete_folders] || []
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
+    target_path = FileHelper.checked_join(starter_file_group.path, params[:path].to_s)
+    if target_path.nil?
+      flash_now(:error, I18n.t('errors.invalid_path'))
+      return
+    end
 
     upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
       if f.is_a?(String) # is a directory
-        folder_path = File.join(starter_file_group.path, params[:path].to_s, f)
-        FileUtils.mkdir_p(folder_path)
+        folder_path = FileHelper.checked_join(target_path, f)
+        if folder_path.nil?
+          flash_now(:error, I18n.t('errors.invalid_path'))
+        else
+          FileUtils.mkdir_p(folder_path)
+        end
       else
         if f.size > assignment.course.max_file_size
           flash_now(:error, t('student.submission.file_too_large',
@@ -57,19 +66,31 @@ class StarterFileGroupsController < ApplicationController
         elsif f.size == 0
           flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
         end
-        file_path = File.join(starter_file_group.path, params[:path].to_s, f.original_filename)
-        file_content = f.read
-        File.write(file_path, file_content, mode: 'wb')
+        file_path = FileHelper.checked_join(target_path, f.original_filename)
+        if file_path.nil?
+          flash_now(:error, I18n.t('errors.invalid_path'))
+        else
+          file_content = f.read
+          File.write(file_path, file_content, mode: 'wb')
+        end
       end
     end
 
     delete_folders.each do |f|
-      folder_path = File.join(starter_file_group.path, f)
-      FileUtils.rm_rf(folder_path)
+      folder_path = FileHelper.checked_join(starter_file_group.path, f)
+      if folder_path.nil?
+        flash_now(:error, I18n.t('errors.invalid_path'))
+      else
+        FileUtils.rm_rf(folder_path)
+      end
     end
     delete_files.each do |f|
-      file_path = File.join(starter_file_group.path, f)
-      File.delete(file_path)
+      file_path = FileHelper.checked_join(starter_file_group.path, f)
+      if file_path.nil?
+        flash_now(:error, I18n.t('errors.invalid_path'))
+      else
+        File.delete(file_path)
+      end
     end
     if params[:path].blank?
       all_paths = [new_folders, new_files.map(&:original_filename), delete_files, delete_folders].flatten

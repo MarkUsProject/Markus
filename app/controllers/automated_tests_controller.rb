@@ -113,12 +113,12 @@ class AutomatedTestsController < ApplicationController
 
   def download_file
     assignment = Assignment.find(params[:assignment_id])
-    file_path = File.join(assignment.autotest_files_dir, params[:file_name])
+    file_path = FileHelper.checked_join(assignment.autotest_files_dir, params[:file_name])
     filename = File.basename params[:file_name]
-    if File.exist?(file_path)
+    if file_path.present? && File.exist?(file_path)
       send_file_download file_path, filename: filename
     else
-      render plain: t('student.submission.missing_file', file_name: filename)
+      render plain: t('student.submission.missing_file', file_name: params[:file_name])
     end
   end
 
@@ -138,11 +138,21 @@ class AutomatedTestsController < ApplicationController
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
     unzip = params[:unzip] == 'true'
+    autotest_files_path = FileHelper.checked_join(assignment.autotest_files_dir, params[:path])
+    if autotest_files_path.nil?
+      flash_now(:error, I18n.t('errors.invalid_path'))
+      render partial: 'update_files'
+      return
+    end
 
     upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
       if f.is_a?(String) # is a directory
-        folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
-        FileUtils.mkdir_p(folder_path)
+        folder_path = FileHelper.checked_join(autotest_files_path, f)
+        if folder_path.nil?
+          flash_now(:error, I18n.t('errors.invalid_path'))
+        else
+          FileUtils.mkdir_p(folder_path)
+        end
       else
         if f.size > assignment.course.max_file_size
           flash_now(:error, t('student.submission.file_too_large',
@@ -152,19 +162,31 @@ class AutomatedTestsController < ApplicationController
         elsif f.size == 0
           flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
         end
-        file_path = File.join(assignment.autotest_files_dir, params[:path], f.original_filename)
-        FileUtils.mkdir_p(File.dirname(file_path))
-        file_content = f.read
-        File.write(file_path, file_content, mode: 'wb')
+        file_path = FileHelper.checked_join(autotest_files_path, f.original_filename)
+        if file_path.nil?
+          flash_now(:error, I18n.t('errors.invalid_path'))
+        else
+          FileUtils.mkdir_p(File.dirname(file_path))
+          file_content = f.read
+          File.write(file_path, file_content, mode: 'wb')
+        end
       end
     end
     delete_folders.each do |f|
-      folder_path = File.join(assignment.autotest_files_dir, f)
-      FileUtils.rm_rf(folder_path)
+      folder_path = FileHelper.checked_join(assignment.autotest_files_dir, f)
+      if folder_path.nil?
+        flash_now(:error, I18n.t('errors.invalid_path'))
+      else
+        FileUtils.rm_rf(folder_path)
+      end
     end
     delete_files.each do |f|
-      file_path = File.join(assignment.autotest_files_dir, f)
-      File.delete(file_path)
+      file_path = FileHelper.checked_join(assignment.autotest_files_dir, f)
+      if file_path.nil?
+        flash_now(:error, I18n.t('errors.invalid_path'))
+      else
+        File.delete(file_path)
+      end
     end
     render partial: 'update_files'
   end

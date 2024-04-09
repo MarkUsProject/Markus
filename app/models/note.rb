@@ -23,4 +23,17 @@ class Note < ApplicationRecord
     end
     false
   end
+
+  def self.get_noteable(class_name)
+    case class_name
+    when 'Grouping'
+      Grouping
+    when 'Student'
+      Student
+    when 'Assignment'
+      Assignment
+    else
+      raise "Invalid noteable class #{class_name}"
+    end
+  end
 end

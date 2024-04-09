@@ -9,7 +9,10 @@
 - Allow instructors to configure an end date until which students can run automated tests (#6992)
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
-- Autotesting ~ Handle case where no test groups are runnable by students (#7003)
+- Display error message for student-run tests when no test groups are runnable (#7003)
+
+## [v2.4.8]
+- Validate user-provided paths (#7025)
 
 ## [v2.4.7]
 - Support Jupyter notebooks for results printing (#6993)
