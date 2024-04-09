@@ -48,6 +48,15 @@ class AutomatedTestsController < ApplicationController
 
   def execute_test_run
     assignment = Assignment.find(params[:assignment_id])
+
+    # If no test groups can be run by students, flash appropriate message and return early
+    test_group_categories = assignment.test_groups.pluck(:autotest_settings).pluck('category')
+    student_runnable = test_group_categories.any? { |category| category.include? 'student' }
+    unless student_runnable
+      flash_now(:info, I18n.t('automated_tests.no_student_runnable_tests'))
+      return
+    end
+
     grouping = current_role.accepted_grouping_for(assignment.id)
     grouping.refresh_test_tokens
     allowed = flash_allowance(:error, allowance_to(:run_tests?,

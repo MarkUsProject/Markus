@@ -443,9 +443,17 @@ describe AutomatedTestsController do
                              token_start_date: 1.day.ago,
                              remote_autotest_settings_id: 1)
         end
-
-        it 'enqueues an AutotestRunJob' do
-          expect { post_as role, :execute_test_run, params: params }.to have_enqueued_job(AutotestRunJob)
+        context 'and at least one test-group can be run by students' do
+          let(:assignment) { create :assignment_with_test_groups_student_runnable } # overwrites current assignment
+          it 'enqueues an AutotestRunJob' do
+            expect { post_as role, :execute_test_run, params: params }.to have_enqueued_job(AutotestRunJob)
+          end
+        end
+        context 'and no test-groups can be run by students' do
+          let(:assignment) { create :assignment_with_test_groups_not_student_runnable }
+          it 'does not enqueue an AutotestRunJob if NO test-groups can be run by students' do
+            expect { post_as role, :execute_test_run, params: params }.not_to have_enqueued_job(AutotestRunJob)
+          end
         end
       end
     end
