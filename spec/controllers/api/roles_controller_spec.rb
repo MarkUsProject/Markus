@@ -254,17 +254,19 @@ describe Api::RolesController do
         end
 
         it 'should not update a first name' do
-          put :update, params: { id: student.id, first_name: tmp_student.first_name, course_id: course.id }
+          new_name = student.first_name + 'a'
+          put :update, params: { id: student.id, first_name: new_name, course_id: course.id }
           expect(response).to have_http_status(:ok)
           student.reload
-          expect(student.first_name).not_to eq(tmp_student.first_name)
+          expect(student.first_name).not_to eq(new_name)
         end
 
         it 'should not update a last name' do
-          put :update, params: { id: student.id, last_name: tmp_student.last_name, course_id: course.id }
+          new_name = student.last_name + 'a'
+          put :update, params: { id: student.id, last_name: new_name, course_id: course.id }
           expect(response).to have_http_status(:ok)
           student.reload
-          expect(student.last_name).not_to eq(tmp_student.last_name)
+          expect(student.last_name).not_to eq(new_name)
         end
 
         it 'should update a section' do
