@@ -10,6 +10,7 @@
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 - Display error message for student-run tests when no test groups are runnable (#7003)
+- Added a confirmation check while renaming a file with a different extension (#7024)
 
 ## [v2.4.8]
 - Validate user-provided paths (#7025)
