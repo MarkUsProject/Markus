@@ -270,7 +270,7 @@ describe Result do
       end
     end
 
-    context 'when the result has a PDF submission_file' do
+    context 'when the result has a PDF submission file' do
       let!(:submission_file) { create(:pdf_submission_file, submission: result.submission) }
       before do
         allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return(
@@ -289,6 +289,31 @@ describe Result do
         it 'successfully creates a PDF' do
           pdf_file = result.generate_print_pdf
           expect(pdf_file).to be_a CombinePDF::PDF
+        end
+      end
+    end
+
+    context 'when the result has a Jupyter notebook submission file' do
+      let!(:submission_file) { create(:notebook_submission_file, submission: result.submission) }
+
+      before do
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return(
+          file_fixture('submission_files/submission.ipynb').read
+        )
+      end
+
+      it 'successfully creates a PDF' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file).to be_a CombinePDF::PDF
+      end
+
+      context 'when nbconvert fails' do
+        before do
+          allow_any_instance_of(Process::Status).to receive(:success?).and_return(false)
+        end
+
+        it 'raises an error' do
+          expect { result.generate_print_pdf }.to raise_error
         end
       end
     end
@@ -323,6 +348,37 @@ describe Result do
         expect(assignment.ta_criteria.size).to eq 4
         pdf_file = result.generate_print_pdf
         expect(pdf_file).to be_a CombinePDF::PDF
+      end
+    end
+  end
+
+  describe '#print_pdf_filename' do
+    let(:assignment) { create :assignment_with_criteria_and_results }
+    let(:result) { assignment.current_results.first }
+
+    context 'when the result is for an individual student' do
+      it 'returns a filename containing data for the student' do
+        student = result.submission.grouping.accepted_students.first.user
+        expect(result.print_pdf_filename).to eq(
+          "#{student.id_number} - #{student.last_name.upcase}, #{student.first_name} (#{student.user_name}).pdf"
+        )
+      end
+    end
+
+    context 'when the result is for a group with multiple members' do
+      it 'returns a filename corresponding to the group name and member user names' do
+        grouping = result.submission.grouping
+        create :accepted_student_membership, grouping: grouping
+        members = grouping.accepted_students.includes(:user).map { |s| s.user.user_name }.sort
+        expect(result.print_pdf_filename).to eq "#{grouping.group.group_name} (#{members.join(', ')}).pdf"
+      end
+    end
+
+    context 'when the result is for a group with no members' do
+      it 'returns a filename corresponding to the group name' do
+        grouping = result.submission.grouping
+        grouping.student_memberships.destroy_all
+        expect(result.print_pdf_filename).to eq "#{grouping.group.group_name}.pdf"
       end
     end
   end

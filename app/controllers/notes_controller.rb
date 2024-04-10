@@ -151,7 +151,7 @@ class NotesController < ApplicationController
     return @noteable if defined?(@noteable)
     noteable_id = params[:noteable_id] || params[:note]&.[](:noteable_id)
     return @noteable = nil unless Note::NOTEABLES.include?(params[:noteable_type])
-    @noteable = params[:noteable_type]&.constantize&.find_by(id: noteable_id)
+    @noteable = Note.get_noteable(params[:noteable_type]).find_by(id: noteable_id)
   end
 
   protected

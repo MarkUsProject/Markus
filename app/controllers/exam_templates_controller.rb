@@ -104,9 +104,14 @@ class ExamTemplatesController < ApplicationController
 
   def download_generate
     exam_template = record
-    send_file(File.join(exam_template.tmp_path, params[:file_name]),
-              filename: params[:file_name],
-              type: 'application/pdf')
+    path = FileHelper.checked_join(exam_template.tmp_path, params[:file_name])
+    if path.nil?
+      head :unprocessable_entity
+    else
+      send_file(path,
+                filename: params[:file_name],
+                type: 'application/pdf')
+    end
   end
 
   def show_cover
@@ -265,9 +270,14 @@ class ExamTemplatesController < ApplicationController
   def download_error_file
     exam_template = record
     @assignment = record.assignment
-    send_file(File.join(exam_template.base_path, 'error', params[:file_name]),
-              filename: params[:file_name],
-              type: 'application/pdf')
+    path = FileHelper.checked_join(exam_template.base_path, 'error', params[:file_name])
+    if path.nil?
+      head :unprocessable_entity
+    else
+      send_file(path,
+                filename: params[:file_name],
+                type: 'application/pdf')
+    end
   end
 
   def fix_error

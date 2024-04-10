@@ -264,6 +264,34 @@ describe ExamTemplatesController do
       before { get_as user, :view_logs, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
+
+    describe '#download_generate' do
+      context 'when the filename is invalid' do
+        before do
+          get_as user, :download_generate,
+                 params: { assignment_id: exam_template.assignment.id, course_id: course.id, id: exam_template.id,
+                           file_name: '../../a.pdf' }
+        end
+
+        it 'responds with an error status code' do
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+    end
+
+    describe '#download_error_file' do
+      context 'when the filename is invalid' do
+        before do
+          get_as user, :download_error_file,
+                 params: { assignment_id: exam_template.assignment.id, course_id: course.id, id: exam_template.id,
+                           file_name: '../../a.pdf' }
+        end
+
+        it 'responds with an error status code' do
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+    end
   end
 
   describe 'When the user is instructor' do

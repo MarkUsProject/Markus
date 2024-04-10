@@ -41,6 +41,7 @@ en:
     no_autotest_settings: No automated tester settings exist for this course. Please update the automated tester settings and try again.
     no_criteria: Unable to find a criterion with name "%{name}".
     no_results: No test results to display
+    no_student_runnable_tests: No tests are available for students to run.
     results:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
@@ -66,3 +67,4 @@ en:
     tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     timeout: Timeout (s)
     title: Automated Testing
+    use_assignment_due_date: Leave blank to use assignment due date

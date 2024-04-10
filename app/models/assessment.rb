@@ -5,13 +5,16 @@ class Assessment < ApplicationRecord
   scope :grade_entry_forms, -> { where(type: 'GradeEntryForm') }
 
   has_many :marking_weights, dependent: :destroy
-  has_many :tags
+  has_many :tags, dependent: :destroy
   belongs_to :course, inverse_of: :assessments
 
-  has_many :assessment_section_properties, inverse_of: :assessment, class_name: 'AssessmentSectionProperties'
+  has_many :assessment_section_properties,
+           dependent: :destroy,
+           inverse_of: :assessment,
+           class_name: 'AssessmentSectionProperties'
   accepts_nested_attributes_for :assessment_section_properties
 
-  has_many :lti_line_items
+  has_many :lti_line_items, dependent: :destroy
 
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)

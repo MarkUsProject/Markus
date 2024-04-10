@@ -46,7 +46,7 @@ end
 Capybara.register_driver :selenium_remote_chrome do |app|
   chrome_options = Selenium::WebDriver::Chrome::Options.new(args: ['--no-sandbox', '--disable-gpu',
                                                                    '--window-size=1400,1400'])
-  chrome_options.add_argument('--headless') unless ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true'
+  chrome_options.add_argument('--headless=new') unless ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true'
   Capybara::Selenium::Driver.new(app, browser: :remote, url: 'http://localhost:9515', capabilities: [chrome_options])
 end
 
