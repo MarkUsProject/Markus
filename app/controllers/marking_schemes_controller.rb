@@ -90,7 +90,7 @@ class MarkingSchemesController < ApplicationController
 
     @all_gradable_items = []
 
-    MarkingWeight.where(marking_scheme_id: @marking_scheme.id).each do |mw|
+    MarkingWeight.where(marking_scheme_id: @marking_scheme.id).find_each do |mw|
       @all_gradable_items << mw.assessment
     end
   end

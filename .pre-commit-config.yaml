@@ -15,14 +15,14 @@ repos:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v16.1.0
+      rev: v16.3.1
       hooks:
         - id: stylelint
           additional_dependencies: [
-              "stylelint@16.1.0",
+              "stylelint@16.3.1",
               "postcss-scss@4.0.9",
-              "stylelint-config-sass-guidelines@11.0.0",
-              "postcss@8.4.34",
+              "stylelint-config-sass-guidelines@11.1.0",
+              "postcss@8.4.38",
             ]
           args: ["--fix"]
           types_or: ["css", "scss"]
@@ -32,7 +32,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.60.2
+    rev: v1.62.1
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -44,8 +44,8 @@ repos:
             lib/repo/test/.*
           )$
         additional_dependencies:
-          - rubocop-rails:2.19.1
-          - rubocop-performance:1.17.1
+          - rubocop-rails:2.24.1
+          - rubocop-performance:1.21.0
 
 exclude: vendor
 

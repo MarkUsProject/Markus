@@ -78,7 +78,7 @@ describe PeerReviewsController do
                               numGroupsToAssign: 1 }
             get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
             @downloaded_text = response.body
-            PeerReview.all.destroy_all
+            PeerReview.destroy_all
             @path = File.join(self.class.file_fixture_path, "#{TEMP_CSV_FILE_PATH}#{extension}")
             # Now allow uploading by placing the data in a temporary file and reading
             # the data back through 'uploading' (requires a clean database)
@@ -134,7 +134,7 @@ describe PeerReviewsController do
       it 'returns the correct id_to_group_names_map' do
         expected = {}
         @assignment_with_pr.groupings.or(@assignment_with_pr.pr_assignment.groupings)
-                           .includes(:group).each do |grouping|
+                           .includes(:group).find_each do |grouping|
           expected[grouping.id.to_s] = grouping.group.group_name
         end
         expect(@response['id_to_group_names_map']).to eq(expected)
@@ -163,13 +163,13 @@ describe PeerReviewsController do
       end
 
       it 'does not assign a reviewee group to review their own submission' do
-        PeerReview.all.each do |pr|
+        PeerReview.find_each do |pr|
           expect(pr.reviewer.id).not_to eq pr.reviewee.id
         end
       end
 
       it 'does not assign a student to review their own submission' do
-        PeerReview.all.each do |pr|
+        PeerReview.find_each do |pr|
           expect(pr.reviewer.does_not_share_any_students?(pr.reviewee)).to be_truthy
         end
       end
@@ -195,13 +195,13 @@ describe PeerReviewsController do
       end
 
       it 'does not assign a reviewee group to review their own submission' do
-        PeerReview.all.each do |pr|
+        PeerReview.find_each do |pr|
           expect(pr.reviewer.id).not_to eq pr.reviewee.id
         end
       end
 
       it 'does not assign a student to review their own submission' do
-        PeerReview.all.each do |pr|
+        PeerReview.find_each do |pr|
           expect(pr.reviewer.does_not_share_any_students?(pr.reviewee)).to be_truthy
         end
       end

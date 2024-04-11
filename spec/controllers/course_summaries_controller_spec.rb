@@ -61,7 +61,7 @@ describe CourseSummariesController do
           out_of_row = csv_rows[1]
           expect(out_of_row.size).to eq(Student::CSV_ORDER.length + assignments.size + grade_forms.size)
           expect(out_of_row.size).to eq(header.size)
-          zipped_info = Assessment.all.order(:id).zip(out_of_row[Student::CSV_ORDER.length, out_of_row.size])
+          zipped_info = Assessment.order(:id).zip(out_of_row[Student::CSV_ORDER.length, out_of_row.size])
           zipped_info.each do |model, out_of_element|
             expect(out_of_element).to eq(model.max_mark.to_s)
           end
@@ -141,11 +141,11 @@ describe CourseSummariesController do
           medians = []
           returned_averages = @response_data[:graph_data][:average]
           returned_medians = @response_data[:graph_data][:median]
-          Assessment.all.order(id: :asc).each do |a|
+          Assessment.order(id: :asc).each do |a|
             averages << a.results_average&.round(2)
             medians << a.results_median&.round(2)
           end
-          MarkingScheme.all.each do |m|
+          MarkingScheme.find_each do |m|
             total = m.marking_weights.pluck(:weight).compact.sum
             grades = m.students_weighted_grades_array(instructor)
             averages << (DescriptiveStatistics.mean(grades) * 100 / total).round(2).to_f
@@ -198,7 +198,7 @@ describe CourseSummariesController do
       end
       context 'when assessments are hidden' do
         before :each do
-          Assessment.all.each do |a|
+          Assessment.find_each do |a|
             a.update(is_hidden: true)
           end
         end
@@ -211,12 +211,12 @@ describe CourseSummariesController do
         end
 
         it 'displays limited information if only some assessments are hidden' do
-          assignment = Assignment.all.first
+          assignment = Assignment.first
           assignment.update(is_hidden: false)
           grouping = assignment.groupings.first
           grouping.current_result.update(released_to_students: true)
           student = grouping.inviter
-          gef = GradeEntryForm.all.first
+          gef = GradeEntryForm.first
           gef.update(is_hidden: false)
           expected_assessment_marks = {}
           mark = grouping.current_result.get_total_mark
@@ -259,7 +259,7 @@ describe CourseSummariesController do
             medians = []
             returned_averages = response_data[:graph_data][:average]
             returned_medians = response_data[:graph_data][:median]
-            Assessment.all.order(id: :asc).each do |a|
+            Assessment.order(id: :asc).each do |a|
               averages << a.results_average&.round(2)
               medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
             end

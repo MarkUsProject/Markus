@@ -194,7 +194,7 @@ class GradeEntryFormsController < ApplicationController
         flash_message(:error, e.message)
         raise ActiveRecord::Rollback
       end
-      GradeEntryStudent.where(id: params[:students]).includes(:role).each do |current_student|
+      GradeEntryStudent.where(id: params[:students]).includes(:role).find_each do |current_student|
         if current_student.role.receives_results_emails?
           NotificationMailer.with(student: current_student, form: grade_entry_form, course: current_course)
                             .release_spreadsheet_email.deliver_later

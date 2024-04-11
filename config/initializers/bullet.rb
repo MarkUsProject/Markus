@@ -1,6 +1,6 @@
 # Configuration for the 'bullet' gem
 
-if Rails.env.development? || Rails.env.test?
+if Rails.env.local?
   Rails.application.config.after_initialize do
     Bullet.enable = true
     # Bullet.sentry = true

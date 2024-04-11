@@ -52,7 +52,7 @@ describe Api::UsersController do
           it 'should return info about all the users' do
             get :index
             user_names = Hash.from_xml(response.body).dig('users', 'user').pluck('user_name')
-            expect(user_names).to contain_exactly(*User.all.pluck(:user_name))
+            expect(user_names).to contain_exactly(*User.pluck(:user_name))
           end
           it 'should return info about a single user if a filter is used' do
             get :index, params: { filter: { user_name: end_users[0].user_name } }
@@ -76,7 +76,7 @@ describe Api::UsersController do
           end
           it 'should return info about all the users' do
             get :index
-            expect(response.parsed_body.pluck('user_name')).to contain_exactly(*User.all.pluck(:user_name))
+            expect(response.parsed_body.pluck('user_name')).to contain_exactly(*User.pluck(:user_name))
           end
           it 'should return info about a single user if a filter is used' do
             get :index, params: { filter: { user_name: end_users[0].user_name } }

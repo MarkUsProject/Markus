@@ -215,7 +215,7 @@ describe AnnotationCategory do
 
     it 'correctly scales annotation text deductions when called due to flexible_criterion_id update' do
       new_criterion = create(:flexible_criterion, assignment: assignment)
-      assignment.groupings.includes(:current_result).each do |grouping|
+      assignment.groupings.includes(:current_result).find_each do |grouping|
         create(:mark,
                criterion_id: new_criterion.id,
                result: grouping.current_result)

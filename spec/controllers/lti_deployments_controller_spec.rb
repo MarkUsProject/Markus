@@ -93,7 +93,7 @@ describe LtiDeploymentsController do
       end
       it 'does not create a new course' do
         post_as instructor, :create_course, params: course_params
-        expect(Course.all.count).to eq(1)
+        expect(Course.count).to eq(1)
       end
       it 'does redirect to choose_course' do
         post_as instructor, :create_course, params: course_params

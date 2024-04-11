@@ -465,13 +465,13 @@ describe Api::RolesController do
           request.env['HTTP_ACCEPT'] = 'application/xml'
           get :index, params: { course_id: course.id }
           user_names = Hash.from_xml(response.body).dig('roles', 'role').pluck('user_name')
-          expect(user_names).to contain_exactly(*User.all.pluck(:user_name))
+          expect(user_names).to contain_exactly(*User.pluck(:user_name))
         end
         it 'json response returns info about all users' do
           students
           request.env['HTTP_ACCEPT'] = 'application/json'
           get :index, params: { course_id: course.id }
-          expect(response.parsed_body.pluck('user_name')).to contain_exactly(*User.all.pluck(:user_name))
+          expect(response.parsed_body.pluck('user_name')).to contain_exactly(*User.pluck(:user_name))
         end
       end
 

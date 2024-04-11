@@ -538,13 +538,13 @@ describe CoursesController do
     end
     it 'deletes the deployment' do
       delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
-      expect(LtiDeployment.all.count).to eq(0)
+      expect(LtiDeployment.count).to eq(0)
     end
     context 'with dependent line items' do
       let!(:lti_line_item) { create :lti_line_item, lti_deployment: lti_deployment }
       it 'deletes the line item' do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
-        expect(LtiLineItem.all.count).to eq(0)
+        expect(LtiLineItem.count).to eq(0)
       end
     end
     context 'with dependent services' do
@@ -552,14 +552,14 @@ describe CoursesController do
       let!(:lti_line_item_service) { create :lti_service_lineitem, lti_deployment: lti_deployment }
       it 'deletes the dependent objects' do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
-        expect(LtiService.all.count).to eq(0)
+        expect(LtiService.count).to eq(0)
       end
     end
     context 'with lti users' do
       let!(:lti_user) { create :lti_user, user: student.user }
       it 'does not delete users' do
         delete_as instructor, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
-        expect(LtiUser.all.count).to eq(1)
+        expect(LtiUser.count).to eq(1)
       end
     end
   end
