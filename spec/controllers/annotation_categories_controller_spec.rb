@@ -700,11 +700,11 @@ describe AnnotationCategoriesController do
         test_category_name = 'test_category'
         test_content = 'c6conley'
         found_cat = false
-        AnnotationCategory.all.each do |ac|
+        AnnotationCategory.find_each do |ac|
           next unless ac['annotation_category_name'] == test_category_name
 
           found_cat = true
-          expect(AnnotationText.where(annotation_category: ac).take['content']).to eq(test_content)
+          expect(AnnotationText.find_by(annotation_category: ac)['content']).to eq(test_content)
         end
         expect(found_cat).to eq(true)
       end

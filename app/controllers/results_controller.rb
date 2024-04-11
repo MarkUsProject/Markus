@@ -175,7 +175,7 @@ class ResultsController < ApplicationController
             info.merge(criterion_type: klass.name)
           end
         end
-        marks_map.sort! { |a, b| a[:position] <=> b[:position] }
+        marks_map.sort_by! { |a| a[:position] }
 
         if original_result.nil?
           old_marks = {}

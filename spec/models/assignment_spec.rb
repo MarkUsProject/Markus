@@ -871,7 +871,7 @@ describe Assignment do
           end
 
           it 'be able to get_repo_checkout_commands with spaces in group name ' do
-            Group.all.each do |group|
+            Group.find_each do |group|
               group.group_name = group.group_name + ' Test'
               group.save
             end

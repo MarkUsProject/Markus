@@ -65,7 +65,7 @@ namespace :db do
                                     .transform_values! { |x| x[0][2] }
 
     annotation_text_ids = {}
-    Assignment.all.where('assessments.short_identifier': %w[A0 A1 A2]).each do |a|
+    Assignment.where('assessments.short_identifier': %w[A0 A1 A2]).find_each do |a|
       annotation_text_ids[a.id] = a.annotation_categories.joins(:annotation_texts)
                                    .where('annotation_categories.flexible_criterion_id': nil)
                                    .pluck('annotation_texts.id')
@@ -74,7 +74,7 @@ namespace :db do
     # The deductive annotation categories for each assignment.
     # There should be two per assignment.
     deductive_categories = {}
-    Assignment.where('assessments.short_identifier': %w[A0 A1 A2]).each do |a|
+    Assignment.where('assessments.short_identifier': %w[A0 A1 A2]).find_each do |a|
       deductive_categories[a.id] = a.annotation_categories.where.not(flexible_criterion_id: nil).map do |cat|
         { criterion_id: cat.flexible_criterion_id, text_ids: cat.annotation_texts.ids }
       end

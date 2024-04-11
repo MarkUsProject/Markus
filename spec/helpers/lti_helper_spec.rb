@@ -96,23 +96,23 @@ describe LtiHelper do
         end
         it 'creates a new user' do
           subject
-          expect(EndUser.all.count).to eq(2)
+          expect(EndUser.count).to eq(2)
         end
         it 'does not create tas' do
           subject
-          expect(Ta.all.count).to eq(0)
+          expect(Ta.count).to eq(0)
         end
         it 'does not create instructors' do
           subject
-          expect(Instructor.all.count).to eq(0)
+          expect(Instructor.count).to eq(0)
         end
         it 'creates roles with an admin role' do
           subject
-          expect(Student.all.count).to eq(2)
+          expect(Student.count).to eq(2)
         end
         it 'creates lti users' do
           subject
-          expect(LtiUser.all.count).to eq(2)
+          expect(LtiUser.count).to eq(2)
         end
       end
       context 'when run by an instructor' do
@@ -122,25 +122,25 @@ describe LtiHelper do
         end
         it 'does create users' do
           subject
-          expect(EndUser.all.count).to eq(2)
+          expect(EndUser.count).to eq(2)
         end
         it 'does not create tas' do
           subject
-          expect(Ta.all.count).to eq(0)
+          expect(Ta.count).to eq(0)
         end
         it 'does not create instructors' do
           subject
-          expect(Instructor.all.count).to eq(0)
+          expect(Instructor.count).to eq(0)
         end
         context 'with a new enduser' do
           let!(:new_user) { create :end_user, user_name: 'second_username' }
           it 'creates roles' do
             subject
-            expect(Student.all.count).to eq(2)
+            expect(Student.count).to eq(2)
           end
           it 'creates lti users' do
             subject
-            expect(LtiUser.all.count).to eq(2)
+            expect(LtiUser.count).to eq(2)
           end
         end
       end
@@ -158,23 +158,23 @@ describe LtiHelper do
         end
         it 'creates a new user' do
           subject
-          expect(EndUser.all.count).to eq(3)
+          expect(EndUser.count).to eq(3)
         end
         it 'does create tas' do
           subject
-          expect(Ta.all.count).to eq(1)
+          expect(Ta.count).to eq(1)
         end
         it 'does not create instructors' do
           subject
-          expect(Instructor.all.count).to eq(0)
+          expect(Instructor.count).to eq(0)
         end
         it 'creates roles with an admin role' do
           subject
-          expect(Student.all.count).to eq(2)
+          expect(Student.count).to eq(2)
         end
         it 'creates lti users' do
           subject
-          expect(LtiUser.all.count).to eq(3)
+          expect(LtiUser.count).to eq(3)
         end
       end
       context 'when run by an instructor' do
@@ -184,25 +184,25 @@ describe LtiHelper do
         end
         it 'does create users' do
           subject
-          expect(EndUser.all.count).to eq(3)
+          expect(EndUser.count).to eq(3)
         end
         it 'does create tas' do
           subject
-          expect(Ta.all.count).to eq(1)
+          expect(Ta.count).to eq(1)
         end
         it 'does not create instructors' do
           subject
-          expect(Instructor.all.count).to eq(0)
+          expect(Instructor.count).to eq(0)
         end
         context 'with a new enduser' do
           let!(:new_user) { create :end_user, user_name: 'second_username' }
           it 'creates roles' do
             subject
-            expect(Student.all.count).to eq(2)
+            expect(Student.count).to eq(2)
           end
           it 'creates lti users' do
             subject
-            expect(LtiUser.all.count).to eq(3)
+            expect(LtiUser.count).to eq(3)
           end
         end
       end
@@ -221,23 +221,23 @@ describe LtiHelper do
         end
         it 'creates a new user' do
           subject
-          expect(EndUser.all.count).to eq(4)
+          expect(EndUser.count).to eq(4)
         end
         it 'does create tas' do
           subject
-          expect(Ta.all.count).to eq(1)
+          expect(Ta.count).to eq(1)
         end
         it 'does create instructors' do
           subject
-          expect(Instructor.all.count).to eq(1)
+          expect(Instructor.count).to eq(1)
         end
         it 'creates roles with an admin role' do
           subject
-          expect(Student.all.count).to eq(2)
+          expect(Student.count).to eq(2)
         end
         it 'creates lti users' do
           subject
-          expect(LtiUser.all.count).to eq(4)
+          expect(LtiUser.count).to eq(4)
         end
       end
       context 'when run by an instructor' do
@@ -248,25 +248,25 @@ describe LtiHelper do
         end
         it 'does create users' do
           subject
-          expect(EndUser.all.count).to eq(4)
+          expect(EndUser.count).to eq(4)
         end
         it 'does create tas' do
           subject
-          expect(Ta.all.count).to eq(1)
+          expect(Ta.count).to eq(1)
         end
         it 'does create instructors' do
           subject
-          expect(Instructor.all.count).to eq(1)
+          expect(Instructor.count).to eq(1)
         end
         context 'with a new enduser' do
           let!(:new_user) { create :end_user, user_name: 'second_username' }
           it 'creates roles' do
             subject
-            expect(Student.all.count).to eq(2)
+            expect(Student.count).to eq(2)
           end
           it 'creates lti users' do
             subject
-            expect(LtiUser.all.count).to eq(4)
+            expect(LtiUser.count).to eq(4)
           end
         end
       end
@@ -309,25 +309,25 @@ describe LtiHelper do
       end
       it 'does create users' do
         subject
-        expect(EndUser.all.count).to eq(4)
+        expect(EndUser.count).to eq(4)
       end
       it 'does create tas' do
         subject
-        expect(Ta.all.count).to eq(1)
+        expect(Ta.count).to eq(1)
       end
       it 'does create instructors' do
         subject
-        expect(Instructor.all.count).to eq(1)
+        expect(Instructor.count).to eq(1)
       end
       context 'with a new enduser' do
         let!(:new_user) { create :end_user, user_name: 'second_username' }
         it 'creates roles' do
           subject
-          expect(Student.all.count).to eq(2)
+          expect(Student.count).to eq(2)
         end
         it 'creates lti users' do
           subject
-          expect(LtiUser.all.count).to eq(4)
+          expect(LtiUser.count).to eq(4)
         end
       end
     end
@@ -338,7 +338,7 @@ describe LtiHelper do
     let!(:assessment2) { create :assignment_with_criteria_and_results, course: course }
     context 'with lti user ids' do
       before :each do
-        User.all.each do |usr|
+        User.find_each do |usr|
           create :lti_user, user: usr, lti_client: lti_deployment.lti_client if LtiUser.find_by(user: usr).nil?
         end
         Result.joins(grouping: :assignment)
@@ -378,7 +378,7 @@ describe LtiHelper do
     let!(:assessment) { create :grade_entry_form_with_data, course: course }
     context 'with lti user ids' do
       before :each do
-        User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
+        User.find_each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
       end
       it 'does not get unreleased grades' do
         expect(get_grade_entry_form_marks(lti_deployment, assessment)).to be_empty
@@ -427,7 +427,7 @@ describe LtiHelper do
     before :each do
       Result.joins(grouping: :assignment)
             .where('assignment.id': assessment.id).update!(released_to_students: true)
-      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
+      User.find_each { |usr| create :lti_user, user: usr, lti_client: lti_deployment.lti_client }
       allow_any_instance_of(LtiHelper).to(receive(:create_or_update_lti_assessment)
                                             .and_return(OpenStruct.new(
                                                           body: { id: 'https://test.example.com/line_items/1' }.to_json

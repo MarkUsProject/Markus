@@ -716,8 +716,7 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    students = Student.all
-                      .includes(:accepted_groupings, :section)
+    students = Student.includes(:accepted_groupings, :section)
                       .where('accepted_groupings.assessment_id': self.id)
                       .joins(:user)
                       .order('users.user_name')

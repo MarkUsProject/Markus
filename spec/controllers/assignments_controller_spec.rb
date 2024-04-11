@@ -1902,8 +1902,8 @@ describe AssignmentsController do
         FileUtils.rm_f(zip_path)
         File.write(zip_path, response.body, mode: 'wb')
         assignment_zip = fixture_file_upload(zip_path, 'application/zip')
-        Tag.all.destroy_all
-        Assignment.all.destroy_all
+        Tag.destroy_all
+        Assignment.destroy_all
         post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
                                                       is_timed: false, is_scanned: false,
                                                       course_id: assignment.course.id }
@@ -1996,8 +1996,8 @@ describe AssignmentsController do
         FileUtils.rm_f(zip_path)
         File.write(zip_path, response.body, mode: 'wb')
         assignment_zip = fixture_file_upload(zip_path, 'application/zip')
-        Tag.all.destroy_all
-        Assignment.all.destroy_all
+        Tag.destroy_all
+        Assignment.destroy_all
         # Upload parent first then peer review
         post_as user, :upload_config_files, params: { upload_files_for_config: parent_assignment_zip,
                                                       is_timed: false, is_scanned: false,
@@ -2031,7 +2031,7 @@ describe AssignmentsController do
     before :each do
       Result.joins(grouping: :assignment)
             .where('assignment.id': assignment.id).update!(released_to_students: true)
-      User.all.each { |usr| create :lti_user, user: usr, lti_client: lti.lti_client }
+      User.find_each { |usr| create :lti_user, user: usr, lti_client: lti.lti_client }
     end
     it 'redirects if not logged in' do
       post :create_lti_grades, params: { lti_deployments: [lti.id], id: assignment.id, course_id: course.id }
