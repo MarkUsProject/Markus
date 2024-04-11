@@ -13,6 +13,9 @@ npm list &> /dev/null || npm ci
 ./venv/bin/python3 -m pip install -r requirements-scanner.txt > /dev/null
 ./venv/bin/python3 -m pip install -r requirements-qr.txt > /dev/null
 
+# install chromium (for nbconvert webpdf conversion)
+./venv/bin/python3 -m playwright install chromium
+
 # setup the database (checks for db existence first)
 until pg_isready -q; do
   echo "waiting for database to start up"

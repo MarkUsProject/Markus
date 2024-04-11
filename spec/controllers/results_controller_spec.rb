@@ -1829,9 +1829,8 @@ describe ResultsController do
       end
 
       it 'responds with the correct filename' do
-        filename = response.header['Content-Disposition']
-                           .split[1].split('"').second
-        expect(filename).to eq "#{assignment.short_identifier}_#{complete_result.grouping.group.group_name}.pdf"
+        filename = URI.decode_www_form_component(response.header['Content-Disposition']).split("UTF-8''").second
+        expect(filename).to eq complete_result.print_pdf_filename
       end
     end
 

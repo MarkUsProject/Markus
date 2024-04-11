@@ -184,4 +184,17 @@ FactoryBot.define do
       evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
     end
   end
+
+  factory :assignment_with_test_groups_student_runnable, parent: :assignment do
+    after(:create) do |a|
+      create(:test_group_student_runnable, assignment: a)
+      2.times { create(:test_group, assignment: a) }
+    end
+  end
+
+  factory :assignment_with_test_groups_not_student_runnable, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:test_group, assignment: a) }
+    end
+  end
 end
