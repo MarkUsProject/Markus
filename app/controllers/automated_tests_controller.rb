@@ -138,7 +138,7 @@ class AutomatedTestsController < ApplicationController
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
     unzip = params[:unzip] == 'true'
-    autotest_files_path = FileHelper.checked_join(assignment.autotest_files_dir, params[:path])
+    autotest_files_path = FileHelper.checked_join(assignment.autotest_files_dir, params[:path] || '')
     if autotest_files_path.nil?
       flash_now(:error, I18n.t('errors.invalid_path'))
       render partial: 'update_files'
