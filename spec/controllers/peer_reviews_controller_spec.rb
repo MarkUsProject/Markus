@@ -318,7 +318,6 @@ describe PeerReviewsController do
                         result_id: Grouping.find(@selected_reviewee_group_ids[2]).current_result.id)
       PeerReview.create(reviewer_id: @selected_reviewer_group_ids[2],
                         result_id: Grouping.find(@selected_reviewee_group_ids[0]).current_result.id)
-      @num_peer_reviews = @assignment_with_pr.peer_reviews.count
     end
 
     it 'should list out total marks for each peer review' do
