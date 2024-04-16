@@ -340,10 +340,6 @@ describe PeerReviewsController do
       response_hash = JSON.parse(response.body)
       final_grades = response_hash.pluck('final_grade')
       expect(final_grades).to all eq(max_mark)
-
-      #       final_grades.each do |final_grade|
-      #         expect(final_grade).to eq(max_mark)
-      #       end
     end
   end
 end
