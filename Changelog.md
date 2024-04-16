@@ -1,5 +1,8 @@
 # Changelog
 
+## [v2.4.9]
+- Peer review table bug fix to display total marks (#7034)
+
 ## [v2.4.8]
 - Validate user-provided paths (#7025)
 

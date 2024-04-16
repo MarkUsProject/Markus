@@ -285,4 +285,39 @@ describe PeerReviewsController do
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end
+
+  describe 'When listing peer reviews in Peer Reviews tab' do
+    let(:instructor) { create(:instructor) }
+    let(:max_mark) { 3 }
+
+    before do
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[0],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[1]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[1],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[2]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[2],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[0]).current_result.id)
+    end
+
+    it 'should list out total marks for each peer review' do
+      create_list(:flexible_criterion, 1, assignment: @assignment_with_pr.pr_assignment)
+      @assignment_with_pr.pr_assignment.criteria.first.update(peer_visible: true)
+      @assignment_with_pr.pr_assignment.criteria.first.update(max_mark: max_mark)
+
+      @assignment_with_pr.pr_assignment.groupings.each do |grouping|
+        result = grouping.peer_reviews_to_others.first.result
+        @assignment_with_pr.pr_assignment.criteria.each do |c|
+          mark = c.marks.find_or_create_by(result_id: result.id)
+          mark.update(mark: max_mark)
+        end
+        result.update(marking_state: Result::MARKING_STATES[:complete])
+      end
+
+      response = get_as instructor, :populate_table,
+                        params: { course_id: @assignment_with_pr.pr_assignment.course.id, assignment_id: @pr_id }
+      response_hash = JSON.parse(response.body)
+      final_grades = response_hash.pluck('final_grade')
+      expect(final_grades).to all eq(max_mark)
+    end
+  end
 end
