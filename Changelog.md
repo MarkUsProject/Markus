@@ -11,6 +11,7 @@
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 - Display error message for student-run tests when no test groups are runnable (#7003)
 - Added a confirmation check while renaming a file with a different extension (#7024)
+- Peer review table bug fix to display total marks (#7034)
 
 ## [v2.4.8]
 - Validate user-provided paths (#7025)
