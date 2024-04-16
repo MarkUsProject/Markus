@@ -330,6 +330,41 @@ describe AutomatedTestsController do
           expect(File).to exist(File.expand_path(File.join(assignment.autotest_files_dir, '../../../../../LICENSE')))
         end
       end
+
+      context 'when a valid filename to be deleted is provided' do
+        let(:unzip) { 'false' }
+        let(:zip_file) { fixture_file_upload('test_zip.zip', 'application/zip') }
+        let(:params) do
+          { course_id: assignment.course.id, assignment_id: assignment.id,
+            unzip: unzip, new_files: [zip_file] }
+        end
+        let(:delete_params) do
+          { course_id: assignment.course.id, assignment_id: assignment.id,
+            unzip: false, delete_files: ['test_zip.zip'] }
+        end
+
+        it 'does delete the file' do
+          post_as role, :upload_files, params: delete_params
+          expect(File).not_to exist(File.expand_path(File.join(assignment.autotest_files_dir, 'test_zip.zip')))
+        end
+      end
+
+      context 'when a valid directory to be deleted is provided' do
+        let(:unzip) { 'false' }
+        let(:params) do
+          { course_id: assignment.course.id, assignment_id: assignment.id,
+            unzip: unzip, new_folers: ['hello'], path: '/' }
+        end
+        let(:delete_params) do
+          { course_id: assignment.course.id, assignment_id: assignment.id,
+            unzip: false, delete_folders: ['hello'] }
+        end
+
+        it 'does delete the file' do
+          post_as role, :upload_files, params: delete_params
+          expect(Dir).not_to exist(File.expand_path(File.join(assignment.autotest_files_dir, 'hello')))
+        end
+      end
     end
 
     context 'GET download_specs' do
