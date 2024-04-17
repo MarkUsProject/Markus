@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.4.9]
+- Peer review table bug fix to display total marks (#7034)
+- Fix bug preventing deletion of autotest files (#7033)
+
 ## [v2.4.8]
 - Validate user-provided paths (#7025)
 
