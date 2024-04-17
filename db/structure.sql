@@ -397,8 +397,7 @@ CREATE TABLE public.assignment_properties (
     url_submit boolean DEFAULT false NOT NULL,
     autotest_settings json,
     api_submit boolean DEFAULT false NOT NULL,
-    release_with_urls boolean DEFAULT false NOT NULL,
-    token_end_date timestamp(6) without time zone
+    release_with_urls boolean DEFAULT false NOT NULL
 );
 
 
@@ -4692,5 +4691,4 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20221219204837'),
 ('20230109190029'),
 ('20230303030615'),
-('20230713153536'),
-('20240313191809');
+('20230713153536');
