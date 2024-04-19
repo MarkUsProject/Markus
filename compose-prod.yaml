@@ -73,7 +73,7 @@ services:
     command: bundle exec rails resque:scheduler
 
   postgres:
-    image: postgres:12.11
+    image: postgres:14
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
@@ -81,7 +81,7 @@ services:
       - POSTGRES_INITDB_ARGS="-A md5"
 
   redis:
-    image: redis:5.0.14-alpine
+    image: redis:7
     volumes:
       - redis:/data
     ports:
