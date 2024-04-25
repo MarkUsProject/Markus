@@ -2106,11 +2106,38 @@ describe Assignment do
         end
       end
 
-      it 'has group with members' do
-        Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
-        data = assignment_tag.summary_json(ta)[:data]
-        expect(data[0][:members]).not_to be_empty
-        expect(data[0][:members][0]).not_to include(nil)
+      context 'groups with group members' do
+        let(:members) do
+          groupings.map do |g|
+            g.accepted_students.joins(:user).pluck('users.user_name',
+                                                   'users.first_name',
+                                                   'users.last_name',
+                                                   'roles.hidden')
+          end
+        end
+
+        before do
+          Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+          @data = assignment_tag.summary_json(ta)[:data]
+        end
+
+        (0..2).each do |idx|
+          context "group_000#{idx}" do
+            it 'has exactly one group member' do
+              expect(@data[idx][:members].size).to eq 1
+            end
+
+            it 'has a group member that is complete' do
+              # each group one only contains one member
+              expect(@data[idx][:members][0].size).to eq 4
+              expect(@data[idx][:members][0]).not_to include(nil)
+            end
+
+            it 'has a group member with the correct information' do
+              expect(@data[idx][:members]).to match_array(members[idx])
+            end
+          end
+        end
       end
 
       it 'has tags correct info' do
