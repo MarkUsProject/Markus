@@ -42,6 +42,7 @@ en:
     no_criteria: Unable to find a criterion with name "%{name}".
     no_results: No test results to display
     no_student_runnable_tests: No tests are available for students to run.
+    no_instructor_runnable_tests: No tests are available for instructors to run.
     results:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"

@@ -18,4 +18,10 @@ FactoryBot.define do
       test_group.update!(autotest_settings: { 'category' => ['student'] })
     end
   end
+
+  factory :test_group_instructor_runnable, parent: :test_group do
+    after :create do |test_group|
+      test_group.update!(autotest_settings: { 'category' => ['instructor'] })
+    end
+  end
 end
