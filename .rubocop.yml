@@ -10,6 +10,7 @@ AllCops:
     - 'db/migrate/.*'
     - 'db/schema.rb'
     - 'lib/repo/test/.*'
+    - 'Vagrantfile'
   NewCops: enable
   SuggestExtensions: false
   TargetRubyVersion: 2.7
