@@ -40,9 +40,9 @@ en:
     need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.
     no_autotest_settings: No automated tester settings exist for this course. Please update the automated tester settings and try again.
     no_criteria: Unable to find a criterion with name "%{name}".
+    no_instructor_runnable_tests: No tests are available for instructors to run.
     no_results: No test results to display
     no_student_runnable_tests: No tests are available for students to run.
-    no_instructor_runnable_tests: No tests are available for instructors to run.
     results:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
