@@ -42,7 +42,8 @@ repos:
           (?x)^(
             db/migrate/.*|
             db/schema.rb|
-            lib/repo/test/.*
+            lib/repo/test/.*|
+            Vagrantfile
           )$
         additional_dependencies:
           - rubocop-rails:2.19.1
