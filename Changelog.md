@@ -1,16 +1,27 @@
 # Changelog
 
 ## [unreleased]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
 - Allow deletion of assignments with no groups (#6880)
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
-- Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
-- Minor improvements in assignment association options (#6989)
 - Allow instructors to configure an end date until which students can run automated tests (#6992)
 - Gave TAs read-only access to starter file information under assignment settings (#6996)
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 - Display error message for student-run tests when no test groups are runnable (#7003)
 - Added a confirmation check while renaming a file with a different extension (#7024)
+
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+- Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
+- Minor improvements in assignment association options (#6989)
+- Update changelog and pull request template formats (#7041)
 
 ## [v2.4.9]
 - Peer review table bug fix to display total marks (#7034)
