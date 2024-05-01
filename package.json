@@ -52,7 +52,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
     "jsdom-worker": "^0.3.0",
-    "mini-css-extract-plugin": "^2.8.1",
+    "mini-css-extract-plugin": "^2.9.0",
     "sass": "^1.72.0",
     "sass-loader": "^14.1.1",
     "webpack": "^5.91.0",
