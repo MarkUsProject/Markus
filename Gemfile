@@ -62,6 +62,7 @@ gem 'activemodel-serializers-xml'
 gem 'activerecord-session_store'
 gem 'config'
 gem 'cookies_eu'
+gem 'dry-validation'  # For settings schema validation
 gem 'exception_notification'
 gem 'rails-html-sanitizer'
 gem 'rails_performance'
