@@ -72,8 +72,10 @@ module Api
         render 'shared/http_status', locals: { code: '422', message:
           'Invalid or malformed parameter values' }, status: :unprocessable_entity
         false
+      elsif filter_params.empty?
+        collection.order('id')
       else
-        collection.order('id').where(filter_params)
+        collection.order('id').where(**filter_params)
       end
     end
 
