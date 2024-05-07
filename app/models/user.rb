@@ -37,10 +37,12 @@ class User < ApplicationRecord
   AUTHENTICATE_ERROR = 'error'.freeze
   AUTHENTICATE_BAD_PLATFORM = 'bad_platform'.freeze
   AUTHENTICATE_BAD_CHAR = 'bad_char'.freeze
+  AUTHENTICATE_LOCAL = 'local'.freeze
+  AUTHENTICATE_REMOTE = 'remote'.freeze
 
   # Authenticates login against its password
   # through a script specified by Settings.validate_file
-  def self.authenticate(login, password, ip: nil)
+  def self.authenticate(login, password: nil, ip: nil, auth_type: AUTHENTICATE_LOCAL)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
@@ -62,7 +64,8 @@ class User < ApplicationRecord
 
       # In general, the external password validation program should exit with 0 for success
       # and exit with any other integer for failure.
-      pipe = IO.popen("'#{Settings.validate_file}'", 'w+') # quotes to avoid choking on spaces
+      validate_script = auth_type == AUTHENTICATE_LOCAL ? Settings.validate_file : Settings.remote_validate_file
+      pipe = IO.popen("'#{validate_script}'", 'w+') # quotes to avoid choking on spaces
       to_stdin = [login, password, ip].compact.join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close

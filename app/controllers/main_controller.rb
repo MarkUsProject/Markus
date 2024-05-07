@@ -45,6 +45,13 @@ class MainController < ApplicationController
                            name: Settings.remote_auth_login_name ||
                                  I18n.t('main.external_authentication_default_name')))
     end
+    if remote_auth? && Settings.remote_validate_file
+      unless validate_login(params[:user_login], params[:user_password], auth_type: User::AUTHENTICATE_REMOTE)
+        flash_message(:error, I18n.t('main.external_authentication_bad_ip',
+                                     name: Settings.remote_auth_login_name ||
+                                       I18n.t('main.external_authentication_default_name'))))
+      end
+    end
     return unless request.post?
 
     # Get information of the user that is trying to login if his or her
@@ -130,17 +137,17 @@ class MainController < ApplicationController
   # same for regular logins and are different on an assume role call.
   # If the login keyword is true then this method also authenticates the real_user
   #
-  def validate_login(user_name, password)
-    if user_name.blank? || password.blank?
+  def validate_login(user_name, password, auth_type: User::AUTHENTICATE_LOCAL)
+    if user_name.blank? || (password.blank? && auth_type == User::AUTHENTICATE_LOCAL)
       flash_now(:error, get_blank_message(user_name, password))
       return false
     end
 
     # No validate file means only remote authentication is allowed
-    return false unless Settings.validate_file
+    return false unless Settings.validate_file || Settings.remote_validate_file
 
     ip = Settings.validate_ip ? request.remote_ip : nil
-    authenticate_response = User.authenticate(user_name, password, ip: ip)
+    authenticate_response = User.authenticate(user_name, password: password, ip: ip, auth_type: auth_type)
     custom_status = Settings.validate_custom_status_message[authenticate_response]
 
     if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
