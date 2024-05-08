@@ -2068,9 +2068,22 @@ describe ResultsController do
                            remote_autotest_settings_id: 1)
       end
 
-      it 'enqueues an AutotestRunJob' do
-        params = { course_id: course.id, id: incomplete_result.id }
-        expect { post :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
+      context 'at least one test-group can be run by instructors' do
+        let(:assignment) { create(:assignment_with_test_groups_instructor_runnable) }
+
+        it 'enqueues an AutotestRunJob' do
+          params = { course_id: course.id, id: incomplete_result.id }
+          expect { post :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
+        end
+      end
+
+      context 'no test-group can be run by instructors' do
+        let(:assignment) { create(:assignment_with_test_groups_not_instructor_runnable) }
+
+        it 'does not enqueue an AutotestRunJob' do
+          params = { course_id: course.id, id: incomplete_result.id }
+          expect { post :run_tests, params: params }.not_to have_enqueued_job(AutotestRunJob)
+        end
       end
     end
   end
