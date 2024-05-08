@@ -23,6 +23,14 @@ class MainController < ApplicationController
   def login
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
+      if remote_auth? && Settings.remote_validate_file && !validate_login(request.env['HTTP_X_FORWARDED_USER'], '',
+                                                                          auth_type: User::AUTHENTICATE_REMOTE)
+        logout
+        flash_message(:error, I18n.t('main.external_authentication_bad_ip',
+                                     name: Settings.remote_auth_login_name ||
+                                       I18n.t('main.external_authentication_default_name')))
+        return
+      end
       if cookies.encrypted[:lti_data].present?
         lti_data = JSON.parse(cookies.encrypted[:lti_data]).symbolize_keys
         redirect_url = lti_data.fetch(:lti_redirect, root_url)
@@ -44,13 +52,6 @@ class MainController < ApplicationController
                     I18n.t('main.external_authentication_user_not_found',
                            name: Settings.remote_auth_login_name ||
                                  I18n.t('main.external_authentication_default_name')))
-    end
-    if remote_auth? && Settings.remote_validate_file
-      unless validate_login(params[:user_login], params[:user_password], auth_type: User::AUTHENTICATE_REMOTE)
-        flash_message(:error, I18n.t('main.external_authentication_bad_ip',
-                                     name: Settings.remote_auth_login_name ||
-                                       I18n.t('main.external_authentication_default_name'))))
-      end
     end
     return unless request.post?
 
