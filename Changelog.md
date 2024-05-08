@@ -15,6 +15,7 @@
 - Display error message for student-run tests when no test groups are runnable (#7003)
 - Added a confirmation check while renaming a file with a different extension (#7024)
 - Ensure user params are passed as keyword arguments to database queries (#7040)
+- Allow restricting IP addresses for remote logins (#7072)
 
 ### 🐛 Bug fixes
 
