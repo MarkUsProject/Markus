@@ -14,6 +14,7 @@
 - Allow inactive groups in the submissions table to be toggled for display (#7000)
 - Display error message for student-run tests when no test groups are runnable (#7003)
 - Added a confirmation check while renaming a file with a different extension (#7024)
+- Allow inactive groups in the summary table to be toggled for display (#7029)
 - Display error message for instructor-run tests when no test groups are runnable by instructors (#7038)
 - Ensure user params are passed as keyword arguments to database queries (#7040)
 

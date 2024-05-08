@@ -20,12 +20,26 @@ export class AssignmentSummaryTable extends React.Component {
       showDownloadTestsModal: false,
       showLtiGradeModal: false,
       lti_deployments: [],
+      filtered: [],
+      inactiveGroupsCount: 0,
     };
   }
 
   componentDidMount() {
     this.fetchData();
   }
+
+  toggleShowInactiveGroups = showInactiveGroups => {
+    let filtered = this.state.filtered.filter(group => {
+      group.id !== "inactive";
+    });
+
+    if (!showInactiveGroups) {
+      filtered.push({id: "inactive", value: false});
+    }
+
+    this.setState({filtered});
+  };
 
   memberDisplay = (group_name, members) => {
     if (members.length !== 0 && !(members.length === 1 && members[0][0] === group_name)) {
@@ -57,6 +71,19 @@ export class AssignmentSummaryTable extends React.Component {
           col["filterable"] = false;
           col["defaultSortDesc"] = true;
         });
+
+        let inactive_groups_count = 0;
+        res.data.forEach(group => {
+          if (group.members.length && group.members.every(member => member[3])) {
+            group.inactive = true;
+            inactive_groups_count++;
+          } else {
+            group.inactive = false;
+          }
+        });
+
+        this.toggleShowInactiveGroups(false);
+
         const markingStates = getMarkingStates(res.data);
         this.setState({
           data: res.data,
@@ -66,6 +93,7 @@ export class AssignmentSummaryTable extends React.Component {
           loading: false,
           marking_states: markingStates,
           lti_deployments: res.ltiDeployments,
+          inactiveGroupsCount: inactive_groups_count,
         });
       });
   };
@@ -83,6 +111,11 @@ export class AssignmentSummaryTable extends React.Component {
 
   fixedColumns = () => {
     return [
+      {
+        show: false,
+        accessor: "inactive",
+        id: "inactive",
+      },
       {
         Header: I18n.t("activerecord.models.group.one"),
         id: "group_name",
@@ -200,6 +233,15 @@ export class AssignmentSummaryTable extends React.Component {
         </button>
       );
     }
+
+    let displayInactiveGroupsTooltip = "";
+
+    if (this.state.inactiveGroupsCount !== null) {
+      displayInactiveGroupsTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_groups", {
+        count: this.state.inactiveGroupsCount,
+      })}`;
+    }
+
     return (
       <div>
         <div style={{display: "inline-block"}}>
@@ -218,33 +260,51 @@ export class AssignmentSummaryTable extends React.Component {
             {I18n.t("submissions.state.complete")}
           </div>
         </div>
-        {this.props.is_instructor && (
-          <div className="rt-action-box">
-            <form
-              action={Routes.summary_course_assignment_path({
-                course_id: this.props.course_id,
-                id: this.props.assignment_id,
-                format: "csv",
-                _options: true,
-              })}
-              method="get"
-            >
-              <button type="submit" name="download">
-                {I18n.t("download")}
+        <div className="rt-action-box">
+          <input
+            id="show_inactive_groups"
+            name="show_inactive_groups"
+            type="checkbox"
+            onChange={e => this.toggleShowInactiveGroups(e.target.checked)}
+            className={"hide-user-checkbox"}
+            data-testid={"show_inactive_groups"}
+          />
+          <label
+            title={displayInactiveGroupsTooltip}
+            htmlFor="show_inactive_groups"
+            data-testid={"show_inactive_groups_tooltip"}
+          >
+            {I18n.t("submissions.groups.display_inactive")}
+          </label>
+          {this.props.is_instructor && (
+            <>
+              <form
+                action={Routes.summary_course_assignment_path({
+                  course_id: this.props.course_id,
+                  id: this.props.assignment_id,
+                  format: "csv",
+                  _options: true,
+                })}
+                method="get"
+              >
+                <button type="submit" name="download">
+                  {I18n.t("download")}
+                </button>
+              </form>
+              <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
+                {I18n.t("download_the", {
+                  item: I18n.t("activerecord.models.test_result.other"),
+                })}
               </button>
-            </form>
-            <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
-              {I18n.t("download_the", {
-                item: I18n.t("activerecord.models.test_result.other"),
-              })}
-            </button>
-            {ltiButton}
-          </div>
-        )}
+              {ltiButton}
+            </>
+          )}
+        </div>
         <ReactTable
           data={data}
           columns={this.fixedColumns().concat(criteriaColumns, [this.bonusColumn])}
           filterable
+          filtered={this.state.filtered}
           onFilteredChange={this.onFilteredChange}
           defaultSorted={[{id: "group_name"}]}
           ref={r => (this.wrappedInstance = r)}
