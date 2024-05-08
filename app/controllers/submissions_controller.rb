@@ -234,7 +234,16 @@ class SubmissionsController < ApplicationController
       head :bad_request
       return
     end
-    assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
+    assignment = Assignment.includes(:test_groups, groupings: :current_submission_used).find(params[:assignment_id])
+
+    # If no test groups can be run by instructors, flash appropriate message and return early
+    test_group_categories = assignment.test_groups.pluck(:autotest_settings).pluck('category')
+    instructor_runnable = test_group_categories.any? { |category| category.include? 'instructor' }
+    unless instructor_runnable
+      flash_now(:info, I18n.t('automated_tests.no_instructor_runnable_tests'))
+      return
+    end
+
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
     group_ids = groupings.filter_map do |g|

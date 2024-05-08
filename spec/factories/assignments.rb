@@ -197,4 +197,17 @@ FactoryBot.define do
       create_list(:test_group, 3, assignment: a)
     end
   end
+
+  factory :assignment_with_test_groups_instructor_runnable, parent: :assignment do
+    after(:create) do |a|
+      create(:test_group_instructor_runnable, assignment: a)
+      create_list(:test_group, 2, assignment: a)
+    end
+  end
+
+  factory :assignment_with_test_groups_not_instructor_runnable, parent: :assignment do
+    after(:create) do |a|
+      create_list(:test_group, 3, assignment: a)
+    end
+  end
 end
