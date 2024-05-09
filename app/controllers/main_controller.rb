@@ -137,7 +137,9 @@ class MainController < ApplicationController
   # with user name "real_user" is authenticated. Effective and real users might be the
   # same for regular logins and are different on an assume role call.
   # If the login keyword is true then this method also authenticates the real_user
-  #
+  # If auth_type == User::AUTHENTICATE_LOCAL, the real_user will be authenticated against their password
+  # If auth_type == User::AUTHENTICATE_REMOTE, the real_user will be authenticated against their
+  # user_name. if Settings.validate_ip is true, the user's ip address will also be validated
   def validate_login(user_name, password, auth_type: User::AUTHENTICATE_LOCAL)
     if user_name.blank? || (password.blank? && auth_type == User::AUTHENTICATE_LOCAL)
       flash_now(:error, get_blank_message(user_name, password))

@@ -4,7 +4,7 @@ en:
     cannot_role_switch: You do not have permission to role switch to this account.
     cannot_role_switch_to_self: You cannot role switch to your own account.
     create_marking_scheme: Create a Marking Scheme to display course summary graph.
-    external_authentication_bad_ip: Authentication with %{name} was successful, but access to this MarkUs is restricted.
+    external_authentication_bad_ip: Authentication with %{name} was successful, but access to MarkUs is restricted.
     external_authentication_default_name: remote authentication
     external_authentication_not_supported: External authentication not supported on your platform!
     external_authentication_user_not_found: Authentication with %{name} was successful but no corresponding user was found in the MarkUs database.

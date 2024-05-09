@@ -40,8 +40,10 @@ class User < ApplicationRecord
   AUTHENTICATE_LOCAL = 'local'.freeze
   AUTHENTICATE_REMOTE = 'remote'.freeze
 
-  # Authenticates login against its password
+  # If auth_type == AUTHENTICATE_LOCAL: Authenticates login against its password
   # through a script specified by Settings.validate_file
+  # if auth_type == AUTHENTICATE_REMOTE: Authenticates user name
+  # through a script specified by Settings.remote_validate_file
   def self.authenticate(login, password: nil, ip: nil, auth_type: AUTHENTICATE_LOCAL)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
