@@ -146,7 +146,8 @@ class MainController < ApplicationController
       return false
     end
 
-    # No validate file means only remote authentication is allowed
+    # Validate locally or by user_name for remote authentication.
+    # If there is no validate_file, only remote authentication is allowed
     return false unless Settings.validate_file || Settings.remote_validate_file
 
     ip = Settings.validate_ip ? request.remote_ip : nil
