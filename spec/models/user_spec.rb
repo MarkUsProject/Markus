@@ -57,22 +57,22 @@ describe User do
   describe '.authenticate' do
     context 'bad character' do
       it 'should not allow a null char in the username' do
-        expect(User.authenticate("a\0b", '123')).to eq User::AUTHENTICATE_BAD_CHAR
+        expect(User.authenticate("a\0b", password: '123')).to eq User::AUTHENTICATE_BAD_CHAR
       end
       it 'should not allow a null char in the password' do
-        expect(User.authenticate('ab', "12\0a3")).to eq User::AUTHENTICATE_BAD_CHAR
+        expect(User.authenticate('ab', password: "12\0a3")).to eq User::AUTHENTICATE_BAD_CHAR
       end
       it 'should not allow a newline in the username' do
-        expect(User.authenticate("a\nb", '123')).to eq User::AUTHENTICATE_BAD_CHAR
+        expect(User.authenticate("a\nb", password: '123')).to eq User::AUTHENTICATE_BAD_CHAR
       end
-      it 'should not allow a newline in the username' do
-        expect(User.authenticate('ab', "12\na3")).to eq User::AUTHENTICATE_BAD_CHAR
+      it 'should not allow a newline in the password' do
+        expect(User.authenticate('ab', password: "12\na3")).to eq User::AUTHENTICATE_BAD_CHAR
       end
     end
     context 'bad platform' do
       it 'should not allow validation if the server OS is windows' do
         stub_const('RUBY_PLATFORM', 'mswin')
-        expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_BAD_PLATFORM
+        expect(User.authenticate('ab', password: '123')).to eq User::AUTHENTICATE_BAD_PLATFORM
       end
     end
     context 'without a custom exit status messages' do
@@ -82,12 +82,35 @@ describe User do
       end
       context 'a successful login' do
         it 'should return a success message' do
-          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_SUCCESS
+          expect(User.authenticate('ab', password: '123')).to eq User::AUTHENTICATE_SUCCESS
         end
       end
       context 'an unsuccessful login' do
         it 'should return a failure message' do
-          expect(User.authenticate('exit3', '123')).to eq User::AUTHENTICATE_ERROR
+          expect(User.authenticate('exit3', password: '123')).to eq User::AUTHENTICATE_ERROR
+        end
+      end
+
+      context 'with a remote validation file' do
+        before do
+          allow(Settings).to receive_messages(remote_validate_file: Rails.root
+                                                     .join('spec/fixtures/files/dummy_remote_validate.sh'),
+                                              validate_ip: true)
+        end
+
+        it 'should return a failure with no ip' do
+          expect(User.authenticate('exit3', password: '123',
+                                            auth_type: User::AUTHENTICATE_REMOTE)).to eq User::AUTHENTICATE_ERROR
+        end
+
+        it 'should return a failure with a disallowed ip' do
+          expect(User.authenticate('exit3', password: '123', ip: '192.168.0.1',
+                                            auth_type: User::AUTHENTICATE_REMOTE)).to eq User::AUTHENTICATE_ERROR
+        end
+
+        it 'should return a success with an allowed ip' do
+          expect(User.authenticate('exit3', password: '123', ip: '0.0.0.0',
+                                            auth_type: User::AUTHENTICATE_REMOTE)).to eq User::AUTHENTICATE_SUCCESS
         end
       end
     end
@@ -99,21 +122,21 @@ describe User do
       end
       context 'a successful login' do
         it 'should return a success message' do
-          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_SUCCESS
+          expect(User.authenticate('ab', password: '123')).to eq User::AUTHENTICATE_SUCCESS
         end
       end
       context 'an unsuccessful login' do
         it 'should return a failure message with a 1' do
-          expect(User.authenticate('exit1', '123')).to eq User::AUTHENTICATE_ERROR
+          expect(User.authenticate('exit1', password: '123')).to eq User::AUTHENTICATE_ERROR
         end
         it 'should return a failure message with a 4' do
-          expect(User.authenticate('exit4', '123')).to eq User::AUTHENTICATE_ERROR
+          expect(User.authenticate('exit4', password: '123')).to eq User::AUTHENTICATE_ERROR
         end
         it 'should return a custom message with a 2' do
-          expect(User.authenticate('exit2', '123')).to eq '2'
+          expect(User.authenticate('exit2', password: '123')).to eq '2'
         end
         it 'should return a custom message with a 3' do
-          expect(User.authenticate('exit3nomsg', '123')).to eq '3'
+          expect(User.authenticate('exit3nomsg', password: '123')).to eq '3'
         end
       end
     end
