@@ -83,6 +83,31 @@ describe MainController do
         expect(response).to redirect_to action: 'index', controller: 'courses'
       end
 
+      context 'when MarkUs is in restricted mode' do
+        before do
+          allow(Settings).to receive_messages(remote_validate_file: Rails.root
+                                                     .join('spec/fixtures/files/dummy_remote_validate.sh'),
+                                              validate_ip: true)
+          allow_any_instance_of(ActionDispatch::Request).to receive(:remote_ip).and_return('192.168.0.1')
+        end
+
+        it 'should return an error if user ip is not in the approved ip range' do
+          get :login
+          expect(flash[:error].size).to be 1
+        end
+
+        context 'with an allowed ip' do
+          before do
+            allow_any_instance_of(ActionDispatch::Request).to receive(:remote_ip).and_return('0.0.0.0')
+          end
+
+          it 'should redirect to the courses index route' do
+            get :login
+            expect(response).to redirect_to action: 'index', controller: 'courses'
+          end
+        end
+      end
+
       context 'going to a page that requires authentication' do
         before { post :logout }
 
