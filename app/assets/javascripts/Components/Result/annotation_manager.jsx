@@ -4,6 +4,7 @@ export class AnnotationManager extends React.Component {
   componentDidUpdate() {
     this.props.categories.forEach(cat => {
       new DropDownMenu($(`#annotation_category_${cat.id}`), $(`#annotation_text_list_${cat.id}`));
+      MathJax.typeset([`#annotation_text_list_${cat.id}`]);
     });
   }
 
@@ -37,7 +38,10 @@ export class AnnotationManager extends React.Component {
                       onMouseDown={e => e.preventDefault()}
                       title={text.content}
                     >
-                      <span className={"text-content"}>{text.content.slice(0, 70)}</span>
+                      <span
+                        className={"text-content"}
+                        dangerouslySetInnerHTML={{__html: safe_marked(text.content).slice(0, 70)}}
+                      />
                       <span className={"red-text"}>
                         {!text.deduction ? "" : "-" + text.deduction}
                       </span>

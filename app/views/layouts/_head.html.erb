@@ -10,3 +10,6 @@
 <%= javascript_tag nonce: true do %>
   const MARKUS_VERSION = '<%= Rails.configuration.markus_version %>';
 <% end %>
+<%= javascript_tag nonce: true do %>
+  <%= render partial: 'layouts/mathjax_config', formats: :js %>
+<% end %>

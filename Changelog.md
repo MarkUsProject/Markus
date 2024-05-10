@@ -20,11 +20,14 @@
 
 ### 🐛 Bug fixes
 
+- Ensure annotation previews are rendered on annotations page and in annotation category dropdown menus when grading (#7073)
+
 ### 🔧 Internal changes
 
 - Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
 - Minor improvements in assignment association options (#6989)
 - Update changelog and pull request template formats (#7041)
+- Upgrade to MathJax version 3, with packaging from npm (#7073)
 
 ## [v2.4.10]
 

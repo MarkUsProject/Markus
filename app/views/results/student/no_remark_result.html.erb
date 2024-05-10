@@ -1,11 +1,7 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'mathjax', nonce: true %>
-  <%= render partial: 'layouts/mathjax_config' %>
-  <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
-  <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      MathJax.Hub.Queue(["Typeset", MathJax.Hub, "remark_request_text"]);
+      MathJax.typeset(["#remark_request_text"]);
     });
   <% end %>
 <% end %>

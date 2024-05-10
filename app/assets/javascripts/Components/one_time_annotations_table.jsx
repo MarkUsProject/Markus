@@ -35,12 +35,22 @@ class OneTimeAnnotationsTable extends React.Component {
         }
       })
       .then(res => {
-        this.setState({
-          data: res,
-          loading: false,
-        });
+        this.setState(
+          {
+            data: res,
+          },
+          // A separate setState call seems to be required to get the MathJax.typeset
+          // call in componentDidUpdate to correctly transform the annotation texts.
+          () => this.setState({loading: false})
+        );
       });
   };
+
+  componentDidUpdate(_prevProps, prevState) {
+    if (prevState.loading && !this.state.loading) {
+      MathJax.typeset(["#one_time_annotations_table_wrapper"]);
+    }
+  }
 
   editAnnotation = (annot_id, content) => {
     $.ajax({
@@ -137,15 +147,17 @@ class OneTimeAnnotationsTable extends React.Component {
 
   render() {
     return (
-      <ReactTable
-        key="one_time_annotations_table"
-        data={this.state.data}
-        columns={this.columns}
-        filterable
-        defaultSorted={[{id: "group_name"}]}
-        loading={this.state.loading}
-        noDataText={I18n.t("annotations.empty_uncategorized")}
-      />
+      <div id="one_time_annotations_table_wrapper">
+        <ReactTable
+          key="one_time_annotations_table"
+          data={this.state.data}
+          columns={this.columns}
+          filterable
+          defaultSorted={[{id: "group_name"}]}
+          loading={this.state.loading}
+          noDataText={I18n.t("annotations.empty_uncategorized")}
+        />
+      </div>
     );
   }
 }

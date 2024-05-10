@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   entry: {
     application_webpack: "./app/javascript/application_webpack.js",
+    markus_notebook: "./app/javascript/markus_notebook.js",
     "pdf.worker": "./app/javascript/pdf.worker.js",
     result: "./app/javascript/result.js",
   },
