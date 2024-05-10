@@ -125,6 +125,7 @@ Config.setup do |config|
       end
       optional(:resque_scheduler).hash
       optional(:validate_file).filled(:string)
+      optional(:remote_validate_file).filled(:string)
       optional(:validate_ip).filled(:bool)
       required(:validate_custom_status_message).hash
       required(:validate_user_not_allowed_message).maybe(:string)
