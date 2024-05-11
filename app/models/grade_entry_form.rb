@@ -77,9 +77,8 @@ class GradeEntryForm < Assessment
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    new_data = []
-    course.students.each do |student|
-      new_data << { role_id: student.id, assessment_id: id, released_to_student: false }
+    new_data = course.students.map do |student|
+      { role_id: student.id, assessment_id: id, released_to_student: false }
     end
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end

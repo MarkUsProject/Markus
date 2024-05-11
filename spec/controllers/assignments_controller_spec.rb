@@ -2064,9 +2064,8 @@ describe AssignmentsController do
 
       it 'copies over starter files' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        uploaded_starter_files = []
-        uploaded_assignment.starter_file_groups.each do |group|
-          uploaded_starter_files << {
+        uploaded_starter_files = uploaded_assignment.starter_file_groups.map do |group|
+          {
             name: group.name,
             use_rename: group.use_rename,
             entry_rename: group.entry_rename,

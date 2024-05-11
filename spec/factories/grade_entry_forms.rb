@@ -29,11 +29,10 @@ FactoryBot.define do
   factory :grade_entry_form_with_multiple_grade_entry_items, parent: :grade_entry_form do
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}_with_data" }
     after(:create) do |grade_entry_form_with_multiple_grade_entry_items|
-      grade_entry_items = []
-      (1..3).each do |i|
-        grade_entry_items << create(:grade_entry_item,
-                                    grade_entry_form: grade_entry_form_with_multiple_grade_entry_items,
-                                    out_of: 10, position: i)
+      grade_entry_items = (1..3).map do |i|
+        create(:grade_entry_item,
+               grade_entry_form: grade_entry_form_with_multiple_grade_entry_items,
+               out_of: 10, position: i)
       end
       grade_entry_form_with_multiple_grade_entry_items.grade_entry_items = grade_entry_items
     end

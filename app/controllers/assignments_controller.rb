@@ -431,13 +431,12 @@ class AssignmentsController < ApplicationController
       flash_message(:warning,
                     I18n.t('assignments.starter_file.groupings_exist_warning_html'))
     end
-    file_data = []
-    assignment.starter_file_groups.order(:id).each do |g|
-      file_data << { id: g.id,
-                     name: g.name,
-                     entry_rename: g.entry_rename,
-                     use_rename: g.use_rename,
-                     files: starter_file_group_file_data(g) }
+    file_data = assignment.starter_file_groups.order(:id).map do |g|
+      { id: g.id,
+        name: g.name,
+        entry_rename: g.entry_rename,
+        use_rename: g.use_rename,
+        files: starter_file_group_file_data(g) }
     end
     section_data = current_course.sections
                                  .left_outer_joins(:starter_file_groups)

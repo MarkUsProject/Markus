@@ -238,10 +238,7 @@ describe AnnotationCategory do
       create(:annotation_text, annotation_category: annotation_category)
       create(:annotation_text, annotation_category: annotation_category)
       annotation_category.update!(flexible_criterion_id: flex_criterion.id)
-      annotation_text_deductions = []
-      annotation_category.annotation_texts.each do |text|
-        annotation_text_deductions << text.deduction
-      end
+      annotation_text_deductions = annotation_category.annotation_texts.map(&:deduction)
       expect(annotation_text_deductions).to all(eq(0.0))
     end
   end

@@ -1,26 +1,29 @@
+@use 'sass:map';
+@use 'sass:meta';
+
 /** For easier size breakpoints. */
 
 $breakpoints: (
-  "tiny": (
+  'tiny': (
     max-width: 360px,
   ),
-  "small": (
+  'small': (
     max-width: 500px,
   ),
-  "mobile": (
+  'mobile': (
     max-width: 745px,
   ),
-  "medium": (
+  'medium': (
     max-width: 990px,
   ),
-  "large": (
+  'large': (
     max-width: 1040px,
   ),
 );
 
 @mixin breakpoint($name) {
-  @if map-has-key($breakpoints, $name) {
-    @media #{inspect(map-get($breakpoints, $name))} {
+  @if map.has-key($breakpoints, $name) {
+    @media #{meta.inspect(map.get($breakpoints, $name))} {
       @content;
     }
   } @else {
