@@ -136,9 +136,8 @@ GEM
       matrix
       ruby-rc4 (>= 0.1.5)
     concurrent-ruby (1.2.3)
-    config (5.1.0)
+    config (5.4.0)
       deep_merge (~> 1.2, >= 1.2.1)
-      dry-validation (~> 1.0, >= 1.0.0)
     connection_pool (2.4.1)
     cookies_eu (1.7.8)
       js_cookie_rails (~> 2.2.0)
@@ -516,6 +515,7 @@ DEPENDENCIES
   cookies_eu
   debug (>= 1.0.0)
   descriptive_statistics
+  dry-validation
   exception_notification
   factory_bot_rails
   faker
