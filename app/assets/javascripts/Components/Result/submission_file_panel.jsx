@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import {AnnotationManager} from "./annotation_manager";
 import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
-import {getType} from "mime/lite";
+import mime from "mime/lite";
 
 export class SubmissionFilePanel extends React.Component {
   constructor(props) {
@@ -157,7 +157,7 @@ export class SubmissionFilePanel extends React.Component {
       submission_file_mime_type = null;
     } else {
       submission_file_id = this.state.selectedFile[1];
-      submission_file_mime_type = getType(this.state.selectedFile[0]);
+      submission_file_mime_type = mime.getType(this.state.selectedFile[0]);
     }
     return (
       <React.Fragment>

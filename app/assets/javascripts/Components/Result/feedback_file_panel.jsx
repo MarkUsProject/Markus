@@ -1,6 +1,6 @@
 import React from "react";
 import {FileViewer} from "./file_viewer";
-import {getType} from "mime/lite";
+import mime from "mime/lite";
 
 export class FeedbackFilePanel extends React.Component {
   constructor(props) {
@@ -86,7 +86,7 @@ export class FeedbackFilePanel extends React.Component {
             submission_id={this.props.submission_id}
             selectedFile={file_obj.filename}
             selectedFileURL={url}
-            mime_type={getType(file_obj.filename)}
+            mime_type={mime.getType(file_obj.filename)}
             selectedFileType={file_obj.type}
           />
         </div>
