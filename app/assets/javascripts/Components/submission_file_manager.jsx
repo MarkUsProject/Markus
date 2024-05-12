@@ -116,14 +116,33 @@ class SubmissionFileManager extends React.Component {
         data.append("grouping_id", this.props.grouping_id);
       }
       data.append("unzip", unzip);
-      $.post({
+
+      this.setState({uploadModalProgressVisible: true});
+
+      $.ajax({
         url: Routes.update_files_course_assignment_submissions_path(
           this.props.course_id,
           this.props.assignment_id
         ),
+        type: "POST",
+        processData: false,
+        contentType: false,
         data: data,
-        processData: false, // tell jQuery not to process the data
-        contentType: false, // tell jQuery not to set contentType
+        xhr: () => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.upload.addEventListener(
+            "progress",
+            event => {
+              if (event.lengthComputable) {
+                this.setState({uploadModalProgressPercentage: (event.loaded / event.total) * 100});
+              }
+            },
+            false
+          );
+
+          return xhr;
+        },
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
         .then(this.endAction)
@@ -131,7 +150,8 @@ class SubmissionFileManager extends React.Component {
           if (jqXHR.getResponseHeader("x-message-error") == null) {
             flashMessage(I18n.t("upload_errors.generic"), "error");
           }
-        });
+        })
+        .always(this.resetProgressBar);
     }
   };
 
@@ -320,6 +340,10 @@ class SubmissionFileManager extends React.Component {
         </div>
       </div>
     );
+  };
+
+  resetProgressBar = () => {
+    this.setState({uploadModalProgressVisible: false, uploadModalProgressPercentage: 0.0});
   };
 
   render() {

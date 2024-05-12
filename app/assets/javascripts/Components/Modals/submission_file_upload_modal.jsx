@@ -23,7 +23,7 @@ class SubmissionFileUploadModal extends React.Component {
       const originalExtension = originalFilename.split(".").pop();
       const newExtension = newFilename.split(".").pop();
 
-      if (originalExtension !== newExtension) {
+      if (newFilename !== "" && originalExtension !== newExtension) {
         const confirmChange = window.confirm(I18n.t("modals.file_upload.rename_warning"));
         if (!confirmChange) {
           // Prevent form submission if the user cancels the operation
@@ -153,10 +153,10 @@ class SubmissionFileUploadModal extends React.Component {
               {I18n.t("submissions.student.rename_file_to")}&nbsp;
               {this.fileRenameInputBox()}
             </label>
-            {this.props.progressVisible && (
+            {this.props.uploadModalProgressVisible && (
               <progress
                 className={"modal-progress-bar"}
-                value={this.props.progressPercentage}
+                value={this.props.uploadModalProgressPercentage}
                 max="100"
               ></progress>
             )}
