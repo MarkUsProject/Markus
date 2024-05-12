@@ -22,6 +22,8 @@ class SubmissionFileManager extends React.Component {
       requiredFiles: [],
       maxFileSize: 0,
       numberOfMissingFiles: 0,
+      uploadModalProgressVisible: false,
+      uploadModalProgressPercentage: 0.0,
     };
   }
 
@@ -353,6 +355,8 @@ class SubmissionFileManager extends React.Component {
           isOpen={this.state.showUploadModal}
           onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+          uploadModalProgressVisible={this.state.uploadModalProgressVisible}
+          uploadModalProgressPercentage={this.state.uploadModalProgressPercentage}
           onlyRequiredFiles={this.state.onlyRequiredFiles}
           requiredFiles={this.state.requiredFiles}
           uploadTarget={this.state.uploadTarget}

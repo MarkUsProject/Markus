@@ -153,6 +153,13 @@ class SubmissionFileUploadModal extends React.Component {
               {I18n.t("submissions.student.rename_file_to")}&nbsp;
               {this.fileRenameInputBox()}
             </label>
+            {this.props.progressVisible && (
+              <progress
+                className={"modal-progress-bar"}
+                value={this.props.progressPercentage}
+                max="100"
+              ></progress>
+            )}
             <div className={"modal-container"}>
               <input
                 type="submit"
