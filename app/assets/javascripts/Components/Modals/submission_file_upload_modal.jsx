@@ -23,7 +23,7 @@ class SubmissionFileUploadModal extends React.Component {
       const originalExtension = originalFilename.split(".").pop();
       const newExtension = newFilename.split(".").pop();
 
-      if (newFilename !== "" && originalExtension !== newExtension) {
+      if (originalExtension !== newExtension) {
         const confirmChange = window.confirm(I18n.t("modals.file_upload.rename_warning"));
         if (!confirmChange) {
           // Prevent form submission if the user cancels the operation
