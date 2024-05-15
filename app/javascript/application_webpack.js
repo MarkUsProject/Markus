@@ -6,6 +6,7 @@
 //
 // To reference this file, add <%= javascript_include_tag 'application_webpack' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
+import "mathjax/es5/tex-svg";
 
 // jquery (should be the first to be loaded, as many other libs depend on it)
 import $ from "jquery/src/jquery";

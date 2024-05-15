@@ -1,7 +1,6 @@
 $('#annotation_list_holder').replaceWith(
   "<%= escape_javascript(render partial: 'uncategorized_annotations_list',
                                 locals: { texts: @texts }).html_safe %>");
-reloadDOM();
 makeOneTimeAnnotationsTable(
   document.getElementById('one_time_annotations_table'),
   {
@@ -9,3 +8,4 @@ makeOneTimeAnnotationsTable(
     assignment_id: <%= @assignment.id %>
   }
 );
+MathJax.typeset(['#one_time_annotations_table'])

@@ -368,7 +368,6 @@ class Result extends React.Component {
     if (typeof window.annotation_manager.hide_selection_box === "function") {
       window.annotation_manager.hide_selection_box();
     }
-    reloadDOM();
   };
 
   addExistingAnnotation = annotation_text_id => {
@@ -508,7 +507,6 @@ class Result extends React.Component {
     if (typeof window.annotation_manager.hide_selection_box === "function") {
       window.annotation_manager.hide_selection_box();
     }
-    reloadDOM();
   };
 
   /**
@@ -540,7 +538,6 @@ class Result extends React.Component {
     if (typeof annotation_manager.hide_selection_box === "function") {
       annotation_manager.hide_selection_box();
     }
-    reloadDOM();
     // Need to remove data attribute from highlight elements - must be last.
     $("span").removeAttr(`data-annotationid${annotation_id}`);
   }
