@@ -199,17 +199,17 @@ describe("For the SubmissionFileUploadModal", () => {
   });
 
   describe("The progress bar", () => {
-    describe("when the uploadModalProgressVisible prop is initially true and uploadModalProgressPercentage prop is 0.0", () => {
+    describe("when the progressVisible prop is initially true and progressPercentage prop is 0.0", () => {
       beforeEach(() => {
         // for testing the behaviour of progress bar after submit
         mockOnSubmit = jest.fn(() => {
-          wrapper.setProps({uploadModalProgressVisible: false});
+          wrapper.setProps({progressVisible: false});
         });
 
         wrapper = shallow(
           <SubmissionFileUploadModal
-            uploadModalProgressVisible={true}
-            uploadModalProgressPercentage={0.0}
+            progressVisible={true}
+            progressPercentage={0.0}
             requiredFiles={[]}
             onSubmit={mockOnSubmit}
           />
@@ -227,8 +227,8 @@ describe("For the SubmissionFileUploadModal", () => {
         expect(wrapper.find(".modal-progress-bar").props()["value"]).toEqual(0.0);
       });
 
-      it("the progress bar's value changes when the prop uploadModalProgressPercentage changes", () => {
-        wrapper.setProps({uploadModalProgressPercentage: 50.0});
+      it("the progress bar's value changes when the prop progressPercentage changes", () => {
+        wrapper.setProps({progressPercentage: 50.0});
         wrapper.update();
         expect(wrapper.find(".modal-progress-bar").props()["value"]).toEqual(50.0);
       });
@@ -242,12 +242,12 @@ describe("For the SubmissionFileUploadModal", () => {
       });
     });
 
-    describe("when the uploadModalProgressVisible prop is initially false", () => {
+    describe("when the progressVisible prop is initially false", () => {
       beforeEach(() => {
         wrapper = shallow(
           <SubmissionFileUploadModal
-            uploadModalProgressVisible={false}
-            uploadModalProgressPercentage={0.0}
+            progressVisible={false}
+            progressPercentage={0.0}
             requiredFiles={[]}
             onSubmit={() => {}}
           />
