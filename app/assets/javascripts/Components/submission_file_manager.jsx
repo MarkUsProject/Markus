@@ -145,14 +145,13 @@ class SubmissionFileManager extends React.Component {
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
         .then(this.endAction)
+        .then(() => this.setState({showUploadModal: false, uploadTarget: undefined}))
         .fail(jqXHR => {
           if (jqXHR.getResponseHeader("x-message-error") == null) {
             flashMessage(I18n.t("upload_errors.generic"), "error");
           }
         })
         .always(this.resetProgressBar);
-
-      this.setState({showUploadModal: false, uploadTarget: undefined});
     }
   };
 
