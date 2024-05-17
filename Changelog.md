@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#xxxx)
+
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
