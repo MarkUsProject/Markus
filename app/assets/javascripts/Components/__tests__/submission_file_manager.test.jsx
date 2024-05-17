@@ -89,14 +89,13 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
   });
 
   describe("For the uploadModalProgressPercentage state element", () => {
-    let file;
+    let file, mockXHR;
     beforeEach(() => {
+      // a dummy file
       file = new File(["content"], "test.txt", {type: "text/plain"});
-    });
 
-    it("when 50% of a file is uploaded, uploadModalProgressPercentage is 0.50", () => {
       // Mock the XMLHttpRequest object
-      const mockXHR = {
+      mockXHR = {
         upload: {
           addEventListener: jest.fn((event, callback) => {
             if (event === "progress") {
@@ -104,33 +103,40 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
             }
           }),
         },
-        send: jest.fn().mockImplementation(() => {
-          mockXHR.upload.onprogress({
-            lengthComputable: true,
-            loaded: 5,
-            total: 10,
-          });
-        }),
       };
 
-      // Spy on the XMLHttpRequest constructor to return our mock
+      // Override XMLHttpRequest constructor to return our mock request instead
       jest.spyOn(window, "XMLHttpRequest").mockImplementation(() => mockXHR);
 
-      // Mock the AJAX call we're about to make
+      // mock ajax call to prevent request from being sent
       $.ajax = jest.fn().mockImplementation(({xhr}) => {
         // call mock xhr send function to trigger onprogress handler
         xhr().send();
 
+        // do nothing for any chain action after ajax() itself
         return {
-          then: jest.fn().mockReturnThis(), // do nothing
-          fail: jest.fn().mockReturnThis(), // do nothing
-          always: jest.fn().mockReturnThis(), // do nothing
+          then: jest.fn().mockReturnThis(),
+          fail: jest.fn().mockReturnThis(),
+          always: jest.fn().mockReturnThis(),
         };
       });
+    });
 
-      // call internal method handleCreateFiles, which makes use of the above ajax call
+    it("when 50% of a file is uploaded, uploadModalProgressPercentage is 0.50", () => {
+      // override our mock XMLHttpRequest's send method to send an onprogress
+      // event with 50% completion
+      mockXHR.send = jest.fn().mockImplementation(() => {
+        mockXHR.upload.onprogress({
+          lengthComputable: true,
+          loaded: 5,
+          total: 10,
+        });
+      });
+
+      // call handleCreateFiles with dummy file
       wrapper.instance().handleCreateFiles([file], "", false);
 
+      // verify percentage is correct
       expect(wrapper.state().uploadModalProgressPercentage).toEqual(50);
     });
   });
