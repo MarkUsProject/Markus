@@ -199,7 +199,7 @@ describe("For the SubmissionFileUploadModal", () => {
   });
 
   describe("The progress bar", () => {
-    describe("when the uploadModalProgressVisible prop is initially true", () => {
+    describe("when the uploadModalProgressVisible prop is initially true and uploadModalProgressPercentage prop is 0.0", () => {
       beforeEach(() => {
         // for testing the behaviour of progress bar after submit
         mockOnSubmit = jest.fn(() => {

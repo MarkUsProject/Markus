@@ -103,8 +103,9 @@ class SubmissionFileManager extends React.Component {
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
+      this.setState({uploadModalProgressVisible: true});
+
       const prefix = path || this.state.uploadTarget || "";
-      this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
       if (!!renameTo && files.length === 1) {
         Array.from(files).forEach(f => data.append("new_files[]", f, renameTo));
@@ -116,8 +117,6 @@ class SubmissionFileManager extends React.Component {
         data.append("grouping_id", this.props.grouping_id);
       }
       data.append("unzip", unzip);
-
-      this.setState({uploadModalProgressVisible: true});
 
       $.ajax({
         url: Routes.update_files_course_assignment_submissions_path(
@@ -152,6 +151,8 @@ class SubmissionFileManager extends React.Component {
           }
         })
         .always(this.resetProgressBar);
+
+      this.setState({showUploadModal: false, uploadTarget: undefined});
     }
   };
 
