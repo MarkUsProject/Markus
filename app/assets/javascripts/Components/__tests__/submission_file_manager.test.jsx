@@ -87,4 +87,51 @@ describe("For the submissions managed by SubmissionFileManager's FileManager chi
       expect(file_viewer_comp.props().selectedFileType).toEqual(file_displayed.type);
     });
   });
+
+  describe("For the uploadModalProgressPercentage state element", () => {
+    let file;
+    beforeEach(() => {
+      file = new File(["content"], "test.txt", {type: "text/plain"});
+    });
+
+    it("when 50% of a file is uploaded, uploadModalProgressPercentage is 0.50", () => {
+      // Mock the XMLHttpRequest object
+      const mockXHR = {
+        upload: {
+          addEventListener: jest.fn((event, callback) => {
+            if (event === "progress") {
+              mockXHR.upload.onprogress = callback;
+            }
+          }),
+        },
+        send: jest.fn().mockImplementation(() => {
+          mockXHR.upload.onprogress({
+            lengthComputable: true,
+            loaded: 5,
+            total: 10,
+          });
+        }),
+      };
+
+      // Spy on the XMLHttpRequest constructor to return our mock
+      jest.spyOn(window, "XMLHttpRequest").mockImplementation(() => mockXHR);
+
+      // Mock the AJAX call we're about to make
+      $.ajax = jest.fn().mockImplementation(({xhr}) => {
+        // call mock xhr send function to trigger onprogress handler
+        xhr().send();
+
+        return {
+          then: jest.fn().mockReturnThis(), // do nothing
+          fail: jest.fn().mockReturnThis(), // do nothing
+          always: jest.fn().mockReturnThis(), // do nothing
+        };
+      });
+
+      // call internal method handleCreateFiles, which makes use of the above ajax call
+      wrapper.instance().handleCreateFiles([file], "", false);
+
+      expect(wrapper.state().uploadModalProgressPercentage).toEqual(50);
+    });
+  });
 });
