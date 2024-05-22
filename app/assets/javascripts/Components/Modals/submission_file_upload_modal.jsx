@@ -1,3 +1,4 @@
+import I18n from "i18n-js";
 import React from "react";
 import Modal from "react-modal";
 
@@ -155,6 +156,7 @@ class SubmissionFileUploadModal extends React.Component {
             </label>
             {this.props.progressVisible && (
               <progress
+                aria-label={I18n.t("modals.submission_file_upload.progress_bar")}
                 className={"modal-progress-bar"}
                 value={this.props.progressPercentage}
                 max="100"
