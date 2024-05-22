@@ -145,13 +145,19 @@ class SubmissionFileManager extends React.Component {
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
         .then(this.endAction)
-        .then(() => this.setState({showUploadModal: false, uploadTarget: undefined}))
         .fail(jqXHR => {
           if (jqXHR.getResponseHeader("x-message-error") == null) {
             flashMessage(I18n.t("upload_errors.generic"), "error");
           }
         })
-        .always(this.resetProgressBar);
+        .always(() => {
+          this.setState({
+            showUploadModal: false,
+            uploadTarget: undefined,
+            uploadModalProgressVisible: false,
+            uploadModalProgressPercentage: 0.0,
+          });
+        });
     }
   };
 
@@ -340,10 +346,6 @@ class SubmissionFileManager extends React.Component {
         </div>
       </div>
     );
-  };
-
-  resetProgressBar = () => {
-    this.setState({uploadModalProgressVisible: false, uploadModalProgressPercentage: 0.0});
   };
 
   render() {
