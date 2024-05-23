@@ -124,8 +124,8 @@ class SubmissionFileManager extends React.Component {
           this.props.assignment_id
         ),
         data: data,
-        processData: false,
-        contentType: false,
+        processData: false, // tell jQuery not to process the data
+        contentType: false, // tell jQuery not to set contentType
         xhr: () => {
           const xhr = new XMLHttpRequest();
 
