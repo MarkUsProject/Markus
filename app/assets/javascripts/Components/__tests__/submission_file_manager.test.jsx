@@ -110,12 +110,12 @@ describe("For the SubmissionFileManager", () => {
       // Override XMLHttpRequest constructor to return our mock request instead
       jest.spyOn(window, "XMLHttpRequest").mockImplementation(() => mockXHR);
 
-      // mock ajax call to prevent request from being sent
-      $.ajax = jest.fn().mockImplementation(({xhr}) => {
+      // mock ajax post call to prevent request from being sent
+      $.post = jest.fn().mockImplementation(({xhr}) => {
         // call mock xhr send function to trigger onprogress handler
         xhr().send();
 
-        // do nothing for any chain action after ajax() itself
+        // do nothing for any chain action after $.post() itself
         return {
           then: jest.fn().mockReturnThis(),
           fail: jest.fn().mockReturnThis(),
@@ -180,7 +180,7 @@ describe("For the SubmissionFileManager", () => {
 
     it("after a file is uploaded, bar is no longer visible and its value is reset to 0.0", () => {
       // override existing mock implementation to allow always() to run
-      $.ajax = jest.fn().mockReturnValue({
+      $.post = jest.fn().mockReturnValue({
         then: jest.fn().mockReturnThis(),
         fail: jest.fn().mockReturnThis(),
         always: jest.fn().mockImplementation(func => {

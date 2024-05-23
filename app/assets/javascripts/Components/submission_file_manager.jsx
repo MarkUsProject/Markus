@@ -118,15 +118,14 @@ class SubmissionFileManager extends React.Component {
       }
       data.append("unzip", unzip);
 
-      $.ajax({
+      $.post({
         url: Routes.update_files_course_assignment_submissions_path(
           this.props.course_id,
           this.props.assignment_id
         ),
-        type: "POST",
+        data: data,
         processData: false,
         contentType: false,
-        data: data,
         xhr: () => {
           const xhr = new XMLHttpRequest();
 
