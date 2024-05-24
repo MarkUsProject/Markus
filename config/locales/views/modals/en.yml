@@ -6,3 +6,5 @@ en:
         Changing the file extension may render the file unusable.
         Are you sure you want to proceed?
       unzip: unzip all zip files in place
+    submission_file_upload:
+      progress_bar: Submission file upload progress bar
