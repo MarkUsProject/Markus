@@ -2,12 +2,11 @@
 
 ## [unreleased]
 
-- Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
-
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
 
+- Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
 - Allow deletion of assignments with no groups (#6880)
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
