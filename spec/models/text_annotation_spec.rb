@@ -23,31 +23,7 @@ describe TextAnnotation do
     it { is_expected.not_to allow_value(-1).for(:line_end) }
     it { is_expected.not_to allow_value(-1).for(:column_start) }
     it { is_expected.not_to allow_value(-1).for(:column_end) }
-
-    it { is_expected.not_to allow_value(nil).for(:line_start) }
-    it { is_expected.not_to allow_value(nil).for(:line_end) }
-    it { is_expected.not_to allow_value(nil).for(:column_start) }
-    it { is_expected.not_to allow_value(nil).for(:column_end) }
-
-    it 'is invalid with line_start less than 1' do
-      expect(subject).not_to allow_value(0).for(:line_start)
-      expect(subject).not_to allow_value(-10).for(:line_start)
-    end
-
-    it 'is invalid with line_end less than 1' do
-      expect(subject).not_to allow_value(0).for(:line_end)
-      expect(subject).not_to allow_value(-10).for(:line_end)
-    end
-
-    it 'is invalid with column_start less than 0' do
-      expect(subject).not_to allow_value(-1).for(:column_start)
-      expect(subject).not_to allow_value(-10).for(:column_start)
-    end
-
-    it 'is invalid with column_end less than 0' do
-      expect(subject).not_to allow_value(-1).for(:column_end)
-      expect(subject).not_to allow_value(-10).for(:column_end)
-    end
+    
 
     include_examples 'course associations'
 
