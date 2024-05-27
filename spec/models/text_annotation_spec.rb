@@ -23,7 +23,6 @@ describe TextAnnotation do
     it { is_expected.not_to allow_value(-1).for(:line_end) }
     it { is_expected.not_to allow_value(-1).for(:column_start) }
     it { is_expected.not_to allow_value(-1).for(:column_end) }
-    
 
     include_examples 'course associations'
 
