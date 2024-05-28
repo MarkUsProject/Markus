@@ -410,6 +410,13 @@ class SubmissionsController < ApplicationController
             authorize! to: :manage_subdirectories? # ensure user is authorized for directories in zip files
             success, msgs = add_folder(f, current_role, repo, path: path, txn: txn, required_files: required_files)
           else
+            content_type = Marcel::MimeType.for Pathname.new(f)
+            file_extension = File.extname(f.original_filename).downcase
+            expected_mime_type = Marcel::MimeType.for extension: file_extension
+
+            if content_type != expected_mime_type && content_type != 'application/octet-stream'
+              flash_message(:warning, "The uploaded file doesn't match its file extension (#{file_extension}).")
+            end
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
           end
