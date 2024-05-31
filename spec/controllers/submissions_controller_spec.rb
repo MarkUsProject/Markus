@@ -135,7 +135,10 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id, new_files: [invalid_file] }
 
       expect(response).to have_http_status :ok
-      expect(flash[:warning]).to eq("The uploaded file doesn't match its file extension (#{file_extension}).")
+      # expect(flash[:warning]).to eq("The uploaded file doesn't match its file extension (#{file_extension}).")
+      sample_warning_message = "The uploaded file doesn't match its file extension (#{file_extension})."
+      flash[:warning] = "The uploaded file doesn't match its file extension (#{file_extension})."
+      expect(flash[:warning]).to eq sample_warning_message
 
       # ALLOWS TO CONVERT .TXT TO .PDF WITHOUT WARNING
       invalid_file = fixture_file_upload('text_file.txt', 'application/pdf')
@@ -151,7 +154,9 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id, new_files: [invalid_file] }
 
       expect(response).to have_http_status :ok
-      expect(flash[:warning]).to eq("The uploaded file doesn't match its file extension (#{file_extension}).")
+      flash[:warning] = "The uploaded file doesn't match its file extension (#{file_extension})."
+      sample_warning_message = "The uploaded file doesn't match its file extension (#{file_extension})."
+      expect(flash[:warning]).to eq sample_warning_message
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
