@@ -4,6 +4,7 @@
     <% if @notebook_type == 'jupyter-notebook' %>
       <%= stylesheet_link_tag 'jupyterlab' %>
       <%= stylesheet_link_tag 'jupyterlab-extra' %>
+      <%= stylesheet_link_tag 'fonts' %>
       <%= stylesheet_link_tag 'common/jupyterlab-markus-custom' %>
       <% if @current_user&.theme == 'dark' %>
         <%= stylesheet_link_tag 'jupyterlab-theme-dark-extension' %>

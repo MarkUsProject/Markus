@@ -30,9 +30,15 @@ export class NotebookViewer extends React.PureComponent {
         const end_node = doc.evaluate(annotation.end_node, doc).iterateNext();
         const newRange = doc.createRange();
         try {
-          newRange.setStart(start_node, annotation.start_offset);
-          newRange.setEnd(end_node, annotation.end_offset);
-          markupTextInRange(newRange, annotation.content);
+          if (doc.getElementById(`markus-annotation-${annotation.id}`) === null) {
+            newRange.setStart(start_node, annotation.start_offset);
+            newRange.setEnd(end_node, annotation.end_offset);
+          } else {
+            // Dummy values for the range
+            newRange.setStart(start_node, 0);
+            newRange.setEnd(end_node, 0);
+          }
+          markupTextInRange(newRange, annotation.content, annotation.id);
         } catch (error) {
           console.error(error);
         }
@@ -41,6 +47,12 @@ export class NotebookViewer extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (prevProps.annotations !== this.props.annotations) {
+      // If annotations have been deleted, reload the notebook.
+      // TODO: Remove this after implementing functionality to manually remove
+      //       an annotation (likely in range_selector.js).
+      if (prevProps.annotations.length > this.props.annotations.length) {
+        this.iframe.current.contentWindow.location.reload();
+      }
       this.renderAnnotations();
     }
   }
