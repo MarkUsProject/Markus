@@ -1,5 +1,4 @@
 {%- extends 'base.html.j2' -%}
-{% from 'mathjax.html.j2' import mathjax %}
 
 {%- block header -%}
 <!DOCTYPE html>
@@ -22,10 +21,6 @@
 
 {% block notebook_css %}
 {% endblock notebook_css %}
-
-{%- block html_head_js_mathjax -%}
-{{ mathjax("") }}
-{%- endblock html_head_js_mathjax -%}
 
 {%- block html_head_css -%}
 {%- endblock html_head_css -%}
