@@ -24,6 +24,7 @@
 - Ensure annotation previews are rendered on annotations page and in annotation category dropdown menus when grading (#7073)
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
+- Fix MathJax rendering of released overall comments (#7084)
 
 ### 🔧 Internal changes
 
