@@ -6,7 +6,7 @@ module.exports = {
   entry: {
     application_webpack: "./app/javascript/application_webpack.js",
     markus_notebook: "./app/javascript/markus_notebook.js",
-    "pdf.worker": "./app/javascript/pdf.worker.js",
+    "pdf.worker": "pdfjs-dist/build/pdf.worker.mjs",
     result: "./app/javascript/result.js",
   },
   module: {
