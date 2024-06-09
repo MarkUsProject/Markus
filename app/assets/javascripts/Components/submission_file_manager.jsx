@@ -22,6 +22,8 @@ class SubmissionFileManager extends React.Component {
       requiredFiles: [],
       maxFileSize: 0,
       numberOfMissingFiles: 0,
+      uploadModalProgressVisible: false,
+      uploadModalProgressPercentage: 0.0,
     };
   }
 
@@ -101,8 +103,9 @@ class SubmissionFileManager extends React.Component {
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
     ) {
+      this.setState({uploadModalProgressVisible: true});
+
       const prefix = path || this.state.uploadTarget || "";
-      this.setState({showUploadModal: false, uploadTarget: undefined});
       let data = new FormData();
       if (!!renameTo && files.length === 1) {
         Array.from(files).forEach(f => data.append("new_files[]", f, renameTo));
@@ -114,6 +117,7 @@ class SubmissionFileManager extends React.Component {
         data.append("grouping_id", this.props.grouping_id);
       }
       data.append("unzip", unzip);
+
       $.post({
         url: Routes.update_files_course_assignment_submissions_path(
           this.props.course_id,
@@ -122,6 +126,21 @@ class SubmissionFileManager extends React.Component {
         data: data,
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
+        xhr: () => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.upload.addEventListener(
+            "progress",
+            event => {
+              if (event.lengthComputable) {
+                this.setState({uploadModalProgressPercentage: (event.loaded / event.total) * 100});
+              }
+            },
+            false
+          );
+
+          return xhr;
+        },
       })
         .then(typeof this.props.onChange === "function" ? this.props.onChange : this.fetchData)
         .then(this.endAction)
@@ -129,6 +148,14 @@ class SubmissionFileManager extends React.Component {
           if (jqXHR.getResponseHeader("x-message-error") == null) {
             flashMessage(I18n.t("upload_errors.generic"), "error");
           }
+        })
+        .always(() => {
+          this.setState({
+            showUploadModal: false,
+            uploadTarget: undefined,
+            uploadModalProgressVisible: false,
+            uploadModalProgressPercentage: 0.0,
+          });
         });
     }
   };
@@ -353,6 +380,8 @@ class SubmissionFileManager extends React.Component {
           isOpen={this.state.showUploadModal}
           onRequestClose={() => this.setState({showUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+          progressVisible={this.state.uploadModalProgressVisible}
+          progressPercentage={this.state.uploadModalProgressPercentage}
           onlyRequiredFiles={this.state.onlyRequiredFiles}
           requiredFiles={this.state.requiredFiles}
           uploadTarget={this.state.uploadTarget}

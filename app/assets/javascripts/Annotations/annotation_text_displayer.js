@@ -28,7 +28,7 @@ class AnnotationTextDisplayer {
   // Show the displayer
   show() {
     this.display_node.style.display = "block";
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.display_node]);
+    MathJax.typeset([this.display_node]);
   }
 
   // Set the parent element of the display node

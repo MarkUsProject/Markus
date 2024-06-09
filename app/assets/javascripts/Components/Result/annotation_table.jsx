@@ -162,11 +162,11 @@ export class AnnotationTable extends React.Component {
   };
 
   componentDidMount() {
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "annotation_table"]);
+    MathJax.typeset(["#annotation_table"]);
   }
 
   componentDidUpdate() {
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "annotation_table"]);
+    MathJax.typeset(["#annotation_table"]);
   }
 
   render() {

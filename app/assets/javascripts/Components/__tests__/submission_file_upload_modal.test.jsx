@@ -197,4 +197,66 @@ describe("For the SubmissionFileUploadModal", () => {
       );
     });
   });
+
+  describe("The progress bar", () => {
+    describe("when the progressVisible prop is initially true and progressPercentage prop is 0.0", () => {
+      beforeEach(() => {
+        // for testing the behaviour of progress bar after submit
+        mockOnSubmit = jest.fn(() => {
+          wrapper.setProps({progressVisible: false});
+        });
+
+        wrapper = shallow(
+          <SubmissionFileUploadModal
+            progressVisible={true}
+            progressPercentage={0.0}
+            requiredFiles={[]}
+            onSubmit={mockOnSubmit}
+          />
+        );
+
+        // to ensure submit button is enabled
+        wrapper.setState({newFiles: ["q1.py", "q2.py"]});
+      });
+
+      it("the progress bar is initially visible", () => {
+        expect(wrapper.find(".modal-progress-bar").exists()).toBeTruthy();
+      });
+
+      it("the progress bar's value is initially 0.0", () => {
+        expect(wrapper.find(".modal-progress-bar").props()["value"]).toEqual(0.0);
+      });
+
+      it("the progress bar's value changes when the prop progressPercentage changes", () => {
+        wrapper.setProps({progressPercentage: 50.0});
+        wrapper.update();
+        expect(wrapper.find(".modal-progress-bar").props()["value"]).toEqual(50.0);
+      });
+
+      it("the progress bar disappears after the submit button is clicked", () => {
+        // simulate form submission
+        wrapper.instance().onSubmit({preventDefault: jest.fn()});
+        expect(mockOnSubmit).toHaveBeenCalled();
+        wrapper.update();
+        expect(wrapper.find(".modal-progress-bar").exists()).toBeFalsy();
+      });
+    });
+
+    describe("when the progressVisible prop is initially false", () => {
+      beforeEach(() => {
+        wrapper = shallow(
+          <SubmissionFileUploadModal
+            progressVisible={false}
+            progressPercentage={0.0}
+            requiredFiles={[]}
+            onSubmit={() => {}}
+          />
+        );
+      });
+
+      it("the progress bar is initially not visible", () => {
+        expect(wrapper.find(".modal-progress-bar").exists()).toBeFalsy();
+      });
+    });
+  });
 });

@@ -404,10 +404,6 @@ class GitRepository < Repository::AbstractRepository
     Rails.root.join("tmp/git_repo_#{connect_string.gsub(File::Separator, '_')}")
   end
 
-  ####################################################################
-  ##  Private method definitions
-  ####################################################################
-
   # Helper method to generate all the permissions for students for all groupings in all assignments.
   # This is done as a single operation to mirror the SVN repo code.
   def self.update_permissions_file(permissions)
@@ -429,6 +425,10 @@ class GitRepository < Repository::AbstractRepository
       end
     end
   end
+
+  ####################################################################
+  ##  Private method definitions
+  ####################################################################
 
   private
 

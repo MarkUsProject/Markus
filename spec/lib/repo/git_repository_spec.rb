@@ -1,7 +1,7 @@
 describe GitRepository do
   context 'writes to repository permissions file' do
     before do
-      GitRepository.public_send :update_permissions_file, { mock_repo: [:student1, :student2] }
+      GitRepository.update_permissions_file({ mock_repo: [:student1, :student2] })
     end
 
     after do
