@@ -1,24 +1,24 @@
 @charset "UTF-8";
 
-@import "reset";
-@import "constants";
-@import "columns";
-@import "file_viewer";
-@import "login";
-@import "mixins";
-@import "modals";
-@import "notes_dialog";
-@import "annotations_dialog";
-@import "icons";
-@import "react_json_schema_form";
-@import "react_tabs";
-@import "courses";
-@import "url_viewer";
-@import "statistics";
-@import "criteria_filter";
-@import "multi_select_dropdown";
-@import "single_select_dropdown";
-@import "filter_modal";
+@import 'reset';
+@import 'constants';
+@import 'columns';
+@import 'file_viewer';
+@import 'login';
+@import 'mixins';
+@import 'modals';
+@import 'notes_dialog';
+@import 'annotations_dialog';
+@import 'icons';
+@import 'react_json_schema_form';
+@import 'react_tabs';
+@import 'courses';
+@import 'url_viewer';
+@import 'statistics';
+@import 'criteria_filter';
+@import 'multi_select_dropdown';
+@import 'single_select_dropdown';
+@import 'filter_modal';
 
 /** Main */
 
@@ -210,7 +210,7 @@ textarea {
     background-color: $light-success;
   }
 
-  &[type="number"] {
+  &[type='number'] {
     width: 5em;
 
     &.fixed-width {
@@ -244,9 +244,9 @@ select[multiple] {
 
 /** Buttons */
 
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
 button,
 .button {
   background: linear-gradient(to bottom, $background-main, $background-support);
@@ -389,7 +389,7 @@ fieldset {
     line-height: 1.8em;
   }
 
-  > input[type="checkbox"] {
+  > input[type='checkbox'] {
     margin-top: 0.2em;
   }
 }
@@ -1111,7 +1111,7 @@ nav {
     border: transparent solid 5px;
     border-left-color: $primary-one;
     border-right-width: 0;
-    content: " ";
+    content: ' ';
     float: right;
     margin-left: 10px;
     margin-top: 3px;
@@ -1336,7 +1336,7 @@ nav {
 
 // Styling for grade entry form inputs
 .grade-input {
-  > input[type="number"] {
+  > input[type='number'] {
     appearance: textfield;
     border-width: 0;
     height: calc(100% + 2px);
