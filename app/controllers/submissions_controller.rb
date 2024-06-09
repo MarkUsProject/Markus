@@ -415,7 +415,7 @@ class SubmissionsController < ApplicationController
             expected_mime_type = Marcel::MimeType.for extension: file_extension
 
             if content_type != expected_mime_type && content_type != 'application/octet-stream'
-              flash_message(:warning, "The uploaded file doesn't match its file extension (#{file_extension}).")
+              flash_message(:warning, I18n.t('student.submission.file_extension_mismatch', extension: file_extension))
             end
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
