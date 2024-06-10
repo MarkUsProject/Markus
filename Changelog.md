@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.4.11]
+
+### 🚨 Breaking changes
+
+- Disallow peer reviewers from printing results (#7114)
+
 ## [v2.4.10]
 
 ### ✨ New features and improvements
