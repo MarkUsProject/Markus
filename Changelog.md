@@ -4,6 +4,8 @@
 
 ### 🚨 Breaking changes
 
+- Disallow peer reviewers from printing results (#7114)
+
 ### ✨ New features and improvements
 
 - Allow deletion of assignments with no groups (#6880)
