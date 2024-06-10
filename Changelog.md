@@ -4,7 +4,6 @@
 
 ### 🚨 Breaking changes
 
-- Disallow peer reviewers from printing results (#7114)
 
 ### ✨ New features and improvements
 
@@ -37,6 +36,12 @@
 - Upgrade CI chromedriver to 125.0.6422.60 (#7082)
 - Fix flaky `Assignment#summary_json` test (#7111)
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
+
+## [v2.4.11]
+
+### 🚨 Breaking changes
+
+- Disallow peer reviewers from printing results (#7114)
 
 ## [v2.4.10]
 
