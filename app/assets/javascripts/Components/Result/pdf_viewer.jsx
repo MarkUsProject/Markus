@@ -110,8 +110,13 @@ export class PDFViewer extends React.PureComponent {
     const cursor = this.props.released_to_students ? "default" : "crosshair";
     const userSelect = this.props.released_to_students ? "default" : "none";
     return (
-      <div>
-        <div id="pdfContainer" style={{cursor, userSelect}} ref={this.pdfContainer}>
+      <div className="pdfContainerParent">
+        <div
+          id="pdfContainer"
+          className="pdfContainer"
+          style={{cursor, userSelect}}
+          ref={this.pdfContainer}
+        >
           <div id="viewer" className="pdfViewer" />
           <div
             key="sel_box"
