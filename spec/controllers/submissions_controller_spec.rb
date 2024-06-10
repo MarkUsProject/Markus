@@ -156,7 +156,6 @@ describe SubmissionsController do
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
         files = revision.files_at_path(@assignment.repository_folder)
-        # expect(files['text_file.txt']).not_to be_nil
         expect(files['docx_file.docx']).not_to be_nil
       end
     end
@@ -180,7 +179,6 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id, new_files: [invalid_file] }
 
       expect(response).to have_http_status :ok
-      # expect(flash[:warning]).to eq("The uploaded file doesn't match its file extension (#{file_extension}).")
       sample_warning_message = "The uploaded file doesn't match its file extension (#{file_extension})."
       flash[:warning] = "The uploaded file doesn't match its file extension (#{file_extension})."
       expect(flash[:warning]).to eq sample_warning_message
@@ -197,7 +195,6 @@ describe SubmissionsController do
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
         files = revision.files_at_path(@assignment.repository_folder)
-        # expect(files['text_file.txt']).not_to be_nil
         expect(files['docx_file.docx']).not_to be_nil
       end
     end
