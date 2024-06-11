@@ -336,7 +336,7 @@ GEM
     rails-i18n (7.0.3)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 8)
-    rails_performance (1.2.1)
+    rails_performance (1.2.2)
       browser
       railties
       redis
