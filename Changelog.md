@@ -18,7 +18,7 @@
 - Display error message for instructor-run tests when no test groups are runnable by instructors (#7038)
 - Ensure user params are passed as keyword arguments to database queries (#7040)
 - Added a progress bar for when a student uploads a file for submission (#7078)
-- - Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
+- Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
 
 ### 🐛 Bug fixes
 
