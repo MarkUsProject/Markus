@@ -9,6 +9,10 @@ div.markus-annotation {
   border: 5px solid $sharp-line;
 }
 
+.markus-annotation-content {
+  font-family: $fonts;
+}
+
 /* Override Jupyterlab css defaults */
 .jp-Notebook .jp-Cell .jp-InputPrompt {
   cursor: initial !important;

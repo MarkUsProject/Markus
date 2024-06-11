@@ -2,9 +2,9 @@
 class ResultPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :get_test_runs_instructors_released?, to: :view_marks?
-  alias_rule :create?, :add_extra_mark?, :remove_extra_mark?, :get_test_runs_instructors?,
+  alias_rule :create?, :add_extra_mark?, :remove_extra_mark?, :get_test_runs_instructors?, :print?,
              :add_tag?, :remove_tag?, :revert_to_automatic_deductions?, :random_incomplete_submission?, to: :grade?
-  alias_rule :show?, :get_annotations?, :print?, to: :view?
+  alias_rule :show?, :get_annotations?, to: :view?
   alias_rule :edit?, :toggle_marking_state?, :update_overall_comment?, :next_grouping?, to: :review?
   alias_rule :refresh_view_tokens?, :update_view_token_expiry?, to: :set_released_to_students?
 

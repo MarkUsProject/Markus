@@ -4,6 +4,7 @@
 
 ### 🚨 Breaking changes
 
+
 ### ✨ New features and improvements
 
 - Allow deletion of assignments with no groups (#6880)
@@ -22,6 +23,9 @@
 ### 🐛 Bug fixes
 
 - Ensure annotation previews are rendered on annotations page and in annotation category dropdown menus when grading (#7073)
+- Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
+- Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
+- Fix MathJax rendering of released overall comments (#7084)
 
 ### 🔧 Internal changes
 
@@ -30,6 +34,14 @@
 - Update changelog and pull request template formats (#7041)
 - Upgrade to MathJax version 3, with packaging from npm (#7073)
 - Upgrade CI chromedriver to 125.0.6422.60 (#7082)
+- Fix flaky `Assignment#summary_json` test (#7111)
+- Upgrade pdfjs-dist to v4.3.136 (#7113)
+
+## [v2.4.11]
+
+### 🚨 Breaking changes
+
+- Disallow peer reviewers from printing results (#7114)
 
 ## [v2.4.10]
 
