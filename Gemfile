@@ -19,7 +19,6 @@ gem 'pluck_to_hash'
 gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'sass-rails'
 gem 'terser'
 
 # Background tasks
@@ -124,3 +123,5 @@ end
 group :unicorn do
   gem 'unicorn'
 end
+
+gem 'cssbundling-rails', '~> 1.4'
