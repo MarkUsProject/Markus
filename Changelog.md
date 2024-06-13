@@ -8,6 +8,7 @@
 ### ✨ New features and improvements
 
 - Allow deletion of assignments with no groups (#6880)
+- Added a rust auto-test target (#6906)
 - Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
 - Enable the deletion of Grade Entry Forms that have no grades (#6915)
 - Allow instructors to configure an end date until which students can run automated tests (#6992)
