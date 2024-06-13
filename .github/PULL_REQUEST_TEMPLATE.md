@@ -11,7 +11,7 @@
 <details>
 <summary>Associated documentation repository pull request (if applicable)</summary>
 
-[Associated documentation repository](https://github.com/MarkUsProject/Wiki)
+[documentation repository](https://github.com/MarkUsProject/Wiki)
 
 </details>
 
