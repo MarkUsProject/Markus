@@ -44,3 +44,6 @@ en:
   submission_file:
     error:
       no_access: 'No access to submission file with id #%{submission_file_id}.'
+  automated_tests:
+    next_token_generation: "Next Token Generation Time"
+    need_one_file: "You must submit at least one file to run tests."

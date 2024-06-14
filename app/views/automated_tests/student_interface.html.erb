@@ -31,6 +31,13 @@
     <% end %>
   </p>
 
+  <% if !@assignment.unlimited_tokens && !@assignment.non_regenerating_tokens %>
+    <p>
+      <strong><%= t('automated_tests.next_token_generation') %>:</strong>
+      <%= @next_token_generation_time %>
+    </p>
+  <% end %>
+
   <p>
     <%= t('automated_tests.need_one_file') %>
   </p>

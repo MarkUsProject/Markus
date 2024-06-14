@@ -41,6 +41,14 @@ class AutomatedTestsController < ApplicationController
                                     allowance_to(:run_tests?,
                                                  current_role,
                                                  context: { assignment: @assignment, grouping: @grouping })).value
+
+      # Calculate the next token generation time
+      token_period = @assignment.assignment_properties.token_period.hours
+      last_generated = @grouping.test_tokens.last_created_at || Time.current
+      @next_token_generation_time = last_generated + token_period
+
+      # Format the next token generation time for display
+      @next_token_generation_time = @next_token_generation_time.strftime('%A, %B %d, %Y %I:%M:%S %p %Z')
     end
 
     render layout: 'assignment_content'
