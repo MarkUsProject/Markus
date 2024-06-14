@@ -129,6 +129,29 @@ describe SubmissionsController do
       end
     end
 
+    it 'should check for MIME type and extension that match' do
+      expect(@student).to have_accepted_grouping_for(@assignment.id)
+
+      valid_file = fixture_file_upload('docx_file.docx',
+                                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+      content_type = Marcel::MimeType.for Pathname.new(valid_file)
+      file_extension = File.extname(valid_file.original_filename).downcase
+      expected_mime_type = Marcel::MimeType.for extension: file_extension
+
+      expect(content_type).to eq(expected_mime_type)
+
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id, new_files: [valid_file] }
+      expect(response).to have_http_status :ok
+
+      # Check to see if the file was added
+      @grouping.group.access_repo do |repo|
+        revision = repo.get_latest_revision
+        files = revision.files_at_path(@assignment.repository_folder)
+        expect(files['docx_file.docx']).not_to be_nil
+      end
+    end
+
     it 'should check for MIME type and extension that do not match' do
       expect(@student).to have_accepted_grouping_for(@assignment.id)
 
