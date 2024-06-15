@@ -523,6 +523,7 @@ DEPENDENCIES
   jwt
   listen
   machinist (< 3)
+  marcel
   mini_mime
   pg
   pluck_to_hash
