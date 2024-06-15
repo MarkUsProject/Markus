@@ -2108,7 +2108,7 @@ describe Assignment do
 
       context 'groups with group members' do
         let(:members) do
-          groupings.map do |g|
+          groupings.sort_by { |g| g.group.group_name }.map do |g|
             g.accepted_students.joins(:user).pluck('users.user_name',
                                                    'users.first_name',
                                                    'users.last_name',
@@ -2118,7 +2118,7 @@ describe Assignment do
 
         before do
           Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
-          @data = assignment_tag.summary_json(ta)[:data]
+          @data = assignment_tag.summary_json(ta)[:data].sort_by { |g| g[:group_name] }
         end
 
         (0..2).each do |idx|

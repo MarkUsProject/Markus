@@ -1,6 +1,7 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('context_menu') %>
+  <%= stylesheet_link_tag 'result' %>
 
   <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_tag nonce: true do -%>
@@ -29,8 +30,8 @@
 ] %>
 
 <div class='pane-wrapper mid-height'>
-  <div class='pane scrollable'>
-    <div id="pdfContainer">
+  <div class='pane scrollable pdfContainerParent'>
+    <div id="pdfContainer" class='pdfContainer'>
       <div id="viewer" class="pdfViewer"></div>
     </div>
   </div>

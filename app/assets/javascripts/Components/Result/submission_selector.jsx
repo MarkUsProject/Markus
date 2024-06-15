@@ -102,17 +102,19 @@ export class SubmissionSelector extends React.Component {
   }
 
   renderPrintButton() {
-    return (
-      <a
-        className={"button"}
-        href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
-        style={{alignSelf: "flex-end"}}
-        title={I18n.t("results.print")}
-      >
-        <FontAwesomeIcon icon={"fa-solid fa-print"} />
-        <span className="button-text">{I18n.t("results.print")}</span>
-      </a>
-    );
+    if (!this.props.is_reviewer) {
+      return (
+        <a
+          className={"button"}
+          href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
+          style={{alignSelf: "flex-end"}}
+          title={I18n.t("results.print")}
+        >
+          <FontAwesomeIcon icon={"fa-solid fa-print"} />
+          <span className="button-text">{I18n.t("results.print")}</span>
+        </a>
+      );
+    }
   }
 
   onOpenFilterModal = () => {

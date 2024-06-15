@@ -1,6 +1,7 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'grader',
                           'jquery-ui' %>
+  <%= stylesheet_link_tag 'result' %>
   <%= javascript_include_tag 'result', nonce: true %>
 <% end %>
 
@@ -114,8 +115,8 @@
     <%= link_to t('groups.manage_groups'), course_assignment_groups_path(@current_course, @assignment) %>
 <% end %>
 <div class='pane-wrapper mid-height'>
-  <div class='pane scrollable'>
-    <div id="pdfContainer">
+  <div class='pane scrollable pdfContainerParent'>
+    <div id="pdfContainer" class='pdfContainer'>
       <div id="viewer" class="pdfViewer"></div>
     </div>
   </div>

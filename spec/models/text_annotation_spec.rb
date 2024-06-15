@@ -4,8 +4,25 @@ describe TextAnnotation do
 
     it { is_expected.to validate_presence_of(:line_start) }
     it { is_expected.to validate_presence_of(:line_end) }
+    it { is_expected.to validate_presence_of(:column_start) }
+    it { is_expected.to validate_presence_of(:column_end) }
+
+    it { is_expected.to allow_value(1).for(:line_start) }
+    it { is_expected.to allow_value(1).for(:line_end) }
+    it { is_expected.to allow_value(0).for(:column_start) }
+    it { is_expected.to allow_value(0).for(:column_end) }
+
     it { is_expected.to allow_value(10).for(:line_start) }
     it { is_expected.to allow_value(10).for(:line_end) }
+    it { is_expected.to allow_value(5).for(:column_start) }
+    it { is_expected.to allow_value(5).for(:column_end) }
+
+    it { is_expected.not_to allow_value(0).for(:line_start) }
+    it { is_expected.not_to allow_value(0).for(:line_end) }
+    it { is_expected.not_to allow_value(-1).for(:line_start) }
+    it { is_expected.not_to allow_value(-1).for(:line_end) }
+    it { is_expected.not_to allow_value(-1).for(:column_start) }
+    it { is_expected.not_to allow_value(-1).for(:column_end) }
 
     include_examples 'course associations'
 
@@ -15,10 +32,5 @@ describe TextAnnotation do
 
       it_behaves_like 'gets annotation data'
     end
-
-    # TODO: Change Model.
-    # We should not allow negative values vor lines
-    # should_not allow_value(-1).for(:line_start)
-    # should_not allow_value(-1).for(:line_end)
   end
 end
