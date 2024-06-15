@@ -31,5 +31,8 @@ sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' /app/db/structure.sql
 
 rm -f ./tmp/pids/server.pid
 
+# cssbundling-rails development command
+npm run build-dev:css &
+
 # Then exec the container's main process (what's set as CMD in the Dockerfile or compose.yaml).
 exec "$@"

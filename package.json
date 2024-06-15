@@ -66,6 +66,8 @@
   "scripts": {
     "build": "node_modules/.bin/webpack --progress --config webpack.production.js",
     "build-dev": "node_modules/.bin/webpack --progress --config webpack.development.js",
+    "build:css": "sass ./app/assets/stylesheets/entrypoints:./app/assets/builds/ --no-source-map --load-path=node_modules --load-path=./app/assets/stylesheets --load-path=./vendor/assets/stylesheets --style=compressed",
+    "build-dev:css": "sass ./app/assets/stylesheets/entrypoints:./app/assets/builds/ --watch --load-path=node_modules --load-path=./app/assets/stylesheets --load-path=./vendor/assets/stylesheets",
     "test": "node_modules/.bin/jest --no-cache",
     "test-cov": "node_modules/.bin/jest --no-cache --collect-coverage"
   }
