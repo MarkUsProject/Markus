@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.4.12]
+
+### ✨ New features and improvements
+
+- Added a backend to check MIME type and file extension of uploaded files (#7083)
+
 ## [v2.4.11]
 
 ### 🚨 Breaking changes
