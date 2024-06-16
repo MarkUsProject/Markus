@@ -1763,7 +1763,7 @@ describe SubmissionsController do
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq 'rmarkdown'
+        expect(response.parsed_body['type']).to eq 'markdown'
       end
     end
 
