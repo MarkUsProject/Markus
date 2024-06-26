@@ -28,6 +28,7 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
+- Remove peer reviews from grade summary table (#7126)
 
 ### 🔧 Internal changes
 
