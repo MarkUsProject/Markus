@@ -6,6 +6,10 @@
 
 - Added a backend to check MIME type and file extension of uploaded files (#7083)
 
+### 🐛 Bug fixes
+
+- Fix bug in grade display for marks summary (#7125)
+
 ## [v2.4.11]
 
 ### 🚨 Breaking changes
