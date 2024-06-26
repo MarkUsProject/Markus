@@ -171,6 +171,59 @@ describe CourseSummariesController do
           end
         end
       end
+
+      context 'when there are percentage extra_marks' do
+        before do
+          assignments = create_list(:assignment_with_criteria_and_results, 3)
+          create(:grouping_with_inviter_and_submission, assignment: assignments[0])
+          create_list(:grade_entry_form_with_data, 2)
+          create(:grade_entry_form)
+          create(:marking_scheme, assessments: Assessment.all)
+          assignments.first.criteria.first.update!(max_mark: 3.0)
+          assignments.second.criteria.first.update!(max_mark: 2.0)
+          assignments.third.criteria.first.update!(max_mark: 5.0)
+          assignments.each do |assignment|
+            create(:extra_mark, result: assignment.groupings.first.current_result)
+          end
+
+          get_as instructor, :populate, params: { course_id: course.id }, format: :json
+          @response_data = response.parsed_body.deep_symbolize_keys
+          @data = @response_data[:data]
+        end
+
+        it 'returns the correct grades' do
+          expect(@data.length).to eq Student.count
+          Student.find_each do |student|
+            expected = {
+              id: student.id,
+              id_number: student.id_number,
+              user_name: student.user_name,
+              first_name: student.first_name,
+              last_name: student.last_name,
+              section_name: student.section_name,
+              email: student.email,
+              hidden: student.hidden,
+              assessment_marks: GradeEntryForm.all.map do |ges|
+                total_grade = ges.grade_entry_students.find_by(role: student).get_total_grade
+                out_of = ges.grade_entry_items.sum(:out_of)
+                percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
+                [ges.id.to_s.to_sym, {
+                  mark: total_grade,
+                  percentage: percent
+                }]
+              end.to_h
+            }
+            student.accepted_groupings.each do |g|
+              mark = g.current_result.get_total_mark
+              expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
+                mark: mark,
+                percentage: (mark * 100 / g.assignment.max_mark).round(2).to_s
+              }
+            end
+            expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
+          end
+        end
+      end
     end
   end
 

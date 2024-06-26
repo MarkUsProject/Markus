@@ -28,6 +28,7 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
+- Fix bug in grade display for marks summary (#7125)
 
 ### 🔧 Internal changes
 
