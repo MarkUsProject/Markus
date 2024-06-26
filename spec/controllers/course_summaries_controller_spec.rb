@@ -171,6 +171,22 @@ describe CourseSummariesController do
           end
         end
       end
+
+      context 'when there are peer reviews' do
+        before do
+          assignments = create_list(:assignment_with_criteria_and_results, 3)
+          @pr_assignment = create(:assignment_with_peer_review_and_groupings_results,
+                                  parent_assessment_id: assignments[0].id)
+          create(:complete_result, grouping: @pr_assignment.groupings.first)
+          get_as instructor, :populate, params: { course_id: course.id }, format: :json
+          @response_data = response.parsed_body.deep_symbolize_keys
+          @assessments = @response_data[:assessments]
+        end
+
+        it 'does not return the peer review mark' do
+          expect(@assessments.pluck(:id)).not_to include @pr_assignment.id # rubocop:disable Rails/PluckId
+        end
+      end
     end
   end
 
@@ -270,6 +286,22 @@ describe CourseSummariesController do
             end
             expect(returned_medians.compact).to be_empty
             expect(returned_averages.compact).to be_empty
+          end
+        end
+
+        context 'when there are peer reviews' do
+          before do
+            assignments = create_list(:assignment_with_criteria_and_results, 3)
+            @pr_assignment = create(:assignment_with_peer_review_and_groupings_results,
+                                    parent_assessment_id: assignments[0].id)
+            create(:complete_result, grouping: @pr_assignment.groupings.first)
+            get_as student, :populate, params: { course_id: course.id }, format: :json
+            @response_data = response.parsed_body.deep_symbolize_keys
+            @assessments = @response_data[:assessments]
+          end
+
+          it 'does not return the peer review mark' do
+            expect(@assessments.pluck(:id)).not_to include @pr_assignment.id # rubocop:disable Rails/PluckId
           end
         end
 
