@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 
 - Fix bug in grade display for marks summary (#7125)
+- Remove peer reviews from grade summary table (#7126)
 
 ## [v2.4.11]
 
