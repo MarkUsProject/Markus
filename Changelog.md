@@ -40,6 +40,7 @@
 - Upgrade CI chromedriver to 125.0.6422.60 (#7082)
 - Fix flaky `Assignment#summary_json` test (#7111)
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
+- Fixed formatting of documentation repository on the PR template (#7120)
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
 
 ## [v2.4.11]
