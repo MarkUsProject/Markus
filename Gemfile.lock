@@ -138,6 +138,8 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    cssbundling-rails (1.4.0)
+      railties (>= 6.0.0)
     date (3.3.4)
     debug (1.9.2)
       irb (~> 1.10)
@@ -413,16 +415,6 @@ GEM
     rufus-scheduler (3.9.1)
       fugit (~> 1.1, >= 1.1.6)
     rugged (1.7.2)
-    sass-rails (6.0.0)
-      sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     selenium-webdriver (4.21.1)
       base64 (~> 0.2)
       rexml (~> 3.2, >= 3.2.5)
@@ -506,6 +498,7 @@ DEPENDENCIES
   combine_pdf
   config
   cookies_eu
+  cssbundling-rails (~> 1.4)
   debug (>= 1.0.0)
   descriptive_statistics
   dry-validation
@@ -523,6 +516,7 @@ DEPENDENCIES
   jwt
   listen
   machinist (< 3)
+  marcel
   mini_mime
   pg
   pluck_to_hash
@@ -545,7 +539,6 @@ DEPENDENCIES
   rtesseract
   rubyzip
   rugged
-  sass-rails
   selenium-webdriver
   shoulda
   shoulda-callback-matchers (~> 1.1.1)
