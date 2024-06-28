@@ -28,7 +28,9 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
-- Fix rename confirmation check triggering even upon no rename (#7124)
+- Fix rename confirmation check triggering even upon no rename input (#7124)
+- Fix bug in grade display for marks summary (#7125)
+- Remove peer reviews from grade summary table (#7126)
 
 ### 🔧 Internal changes
 
@@ -39,6 +41,7 @@
 - Upgrade CI chromedriver to 125.0.6422.60 (#7082)
 - Fix flaky `Assignment#summary_json` test (#7111)
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
+- Fixed formatting of documentation repository on the PR template (#7120)
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
 
 ## [v2.4.11]
