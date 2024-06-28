@@ -27,7 +27,6 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
-- Fixed formatting of documentation repository on the PR template (#7120)
 
 ### 🔧 Internal changes
 
@@ -38,6 +37,7 @@
 - Upgrade CI chromedriver to 125.0.6422.60 (#7082)
 - Fix flaky `Assignment#summary_json` test (#7111)
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
+- Fixed formatting of documentation repository on the PR template (#7120)
 
 ## [v2.4.11]
 
