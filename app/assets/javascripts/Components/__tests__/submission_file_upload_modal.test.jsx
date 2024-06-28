@@ -206,6 +206,16 @@ describe("For the SubmissionFileUploadModal", () => {
       wrapper.instance().onSubmit({preventDefault: jest.fn()});
       expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "");
     });
+
+    it("should call onSubmit prop with correct arguments when rename input consists only of whitespace", () => {
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file.py"}],
+        renameTo: "   ",
+      });
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+      expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "");
+    });
   });
 
   describe("The progress bar", () => {
