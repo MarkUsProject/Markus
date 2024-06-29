@@ -1,5 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
+import Prism from "prismjs";
 
 export class TextViewer extends React.PureComponent {
   constructor(props) {
@@ -14,6 +15,7 @@ export class TextViewer extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.highlight_root = this.raw_content.current.parentNode;
     if (this.props.content) {
       this.ready_annotations();
     }
@@ -42,34 +44,86 @@ export class TextViewer extends React.PureComponent {
    * 3. Scroll to line numbered this.props.focusLine
    */
   ready_annotations = () => {
-    if (this.highlight_root !== null) {
-      this.highlight_root.remove();
-    }
+    this.run_syntax_highlighting();
+
     if (this.annotation_manager !== null) {
       this.annotation_manager.annotation_text_displayer.hide();
     }
 
-    const preElementName = this.raw_content.current.getAttribute("name");
-    dp.SyntaxHighlighter.HighlightAll(
-      preElementName,
-      true /* showGutter */,
-      false /* showControls */
-    );
-    this.highlight_root =
-      this.raw_content.current.parentNode.getElementsByClassName("dp-highlighter")[0];
     this.highlight_root.style.font_size = this.state.fontSize + "em";
 
     if (this.props.resultView) {
       window.annotation_type = ANNOTATION_TYPES.CODE;
 
-      window.annotation_manager = new TextAnnotationManager(
-        this.highlight_root.children[1].children
-      );
+      window.annotation_manager = new TextAnnotationManager(this.raw_content.current.children);
       this.annotation_manager = window.annotation_manager;
     }
 
     this.props.annotations.forEach(this.display_annotation);
     this.scrollToLine(this.props.focusLine);
+  };
+
+  run_syntax_highlighting = () => {
+    Prism.highlightElement(this.raw_content.current, false);
+    let nodeLines = [];
+    let currLine = document.createElement("span");
+    currLine.classList.add("source-line");
+    for (let node of this.raw_content.current.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        // SourceCodeLine.glow assumes text nodes are wrapped in <span> elements
+        let textContainer = document.createElement("span");
+        let textNode = null;
+        if (node.textContent.includes("\n")) {
+          const splits = node.textContent.split("\n");
+          for (let i = 0; i < splits.length - 1; i++) {
+            textNode = document.createTextNode(splits[i] + "\n");
+            textContainer.appendChild(textNode);
+            currLine.appendChild(textContainer);
+            nodeLines.push(currLine);
+            currLine = document.createElement("span");
+            currLine.classList.add("source-line");
+            textContainer = document.createElement("span");
+          }
+          textNode = document.createTextNode(splits[splits.length - 1]);
+        } else {
+          textNode = node.cloneNode(true);
+        }
+        textContainer.appendChild(textNode);
+        currLine.appendChild(textContainer);
+      } else {
+        if (node.textContent.includes("\n")) {
+          const splits = node.textContent.split("\n");
+          let textContainer = document.createElement("span");
+          textContainer.className = node.className;
+          let textNode = null;
+          for (let i = 0; i < splits.length - 1; i++) {
+            textNode = document.createTextNode(splits[i] + "\n");
+            textContainer.appendChild(textNode);
+            currLine.appendChild(textContainer);
+            nodeLines.push(currLine);
+            currLine = document.createElement("span");
+            currLine.classList.add("source-line");
+            textContainer = document.createElement("span");
+            textContainer.className = node.className;
+          }
+          textNode = document.createTextNode(splits[splits.length - 1]);
+          textContainer.appendChild(textNode);
+          currLine.appendChild(textContainer);
+        } else {
+          currLine.appendChild(node.cloneNode(true));
+        }
+      }
+    }
+    if (currLine.textContent.length > 0) {
+      nodeLines.appendChild(currLine);
+    }
+    nodeLines.push(this.raw_content.current.lastChild.cloneNode(true));
+    while (this.raw_content.current.firstChild) {
+      this.raw_content.current.removeChild(this.raw_content.current.lastChild);
+    }
+    for (let n of nodeLines) {
+      this.raw_content.current.appendChild(n);
+    }
   };
 
   change_font_size = delta => {
@@ -109,15 +163,11 @@ export class TextViewer extends React.PureComponent {
       return;
     }
 
-    const line = this.highlight_root.querySelector(`li:nth-of-type(${lineNumber})`);
+    const line = this.highlight_root.querySelector(`span.source-line:nth-of-type(${lineNumber})`);
     if (line) {
       line.scrollIntoView();
     }
   };
-
-  componentWillUnmount() {
-    document.querySelectorAll(".dp-highlighter").forEach(node => node.remove());
-  }
 
   copyToClipboard = () => {
     navigator.clipboard.writeText(this.props.content).then(() => {
@@ -142,13 +192,12 @@ export class TextViewer extends React.PureComponent {
             <a href="#" onClick={() => this.change_font_size(-0.25)}>
               -A
             </a>
-            <a href="#" onClick={() => dp.sh.Toolbar.Command("About", this.highlight_root)}>
-              ?
-            </a>
           </div>
         </div>
-        <pre name={preElementName} ref={this.raw_content} className={this.props.type}>
-          {this.props.content}
+        <pre name={preElementName} className={`line-numbers`}>
+          <code ref={this.raw_content} className={`language-${this.props.type}`}>
+            {this.props.content}
+          </code>
         </pre>
       </React.Fragment>
     );

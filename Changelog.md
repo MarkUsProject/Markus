@@ -42,6 +42,7 @@
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
 - Fixed formatting of documentation repository on the PR template (#7120)
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
+- Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
 
 ## [v2.4.11]
 
