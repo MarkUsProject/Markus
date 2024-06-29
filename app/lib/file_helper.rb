@@ -12,15 +12,16 @@ module FileHelper
                   '.rb' => 'ruby',
                   '.py' => 'python',
                   '.js' => 'javascript',
+                  '.jsx' => 'jsx',
                   '.html' => 'html',
                   '.css' => 'css',
                   '.c' => 'c',
                   '.h' => 'c',
-                  '.cpp' => 'c',
+                  '.cpp' => 'cpp',
                   '.hs' => 'haskell',
                   '.scm' => 'scheme',
                   '.ss' => 'scheme',
-                  '.rkt' => 'scheme',
+                  '.rkt' => 'racket',
                   '.tex' => 'tex',
                   '.jpeg' => 'image',
                   '.jpg' => 'image',
@@ -32,7 +33,14 @@ module FileHelper
                   '.pdf' => 'pdf',
                   '.ipynb' => 'jupyter-notebook',
                   '.r' => 'r',
-                  '.rmd' => 'rmarkdown',
+                  '.rmd' => 'markdown',
+                  '.md' => 'markdown',
+                  '.sql' => 'sql',
+                  '.csv' => 'csv',
+                  '.json' => 'json',
+                  '.sh' => 'sh',
+                  '.cmake' => 'cmake',
+                  '.make' => 'makefile',
                   '.markusurl' => 'markusurl' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
@@ -57,10 +65,8 @@ module FileHelper
     )
   end
 
+  # Return a file type based on the extension of +filename+. Used for syntax highlighting.
   def self.get_file_type(filename)
-    # This is where you can add more languages that SubmissionFile will
-    # recognize.  It will return the name of the language, which
-    # SyntaxHighlighter can work with.
     extension = File.extname(filename).downcase
     if EXT_TO_TYPE.key?(extension)
       EXT_TO_TYPE[extension]

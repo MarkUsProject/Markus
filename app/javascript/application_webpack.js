@@ -54,6 +54,10 @@ import "javascripts/chart_config";
 import flatpickr from "flatpickr";
 window.flatpickr = flatpickr;
 
+// prism
+window.Prism = window.Prism || {};
+window.Prism.manual = true;
+
 window.Routes = require("./routes");
 
 // create a global icon for the help system
