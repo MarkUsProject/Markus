@@ -1,5 +1,16 @@
 # Changelog
 
+## [v2.4.12]
+
+### ✨ New features and improvements
+
+- Added a backend to check MIME type and file extension of uploaded files (#7083)
+
+### 🐛 Bug fixes
+
+- Fix bug in grade display for marks summary (#7125)
+- Remove peer reviews from grade summary table (#7126)
+
 ## [v2.4.11]
 
 ### 🚨 Breaking changes

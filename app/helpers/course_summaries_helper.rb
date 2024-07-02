@@ -30,12 +30,13 @@ module CourseSummariesHelper
       target[:section_name] = target.delete('sections.name')
       target
     end
-
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
                                 .order(:'results.created_at')
                                 .pluck('roles.id', 'groupings.assessment_id', 'results.id')
-    result_marks = Result.get_total_marks(assignment_grades.map(&:third))
+    results = Result.where(id: assignment_grades.map(&:third)).where.missing(:peer_reviews).ids
+    assignment_grades.select! { |row| results.include?(row[2]) }
+    result_marks = Result.get_total_marks(results)
     assignment_grades.each do |role_id, assessment_id, result_id|
       max_mark = @max_marks[assessment_id]
       mark = result_marks[result_id]

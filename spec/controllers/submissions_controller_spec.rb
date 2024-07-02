@@ -116,6 +116,55 @@ describe SubmissionsController do
       end
     end
 
+    it 'should check for MIME type and extension that match' do
+      expect(@student).to have_accepted_grouping_for(@assignment.id)
+
+      valid_file = fixture_file_upload('docx_file.docx',
+                                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+      content_type = Marcel::MimeType.for Pathname.new(valid_file)
+      file_extension = File.extname(valid_file.original_filename).downcase
+      expected_mime_type = Marcel::MimeType.for extension: file_extension
+
+      expect(content_type).to eq(expected_mime_type)
+
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id, new_files: [valid_file] }
+      expect(response).to have_http_status :ok
+
+      # Check to see if the file was added
+      @grouping.group.access_repo do |repo|
+        revision = repo.get_latest_revision
+        files = revision.files_at_path(@assignment.repository_folder)
+        expect(files['docx_file.docx']).not_to be_nil
+      end
+    end
+
+    it 'should check for MIME type and extension that do not match' do
+      expect(@student).to have_accepted_grouping_for(@assignment.id)
+
+      invalid_file = fixture_file_upload('docx_renamed_to_pdf.pdf')
+      content_type = Marcel::MimeType.for(Pathname.new(invalid_file))
+      file_extension = File.extname(invalid_file.original_filename).downcase
+      expected_mime_type = Marcel::MimeType.for(extension: file_extension)
+
+      expect(content_type).not_to eq(expected_mime_type)
+
+      post_as @student, :update_files,
+              params: { course_id: course.id, assignment_id: @assignment.id, new_files: [invalid_file] }
+
+      expect(response).to have_http_status :ok
+      sample_warning_message = I18n.t('student.submission.file_extension_mismatch', extension: file_extension)
+      flash[:warning] = I18n.t('student.submission.file_extension_mismatch', extension: file_extension)
+      expect(flash[:warning]).to eq sample_warning_message
+
+      # Check to see if the file was added
+      @grouping.group.access_repo do |repo|
+        revision = repo.get_latest_revision
+        files = revision.files_at_path(@assignment.repository_folder)
+        expect(files['docx_renamed_to_pdf.pdf']).not_to be_nil
+      end
+    end
+
     it 'cannot add files outside the repository when an invalid path is given' do
       file = fixture_file_upload('Shapes.java', 'text/java')
       bad_path = '../../'
