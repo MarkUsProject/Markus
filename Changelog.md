@@ -20,7 +20,6 @@
 - Ensure user params are passed as keyword arguments to database queries (#7040)
 - Added a progress bar for when a student uploads a file for submission (#7078)
 - Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
-- Added a backend to check MIME type and file extension of uploaded files (#7083)
 
 ### 🐛 Bug fixes
 
@@ -28,8 +27,6 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
-- Fix bug in grade display for marks summary (#7125)
-- Remove peer reviews from grade summary table (#7126)
 
 ### 🔧 Internal changes
 
@@ -43,6 +40,17 @@
 - Fixed formatting of documentation repository on the PR template (#7120)
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
 - Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
+
+## [v2.4.12]
+
+### ✨ New features and improvements
+
+- Added a backend to check MIME type and file extension of uploaded files (#7083)
+
+### 🐛 Bug fixes
+
+- Fix bug in grade display for marks summary (#7125)
+- Remove peer reviews from grade summary table (#7126)
 
 ## [v2.4.11]
 
