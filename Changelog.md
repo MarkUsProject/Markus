@@ -28,8 +28,6 @@
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
 - Fix rename confirmation check triggering even upon no rename input (#7124)
-- Fix bug in grade display for marks summary (#7125)
-- Remove peer reviews from grade summary table (#7126)
 
 ### 🔧 Internal changes
 
