@@ -24,8 +24,6 @@ class Assignment < Assessment
   before_save :reset_collection_time
   after_create :update_parent_assignment, if: :is_peer_review?
 
-  delegate :enable_student_tests, :token_period, to: :assignment_properties
-
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
 

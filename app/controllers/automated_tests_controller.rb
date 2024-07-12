@@ -35,9 +35,7 @@ class AutomatedTestsController < ApplicationController
     @student = current_role
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
-    if @grouping.nil?
-      @next_token_generation_time = nil
-    else
+    if @grouping.present?
       @grouping.refresh_test_tokens
       @authorized = flash_allowance(:notice,
                                     allowance_to(:run_tests?,
@@ -45,18 +43,26 @@ class AutomatedTestsController < ApplicationController
                                                  context: { assignment: @assignment, grouping: @grouping })).value
 
       if @assignment.enable_student_tests
-        # Calculate the next token generation time
-        token_period = @assignment.token_period
-        last_generated = @grouping.test_runs.first&.created_at || Time.zone.now
-        @next_token_generation_time = last_generated + token_period.hours
+        last_student_run = @grouping.test_runs.where(role: @grouping.accepted_students).first
+        if last_student_run.nil?
+          @next_token_generation_time = @assignment.token_start_date + @assignment.token_period.hours
+        else
+          hours_from_start = (Time.current - @assignment.token_start_date) / 3600
+          if @assignment.non_regenerating_tokens
+            last_period_begin = @assignment.token_start_date
+          else
+            periods_from_start = (hours_from_start / @assignment.token_period).floor
+            last_period_begin = @assignment.token_start_date + (periods_from_start * @assignment.token_period).hours
+          end
+          @next_token_generation_time = last_period_begin + @assignment.token_period.hours
+        end
 
         # Format the next token generation time for display
-        @next_token_generation_time = @next_token_generation_time.strftime('%A, %B %d, %Y %I:%M:%S %p %Z')
-      else
-        @next_token_generation_time = nil
+        @next_token_generation_time = I18n.l(@next_token_generation_time)
       end
     end
 
+    @next_token_generation_time ||= nil
     render layout: 'assignment_content'
   end
 

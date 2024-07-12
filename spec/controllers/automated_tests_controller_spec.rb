@@ -1,7 +1,7 @@
-require 'rails_helper'
-
 describe AutomatedTestsController do
   include AutomatedTestsHelper
+
+  # TODO: add 'role is from a different course' shared tests to each route test below
 
   let(:assignment) { create(:assignment) }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
@@ -564,9 +564,6 @@ describe AutomatedTestsController do
       let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
 
       before do
-        allow_any_instance_of(AutotestSetting).to(
-          receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
-        )
         create(:student_membership, role: student, grouping: grouping, membership_status: 'accepted')
         sign_in student
       end
@@ -577,7 +574,10 @@ describe AutomatedTestsController do
         end
 
         it 'should calculate the next token generation time' do
-          expect(assigns(:next_token_generation_time)).not_to be_nil
+          assignment.reload
+          expected_time = assignment.token_start_date + assignment.token_period.hours
+          formatted_expected_time = I18n.l(expected_time)
+          expect(assigns(:next_token_generation_time)).to eq(formatted_expected_time)
         end
 
         it 'should respond with success' do
