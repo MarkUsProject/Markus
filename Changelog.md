@@ -41,6 +41,7 @@
 - Fix flaky `Assignment#summary_json` test (#7111)
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
+- Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
 
 ## [v2.4.11]
 
