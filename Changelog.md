@@ -27,6 +27,7 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
+- Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
 
 ### 🔧 Internal changes
 
