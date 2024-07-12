@@ -1,6 +1,6 @@
 /**
  * AnnotationManager subclass for plaintext files. Its constructor is given a list of DOM elements
- * (one for each line of text in the file), that have been transformed through SyntaxHighlighter.
+ * (one for each line of text in the file), that have been transformed through syntax highlighting.
  */
 class TextAnnotationManager extends AnnotationManager {
   constructor(source_nodes) {
@@ -120,7 +120,7 @@ class TextAnnotationManager extends AnnotationManager {
     );
 
     // If the entire line was selected through a triple-click, highlight the entire line.
-    if (mouse_anchor.nodeName === "LI" && mouse_focus.nodeName === "LI") {
+    if (mouse_anchor === mouse_focus && this.isSourceLineElement(mouse_focus)) {
       return {
         line_start: line_start,
         line_end: line_end,
@@ -130,10 +130,10 @@ class TextAnnotationManager extends AnnotationManager {
     }
 
     // If we selected an entire line the above returns + 1, a fix follows
-    if (mouseSelection.anchorNode.nodeName === "LI") {
+    if (this.isSourceLineElement(mouseSelection.anchorNode)) {
       line_start--;
     }
-    if (mouseSelection.focusNode.nodeName === "LI") {
+    if (this.isSourceLineElement(mouseSelection.focusNode)) {
       line_end--;
     }
 
@@ -213,13 +213,18 @@ class TextAnnotationManager extends AnnotationManager {
     };
   }
 
-  // Given some node, traverses upwards until it finds the LI element that represents a line of code in SyntaxHighlighter.
+  // Given some node, traverses upwards until it finds the span element that represents a line of code.
   // This is useful for figuring out what text is currently selected, using window.getSelection().anchorNode / focusNode
   getRootFromSelection(node) {
     let current_node = node;
-    while (current_node !== null && current_node.tagName !== "LI") {
+    while (current_node !== null && !this.isSourceLineElement(current_node)) {
       current_node = current_node.parentNode;
     }
     return current_node;
+  }
+
+  // Returns whether node is an element representing a source line (after syntax highlighting has been applied).
+  isSourceLineElement(node) {
+    return node.tagName === "SPAN" && node.className.includes("source-line");
   }
 }

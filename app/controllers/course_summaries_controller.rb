@@ -9,7 +9,11 @@ class CourseSummariesController < ApplicationController
 
   def populate
     table_data = get_table_json_data(current_role)
-    assessments = current_role.student? ? current_role.visible_assessments : current_course.assessments
+    if current_role.student?
+      assessments = current_role.visible_assessments.where(parent_assessment_id: nil)
+    else
+      assessments = current_course.assessments.where(parent_assessment_id: nil)
+    end
     marking_schemes = current_role.student? ? MarkingScheme.none : current_course.marking_schemes
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
