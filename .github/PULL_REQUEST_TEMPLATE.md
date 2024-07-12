@@ -9,7 +9,7 @@
 </details>
 
 <details>
-<summary>Associated [documentation repository](https://github.com/MarkUsProject/Wiki) pull request (if applicable)</summary>
+<summary>Associated <a href="https://github.com/MarkUsProject/Wiki">documentation repository</a> pull request (if applicable)</summary>
 
 </details>
 
