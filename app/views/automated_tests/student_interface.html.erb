@@ -4,7 +4,7 @@
 <%= javascript_include_tag 'result', nonce: true %>
 <%= javascript_include_tag 'Results/main', nonce: true %>
 
-<% if policy(@student).run_tests? %>
+<% if @assignment.enable_student_tests && !@grouping.nil? %>
   <p>
     <strong><%= Assignment.human_attribute_name(:token_start_date) %>:</strong>
     <%= l(@assignment.token_start_date) %>
@@ -12,7 +12,7 @@
 
   <p>
     <strong><%= Assignment.human_attribute_name(:token_end_date) %>:</strong>
-    <%= @assignment.token_end_date.present? ? l(@assignment.token_end_date) : l(@assignment.due_date) %>
+    <%= @assignment.token_end_date.present? ? l(@assignment.token_end_date) : l(@grouping.collection_date) %>
   </p>
 
   <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
@@ -30,6 +30,13 @@
       <%= @grouping.test_tokens %> / <%= @assignment.tokens_per_period %>
     <% end %>
   </p>
+
+  <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
+    <p>
+      <strong><%= t('automated_tests.next_token_generation') %>:</strong>
+      <%= @next_token_generation_time %>
+    </p>
+  <% end %>
 
   <p>
     <%= t('automated_tests.need_one_file') %>
