@@ -129,7 +129,6 @@ class Result < ApplicationRecord
           max_mark_hash[assessment_id] ||= Assignment.find(assessment_id)&.max_mark(user_visibility)
           assignment_max_mark = max_mark_hash[assessment_id]
         end
-        max_mark = max_mark_hash[assessment_id]
         extra_marks_hash[id] += (extra_mark * assignment_max_mark / 100).round(2)
       end
     end

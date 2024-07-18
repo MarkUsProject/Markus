@@ -2,16 +2,11 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <% if @notebook_type == 'jupyter-notebook' %>
-      <%= stylesheet_link_tag 'jupyterlab' %>
-      <%= stylesheet_link_tag 'jupyterlab-extra' %>
-      <%= stylesheet_link_tag 'fonts' %>
-      <%= stylesheet_link_tag 'common/jupyterlab-markus-custom' %>
+      <%= stylesheet_link_tag 'notebook_common' %>
       <% if @current_user&.theme == 'dark' %>
-        <%= stylesheet_link_tag 'jupyterlab-theme-dark-extension' %>
-        <%= stylesheet_link_tag 'pygments-monokai' %>
+        <%= stylesheet_link_tag 'notebook_dark' %>
       <% else %>
-        <%= stylesheet_link_tag 'jupyterlab-theme-light-extension' %>
-        <%= stylesheet_link_tag 'pygments-default' %>
+        <%= stylesheet_link_tag 'notebook_light' %>
       <% end %>
       <%= javascript_include_tag 'require', nonce: true %>
       <%= javascript_tag nonce: true do %>

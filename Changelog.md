@@ -27,6 +27,7 @@
 - Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
+- Fix rename confirmation check triggering even upon no rename input (#7124)
 - Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
 
 ### 🔧 Internal changes
@@ -38,6 +39,21 @@
 - Upgrade CI chromedriver to 125.0.6422.60 (#7082)
 - Fix flaky `Assignment#summary_json` test (#7111)
 - Upgrade pdfjs-dist to v4.3.136 (#7113)
+- Fixed formatting of documentation repository on the PR template (#7120)
+- Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
+- Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
+- Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
+
+## [v2.4.12]
+
+### ✨ New features and improvements
+
+- Added a backend to check MIME type and file extension of uploaded files (#7083)
+
+### 🐛 Bug fixes
+
+- Fix bug in grade display for marks summary (#7125)
+- Remove peer reviews from grade summary table (#7126)
 
 ## [v2.4.11]
 

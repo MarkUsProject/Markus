@@ -35,6 +35,7 @@ en:
       empty_file_warning: "%{file_name} is empty"
       external_submit_only: MarkUs is only accepting external submits
       file_conflicts: 'Your changes have not been made.  The following file conflicts were detected:'
+      file_extension_mismatch: The contents of the uploaded file do not match the file extension %{extension}.
       file_too_large: The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB.
       invalid_file_name: 'Invalid file name on submitted file: %{file_name}'
       invalid_folder_name: 'Invalid folder name on submitted folder: %{folder_name}'
