@@ -2,6 +2,7 @@
 en:
   graders:
     actions:
+      assign_by_section: Randomly assign TA(s)
       assign_grader: Assign grader(s)
       randomly_assign_graders: Randomly assign grader(s)
       unassign_grader: Unassign grader(s)

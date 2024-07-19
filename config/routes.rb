@@ -354,7 +354,7 @@ Rails.application.routes.draw do
           get 'populate_table'
         end
       end
-
+      # ACTION I WANT
       resources :graders, only: [:index] do
         collection do
           post 'upload'
