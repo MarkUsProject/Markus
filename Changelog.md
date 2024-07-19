@@ -28,6 +28,7 @@
 - Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
 - Fix MathJax rendering of released overall comments (#7084)
 - Fix rename confirmation check triggering even upon no rename input (#7124)
+- Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
 
 ### 🔧 Internal changes
 

@@ -12,7 +12,7 @@
 
   <p>
     <strong><%= Assignment.human_attribute_name(:token_end_date) %>:</strong>
-    <%= l(@assignment.token_end_date) %>
+    <%= @assignment.token_end_date.present? ? l(@assignment.token_end_date) : l(@grouping.collection_date) %>
   </p>
 
   <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
