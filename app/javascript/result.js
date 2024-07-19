@@ -12,3 +12,4 @@ window.pdfjs = pdfjs;
 window.pdfjsViewer = pdfjsViewer;
 
 import "pdfjs-dist/web/pdf_viewer.css";
+import "prismjs/plugins/line-numbers/prism-line-numbers.css";

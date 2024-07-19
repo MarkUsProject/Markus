@@ -1,0 +1,67 @@
+@import 'mixins';
+@import 'constants';
+
+/* codeviewer */
+#codeviewer {
+  .toolbar {
+    background: $primary-two;
+    margin: 0 0 10px;
+    padding: 2px;
+  }
+
+  .tools {
+    background-color: $background-main;
+    font: 0.825em $fonts;
+    padding: 5px 0;
+    text-align: right;
+
+    a {
+      background-color: inherit;
+      color: $link;
+      font-size: 1.1em;
+      margin-right: 10px;
+      text-decoration: none;
+    }
+
+    a:hover {
+      background-color: inherit;
+      color: $darker-orange;
+      text-decoration: none;
+    }
+  }
+
+  :not(pre) > code[class*='language-'],
+  pre[class*='language-'] {
+    background-color: unset;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  pre[class*='language-'] {
+    border: 0;
+  }
+
+  .line-numbers > code[class*='language-'] {
+    padding-top: 2px; // Fix alignment of code and line numbers
+  }
+
+  .line-numbers-rows {
+    border-right: 0;
+  }
+}
+
+.source-code-glowing-1 {
+  background-color: $light-alert !important;
+}
+
+.source-code-glowing-2 {
+  background-color: $severe-alert !important;
+}
+
+.source-code-glowing-3 {
+  background-color: $alert !important;
+}
+
+.remark {
+  background-color: $light-success !important;
+}
