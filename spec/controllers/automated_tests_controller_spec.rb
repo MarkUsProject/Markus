@@ -1,4 +1,5 @@
 describe AutomatedTestsController do
+  include ActiveSupport::Testing::TimeHelpers
   include AutomatedTestsHelper
 
   # TODO: add 'role is from a different course' shared tests to each route test below
@@ -573,14 +574,14 @@ describe AutomatedTestsController do
         end
 
         it 'should calculate the next token generation time' do
-          assignment.reload
-          current_time = Time.zone.now.change(hour: 14)
-          token_start_time = assignment.token_start_date
-          hours_since_start = [(current_time - token_start_time) / 1.hour, 0].max
-          periods_since_start = (hours_since_start / assignment.token_period).floor
-          next_period_start = token_start_time + (periods_since_start + 1) * assignment.token_period.hours
-          formatted_expected_time = I18n.l(next_period_start)
-          expect(assigns(:next_token_generation_time)).to eq(formatted_expected_time)
+          travel 14.hours do
+            get_as student, :student_interface, params: params
+            assignment.reload
+            token_start_time = assignment.token_start_date
+            expected_next_token_generation_time = token_start_time + 2.days
+            formatted_expected_time = I18n.l(expected_next_token_generation_time)
+            expect(assigns(:next_token_generation_time)).to eq(formatted_expected_time)
+          end
         end
 
         it 'should respond with success' do
