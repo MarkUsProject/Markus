@@ -22,6 +22,13 @@
     </p>
   <% end %>
 
+  <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
+    <p>
+      <strong><%= t('automated_tests.next_token_generation') %>:</strong>
+      <%= @next_token_generation_time %>
+    </p>
+  <% end %>
+
   <p>
     <strong><%= Grouping.human_attribute_name(:test_tokens) %>:</strong>
     <% if @assignment.unlimited_tokens %>
@@ -30,13 +37,6 @@
       <%= @grouping.test_tokens %> / <%= @assignment.tokens_per_period %>
     <% end %>
   </p>
-
-  <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
-    <p>
-      <strong><%= t('automated_tests.next_token_generation') %>:</strong>
-      <%= @next_token_generation_time %>
-    </p>
-  <% end %>
 
   <p>
     <%= t('automated_tests.need_one_file') %>

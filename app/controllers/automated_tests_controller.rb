@@ -42,18 +42,15 @@ class AutomatedTestsController < ApplicationController
                                                  current_role,
                                                  context: { assignment: @assignment, grouping: @grouping })).value
 
-      if @assignment.enable_student_tests
-        if @assignment.non_regenerating_tokens
-          @next_token_generation_time = nil
-        else
-          hours_from_start = [(Time.current - @assignment.token_start_date) / 3600, 0].max
-          periods_from_start = (hours_from_start / @assignment.token_period).floor
-          last_period_begin = @assignment.token_start_date + (periods_from_start * @assignment.token_period).hours
-          @next_token_generation_time = last_period_begin + @assignment.token_period.hours
-        end
-        @next_token_generation_time = I18n.l(@next_token_generation_time) if @next_token_generation_time
+      if @assignment.enable_student_tests && !@assignment.non_regenerating_tokens
+        hours_from_start = [(Time.current - @assignment.token_start_date) / 3600, 0].max
+        periods_from_start = (hours_from_start / @assignment.token_period).floor
+        last_period_begin = @assignment.token_start_date + (periods_from_start * @assignment.token_period).hours
+        @next_token_generation_time = last_period_begin + @assignment.token_period.hours
+        @next_token_generation_time = I18n.l(@next_token_generation_time)
       end
     end
+
     @next_token_generation_time ||= nil
     render layout: 'assignment_content'
   end

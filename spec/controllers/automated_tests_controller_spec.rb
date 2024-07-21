@@ -2,7 +2,6 @@ describe AutomatedTestsController do
   include AutomatedTestsHelper
 
   # TODO: add 'role is from a different course' shared tests to each route test below
-
   let(:assignment) { create(:assignment) }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
 

@@ -1,7 +1,5 @@
 ---
 en:
-  automated_tests:
-    next_token_generation: Next Token Generation Time
   date_validator:
     invalid_date: is not a valid date
   poll_job:

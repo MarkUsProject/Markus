@@ -69,3 +69,4 @@ en:
     timeout: Timeout (s)
     title: Automated Testing
     use_assignment_due_date: Leave blank to use assignment due date
+    next_token_generation: Next token generation time
