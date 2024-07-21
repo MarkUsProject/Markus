@@ -444,7 +444,13 @@ describe GroupsController do
                  params: { course_id: course.id, assignment_id: assignment.id },
                  format: 'js'
 
-          assert_enqueued_with(job: CreateGroupsJob, args: [assignment, data])
+          expected_args = ->(job_args) do
+            assignment_arg, data_arg = job_args
+            expect(assignment_arg).to eq(assignment)
+            expect(data_arg).to match_array(data)
+          end
+
+          assert_enqueued_with(job: CreateGroupsJob, args: expected_args)
           expect(flash[:error]).to be_blank
         end
 

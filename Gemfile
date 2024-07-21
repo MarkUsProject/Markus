@@ -19,7 +19,6 @@ gem 'pluck_to_hash'
 gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'sass-rails'
 gem 'terser'
 
 # Background tasks
@@ -64,6 +63,7 @@ gem 'config'
 gem 'cookies_eu'
 gem 'dry-validation'  # For settings schema validation
 gem 'exception_notification'
+gem 'marcel'
 gem 'rails-html-sanitizer'
 gem 'rails_performance'
 gem 'responders'
@@ -105,7 +105,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 6.1.2'
+  gem 'rspec-rails', '~> 6.1.3'
   gem 'selenium-webdriver'
 end
 
@@ -123,3 +123,5 @@ end
 group :unicorn do
   gem 'unicorn'
 end
+
+gem 'cssbundling-rails', '~> 1.4'
