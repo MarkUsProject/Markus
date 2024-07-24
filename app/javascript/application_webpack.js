@@ -9,8 +9,10 @@
 import "mathjax/es5/tex-svg";
 
 // jquery (should be the first to be loaded, as many other libs depend on it)
-import $ from "jquery/src/jquery";
+import $ from "jquery";
 window.$ = window.jQuery = $;
+import "jquery-ui/dist/jquery-ui";
+import "ui-contextmenu";
 
 // Callbacks for AJAX events (both jQuery and ujs).
 import * as ajax_events from "javascripts/ajax_events";

@@ -44,6 +44,7 @@
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
 - Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
 - Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
+- Move jquery-ui and ui-contextmenu dependencies to package.json and upgrade jquery-ui to v1.13.3 (#7149)
 
 ## [v2.4.12]
 
