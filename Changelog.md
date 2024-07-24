@@ -29,6 +29,7 @@
 - Fix MathJax rendering of released overall comments (#7084)
 - Fix rename confirmation check triggering even upon no rename input (#7124)
 - Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
+- Fixed grader view rendering when a pre-defined annotation's content is blank (#7147)
 
 ### 🔧 Internal changes
 

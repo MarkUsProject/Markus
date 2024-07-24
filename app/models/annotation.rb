@@ -39,7 +39,7 @@ class Annotation < ApplicationRecord
       path: submission_file.path.split('/', 2)[1], # Remove assignment folder
       submission_file_id: submission_file_id,
       annotation_text_id: annotation_text_id,
-      content: annotation_text.content,
+      content: annotation_text.content || '',
       annotation_category:
         annotation_text.annotation_category&.annotation_category_name,
       annotation_category_id: annotation_text.annotation_category_id,
