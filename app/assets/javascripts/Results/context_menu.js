@@ -4,7 +4,7 @@
   function properly, these dependencies are necessary:
 
   Context-Menu and library related:
-    * jquery.ui-contextmenu.min.js (..\app\assets\javascripts\)
+    * ui-contextmenu
       * Depends on jQuery and jQuery-ui
     * context_menu.scss (..\app\assets\stylesheets\)
    */
