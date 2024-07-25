@@ -42,7 +42,7 @@ class AutomatedTestsController < ApplicationController
                                                  current_role,
                                                  context: { assignment: @assignment, grouping: @grouping })).value
 
-      if @assignment.enable_student_tests && !@assignment.non_regenerating_tokens
+      if @assignment.enable_student_tests && !@assignment.non_regenerating_tokens && !@assignment.unlimited_tokens
         hours_from_start = [(Time.current - @assignment.token_start_date) / 3600, 0].max
         periods_from_start = (hours_from_start / @assignment.token_period).floor
         last_period_begin = @assignment.token_start_date + (periods_from_start * @assignment.token_period).hours
