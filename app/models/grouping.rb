@@ -126,6 +126,19 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def self.assign_tas_by_section(groupings, assignments, _assignment)
+    assignments.each do |section_name, ta_id|
+      # Find groupings for the section
+      section_groupings = groupings.select { |grouping| grouping.section.name == section_name }
+
+      # Assign the TA to all groupings in the section
+      section_groupings.each do |grouping|
+        # Optionally, you can add logic to avoid overwriting existing TA assignments
+        grouping.update!(ta_id: ta_id)
+      end
+    end
+  end
+
   # Assigns all TAs in a list of TAs specified by +ta_ids+ to each grouping in
   # a list of groupings specified by +grouping_ids+. The groupings must belong
   # to the given assignment +assignment+.

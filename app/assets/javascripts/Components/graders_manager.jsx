@@ -157,6 +157,8 @@ class GradersManager extends React.Component {
   };
 
   assignSections = assignments => {
+    let sections = Object.keys(assignments);
+    let graders = Object.values(assignments);
     $.post({
       url: Routes.global_actions_course_assignment_graders_path(
         this.props.course_id,
@@ -164,7 +166,10 @@ class GradersManager extends React.Component {
       ),
       data: {
         global_actions: "assign_sections",
+        current_table: this.state.tableName,
+        skip_empty_submissions: this.state.skip_empty_submissions,
         assignments: assignments,
+        graders: graders,
       },
     }).then(this.fetchData);
   };

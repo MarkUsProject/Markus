@@ -10,6 +10,7 @@ export class SectionDistributionModal extends React.Component {
   constructor(props) {
     super(props);
     this.input = React.createRef();
+    this.sectionsArray = Object.values(this.props.sections);
   }
 
   componentDidMount() {
@@ -26,14 +27,33 @@ export class SectionDistributionModal extends React.Component {
     this.props.onSubmit(assignments);
   };
 
+  // renderSectionRow = section => {
+  //   const {graders} = this.props;
+  //   return (
+  //     <div className="flex-row-expand" key={section.id}>
+  //       <label htmlFor={`input-${section.id}`} className="modal-inline-label">
+  //         {section.name}
+  //       </label>
+  //       <select className={`input-${section.id}`} name={section.id} ref={this.input}>
+  //         <option value="">Select TA</option>
+  //         {graders.map(grader => (
+  //           <option key={grader.user_name} value={grader.user_name}>
+  //             {grader.user_name}
+  //           </option>
+  //         ))}
+  //       </select>
+  //     </div>
+  //   );
+  // };
+
   renderSectionRow = section => {
     const {graders} = this.props;
     return (
-      <div className="flex-row-expand" key={section.id}>
-        <label htmlFor={`input-${section.id}`} className="modal-inline-label">
-          {section.name}
+      <div className="flex-row-expand" key={section}>
+        <label htmlFor={`input-${section}`} className="modal-inline-label">
+          {section}
         </label>
-        <select className={`input-${section.id}`} name={section.id} ref={this.input}>
+        <select className={`input-${section}`} name={section}>
           <option value="">Select TA</option>
           {graders.map(grader => (
             <option key={grader.user_name} value={grader.user_name}>
@@ -55,7 +75,7 @@ export class SectionDistributionModal extends React.Component {
         <form onSubmit={this.onSubmit} ref={this.input}>
           <div className={"modal-container-vertical"}>
             <h2>Distribute TAs to Sections</h2>
-            {this.props.sections.map(section => this.renderSectionRow(section))}
+            {this.sectionsArray.map(section => this.renderSectionRow(section))}
           </div>
           <div className={"modal-container"}>
             <input type="submit" value="Assign TAs" />
@@ -70,5 +90,5 @@ SectionDistributionModal.propTypes = {
   graders: PropTypes.arrayOf(PropTypes.object).isRequired,
   isOpen: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  sections: PropTypes.arrayOf(PropTypes.object).isRequired,
+  sections: PropTypes.objectOf(PropTypes.string).isRequired,
 };
