@@ -229,7 +229,7 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment)
-        @assignment.token_start_date = @assignment.due_date
+        @assignment.token_start_date = Time.current
         @assignment.token_period = 1
       rescue StandardError => e
         @assignment.errors.add(:base, e.message)
