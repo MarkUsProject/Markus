@@ -138,7 +138,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
-    cssbundling-rails (1.4.0)
+    cssbundling-rails (1.4.1)
       railties (>= 6.0.0)
     date (3.3.4)
     debug (1.9.2)
@@ -225,7 +225,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
     io-console (0.7.2)
-    irb (1.13.2)
+    irb (1.14.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     js-routes (2.2.8)
@@ -272,7 +272,7 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.3)
-    nokogiri (1.16.6)
+    nokogiri (1.16.7)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     observer (0.1.2)
@@ -298,7 +298,7 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     raabro (1.4.0)
-    racc (1.8.0)
+    racc (1.8.1)
     rack (2.2.9)
     rack-cors (2.0.2)
       rack (>= 2.0.0)
@@ -479,7 +479,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.6.16)
+    zeitwerk (2.6.17)
 
 PLATFORMS
   ruby
