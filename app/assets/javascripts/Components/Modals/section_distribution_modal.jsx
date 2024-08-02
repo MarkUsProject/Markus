@@ -27,25 +27,6 @@ export class SectionDistributionModal extends React.Component {
     this.props.onSubmit(assignments);
   };
 
-  // renderSectionRow = section => {
-  //   const {graders} = this.props;
-  //   return (
-  //     <div className="flex-row-expand" key={section.id}>
-  //       <label htmlFor={`input-${section.id}`} className="modal-inline-label">
-  //         {section.name}
-  //       </label>
-  //       <select className={`input-${section.id}`} name={section.id} ref={this.input}>
-  //         <option value="">Select TA</option>
-  //         {graders.map(grader => (
-  //           <option key={grader.user_name} value={grader.user_name}>
-  //             {grader.user_name}
-  //           </option>
-  //         ))}
-  //       </select>
-  //     </div>
-  //   );
-  // };
-
   renderSectionRow = section => {
     const {graders} = this.props;
     return (

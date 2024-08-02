@@ -363,6 +363,7 @@ Rails.application.routes.draw do
           get 'global_actions'
           post 'global_actions'
           get 'grader_summary'
+          get 'filter_groupings_by_sections', to: 'graders#filter_by_sections'
         end
       end
 

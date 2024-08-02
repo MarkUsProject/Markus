@@ -157,12 +157,12 @@ class GradersController < ApplicationController
           return
         end
       when 'assign_sections'
-        if params[:skip_empty_submissions] == 'true'
-          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
-          if filtered_grouping_ids.count != grouping_ids.count
-            found_empty_submission = true
-          end
-        end
+        # if params[:skip_empty_submissions] == 'true'
+        #   filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+        #   if filtered_grouping_ids.count != grouping_ids.count
+        #     found_empty_submission = true
+        #   end
+        # end
 
         begin
           assignments = params[:assignments] || {}
@@ -277,6 +277,12 @@ class GradersController < ApplicationController
       submission = Submission.find_by(grouping_id: grouping_id, submission_version_used: true)
       submission && !submission.is_empty
     end
+  end
+
+  def filter_by_sections
+    section_names = params[:section_names]
+    groupings = find_groupings_by_sections(section_names)
+    render json: groupings
   end
 
   def find_groupings_by_sections(section_names)

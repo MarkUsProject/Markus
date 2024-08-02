@@ -7,6 +7,7 @@ import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
+import {filter_groupings_by_sections_course_assignment_graders_path} from "../../../javascript/routes";
 
 class GradersManager extends React.Component {
   constructor(props) {
@@ -159,19 +160,45 @@ class GradersManager extends React.Component {
   assignSections = assignments => {
     let sections = Object.keys(assignments);
     let graders = Object.values(assignments);
-    $.post({
-      url: Routes.global_actions_course_assignment_graders_path(
+
+    fetch(
+      Routes.filter_groupings_by_sections_course_assignment_graders_path(
         this.props.course_id,
         this.props.assignment_id
       ),
-      data: {
-        global_actions: "assign_sections",
-        current_table: this.state.tableName,
-        skip_empty_submissions: this.state.skip_empty_submissions,
-        assignments: assignments,
-        graders: graders,
-      },
-    }).then(this.fetchData);
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({section_names: sections}),
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch groupings by sections");
+        }
+      })
+      .then(groupings => {
+        $.post({
+          url: Routes.global_actions_course_assignment_graders_path(
+            this.props.course_id,
+            this.props.assignment_id
+          ),
+          data: {
+            global_actions: "assign_sections",
+            current_table: this.state.tableName,
+            skip_empty_submissions: this.state.skip_empty_submissions,
+            groupings: groupings,
+            assignments: assignments,
+            sections: sections,
+            graders: graders,
+          },
+        }).then(this.fetchData);
+      });
   };
 
   unassignAll = () => {
