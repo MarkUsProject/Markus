@@ -167,7 +167,7 @@ class GradersManager extends React.Component {
         this.props.assignment_id
       ),
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
