@@ -91,14 +91,8 @@ jobs:
           bundle exec rake css:build
       - name: Set up database
         run: bundle exec rails db:migrate
-      - name: Install chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: '125.0.6422.60'
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
-        with:
-          chromedriver-version: '125.0.6422.60'
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
       - name: Run rspec tests

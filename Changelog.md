@@ -46,6 +46,7 @@
 - Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
 - Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
 - Move jquery-ui and ui-contextmenu dependencies to package.json and upgrade jquery-ui to v1.13.3 (#7149)
+- Remove CI chromedriver version and Chrome dependency (#7170)
 
 ## [v2.4.12]
 
