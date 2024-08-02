@@ -157,12 +157,12 @@ class GradersController < ApplicationController
           return
         end
       when 'assign_sections'
-        # if params[:skip_empty_submissions] == 'true'
-        #   filtered_grouping_ids = filter_empty_submissions(grouping_ids)
-        #   if filtered_grouping_ids.count != grouping_ids.count
-        #     found_empty_submission = true
-        #   end
-        # end
+        if params[:skip_empty_submissions] == 'true'
+          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+          if filtered_grouping_ids.count != grouping_ids.count
+            found_empty_submission = true
+          end
+        end
 
         begin
           assignments = params[:assignments] || {}
@@ -184,9 +184,9 @@ class GradersController < ApplicationController
             return
           end
 
-          # Find all groupings associated with the provided sections
-          section_names = assignments.keys
-          section_groupings = find_groupings_by_sections(section_names)
+          # # Find all groupings associated with the provided sections
+          # section_names = assignments.keys
+          # section_groupings = find_groupings_by_sections(section_names)
 
           if section_groupings.empty?
             head :bad_request
@@ -280,20 +280,26 @@ class GradersController < ApplicationController
   end
 
   def filter_by_sections
+    # Assuming you receive `section_names` and `ta_ids` as parameters
     section_names = params[:section_names]
-    groupings = find_groupings_by_sections(section_names)
+    ta_ids = params[:ta_ids]
+
+    # Fetch groupings that match the given sections and TAs
+    groupings = Grouping.joins(:section, :tas)
+                        .where(sections: { name: section_names }, tas: { id: ta_ids })
+
     render json: groupings
   end
 
-  def find_groupings_by_sections(section_names)
-    # Find all StudentMemberships where the membership status is 'inviter'
-    # and then find the associated Sections and Groupings
-    Grouping.joins(:inviter_membership)
-            .joins('JOIN students ON students.id = student_memberships.role_id')
-            .joins('JOIN sections ON sections.id = students.section_id')
-            .where(sections: { name: section_names })
-            .distinct
-  end
+  # def find_groupings_by_sections(section_names)
+  #   # Find all StudentMemberships where the membership status is 'inviter'
+  #   # and then find the associated Sections and Groupings
+  #   Grouping.joins(:inviter_membership)
+  #           .joins('JOIN students ON students.id = student_memberships.role_id')
+  #           .joins('JOIN sections ON sections.id = students.section_id')
+  #           .where(sections: { name: section_names })
+  #           .distinct
+  # end
 
   def implicit_authorization_target
     OpenStruct.new policy_class: GraderPolicy

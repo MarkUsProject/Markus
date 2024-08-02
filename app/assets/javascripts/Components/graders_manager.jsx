@@ -167,12 +167,12 @@ class GradersManager extends React.Component {
         this.props.assignment_id
       ),
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({section_names: sections}),
+        body: JSON.stringify({section_names: sections, ta_ids: graders}),
       }
     )
       .then(response => {
