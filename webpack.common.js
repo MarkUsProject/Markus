@@ -36,6 +36,11 @@ module.exports = {
       maxChunks: 1,
     }),
     new MiniCssExtractPlugin(),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      "window.jQuery": "jquery",
+    }),
   ],
   resolve: {
     extensions: [".js", ".json", ".jsx"],

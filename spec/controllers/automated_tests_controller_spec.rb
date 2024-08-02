@@ -1,4 +1,5 @@
 describe AutomatedTestsController do
+  include ActiveSupport::Testing::TimeHelpers
   include AutomatedTestsHelper
 
   # TODO: add 'role is from a different course' shared tests to each route test below
@@ -548,8 +549,83 @@ describe AutomatedTestsController do
     let(:role) { create(:student) }
 
     context 'GET student_interface' do
-      before { get_as role, :student_interface, params: params }
-      # TODO: write tests
+      let(:assignment) do
+        create(:assignment,
+               assignment_properties_attributes: {
+                 enable_student_tests: true,
+                 tokens_per_period: 5,
+                 token_start_date: 1.day.ago,
+                 token_period: 24
+               })
+      end
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:student) { create(:student) }
+      let(:role) { student }
+      let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
+
+      before do
+        create(:student_membership, role: student, grouping: grouping, membership_status: 'accepted')
+        sign_in student
+      end
+
+      context 'when student tests are enabled and the student has a grouping' do
+        before do
+          get_as student, :student_interface, params: params
+        end
+
+        it 'should calculate the next token generation time' do
+          travel 14.hours do
+            get_as student, :student_interface, params: params
+            assignment.reload
+            token_start_time = assignment.token_start_date
+            expected_next_token_generation_time = token_start_time + 2.days
+            formatted_expected_time = I18n.l(expected_next_token_generation_time)
+            expect(assigns(:next_token_generation_time)).to eq(formatted_expected_time)
+          end
+        end
+
+        it 'should respond with success' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'should render the assignment_content layout' do
+          expect(response).to render_template('layouts/assignment_content')
+        end
+      end
+
+      context 'when student tests are disabled' do
+        before do
+          assignment.assignment_properties.update!(enable_student_tests: false)
+          get_as student, :student_interface, params: params
+        end
+
+        it 'should not calculate the next token generation time' do
+          expect(assigns(:next_token_generation_time)).to be_nil
+        end
+
+        it 'should respond with success' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'should render the assignment_content layout' do
+          expect(response).to render_template('layouts/assignment_content')
+        end
+      end
+
+      context 'when the student does not have a grouping' do
+        before do
+          grouping.update!(inviter: nil)
+          get_as student, :student_interface, params: params
+        end
+
+        it 'should respond with success' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'should render the assignment_content layout' do
+          expect(response).to render_template('layouts/assignment_content')
+        end
+      end
     end
 
     context 'POST execute_test_run' do
