@@ -165,34 +165,34 @@ class GradersController < ApplicationController
         end
 
         begin
-          assignments = params[:assignments] || {}
-
-          # Validate that assignments is a hash
-          unless assignments.is_a?(Hash)
-            head :bad_request
-            flash_now(:error, I18n.t('graders.invalid_format'))
-            return
-          end
+          # assignments = params[:assignments] || {}
+          #
+          # # Validate that assignments is a hash
+          # unless assignments.is_a?(Hash)
+          #   head :bad_request
+          #   flash_now(:error, I18n.t('graders.invalid_format'))
+          #   return
+          # end
 
           # Ensure that all values are valid TA IDs or "empty"
-          ta_ids = assignments.values.uniq.reject { |ta_id| ta_id == '' }
-          invalid_tas = ta_ids.reject { |ta_id| Ta.exists?(id: ta_id) }
+          # ta_ids = assignments.values.uniq.reject { |ta_id| ta_id == '' }
+          # invalid_tas = ta_ids.reject { |ta_id| Ta.exists?(id: ta_id) }
 
-          if invalid_tas.any?
-            head :bad_request
-            flash_now(:error, I18n.t('graders.invalid_ta', ta_ids: invalid_tas.join(', ')))
-            return
-          end
+          # if invalid_tas.any?
+          #   head :bad_request
+          #   flash_now(:error, I18n.t('graders.invalid_ta', ta_ids: invalid_tas.join(', ')))
+          #   return
+          # end
 
           # # Find all groupings associated with the provided sections
           # section_names = assignments.keys
           # section_groupings = find_groupings_by_sections(section_names)
 
-          if section_groupings.empty?
-            head :bad_request
-            flash_now(:error, I18n.t('graders.no_groupings_found'))
-            return
-          end
+          # if section_groupings.empty?
+          #   head :bad_request
+          #   flash_now(:error, I18n.t('graders.no_groupings_found'))
+          #   return
+          # end
 
           if found_empty_submission
             # If there were empty submissions and 'skip_empty_submissions' is true,
@@ -200,11 +200,11 @@ class GradersController < ApplicationController
             filtered_section_groupings = section_groupings.select do |grouping|
               filtered_grouping_ids.include?(grouping.id)
             end
-            assign_tas_by_section(filtered_section_groupings, assignments)
+            assign_tas_by_section(filtered_section_groupings, grader_ids, assignments)
             flash_now(:info, I18n.t('graders.group_submission_no_files'))
           else
             # Otherwise, apply assignments to all relevant groupings.
-            assign_tas_by_section(section_groupings, assignments)
+            assign_tas_by_section(grouping_ids, grader_ids, assignments)
             flash_now(:info, I18n.t('graders.assignment_success'))
           end
 
@@ -267,8 +267,8 @@ class GradersController < ApplicationController
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 
-  def assign_tas_by_section(groupings, assignments)
-    Grouping.assign_tas_by_section(groupings, assignments, @assignment)
+  def assign_tas_by_section(grouping_ids, grader_ids, assignments)
+    Grouping.assign_tas_by_section(grouping_ids, grader_ids, assignments, @assignment)
   end
 
   # Returns array of grouping ids with non empty submissions
