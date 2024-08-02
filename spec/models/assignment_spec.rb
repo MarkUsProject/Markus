@@ -66,6 +66,11 @@ describe Assignment do
         expect(@assignment.parent_assessment_id).to be_nil
         expect(@assignment.is_peer_review?).to be false
       end
+
+      it 'sets default token_start_date to current time if not provided' do
+        assignment = build(:assignment_for_student_tests)
+        expect(assignment.token_start_date).to be_within(1.second).of(Time.current)
+      end
     end
 
     it 'should catch an invalid date' do
