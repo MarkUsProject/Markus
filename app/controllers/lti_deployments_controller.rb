@@ -7,6 +7,8 @@ class LtiDeploymentsController < ApplicationController
   before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
   before_action :check_host, only: [:launch, :redirect_login]
 
+  USE_SECURE_COOKIES = !Rails.env.local?
+
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
       params[:target_link_uri].blank? || params[:lti_message_hint].blank?
@@ -21,7 +23,7 @@ class LtiDeploymentsController < ApplicationController
     lti_launch_data[:nonce] = nonce
     lti_launch_data[:state] = session_nonce
     cookies.permanent.encrypted[:lti_launch_data] =
-      { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now, same_site: :none, secure: true }
+      { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now, same_site: :none, secure: USE_SECURE_COOKIES }
     auth_params = {
       scope: 'openid',
       response_type: 'id_token',
@@ -104,7 +106,7 @@ class LtiDeploymentsController < ApplicationController
       unless logged_in?
         lti_data[:lti_redirect] = request.url
         cookies.encrypted.permanent[:lti_data] =
-          { value: JSON.generate(lti_data), expires: 1.hour.from_now, same_site: :none, secure: true }
+          { value: JSON.generate(lti_data), expires: 1.hour.from_now, same_site: :none, secure: USE_SECURE_COOKIES }
         redirect_to root_path
         return
       end

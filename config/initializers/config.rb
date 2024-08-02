@@ -190,7 +190,7 @@ Config.setup do |config|
       end
       optional(:lti).hash do
         optional(:course_filter_file).filled(:string)
-        optional(:domains).array(:str?)
+        required(:domains).array(:str?)
         required(:token_endpoint).filled(:string)
         optional(:unpermitted_new_course_message).filled(:string)
       end
