@@ -180,6 +180,15 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def create_course
+    if LtiConfig.respond_to?(:allowed_to_create_course?) && !LtiConfig.allowed_to_create_course?(record)
+      render 'shared/http_status',
+             locals: { code: '422',
+                       message: format(Settings.lti.unpermitted_new_course_message,
+                                       course_name: record.lms_course_name) },
+             status: :unprocessable_entity, layout: false
+      return
+    end
+
     new_course = Course.find_or_initialize_by(name: params['name'])
     unless new_course.new_record?
       flash_message(:error, I18n.t('lti.course_exists'))

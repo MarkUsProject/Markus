@@ -62,8 +62,8 @@ describe LtiDeploymentsController do
     end
   end
 
-  describe '#new_course' do
-    let!(:lti_deployment) { create(:lti_deployment) }
+  describe '#create_course' do
+    let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108') }
     let(:course_params) { { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: 'csc108' } }
 
     context 'as an instructor' do
@@ -118,6 +118,25 @@ describe LtiDeploymentsController do
       it 'does redirect to choose_course' do
         post_as instructor, :create_course, params: course_params
         expect(response).to have_http_status(:found)
+      end
+    end
+
+    context 'when the course is rejected by the filter' do
+      # NOTE: the default filter in config/dummy_lti_config.rb only accepts course names starting with 'csc'
+      let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'sta130') }
+
+      before do
+        session[:lti_deployment_id] = lti_deployment.id
+      end
+
+      it 'does not create a new course' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.count).to eq(1)
+      end
+
+      it 'responds with an error message' do
+        post_as instructor, :create_course, params: course_params
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
