@@ -35,6 +35,7 @@
 - Fixed grader view rendering when a pre-defined annotation's content is blank (#7147)
 - Fixed AJAX requests in grader view, which were missing CSRF token headers (#7174)
 - Use jQuery `.find` method in `ModalMarkus` to guard against potential XSS attack (#7176)
+- Sanitize LTI deployment course names when creating new courses (#7151)
 
 ### 🔧 Internal changes
 
