@@ -1,6 +1,10 @@
 import React from "react";
 import {render} from "react-dom";
 
+// TODO: This import seems to be required to automatically include the X-CSRF-TOKEN header on
+//   jQuery AJAX requests in this component, unlike all other pages. Requires further investigation.
+import "@rails/ujs";
+
 import {LeftPane} from "./left_pane";
 import {RightPane} from "./right_pane";
 import {SubmissionSelector} from "./submission_selector";
