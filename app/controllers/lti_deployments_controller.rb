@@ -191,7 +191,8 @@ class LtiDeploymentsController < ApplicationController
       return
     end
 
-    new_course = Course.find_or_initialize_by(name: params['name'])
+    name = params['name'].gsub(/[^a-zA-Z0-9\-_]/, '-')  # Sanitize name to comply with Course name validation
+    new_course = Course.find_or_initialize_by(name: name)
     unless new_course.new_record?
       flash_message(:error, I18n.t('lti.course_exists'))
       redirect_to choose_course_lti_deployment_path
