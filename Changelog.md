@@ -48,6 +48,7 @@
 - Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
 - Move jquery-ui and ui-contextmenu dependencies to package.json and upgrade jquery-ui to v1.13.3 (#7149)
 - Remove CI chromedriver version and Chrome dependency (#7170)
+- Update Jupyter notebook Javascript dependencies (require.js to v2.3.7, plotly.js to v2.34.0) (#7175)
 
 ## [v2.4.12]
 
