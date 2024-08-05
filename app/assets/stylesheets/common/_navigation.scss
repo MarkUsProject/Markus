@@ -1,7 +1,7 @@
 /**
  * Header, main menu, sub menu, and sub_sub menu.
  */
-@import 'constants';
+@import "constants";
 
 /* Header */
 
@@ -58,7 +58,7 @@ nav {
 }
 
 #logo-img {
-  background: transparent url('markus_logo.svg') no-repeat center center / 90px 30px;
+  background: transparent url("markus_logo.svg") no-repeat center center / 90px 30px;
   margin-right: $dimen-horizontal-nav;
   min-height: 38px;
   width: 90px;
@@ -70,11 +70,11 @@ nav {
 
 .color-dark {
   #logo-img {
-    background-image: url('markus_logo_dark.svg');
+    background-image: url("markus_logo_dark.svg");
   }
 
   #mobile_menu {
-    background-image: url('markus_logo_dark.svg');
+    background-image: url("markus_logo_dark.svg");
   }
 }
 
@@ -104,7 +104,7 @@ nav {
 
     &::after {
       animation: ellipsis $time-quick infinite;
-      content: '\2026';
+      content: "\2026";
       display: inline-block;
       overflow: hidden;
       vertical-align: bottom;
@@ -131,7 +131,7 @@ nav {
 }
 
 #mobile_menu {
-  background: $background-support url('markus_logo.svg') no-repeat center center / 90px 30px;
+  background: $background-support url("markus_logo.svg") no-repeat center center / 90px 30px;
   border-bottom: 1px solid $primary-three;
   display: none;
   height: 3.5em;
@@ -153,7 +153,7 @@ nav {
 
     &::before,
     &::after {
-      content: '';
+      content: "";
       left: 1em;
       position: absolute;
       transition: all $time-quick;

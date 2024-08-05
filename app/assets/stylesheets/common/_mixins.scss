@@ -1,19 +1,19 @@
 /** For easier size breakpoints. */
 
 $breakpoints: (
-  'tiny': (
+  "tiny": (
     max-width: 360px,
   ),
-  'small': (
+  "small": (
     max-width: 500px,
   ),
-  'mobile': (
+  "mobile": (
     max-width: 745px,
   ),
-  'medium': (
+  "medium": (
     max-width: 990px,
   ),
-  'large': (
+  "large": (
     max-width: 1040px,
   ),
 );

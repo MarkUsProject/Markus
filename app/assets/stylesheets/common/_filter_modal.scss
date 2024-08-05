@@ -1,4 +1,4 @@
-@import 'constants';
+@import "constants";
 
 .filter-modal {
   .filter-modal-title {
@@ -12,7 +12,7 @@
   .annotation-input {
     margin: 5px;
 
-    input[type='text'] {
+    input[type="text"] {
       height: 30px;
       width: $dropdown-horizontal;
     }
@@ -36,7 +36,7 @@
       margin-right: 10px;
     }
 
-    input[type='number'] {
+    input[type="number"] {
       width: 80px;
     }
 

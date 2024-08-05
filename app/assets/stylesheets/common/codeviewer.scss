@@ -1,5 +1,5 @@
-@import 'mixins';
-@import 'constants';
+@import "mixins";
+@import "constants";
 
 /* codeviewer */
 #codeviewer {
@@ -30,18 +30,18 @@
     }
   }
 
-  :not(pre) > code[class*='language-'],
-  pre[class*='language-'] {
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
     background-color: unset;
     margin-top: 0;
     padding-top: 0;
   }
 
-  pre[class*='language-'] {
+  pre[class*="language-"] {
     border: 0;
   }
 
-  .line-numbers > code[class*='language-'] {
+  .line-numbers > code[class*="language-"] {
     padding-top: 2px; // Fix alignment of code and line numbers
   }
 
