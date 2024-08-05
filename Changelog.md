@@ -32,6 +32,7 @@
 - Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
 - Fixed grader view rendering when a pre-defined annotation's content is blank (#7147)
 - Fixed AJAX requests in grader view, which were missing CSRF token headers (#7174)
+- Use jQuery `.find` method in `ModalMarkus` to guard against potential XSS attack (#7176)
 
 ### 🔧 Internal changes
 
