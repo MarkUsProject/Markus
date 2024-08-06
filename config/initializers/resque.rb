@@ -19,4 +19,5 @@ unless ENV['NO_INIT_SCHEDULER']
   end
 
   Resque.schedule = Settings.resque_scheduler.to_h.deep_stringify_keys
+  Resque::Scheduler.dynamic = true
 end
