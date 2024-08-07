@@ -4,7 +4,7 @@ import FileManager from "./markus_file_manager";
 import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
 import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
-import {getType} from "mime/lite";
+import mime from "mime/lite";
 import {flashMessage} from "../flash";
 
 class SubmissionFileManager extends React.Component {
@@ -273,7 +273,7 @@ class SubmissionFileManager extends React.Component {
             selectedFile={this.state.viewFile}
             selectedFileType={this.state.viewFileType}
             selectedFileURL={this.state.viewFileURL}
-            mime_type={getType(this.state.viewFile)}
+            mime_type={mime.getType(this.state.viewFile)}
           />
         </div>
       );

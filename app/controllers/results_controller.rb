@@ -111,7 +111,7 @@ class ResultsController < ApplicationController
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,
-                  content: text.content,
+                  content: text.content || '',
                   deduction: text.deduction
                 }
               end,

@@ -20,7 +20,8 @@
 - Ensure user params are passed as keyword arguments to database queries (#7040)
 - Added a progress bar for when a student uploads a file for submission (#7078)
 - Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
-- Set the default date for "Tokens available on" to the current time (#7173).
+- Calculate and display the exact future time for the next token generation to help students plan their test runs more effectively. (#7127)
+- - Set the default date for "Tokens available on" to the current time (#7173).
 
 ### 🐛 Bug fixes
 
@@ -30,6 +31,7 @@
 - Fix MathJax rendering of released overall comments (#7084)
 - Fix rename confirmation check triggering even upon no rename input (#7124)
 - Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
+- Fixed grader view rendering when a pre-defined annotation's content is blank (#7147)
 
 ### 🔧 Internal changes
 
@@ -44,6 +46,8 @@
 - Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
 - Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
 - Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
+- Move jquery-ui and ui-contextmenu dependencies to package.json and upgrade jquery-ui to v1.13.3 (#7149)
+- Remove CI chromedriver version and Chrome dependency (#7170)
 
 ## [v2.4.12]
 
