@@ -365,7 +365,6 @@ class AutotestManager extends React.Component {
             id="token_start_date"
             value={this.state.token_start_date}
             onChange={this.handleTokenStartDateChange}
-            placeholder={I18n.t("automated_tests.use_assignment_release_date")}
             options={{
               altInput: true,
               altFormat: I18n.t("time.format_string.flatpickr"),

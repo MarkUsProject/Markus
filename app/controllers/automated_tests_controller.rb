@@ -114,8 +114,8 @@ class AutomatedTestsController < ApplicationController
 
     test_specs = autotest_settings_for(assignment)
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
-    assignment_data['token_period'] = assignment_data['token_period'].to_i
-    assignment_data['token_start_date'] = assignment_data['token_start_date']&.change(usec: 0)&.iso8601
+    assignment_data['token_start_date'] ||= Time.current
+    assignment_data['token_start_date'] = assignment_data['token_start_date'].iso8601
     data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
     render json: data
   end

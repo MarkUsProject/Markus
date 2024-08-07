@@ -1,4 +1,6 @@
 describe Assignment do
+  include ActiveSupport::Testing::TimeHelpers
+
   describe 'ActiveRecord associations' do
     it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
     it { is_expected.to validate_presence_of(:submission_rule) }
@@ -68,8 +70,26 @@ describe Assignment do
       end
 
       it 'sets default token_start_date to current time if not provided' do
-        assignment = build(:assignment_for_student_tests)
-        expect(assignment.token_start_date).to be_within(1.second).of(Time.current)
+        travel_to Time.zone.local(2024, 8, 6, 22, 0, 0) do
+          assignment = build(:assignment_for_student_tests)
+          expect(assignment.token_start_date).to eq(Time.current)
+        end
+      end
+
+      it 'sets token_start_date to the provided date' do
+        travel_to Time.zone.local(2024, 12, 25, 10, 0, 0) do
+          provided_date = Time.current
+          assignment = build(:assignment_for_student_tests, token_start_date: provided_date)
+          expect(assignment.token_start_date).to eq(provided_date)
+        end
+      end
+
+      it 'does not overwrite token_start_date if already set' do
+        initial_date = Time.zone.local(2024, 5, 20, 15, 0, 0)
+        travel_to initial_date do
+          assignment = build(:assignment_for_student_tests, token_start_date: initial_date)
+          expect(assignment.token_start_date).to eq(initial_date)
+        end
       end
     end
 
