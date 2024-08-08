@@ -22,6 +22,7 @@
 - Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
 - Calculate and display the exact future time for the next token generation to help students plan their test runs more effectively. (#7127)
 - Set the default date for "Tokens available on" to the current time (#7173).
+- Add daily roster syncing via LTI (#7178)
 
 ### 🐛 Bug fixes
 
