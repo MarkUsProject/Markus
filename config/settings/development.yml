@@ -43,3 +43,4 @@ autotest:
 lti:
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
+  sync_schedule: "0 3 * * *"

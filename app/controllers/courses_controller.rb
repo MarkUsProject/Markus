@@ -181,7 +181,7 @@ class CoursesController < ApplicationController
       config = {}
       config[:class] = 'ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper'
       config[:args] = { job_class: 'LtiRosterSyncJob', arguments: [job_args] }
-      config[:cron] = "#{rand(0..60)} #{rand(2..4)} * * *"
+      config[:cron] = Settings.lti.sync_schedule
       config[:persist] = true
       config[:queue] = 'DEFAULT_QUEUE'
       Resque.set_schedule(name, config)
