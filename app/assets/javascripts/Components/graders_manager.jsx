@@ -332,6 +332,7 @@ class GradersManager extends React.Component {
         <GradersActionBox
           assignAll={this.assignAll}
           openGraderDistributionModal={this.openGraderDistributionModal}
+          openSectionDistributionModal={this.openSectionDistributionModal}
           unassignAll={this.unassignAll}
           showHidden={this.state.show_hidden}
           showHiddenGroups={this.state.show_hidden_groups}
@@ -431,6 +432,15 @@ class GradersManager extends React.Component {
             }
             graders={this.getAssignedGraderObjects()}
             onSubmit={this.assignRandomly}
+          />
+        )}
+        {this.state.isSectionDistributionModalOpen && (
+          <SectionDistributionModal
+            isOpen={this.state.isSectionDistributionModalOpen}
+            onRequestClose={() => this.setState({isSectionDistributionModalOpen: false})}
+            onSubmit={this.assignSections}
+            graders={this.state.graders}
+            sections={this.state.sections}
           />
         )}
       </div>
@@ -805,6 +815,10 @@ class GradersActionBox extends React.Component {
           <FontAwesomeIcon icon="fa-solid fa-dice" />
           {I18n.t("graders.actions.randomly_assign_graders")}
         </button>
+        <button onClick={this.props.openSectionDistributionModal}>
+          <FontAwesomeIcon icon="fa-solid fa-list" />
+          {I18n.t("graders.actions.assign_by_section")}
+        </button>
         <button onClick={this.props.unassignAll}>
           <FontAwesomeIcon icon="fa-solid fa-user-minus" />
           {I18n.t("graders.actions.unassign_grader")}
@@ -817,4 +831,5 @@ class GradersActionBox extends React.Component {
 export function makeGradersManager(elem, props) {
   render(<GradersManager {...props} />, elem);
 }
+
 export {GradersManager};
