@@ -354,7 +354,7 @@ Rails.application.routes.draw do
           get 'populate_table'
         end
       end
-
+      # ACTION I WANT
       resources :graders, only: [:index] do
         collection do
           post 'upload'
@@ -363,6 +363,7 @@ Rails.application.routes.draw do
           get 'global_actions'
           post 'global_actions'
           get 'grader_summary'
+          post 'filter_groupings_by_sections', to: 'graders#filter_by_sections'
         end
       end
 

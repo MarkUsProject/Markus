@@ -156,6 +156,63 @@ class GradersController < ApplicationController
           flash_now(:error, e.message)
           return
         end
+      when 'assign_sections'
+        if params[:skip_empty_submissions] == 'true'
+          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+          if filtered_grouping_ids.count != grouping_ids.count
+            found_empty_submission = true
+          end
+        end
+
+        begin
+          # assignments = params[:assignments] || {}
+          #
+          # # Validate that assignments is a hash
+          # unless assignments.is_a?(Hash)
+          #   head :bad_request
+          #   flash_now(:error, I18n.t('graders.invalid_format'))
+          #   return
+          # end
+
+          # Ensure that all values are valid TA IDs or "empty"
+          # ta_ids = assignments.values.uniq.reject { |ta_id| ta_id == '' }
+          # invalid_tas = ta_ids.reject { |ta_id| Ta.exists?(id: ta_id) }
+
+          # if invalid_tas.any?
+          #   head :bad_request
+          #   flash_now(:error, I18n.t('graders.invalid_ta', ta_ids: invalid_tas.join(', ')))
+          #   return
+          # end
+
+          # # Find all groupings associated with the provided sections
+          # section_names = assignments.keys
+          # section_groupings = find_groupings_by_sections(section_names)
+
+          # if section_groupings.empty?
+          #   head :bad_request
+          #   flash_now(:error, I18n.t('graders.no_groupings_found'))
+          #   return
+          # end
+
+          if found_empty_submission
+            # If there were empty submissions and 'skip_empty_submissions' is true,
+            # apply assignments only to filtered groupings.
+            filtered_section_groupings = section_groupings.select do |grouping|
+              filtered_grouping_ids.include?(grouping.id)
+            end
+            assign_tas_by_section(filtered_section_groupings, grader_ids, assignments)
+            flash_now(:info, I18n.t('graders.group_submission_no_files'))
+          else
+            # Otherwise, apply assignments to all relevant groupings.
+            assign_tas_by_section(grouping_ids, grader_ids, assignments)
+            flash_now(:info, I18n.t('graders.assignment_success'))
+          end
+
+          flash_now(:info, I18n.t('graders.assignment_success'))
+        rescue StandardError => e
+          head :bad_request
+          flash_now(:error, e.message)
+        end
       end
     when 'criteria_table'
       positions = params[:criteria]
@@ -210,6 +267,10 @@ class GradersController < ApplicationController
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 
+  def assign_tas_by_section(grouping_ids, grader_ids, assignments)
+    Grouping.assign_tas_by_section(grouping_ids, grader_ids, assignments, @assignment)
+  end
+
   # Returns array of grouping ids with non empty submissions
   def filter_empty_submissions(grouping_ids)
     grouping_ids.select do |grouping_id|
@@ -217,6 +278,28 @@ class GradersController < ApplicationController
       submission && !submission.is_empty
     end
   end
+
+  def filter_by_sections
+    # Assuming you receive `section_names` and `ta_ids` as parameters
+    section_names = params[:section_names]
+    ta_ids = params[:ta_ids]
+
+    # Fetch groupings that match the given sections and TAs
+    groupings = Grouping.joins(:section, :tas)
+                        .where(sections: { name: section_names }, tas: { id: ta_ids })
+
+    render json: groupings
+  end
+
+  # def find_groupings_by_sections(section_names)
+  #   # Find all StudentMemberships where the membership status is 'inviter'
+  #   # and then find the associated Sections and Groupings
+  #   Grouping.joins(:inviter_membership)
+  #           .joins('JOIN students ON students.id = student_memberships.role_id')
+  #           .joins('JOIN sections ON sections.id = students.section_id')
+  #           .where(sections: { name: section_names })
+  #           .distinct
+  # end
 
   def implicit_authorization_target
     OpenStruct.new policy_class: GraderPolicy
