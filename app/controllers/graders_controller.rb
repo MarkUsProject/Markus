@@ -106,13 +106,17 @@ class GradersController < ApplicationController
 
     case params[:current_table]
     when 'groups_table'
-      grouping_ids = params[:groupings]
-      if grouping_ids.blank?
-        flash_now(:error, I18n.t('groups.select_a_group'))
-        head :bad_request
-        return
+      if params[:groupings] == 'assign_sections'
+        section_names = params[:sections]
+        grouping_ids = filter_grouping_by_section(section_names, grader_ids).ids
+      else
+        grouping_ids = params[:groupings]
+        if grouping_ids.blank?
+          flash_now(:error, I18n.t('groups.select_a_group'))
+          head :bad_request
+          return
+        end
       end
-
       case params[:global_actions]
       when 'assign'
         if params[:skip_empty_submissions] == 'true'
@@ -155,6 +159,26 @@ class GradersController < ApplicationController
           head :bad_request
           flash_now(:error, e.message)
           return
+        end
+      when 'assign_sections'
+        if params[:skip_empty_submissions] == 'true'
+          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+          if filtered_grouping_ids.count != grouping_ids.count
+            found_empty_submission = true
+          end
+        end
+
+        begin
+          if found_empty_submission
+            assign_all_graders(filtered_grouping_ids, grader_ids)
+            flash_now(:info, I18n.t('graders.group_submission_no_files'))
+          else
+            # Otherwise, apply assignments to all relevant groupings.
+            assign_all_graders(grouping_ids, grader_ids)
+          end
+        rescue StandardError => e
+          head :bad_request
+          flash_now(:error, e.message)
         end
       end
     when 'criteria_table'
@@ -216,6 +240,12 @@ class GradersController < ApplicationController
       submission = Submission.find_by(grouping_id: grouping_id, submission_version_used: true)
       submission && !submission.is_empty
     end
+  end
+
+  def filter_grouping_by_section(section_names, ta_ids)
+    Grouping.includes(:section, :tas)
+            .where(sections: { name: section_names })
+            .where(tas: { id: ta_ids })
   end
 
   def implicit_authorization_target
