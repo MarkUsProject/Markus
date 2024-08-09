@@ -38,9 +38,9 @@ logging:
 autotest:
   max_batch_size: 10
 
-# The settings below are for an experimental feature that is not available
-# in production yet. Please disregard for now.
 lti:
+  course_filter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
+  unpermitted_new_course_message: 'You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator.'
   sync_schedule: "0 3 * * *"

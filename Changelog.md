@@ -22,6 +22,7 @@
 - Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
 - Calculate and display the exact future time for the next token generation to help students plan their test runs more effectively. (#7127)
 - Set the default date for "Tokens available on" to the current time (#7173).
+- Add setting to enable filtering of new course creation from LTI launch (#7151)
 - Add daily roster syncing via LTI (#7178)
 
 ### 🐛 Bug fixes
@@ -35,6 +36,7 @@
 - Fixed grader view rendering when a pre-defined annotation's content is blank (#7147)
 - Fixed AJAX requests in grader view, which were missing CSRF token headers (#7174)
 - Use jQuery `.find` method in `ModalMarkus` to guard against potential XSS attack (#7176)
+- Sanitize LTI deployment course names when creating new courses (#7151)
 
 ### 🔧 Internal changes
 
@@ -50,6 +52,7 @@
 - Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
 - Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
 - Move jquery-ui and ui-contextmenu dependencies to package.json and upgrade jquery-ui to v1.13.3 (#7149)
+- Do not enforce secure cookies in development for LTI deployments (#7151)
 - Remove CI chromedriver version and Chrome dependency (#7170)
 - Update Jupyter notebook Javascript dependencies (require.js to v2.3.7, plotly.js to v2.34.0) (#7175)
 

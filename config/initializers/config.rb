@@ -188,6 +188,13 @@ Config.setup do |config|
         optional(:lti).filled(:string)
         optional(:repos).filled(:string)
       end
+      optional(:lti).hash do
+        optional(:course_filter_file).filled(:string)
+        required(:domains).array(:str?)
+        required(:token_endpoint).filled(:string)
+        optional(:unpermitted_new_course_message).filled(:string)
+        optional(:sync_schedule).filled(:string)
+      end
     end
   end
 end
