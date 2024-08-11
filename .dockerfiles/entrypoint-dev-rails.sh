@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
+# Enable jemalloc for reduced memory usage and latency.
+if [ -z "${LD_PRELOAD+x}" ] && [ -f /usr/lib/*/libjemalloc.so.2 ]; then
+  export LD_PRELOAD="$(echo /usr/lib/*/libjemalloc.so.2)"
+fi
+
 # install bundle gems if not up to date with the Gemfile.lock file
-bundle check 2>/dev/null || bundle install --without unicorn
+bundle check 2>/dev/null || bundle install
 
 # install node packages
 npm list &> /dev/null || npm ci

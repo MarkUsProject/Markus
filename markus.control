@@ -28,12 +28,6 @@ Depends:
   libyaml-dev,
 # nodejs: for serving/managing javascript
   nodejs (>= 18), nodejs (<< 21),
-# ruby: required to run Rails
-  ruby (>= 1:2.7) | ruby3.0, ruby (<< 1:3) | ruby3.0,
-# ruby-dev: required to run rails
-  ruby-dev (>= 1:2.7) | ruby3.0-dev, ruby-dev (<< 1:3) | ruby3.0-dev,
-# rubygems-integration: required to install ruby gems
-  rubygems-integration,
 # tesseract-ocr: required for scanned exams
   tesseract-ocr (>= 4.1.1-2build2),
 # pandoc: required for Jupyter notebook to PDF conversion

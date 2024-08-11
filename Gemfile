@@ -50,6 +50,7 @@ gem 'rmagick', '~> 6.0.1'
 gem 'rtesseract'
 
 # Ruby miscellany
+gem 'csv'
 gem 'json'
 gem 'mini_mime'
 gem 'redcarpet'
