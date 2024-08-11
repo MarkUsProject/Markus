@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.1.3'
+gem 'rails', '~> 7.2.0'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -91,8 +91,9 @@ group :test do
   gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'rails-controller-testing'
-  gem 'shoulda'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
+  gem 'shoulda-context', '~> 3.0.0.rc1'
+  gem 'shoulda-matchers', '~> 6.0'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'time-warp'

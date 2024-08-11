@@ -11,6 +11,7 @@
 ### 🔧 Internal changes
 
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
+- Upgrade to Rails v7.2 (#7185)
 
 ## [v2.5.0]
 
@@ -64,7 +65,6 @@
 - Remove CI chromedriver version and Chrome dependency (#7170)
 - Update Jupyter notebook Javascript dependencies (require.js to v2.3.7, plotly.js to v2.34.0) (#7175)
 - Do not require i18n-tasks in Gemfile (#7180)
-- Update Docker containers to install Ruby v3.3 (#7181)
 
 ## [v2.4.12]
 
