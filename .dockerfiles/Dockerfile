@@ -2,6 +2,7 @@ FROM ubuntu:jammy AS base
 
 ARG NODE_MAJOR=20
 ARG BUNDLER_VERSION='2.4.13'
+ARG RUBY_VERSION='3.3.4'
 ARG USER=markus
 
 # Required in order to ensure bind-mounts are owned by the correct user inside the container
@@ -20,9 +21,18 @@ RUN sh /tmp/setup_node.sh
 COPY markus_1.0_all.deb /
 
 # Install basic system dependencies
-RUN apt-get update -qq && \
+RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends /markus_1.0_all.deb && \
     rm /tmp/setup_node.sh /markus_1.0_all.deb
+
+# Install Ruby (we use ruby-install to configure the installed ruby version).
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends wget ca-certificates sudo && \
+    wget https://github.com/postmodern/ruby-install/releases/download/v0.9.3/ruby-install-0.9.3.tar.gz && \
+    tar -xzvf ruby-install-0.9.3.tar.gz && \
+    cd ruby-install-0.9.3/ && \
+    make install && \
+    ruby-install --update && \
+    ruby-install --system ruby $RUBY_VERSION
 
 # Enable reading of PDF files with imagemagick
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
@@ -71,7 +81,8 @@ RUN apt-get update -qq && \
                                                                                python3 \
                                                                                python3-dev \
                                                                                python3-venv \
-                                                                               equivs
+                                                                               equivs \
+                                                                               libjemalloc2
 
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
@@ -110,7 +121,7 @@ COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/da
 COPY --chown=${USER}:${USER} .dockerfiles/git-ssh.rc /home/${USER}/.ssh/rc
 
 # Install bundler
-RUN gem install bundler -v $BUNDLER_VERSION
+RUN gem install bundler -v $BUNDLER_VERSION && bundle config set --local without 'development test offline production_test'
 
 USER $USER
 
@@ -121,7 +132,7 @@ ENV RAILS_ENV=production
 ENV NODE_ENV=production
 
 # Install gems
-RUN SECRET_KEY_BASE=1 bundle install --deployment --without development test offline production_test
+RUN SECRET_KEY_BASE=1 bundle install --deployment
 
 # Precompile assets
 RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true NO_INIT_SCHEDULER=true PGDATABASE=dummy bundle exec rails assets:precompile

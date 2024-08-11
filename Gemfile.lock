@@ -123,7 +123,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
-    cgi (0.3.6)
+    cgi (0.4.1)
     chunky_png (1.4.0)
     combine_pdf (1.0.26)
       matrix
@@ -140,6 +140,7 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.4.1)
       railties (>= 6.0.0)
+    csv (3.2.8)
     date (3.3.4)
     debug (1.9.2)
       irb (~> 1.10)
@@ -501,6 +502,7 @@ DEPENDENCIES
   config
   cookies_eu
   cssbundling-rails (~> 1.4)
+  csv
   debug (>= 1.0.0)
   descriptive_statistics
   dry-validation
@@ -554,4 +556,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.4.13
+   2.5.17
