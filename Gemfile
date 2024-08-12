@@ -104,7 +104,7 @@ group :development, :test do
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
-  gem 'i18n-tasks'
+  gem 'i18n-tasks', require: false
   gem 'rspec-rails', '~> 6.1.3'
   gem 'selenium-webdriver'
 end
