@@ -4,8 +4,9 @@ module LtiHelper
   # if role is not nil, attempt to create users
   # based on the values of can_create_users and
   # can_create_roles.
-  def roster_sync(lti_deployment, course, role_types, can_create_users: false, can_create_roles: false)
+  def roster_sync(lti_deployment, role_types, can_create_users: false, can_create_roles: false)
     error = false
+    course = lti_deployment.course
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)

@@ -11,10 +11,9 @@ class LtiRosterSyncJob < ApplicationJob
 
   def perform(args)
     args = args.deep_symbolize_keys
-    lti_deployment = LtiDeployment.find(args[:deployment])
-    course = lti_deployment.course
+    lti_deployment = LtiDeployment.find(args[:deployment_id])
 
-    roster_error = roster_sync(lti_deployment, course, args[:role_types], can_create_users: args[:can_create_users],
+    roster_error = roster_sync(lti_deployment, args[:role_types], can_create_users: args[:can_create_users],
                                                                           can_create_roles: args[:can_create_roles])
     if roster_error
       status.update(warning_message: [status[:warning_message], I18n.t('lti.roster_sync_errors')].compact.join("\n"))

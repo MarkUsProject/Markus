@@ -172,18 +172,18 @@ class CoursesController < ApplicationController
       roles.append(LtiDeployment::LTI_ROLES[:instructor])
     end
     job_args = {}
-    job_args[:deployment] = deployment.id
+    job_args[:deployment_id] = deployment.id
     job_args[:role_types] = roles
     job_args[:can_create_users] = allowed_to?(:lti_manage?, with: UserPolicy)
     job_args[:can_create_roles] = allowed_to?(:manage?, with: RolePolicy)
-    name = "#{@current_course.name}_#{root_path.tr!('/', '')}"
+    name = "LtiRosterSync_#{deployment.id}_#{root_path.tr!('/', '')}"
     if params[:automatic_sync] == 'true'
       config = {}
       config[:class] = 'ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper'
       config[:args] = { job_class: 'LtiRosterSyncJob', arguments: [job_args] }
       config[:cron] = Settings.lti.sync_schedule
       config[:persist] = true
-      config[:queue] = 'DEFAULT_QUEUE'
+      config[:queue] = LtiRosterSyncJob.queue_name
       Resque.set_schedule(name, config)
     else
       Resque.remove_schedule(name)
