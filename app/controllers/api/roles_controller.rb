@@ -171,7 +171,8 @@ module Api
     end
 
     def filtered_roles
-      collection = Role.includes(:user).where(params.permit(:course_id)).order(:id)
+      course_id = params[:course_id]
+      collection = Role.includes(:user).where(course_id: course_id).order(:id)
       collection = collection.where.not(type: AdminRole.name) unless @real_user.admin_user?
       if params[:filter].present?
         role_filter = params[:filter].permit(*ROLE_FIELDS).to_h
@@ -183,7 +184,7 @@ module Api
                  status: :unprocessable_entity
           return false
         else
-          return collection.where(filter_params)
+          return collection.where(**filter_params)
         end
       end
       collection

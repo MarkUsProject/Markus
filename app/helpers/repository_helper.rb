@@ -214,7 +214,7 @@ module RepositoryHelper
 
       next if dirs.include? folder_path
 
-      repo.get_revision(current_revision.to_s).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
+      repo.get_revision(current_revision.to_s).tree_at_path(folder_path, with_attrs: false).each_value do |obj|
         path = File.join obj.path, obj.name
         if obj.is_a? Repository::RevisionFile
           files << path

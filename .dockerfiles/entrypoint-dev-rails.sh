@@ -9,9 +9,9 @@ npm list &> /dev/null || npm ci
 # install python packages
 [ -f ./venv/bin/python3 ] || python3 -m venv ./venv
 ./venv/bin/python3 -m pip install --upgrade pip > /dev/null
-./venv/bin/python3 -m pip install -r requirements-jupyter.txt > /dev/null
-./venv/bin/python3 -m pip install -r requirements-scanner.txt > /dev/null
-./venv/bin/python3 -m pip install -r requirements-qr.txt > /dev/null
+./venv/bin/python3 -m pip install -r requirements-jupyter.txt
+./venv/bin/python3 -m pip install -r requirements-scanner.txt
+./venv/bin/python3 -m pip install -r requirements-qr.txt
 
 # install chromium (for nbconvert webpdf conversion)
 ./venv/bin/python3 -m playwright install chromium
@@ -31,5 +31,8 @@ sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' /app/db/structure.sql
 
 rm -f ./tmp/pids/server.pid
 
-# Then exec the container's main process (what's set as CMD in the Dockerfile or docker-compose.yml).
+# cssbundling-rails development command
+npm run build-dev:css &
+
+# Then exec the container's main process (what's set as CMD in the Dockerfile or compose.yaml).
 exec "$@"

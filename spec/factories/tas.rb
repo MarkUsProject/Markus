@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :ta, class: Ta, parent: :role do
+  factory :ta, class: 'Ta', parent: :role do
     transient do
       manage_assessments { false }
       run_tests { false }

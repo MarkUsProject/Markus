@@ -62,7 +62,7 @@ module RandomAssignHelper
     PeerReview.includes(:reviewer,
                         { result: { submission: :grouping } })
               .where(reviewer_id: reviewer_ids, 'groupings.id': reviewee_ids)
-              .each do |peer_review|
+              .find_each do |peer_review|
       reviewer_id = peer_review.reviewer_id
       reviewee_id = peer_review.reviewee.id
 

@@ -8,7 +8,7 @@
   <%= form_tag upload_course_grade_entry_form_path(@current_course, @grade_entry_form),
                { multipart: true, size: 1 } do %>
 
-    <p><%= file_field_tag 'upload_file', required: true %></p>
+    <p><%= file_field_tag 'upload_file', required: true, accept: '.csv' %></p>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>

@@ -4,14 +4,14 @@ describe Admin::UsersController do
       describe '#index' do
         it 'responds with 403' do
           get_as user, :index, format: 'json'
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
       describe '#new' do
         it 'responds with 403' do
           get_as user, :new
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
@@ -28,16 +28,17 @@ describe Admin::UsersController do
             }
           }
         end
+
         it 'responds with 403' do
           put_as user, :create, params: params
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
       describe '#edit' do
         it 'responds with 403' do
           get_as user, :edit, params: { id: user.user.id }
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
@@ -55,34 +56,38 @@ describe Admin::UsersController do
             }
           }
         end
+
         it 'responds with 403' do
           put_as user, :update, params: params
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
-      context '#upload' do
+      describe '#upload' do
         it 'responds with 403' do
           post_as user,
                   :upload,
                   params: { upload_file: fixture_file_upload('admin/users_good.csv', 'text/csv') }
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
 
     context 'Instructor' do
       let(:user) { create(:instructor) }
+
       include_examples 'cannot access user admin routes'
     end
 
     context 'TA' do
       let(:user) { create(:ta) }
+
       include_examples 'cannot access user admin routes'
     end
 
     context 'Student' do
       let(:user) { create(:student) }
+
       include_examples 'cannot access user admin routes'
     end
   end
@@ -92,19 +97,21 @@ describe Admin::UsersController do
     let(:user) { create(:end_user) }
 
     describe '#index' do
-      let!(:autotest_user) { create(:autotest_user) }
+      before { create(:autotest_user) }
+
       context 'when sending html' do
         it 'responds with 200' do
           get_as admin, :index, format: 'html'
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
       end
 
       context 'when sending json' do
         it 'responds with 200' do
           get_as admin, :index, format: 'json'
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
+
         it 'sends the appropriate data' do
           expected_data = [
             {
@@ -136,7 +143,7 @@ describe Admin::UsersController do
     describe '#new' do
       it 'responds with 200' do
         get_as admin, :new
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -177,10 +184,12 @@ describe Admin::UsersController do
           }
         }
       end
+
       it 'responds with 302' do
         post_as admin, :create, params: params
-        expect(response).to have_http_status(302)
+        expect(response).to have_http_status(:found)
       end
+
       it 'creates the user when information is valid' do
         post_as admin, :create, params: params
         created_user = User.find_by(user_name: 'Spiderman')
@@ -202,11 +211,13 @@ describe Admin::UsersController do
         }
         expect(expected_user_data).to eq(created_user_data)
       end
+
       it 'does not create the user when non type related information is invalid' do
         post_as admin, :create, params: invalid_non_type_params
         created_user = User.find_by(user_name: 'notValidUser')
         expect(created_user).to be_nil
       end
+
       it 'does not create the user when type related information is invalid' do
         post_as admin, :create, params: params_with_invalid_type
         created_user = User.find_by(user_name: 'Spiderman')
@@ -217,7 +228,7 @@ describe Admin::UsersController do
     describe '#edit' do
       it 'responds with 200' do
         get_as admin, :edit, params: { id: user.id }
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -248,10 +259,12 @@ describe Admin::UsersController do
           }
         }
       end
+
       it 'responds with 302' do
         put_as admin, :update, params: params
-        expect(response).to have_http_status(302)
+        expect(response).to have_http_status(:found)
       end
+
       it 'updates the user with valid data' do
         put_as admin, :update, params: params
         updated_user = User.find(user.id)
@@ -273,6 +286,7 @@ describe Admin::UsersController do
         }
         expect(expected_user_data).to eq(updated_user_data)
       end
+
       it 'does not update when parameters are invalid' do
         expected_user_data = {
           user_name: user.user_name,
@@ -296,16 +310,19 @@ describe Admin::UsersController do
       end
     end
 
-    context '#upload' do
+    describe '#upload' do
       include_examples 'a controller supporting upload', formats: [:csv], background: true, uploader: :admin_user do
         let(:params) { {} }
       end
 
-      it 'calls perform_later on a background job' do
-        expect(UploadUsersJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
-        post_as admin,
-                :upload,
-                params: { upload_file: fixture_file_upload('admin/users_good.csv', 'text/csv') }
+      ['.csv', '', '.pdf'].each do |extension|
+        ext_string = extension.empty? ? 'none' : extension
+        it "calls perform_later on a background job on a valid CSV file with extension '#{ext_string}'" do
+          expect(UploadUsersJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
+          post_as admin,
+                  :upload,
+                  params: { upload_file: fixture_file_upload("admin/users_good#{extension}", 'text/csv') }
+        end
       end
     end
   end

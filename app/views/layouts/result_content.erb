@@ -8,8 +8,6 @@
   <% unless session[:auth_type] == 'remote'%>
     <%= javascript_include_tag 'check_timeout', nonce: true %>
   <% end %>
-  <%= render partial: 'layouts/mathjax_config' %>
-  <%= javascript_include_tag 'MathJax_lib/MathJax', nonce: true %>
   <%= render partial: 'layouts/jsroutes_config' %>
   <%= render partial: 'layouts/i18n_config' %>
   <%= yield :head %>

@@ -71,7 +71,7 @@ class PeerReview < ApplicationRecord
   def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
-      reviewer_id_to_bool.each do |reviewer_id, _|
+      reviewer_id_to_bool.each_key do |reviewer_id|
         reviewee_group = Grouping.find_by(id: reviewee_id)
         reviewer_group = Grouping.find_by(id: reviewer_id)
         self.delete_peer_review_between(reviewer_group, reviewee_group)

@@ -20,6 +20,8 @@ class GradeEntryForm < Assessment
 
   after_create :create_all_grade_entry_students
 
+  before_destroy -> { throw(:abort) if self.grades.where.not(grade: nil).exists? }, prepend: true
+
   # Set the default order of spreadsheets: in ascending order of id
   default_scope { order('id ASC') }
 
@@ -75,9 +77,8 @@ class GradeEntryForm < Assessment
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    new_data = []
-    course.students.each do |student|
-      new_data << { role_id: student.id, assessment_id: id, released_to_student: false }
+    new_data = course.students.map do |student|
+      { role_id: student.id, assessment_id: id, released_to_student: false }
     end
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
@@ -207,7 +208,7 @@ class GradeEntryForm < Assessment
 
   def update_grade_entry_items(names, totals, overwrite)
     if names.size != totals.size || names.empty? || totals.empty?
-      raise "Invalid header rows: '#{names}' and '#{totals}'."
+      raise CsvInvalidLineError, "Invalid header rows: '#{names}' and '#{totals}'."
     end
 
     updated_items = []

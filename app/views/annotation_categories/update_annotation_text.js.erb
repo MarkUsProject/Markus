@@ -1,4 +1,5 @@
-$('#annotation_text_' + <%= @text['id'] %>).replaceWith(
+let target_id = '#annotation_text_' + <%= @text['id'] %>;
+$(target_id).replaceWith(
   "<%= escape_javascript(render partial: 'annotation_text',
                                 locals: { annotation_text: @text }).html_safe %>");
-reloadDOM();
+MathJax.typeset([target_id]);

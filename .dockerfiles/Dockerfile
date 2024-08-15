@@ -1,6 +1,6 @@
 FROM ubuntu:jammy AS base
 
-ARG NODE_MAJOR=18
+ARG NODE_MAJOR=20
 ARG BUNDLER_VERSION='2.4.13'
 ARG USER=markus
 

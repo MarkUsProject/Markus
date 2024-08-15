@@ -1,7 +1,6 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= stylesheet_link_tag 'result' %>
-  <%= javascript_include_tag 'mathjax', nonce: true %>
   <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= javascript_tag nonce: true do %>
@@ -24,11 +23,6 @@
 <% end %>
 
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu.js', nonce: true %>
-
-<!-- DISPLAYING MATHML -->
-<%= render partial: 'layouts/mathjax_config' %>
-<%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
-<%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
 
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>

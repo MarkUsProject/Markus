@@ -4,7 +4,7 @@
   function properly, these dependencies are necessary:
 
   Context-Menu and library related:
-    * jquery.ui-contextmenu.min.js (..\app\assets\javascripts\)
+    * ui-contextmenu
       * Depends on jQuery and jQuery-ui
     * context_menu.scss (..\app\assets\stylesheets\)
    */
@@ -52,7 +52,7 @@ var annotation_context_menu = {
         title: I18n.t("edit"),
         cmd: "edit_annotation",
         action: function (event, ui) {
-          var clicked_element = $(ui.target);
+          var clicked_element = ui.target[0];
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
             resultComponent.editAnnotation(annot_id);
@@ -64,7 +64,7 @@ var annotation_context_menu = {
         title: I18n.t("delete"),
         cmd: "delete_annotation",
         action: function (event, ui) {
-          var clicked_element = $(ui.target);
+          var clicked_element = $(ui.target)[0];
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
             resultComponent.removeAnnotation(annot_id);
@@ -94,18 +94,20 @@ var annotation_context_menu = {
     };
 
     function get_annotation_id(clicked_element) {
-      var annot_id = "";
       if (annotation_type === ANNOTATION_TYPES.CODE) {
-        $.each(clicked_element[0].attributes, function (index, attr) {
-          if (attr.nodeName.toLowerCase().indexOf("data-annotationid") != -1) {
-            annot_id = attr.value;
-            // Continue iteration in case of multiple annotations
+        let curr = clicked_element;
+        while (curr !== null && curr.tagName === "SPAN") {
+          for (let attr in curr.dataset) {
+            if (attr.toLowerCase().startsWith("annotationid")) {
+              return curr.dataset[attr];
+            }
           }
-        });
+          curr = curr.parentNode;
+        }
+        return "";
       } else {
-        annot_id = clicked_element.attr("id").replace("annotation_holder_", "");
+        return clicked_element.attr("id").replace("annotation_holder_", "");
       }
-      return annot_id;
     }
 
     $(document).contextmenu({

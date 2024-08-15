@@ -1,7 +1,6 @@
 <% content_for :title, t('automated_tests.title') %>
 <%= stylesheet_link_tag 'result_main' %>
 <%= stylesheet_link_tag 'result' %>
-<%= javascript_include_tag 'mathjax', nonce: true %>
 <%= javascript_include_tag 'result', nonce: true %>
 <%= javascript_include_tag 'Results/main', nonce: true %>
 
@@ -11,10 +10,22 @@
     <%= l(@assignment.token_start_date) %>
   </p>
 
+  <p>
+    <strong><%= Assignment.human_attribute_name(:token_end_date) %>:</strong>
+    <%= @assignment.token_end_date.present? ? l(@assignment.token_end_date) : l(@grouping.collection_date) %>
+  </p>
+
   <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
     <p>
       <strong><%= Assignment.human_attribute_name(:token_period) %>:</strong>
       <%= "#{@assignment.token_period} #{t('durations.any_hours')}" %>
+    </p>
+  <% end %>
+
+  <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
+    <p>
+      <strong><%= t('automated_tests.next_token_generation') %>:</strong>
+      <%= @next_token_generation_time %>
     </p>
   <% end %>
 

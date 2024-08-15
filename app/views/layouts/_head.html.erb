@@ -5,8 +5,17 @@
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
 <%= stylesheet_link_tag 'application' %>
-<%= favicon_link_tag(@current_user&.theme == 'dark' ? 'favicon_dark.svg' : 'favicon.ico') %>
+<% if @current_user&.theme == 'dark' %>
+  <%= stylesheet_link_tag 'dark_theme' %>
+  <%= favicon_link_tag 'favicon_dark.svg' %>
+<% else %>
+  <%= stylesheet_link_tag 'light_theme' %>
+  <%= favicon_link_tag 'favicon.ico' %>
+<% end %>
 <%= javascript_tag("const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;", nonce: true) if protect_against_forgery?%>
 <%= javascript_tag nonce: true do %>
   const MARKUS_VERSION = '<%= Rails.configuration.markus_version %>';
+<% end %>
+<%= javascript_tag nonce: true do %>
+  <%= render partial: 'layouts/mathjax_config', formats: :js %>
 <% end %>

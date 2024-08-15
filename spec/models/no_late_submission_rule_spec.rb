@@ -1,5 +1,6 @@
 describe NoLateSubmissionRule do
   let(:rule_type) { :no_late_submission_rule }
+
   it { is_expected.to have_one(:course) }
 
   context 'when the group submitted on time' do

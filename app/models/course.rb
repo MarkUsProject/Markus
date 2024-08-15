@@ -126,15 +126,14 @@ class Course < ApplicationRecord
   end
 
   def export_student_data_yml
-    output = []
     students = self.students.joins(:user).order('users.user_name').includes(:section)
-    students.each do |student|
-      output.push(user_name: student.user_name,
-                  last_name: student.last_name,
-                  first_name: student.first_name,
-                  email: student.email,
-                  id_number: student.id_number,
-                  section_name: student.section&.name)
+    output = students.map do |student|
+      { user_name: student.user_name,
+        last_name: student.last_name,
+        first_name: student.first_name,
+        email: student.email,
+        id_number: student.id_number,
+        section_name: student.section&.name }
     end
     output.to_yaml
   end

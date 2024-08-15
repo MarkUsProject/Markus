@@ -301,6 +301,12 @@ button,
     min-width: 70px;
     padding: 0.25em 0.5em;
   }
+
+  &.danger-button {
+    background: $severe-error;
+    color: $background-main;
+    font-weight: bold;
+  }
 }
 
 /** Fieldset */
@@ -800,6 +806,11 @@ ul.tags {
           color: $line;
         }
       }
+    }
+
+    &.annotation_category p {
+      margin-bottom: 0.1em;
+      margin-top: 0.1em;
     }
   }
 }

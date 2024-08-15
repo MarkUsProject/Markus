@@ -8,6 +8,10 @@ class Assignment < Assessment
 
   validates :due_date, presence: true
 
+  # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
+  has_many :groupings, foreign_key: :assessment_id, inverse_of: :assignment
+  has_many :groups, through: :groupings, dependent: :restrict_with_exception
+
   has_one :assignment_properties,
           dependent: :destroy,
           inverse_of: :assignment,
@@ -32,12 +36,14 @@ class Assignment < Assessment
   has_many :ta_criteria,
            -> { where(ta_visible: true).order(:position) },
            class_name: 'Criterion',
+           dependent: :destroy,
            inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :peer_criteria,
            -> { where(peer_visible: true).order(:position) },
            class_name: 'Criterion',
+           dependent: :destroy,
            inverse_of: :assignment,
            foreign_key: :assessment_id
 
@@ -57,13 +63,15 @@ class Assignment < Assessment
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
-  # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
-  has_many :groupings, foreign_key: :assessment_id, inverse_of: :assignment
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment,
              class_name: 'Assignment', optional: true, inverse_of: :pr_assignment, foreign_key: :parent_assessment_id
-  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assessment_id, inverse_of: :parent_assignment
+  has_one :pr_assignment,
+          class_name: 'Assignment',
+          dependent: :destroy,
+          foreign_key: :parent_assessment_id,
+          inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
 
@@ -74,7 +82,6 @@ class Assignment < Assessment
   has_many :student_memberships, through: :groupings
 
   has_many :submissions, through: :groupings
-  has_many :groups, through: :groupings
 
   has_many :notes, as: :noteable, dependent: :destroy
 
@@ -543,7 +550,7 @@ class Assignment < Assessment
                              .group_by { |x| x[:id] }
     members = Grouping.joins(accepted_students: :user)
                       .where(id: groupings)
-                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name', 'roles.hidden')
                       .group_by { |x| x[:id] }
     tag_data = groupings
                .joins(:tags)
@@ -588,7 +595,9 @@ class Assignment < Assessment
         group_name = grouping_data[g.id][0]['groups.group_name']
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
-                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+                               .map do |s|
+          [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
+        end
       end
 
       tag_info = tag_data.fetch(g.id, [])
@@ -677,7 +686,7 @@ class Assignment < Assessment
     CSV.generate do |csv|
       csv << [nil, *headers]
 
-      results.sort_by(&:first).each do |group_name, _test_group|
+      results.sort_by(&:first).each do |(group_name, _test_group)|
         row = [group_name]
 
         headers.each do |header|
@@ -709,8 +718,7 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    students = Student.all
-                      .includes(:accepted_groupings, :section)
+    students = Student.includes(:accepted_groupings, :section)
                       .where('accepted_groupings.assessment_id': self.id)
                       .joins(:user)
                       .order('users.user_name')
@@ -1157,7 +1165,7 @@ class Assignment < Assessment
       section_data = {}
     else
       member_data = groupings.joins(accepted_students: :user)
-                             .pluck_to_hash('groupings.id', 'users.user_name')
+                             .pluck_to_hash('groupings.id', 'users.user_name', 'roles.hidden')
                              .group_by { |h| h['groupings.id'] }
 
       section_data = groupings.joins(inviter: :section)
@@ -1228,7 +1236,7 @@ class Assignment < Assessment
         end
       end
 
-      base[:members] = member_info.pluck('users.user_name') unless member_info.nil?
+      base[:members] = member_info.nil? ? [] : member_info.pluck('users.user_name', 'roles.hidden')
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 

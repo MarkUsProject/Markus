@@ -37,16 +37,14 @@ module Admin
 
     def upload
       begin
-        data = process_file_upload
+        data = process_file_upload(['.csv'])
       rescue StandardError => e
         flash_message(:error, e.message)
       else
-        if data[:type] == '.csv'
-          @current_job = UploadUsersJob.perform_later(EndUser,
-                                                      params[:upload_file].read,
-                                                      params[:encoding])
-          session[:job_id] = @current_job.job_id
-        end
+        @current_job = UploadUsersJob.perform_later(EndUser,
+                                                    data[:contents],
+                                                    data[:encoding])
+        session[:job_id] = @current_job.job_id
       end
       redirect_to action: 'index'
     end

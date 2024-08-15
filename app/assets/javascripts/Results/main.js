@@ -1,9 +1,5 @@
 // UI LIBRARIES
 //= require DropDownMenu/DropDownMenu
-//= require jquery.ui-contextmenu.min
-
-// Syntax highlighting
-//= require syntaxhighlighter
 
 // Source code highlighting
 //= require Annotations/globals

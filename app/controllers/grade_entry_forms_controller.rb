@@ -194,7 +194,7 @@ class GradeEntryFormsController < ApplicationController
         flash_message(:error, e.message)
         raise ActiveRecord::Rollback
       end
-      GradeEntryStudent.where(id: params[:students]).includes(:role).each do |current_student|
+      GradeEntryStudent.where(id: params[:students]).includes(:role).find_each do |current_student|
         if current_student.role.receives_results_emails?
           NotificationMailer.with(student: current_student, form: grade_entry_form, course: current_course)
                             .release_spreadsheet_email.deliver_later
@@ -216,19 +216,14 @@ class GradeEntryFormsController < ApplicationController
   def upload
     @grade_entry_form = record
     begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      data = process_file_upload(['.csv'])
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      if data[:type] == '.csv'
-        overwrite = params[:overwrite]
-        grades_file = data[:file]
-        result = @grade_entry_form.from_csv(grades_file.read, overwrite)
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
-      end
+      overwrite = params[:overwrite]
+      grades_file = data[:contents]
+      result = @grade_entry_form.from_csv(grades_file, overwrite)
+      flash_csv_result(result)
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
   end
@@ -297,6 +292,18 @@ class GradeEntryFormsController < ApplicationController
       redirect_to grades_course_grade_entry_form_path(current_course, params[:id])
     else # current_role.student?
       redirect_to student_interface_course_grade_entry_form_path(current_course, params[:id])
+    end
+  end
+
+  def destroy
+    @grade_entry_form = record
+    begin
+      @grade_entry_form.destroy!
+      redirect_to course_assignments_path(@current_course)
+      flash_message(:success, t('grade_entry_forms.successfully_deleted'))
+    rescue ActiveRecord::RecordNotDestroyed
+      redirect_to edit_course_grade_entry_form_path(@current_course, params[:id])
+      flash_message(:error, t('grade_entry_forms.failed_deletion'))
     end
   end
 end

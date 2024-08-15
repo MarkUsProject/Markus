@@ -82,3 +82,4 @@ app/javascript/routes.d.ts
 
 # local docker compose overrides
 docker-compose.override.yml
+compose.override.yaml

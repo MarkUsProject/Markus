@@ -27,7 +27,9 @@ export class ModalMarkus {
 
     // If link is provided, bind its onclick to open this modal.
     if (openLink !== undefined) {
-      $(openLink).click(() => this.open());
+      $(document)
+        .find(openLink)
+        .click(() => this.open());
     }
   }
 

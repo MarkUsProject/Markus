@@ -3,12 +3,13 @@ shared_context 'git' do
     allow(Settings.repository).to receive(:type).and_return('git')
     allow(Repository.get_class).to receive(:purge_all).and_return nil
   end
+
   after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
 end
 
 shared_context 'git_hooks' do
-  let!(:course) { create :course }
-  let!(:assignment) { create :assignment, course: course }
+  let!(:course) { create(:course) }
+  let(:assignment) { course.assignments.first }
   let(:repo) { build(:git_repository) }
   let(:repo_path) { repo.tmp_repo }
   let(:repo_bare_path) { repo.get_repos_path }
@@ -16,7 +17,8 @@ shared_context 'git_hooks' do
   let(:server_hooks) { false }
   let(:client_hook_output) { [] }
   let(:server_hook_output) { [] }
-  before :each do
+
+  before do
     FileUtils.rm_rf(File.join(repo_path, '.git', 'hooks'))
     FileUtils.cp_r(File.join(repo_path, 'markus-hooks'), File.join(repo_path, '.git', 'hooks'))
     if client_hooks
@@ -30,15 +32,19 @@ shared_context 'git_hooks' do
       end
     end
     txn = repo.get_transaction('MarkUs')
+
+    create(:assignment, course: course)
     course.assignments.pluck(:repository_folder).each do |repo_folder|
       txn.add_path(repo_folder)
     end
     repo.commit(txn)
   end
-  after :each do
+
+  after do
     FileUtils.rm_r(repo_path)
     FileUtils.rm_r(repo_bare_path)
   end
+
   def commit_changes(changes: '.')
     remotes = Open3.popen3('git remote -v', chdir: repo_path)[1].read.lines.map { |line| line.split[...2] }.to_h
     unless File.realpath(remotes['origin']) == File.realpath(repo_bare_path)

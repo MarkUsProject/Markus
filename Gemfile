@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.0.8'
+gem 'rails', '~> 7.1.3'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -19,7 +19,6 @@ gem 'pluck_to_hash'
 gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'sass-rails'
 gem 'terser'
 
 # Background tasks
@@ -47,7 +46,7 @@ gem 'redis', '~> 4.8.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 5.3.0'
+gem 'rmagick', '~> 6.0.1'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -62,6 +61,7 @@ gem 'activemodel-serializers-xml'
 gem 'activerecord-session_store'
 gem 'config'
 gem 'cookies_eu'
+gem 'dry-validation'  # For settings schema validation
 gem 'exception_notification'
 gem 'marcel'
 gem 'rails-html-sanitizer'
@@ -104,8 +104,8 @@ group :development, :test do
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
-  gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 6.1.0'
+  gem 'i18n-tasks', require: false
+  gem 'rspec-rails', '~> 6.1.3'
   gem 'selenium-webdriver'
 end
 
@@ -123,3 +123,5 @@ end
 group :unicorn do
   gem 'unicorn'
 end
+
+gem 'cssbundling-rails', '~> 1.4'

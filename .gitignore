@@ -81,3 +81,4 @@ config/environments/*.local.yml
 
 # local docker compose overrides
 docker-compose.override.yml
+compose.override.yaml
