@@ -18,7 +18,7 @@ namespace :db do
     end
 
     names = Faker::Lorem.unique.words(number: 9)
-    Assignment.all.each do |assignment|
+    Assignment.find_each do |assignment|
       5.times do |index|
         ac = AnnotationCategory.create(assignment: assignment,
                                        position: index + 1,

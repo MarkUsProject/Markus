@@ -11,7 +11,7 @@ describe TestResult do
   it { is_expected.to have_one(:course) }
 
   context 'test result' do
-    before(:each) do
+    before do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
@@ -21,6 +21,7 @@ describe TestResult do
       @test_group_result = create(:test_group_result, test_group: @test_group, test_run: @test_run)
       @test_result = create(:test_result, test_group_result: @test_group_result)
     end
+
     let(:test_result2) { create(:test_result, test_group_result: @test_group_result) }
 
     context 'A valid test result' do

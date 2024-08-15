@@ -46,7 +46,7 @@ end
 Capybara.register_driver :selenium_remote_chrome do |app|
   chrome_options = Selenium::WebDriver::Chrome::Options.new(args: ['--no-sandbox', '--disable-gpu',
                                                                    '--window-size=1400,1400'])
-  chrome_options.add_argument('--headless') unless ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true'
+  chrome_options.add_argument('--headless=new') unless ENV.fetch('DISABLE_HEADLESS_UI_TESTING', nil) == 'true'
   Capybara::Selenium::Driver.new(app, browser: :remote, url: 'http://localhost:9515', capabilities: [chrome_options])
 end
 
@@ -84,6 +84,7 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   config.filter_gems_from_backtrace(
     'actiontext',
+    'factory_bot',
     'rails-controller-testing'
   )
 
@@ -107,7 +108,7 @@ RSpec.configure do |config|
     SimpleCov.command_name 'system'
   end
 
-  config.after :each do |test|
+  config.after do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
     FactoryBot.rewind_sequences
   end

@@ -1,3 +1,3 @@
 FactoryBot.define do
-  factory :instructor, class: Instructor, parent: :role
+  factory :instructor, class: 'Instructor', parent: :role
 end

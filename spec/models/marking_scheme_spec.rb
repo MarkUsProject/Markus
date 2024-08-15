@@ -1,5 +1,6 @@
 describe MarkingScheme do
-  subject { build :marking_scheme }
+  subject { build(:marking_scheme) }
+
   it { is_expected.to have_many :marking_weights }
   it { is_expected.to belong_to :course }
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_id) }

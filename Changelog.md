@@ -1,5 +1,61 @@
 # Changelog
 
+## [unreleased]
+
+### 🚨 Breaking changes
+
+
+### ✨ New features and improvements
+
+- Allow deletion of assignments with no groups (#6880)
+- Add new routes for `update`, `show`, and `index` actions of the Sections API Controller (#6955)
+- Enable the deletion of Grade Entry Forms that have no grades (#6915)
+- Allow instructors to configure an end date until which students can run automated tests (#6992)
+- Gave TAs read-only access to starter file information under assignment settings (#6996)
+- Allow inactive groups in the submissions table to be toggled for display (#7000)
+- Display error message for student-run tests when no test groups are runnable (#7003)
+- Added a confirmation check while renaming a file with a different extension (#7024)
+- Allow inactive groups in the summary table to be toggled for display (#7029)
+- Display error message for instructor-run tests when no test groups are runnable by instructors (#7038)
+- Ensure user params are passed as keyword arguments to database queries (#7040)
+- Added a progress bar for when a student uploads a file for submission (#7078)
+- Added validations to the `TextAnnotation` model to ensure `line_start` and `line_end` are >= 1, and `column_start` and `column_end` are >= 0. (#7081)
+- Calculate and display the exact future time for the next token generation to help students plan their test runs more effectively. (#7127)
+- Set the default date for "Tokens available on" to the current time (#7173).
+- Add setting to enable filtering of new course creation from LTI launch (#7151)
+
+### 🐛 Bug fixes
+
+- Ensure annotation previews are rendered on annotations page and in annotation category dropdown menus when grading (#7073)
+- Ensure annotation rendering is updated in real-time for Jupyter notebooks (#7084)
+- Fix MathJax rendering in annotations for Jupyter notebooks (#7084)
+- Fix MathJax rendering of released overall comments (#7084)
+- Fix rename confirmation check triggering even upon no rename input (#7124)
+- Ensured that the assignment deadline is used as a placeholder if token_end_date is not present. (#7128)
+- Fixed grader view rendering when a pre-defined annotation's content is blank (#7147)
+- Fixed AJAX requests in grader view, which were missing CSRF token headers (#7174)
+- Use jQuery `.find` method in `ModalMarkus` to guard against potential XSS attack (#7176)
+- Sanitize LTI deployment course names when creating new courses (#7151)
+
+### 🔧 Internal changes
+
+- Fixed login_spec.rb flaky test on GitHub Actions run (#6966)
+- Minor improvements in assignment association options (#6989)
+- Update changelog and pull request template formats (#7041)
+- Upgrade to MathJax version 3, with packaging from npm (#7073)
+- Upgrade CI chromedriver to 125.0.6422.60 (#7082)
+- Fix flaky `Assignment#summary_json` test (#7111)
+- Upgrade pdfjs-dist to v4.3.136 (#7113)
+- Fixed formatting of documentation repository on the PR template (#7120)
+- Switch from rails-sassc to cssbundling-rails for CSS asset management (#7121)
+- Fixed flaky test #creates groups for individual students in groups_controller_spec (#7145)
+- Switch from SyntaxHighlighter to Prism for syntax highlighting (#7122)
+- Move jquery-ui and ui-contextmenu dependencies to package.json and upgrade jquery-ui to v1.13.3 (#7149)
+- Do not enforce secure cookies in development for LTI deployments (#7151)
+- Remove CI chromedriver version and Chrome dependency (#7170)
+- Update Jupyter notebook Javascript dependencies (require.js to v2.3.7, plotly.js to v2.34.0) (#7175)
+- Do not require i18n-tasks in Gemfile (#7180)
+
 ## [v2.4.12]
 
 ### ✨ New features and improvements

@@ -3,7 +3,7 @@ describe FlexibleCriterion do
 
   it_behaves_like 'a criterion'
   context 'A good Flexible Criterion model' do
-    before :each do
+    before do
       @criterion = create(:flexible_criterion)
     end
 
@@ -13,11 +13,11 @@ describe FlexibleCriterion do
     it { is_expected.to have_one(:course) }
 
     it do
-      is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id)
+      expect(subject).to validate_uniqueness_of(:name).scoped_to(:assessment_id)
     end
 
     it do
-      is_expected.to validate_numericality_of(:max_mark)
+      expect(subject).to validate_numericality_of(:max_mark)
     end
 
     it { is_expected.to allow_value(0.1).for(:max_mark) }
@@ -28,8 +28,8 @@ describe FlexibleCriterion do
     it { is_expected.not_to allow_value(-100.0).for(:max_mark) }
   end
 
-  context 'With non-existent criteria' do
-    before :each do
+  context 'With bad CSV line input' do
+    before do
       @assignment = create(:assignment)
     end
 
@@ -47,10 +47,26 @@ describe FlexibleCriterion do
       expect { FlexibleCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
         .to raise_error(CsvInvalidLineError)
     end
+
+    it 'raised an error message if the maximum value is 0' do
+      expect { FlexibleCriterion.create_or_update_from_csv_row(%w[name 0], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it 'raised an error message if the maximum value is nil' do
+      expect { FlexibleCriterion.create_or_update_from_csv_row(['name', nil], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it "raises an error message if the criterion doesn't save" do
+      allow_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
+      expect { FlexibleCriterion.create_or_update_from_csv_row(['name', 1.0], @assignment) }
+        .to raise_error(CsvInvalidLineError)
+    end
   end
 
   context 'for an assignment' do
-    before :each do
+    before do
       @assignment = create(:assignment)
     end
 
@@ -75,7 +91,7 @@ describe FlexibleCriterion do
         it 'reassigns its annotation_category\'s flexible_criterion_id to nil if it has one' do
           flexible_criterion.destroy
           assignment.reload
-          expect(assignment.annotation_categories.first.flexible_criterion_id).to eq nil
+          expect(assignment.annotation_categories.first.flexible_criterion_id).to be_nil
         end
 
         it 'reassigns its annotation_categories\' flexible_criterion_ids to nil if it has many' do
@@ -107,7 +123,7 @@ describe FlexibleCriterion do
     end
 
     context 'with criterion from a 2 element row with no description overwritten' do
-      before :each do
+      before do
         @criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
       end
 
@@ -131,7 +147,7 @@ describe FlexibleCriterion do
     end
 
     context 'with criterion from a 3 elements row that includes a description overwritten' do
-      before :each do
+      before do
         @criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
       end
 
@@ -161,7 +177,7 @@ describe FlexibleCriterion do
     end
 
     context 'with three flexible criteria allows criterion with same name to overwrite' do
-      before :each do
+      before do
         create(:flexible_criterion,
                assignment: @assignment,
                name: 'criterion1',
@@ -211,11 +227,12 @@ describe FlexibleCriterion do
   end
 
   context 'validations work properly' do
-    before(:each) do
+    before do
       @criterion = create(:flexible_criterion)
     end
+
     context 'when a result is released' do
-      before(:each) do
+      before do
         @marks = @criterion.marks
         results = []
         3.times do

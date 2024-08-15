@@ -1,18 +1,21 @@
 describe PeerReviewsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  TEMP_CSV_FILE_PATH = '_temp_peer_review.csv'.freeze
   let(:course) { @assignment_with_pr.course }
-  before :each do
+
+  before do
+    stub_const('TEMP_CSV_FILE_PATH', '_temp_peer_review'.freeze)
+
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
     @pr_id = @assignment_with_pr.pr_assignment.id
     @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.ids
     @selected_reviewee_group_ids = @assignment_with_pr.groupings.ids
   end
-  context '#peer_review_mapping & #upload' do
-    let(:instructor) { create :instructor }
+
+  describe '#peer_review_mapping & #upload' do
+    let(:instructor) { create(:instructor) }
 
     describe '#peer_review_mapping' do
-      before :each do
+      before do
         PeerReview.create(reviewer_id: @selected_reviewer_group_ids[0],
                           result_id: Grouping.find(@selected_reviewee_group_ids[1]).current_result.id)
         PeerReview.create(reviewer_id: @selected_reviewer_group_ids[1],
@@ -54,7 +57,7 @@ describe PeerReviewsController do
         uniqueness_test_set = Set.new
         @lines.each do |line|
           uniqueness_test_set.add(line)
-          expect(@pr_expected_lines.member?(line)).to be_truthy
+          expect(@pr_expected_lines).to be_member(line)
         end
         expect(uniqueness_test_set.count).to eq @num_peer_reviews
       end
@@ -64,47 +67,52 @@ describe PeerReviewsController do
       include_examples 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @pr_id, model: PeerReview } }
       end
+      ['.csv', '', '.pdf'].each do |extension|
+        ext_string = extension.empty? ? 'none' : extension
+        context "with a valid upload file and extension '#{ext_string}'" do
+          before do
+            post_as instructor,
+                    :assign_groups,
+                    params: { actionString: 'random_assign',
+                              selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                              selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                              assignment_id: @pr_id,
+                              course_id: course.id,
+                              numGroupsToAssign: 1 }
+            get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
+            @downloaded_text = response.body
+            PeerReview.destroy_all
+            @path = File.join(self.class.file_fixture_path, "#{TEMP_CSV_FILE_PATH}#{extension}")
+            # Now allow uploading by placing the data in a temporary file and reading
+            # the data back through 'uploading' (requires a clean database)
+            File.write(@path, @downloaded_text)
+            csv_upload = fixture_file_upload("#{TEMP_CSV_FILE_PATH}#{extension}", 'text/csv')
 
-      context 'with a valid upload file' do
-        before :each do
-          post_as instructor,
-                  :assign_groups,
-                  params: { actionString: 'random_assign',
-                            selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                            selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                            assignment_id: @pr_id,
-                            course_id: course.id,
-                            numGroupsToAssign: 1 }
-          get_as instructor, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
-          @downloaded_text = response.body
-          PeerReview.all.destroy_all
-          @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
-          # Now allow uploading by placing the data in a temporary file and reading
-          # the data back through 'uploading' (requires a clean database)
-          File.write(@path, @downloaded_text)
-          csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
+            post_as instructor, :upload,
+                    params: { course_id: course.id, assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
+          end
 
-          post_as instructor, :upload,
-                  params: { course_id: course.id, assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
-        end
+          after do
+            File.delete(@path)
+          end
 
-        after :each do
-          File.delete(@path)
-        end
-
-        it 'has the correct number of peer reviews' do
-          expect(@assignment_with_pr.peer_reviews.count).to eq 3
+          it 'has the correct number of peer reviews' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq 3
+          end
         end
       end
     end
   end
+
   shared_examples 'An authorized instructor or grader' do
     describe '#index' do
       before { get_as role, :index, params: { course_id: course.id, assignment_id: @pr_id } }
-      it('should respond with 200') { expect(response.status).to eq 200 }
+
+      it('should respond with 200') { expect(response).to have_http_status :ok }
     end
+
     describe '#populate' do
-      before :each do
+      before do
         PeerReview.create(reviewer_id: @selected_reviewer_group_ids[0],
                           result_id: Grouping.find(@selected_reviewee_group_ids[1]).current_result.id)
         PeerReview.create(reviewer_id: @selected_reviewer_group_ids[1],
@@ -129,14 +137,16 @@ describe PeerReviewsController do
                      @selected_reviewee_group_ids[2].to_s => [@selected_reviewer_group_ids[1]] }
         expect(@response['reviewee_to_reviewers_map']).to eq(expected)
       end
+
       it 'returns the correct id_to_group_names_map' do
         expected = {}
         @assignment_with_pr.groupings.or(@assignment_with_pr.pr_assignment.groupings)
-                           .includes(:group).each do |grouping|
+                           .includes(:group).find_each do |grouping|
           expected[grouping.id.to_s] = grouping.group.group_name
         end
         expect(@response['id_to_group_names_map']).to eq(expected)
       end
+
       it 'returns the correct num_reviews_map' do
         expected = { @selected_reviewer_group_ids[0].to_s => 1,
                      @selected_reviewer_group_ids[1].to_s => 1,
@@ -146,7 +156,7 @@ describe PeerReviewsController do
     end
 
     context 'random assign' do
-      before :each do
+      before do
         post_as role, :assign_groups,
                 params: { actionString: 'random_assign',
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
@@ -161,14 +171,14 @@ describe PeerReviewsController do
       end
 
       it 'does not assign a reviewee group to review their own submission' do
-        PeerReview.all.each do |pr|
+        PeerReview.find_each do |pr|
           expect(pr.reviewer.id).not_to eq pr.reviewee.id
         end
       end
 
       it 'does not assign a student to review their own submission' do
-        PeerReview.all.each do |pr|
-          expect(pr.reviewer.does_not_share_any_students?(pr.reviewee)).to be_truthy
+        PeerReview.find_each do |pr|
+          expect(pr.reviewer).to be_does_not_share_any_students(pr.reviewee)
         end
       end
 
@@ -178,7 +188,7 @@ describe PeerReviewsController do
     end
 
     context 'assign' do
-      before :each do
+      before do
         post_as role, :assign_groups,
                 params: { actionString: 'assign',
                           course_id: course.id,
@@ -193,20 +203,20 @@ describe PeerReviewsController do
       end
 
       it 'does not assign a reviewee group to review their own submission' do
-        PeerReview.all.each do |pr|
+        PeerReview.find_each do |pr|
           expect(pr.reviewer.id).not_to eq pr.reviewee.id
         end
       end
 
       it 'does not assign a student to review their own submission' do
-        PeerReview.all.each do |pr|
-          expect(pr.reviewer.does_not_share_any_students?(pr.reviewee)).to be_truthy
+        PeerReview.find_each do |pr|
+          expect(pr.reviewer).to be_does_not_share_any_students(pr.reviewee)
         end
       end
     end
 
     context 'unassign' do
-      before :each do
+      before do
         post_as role, :assign_groups,
                 params: { actionString: 'assign',
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
@@ -217,20 +227,21 @@ describe PeerReviewsController do
       end
 
       context 'all reviewers for selected reviewees' do
-        before :each do
+        before do
           post_as role, :assign_groups,
                   params: { actionString: 'unassign',
                             selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
                             assignment_id: @pr_id,
                             course_id: course.id }
         end
+
         it 'deletes the correct number of peer reviews' do
           expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - @selected_reviewer_group_ids.size
         end
       end
 
       context 'selected reviewer for selected reviewees' do
-        before :each do
+        before do
           @reviewer = Grouping.find_by(id: @selected_reviewer_group_ids[0])
           @reviewee = Grouping.find_by(id: @selected_reviewee_group_ids[1])
           selected_group = {}
@@ -254,17 +265,23 @@ describe PeerReviewsController do
       end
     end
   end
+
   describe 'When role is an authenticated instructor' do
     let(:role) { create(:instructor) }
+
     include_examples 'An authorized instructor or grader'
   end
+
   describe 'When role is grader and allowed to manage reviewers' do
     let(:role) { create(:ta, manage_assessments: true) }
+
     include_examples 'An authorized instructor or grader'
   end
+
   describe 'When the role is grader and not allowed to manage reviewers' do
     # By default all the grader permissions are set to false
     let(:grader) { create(:ta) }
+
     describe '#random assign' do
       it 'should return 403 response' do
         post_as grader, :assign_groups,
@@ -273,16 +290,55 @@ describe PeerReviewsController do
                           selectedRevieweeGroupIds: @selected_reviewee_group_ids,
                           assignment_id: @pr_id,
                           course_id: course.id }
-        expect(response).to have_http_status(403)
+        expect(response).to have_http_status(:forbidden)
       end
     end
+
     describe '#index' do
       before { get_as grader, :index, params: { course_id: course.id, assignment_id: @pr_id } }
-      it('should respond with 403') { expect(response.status).to eq 403 }
+
+      it('should respond with 403') { expect(response).to have_http_status :forbidden }
     end
+
     describe '#populate' do
       before { get_as grader, :populate, params: { course_id: course.id, assignment_id: @pr_id } }
-      it('should respond with 403') { expect(response.status).to eq 403 }
+
+      it('should respond with 403') { expect(response).to have_http_status :forbidden }
+    end
+  end
+
+  describe 'When listing peer reviews in Peer Reviews tab' do
+    let(:instructor) { create(:instructor) }
+    let(:max_mark) { 3 }
+
+    before do
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[0],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[1]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[1],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[2]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[2],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[0]).current_result.id)
+    end
+
+    it 'should list out total marks for each peer review' do
+      create_list(:flexible_criterion, 1, assignment: @assignment_with_pr.pr_assignment)
+      @assignment_with_pr.pr_assignment.criteria.first.update(peer_visible: true)
+      @assignment_with_pr.pr_assignment.criteria.first.update(max_mark: max_mark)
+
+      @assignment_with_pr.pr_assignment.groupings.each do |grouping|
+        result = grouping.peer_reviews_to_others.first.result
+        @assignment_with_pr.pr_assignment.criteria.each do |c|
+          mark = c.marks.find_or_create_by(result_id: result.id)
+          mark.update(mark: max_mark)
+        end
+        result.update(marking_state: Result::MARKING_STATES[:complete])
+      end
+
+      response = get_as instructor, :populate_table,
+                        params: { course_id: @assignment_with_pr.pr_assignment.course.id, assignment_id: @pr_id }
+      response_hash = JSON.parse(response.body)
+      final_grades = response_hash.pluck('final_grade')
+      expect(final_grades).to all eq(max_mark)
     end
   end
 

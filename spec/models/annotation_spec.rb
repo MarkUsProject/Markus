@@ -15,17 +15,18 @@ describe Annotation do
   end
 
   context 'ensures invalid values cannot be added' do
-    it { is_expected.to_not allow_value(-1).for(:annotation_number) }
+    it { is_expected.not_to allow_value(-1).for(:annotation_number) }
 
     it { is_expected.to allow_value('ImageAnnotation').for(:type) }
     it { is_expected.to allow_value('TextAnnotation').for(:type) }
     it { is_expected.to allow_value('PdfAnnotation').for(:type) }
     it { is_expected.to allow_value('HtmlAnnotation').for(:type) }
-    it { is_expected.to_not allow_value('OtherAnnotation').for(:type) }
+    it { is_expected.not_to allow_value('OtherAnnotation').for(:type) }
   end
 
   context 'creating annotations' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
+
     context 'with a remark result' do
       let(:result) do
         grouping = assignment.groupings.first
@@ -33,24 +34,30 @@ describe Annotation do
         grouping.current_submission_used.make_remark_result
         grouping.current_result
       end
+
       it 'should allow it to be created' do
-        expect { create :text_annotation, result: result, is_remark: true }.not_to raise_error
+        expect { create(:text_annotation, result: result, is_remark: true) }.not_to raise_error
       end
     end
+
     context 'with a released result' do
-      let(:annotation) { create :text_annotation, result: create(:released_result) }
+      let(:annotation) { create(:text_annotation, result: create(:released_result)) }
+
       it 'should prevent it being created' do
         expect { annotation }.to raise_error(ActiveRecord::RecordNotSaved)
       end
     end
+
     context 'without remark result or a released result' do
       it 'should prevent it being created' do
-        expect { create :text_annotation }.not_to raise_error
+        expect { create(:text_annotation) }.not_to raise_error
       end
     end
   end
+
   context 'destroying annotations' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
+
     context 'with a remark result' do
       let(:annotation) do
         grouping = assignment.groupings.first
@@ -59,23 +66,29 @@ describe Annotation do
         grouping.current_submission_used.make_remark_result
         annotation
       end
+
       it 'should prevent a pre-existing annotation from being destroyed' do
         expect { annotation.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
       end
+
       it 'should allow a remark annotation to destroyed' do
         annotation.update!(is_remark: true)
         expect { annotation.destroy! }.not_to raise_error
       end
     end
+
     context 'with a released result' do
-      let(:annotation) { create :text_annotation }
+      let(:annotation) { create(:text_annotation) }
+
       it 'should prevent it being destroyed' do
         annotation.result.update!(released_to_students: true)
         expect { annotation.reload.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
       end
     end
+
     context 'without remark result or a released result' do
-      let(:annotation) { create :text_annotation }
+      let(:annotation) { create(:text_annotation) }
+
       it 'should prevent it being destroyed' do
         expect { annotation.reload.destroy! }.not_to raise_error
       end
@@ -98,7 +111,7 @@ describe Annotation do
 
     it 'correctly updates the mark when destroyed, being only deductive annotation applied' do
       result.annotations.find_by(annotation_text: annotation_text).destroy
-      expect(mark.mark).to eq nil
+      expect(mark.mark).to be_nil
     end
 
     it 'correctly updates the mark when destroyed, being one of several deductive annotations applied' do
@@ -109,8 +122,7 @@ describe Annotation do
       expect(mark.mark).to eq 2.0
     end
 
-    it 'creates a mark when associated with its category\'s flexible criterion ' \
-       'was made after annotations were made ' do
+    it "creates a mark when associated with its category's flexible criterion was made after annotations were made" do
       annotation_text.annotations.destroy_all
       new_flex = create(:flexible_criterion, assignment: assignment)
       annotation_category.update!(flexible_criterion_id: new_flex.id)
@@ -132,9 +144,11 @@ describe Annotation do
                                               is_remark: true)
         annotation
       end
+
       it 'does not update a mark after creation' do
         expect(mark.mark).to eq 2.0
       end
+
       it 'does not update a mark after destruction' do
         annotation.destroy!
         expect(mark.mark).to eq 2.0

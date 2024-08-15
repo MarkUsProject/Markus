@@ -26,7 +26,7 @@ Rails.application.routes.draw do
           put 'update_by_username'
         end
       end
-      resources :grade_entry_forms, only: [:show, :index, :create, :update] do
+      resources :grade_entry_forms, only: [:show, :index, :create, :update, :destroy] do
         member do
           put 'update_grades'
         end
@@ -85,7 +85,7 @@ Rails.application.routes.draw do
           get 'download_entries'
         end
       end
-      resources :sections, only: [:create, :destroy]
+      resources :sections, only: [:create, :destroy, :index, :show, :update]
     end
     # Return a 404 when no route is match
     match '*path', controller: 'main_api', action: 'page_not_found', via: :all
@@ -209,7 +209,7 @@ Rails.application.routes.draw do
 
     resources :annotation_categories, only: [:show, :destroy, :update]
 
-    resources :assignments, except: [:destroy] do
+    resources :assignments do
       collection do
         get 'delete_rejected'
         get 'batch_runs'
@@ -390,7 +390,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :grade_entry_forms, except: [:index, :destroy] do
+    resources :grade_entry_forms, except: [:index] do
       collection do
         get 'student_interface'
       end

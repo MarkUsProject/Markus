@@ -1,14 +1,17 @@
 describe CanvasController do
-  let(:instructor) { create :instructor }
-  describe '#get_config', :get_config do
+  let(:instructor) { create(:instructor) }
+
+  describe '#get_config', get_config: true do
     it 'should respond with success when not logged in' do
       get :get_config
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
+
     it 'should respond with success when logged in' do
       get_as instructor, :get_config
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
   end
+
   include_examples 'lti deployment controller'
 end

@@ -11,7 +11,7 @@ class CreateGroupsJob < ApplicationJob
   def perform(assignment, data)
     progress.total = data.length
     Repository.get_class.update_permissions_after(only_on_request: true) do
-      data.each do |group_name, *members|
+      data.each do |(group_name, *members)|
         ApplicationRecord.transaction do
           students = assignment.course.students.joins(:user).where('users.user_name': members)
           if students.length != members.length

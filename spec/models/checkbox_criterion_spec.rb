@@ -4,7 +4,7 @@ describe CheckboxCriterion do
   it_behaves_like 'a criterion'
 
   context 'validations work properly' do
-    before(:each) do
+    before do
       @criterion = create(:checkbox_criterion)
     end
 
@@ -23,7 +23,7 @@ describe CheckboxCriterion do
     it { is_expected.to have_one(:course) }
 
     context 'when a result is released' do
-      before(:each) do
+      before do
         @marks = @criterion.marks
         results = []
         3.times do
@@ -47,8 +47,8 @@ describe CheckboxCriterion do
     end
   end
 
-  context 'With non-existent criteria' do
-    before :each do
+  context 'With bad CSV line input' do
+    before do
       @assignment = create(:assignment)
     end
 
@@ -66,15 +66,32 @@ describe CheckboxCriterion do
       expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
         .to raise_error(CsvInvalidLineError)
     end
+
+    it 'raises an error message on a max mark that is zero' do
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 0], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it 'raises an error message on a max mark that is nil' do
+      expect { CheckboxCriterion.create_or_update_from_csv_row(['name', nil], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+    end
+
+    it 'raises an error message if the checkbox criterion fails to save' do
+      allow_any_instance_of(CheckboxCriterion).to receive(:save).and_return(false)
+
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name 2], @assignment) }
+        .to raise_error(CsvInvalidLineError)
+    end
   end
 
   context 'for an assignment' do
-    before :each do
+    before do
       @assignment = create(:assignment)
     end
 
     context 'with criterion from a 2 element row with no description overwritten' do
-      before :each do
+      before do
         @criterion = CheckboxCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
       end
 
@@ -98,7 +115,7 @@ describe CheckboxCriterion do
     end
 
     context 'with criterion from a 3 elements row that includes a description overwritten' do
-      before :each do
+      before do
         @criterion = CheckboxCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
       end
 
@@ -128,7 +145,7 @@ describe CheckboxCriterion do
     end
 
     context 'with three checkbox criteria allows criterion with same name to overwrite' do
-      before :each do
+      before do
         create(:checkbox_criterion,
                assignment: @assignment,
                name: 'criterion1',

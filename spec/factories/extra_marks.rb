@@ -5,7 +5,7 @@ FactoryBot.define do
     unit { 'percentage' }
     extra_mark { -10.0 }
   end
-  factory :extra_mark_points, class: ExtraMark do
+  factory :extra_mark_points, class: 'ExtraMark' do
     association :result
     description { Faker::Lorem.sentence }
     unit { 'points' }

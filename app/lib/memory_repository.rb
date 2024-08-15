@@ -358,7 +358,7 @@ class MemoryRepository < Repository::AbstractRepository
     filename = File.basename(full_path)
     path = File.dirname(full_path)
     curr_files = rev.files_at_path(path)
-    curr_files&.each do |f, _|
+    curr_files&.each_key do |f|
       if f == filename
         return true
       end

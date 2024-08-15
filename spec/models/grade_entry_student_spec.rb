@@ -1,32 +1,34 @@
 describe GradeEntryStudent do
   describe 'validations' do
     subject do
-      student = create :student
-      create :grade_entry_form
+      student = create(:student)
+      create(:grade_entry_form)
       student.grade_entry_students.first
     end
+
     it { is_expected.to have_one(:course) }
+
     include_examples 'course associations'
   end
 
   describe 'assigning and unassigning TAs' do
     let(:form) { create(:grade_entry_form) }
-    let(:students) { Array.new(2) { create(:student) } }
-    let(:tas) { Array.new(2) { create(:ta) } }
+    let(:students) { create_list(:student, 2) }
+    let(:tas) { create_list(:ta, 2) }
     let(:student_ids) { students.map(&:id) }
     let(:ta_ids) { tas.map(&:id) }
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no grade_entry_students' do
-        GradeEntryStudent.randomly_assign_tas([], [], form)
+        expect { GradeEntryStudent.randomly_assign_tas([], [], form) }.not_to raise_error
       end
 
       it 'can randomly bulk assign TAs to no grade entry students' do
-        GradeEntryStudent.randomly_assign_tas([], ta_ids, form)
+        expect { GradeEntryStudent.randomly_assign_tas([], ta_ids, form) }.not_to raise_error
       end
 
       it 'can randomly bulk assign no TAs to all grade entry students' do
-        GradeEntryStudent.randomly_assign_tas(student_ids, [], form)
+        expect { GradeEntryStudent.randomly_assign_tas(student_ids, [], form) }.not_to raise_error
       end
 
       it 'can randomly bulk assign TAs to all grade entry students' do
@@ -57,15 +59,15 @@ describe GradeEntryStudent do
 
     describe '.assign_all_tas' do
       it 'can bulk assign no TAs to no grade entry students' do
-        GradeEntryStudent.assign_all_tas([], [], form)
+        expect { GradeEntryStudent.assign_all_tas([], [], form) }.not_to raise_error
       end
 
       it 'can bulk assign all TAs to no grade entry students' do
-        GradeEntryStudent.assign_all_tas([], ta_ids, form)
+        expect { GradeEntryStudent.assign_all_tas([], ta_ids, form) }.not_to raise_error
       end
 
       it 'can bulk assign no TAs to all grade entry students' do
-        GradeEntryStudent.assign_all_tas(student_ids, [], form)
+        expect { GradeEntryStudent.assign_all_tas(student_ids, [], form) }.not_to raise_error
       end
 
       it 'can bulk assign all TAs to all grade entry students' do
@@ -97,7 +99,7 @@ describe GradeEntryStudent do
 
     describe '.unassign_tas' do
       it 'can bulk unassign no TAs' do
-        GradeEntryStudent.unassign_tas([], [], form)
+        expect { GradeEntryStudent.unassign_tas([], [], form) }.not_to raise_error
       end
 
       it 'can bulk unassign TAs' do

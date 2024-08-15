@@ -41,7 +41,7 @@ jobs:
       RSPEC_RENDER_VIEWS: true
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -52,26 +52,30 @@ jobs:
           ruby-version: ruby-3.0
           bundler-cache: true
       - name: Set up node and cache packages
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
       - name: Install npm packages
         run: npm ci
       - name: Install python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
+          path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}-${{ hashFiles('requirements-qr.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Install python packages and playwright dependencies
         run: |
-          python3.9 -m venv venv
+          python3.10 -m venv venv
           ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt -r requirements-qr.txt
           ./venv/bin/playwright install chromium
           ./venv/bin/playwright install-deps chromium
@@ -82,10 +86,12 @@ jobs:
           sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
           cp config/database.yml.ci config/database.yml
       - name: Build assets
-        run: bundle exec rake javascript:build
+        run: |
+          bundle exec rake javascript:build
+          bundle exec rake css:build
       - name: Set up database
         run: bundle exec rails db:migrate
-      - name: Install chrome and chromedriver
+      - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: '119.0.6045.199'

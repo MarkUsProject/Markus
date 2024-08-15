@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 
 export default class MarkdownPreview extends React.Component {
   componentDidMount = () => {
-    const target_id = "annotation_preview";
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
+    const target_id = "#annotation-preview";
+    MathJax.typeset([target_id]);
   };
 
   render() {

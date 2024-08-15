@@ -129,4 +129,154 @@ describe("For the SubmissionFileUploadModal", () => {
       expect(wrapper.find(".file-rename-textbox").props().disabled).toBeFalsy();
     });
   });
+  describe("The onSubmit method", () => {
+    // Mock onSubmit function
+    const mockOnSubmit = jest.fn();
+
+    beforeEach(() => {
+      wrapper = shallow(
+        <SubmissionFileUploadModal
+          onlyRequiredFiles={true}
+          requiredFiles={["q1.py", "q2.py", "q3.py", "part1/p1.py"]}
+          uploadTarget={null}
+          onSubmit={mockOnSubmit} // Pass the mocked onSubmit function
+        />
+      );
+    });
+
+    it("should call onSubmit prop with correct arguments when extensions match", () => {
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file.py"}],
+        renameTo: "file.py",
+      });
+
+      // Simulate form submission
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+
+      // Ensure onSubmit is called with expected arguments
+      expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "file.py");
+    });
+
+    it("should not call onSubmit prop when extensions don't match and user cancels", () => {
+      // Mock window.confirm to return false
+      window.confirm = jest.fn(() => false);
+
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file1.py"}],
+        renameTo: "file2.txt",
+      });
+
+      // Simulate form submission
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+
+      // Ensure onSubmit is not called
+      expect(mockOnSubmit).not.toHaveBeenCalled();
+    });
+
+    it("should call onSubmit prop with correct arguments when extensions don't match and user confirms", () => {
+      // Mock window.confirm to return true
+      window.confirm = jest.fn(() => true);
+
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file1.py"}],
+        renameTo: "file2.txt",
+      });
+
+      // Simulate form submission
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+
+      // Ensure onSubmit is called with expected arguments
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        [{name: "file1.py"}],
+        undefined,
+        false,
+        "file2.txt"
+      );
+    });
+
+    it("should call onSubmit prop with correct arguments when rename input is left blank", () => {
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file.py"}],
+        renameTo: "",
+      });
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+      expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "");
+    });
+
+    it("should call onSubmit prop with correct arguments when rename input consists only of whitespace", () => {
+      // Mock setState method
+      wrapper.setState({
+        newFiles: [{name: "file.py"}],
+        renameTo: "   ",
+      });
+      wrapper.instance().onSubmit({preventDefault: jest.fn()});
+      expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "");
+    });
+  });
+
+  describe("The progress bar", () => {
+    describe("when the progressVisible prop is initially true and progressPercentage prop is 0.0", () => {
+      beforeEach(() => {
+        // for testing the behaviour of progress bar after submit
+        mockOnSubmit = jest.fn(() => {
+          wrapper.setProps({progressVisible: false});
+        });
+
+        wrapper = shallow(
+          <SubmissionFileUploadModal
+            progressVisible={true}
+            progressPercentage={0.0}
+            requiredFiles={[]}
+            onSubmit={mockOnSubmit}
+          />
+        );
+
+        // to ensure submit button is enabled
+        wrapper.setState({newFiles: ["q1.py", "q2.py"]});
+      });
+
+      it("the progress bar is initially visible", () => {
+        expect(wrapper.find(".modal-progress-bar").exists()).toBeTruthy();
+      });
+
+      it("the progress bar's value is initially 0.0", () => {
+        expect(wrapper.find(".modal-progress-bar").props()["value"]).toEqual(0.0);
+      });
+
+      it("the progress bar's value changes when the prop progressPercentage changes", () => {
+        wrapper.setProps({progressPercentage: 50.0});
+        wrapper.update();
+        expect(wrapper.find(".modal-progress-bar").props()["value"]).toEqual(50.0);
+      });
+
+      it("the progress bar disappears after the submit button is clicked", () => {
+        // simulate form submission
+        wrapper.instance().onSubmit({preventDefault: jest.fn()});
+        expect(mockOnSubmit).toHaveBeenCalled();
+        wrapper.update();
+        expect(wrapper.find(".modal-progress-bar").exists()).toBeFalsy();
+      });
+    });
+
+    describe("when the progressVisible prop is initially false", () => {
+      beforeEach(() => {
+        wrapper = shallow(
+          <SubmissionFileUploadModal
+            progressVisible={false}
+            progressPercentage={0.0}
+            requiredFiles={[]}
+            onSubmit={() => {}}
+          />
+        );
+      });
+
+      it("the progress bar is initially not visible", () => {
+        expect(wrapper.find(".modal-progress-bar").exists()).toBeFalsy();
+      });
+    });
+  });
 });

@@ -10,12 +10,12 @@ namespace :markus do
     desc 'Build repositories for all existing groups'
     task(build: :environment) do
       puts 'Building Repositories for existing groups...'
-      Group.all.each do |group|
+      Group.find_each do |group|
         puts "Creating Repository for #{group.group_name}..."
         group.build_repository
       end
       puts 'Creating Assignment folders...'
-      Grouping.all.each(&:create_starter_files)
+      Grouping.find_each(&:create_starter_files)
     end
   end
 end

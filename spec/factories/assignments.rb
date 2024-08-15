@@ -30,8 +30,8 @@ FactoryBot.define do
 
   factory :assignment_with_criteria_and_results, parent: :assignment do
     after(:create) do |a|
-      3.times { create(:flexible_criterion, assignment: a) }
-      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      create_list(:flexible_criterion, 3, assignment: a)
+      create_list(:grouping_with_inviter_and_submission, 3, assignment: a)
       a.groupings.each do |grouping|
         result = grouping.current_result
         result.marks.each do |mark|
@@ -44,9 +44,9 @@ FactoryBot.define do
 
   factory :assignment_with_criteria_and_test_results, parent: :assignment do
     after(:create) do |a|
-      3.times { create(:flexible_criterion, assignment: a) }
-      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
-      3.times { create(:test_group, assignment: a) }
+      create_list(:flexible_criterion, 3, assignment: a)
+      create_list(:grouping_with_inviter_and_submission, 3, assignment: a)
+      create_list(:test_group, 3, assignment: a)
 
       a.groupings.each do |grouping|
         a.test_groups.each do |test_group|
@@ -64,9 +64,9 @@ FactoryBot.define do
     # This factory generates an assignment with test results that have group, test_group and test_result
     # names that match the most_recent_test_results.csv fixture file.
     after(:create) do |a|
-      3.times { create(:flexible_criterion, assignment: a) }
-      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
-      3.times { create(:test_group, assignment: a) }
+      create_list(:flexible_criterion, 3, assignment: a)
+      create_list(:grouping_with_inviter_and_submission, 3, assignment: a)
+      create_list(:test_group, 3, assignment: a)
 
       a.groupings.each do |grouping|
         test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
@@ -89,8 +89,8 @@ FactoryBot.define do
 
   factory :assignment_with_criteria_and_results_with_remark, parent: :assignment do
     after(:create) do |a|
-      3.times { create(:flexible_criterion, assignment: a) }
-      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      create_list(:flexible_criterion, 3, assignment: a)
+      create_list(:grouping_with_inviter_and_submission, 3, assignment: a)
       a.groupings.each_with_index do |grouping, i|
         result = grouping.current_result
         result.marks.each do |mark|
@@ -117,7 +117,7 @@ FactoryBot.define do
     # Each grouping's result has one annotation which belongs to the annotation_text mentioned.
     after(:create) do |a|
       create(:flexible_criterion_with_annotation_category, assignment: a)
-      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      create_list(:grouping_with_inviter_and_submission, 3, assignment: a)
       a.groupings.each do |grouping|
         result = grouping.current_result
         create(:text_annotation,
@@ -182,6 +182,32 @@ FactoryBot.define do
     after :build do |_assignment, evaluator|
       properties = { is_timed: true, duration: 1.hour + 30.minutes, start_time: 10.hours.ago }
       evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+    end
+  end
+
+  factory :assignment_with_test_groups_student_runnable, parent: :assignment do
+    after(:create) do |a|
+      create(:test_group_student_runnable, assignment: a)
+      create_list(:test_group, 2, assignment: a)
+    end
+  end
+
+  factory :assignment_with_test_groups_not_student_runnable, parent: :assignment do
+    after(:create) do |a|
+      create_list(:test_group, 3, assignment: a)
+    end
+  end
+
+  factory :assignment_with_test_groups_instructor_runnable, parent: :assignment do
+    after(:create) do |a|
+      create(:test_group_instructor_runnable, assignment: a)
+      create_list(:test_group, 2, assignment: a)
+    end
+  end
+
+  factory :assignment_with_test_groups_not_instructor_runnable, parent: :assignment do
+    after(:create) do |a|
+      create_list(:test_group, 3, assignment: a)
     end
   end
 end

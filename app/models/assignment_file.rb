@@ -1,7 +1,7 @@
 class AssignmentFile < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :assignment_files
   has_many :criteria_assignment_files_joins, dependent: :destroy
-  has_many :template_divisions
+  has_many :template_divisions, dependent: :destroy
   has_one :course, through: :assignment
 
   before_validation :clean_filename

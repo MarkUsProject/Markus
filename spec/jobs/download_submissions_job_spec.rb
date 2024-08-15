@@ -1,5 +1,5 @@
 describe DownloadSubmissionsJob do
-  let(:assignment) { create :assignment }
+  let(:assignment) { create(:assignment) }
   let(:groupings) do
     create_list(:grouping_with_inviter, 3, assignment: assignment).map do |grouping|
       gid = grouping.id
@@ -8,12 +8,13 @@ describe DownloadSubmissionsJob do
     end
   end
 
+  let(:groupings_without_files) { create_list(:grouping, 3) }
+
   context 'when running as a background job' do
     let(:job_args) { [groupings.map(&:id), 'zip_path.zip', assignment.id] }
+
     include_examples 'background job'
   end
-
-  let(:groupings_without_files) { create_list :grouping, 3 }
 
   context 'when print is false' do
     it 'should create a zip file containing all submission files for the given groupings' do
@@ -24,7 +25,7 @@ describe DownloadSubmissionsJob do
         groupings.each do |grouping|
           gid = grouping.id
           zip_entry = Pathname.new(grouping.group.group_name) + "file#{gid}"
-          expect(zip_file.find_entry(zip_entry)).to_not be_nil
+          expect(zip_file.find_entry(zip_entry)).not_to be_nil
           expect("file#{gid}'s content\n").to eq(zip_file.read(zip_entry))
         end
       end
@@ -54,7 +55,7 @@ describe DownloadSubmissionsJob do
           student = grouping.accepted_students.first.user
           zip_entry =
             "#{student.id_number} - #{student.last_name.upcase}, #{student.first_name} (#{student.user_name}).pdf"
-          expect(zip_file.find_entry(zip_entry)).to_not be_nil
+          expect(zip_file.find_entry(zip_entry)).not_to be_nil
         end
       end
     end

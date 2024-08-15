@@ -1,38 +1,46 @@
 describe TasController do
-  let(:instructor) { create :instructor, user: create(:end_user, user_name: :instructor) }
+  let(:instructor) { create(:instructor, user: create(:end_user, user_name: :instructor)) }
   let(:course) { instructor.course }
 
-  context '#upload' do
+  describe '#upload' do
     include_examples 'a controller supporting upload', formats: [:csv], background: true do
       let(:params) { { course_id: course.id } }
     end
 
-    it 'calls perform_later on a background job' do
-      expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
-      post_as instructor,
-              :upload,
-              params: { course_id: course.id, upload_file: fixture_file_upload('tas/form_good.csv', 'text/csv') }
+    ['.csv', '', '.pdf'].each do |extension|
+      ext_string = extension.empty? ? 'none' : extension
+      it "calls perform_later on a background job on a valid CSV file with extension '#{ext_string}'" do
+        expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
+        post_as instructor,
+                :upload,
+                params: { course_id: course.id,
+                          upload_file: fixture_file_upload("tas/form_good#{extension}", 'text/csv') }
+      end
     end
+
     it_behaves_like 'role is from a different course' do
-      let(:role) { instructor }
       subject do
         post_as new_role,
                 :upload,
                 params: { course_id: course.id, upload_file: fixture_file_upload('tas/form_good.csv', 'text/csv') }
       end
+
+      let(:role) { instructor }
     end
   end
 
-  context '#download' do
+  describe '#download' do
     subject { get_as(instructor, :download, format: format_str, params: { course_id: course.id }) }
-    let!(:tas) { create_list :ta, 4, course: course }
+
+    before { create_list(:ta, 4, course: course) }
+
     context 'csv' do
       let(:format_str) { 'csv' }
       let(:csv_options) { { type: 'text/csv', filename: 'ta_list.csv', disposition: 'attachment' } }
 
       it 'responds with appropriate status' do
         subject
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
       end
 
       # parse header object to check for the right disposition
@@ -59,19 +67,23 @@ describe TasController do
         subject
         expect(response.media_type).to eq 'text/csv'
       end
+
       it_behaves_like 'role is from a different course' do
-        let(:role) { instructor }
         subject do
           get_as(new_role, :download, format: format_str, params: { course_id: course.id })
         end
+
+        let(:role) { instructor }
       end
     end
+
     context 'yml' do
       let(:yml_options) { { type: 'text/yaml', filename: 'ta_list.yml', disposition: 'attachment' } }
       let(:format_str) { 'yml' }
+
       it 'responds with appropriate status' do
         subject
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
       end
 
       it 'sets disposition as attachment' do
@@ -90,16 +102,18 @@ describe TasController do
         subject
         expect(response.media_type).to eq 'text/yaml'
       end
+
       it_behaves_like 'role is from a different course' do
-        let(:role) { instructor }
         subject do
           get_as(new_role, :download, format: format_str, params: { course_id: course.id })
         end
+
+        let(:role) { instructor }
       end
     end
   end
 
-  context '#create' do
+  describe '#create' do
     let(:params) do
       {
         role: {
@@ -113,18 +127,23 @@ describe TasController do
         course_id: course.id
       }
     end
+
     context 'when a end_user exists' do
-      let(:end_user) { create :end_user }
+      let(:end_user) { create(:end_user) }
+
       context 'when the role is in the same course' do
         before { post_as instructor, :create, params: params }
+
         context 'When permissions are selected' do
           it 'should respond with a redirect' do
             expect(response).to redirect_to action: 'index'
           end
+
           it 'should create associated grader permissions' do
             ta = course.tas.where(user: end_user).first
             expect(GraderPermission.exists?(ta.grader_permission.id)).to be true
           end
+
           it 'should create the permissions with corresponding values' do
             ta = course.tas.where(user: end_user).first
             expect(ta.grader_permission.manage_assessments).to be false
@@ -139,6 +158,7 @@ describe TasController do
             { course_id: course.id,
               role: { end_user: { user_name: end_user.user_name }, grader_permission_attributes: { a: 1 } } }
           end
+
           it 'default value for all permissions should be false' do
             ta = course.tas.where(user: end_user).first
             expect(ta.grader_permission.manage_assessments).to be false
@@ -154,34 +174,42 @@ describe TasController do
               role: { end_user: { user_name: end_user.user_name }, hidden: true }
             }
           end
+
           it 'should change the default visibility status' do
             grader = end_user.roles.first
-            expect(grader.hidden).to eq(true)
+            expect(grader.hidden).to be(true)
           end
         end
       end
+
       it_behaves_like 'role is from a different course' do
-        let(:role) { instructor }
         subject { post_as new_role, :create, params: params }
+
+        let(:role) { instructor }
       end
     end
+
     context 'when a end_user does not exist' do
       before { post_as instructor, :create, params: params }
-      let(:end_user) { build :end_user }
+
+      let(:end_user) { build(:end_user) }
+
       it 'should not create a Ta' do
         expect(Ta.count).to eq(0)
       end
+
       it 'should display an error message' do
         expect(flash[:error]).not_to be_empty
       end
     end
   end
 
-  context '#index' do
+  describe '#index' do
     it 'respond with success on index' do
       get_as instructor, :index, params: { course_id: course.id }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
+
     it 'retrieves correct data' do
       get_as instructor, :index, format: 'json', params: { course_id: course.id }
       response_data = response.parsed_body['data']
@@ -190,6 +218,7 @@ describe TasController do
                                            :last_name, :email, :hidden).as_json
       expect(response_data).to eq(expected_data)
     end
+
     it 'retrieves correct hidden count' do
       get_as instructor, :index, format: 'json', params: { course_id: course.id }
       response_data = response.parsed_body['counts']
@@ -202,11 +231,14 @@ describe TasController do
     end
   end
 
-  context '#update' do
-    let(:grader) { create(:ta, course: course) }
+  describe '#update' do
     subject { post_as grader, :update, params: params }
+
+    let(:grader) { create(:ta, course: course) }
+
     context 'when updating user visibility' do
-      let(:new_end_user) { create :end_user }
+      let(:new_end_user) { create(:end_user) }
+
       context 'as an instructor' do
         let(:params) do
           {
@@ -215,11 +247,13 @@ describe TasController do
             role: { end_user: { user_name: grader.user_name }, hidden: true }
           }
         end
+
         it 'should update the user' do
           post_as instructor, :update, params: params
-          expect(grader.reload.hidden).to eq(true)
+          expect(grader.reload.hidden).to be(true)
         end
       end
+
       context 'as a grader' do
         let(:params) do
           {
@@ -228,9 +262,10 @@ describe TasController do
             role: { end_user: { user_name: grader.user_name }, hidden: true }
           }
         end
+
         it 'should not update the user' do
           subject
-          expect(grader.reload.hidden).to eq(false)
+          expect(grader.reload.hidden).to be(false)
         end
       end
     end

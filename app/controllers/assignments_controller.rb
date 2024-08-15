@@ -138,7 +138,7 @@ class AssignmentsController < ApplicationController
       end
 
       @g_id_entries = {}
-      current_role.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
+      current_role.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).find_each do |g|
         if allowed_to?(:see_hidden?, g.grade_entry_form)
           @g_id_entries[g.assessment_id] = g
         end
@@ -229,7 +229,7 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment)
-        @assignment.token_start_date = @assignment.due_date
+        @assignment.token_start_date = Time.current
         @assignment.token_period = 1
       rescue StandardError => e
         @assignment.errors.add(:base, e.message)
@@ -431,13 +431,12 @@ class AssignmentsController < ApplicationController
       flash_message(:warning,
                     I18n.t('assignments.starter_file.groupings_exist_warning_html'))
     end
-    file_data = []
-    assignment.starter_file_groups.order(:id).each do |g|
-      file_data << { id: g.id,
-                     name: g.name,
-                     entry_rename: g.entry_rename,
-                     use_rename: g.use_rename,
-                     files: starter_file_group_file_data(g) }
+    file_data = assignment.starter_file_groups.order(:id).map do |g|
+      { id: g.id,
+        name: g.name,
+        entry_rename: g.entry_rename,
+        use_rename: g.use_rename,
+        files: starter_file_group_file_data(g) }
     end
     section_data = current_course.sections
                                  .left_outer_joins(:starter_file_groups)
@@ -657,6 +656,22 @@ class AssignmentsController < ApplicationController
     render layout: 'assignment_content'
   end
 
+  def destroy
+    @assignment = record
+    begin
+      @assignment.destroy
+      # this fixes the problem of the flash no appearing when you delete an assignment right after creating it
+      flash.delete(:success)
+      respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
+    rescue ActiveRecord::DeleteRestrictionError
+      flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
+      redirect_back fallback_location: { action: :edit, id: @assignment.id }
+    rescue StandardError => e
+      flash_message(:error, I18n.t('activerecord.errors.models.assignment_deletion', problem_message: e.message))
+      redirect_back fallback_location: { action: :edit, id: @assignment.id }
+    end
+  end
+
   private
 
   # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+
@@ -801,10 +816,10 @@ class AssignmentsController < ApplicationController
     unless assignment_params[:assignment_properties_attributes][:scanned_exam] == 'true'
       period_attrs = submission_rule_params['submission_rule_attributes']['periods_attributes']
       periods = period_attrs.to_h.values.map { |h| h[:id].presence }
-      assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
+      assignment.submission_rule.periods.where.not(id: periods).find_each(&:destroy)
     end
     assignment.assign_attributes(assignment_params)
-    SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).each(&:destroy)
+    SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).find_each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier
 

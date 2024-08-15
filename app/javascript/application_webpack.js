@@ -6,10 +6,13 @@
 //
 // To reference this file, add <%= javascript_include_tag 'application_webpack' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
+import "mathjax/es5/tex-svg";
 
 // jquery (should be the first to be loaded, as many other libs depend on it)
-import $ from "jquery/src/jquery";
+import $ from "jquery";
 window.$ = window.jQuery = $;
+import "jquery-ui/dist/jquery-ui";
+import "ui-contextmenu";
 
 // Callbacks for AJAX events (both jQuery and ujs).
 import * as ajax_events from "javascripts/ajax_events";
@@ -52,6 +55,10 @@ import "javascripts/chart_config";
 // flatpickr
 import flatpickr from "flatpickr";
 window.flatpickr = flatpickr;
+
+// prism
+window.Prism = window.Prism || {};
+window.Prism.manual = true;
 
 window.Routes = require("./routes");
 

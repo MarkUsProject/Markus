@@ -1,6 +1,9 @@
 require:
   - rubocop-rails
   - rubocop-performance
+  - rubocop-factory_bot
+  - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   Exclude:
@@ -11,6 +14,15 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
   TargetRubyVersion: 2.7
+
+Capybara/ClickLinkOrButtonStyle:  # TODO: Enable and fix errors after reviewing system tests
+  Enabled: false
+
+FactoryBot/AssociationStyle:
+  EnforcedStyle: explicit
+
+FactoryBot/ConsistentParenthesesStyle:
+  EnforcedStyle: require_parentheses
 
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
@@ -171,6 +183,77 @@ Rails/SkipsModelValidations:
   Enabled: false
 
 Rails/UniqueValidationWithoutIndex:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/DescribeClass:  # Disabled because some suites are note testing classes or modules
+  Enabled: false
+
+RSpec/DescribedClass:
+  EnforcedStyle: explicit
+
+RSpec/EmptyExampleGroup:  # Does not recognize ActionPolicy tests (succeed/failed)
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExampleWording:
+  Enabled: false
+
+RSpec/ExpectChange:
+  EnforcedStyle: block
+
+RSpec/FactoryBot:  # Extracted into rubocop-factory_bot gem
+  Enabled: false
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpec/InstanceVariable:  # TODO: enable this check and fix the errors
+  Enabled: false
+
+RSpec/MatchArray:
+  Enabled: false
+
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
+RSpec/MetadataStyle:
+  EnforcedStyle: hash
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/PendingWithoutReason:
+  Enabled: false
+
+RSpec/Rails:  # Extracted into rubocop-factory_bot gem
+  Enabled: false
+
+RSpec/ScatteredLet:
+  Exclude:
+    - spec/policies/**/*.rb
+
+RSpec/ScatteredSetup:
+  Exclude:
+    - spec/policies/**/*.rb
+
+RSpec/StubbedMock:
   Enabled: false
 
 Security/IoMethods:

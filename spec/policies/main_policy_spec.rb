@@ -3,13 +3,13 @@ describe MainPolicy do
 
   describe_rule :manage? do
     succeed 'user is instructor' do
-      let(:user) { create :instructor }
+      let(:user) { create(:instructor) }
     end
     succeed 'user is ta' do
-      let(:user) { create :ta }
+      let(:user) { create(:ta) }
     end
     succeed 'user is student' do
-      let(:user) { create :student }
+      let(:user) { create(:student) }
     end
   end
 end

@@ -518,7 +518,7 @@ class Grouping < ApplicationRecord
     else
       a_due_date = assignment.due_date
     end
-    extension_time = (extension&.time_delta || 0)
+    extension_time = extension&.time_delta || 0
     return a_due_date + extension_time if !assignment.is_timed || start_time.nil?
 
     start_time + extension_time + assignment.duration

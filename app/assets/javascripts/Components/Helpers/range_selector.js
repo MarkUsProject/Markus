@@ -93,10 +93,10 @@ function addMouseOverToNode(node, content) {
   content_container.innerHTML = safe_marked(content);
   content_container.className = "markus-annotation-content";
   node.ownerDocument.body.appendChild(content_container);
-  // TODO: apply MathJax typesetting to the content_container node
-  //       MathJax.Hub.Queue(["Typeset", MathJax.Hub, content_container]); // <- this works but mathjax css isn't applied
-  //                                                                       //    because iframe has its own css context
   node.addEventListener("mouseenter", e => {
+    // We make MathJax typesetting lazy to avoid rendering issues when editing an annotation
+    // from the "Annotations" tab, where the NotebookViewer component is updated before being visible.
+    node.ownerDocument.defaultView.MathJax.typeset([content_container]);
     let offset_height = 0;
     for (let elem of node.ownerDocument.getElementsByClassName("markus-annotation-content")) {
       if (getComputedStyle(elem).display !== "none") {
@@ -112,7 +112,15 @@ function addMouseOverToNode(node, content) {
   });
 }
 
-export function markupTextInRange(range, content) {
+export function markupTextInRange(range, content, id) {
+  let existing_node = range.startContainer.ownerDocument.getElementById(`markus-annotation-${id}`);
+  if (existing_node !== null) {
+    let existing_parent = existing_node.parentNode;
+    let replace_node = existing_node.cloneNode(true); // Create a deep copy
+    existing_parent.replaceChild(replace_node, existing_node);
+    addMouseOverToNode(replace_node, content);
+    return;
+  }
   if (range.startContainer === range.endContainer) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
@@ -120,6 +128,7 @@ export function markupTextInRange(range, content) {
     if (old_node.nodeType === Node.TEXT_NODE) {
       new_node = document.createElement("span");
       new_node.className = "markus-annotation";
+      new_node.id = `markus-annotation-${id}`;
       const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
       const marked = document.createTextNode(
         old_node.nodeValue.substring(range.startOffset, range.endOffset)
@@ -132,6 +141,7 @@ export function markupTextInRange(range, content) {
     } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
       new_node = document.createElement("div");
       new_node.className = "markus-annotation";
+      new_node.id = `markus-annotation-${id}`;
       new_node.appendChild(old_node.cloneNode(true));
       parent.replaceChild(new_node, old_node);
     }
@@ -144,6 +154,7 @@ export function markupTextInRange(range, content) {
         if (old_node.nodeType === Node.TEXT_NODE) {
           new_node = document.createElement("span");
           new_node.className = "markus-annotation";
+          new_node.id = `markus-annotation-${id}`;
           if (old_node === range.startContainer) {
             const unmarked = document.createTextNode(
               old_node.nodeValue.substring(0, range.startOffset)
@@ -167,6 +178,7 @@ export function markupTextInRange(range, content) {
         } else if (old_node.nodeName === "img" || old_node.childNodes.length) {
           new_node = document.createElement("div");
           new_node.className = "markus-annotation";
+          new_node.id = `markus-annotation-${id}`;
           new_node.appendChild(old_node.cloneNode(true));
           parent.replaceChild(new_node, old_node);
         }

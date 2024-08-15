@@ -111,7 +111,7 @@ class ResultsController < ApplicationController
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,
-                  content: text.content,
+                  content: text.content || '',
                   deduction: text.deduction
                 }
               end,
@@ -175,7 +175,7 @@ class ResultsController < ApplicationController
             info.merge(criterion_type: klass.name)
           end
         end
-        marks_map.sort! { |a, b| a[:position] <=> b[:position] }
+        marks_map.sort_by! { |a| a[:position] }
 
         if original_result.nil?
           old_marks = {}
@@ -281,6 +281,14 @@ class ResultsController < ApplicationController
 
   def run_tests
     submission = record.submission
+    assignment = Grouping.find(submission.grouping_id).assignment
+    # If no test groups can be run by instructors, flash appropriate message and return early
+    test_group_categories = assignment.test_groups.pluck(:autotest_settings).pluck('category')
+    instructor_runnable = test_group_categories.any? { |category| category.include? 'instructor' }
+    unless instructor_runnable
+      flash_now(:info, I18n.t('automated_tests.no_instructor_runnable_tests'))
+      return
+    end
     flash_message(:notice, I18n.t('automated_tests.autotest_run_job.status.in_progress'))
     AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                  current_role.id,

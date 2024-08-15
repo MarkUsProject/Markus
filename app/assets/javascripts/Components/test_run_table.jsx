@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import ReactTable from "react-table";
-import {getType} from "mime/lite";
+import mime from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
 import consumer from "../../../javascript/channels/consumer";
@@ -270,7 +270,11 @@ class TestGroupResultTable extends React.Component {
           [0, 0]
         ),
       Aggregated: row => {
-        return `${row.value[0]} / ${row.value[1]}`;
+        const timeout_reached = row.value[0] === 0 && row.value[1] === 0;
+        const ret_val = timeout_reached
+          ? I18n.t("activerecord.attributes.test_group_result.no_test_results")
+          : `${row.value[0]} / ${row.value[1]}`;
+        return ret_val;
       },
     },
   ];
@@ -390,7 +394,7 @@ class TestGroupFeedbackFileTable extends React.Component {
               this.props.course_id,
               row.original.id
             )}
-            mime_type={getType(row["filename"])}
+            mime_type={mime.getType(row["filename"])}
             selectedFileType={row.original.type}
           />
         )}

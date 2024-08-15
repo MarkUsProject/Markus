@@ -1,8 +1,7 @@
-describe 'routing', type: :routing do
-  BAD_MATCH = %r{^/rails|^/assets|^/cable|.*\*path\(.:format\)}.freeze
+describe 'routing' do
   Rails.application.routes.routes.map do |r|
     spec = r.path.spec.to_s
-    next if spec.match BAD_MATCH
+    next if spec.match %r{^/rails|^/assets|^/cable|.*\*path\(.:format\)}.freeze
     r.verb.split('|').each do |verb|
       it "#{verb}: #{r.path.spec}" do
         parts = r.required_parts.index_with { |_part| '1' }
@@ -12,7 +11,7 @@ describe 'routing', type: :routing do
     end
   end
 
-  context 'Root with locale' do
+  describe 'root with locale' do
     it 'routes /en/ to error' do
       expect(get: '/en/').to route_to(controller: 'main', action: 'page_not_found', path: 'en')
     end

@@ -1,71 +1,73 @@
 describe NotesController do
   # Security test - these it all fail
-  context 'An authenticated and authorized student doing a ' do
+  context 'An authenticated and authorized student doing a' do
     let(:course) { @note.course }
-    before :each do
+
+    before do
       @student = create(:student)
       @note = create(:note)
     end
 
     it 'get on notes_dialog' do
       get_as @student, :notes_dialog, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'post on notes_dialog' do
       post_as @student, :notes_dialog, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'GET on :add_note' do
       get_as @student, :add_note, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'POST on :add_note' do
       post_as @student, :add_note, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'GET on :index' do
       get_as @student, :index, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'GET on :new' do
       get_as @student, :new, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'POST on :create' do
       post_as @student, :create, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'GET on :new_update_groupings' do
       get_as @student, :new_update_groupings, params: { course_id: course.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'GET on :edit' do
       get_as @student, :edit, params: { course_id: course.id, id: @note.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'POST on :update' do
       put_as @student, :update, params: { course_id: course.id, id: @note.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
 
     it 'DELETE on :destroy' do
       delete_as @student, :destroy, params: { course_id: course.id, id: @note.id }
-      expect(response.status).to eq 403
+      expect(response).to have_http_status :forbidden
     end
   end
 
-  context 'An authenticated and authorized TA doing a ' do
+  context 'An authenticated and authorized TA doing a' do
     let(:course) { @assignment.course }
-    before :each do
+
+    before do
       @assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @assignment)
       @controller_to = 'groups'
@@ -119,7 +121,7 @@ describe NotesController do
       expect(note_data['message']).to eq(@note.notes_message)
       expect(note_data['display_for']).to eq(@note.noteable.display_for_note)
       # Should be true, since TA created note
-      expect(note_data['modifiable']).to eq(true)
+      expect(note_data['modifiable']).to be(true)
     end
 
     context 'POST on :create' do
@@ -128,7 +130,7 @@ describe NotesController do
                 :create,
                 params: { course_id: course.id, noteable_type: 'Grouping', note: { noteable_id: @grouping.id } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash.empty?).to be_truthy
+        expect(flash).to be_empty
         expect(assigns(:assignments)).not_to be_nil
         expect(assigns(:groupings)).not_to be_nil
       end
@@ -187,7 +189,7 @@ describe NotesController do
 
     it 'be able to update new groupings' do
       get_as @ta, :new_update_groupings, params: { course_id: course.id, assignment_id: @assignment.id }
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :ok
     end
 
     context 'GET on :noteable_object_selector' do
@@ -195,19 +197,19 @@ describe NotesController do
         get_as @ta, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Grouping' }
         expect(assigns(:assignments)).not_to be_nil
         expect(assigns(:groupings)).not_to be_nil
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'for Students' do
         get_as @ta, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Student' }
         expect(assigns(:students)).not_to be_nil
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'for Assignments' do
         get_as @ta, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'Assignment' }
         expect(assigns(:assignments)).not_to be_nil
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
     end
 
@@ -215,13 +217,13 @@ describe NotesController do
       it 'for a note belonging to themselves (get as TA)' do
         @note = create(:note, creator_id: @ta.id)
         get_as @ta, :edit, params: { course_id: course.id, id: @note.id }
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'for a note belonging to someone else (get as TA)' do
         @note = create(:note)
         get_as @ta, :edit, params: { course_id: course.id, id: @note.id }
-        expect(response.status).to eq 403
+        expect(response).to have_http_status :forbidden
       end
     end
 
@@ -233,7 +235,7 @@ describe NotesController do
                   :update,
                   params: { course_id: course.id, id: @note.id, note: { notes_message: '' } }
           expect(assigns(:note)).not_to be_nil
-          expect(flash.empty?).to be_truthy
+          expect(flash).to be_empty
         end
 
         it 'with good data' do
@@ -254,7 +256,7 @@ describe NotesController do
         post_as @ta,
                 :update,
                 params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
-        expect(response.status).to eq 403
+        expect(response).to have_http_status :forbidden
       end
     end
 
@@ -276,20 +278,21 @@ describe NotesController do
     end
   end
 
-  context 'An authenticated and authorized instructor doing a ' do
+  context 'An authenticated and authorized instructor doing a' do
     let(:course) { @instructor.course }
-    before :each do
+
+    before do
       @instructor = create(:instructor)
     end
 
     it 'be able to get the index' do
       get_as @instructor, :index, params: { course_id: course.id }
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :ok
     end
 
     it 'to go on new' do
       get_as @instructor, :new, params: { course_id: course.id }
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :ok
     end
 
     it 'for Students' do
@@ -297,7 +300,7 @@ describe NotesController do
       expect(assigns(:students)).not_to be_nil
       expect(assigns(:assignments)).to be_nil
       expect(assigns(:groupings)).to be_nil
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :ok
     end
 
     it 'for Assignments' do
@@ -305,7 +308,7 @@ describe NotesController do
       expect(assigns(:assignments)).not_to be_nil
       expect(assigns(:students)).to be_nil
       expect(assigns(:groupings)).to be_nil
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :ok
     end
 
     it 'for invalid type' do
@@ -315,11 +318,11 @@ describe NotesController do
       expect(assigns(:assignments)).not_to be_nil
       expect(assigns(:groupings)).not_to be_nil
       expect(assigns(:students)).to be_nil
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :ok
     end
 
     context 'with an assignment' do
-      before :each do
+      before do
         @grouping = create(:grouping)
         @student = create(:student)
         @assignment = @grouping.assignment
@@ -333,7 +336,7 @@ describe NotesController do
                :notes_dialog,
                params: { course_id: course.id, assignment_id: @assignment.id, noteable_type: 'Grouping',
                          noteable_id: @grouping.id, controller_to: @controller_to, action_to: @action_to }
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'with a valid note' do
@@ -356,7 +359,7 @@ describe NotesController do
         post_as @instructor, :create, params: { course_id: course.id, noteable_type: 'Grouping',
                                                 note: { noteable_id: @grouping.id } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash.empty?).to be_truthy
+        expect(flash).to be_empty
         expect(assigns(:assignments)).not_to be_nil
         expect(assigns(:groupings)).not_to be_nil
         expect(assigns(:students)).to be_nil
@@ -403,7 +406,7 @@ describe NotesController do
 
       it 'GET on :new_update_groupings' do
         get_as @instructor, :new_update_groupings, params: { course_id: course.id, assignment_id: @assignment.id }
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'for Groupings' do
@@ -411,26 +414,26 @@ describe NotesController do
         expect(assigns(:assignments)).not_to be_nil
         expect(assigns(:groupings)).not_to be_nil
         expect(assigns(:students)).to be_nil
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'for a note belonging to themselves (get as Instructor)' do
         @note = create(:note, creator_id: @instructor.id)
         get_as @instructor, :edit, params: { course_id: course.id, id: @note.id }
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'for a note belonging to someone else (get as Instructor)' do
         @note = create(:note, creator_id: create(:ta).id)
         get_as @instructor, :edit, params: { course_id: course.id, id: @note.id }
-        expect(response.status).to eq 200
+        expect(response).to have_http_status :ok
       end
 
       it 'with bad data' do
         @note = create(:note, creator_id: @instructor.id)
         post_as @instructor, :update, params: { course_id: course.id, id: @note.id, note: { notes_message: '' } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash.empty?).to be_truthy
+        expect(flash).to be_empty
       end
 
       it 'with good data' do

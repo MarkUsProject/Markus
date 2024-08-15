@@ -26,13 +26,13 @@ class DownloadSubmissionsJob < ApplicationJob
     Zip::File.open(zip_path, create: true) do |zip_file|
       if print
         assignment = Assignment.find(assignment_id)
-        assignment.current_results.where('groupings.id': grouping_ids).each do |result|
+        assignment.current_results.where('groupings.id': grouping_ids).find_each do |result|
           pdf_report = result.generate_print_pdf
           zip_file.get_output_stream(result.print_pdf_filename) { |f| f.write pdf_report.to_pdf }
           progress.increment
         end
       else
-        Grouping.includes(:group, :current_submission_used).where(id: grouping_ids).each do |grouping|
+        Grouping.includes(:group, :current_submission_used).where(id: grouping_ids).find_each do |grouping|
           revision_id = grouping.current_submission_used&.revision_identifier
           group_name = grouping.group.group_name
           grouping.access_repo do |repo|

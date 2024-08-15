@@ -1,0 +1,119 @@
+version: '3.7'
+
+services:
+  app: &app
+    build:
+      context: .
+      dockerfile: ./.dockerfiles/Dockerfile
+      target: prod
+    image: markus:1.0.1
+    tmpfs:
+      - /tmp
+    stdin_open: true
+    tty: true
+    entrypoint: .dockerfiles/production_demo/entrypoint-prod-rails.sh
+    depends_on:
+      - postgres
+      - redis
+
+  rails: &rails
+    <<: *app
+    command: bundle exec rails server -b 0.0.0.0
+    environment:
+      - PGDATABASE=markus_production
+      - PGDATABASETEST=markus_test
+      - SECRET_KEY_BASE=1 # change this to something secure and/or use a secret to set this
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGPASSWORD=docker # change this to something secure and/or use a secret to set this
+      - TZ=America/Toronto
+    ports:
+      - '3000:3000'
+    volumes:
+      - app_data:/app/data/production
+      - repos:/app/data/production/repos
+      - log:/app/log
+      - assets:/app/public
+    secrets:
+      - source: markus.settings
+        target: /app/config/settings.local.yml
+    depends_on:
+      - postgres
+      - redis
+      - resque
+      - resque-scheduler
+      - ssh
+
+  ssh:
+    <<: *rails
+    volumes:
+      - log:/home/markus/log
+      - repos:/home/markus/
+    environment:
+      - TZ=America/Toronto
+    command: /usr/sbin/sshd -D -e
+    user: root
+    secrets:
+      - source: markus.pg_service
+        target: /home/markus/.pg_service.conf
+    ports:
+      - '2222:22'
+    entrypoint: []
+    depends_on: []
+
+  resque: &resque
+    <<: *rails
+    command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
+    depends_on:
+      - redis
+    ports: []
+
+  resque-scheduler:
+    <<: *resque
+    command: bundle exec rails resque:scheduler
+
+  postgres:
+    image: postgres:14
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=docker  # change this to something secure and/or use a secret to set this
+      - POSTGRES_INITDB_ARGS="-A md5"
+
+  redis:
+    image: redis:7
+    volumes:
+      - redis:/data
+    ports:
+      - 6379
+
+  httpd:
+    build:
+      context: ./.dockerfiles/production_demo
+      dockerfile: ./Dockerfile-httpd
+    ports:
+      - '8080:80'
+    volumes:
+      - assets:/assets/
+      - repos:/repos/
+    depends_on:
+      - rails
+    secrets:
+      - source: markus.conf
+        target: /usr/local/apache2/sites-enabled/markus.conf
+
+volumes:
+  app_data:
+  repos:
+  log:
+  assets:
+  postgres:
+  redis:
+
+secrets:
+  markus.conf:
+    file: ./.dockerfiles/production_demo/httpd.example.conf
+  markus.settings:
+    file: ./.dockerfiles/production_demo/settings.example.yml
+  markus.pg_service:
+    file: ./.dockerfiles/production_demo/ssh.pg_service.conf

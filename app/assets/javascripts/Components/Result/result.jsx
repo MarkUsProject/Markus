@@ -1,6 +1,10 @@
 import React from "react";
 import {render} from "react-dom";
 
+// TODO: This import seems to be required to automatically include the X-CSRF-TOKEN header on
+//   jQuery AJAX requests in this component, unlike all other pages. Requires further investigation.
+import "@rails/ujs";
+
 import {LeftPane} from "./left_pane";
 import {RightPane} from "./right_pane";
 import {SubmissionSelector} from "./submission_selector";
@@ -365,10 +369,9 @@ class Result extends React.Component {
       this.refreshAnnotationCategories();
     }
 
-    if (typeof window.annotation_manager.hide_selection_box === "function") {
+    if (typeof window.annotation_manager?.hide_selection_box === "function") {
       window.annotation_manager.hide_selection_box();
     }
-    reloadDOM();
   };
 
   addExistingAnnotation = annotation_text_id => {
@@ -505,10 +508,9 @@ class Result extends React.Component {
     }
     this.update_annotation_text(annotation.annotation_text_id, annotation.content, annotation.id);
 
-    if (typeof window.annotation_manager.hide_selection_box === "function") {
+    if (typeof window.annotation_manager?.hide_selection_box === "function") {
       window.annotation_manager.hide_selection_box();
     }
-    reloadDOM();
   };
 
   /**
@@ -527,8 +529,11 @@ class Result extends React.Component {
   }
 
   destroyAnnotation(annotation_id, range, annotation_text_id) {
-    if (annotation_manager.annotation_text_manager.annotationTextExists(annotation_text_id)) {
-      annotation_manager.removeAnnotation(annotation_id);
+    if (
+      !!window.annotation_manager &&
+      window.annotation_manager.annotation_text_manager.annotationTextExists(annotation_text_id)
+    ) {
+      window.annotation_manager.removeAnnotation(annotation_id);
     }
     let newAnnotations = [...this.state.annotations];
     const i = newAnnotations.findIndex(a => a.id === annotation_id);
@@ -537,10 +542,9 @@ class Result extends React.Component {
       this.setState({annotations: newAnnotations});
     }
 
-    if (typeof annotation_manager.hide_selection_box === "function") {
-      annotation_manager.hide_selection_box();
+    if (typeof window.annotation_manager?.hide_selection_box === "function") {
+      window.annotation_manager.hide_selection_box();
     }
-    reloadDOM();
     // Need to remove data attribute from highlight elements - must be last.
     $("span").removeAttr(`data-annotationid${annotation_id}`);
   }

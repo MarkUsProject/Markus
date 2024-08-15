@@ -4,7 +4,9 @@ namespace :db do
     puts 'Create remark requests'
 
     # Create remark requests for assignments that allow them
-    Assignment.joins(:assignment_properties).where(assignment_properties: { allow_remarks: true }).each do |assignment|
+    Assignment.joins(:assignment_properties)
+              .where(assignment_properties: { allow_remarks: true })
+              .find_each do |assignment|
       # Create remark request for first two groups in each assignment
       Grouping.where(assessment_id: assignment.id).first(2).each do |grouping|
         submission = Submission.find_by(grouping_id: grouping.id)
@@ -36,7 +38,7 @@ namespace :db do
     result = remark_submission.results.first
 
     # Automate remarks for assignment using appropriate criteria
-    remark_submission.assignment.criteria.includes(:marks).each do |criterion|
+    remark_submission.assignment.criteria.includes(:marks).find_each do |criterion|
       if criterion.instance_of?(RubricCriterion)
         random_mark = criterion.max_mark / 4 * rand(0..4)
       elsif criterion.instance_of?(FlexibleCriterion)

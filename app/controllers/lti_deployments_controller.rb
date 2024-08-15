@@ -7,6 +7,8 @@ class LtiDeploymentsController < ApplicationController
   before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
   before_action :check_host, only: [:launch, :redirect_login]
 
+  USE_SECURE_COOKIES = !Rails.env.local?
+
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
       params[:target_link_uri].blank? || params[:lti_message_hint].blank?
@@ -21,7 +23,7 @@ class LtiDeploymentsController < ApplicationController
     lti_launch_data[:nonce] = nonce
     lti_launch_data[:state] = session_nonce
     cookies.permanent.encrypted[:lti_launch_data] =
-      { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now, same_site: :none, secure: true }
+      { value: JSON.generate(lti_launch_data), expires: 1.hour.from_now, same_site: :none, secure: USE_SECURE_COOKIES }
     auth_params = {
       scope: 'openid',
       response_type: 'id_token',
@@ -104,7 +106,7 @@ class LtiDeploymentsController < ApplicationController
       unless logged_in?
         lti_data[:lti_redirect] = request.url
         cookies.encrypted.permanent[:lti_data] =
-          { value: JSON.generate(lti_data), expires: 1.hour.from_now, same_site: :none, secure: true }
+          { value: JSON.generate(lti_data), expires: 1.hour.from_now, same_site: :none, secure: USE_SECURE_COOKIES }
         redirect_to root_path
         return
       end
@@ -180,7 +182,17 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def create_course
-    new_course = Course.find_or_initialize_by(name: params['name'])
+    if LtiConfig.respond_to?(:allowed_to_create_course?) && !LtiConfig.allowed_to_create_course?(record)
+      render 'shared/http_status',
+             locals: { code: '422',
+                       message: format(Settings.lti.unpermitted_new_course_message,
+                                       course_name: record.lms_course_name) },
+             status: :unprocessable_entity, layout: false
+      return
+    end
+
+    name = params['name'].gsub(/[^a-zA-Z0-9\-_]/, '-')  # Sanitize name to comply with Course name validation
+    new_course = Course.find_or_initialize_by(name: name)
     unless new_course.new_record?
       flash_message(:error, I18n.t('lti.course_exists'))
       redirect_to choose_course_lti_deployment_path

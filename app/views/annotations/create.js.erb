@@ -26,7 +26,11 @@
     y_range: {
       start: <%= [@annotation.y1, @annotation.y2].min || 'undefined' %>,
       end: <%= [@annotation.y1, @annotation.y2].max || 'undefined' %>
-    }
+    },
+    start_node: '<%= @annotation.start_node&.html_safe || '' %>',
+    start_offset: <%= @annotation.start_offset || 'undefined' %>,
+    end_node: '<%= @annotation.end_node&.html_safe || '' %>',
+    end_offset: <%= @annotation.end_offset || 'undefined' %>
   };
 
 

@@ -1,6 +1,7 @@
-extends: ["stylelint-config-sass-guidelines", "stylelint-config-prettier"]
+extends: ["stylelint-config-sass-guidelines"]
 rules:
   scss/at-extend-no-missing-placeholder: null
+  scss/no-global-function-names: null
   max-nesting-depth: 4
   selector-class-pattern: null
   selector-max-compound-selectors: 6

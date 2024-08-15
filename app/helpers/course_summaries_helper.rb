@@ -86,7 +86,7 @@ module CourseSummariesHelper
   # Update student hashes with weighted grades for every marking scheme.
   def calculate_course_grades(course, students)
     course.marking_schemes.find_each do |scheme|
-      students.each do |_, student|
+      students.each_value do |student|
         student[:weighted_marks] ||= {}
         weighted = 0
         scheme.marking_weights.each do |mw|

@@ -205,7 +205,7 @@ class Submission < ApplicationRecord
     files_added = false
     # First, go through directories...
     directories = revision.directories_at_path(path)
-    directories.each do |_directory_name, directory|
+    directories.each_value do |directory|
       files_added = populate_with_submission_files(revision, File.join(path, directory.name))
     end
     files = revision.files_at_path(path)

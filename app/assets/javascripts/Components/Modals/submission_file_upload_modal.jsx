@@ -17,7 +17,29 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newFiles, undefined, this.state.unzip, this.state.renameTo);
+    if (this.state.newFiles.length === 1) {
+      const newFilename = this.state.renameTo;
+      const originalFilename = this.state.newFiles[0].name; // Assuming only one file is uploaded
+      // Check if newFilename is not blank
+      if (newFilename.trim() !== "") {
+        const originalExtension = originalFilename.split(".").pop();
+        const newExtension = newFilename.split(".").pop();
+
+        if (originalExtension !== newExtension) {
+          const confirmChange = window.confirm(I18n.t("modals.file_upload.rename_warning"));
+          if (!confirmChange) {
+            // Prevent form submission if the user cancels the operation
+            return;
+          }
+        }
+      }
+    }
+    this.props.onSubmit(
+      this.state.newFiles,
+      undefined,
+      this.state.unzip,
+      this.state.renameTo.trim()
+    );
   };
 
   handleFileUpload = event => {
@@ -139,6 +161,14 @@ class SubmissionFileUploadModal extends React.Component {
               {I18n.t("submissions.student.rename_file_to")}&nbsp;
               {this.fileRenameInputBox()}
             </label>
+            {this.props.progressVisible && (
+              <progress
+                aria-label={I18n.t("modals.submission_file_upload.progress_bar")}
+                className={"modal-progress-bar"}
+                value={this.props.progressPercentage}
+                max="100"
+              ></progress>
+            )}
             <div className={"modal-container"}>
               <input
                 type="submit"

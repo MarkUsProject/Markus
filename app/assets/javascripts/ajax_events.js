@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {FLASH_KEYS} from "./flash";
 
 /*

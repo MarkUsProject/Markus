@@ -25,24 +25,18 @@ class GradersController < ApplicationController
 
   def upload
     begin
-      data = process_file_upload
-    rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      data = process_file_upload(['.csv'])
     rescue StandardError => e
       flash_message(:error, e.message)
     else
       assignment = Assignment.find(params[:assignment_id])
       if params[:groupings]
-        result = TaMembership.from_csv(assignment, data[:file], params[:remove_existing_mappings])
+        result = TaMembership.from_csv(assignment, data[:contents], params[:remove_existing_mappings])
       elsif params[:criteria]
-        result = CriterionTaAssociation.from_csv(assignment, data[:file], params[:remove_existing_mappings])
+        result = CriterionTaAssociation.from_csv(assignment, data[:contents], params[:remove_existing_mappings])
       end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+
+      flash_csv_result(result)
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
@@ -84,6 +78,29 @@ class GradersController < ApplicationController
         flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request
         return
+      end
+    end
+
+    # It appears that the params[:graders] received is always an array of stringed integers instead of integers.
+    # This is the case both from the React front-end (it sends id's as strings; this should be dealt with in
+    # the future), as well as from the requests generated in the RSPEC tests, where it appears that array elements
+    # (in request parameters) are automatically converted to strings for HTTP transmission.
+    # This map handles the required conversion from stringed integers to integers.
+    grader_ids.map!(&:to_i)
+
+    if %w[assign random_assign].include? params[:global_actions]
+      inactive_graders_hash =
+        current_course.tas.joins(:user).where(roles: { hidden: true }).pluck(:id, :user_name)
+                      .map { |x| [x[0], x[1]] }.to_h
+
+      inactive_graders_for_flash = inactive_graders_hash.select { |k| grader_ids.include? k }
+
+      grader_ids.reject! { |grader_id| inactive_graders_hash.key? grader_id }
+
+      if inactive_graders_for_flash.size > 0
+        flash_now(:error,
+                  I18n.t('groups.invite_member.errors.inactive_grader',
+                         user_names: inactive_graders_for_flash.values.join(', ')))
       end
     end
 
@@ -182,6 +199,8 @@ class GradersController < ApplicationController
     Grouping.randomly_assign_tas(grouping_ids, grader_ids, weightings, @assignment)
   end
 
+  # This helper is only expected to be invoked from within the global_actions method, which
+  # filters 'grader_ids' to remove inactive graders (in the cases of assign and random_assign)
   def assign_all_graders(grouping_ids, grader_ids)
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
   end
