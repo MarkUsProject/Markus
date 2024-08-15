@@ -355,8 +355,9 @@ describe Api::StarterFileGroupsController do
         expect(File).not_to exist(File.expand_path(File.join(starter_file_group.path, '../../../a')))
       end
     end
+
     context 'when the path given is invalid' do
-      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
       before do
         post :create_file, params: { filename: '../../../a',
@@ -436,8 +437,9 @@ describe Api::StarterFileGroupsController do
         expect(Dir).not_to exist(File.expand_path(File.join(starter_file_group.path, '../../../a')))
       end
     end
+
     context 'when the path given is invalid' do
-      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
       before do
         post :create_folder, params: { folder_path: '../../../a',
@@ -516,8 +518,9 @@ describe Api::StarterFileGroupsController do
         expect(File).to exist(File.expand_path(File.join(starter_file_group.path, '../../../../../LICENSE')))
       end
     end
+
     context 'when the path given is invalid' do
-      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
       before do
         post :remove_file, params: { filename: '../../../../../LICENSE',
@@ -599,8 +602,9 @@ describe Api::StarterFileGroupsController do
         expect(Dir).to exist(File.expand_path(File.join(starter_file_group.path, '../../../../../doc')))
       end
     end
+
     context 'when the path given is invalid' do
-      let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
       before do
         post :remove_folder, params: { folder_path: '../../../../../doc',

@@ -1472,7 +1472,7 @@ describe SubmissionsController do
           end
           post_as assigned_ta, :zip_groupings_files,
                   params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids, print: 'true' }
-          is_expected.to respond_with(:success)
+          expect(subject).to respond_with(:success)
         end
       end
 
