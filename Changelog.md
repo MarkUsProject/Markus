@@ -4,6 +4,13 @@
 
 ### 🚨 Breaking changes
 
+### ✨ New features and improvements
+
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.5.0]
 
 ### ✨ New features and improvements
 
