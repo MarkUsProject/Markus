@@ -2,7 +2,7 @@
 
 Welcome to MarkUs! Online Marking Made Easy
 ===========================================
-test1
+
 MarkUs is a Ruby on Rails and React web application for the submission and grading of student assignments. The primary purpose of MarkUs is to provide TAs with simple tools that will help them to give high quality feedback to students. MarkUs also provides a straight-forward interface for students to submit their work, form groups, and receive feedback. The administrative interface allows instructors to manage groups, organize the grading, and release grades to students.
 
 ## 1. Features
