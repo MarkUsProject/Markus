@@ -93,8 +93,6 @@ jobs:
         run: bundle exec rails db:migrate
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
-        with:
-          chromedriver-version: '119.0.6045.199'
       - name: Run chromedriver
         run: chromedriver --whitelisted-ips &
       - name: Run rspec tests

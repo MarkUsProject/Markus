@@ -16,9 +16,6 @@ npm list &> /dev/null || npm ci
 # install chromium (for nbconvert webpdf conversion)
 ./venv/bin/python3 -m playwright install chromium
 
-# install chromium (for nbconvert webpdf conversion)
-./venv/bin/python3 -m playwright install chromium
-
 # setup the database (checks for db existence first)
 until pg_isready -q; do
   echo "waiting for database to start up"

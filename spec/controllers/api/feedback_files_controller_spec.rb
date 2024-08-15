@@ -119,25 +119,6 @@ describe Api::FeedbackFilesController do
           ).not_to include(*feedback_files_with_test_run.pluck(:id)) # rubocop:disable Rails/PluckId
         end
       end
-
-      context 'when feedback files with no submission exist' do
-        before do
-          request.env['HTTP_ACCEPT'] = 'application/json'
-          feedback_files
-          feedback_files_with_test_run
-        end
-
-        it 'should not return info about feedback files if not related to the submission' do
-          get :index, params: {
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            course_id: course.id
-          }
-          expect(
-            response.parsed_body.pluck('id')
-          ).not_to include(*feedback_files_with_test_run.pluck(:id)) # rubocop:disable Rails/PluckId
-        end
-      end
     end
 
     context 'GET show' do

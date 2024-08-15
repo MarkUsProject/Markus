@@ -2086,21 +2086,6 @@ describe ResultsController do
         end
       end
     end
-
-    describe '#run_tests' do
-      before do
-        assignment.update!(enable_test: true,
-                           enable_student_tests: true,
-                           unlimited_tokens: true,
-                           token_start_date: 1.day.ago,
-                           remote_autotest_settings_id: 1)
-      end
-
-      it 'enqueues an AutotestRunJob' do
-        params = { course_id: course.id, id: incomplete_result.id }
-        expect { post :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
-      end
-    end
   end
 
   context 'A TA' do
