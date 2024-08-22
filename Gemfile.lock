@@ -380,7 +380,7 @@ GEM
       redis (>= 3.3)
       resque (>= 1.27)
       rufus-scheduler (~> 3.2, != 3.3)
-    rexml (3.3.4)
+    rexml (3.3.6)
       strscan
     rmagick (6.0.1)
       observer (~> 0.1)
