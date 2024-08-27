@@ -8,6 +8,8 @@
 
 ### 🐛 Bug fixes
 
+- Fix bug in syntax highlighting caused by incorrect function call (#7187)
+
 ### 🔧 Internal changes
 
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
