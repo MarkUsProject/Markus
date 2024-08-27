@@ -1,19 +1,10 @@
 # Changelog
 
-## [unreleased]
-
-### 🚨 Breaking changes
-
-### ✨ New features and improvements
+## [v2.5.1]
 
 ### 🐛 Bug fixes
 
 - Fix bug in syntax highlighting caused by incorrect function call (#7187)
-
-### 🔧 Internal changes
-
-- Upgrade Docker environment to use Ruby v3.3 (#7185)
-- Upgrade to Rails v7.2 (#7185)
 
 ## [v2.5.0]
 
