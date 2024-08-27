@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.5.1]
+
+### 🐛 Bug fixes
+
+- Fix bug in syntax highlighting caused by incorrect function call (#7187)
+
 ## [v2.5.0]
 
 ### ✨ New features and improvements
