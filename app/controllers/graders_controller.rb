@@ -107,8 +107,8 @@ class GradersController < ApplicationController
     case params[:current_table]
     when 'groups_table'
       if params[:groupings] == 'assign_sections'
-        section_names = params[:sections]
-        grouping_ids = filter_grouping_by_section(section_names, grader_ids).ids
+        assignments = params[:assignments]
+        grouping_hash = filter_grouping_by_section(assignments)
       else
         grouping_ids = params[:groupings]
         if grouping_ids.blank?
@@ -161,20 +161,29 @@ class GradersController < ApplicationController
           return
         end
       when 'assign_sections'
-        if params[:skip_empty_submissions] == 'true'
-          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
-          if filtered_grouping_ids.count != grouping_ids.count
-            found_empty_submission = true
+        found_empty_submission = false
+        filtered_grouping_hash = {}
+
+        grouping_hash.each do |ta_id, group_ids|
+          if params[:skip_empty_submissions] == 'true'
+            filtered_grouping_ids = filter_empty_submissions(group_ids)
+            if filtered_grouping_ids.count != group_ids.count
+              found_empty_submission = true
+            end
+            # Add the filtered results to the new hash
+            filtered_grouping_hash[ta_id] = filtered_grouping_ids
+          else
+            # If not skipping empty submissions, copy the original values
+            filtered_grouping_hash[ta_id] = group_ids
           end
         end
 
         begin
           if found_empty_submission
-            assign_all_graders(filtered_grouping_ids, grader_ids)
+            assign_graders_by_section(filtered_grouping_hash)
             flash_now(:info, I18n.t('graders.group_submission_no_files'))
           else
-            # Otherwise, apply assignments to all relevant groupings.
-            assign_all_graders(grouping_ids, grader_ids)
+            assign_graders_by_section(grouping_hash)
           end
         rescue StandardError => e
           head :bad_request
@@ -229,6 +238,10 @@ class GradersController < ApplicationController
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
   end
 
+  def assign_graders_by_section(grouping_hash)
+    Grouping.assign_by_section(grouping_hash, @assignment)
+  end
+
   def unassign_graders(grouping_ids, grader_ids)
     grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, role_id: grader_ids).ids
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
@@ -242,10 +255,18 @@ class GradersController < ApplicationController
     end
   end
 
-  def filter_grouping_by_section(section_names, ta_ids)
-    Grouping.includes(:section, :tas)
-            .where(sections: { name: section_names })
-            .where(tas: { id: ta_ids })
+  def filter_grouping_by_section(assignments)
+    ta_groupings = {}
+
+    assignments.each do |section_name, ta_id|
+      grouping_ids = Grouping.joins(:section)
+                             .where(section: { name: section_name })
+                             .ids
+
+      ta_groupings[ta_id] = grouping_ids
+    end
+
+    ta_groupings
   end
 
   def implicit_authorization_target

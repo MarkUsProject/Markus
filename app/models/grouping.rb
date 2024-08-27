@@ -136,6 +136,16 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def self.assign_by_section(groupings_by_ta, assignment)
+    groupings_by_ta.each do |ta_id, grouping_ids|
+      # Call assign_tas with the grouping_ids and ta_id
+      assign_tas(grouping_ids, [ta_id], assignment) do |grouping_ids_, ta_ids_|
+        # Return the pairs of grouping_ids and the single ta_id
+        grouping_ids_.product(ta_ids_)
+      end
+    end
+  end
+
   # Assigns TAs to groupings using a caller-specified block. The block is given
   # a list of grouping IDs and a list of TA IDs and must return a list of
   # grouping-ID-TA-ID pair that represents the TA assignment.
