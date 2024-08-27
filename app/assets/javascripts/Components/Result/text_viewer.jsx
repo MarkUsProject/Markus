@@ -115,7 +115,7 @@ export class TextViewer extends React.PureComponent {
       }
     }
     if (currLine.textContent.length > 0) {
-      nodeLines.appendChild(currLine);
+      nodeLines.push(currLine);
     }
     nodeLines.push(this.raw_content.current.lastChild.cloneNode(true));
     while (this.raw_content.current.firstChild) {
