@@ -12,6 +12,7 @@
 
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
 - Upgrade to Rails v7.2 (#7185)
+- Manually specify chromedriver port number in Github actions (#7209)
 
 ## [v2.5.1]
 
