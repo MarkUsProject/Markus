@@ -764,6 +764,159 @@ describe GradersController do
         end
       end
 
+      # context 'POST on :global_action on assign_sections' do
+      #   before do
+      #     @assignment = create(:assignment)
+      #     @section1 = create(:section)
+      #     @section2 = create(:section)
+      #     @grouping1 = create(:grouping, assignment: @assignment, section: @section1)
+      #     @grouping2 = create(:grouping, assignment: @assignment, section: @section2)
+      #     @grouping3 = create(:grouping, assignment: @assignment, section: @section1)
+      #     @ta1 = create(:ta)
+      #     @ta2 = create(:ta)
+      #   end
+      #
+      #   it 'returns bad request when no sections are selected' do
+      #     post_as @instructor, :assign_by_section, params: { course_id: course.id, assignment_id: @assignment.id }
+      #     expect(response).to have_http_status(:bad_request)
+      #   end
+      #
+      #   it 'assigns one TA to one section' do
+      #     post_as @instructor,
+      #             :assign_by_section,
+      #             params: { course_id: course.id, assignment_id: @assignment.id,
+      #                       assignments: { @section1.name => @ta1.id }, groupings: 'assign_sections' }
+      #
+      #     expect(@grouping1.tas).to include(@ta1)
+      #     expect(@grouping3.tas).to include(@ta1)
+      #     expect(@grouping2.tas).to be_empty
+      #   end
+      #
+      #   it 'assigns multiple TAs to different sections' do
+      #     post_as @instructor,
+      #             :assign_by_section,
+      #             params: { course_id: course.id, assignment_id: @assignment.id,
+      #                       assignments: { @section1.name => @ta1.id, @section2.name => @ta2.id },
+      # groupings: 'assign_sections' }
+      #
+      #     expect(@grouping1.tas).to include(@ta1)
+      #     expect(@grouping3.tas).to include(@ta1)
+      #     expect(@grouping2.tas).to include(@ta2)
+      #   end
+      #
+      #   it 'skips empty submissions when specified' do
+      #     allow_any_instance_of(Grouping).to receive(:has_submission?).and_return(false)
+      #     allow(@grouping1).to receive(:has_submission?).and_return(true)
+      #
+      #     post_as @instructor,
+      #             :assign_by_section,
+      #             params: { course_id: course.id, assignment_id: @assignment.id,
+      #                       assignments: { @section1.name => @ta1.id, @section2.name => @ta2.id },
+      #                       groupings: 'assign_sections', skip_empty_submissions: 'true' }
+      #
+      #     expect(@grouping1.tas).to include(@ta1)
+      #     expect(@grouping3.tas).to be_empty
+      #     expect(@grouping2.tas).to be_empty
+      #   end
+      # end
+      context 'POST on :global_actions on assign_sections' do
+        before do
+          @section1 = create(:section)
+          @section2 = create(:section)
+          @section3 = create(:section)
+
+          @student1 = create(:student, section: @section1)
+          @student2 = create(:student, section: @section2)
+          @student3 = create(:student, section: @section3)
+
+          @grouping1 = create(:grouping, assignment: @assignment)
+          @grouping2 = create(:grouping, assignment: @assignment)
+          @grouping3 = create(:grouping, assignment: @assignment)
+
+          create(:student_membership, grouping: @grouping1, user: @student1,
+                                      membership_status: StudentMembership::STATUSES[:inviter])
+          create(:student_membership, grouping: @grouping2, user: @student2,
+                                      membership_status: StudentMembership::STATUSES[:inviter])
+          create(:student_membership, grouping: @grouping3, user: @student3,
+                                      membership_status: StudentMembership::STATUSES[:inviter])
+
+          @ta1 = create(:ta)
+          @ta2 = create(:ta)
+          @ta3 = create(:ta)
+
+          # Making two new TAs that are 'inactive', to test additional functionality
+          @ta4 = create(:ta, hidden: true)
+          @ta5 = create(:ta, hidden: true)
+        end
+
+        it 'assigns one TA to one section' do
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id,
+                    assignment_id: @assignment.id,
+                    global_actions: 'assign_sections',
+                    assignments: { @section1.name => @ta1.id },
+                    current_table: 'groups_table'
+                  }
+          expect(response).to have_http_status(:ok)
+          expect(@grouping1.tas[0].id).to eq @ta1.id
+          expect(@grouping2.tas).to eq []
+          expect(@grouping3.tas).to eq []
+        end
+
+        it 'returns bad request when no sections are selected' do
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id,
+                    assignment_id: @assignment.id,
+                    global_actions: 'assign_sections',
+                    assignments: {},
+                    current_table: 'groups_table'
+                  }
+          expect(response).to have_http_status(:bad_request)
+          @assignment.groupings.each do |grouping|
+            expect(grouping.tas).to eq []
+          end
+        end
+
+        it 'assigns multiple TAs to different sections' do
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id,
+                    assignment_id: @assignment.id,
+                    global_actions: 'assign_sections',
+                    assignments: { @section1.name => @ta1.id, @section2.name => @ta2.id },
+                    current_table: 'groups_table'
+                  }
+          expect(response).to have_http_status(:ok)
+          expect(@grouping1.tas[0].id).to eq @ta1.id
+          expect(@grouping2.tas[0].id).to eq @ta2.id
+          expect(@grouping3.tas).to eq []
+        end
+
+        it 'skips empty submissions when specified' do
+          allow_any_instance_of(GradersController).to receive(:filter_empty_submissions).and_return([])
+
+          post_as @instructor,
+                  :global_actions,
+                  params: {
+                    course_id: course.id,
+                    assignment_id: @assignment.id,
+                    global_actions: 'assign_sections',
+                    assignments: { @section1.name => @ta1.id },
+                    skip_empty_submissions: 'true',
+                    current_table: 'groups_table'
+                  }
+          expect(response).to have_http_status(:ok)
+          expect(@grouping1.tas).to eq []
+          expect(@grouping2.tas).to eq []
+          expect(@grouping3.tas).to eq []
+        end
+      end
+
       context 'POST on :global_actions on unassign' do
         before do
           @grouping1 = create(:grouping, assignment: @assignment)
