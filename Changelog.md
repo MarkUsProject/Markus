@@ -6,6 +6,8 @@
 
 ### ✨ New features and improvements
 
+- Improve textviewer rendering speed (#7211)
+
 ### 🐛 Bug fixes
 
 ### 🔧 Internal changes

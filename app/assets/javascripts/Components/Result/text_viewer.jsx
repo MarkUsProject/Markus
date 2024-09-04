@@ -68,62 +68,35 @@ export class TextViewer extends React.PureComponent {
     let nodeLines = [];
     let currLine = document.createElement("span");
     currLine.classList.add("source-line");
+    let currChildren = [];
     for (let node of this.raw_content.current.childNodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        // SourceCodeLine.glow assumes text nodes are wrapped in <span> elements
-        let textContainer = document.createElement("span");
-        let textNode = null;
-        if (node.textContent.includes("\n")) {
-          const splits = node.textContent.split("\n");
-          for (let i = 0; i < splits.length - 1; i++) {
-            textNode = document.createTextNode(splits[i] + "\n");
-            textContainer.appendChild(textNode);
-            currLine.appendChild(textContainer);
-            nodeLines.push(currLine);
-            currLine = document.createElement("span");
-            currLine.classList.add("source-line");
-            textContainer = document.createElement("span");
-          }
-          textNode = document.createTextNode(splits[splits.length - 1]);
-        } else {
-          textNode = node.cloneNode(true);
-        }
-        textContainer.appendChild(textNode);
-        currLine.appendChild(textContainer);
-      } else {
-        if (node.textContent.includes("\n")) {
-          const splits = node.textContent.split("\n");
-          let textContainer = document.createElement("span");
-          textContainer.className = node.className;
-          let textNode = null;
-          for (let i = 0; i < splits.length - 1; i++) {
-            textNode = document.createTextNode(splits[i] + "\n");
-            textContainer.appendChild(textNode);
-            currLine.appendChild(textContainer);
-            nodeLines.push(currLine);
-            currLine = document.createElement("span");
-            currLine.classList.add("source-line");
-            textContainer = document.createElement("span");
-            textContainer.className = node.className;
-          }
-          textNode = document.createTextNode(splits[splits.length - 1]);
-          textContainer.appendChild(textNode);
-          currLine.appendChild(textContainer);
-        } else {
-          currLine.appendChild(node.cloneNode(true));
-        }
+      // Note: SourceCodeLine.glow assumes text nodes are wrapped in <span> elements
+      let textContainer = document.createElement("span");
+      let className = node.nodeType === Node.TEXT_NODE ? "" : node.className;
+      textContainer.className = className;
+
+      const splits = node.textContent.split("\n");
+      for (let i = 0; i < splits.length - 1; i++) {
+        textContainer.textContent = splits[i] + "\n";
+        currLine.append(...currChildren, textContainer);
+        nodeLines.push(currLine);
+        currLine = document.createElement("span");
+        currLine.classList.add("source-line");
+        currChildren = [];
+        textContainer = document.createElement("span");
+        textContainer.className = className;
       }
+
+      textContainer.textContent = splits[splits.length - 1];
+      currLine.append(...currChildren, textContainer);
     }
     if (currLine.textContent.length > 0) {
       nodeLines.push(currLine);
     }
-    nodeLines.push(this.raw_content.current.lastChild.cloneNode(true));
-    while (this.raw_content.current.firstChild) {
-      this.raw_content.current.removeChild(this.raw_content.current.lastChild);
-    }
-    for (let n of nodeLines) {
-      this.raw_content.current.appendChild(n);
-    }
+    this.raw_content.current.replaceChildren(
+      ...nodeLines,
+      this.raw_content.current.lastChild.cloneNode(true)
+    );
   };
 
   change_font_size = delta => {
