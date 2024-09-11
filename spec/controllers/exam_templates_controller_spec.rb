@@ -11,7 +11,7 @@ describe ExamTemplatesController do
     end
 
     describe '#create' do
-      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf', 'application/pdf') }
       let(:params) do
         { create_template: { file_io: file_io, name: 'Template 1' },
           assignment_id: exam_template.assignment.id, course_id: course.id }
