@@ -1,5 +1,5 @@
 class TestRun < ApplicationRecord
-  enum status: { in_progress: 0, complete: 1, cancelled: 2, failed: 3 }
+  enum :status, { in_progress: 0, complete: 1, cancelled: 2, failed: 3 }
   has_many :test_group_results, dependent: :destroy
   has_many :feedback_files, through: :test_group_results
   belongs_to :test_batch, optional: true

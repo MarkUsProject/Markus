@@ -17,7 +17,7 @@ ENV['SKIP_LOCAL_GIT_HOOKS'] = 'true'
 module Markus
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # Change the format of the cache entry.
     #
@@ -28,11 +28,6 @@ module Markus
     # Only change this value after your application is fully deployed to Rails 7.1
     # and you have no plans to rollback.
     config.active_support.cache_format_version = 7.1
-
-    # Sensitive parameters which will be filtered from the log file
-    config.filter_parameters += [
-      :passw, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn
-    ]
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
