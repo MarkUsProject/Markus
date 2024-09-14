@@ -2,5 +2,5 @@
 en:
   students:
     errors:
-      group_creation_failure: "Sorry! For some reason, your group could not be created. Please wait a few seconds, then hit refresh to try again. If you come back to this page, you should inform the course instructor."
-      grouping_creation_failure: "Sorry! For some reason, your grouping could not be created. Please wait a few seconds, and hit refresh to try again. If you come back to this page, you should inform the course instructor."
+      group_creation_failure: Sorry! For some reason, your group could not be created. Please wait a few seconds, then hit refresh to try again. If you come back to this page, you should inform the course instructor.
+      grouping_creation_failure: Sorry! For some reason, your grouping could not be created. Please wait a few seconds, and hit refresh to try again. If you come back to this page, you should inform the course instructor.
