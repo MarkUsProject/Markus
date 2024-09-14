@@ -270,15 +270,21 @@ describe Student do
             it 'raises an error on group save failure when creating group' do
               allow_any_instance_of(Group).to receive(:save).and_return(false)
 
-              expect { @student.create_group_for_working_alone_student(@assignment.id) }.to raise_error(RuntimeError, I18n.t('students.errors.group_creation_failure'))
+              expect do
+                @student.create_group_for_working_alone_student(@assignment.id)
+              end.to raise_error(RuntimeError,
+                                 I18n.t('students.errors.group_creation_failure'))
             end
           end
 
           context 'when error occurs on grouping save' do
             it 'raises an error on grouping save failure when creating group' do
               allow_any_instance_of(Grouping).to receive(:save).and_return(false)
-              
-              expect { @student.create_group_for_working_alone_student(@assignment.id) }.to raise_error(RuntimeError, I18n.t('students.errors.grouping_creation_failure'))
+
+              expect do
+                @student.create_group_for_working_alone_student(@assignment.id)
+              end.to raise_error(RuntimeError,
+                                 I18n.t('students.errors.grouping_creation_failure'))
             end
           end
         end
