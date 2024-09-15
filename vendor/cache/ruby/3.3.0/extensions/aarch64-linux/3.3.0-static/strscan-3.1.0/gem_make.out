@@ -1,0 +1,20 @@
+current directory: /app/vendor/cache/ruby/3.3.0/gems/strscan-3.1.0/ext/strscan
+/usr/local/bin/ruby extconf.rb
+checking for onig_region_memsize() in ruby.h... yes
+checking for rb_reg_onig_match() in ruby.h... yes
+creating Makefile
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-mtsx16 sitelibdir\=./.gem.20240915-10-mtsx16 clean
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-mtsx16 sitelibdir\=./.gem.20240915-10-mtsx16
+compiling strscan.c
+linking shared-object strscan.so
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-mtsx16 sitelibdir\=./.gem.20240915-10-mtsx16 install
+/usr/bin/install -c -m 0755 strscan.so ./.gem.20240915-10-mtsx16
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-mtsx16 sitelibdir\=./.gem.20240915-10-mtsx16 clean

@@ -1,0 +1,20 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/strscan-3.1.0/ext/strscan
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+checking for onig_region_memsize() in ruby.h... yes
+checking for rb_reg_onig_match() in ruby.h... no
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-3g7pqb sitelibdir\=./.gem.20240915-53657-3g7pqb clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-3g7pqb sitelibdir\=./.gem.20240915-53657-3g7pqb
+compiling strscan.c
+linking shared-object strscan.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-3g7pqb sitelibdir\=./.gem.20240915-53657-3g7pqb install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 strscan.bundle ./.gem.20240915-53657-3g7pqb
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/strscan-3.1.0/ext/strscan
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-3g7pqb sitelibdir\=./.gem.20240915-53657-3g7pqb clean

@@ -1,0 +1,18 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/cgi-0.4.1/ext/cgi/escape
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/cgi-0.4.1/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-4l7k0x sitelibdir\=./.gem.20240915-53657-4l7k0x clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/cgi-0.4.1/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-4l7k0x sitelibdir\=./.gem.20240915-53657-4l7k0x
+compiling escape.c
+linking shared-object cgi/escape.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/cgi-0.4.1/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-4l7k0x sitelibdir\=./.gem.20240915-53657-4l7k0x install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 escape.bundle ./.gem.20240915-53657-4l7k0x/cgi
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/cgi-0.4.1/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-4l7k0x sitelibdir\=./.gem.20240915-53657-4l7k0x clean

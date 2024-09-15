@@ -1,0 +1,254 @@
+current directory: /app/vendor/cache/ruby/3.3.0/gems/kgio-2.11.4/ext/kgio
+/usr/local/bin/ruby extconf.rb
+checking for CLOCK_MONOTONIC in time.h... yes
+checking for clockid_t in time.h... yes
+checking for clock_gettime() in -lrt... yes
+checking for t_open() in -lnsl... no
+checking for socket() in -lsocket... no
+checking for poll() in poll.h... yes
+checking for getaddrinfo() in sys/types.h,sys/socket.h,netdb.h... yes
+checking for getnameinfo() in sys/types.h,sys/socket.h,netdb.h... yes
+checking for struct sockaddr_storage in sys/types.h,sys/socket.h... yes
+checking for accept4() in sys/socket.h... yes
+checking for sys/select.h... yes
+checking for writev() in sys/uio.h... yes
+checking for ruby/io.h... yes
+checking for rb_io_t.fd in ruby.h,ruby/io.h... yes
+checking for rb_io_t.mode in ruby.h,ruby/io.h... yes
+checking for rb_io_t.pathv in ruby.h,ruby/io.h... yes
+checking for struct RFile in ruby.h,ruby/io.h... yes
+checking size of struct RFile in ruby.h,ruby/io.h... 24
+checking for struct RObject... yes
+checking size of struct RObject... 32
+checking size of int... 4
+checking for rb_io_ascii8bit_binmode()... yes
+checking for rb_update_max_fd()... yes
+checking for rb_fd_fix_cloexec()... yes
+checking for rb_cloexec_open()... yes
+checking for ruby/thread.h... yes
+checking for rb_thread_call_without_gvl() in ruby/thread.h... yes
+checking for rb_thread_blocking_region()... no
+checking for rb_thread_io_blocking_region()... yes
+checking for rb_str_set_len()... yes
+checking for rb_hash_clear() in ruby.h... yes
+checking for rb_time_interval()... yes
+checking for rb_wait_for_single_fd()... yes
+checking for rb_str_subseq()... yes
+checking for rb_ary_subseq()... yes
+creating Makefile
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/kgio-2.11.4/ext/kgio
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-b7e4fs sitelibdir\=./.gem.20240915-10-b7e4fs clean
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/kgio-2.11.4/ext/kgio
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-b7e4fs sitelibdir\=./.gem.20240915-10-b7e4fs
+compiling accept.c
+In file included from accept.c:6:
+sock_for_fd.h: In function 'sock_for_fd':
+sock_for_fd.h:38:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   38 |         fp->fd = fd;
+      |         ^~
+In file included from kgio.h:6,
+                 from accept.c:4:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+In file included from accept.c:6:
+sock_for_fd.h:39:9: warning: 'mode' is deprecated: rb_io_mode [-Wdeprecated-declarations]
+   39 |         fp->mode = FMODE_READWRITE|FMODE_DUPLEX|FMODE_NOREVLOOKUP;
+      |         ^~
+In file included from kgio.h:6,
+                 from accept.c:4:
+/usr/local/include/ruby-3.3.0/ruby/io.h:158:9: note: declared here
+  158 |     int mode;
+      |         ^~~~
+In file included from accept.c:7:
+my_fileno.h: At top level:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from accept.c:4:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+accept.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling autopush.c
+In file included from autopush.c:16:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from autopush.c:15:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+autopush.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling connect.c
+In file included from connect.c:3:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from connect.c:2:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+In file included from connect.c:4:
+sock_for_fd.h: In function 'sock_for_fd':
+sock_for_fd.h:38:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   38 |         fp->fd = fd;
+      |         ^~
+In file included from kgio.h:6,
+                 from connect.c:2:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+In file included from connect.c:4:
+sock_for_fd.h:39:9: warning: 'mode' is deprecated: rb_io_mode [-Wdeprecated-declarations]
+   39 |         fp->mode = FMODE_READWRITE|FMODE_DUPLEX|FMODE_NOREVLOOKUP;
+      |         ^~
+In file included from kgio.h:6,
+                 from connect.c:2:
+/usr/local/include/ruby-3.3.0/ruby/io.h:158:9: note: declared here
+  158 |     int mode;
+      |         ^~~~
+connect.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling kgio_ext.c
+compiling poll.c
+In file included from poll.c:3:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from poll.c:1:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+poll.c: In function 'poll_result':
+poll.c:136:13: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
+  136 |         int rc;
+      |             ^~
+poll.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling read.c
+In file included from read.c:4:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from read.c:3:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+read.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling tryopen.c
+In file included from tryopen.c:19:
+set_file_path.h: In function 'set_file_path':
+set_file_path.h:9:9: warning: 'pathv' is deprecated: rb_io_path [-Wdeprecated-declarations]
+    9 |         fptr->pathv = rb_str_new4(path);
+      |         ^~~~
+In file included from tryopen.c:4:
+/usr/local/include/ruby-3.3.0/ruby/io.h:170:11: note: declared here
+  170 |     VALUE pathv;
+      |           ^~~~~
+tryopen.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling wait.c
+In file included from wait.c:2:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from wait.c:1:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+wait.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling write.c
+In file included from write.c:3:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from write.c:2:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+write.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+compiling writev.c
+In file included from writev.c:8:
+my_fileno.h:16:25: warning: "RUBY_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+   16 | #  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+      |                         ^~~~~~~~~~~~~~~~~~
+my_fileno.h: In function 'my_fileno':
+my_fileno.h:31:9: warning: 'fd' is deprecated: rb_io_descriptor [-Wdeprecated-declarations]
+   31 |         fd = FPTR_TO_FD(fptr);
+      |         ^~
+In file included from kgio.h:6,
+                 from writev.c:7:
+/usr/local/include/ruby-3.3.0/ruby/io.h:154:9: note: declared here
+  154 |     int fd;
+      |         ^~
+writev.c: At top level:
+cc1: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+linking shared-object kgio_ext.so
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/kgio-2.11.4/ext/kgio
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-b7e4fs sitelibdir\=./.gem.20240915-10-b7e4fs install
+/usr/bin/install -c -m 0755 kgio_ext.so ./.gem.20240915-10-b7e4fs
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/kgio-2.11.4/ext/kgio
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-b7e4fs sitelibdir\=./.gem.20240915-10-b7e4fs clean

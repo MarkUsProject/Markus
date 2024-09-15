@@ -1,0 +1,88 @@
+have_func: checking for rb_category_warn()... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     int (* volatile tp)(void)=(int (*)(void))&t;
+ 9:     printf("%d", (*tp)());
+10:   }
+11: 
+12:   return !!argv[argc];
+13: }
+14: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_category_warn; return !p; }
+/* end */
+
+--------------------
+
+have_var: checking for timezone in time.h with  -Werror... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe   -Werror -c conftest.c"
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <time.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { const volatile void *volatile p; p = &(&timezone)[0]; return !p; }
+/* end */
+
+--------------------
+
+have_var: checking for altzone in time.h with  -Werror... -------------------- no
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe   -Werror -c conftest.c"
+conftest.c:16:55: error: use of undeclared identifier 'altzone'
+int t(void) { const volatile void *volatile p; p = &(&altzone)[0]; return !p; }
+                                                      ^
+1 error generated.
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <time.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { const volatile void *volatile p; p = &(&altzone)[0]; return !p; }
+/* end */
+
+--------------------
+

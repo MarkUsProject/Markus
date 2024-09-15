@@ -1,0 +1,23 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/unicorn-6.1.0/ext/unicorn_http
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+checking for rb_hash_clear() in ruby.h... yes
+checking if String#-@ (str_uminus) dedupes... yes
+checking if Hash#[]= (rb_hash_aset) dedupes... yes
+checking for epoll_create1() in sys/epoll.h... no
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/unicorn-6.1.0/ext/unicorn_http
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-d3fyew sitelibdir\=./.gem.20240915-53657-d3fyew clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/unicorn-6.1.0/ext/unicorn_http
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-d3fyew sitelibdir\=./.gem.20240915-53657-d3fyew
+compiling httpdate.c
+compiling unicorn_http.c
+linking shared-object unicorn_http.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/unicorn-6.1.0/ext/unicorn_http
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-d3fyew sitelibdir\=./.gem.20240915-53657-d3fyew install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 unicorn_http.bundle ./.gem.20240915-53657-d3fyew
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/unicorn-6.1.0/ext/unicorn_http
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-d3fyew sitelibdir\=./.gem.20240915-53657-d3fyew clean

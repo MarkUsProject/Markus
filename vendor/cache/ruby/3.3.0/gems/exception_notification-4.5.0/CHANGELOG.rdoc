@@ -1,0 +1,227 @@
+== 4.5.0
+
+* enhancements
+  * Added Rails 7 compatibility (by @fwininger)
+  * Added support for the optional `data` attribute to the SNS notifier (@TomK32)
+  * Addressed a deprecation warning for `module_parent_name` which was thrown for users
+    using Rails > 6.x (@quorak)
+  * Restored the hash separator for `controller#action` in the email notifier (@garethrees)
+
+* removals
+  * Dropped support for Tinder (gem is no longer maintained) (by @fwininger)
+  * Dropped support for Ruby on Rails versions below 5.2
+
+== 4.4.3
+
+* big fixes
+  * Remove using configured default from address from custom mailer_parent class
+
+== 4.4.2 (yanked)
+
+* bug fixes
+  * Fix `sender_address` being overwritten
+
+== 4.4.1
+
+* enhancements
+  * Enhance `ignore_if` option to allow by-notifier customization (by @fursich)
+  * Ignore extended modules of ignored exceptions (by @elengine)
+  * Add `exception_data` to Mattermost notifier (by @camillof)
+
+* bug fixes
+  * Fix Rubocop offenses (by @nicolasferraro)
+
+== 4.4.0
+
+* enhancements
+  * Rails 6 compatibility (by @shanecav)
+  * Add Datadog notifier (by @ajain0184)
+  * Use backtrace cleaner for Slack notifications (by @pomier)
+  * Add slack channel name override option (by @chaadow)
+  * Addition of sample application for testing purposes (by @ampeigonet)
+
+* bug fixes
+  * Fix error in Resque failure backend (by @EmilioCristalli)
+  * Remove sqlite dependency (by @EmilioCristalli)
+  * Configure ignore_crawlers from Rails initializer (by @EmilioCristalli)
+
+== 4.3.0
+
+* enhancements
+  * Add Microsoft Teams Notifier (by @phaelin)
+  * Add SNS notifier (by @FLarra)
+  * Add Google Chats notifier (by @renatolond)
+  * Align output of section-headers consistently (by @kronn)
+  * ExceptionNotifier.notify_exception receives block & pass it to each notifier (by @pocke)
+  * Update Travis to latest rubies (by @lostapathy)
+
+* bug fixes
+  * Replace all before_filter to before_action on readme (by @pastullo)
+  * Fix error when using error grouping outside of rails (by @garethcokell)
+  * Fix missing MissingController Mattermost class (by @n-rodriguez)
+
+== 4.2.2
+
+* enhancements
+  * Error grouping (by @Martin91)
+  * Additional fields for Slack support (by @schurig)
+  * Enterprise HipChat support (by @seanhuber)
+
+== 4.2.1
+
+* enhancements
+  * Allow customizable backtrace for Slack (by @aried3r)
+  * Add `Mongoid::Errors::DocumentNotFound` to ignored_exceptions (by @nazarok)
+  * Improved text in Slack notifier (by @vojtad)
+
+* bug fixes
+  * Fix data being sent on webhook notifier
+
+== 4.2.0
+
+* enhancements
+  * update URL in gemspec (by @ktdreyer)
+  * Add `hostname` to Slack notifier (by @juanazam)
+  * Allow `exception_recipients` to be a proc (by @kellyjosephprice)
+  * Add Mattermost integration (by @Aschen)
+  * Rails 5 compatible
+
+* bug fixes
+  * Fix error when showing timestamp on non Rails apps
+  * Fix delivery failure when deliver_with specified (by @grzuy)
+
+== 4.1.4
+
+* bug fixes
+  * HTML-escape exception messages sent to hipchat (by @gburt)
+  * Send the correct options in send_notice (by @pcboy)
+
+== 4.1.3
+
+* enhancements
+  * Add a way to have a backtrace callback on notifiers (by @pcboy)
+
+* bug fixes
+  * Fix incompatible character encodings error (by @san650)
+
+== 4.1.2
+* enhancements
+  * Change format of Slack notifications (by @eldano)
+
+== 4.1.1
+
+* bug fixes
+  * Alternate way to monkeypatch (by @joshco)
+  * Fix BacktraceCleaner namespacing (by @esdlocomb)
+
+== 4.1.0
+
+* enhancements
+  * Add support for Sidekiq 3.0 (by @mbrictson)
+  * Add IRC notifier (by @nathanjsharpe)
+  * Add ActionController::UnknownFormat to default ignored exceptions (by @rezwyi)
+  * Add message_template option to HipChat notifier (by @makimoto)
+  * Add support for HipChat APIv2 (by @michaelherold)
+  * Add Slack notifier (by @martin1keogh)
+  * Add option for notifying on `X-Cascade` header (by @etipton)
+  * Improve backtrace data (by @munkius)
+
+* bug fixes
+  * Fix `Rails.root` exception (by @hovatterz)
+  * Fix email notifier in Sinatra (by @betesh)
+
+== 4.0.1
+
+* enhancements
+  * Add HipChat notifier (by @j15e)
+  * Log backtrace when notification fails
+  * Send more info in Webhook notifier
+  * Add HTTP method to request section
+
+== 4.0.0
+
+* enhancements
+  * Be able to override delivery_method (by @jweslley)
+  * Add logger to log when notifications cannot be shiped (by @jweslley)
+  * Add Rails generator to create an initializer file (by @jweslley)
+  * Add rails engine (by @jweslley)
+  * Add sidekiq support (by @jweslley)
+  * Add resque support (by @jweslley)
+  * Better style for html views (by @jweslley)
+  * Support customizable Mailer class (by @Bishop)
+  * Turn ExceptionNotification Rails agnostic (by @jweslley)
+  * Support custom ignore exceptions for background notifications (by @jweslley)
+  * Be able to implement custom notifiers (by @jweslley)
+  * Add Webhook notifier (by @jweslley)
+  * Rails 4 compatible
+
+* bug fixes
+  * Don't error if Rails isn't defined. (by @dpogue)
+  * Fix call to #normalize_digits (by @ghiculescu)
+
+== 3.0.1
+
+* enhancements
+  * Custom Headers (by @DouweM)
+  * Make Tinder a soft-dependency (by @fgrehm)
+
+* bug fixes
+  * Fix `code converter not found` (by @alanjds)
+
+== 3.0.0
+
+* enhancements
+  * Campfire integration
+  * Support for HTML notifications (by @Xenofex)
+  * Be able to override SMTP settings (by @piglop and @Macint)
+
+* bug fixes
+  * Fix encoding issues
+  * Allow default sections to be overridden (by @jfarmer)
+  * Don't automatically deliver background notifications
+
+== 2.6.1
+
+* bug fixes
+  * Fix finding custom sections on Background notifications. Fixes [#68]
+
+== 2.6.0
+
+* enhancements
+  * Avoid raising exception on dev mode
+  * Add ignore_if option to avoid sending certain notifications.
+  * Add normalize_subject option to remove numbers from email so that they thread (by @jjb)
+  * Allow the user to provide a custom message and hash of data (by @jjb)
+  * Add support for configurable background sections and a data partial (by @jeffrafter)
+  * Include timestamp of exception in notification body
+  * Add support for rack based session management (by @phoet)
+  * Add ignore_crawlers option to ignore exceptions generated by crawlers
+  * Add verbode_subject option to exclude exception message from subject (by @amishyn)
+
+* bug fixes
+  * Correctly set view path at the right time so that new sections are properly available (by @scrozier)
+  * Fix handling exceptions with no backtrace
+  * Fix issue on Solaris with hostname (by @bluescripts)
+  * Ensure exceptions in view templates doesn't cause problems, allowing the notification to be sent anyway (by @sce)
+
+== 2.5.1
+
+* bug fixes
+  * Fix lib references on gemspec
+
+== 2.5.0
+
+* enhancements
+  * Add Background Notifications
+
+* bug fixes
+  * Filter session_id on secure requests
+
+== 2.4.1
+
+* enhancements
+  * Use values set for the middleware as defaults
+
+* bug fixes
+  * Avoid sending emails with large subjects
+  * Avoid having to add 'require' option on gem configuration

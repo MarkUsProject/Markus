@@ -1,0 +1,91 @@
+have_func: checking for rb_hash_clear() in ruby.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_hash_clear; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for epoll_create1() in sys/epoll.h... -------------------- no
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -DSTR_UMINUS_DEDUPE=1  -DHASH_ASET_DEDUPE=1  -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+conftest.c:3:10: fatal error: 'sys/epoll.h' file not found
+#include <sys/epoll.h>
+         ^~~~~~~~~~~~~
+1 error generated.
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <sys/epoll.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))epoll_create1; return !p; }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -DSTR_UMINUS_DEDUPE=1  -DHASH_ASET_DEDUPE=1  -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+conftest.c:3:10: fatal error: 'sys/epoll.h' file not found
+#include <sys/epoll.h>
+         ^~~~~~~~~~~~~
+1 error generated.
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <sys/epoll.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: extern void epoll_create1();
+17: int t(void) { epoll_create1(); return 0; }
+/* end */
+
+--------------------
+

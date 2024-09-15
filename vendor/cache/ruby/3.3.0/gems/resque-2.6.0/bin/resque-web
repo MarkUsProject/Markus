@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+
+if !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i)
+  begin
+    require 'win32/process'
+  rescue
+    puts "Sorry, in order to use resque-web on Windows you need the win32-process gem:",
+         "gem install win32-process"
+  end
+end
+require 'resque/web_runner'
+
+Resque::WebRunner.new(*ARGV)

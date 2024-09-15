@@ -1,0 +1,772 @@
+find_executable: checking for brew... -------------------- no
+
+--------------------
+
+find_executable: checking for pacman... -------------------- no
+
+--------------------
+
+assert_minimum_ruby_version!: checking for Ruby version >= 3.0.0... -------------------- yes
+
+--------------------
+
+assert_has_dev_libs!: checking for outdated ImageMagick version (<= 6.8.9)... -------------------- no
+
+Detected ImageMagick version: 6.9.11
+--------------------
+
+find_executable: checking for g++... -------------------- yes
+
+--------------------
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main() { }
+/* end */
+
+have_header: checking for MagickCore/MagickCore.h... -------------------- no
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef   -c conftest.c"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c:3:10: fatal error: MagickCore/MagickCore.h: No such file or directory
+    3 | #include <MagickCore/MagickCore.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <MagickCore/MagickCore.h>
+/* end */
+
+--------------------
+
+have_header: checking for magick/MagickCore.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef   -c conftest.c"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <magick/MagickCore.h>
+/* end */
+
+--------------------
+
+have_header: checking for malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef   -c conftest.c"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <malloc.h>
+/* end */
+
+--------------------
+
+have_func: checking for rb_io_path() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_io_path; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_io_path; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_io_path; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for posix_memalign() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))posix_memalign; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))posix_memalign; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))posix_memalign; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for malloc_usable_size() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_usable_size; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_usable_size; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_usable_size; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for malloc_size() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- no
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_size; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_size; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+conftest.c:26:57: error: 'malloc_size' was not declared in this scope
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_size; return !p; }
+      |                                                         ^~~~~~~~~~~
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))malloc_size; return !p; }
+/* end */
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+/usr/bin/ld: /tmp/cc7trOsW.o: in function `t()':
+/app/vendor/cache/ruby/3.3.0/gems/rmagick-6.0.1/ext/RMagick/conftest.c:27: undefined reference to `malloc_size()'
+collect2: error: ld returned 1 exit status
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: extern void malloc_size();
+27: int t(void) { malloc_size(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for _aligned_msize() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- no
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))_aligned_msize; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))_aligned_msize; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+conftest.c:26:57: error: '_aligned_msize' was not declared in this scope
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))_aligned_msize; return !p; }
+      |                                                         ^~~~~~~~~~~~~~
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))_aligned_msize; return !p; }
+/* end */
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+/usr/bin/ld: /tmp/ccqRTUGx.o: in function `t()':
+/app/vendor/cache/ruby/3.3.0/gems/rmagick-6.0.1/ext/RMagick/conftest.c:27: undefined reference to `_aligned_msize()'
+collect2: error: ld returned 1 exit status
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: extern void _aligned_msize();
+27: int t(void) { _aligned_msize(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for GetImageChannelEntropy() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))GetImageChannelEntropy; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))GetImageChannelEntropy; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))GetImageChannelEntropy; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for SetImageGray() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))SetImageGray; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))SetImageGray; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))SetImageGray; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for SetMagickAlignedMemoryMethods() in assert.h,ctype.h,stdio.h,stdlib.h,math.h,time.h,sys/types.h,ruby.h,ruby/io.h,magick/MagickCore.h,malloc.h... -------------------- yes
+
+LD_LIBRARY_PATH=.:/usr/local/lib "gcc -o conftest -I/usr/local/include/ruby-3.3.0/aarch64-linux -I/usr/local/include/ruby-3.3.0/ruby/backward -I/usr/local/include/ruby-3.3.0 -I.     -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register -O3 -fno-fast-math -ggdb3 -fomit-frame-pointer -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdiv-by-zero -Wduplicated-cond -Wimplicit-function-declaration -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wold-style-definition -Wimplicit-fallthrough=0 -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-packed-bitfield-compat -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wsuggest-attribute=format -Wsuggest-attribute=noreturn -Wunused-variable -Wmisleading-indentation -Wundef conftest.c  -L. -L/usr/local/lib -Wl,-rpath,/usr/local/lib -L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu     -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16  -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lruby-static -lz -lrt -lrt -ldl -lcrypt -lm -lpthread   -lm -lpthread  -lc"
+cc1plus: warning: command-line option '-Wimplicit-function-declaration' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wimplicit-int' is valid for C/ObjC but not for C++
+cc1plus: warning: command-line option '-Wold-style-definition' is valid for C/ObjC but not for C++
+In file included from /usr/local/include/ruby-3.3.0/ruby/internal/anyargs.h:83,
+                 from /usr/local/include/ruby-3.3.0/ruby/ruby.h:27,
+                 from /usr/local/include/ruby-3.3.0/ruby.h:38,
+                 from conftest.c:1:
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:6: warning: "RUBY_API_VERSION_MAJOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/ruby-3.3.0/ruby/backward/cxxanyargs.hpp:540:37: warning: "RUBY_API_VERSION_MINOR" is not defined, evaluates to 0 [-Wundef]
+  540 | #if (RUBY_API_VERSION_MAJOR * 100 + RUBY_API_VERSION_MINOR) >= 301
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+conftest.c: In function 'int t()':
+conftest.c:26:20: warning: unnecessary parentheses in declaration of 'p' [-Wparentheses]
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))SetMagickAlignedMemoryMethods; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+conftest.c:26:20: note: remove parentheses
+   26 | int t(void) { void ((*volatile p)()); p = (void ((*)()))SetMagickAlignedMemoryMethods; return !p; }
+      |                    ^~~~~~~~~~~~~~~~~
+      |                    -               -
+At global scope:
+cc1plus: note: unrecognized command-line option '-Wno-self-assign' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-parentheses-equality' may have been intended to silence earlier diagnostics
+cc1plus: note: unrecognized command-line option '-Wno-constant-logical-operand' may have been intended to silence earlier diagnostics
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <assert.h>
+ 4: #include <ctype.h>
+ 5: #include <stdio.h>
+ 6: #include <stdlib.h>
+ 7: #include <math.h>
+ 8: #include <time.h>
+ 9: #include <sys/types.h>
+10: #include <ruby.h>
+11: #include <ruby/io.h>
+12: #include <magick/MagickCore.h>
+13: #include <malloc.h>
+14: 
+15: /*top*/
+16: extern int t(void);
+17: int main(int argc, char **argv)
+18: {
+19:   if (argc > 1000000) {
+20:     int (* volatile tp)(void)=(int (*)(void))&t;
+21:     printf("%d", (*tp)());
+22:   }
+23: 
+24:   return !!argv[argc];
+25: }
+26: int t(void) { void ((*volatile p)()); p = (void ((*)()))SetMagickAlignedMemoryMethods; return !p; }
+/* end */
+
+--------------------
+
+extconf.h is:
+/* begin */
+ 1: #ifndef EXTCONF_H
+ 2: #define EXTCONF_H
+ 3: #define HAVE_MAGICK_MAGICKCORE_H 1
+ 4: #define HAVE_MALLOC_H 1
+ 5: #define HAVE_RB_IO_PATH 1
+ 6: #define HAVE_POSIX_MEMALIGN 1
+ 7: #define HAVE_MALLOC_USABLE_SIZE 1
+ 8: #define HAVE_GETIMAGECHANNELENTROPY 1
+ 9: #define HAVE_SETIMAGEGRAY 1
+10: #define HAVE_SETMAGICKALIGNEDMEMORYMETHODS 1
+11: #define RUBY_VERSION_STRING ruby 3.3.4
+12: #define RMAGICK_VERSION_STRING RMagick 6.0.1
+13: #define IMAGEMAGICK_GREATER_THAN_EQUAL_6_9_0 1
+14: #define IMAGEMAGICK_GREATER_THAN_EQUAL_6_9_10 1
+15: #endif
+/* end */
+
+======================================================================
+Sun 15 Sep 24 11:27:38
+This installation of RMagick 6.0.1 is configured for
+Ruby 3.3.4 (aarch64-linux) and ImageMagick 6.9.11
+======================================================================
+
+
+Configured compile options: {:magick_version=>"6.9.11", :local_libs=>"  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16", :cppflags=>" $(DEFS) $(cppflags)  -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/aarch64-linux-gnu//ImageMagick-6 -I/usr/include/ImageMagick-6 -x c++ -std=c++11 -Wno-register $(optflags) $(debugflags) -fomit-frame-pointer", :ldflags=>"-L. -fstack-protector-strong -rdynamic -Wl,-export-dynamic  -L/usr/lib/aarch64-linux-gnu -lMagickCore-6.Q16 -Wl,-rpath,/usr/lib/aarch64-linux-gnu", :defs=>["-DHAVE_MAGICK_MAGICKCORE_H", "-DHAVE_MALLOC_H", "-DHAVE_RB_IO_PATH", "-DHAVE_POSIX_MEMALIGN", "-DHAVE_MALLOC_USABLE_SIZE", "-DHAVE_GETIMAGECHANNELENTROPY", "-DHAVE_SETIMAGEGRAY", "-DHAVE_SETMAGICKALIGNEDMEMORYMETHODS", "-DRUBY_VERSION_STRING=\"ruby 3.3.4\"", "-DRMAGICK_VERSION_STRING=\"RMagick 6.0.1\"", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_6_9_0=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_6_9_10=1"], :config_h=>"Makefile"}

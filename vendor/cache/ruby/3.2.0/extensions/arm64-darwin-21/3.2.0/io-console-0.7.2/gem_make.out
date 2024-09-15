@@ -1,0 +1,27 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/io-console-0.7.2/ext/io/console
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+checking for rb_io_path()... no
+checking for rb_io_descriptor()... yes
+checking for rb_io_get_write_io()... yes
+checking for rb_io_closed_p()... no
+checking for rb_io_open_descriptor()... no
+checking for termios.h... yes
+checking for cfmakeraw() in termios.h... yes
+checking for sys/ioctl.h... yes
+checking for HAVE_RUBY_FIBER_SCHEDULER_H... yes
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-p4rvwu sitelibdir\=./.gem.20240915-53657-p4rvwu clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-p4rvwu sitelibdir\=./.gem.20240915-53657-p4rvwu
+compiling console.c
+linking shared-object io/console.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-p4rvwu sitelibdir\=./.gem.20240915-53657-p4rvwu install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 console.bundle ./.gem.20240915-53657-p4rvwu/io
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-p4rvwu sitelibdir\=./.gem.20240915-53657-p4rvwu clean

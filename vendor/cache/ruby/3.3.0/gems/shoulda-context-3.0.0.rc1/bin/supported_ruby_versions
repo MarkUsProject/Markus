@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+
+ci_config_path = File.expand_path('../../.github//workflows/ci.yml', __FILE__)
+ci_config = YAML.load_file(ci_config_path)
+puts ci_config.dig('jobs', 'build', 'strategy', 'matrix', 'ruby').join(' ')

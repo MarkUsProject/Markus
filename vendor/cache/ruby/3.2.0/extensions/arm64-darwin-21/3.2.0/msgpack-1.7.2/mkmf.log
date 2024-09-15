@@ -1,0 +1,232 @@
+have_func: checking for rb_enc_interned_str() in ruby.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+conftest.c:16:57: error: use of undeclared identifier 'rb_enc_interned_str'
+int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_enc_interned_str; return !p; }
+                                                        ^
+1 error generated.
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_enc_interned_str; return !p; }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: extern void rb_enc_interned_str();
+17: int t(void) { rb_enc_interned_str(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for rb_hash_new_capa() in ruby.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_hash_new_capa; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for rb_proc_call_with_block() in ruby.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_proc_call_with_block; return !p; }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -fvisibility=hidden is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe  -fvisibility=hidden -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -I.. is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden  -I.. -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -Wall is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden -I..  -Wall -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -O3 is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden -I.. -Wall  -O3 -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -std=gnu99 is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden -I.. -Wall -O3  -std=gnu99 -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -ggdb3 is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden -I.. -Wall -O3 -std=gnu99  -ggdb3 -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -DHASH_ASET_DEDUPE=1 is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden -I.. -Wall -O3 -std=gnu99 -ggdb3  -DHASH_ASET_DEDUPE=1 -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -DSTR_UMINUS_DEDUPE_FROZEN=1 is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe -fvisibility=hidden -I.. -Wall -O3 -std=gnu99 -ggdb3 -DHASH_ASET_DEDUPE=1  -DSTR_UMINUS_DEDUPE_FROZEN=1 -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+

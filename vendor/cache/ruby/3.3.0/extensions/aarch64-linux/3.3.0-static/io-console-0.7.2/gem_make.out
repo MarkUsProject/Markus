@@ -1,0 +1,27 @@
+current directory: /app/vendor/cache/ruby/3.3.0/gems/io-console-0.7.2/ext/io/console
+/usr/local/bin/ruby extconf.rb
+checking for rb_io_path()... yes
+checking for rb_io_descriptor()... yes
+checking for rb_io_get_write_io()... yes
+checking for rb_io_closed_p()... yes
+checking for rb_io_open_descriptor()... yes
+checking for termios.h... yes
+checking for cfmakeraw() in termios.h... yes
+checking for sys/ioctl.h... yes
+checking for HAVE_RUBY_FIBER_SCHEDULER_H... yes
+creating Makefile
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-fwdg6x sitelibdir\=./.gem.20240915-10-fwdg6x clean
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-fwdg6x sitelibdir\=./.gem.20240915-10-fwdg6x
+compiling console.c
+linking shared-object io/console.so
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-fwdg6x sitelibdir\=./.gem.20240915-10-fwdg6x install
+/usr/bin/install -c -m 0755 console.so ./.gem.20240915-10-fwdg6x/io
+
+current directory: /app/vendor/cache/ruby/3.3.0/gems/io-console-0.7.2/ext/io/console
+make DESTDIR\= sitearchdir\=./.gem.20240915-10-fwdg6x sitelibdir\=./.gem.20240915-10-fwdg6x clean

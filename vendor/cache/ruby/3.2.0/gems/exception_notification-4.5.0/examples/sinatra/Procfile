@@ -1,0 +1,2 @@
+web: bundle exec thin start --port 3000
+mail: bundle exec mailcatcher --foreground --smtp-port 1025 --http-port 1080

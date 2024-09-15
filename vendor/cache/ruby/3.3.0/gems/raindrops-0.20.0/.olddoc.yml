@@ -1,0 +1,16 @@
+---
+cgit_url: https://yhbt.net/raindrops.git/
+rdoc_url: https://yhbt.net/raindrops/
+public_email: raindrops-public@yhbt.net
+ml_url:
+- https://yhbt.net/raindrops-public/
+- http://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/raindrops-public
+imap_url:
+- imaps://yhbt.net/inbox.comp.lang.ruby.raindrops.0
+- imap://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/inbox.comp.lang.ruby.raindrops.0
+nntp_url:
+- nntps://news.public-inbox.org/inbox.comp.lang.ruby.raindrops
+- nntp://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/inbox.comp.lang.ruby.raindrops
+source_code:
+- git clone https://yhbt.net/raindrops.git
+- torsocks git clone http://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/raindrops.git

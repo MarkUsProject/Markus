@@ -1,0 +1,40 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+checking for unistd.h... yes
+checking for rb_io_descriptor()... yes
+checking for linux/aio_abi.h... no
+checking for linux/io_uring.h... no
+checking for sys/select.h... yes
+checking for port_event_t in poll.h... no
+checking for sys/epoll.h... no
+checking for sys/event.h... yes
+checking for sys/queue.h... yes
+checking for port_event_t in port.h... no
+checking for sys/resource.h... yes
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30 clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30
+compiling bytebuffer.c
+compiling monitor.c
+compiling nio4r_ext.c
+In file included from nio4r_ext.c:6:
+./../libev/ev.c:573:48: warning: '/*' within block comment [-Wcomment]
+/*#define MIN_INTERVAL  0.00000095367431640625 /* 1/2**20, good till 2200 */
+                                               ^
+./../libev/ev.c:2136:31: warning: 'extern' variable has an initializer [-Wextern-initializer]
+  EV_API_DECL struct ev_loop *ev_default_loop_ptr = 0; /* needs to be initialised to make it a definition despite extern */
+                              ^
+2 warnings generated.
+compiling selector.c
+linking shared-object nio4r_ext.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30 install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 nio4r_ext.bundle ./.gem.20240915-53657-mgxs30
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30 clean

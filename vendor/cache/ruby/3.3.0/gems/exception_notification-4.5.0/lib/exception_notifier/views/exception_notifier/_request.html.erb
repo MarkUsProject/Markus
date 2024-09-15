@@ -1,0 +1,36 @@
+<ul style="list-style: none">
+  <li>
+    <strong>URL:</strong>
+    <span><%= @request.url %></span>
+  </li>
+  <li>
+    <strong>HTTP Method:</strong>
+    <span><%= @request.request_method %></span>
+  </li>
+  <li>
+    <strong>IP Address:</strong>
+    <span><%= @request.remote_ip %></span>
+  </li>
+  <li>
+    <strong>Parameters:</strong>
+    <span><%= @request.filtered_parameters.inspect %></span>
+  </li>
+  <li>
+    <strong>Timestamp:</strong>
+    <span><%= @timestamp %></span>
+  </li>
+  <li>
+    <strong>Server:</strong>
+    <span><%= Socket.gethostname %></span>
+  </li>
+  <% if defined?(Rails) && Rails.respond_to?(:root) %>
+    <li>
+      <strong>Rails root:</strong>
+      <span><%= Rails.root %></span>
+    </li>
+  <% end %>
+  <li>
+    <strong>Process:</strong>
+    <span><%= $$ %></span>
+  </li>
+</ul>

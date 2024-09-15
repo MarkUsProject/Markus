@@ -1,0 +1,24 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/date-3.3.4/ext/date
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+checking for rb_category_warn()... yes
+checking for timezone in time.h with  -Werror... yes
+checking for altzone in time.h with  -Werror... no
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/date-3.3.4/ext/date
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qv5w4f sitelibdir\=./.gem.20240915-53657-qv5w4f clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/date-3.3.4/ext/date
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qv5w4f sitelibdir\=./.gem.20240915-53657-qv5w4f
+compiling date_core.c
+compiling date_parse.c
+compiling date_strftime.c
+compiling date_strptime.c
+linking shared-object date_core.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/date-3.3.4/ext/date
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qv5w4f sitelibdir\=./.gem.20240915-53657-qv5w4f install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 date_core.bundle ./.gem.20240915-53657-qv5w4f
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/date-3.3.4/ext/date
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qv5w4f sitelibdir\=./.gem.20240915-53657-qv5w4f clean

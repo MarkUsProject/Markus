@@ -1,0 +1,55 @@
+# frozen_string_literal: true
+
+require "yaml"
+begin
+  require "sprockets/railtie"
+rescue LoadError
+end
+
+begin
+  module AutoprefixedRails
+    class Railtie < ::Rails::Railtie # :nodoc:
+      rake_tasks do |app|
+        require "rake/autoprefixer_tasks"
+        Rake::AutoprefixerTasks.new(config) if defined? app.assets
+      end
+
+      if config.respond_to?(:assets) && !config.assets.nil?
+        config.assets.configure do |env|
+          AutoprefixerRails.install(env, config)
+        end
+      else
+        initializer :setup_autoprefixer, group: :all do |app|
+          AutoprefixerRails.install(app.assets, config) if defined?(app.assets) && !app.assets.nil?
+        end
+      end
+
+      # Read browsers requirements from application or engine config
+      def config
+        params = {}
+
+        roots.each do |root|
+          file = File.join(root, "config/autoprefixer.yml")
+
+          next unless File.exist?(file)
+
+          parsed = ::YAML.load_file(file)
+          next unless parsed
+
+          params = parsed
+
+          break
+        end
+
+        params = params.symbolize_keys
+        params[:env] ||= Rails.env.to_s
+        params
+      end
+
+      def roots
+        [Rails.application.root] + Rails::Engine.subclasses.map(&:root)
+      end
+    end
+  end
+rescue LoadError
+end

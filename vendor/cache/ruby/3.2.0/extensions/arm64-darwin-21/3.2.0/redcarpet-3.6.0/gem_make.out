@@ -1,0 +1,48 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/redcarpet-3.6.0/ext/redcarpet
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/redcarpet-3.6.0/ext/redcarpet
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-6cbgte sitelibdir\=./.gem.20240915-53657-6cbgte clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/redcarpet-3.6.0/ext/redcarpet
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-6cbgte sitelibdir\=./.gem.20240915-53657-6cbgte
+compiling autolink.c
+compiling buffer.c
+buffer.c:111:45: warning: passing 'const struct buf *' to parameter of type 'struct buf *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        if (buf->size + 1 <= buf->asize || bufgrow(buf, buf->size + 1) == BUF_OK) {
+                                                   ^~~
+buffer.c:60:21: note: passing argument to parameter 'buf' here
+bufgrow(struct buf *buf, size_t neosz)
+                    ^
+1 warning generated.
+compiling houdini_href_e.c
+compiling houdini_html_e.c
+compiling html.c
+compiling html_smartypants.c
+html_smartypants.c:385:44: warning: passing 'const uint8_t *' (aka 'const unsigned char *') to parameter of type 'const char *' converts between pointers to integer types with different sign [-Wpointer-sign]
+        if (next_to_closing_a && strncmp("&#39;", text+(i+1), 5) == 0) {
+                                                  ^~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/string.h:84:44: note: passing argument to parameter '__s2' here
+int      strncmp(const char *__s1, const char *__s2, size_t __n);
+                                               ^
+1 warning generated.
+compiling markdown.c
+markdown.c:2867:43: warning: passing 'const uint8_t *' (aka 'const unsigned char *') to parameter of type 'uint8_t *' (aka 'unsigned char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+                if (codefences_enabled && (is_codefence(document + beg, doc_size - beg, &fence_delim, NULL) != 0))
+                                                        ^~~~~~~~~~~~~~
+markdown.c:1402:23: note: passing argument to parameter 'data' here
+is_codefence(uint8_t *data, size_t size, struct buf *curdelim, struct buf *syntax)
+                      ^
+1 warning generated.
+compiling rc_markdown.c
+compiling rc_render.c
+compiling stack.c
+linking shared-object redcarpet.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/redcarpet-3.6.0/ext/redcarpet
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-6cbgte sitelibdir\=./.gem.20240915-53657-6cbgte install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 redcarpet.bundle ./.gem.20240915-53657-6cbgte
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/redcarpet-3.6.0/ext/redcarpet
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-6cbgte sitelibdir\=./.gem.20240915-53657-6cbgte clean

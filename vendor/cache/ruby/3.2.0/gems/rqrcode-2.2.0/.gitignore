@@ -1,0 +1,13 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+/.devcontainer/
+.rvmrc
+*.sublime-project
+*.sublime-workspace
+*.gem

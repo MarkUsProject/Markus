@@ -1,0 +1,9 @@
+<% if @record %>
+  window.panel.header.html(window.panel.close + "<%= j report_name(@record.record_hash) %>");
+<% else %>
+  window.panel.header.html(window.panel.close);
+<% end %>
+
+window.panel.content.html("<%= j render '/rails_performance/rails_performance/trace' %>");
+
+showPanel();

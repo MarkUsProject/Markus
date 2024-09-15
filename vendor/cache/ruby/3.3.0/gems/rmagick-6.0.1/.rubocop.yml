@@ -1,0 +1,67 @@
+inherit_from:
+  - .rubocop_todo.yml
+
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  DefaultFormatter: fuubar
+  EnabledByDefault: true
+  TargetRubyVersion: 3.0
+  Exclude:
+    - 'vendor/bundle/**/*'
+    - '**/*\.spec'
+
+################################################################################
+#
+# Rules that depart from rubocop defaults
+#
+################################################################################
+
+Layout/MultilineAssignmentLayout:
+  EnforcedStyle: same_line
+
+RSpec/FilePath:
+  CustomTransform: { Magick: rmagick }
+
+Style/FormatString:
+  EnforcedStyle: sprintf
+
+Style/GuardClause:
+  MinBodyLength: 3
+
+# we may not need this after finishing RSpec conversion
+# seems like `rubocop-rspec` already excludes the `spec/` directory
+Style/MethodCalledOnDoEndBlock:
+  Exclude: [spec/**/*.rb]
+
+Style/NumericLiterals:
+  MinDigits: 6
+
+Style/TopLevelMethodDefinition:
+  Exclude: [doc/**/*.rb, examples/**/*.rb, spec/**/*.rb]
+
+RSpec/BeNil:
+  EnforcedStyle: be
+
+RSpec/ClassCheck:
+  EnforcedStyle: be_kind_of
+
+################################################################################
+#
+# Rules we don't want to enable
+#
+################################################################################
+
+RSpec/AlignLeftLetBrace:
+  Enabled: false
+
+RSpec/AlignRightLetBrace:
+  Enabled: false
+
+Style/Copyright:
+  Enabled: false
+
+Style/DisableCopsWithinSourceCodeDirective:
+  Enabled: false

@@ -1,0 +1,18 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/racc-1.8.1/ext/racc/cparse
+/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+creating Makefile
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-lr78sh sitelibdir\=./.gem.20240915-53657-lr78sh clean
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-lr78sh sitelibdir\=./.gem.20240915-53657-lr78sh
+compiling cparse.c
+linking shared-object racc/cparse.bundle
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-lr78sh sitelibdir\=./.gem.20240915-53657-lr78sh install
+/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 cparse.bundle ./.gem.20240915-53657-lr78sh/racc
+
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20240915-53657-lr78sh sitelibdir\=./.gem.20240915-53657-lr78sh clean

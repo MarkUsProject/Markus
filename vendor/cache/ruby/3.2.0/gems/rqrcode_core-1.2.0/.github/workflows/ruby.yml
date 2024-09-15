@@ -1,0 +1,29 @@
+name: rqrcode_core
+
+on:
+  push:
+    branches:
+    - master
+    - release/*
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  Build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ruby: [2.5, 2.6, 2.7, 3.0]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Run Tests
+      run: bundle exec rake test
+    - name: StandardRB Check
+      run: bundle exec standardrb --format progress

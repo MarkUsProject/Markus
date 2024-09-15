@@ -1,0 +1,96 @@
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib pkg-config --exists yaml-0.1
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib pkg-config --libs yaml-0.1 |
+=> "-L/opt/homebrew/Cellar/libyaml/0.2.5/lib -lyaml\n"
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2  -lpthread  "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong     -lruby.3.2 -L/opt/homebrew/Cellar/libyaml/0.2.5/lib -lyaml -lpthread  "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib pkg-config --cflags-only-I yaml-0.1 |
+=> "-I/opt/homebrew/Cellar/libyaml/0.2.5/include\n"
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib pkg-config --cflags-only-other yaml-0.1 |
+=> "\n"
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib pkg-config --libs-only-l yaml-0.1 |
+=> "-lyaml\n"
+package configuration for yaml-0.1
+incflags: -I/opt/homebrew/Cellar/libyaml/0.2.5/include
+cflags: 
+ldflags: -L/opt/homebrew/Cellar/libyaml/0.2.5/lib
+libs: -lyaml
+
+find_header: checking for yaml.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -I/opt/homebrew/Cellar/libyaml/0.2.5/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe    -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <yaml.h>
+/* end */
+
+--------------------
+
+find_library: checking for yaml_get_version() in -lyaml... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -I/opt/homebrew/Cellar/libyaml/0.2.5/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe  conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong -L/opt/homebrew/Cellar/libyaml/0.2.5/lib     -lyaml -lruby.3.2 -lyaml  -lyaml -lpthread  "
+conftest.c:14:57: error: use of undeclared identifier 'yaml_get_version'
+int t(void) { void ((*volatile p)()); p = (void ((*)()))yaml_get_version; return !p; }
+                                                        ^
+1 error generated.
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     int (* volatile tp)(void)=(int (*)(void))&t;
+ 9:     printf("%d", (*tp)());
+10:   }
+11: 
+12:   return !!argv[argc];
+13: }
+14: int t(void) { void ((*volatile p)()); p = (void ((*)()))yaml_get_version; return !p; }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib "gcc -o conftest -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/arm64-darwin21 -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0/ruby/backward -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/include/ruby-3.2.0 -I. -I/opt/homebrew/Cellar/libyaml/0.2.5/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/opt/homebrew/opt/libyaml/include -I/opt/homebrew/opt/libksba/include -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/openssl@1.1/include -fdeclspec -O3 -fno-fast-math -ggdb3 -Wno-error=implicit-function-declaration -fno-common -pipe  conftest.c  -L. -L/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib -L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong -L/opt/homebrew/Cellar/libyaml/0.2.5/lib     -lyaml -lruby.3.2 -lyaml  -lyaml -lpthread  "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     int (* volatile tp)(void)=(int (*)(void))&t;
+ 9:     printf("%d", (*tp)());
+10:   }
+11: 
+12:   return !!argv[argc];
+13: }
+14: extern void yaml_get_version();
+15: int t(void) { yaml_get_version(); return 0; }
+/* end */
+
+--------------------
+

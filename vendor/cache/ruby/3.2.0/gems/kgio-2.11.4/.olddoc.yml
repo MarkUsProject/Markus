@@ -1,0 +1,16 @@
+---
+cgit_url: https://yhbt.net/kgio.git
+ml_url:
+- https://yhbt.net/kgio-public/
+- http://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/kgio-public/
+rdoc_url: https://yhbt.net/kgio/
+public_email: kgio-public@yhbt.net
+noindex:
+- LATEST
+- TODO
+nntp_url:
+- nntp://news.public-inbox.org/inbox.comp.lang.ruby.kgio
+- nntp://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/inbox.comp.lang.ruby.kgio
+source_code:
+- git clone https://yhbt.net/kgio.git
+- torsocks git clone http://7fh6tueqddpjyxjmgtdiueylzoqt6pt7hec3pukyptlmohoowvhde4yd.onion/kgio.git
