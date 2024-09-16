@@ -4,6 +4,17 @@ describe PenaltyPeriodSubmissionRule do
 
   it { is_expected.to have_one(:course) }
 
+  shared_examples 'valid overtime message' do |potential_penalty, submission_time_offset|
+    it 'has an overtime message with a potential penalty' do
+      pretend_now_is(due_date + submission_time_offset)
+      apply_rule
+      rule_overtime_message = rule.overtime_message(grouping)
+      expected_overtime_message = I18n.t 'penalty_decay_period_submission_rules.overtime_message',
+                                         potential_penalty: potential_penalty
+      expect(rule_overtime_message).to eq expected_overtime_message
+    end
+  end
+
   context 'when the group submitted on time' do
     include_context 'submission_rule_on_time'
     context 'when the student did not submit any files' do
@@ -24,6 +35,8 @@ describe PenaltyPeriodSubmissionRule do
         expect { apply_rule }.not_to(change { result.extra_marks.count })
       end
     end
+
+    it_behaves_like 'valid overtime message', 0, -5.days
   end
 
   context 'when the group submitted during the first penalty period' do
@@ -36,6 +49,8 @@ describe PenaltyPeriodSubmissionRule do
       apply_rule
       expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE
     end
+
+    it_behaves_like 'valid overtime message', 1.0, 10.hours
   end
 
   context 'when the group submitted during the second penalty period' do
@@ -48,5 +63,7 @@ describe PenaltyPeriodSubmissionRule do
       apply_rule
       expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE
     end
+
+    it_behaves_like 'valid overtime message', 2.0, 25.hours
   end
 end
